@@ -6,7 +6,7 @@
 
 - ✅ ریپوی محصول ساخته و Push شد (`hanaso`، private) — محافظت سروری main تلاش شد و در پلن Free قفل است (BLOCKER-F07)؛ کنترل جبرانی: قاعدهٔ AGENTS.md §۶ + بازبینی مستقل هر PR
 - ✅ اسکلت اجرایی: Next.js 16.4.3 + TS strict + Tailwind 4.3 + `/api/health` + `/api/ready` — همهٔ دروازه‌های محلی سبز
-- ✅ CI workflow + Docker/Caddy/deploy/rollback + طرح Preview
+- ✅ CI workflow + Docker/Caddy/deploy/rollback + طرح Preview — **CI کاملاً سبز (هر دو job) و Image در GHCR**
 - ✅ سیستم مدیریت پیشرفت: GitHub Project + Milestones + Issues + Labels
 - ✅ حاکمیت چند-Agentی: AGENTS.md + مالکیت ماژول‌ها + DoD + قالب‌های ops
 - ✅ گزارش تجمیعی دانش + ADR-000..005 + بازارزیابی Stack (npm registry، ۲۰۲۶-۱۱-۰۱)
