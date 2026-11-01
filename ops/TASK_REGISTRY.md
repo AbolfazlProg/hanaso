@@ -2,7 +2,7 @@
 
 > **تنها منبع وضعیت تسک‌ها در این ریپو.** هم‌روز با GitHub Issues/Project نگه می‌شود (Issue = مرجع بحث/AC؛ اینجا = وضعیت canonical).
 > چرخهٔ عمر/وضعیت‌ها/شدت‌ها: KB `task-lifecycle.md`. نگاشت GitHub↔رجیستری: Issue بسته = «اجرا شد با شواهد»؛ وضعیت اینجا = پذیرش (مثلاً In Review = منتظر مالک). وضعیت‌ها: `Backlog → Ready → In Progress → In Review → (Needs Fix ↔) → Verified → Staging → Deployed → Closed` + `Blocked`.
-> **آخرین به‌روزرسانی:** 2026-11-01 (سشن دوم) — B-0 Spikes + TASK-DLG-POC-01 + TASK-SLICE-01 تحویل و در main ادغام شدند (PR #62/#64).
+> **آخرین به‌روزرسانی:** 2026-11-01 (سشن سوم) — نخستین استقرار زنده: Preview روی **https://learn.kotodama.ir** (Web-tier M0-10؛ RUN-20261101-03) · سشن دوم: B-0 Spikes + TASK-DLG-POC-01 + TASK-SLICE-01 (PR #62/#64).
 
 ## فاز M0 — بوت‌استرپ
 
@@ -17,7 +17,7 @@
 | TASK-M0-07   | Spike: فونت‌ها از ایران                                                         | Ready                                                                                | GitHub             | —                          | دسترس‌پذیری ۳ فونت + fallback → OTD                                              |
 | TASK-M0-08   | Spike: ruby در RTL (FT-003) — **جزیرهٔ LTR اجباری + lh≥2 + الگوی FuriganaText** | **Verified** (PR #62)                                                                | GitHub #14 (بسته)  | —                          | رفتار مرورگر (Chromium) ✓ + الگوی رندر ✓ + گزارش `SPIKE-M0-08`                   |
 | TASK-M0-09   | زیرساخت مشترک UI (=B-0)                                                         | **Ready** (ورودی‌های چهار اسپایک ✓)                                                  | GitHub #10         | M0-05..08 ✓                | tokens + فونت self-host + FuriganaText (الگوی M0-08) + DirectionProvider + RC on |
-| TASK-M0-10   | استقرار Preview روی VPS + بکاپ اولیه                                            | Blocked                                                                              | GitHub             | M0-02 + دسترسی VPS         | compose زنده با TLS + health سبز + بکاپ اثبات‌شده                                |
+| TASK-M0-10   | استقرار Preview روی VPS + Postgres/PgBouncer/Worker + بکاپ اولیه                                            | **In Progress** — Web-tier: **Deployed** (learn.kotodama.ir، RUN-20261101-03)؛ DB-tier/بکاپ باقی | GitHub #11          | M0-02 ✓ + VPS ✓ (F02 بسته) | Web: compose زنده با TLS + health سبز ✓؛ باقی: Postgres/PgBouncer/Worker + بکاپ اثبات‌شده |
 | TASK-M0-11   | درس نمونهٔ «Hello» با ruby                                                      | Backlog                                                                              | GitHub             | M0-09 + M0-10              | AC-901..903 + FT-002/003 + روی Preview قابل مشاهده                               |
 | TASK-DSGN-01 | ادغام Design System v2 (خروجی TASK-DESIGN-04 پس از پذیرش مالک)                  | Blocked                                                                              | GitHub             | پذیرش TASK-DESIGN-04 در KB | ارزیابی tokens/components v2 + ادغام بدون انشعاب ناسازگار                        |
 
@@ -39,3 +39,4 @@
 | --------------- | ------- | ----- | ----------- | --------- | ------- | --------- | --- |
 | 2026-11-01      | 1       | 4     | 2           | 1         | 3       | 1         | 12  |
 | 2026-11-01 (س۲) | 0       | 5     | 2           | 1         | 2       | 9         | 19  |
+| 2026-11-01 (س۳) | 1       | 2     | 2           | 1         | 1       | 7         | 14  |

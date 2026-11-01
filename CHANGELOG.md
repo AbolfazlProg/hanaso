@@ -3,6 +3,27 @@
 > قالب نسخه‌ها: **CalVer `YYYY.0M.N`** · محور استقرار: تگ=SHA · پیام‌ها فارسی و قابل‌فهم.
 > هیچ ادعایی بدون شناسهٔ commit قابل‌استناد ثبت نمی‌شود.
 
+## 2026.11.2 — First Live Deployment: Preview روی learn.kotodama.ir (2026-11-01)
+
+**نوع:** نخستین استقرار واقعی محصول — TASK-M0-10 لایهٔ Web (RUN-20261101-03).
+
+### افزوده شد
+
+- **Preview زنده روی https://learn.kotodama.ir** — دستور مالک (تغییر مقصد از `preview.hanaso.ir` به ساب‌دامینهٔ موجود kotodama): image `ea701342` از GHCR (خروجی CI) در Docker ایزوله (project `hanaso` · شبکهٔ `hanaso-net` · فقط `127.0.0.1:3100`) پشت reverse-proxy موجود میزبان (HAProxy:443 → nginx:81/82 → upstream) — معماری و رویهٔ کامل: **`infra/deploy/learn-kotodama/`** (README + کپی دقیق compose و vhost nginx)
+- رکورد اجرا `ops/runs/RUN-20261101-03.md` + گزارش بازبینی مستقل `ops/reviews/DEPLOY-LEARN-R1.md`
+
+### تغییر داد
+
+- پروژهٔ قبلی همان آدرس (`genesis-learn.service` روی `127.0.0.1:3100`) به دستور صریح مالک **بازنشسته شد** (stop+disable؛ بکاپ vhost در `/root/backups/pre-hanaso-20261101/`؛ فایل‌های ۱۱۴MB حذف نشدند — حذف نهایی نیازمند تأیید مالک)
+- **BLOCKER-F02 بسته شد** (مالک VPS ارائه کرد) و **BLOCKER-F04 بسته شد** (تغییر مقصد Preview به دامنهٔ آمادهٔ `learn.kotodama.ir`)
+- ledgers هم‌گاه شدند: PROJECT_STATUS / CURRENT_PHASE / TASK_REGISTRY (M0-10 → In Progress با Web-tier Deployed) / NEXT_ACTIONS / PHASE_STATUS (گیت ۸ M0 ✓) / AGENT_RUN_LOG
+
+### شناخته‌شده/محدودیت‌ها
+
+- Preview فعلی DB ندارد (فاز اسکلت): `/api/ready` → `database: skipped` — لایهٔ DB (Postgres/PgBouncer/Worker + بکاپ) باقیِ M0-10 است
+- میزبان مشترک است (BigBlueButton + kotodama.ir + voicevox هم‌زمان زنده‌اند) — تغییر firewall/HAProxy/nginx بدون بکاپ+تست+مجوز ممنوع
+- Node میزبان v22 است؛ اجرا فقط از مسیر Docker (image بر base node:24-alpine)
+
 ## 2026.11.1 — Real Development Start: B-0 Spikes + Dialogue PoC + First Vertical Slice (2026-11-01)
 
 **نوع:** نخستین قابلیت‌های واقعی محصول — مجوز صریح مالک (DD-080) + ثبت تصمیم‌های صوت/شخصیت/انیمیشن (DD-081..083).
