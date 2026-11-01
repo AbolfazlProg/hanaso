@@ -11,15 +11,16 @@
 
 ## وضعیت پروژه را چطور ببینم؟ (بدون دانش برنامه‌نویسی)
 
-| چه می‌خواهید بدانید؟                    | کجا؟                                                                 |
-| --------------------------------------- | -------------------------------------------------------------------- |
-| وضعیت لحظه‌ای و صداقت‌محور پروژه        | [`PROJECT_STATUS.md`](PROJECT_STATUS.md)                             |
-| نقشهٔ راه و فازها (M0..M7) و وابستگی‌ها | [`ROADMAP.md`](ROADMAP.md) · [`CURRENT_PHASE.md`](CURRENT_PHASE.md)  |
-| تابلوی مدیریت (Backlog/In Progress/…)   | GitHub Project: **HANASO Development** (لینک در `PROJECT_STATUS.md`) |
-| کارهای باز/بسته و تصمیم‌های منتظر مالک  | Issues + Milestones همین ریپو                                        |
-| تغییرات هر نسخه                         | [`CHANGELOG.md`](CHANGELOG.md)                                       |
-| گزارش مأموریت‌های Agentها               | `ops/runs/` + `ops/reviews/`                                         |
-| ممیزی کل دانش و تصمیم‌ها                | [`docs/CONSOLIDATION-REPORT.fa.md`](docs/CONSOLIDATION-REPORT.fa.md) |
+| چه می‌خواهید بدانید؟                     | کجا؟                                                                     |
+| ---------------------------------------- | ------------------------------------------------------------------------ |
+| **📋 خلاصهٔ سادهٔ مالک (شروع از اینجا)** | **[`docs/owner/OWNER_BRIEFING.fa.md`](docs/owner/OWNER_BRIEFING.fa.md)** |
+| وضعیت لحظه‌ای و صداقت‌محور پروژه         | [`PROJECT_STATUS.md`](PROJECT_STATUS.md)                                 |
+| نقشهٔ راه و فازها (M0..M7) و وابستگی‌ها  | [`ROADMAP.md`](ROADMAP.md) · [`CURRENT_PHASE.md`](CURRENT_PHASE.md)      |
+| تابلوی مدیریت (Backlog/In Progress/…)    | GitHub Project: **HANASO Development** (لینک در `PROJECT_STATUS.md`)     |
+| کارهای باز/بسته و تصمیم‌های منتظر مالک   | Issues + Milestones همین ریپو                                            |
+| تغییرات هر نسخه                          | [`CHANGELOG.md`](CHANGELOG.md)                                           |
+| گزارش مأموریت‌های Agentها                | `ops/runs/` + `ops/reviews/`                                             |
+| ممیزی کل دانش و تصمیم‌ها                 | [`docs/CONSOLIDATION-REPORT.fa.md`](docs/CONSOLIDATION-REPORT.fa.md)     |
 
 ## شروع سریع (توسعه‌دهنده/Agent)
 
