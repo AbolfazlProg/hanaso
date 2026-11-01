@@ -1,0 +1,38 @@
+# HANASO — .gitignore (product repository)
+# Secrets — never committed (names live in .env.example only)
+.env
+.env.*
+!.env.example
+
+# Dependencies / build output
+node_modules/
+.next/
+next-env.d.ts
+out/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Package manager
+.pnpm-store/
+
+# Tests / tooling
+tests/**/visual-report/
+playwright-report/
+test-results/
+.lighthouseci/
+
+# Generated skills sync output (canonical source: KB `agent-skills/`)
+# Regenerate: KB_PATH=/path/to/japanese-learning-kb "$KB_PATH/scripts/install-skills.sh" .
+.claude/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local runtime
+*.log
+logs/
+tmp/

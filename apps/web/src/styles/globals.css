@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* HANASO base — Persian-first, RTL-safe, WCAG 2.2 AA.
+   Japanese text always lives inside explicit `lang="ja" dir="ltr"` blocks. */
+
+html {
+  color-scheme: light; /* v1 is Light-only (DD-023) */
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-fa);
+  line-height: 1.8; /* ALREQ */
+  min-height: 100dvh;
+}
+
+/* Japanese blocks (JaBlock pattern seed — full component in TASK-M0-09) */
+.ja-block {
+  direction: ltr;
+  font-family: var(--font-ja);
+  line-height: 1.9; /* JLREQ */
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+/* Focus visibility (WCAG 2.4.7 / 2.5.8) */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}

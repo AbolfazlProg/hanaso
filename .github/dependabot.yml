@@ -1,0 +1,17 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # KB dependency policy: exact pins + lockfile; security patches immediate.
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]

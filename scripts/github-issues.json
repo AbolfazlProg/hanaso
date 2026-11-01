@@ -1,0 +1,387 @@
+{
+  "repo": "hanaso",
+  "project_title": "HANASO Development",
+  "project_description": "تابلوی مدیریت توسعهٔ HANASO — وضعیت‌ها: Backlog/Ready/In Progress/Review/Blocked/Done (ADR-004)",
+  "milestones": [
+    {
+      "alias": "M0",
+      "title": "M0 — Bootstrap & Foundation",
+      "description": "ریپو + CI + اسکلت + Spikeها + زیرساخت UI + استقرار Preview (خروجی: درس Hello با ruby)"
+    },
+    {
+      "alias": "M1",
+      "title": "M1 — Core Learning Experience",
+      "description": "auth + آنبوردینگ + کانا + ۴ تمرین + IME + شالودهٔ امنیتی پنل (TASK-M1-01..07)"
+    },
+    {
+      "alias": "M2",
+      "title": "M2 — FSRS Review & Dashboard v1",
+      "description": "موتور مرور + داشبورد v1 + پوستهٔ /admin (TASK-M2-01)"
+    },
+    {
+      "alias": "M3a",
+      "title": "M3a — Dialogue Foundation & Audio",
+      "description": "VOICEVOX + صوت دوگانه + پلیر + ۳ واحد Stage-A (گیت A/B صوت)"
+    },
+    {
+      "alias": "M3b",
+      "title": "M3b — Lesson Engine & Mastery Gate",
+      "description": "درس از دیالوگ + تمرین‌های دیالوگی + گیت فهم understood"
+    },
+    { "alias": "M4", "title": "M4 — Library & Reader", "description": "کتابخانه + کتاب‌خوان + ذخیرهٔ واژه→FSRS" },
+    { "alias": "M5", "title": "M5 — Interactive Dialogue", "description": "نقاط تصمیم + حالت‌های چالشی + دیکته" },
+    {
+      "alias": "M6",
+      "title": "M6 — Analytics & Admin Operations",
+      "description": "پیشرفت/تنظیمات/خروجی + ماژول Analytics + عملیات پنل مالک (TASK-M6-01..11)"
+    },
+    {
+      "alias": "M7",
+      "title": "M7 — Hardening & Public Launch",
+      "description": "امنیت/پرفورمنس/بکاپ/محتوای MVP + درگاه پرداخت + انتشار hanaso.ir"
+    }
+  ],
+  "labels": [
+    { "name": "phase:m0", "color": "1D76DB", "description": "فاز M0 — بوت‌استرپ" },
+    { "name": "phase:m1", "color": "BFD4F2", "description": "فاز M1" },
+    { "name": "phase:m2", "color": "BFD4F2", "description": "فاز M2" },
+    { "name": "phase:m3a", "color": "C5DEF5", "description": "فاز M3a" },
+    { "name": "phase:m3b", "color": "C5DEF5", "description": "فاز M3b" },
+    { "name": "phase:m4", "color": "D4C5F9", "description": "فاز M4" },
+    { "name": "phase:m5", "color": "D4C5F9", "description": "فاز M5" },
+    { "name": "phase:m6", "color": "E99695", "description": "فاز M6" },
+    { "name": "phase:m7", "color": "E99695", "description": "فاز M7" },
+    { "name": "type:feature", "color": "A2EEEF", "description": "قابلیت محصول" },
+    { "name": "type:infrastructure", "color": "D4C5F9", "description": "زیرساخت/DevOps" },
+    { "name": "type:spike", "color": "FBCA04", "description": "اسپایک/تحقیق فنی با نتیجهٔ تصمیم" },
+    { "name": "type:epic", "color": "3E4B9E", "description": "اسپایک فاز — تسک‌سازی در ورود فاز" },
+    { "name": "type:docs", "color": "0075CA", "description": "مستندات" },
+    { "name": "type:security", "color": "B60205", "description": "امنیت" },
+    { "name": "type:design", "color": "C5DEF5", "description": "طراحی/Design System" },
+    { "name": "priority:P0", "color": "B60205", "description": "بحرانی" },
+    { "name": "priority:P1", "color": "D93F0B", "description": "بالا" },
+    { "name": "priority:P2", "color": "FBCA04", "description": "متوسط" },
+    { "name": "priority:P3", "color": "CCCCCC", "description": "پایین" },
+    { "name": "owner-decision", "color": "5319E7", "description": "نیازمند تصمیم/اقدام مالک" },
+    { "name": "blocked-external", "color": "7057FF", "description": "مسدود بر عامل بیرونی (بیلینگ/VPS/دسترسی)" }
+  ],
+  "issues": [
+    {
+      "title": "TASK-ENG-01 — مأموریت پایه‌گذاری مهندسی (ریپو + CI + اسکلت + GitHub PM + حاکمیت Agent)",
+      "body": "## چه شد\nریپوی محصول hanaso ساخته شد: ساختار Monorepo سبک + اسکلت اجرایی Next.js 16.4.3 (TS 6.0.3 strict، Tailwind 4.3.3 با توکن‌های DD-067) + `/api/health` و `/api/ready` + قرارداد Envelope + CI کامل + Docker/Caddy/deploy/rollback + AGENTS.md + ops/ + گزارش تجمیعی + ADR-000..005 + بازارزیابی Stack + سه بازبینی مستقل.\n\n## شواهد\nدروازه‌های محلی سبز (خروجی واقعی در `ops/runs/RUN-20261101-01.md`) · اسکیل‌ها از KB نصب شد (16) · Branch Protection (PR-only).\n\n## وضعیت\nمأموریت زیرساختی — هیچ قابلیت آموزشی ساخته نشده (گیت OQ-13). پذیرش: مالک.",
+      "labels": ["phase:m0", "type:infrastructure", "priority:P0"],
+      "milestone": "M0",
+      "priority": "P0",
+      "project_status": "Done",
+      "close": true,
+      "close_comment": "بسته با شواهد: commitهای main + ops/runs/RUN-20261101-01.md + سه گزارش بازبینی در ops/reviews/. پذیرش نهایی: مالک (دیدن ریپو + PROJECT_STATUS.md)."
+    },
+    {
+      "title": "TASK-M0-02 — تکمیل بوت‌استرپ frontend (ساختار کامل + قواعد lint L1..L11)",
+      "body": "## نیازمندی\nتکمیل آنچه اسکلت ندارد: ساختار کامل `src/messages/fa.ts`، `src/components/{ui,patterns}`، قواعد lint کامل L1..L11 (KB engineering-standards §2)، Stylelint 17 + use-logical، هوک‌های Agent، اسکریپت‌های e2e.\n## دلیل\nمرجع: KB frontend-architecture §۱-۲ + TASK-M0-02 در KB ops/TASK_REGISTRY.md.\n## AC\n۱) `pnpm lint/typecheck/test/build` سبز با قواعد کامل ۲) ساختار پوشه‌ها مطابق §۱ ۳) قاعدهٔ مرز ماژولی فعال (L1) ۴) zero physical left/right (L5).\n## وابستگی\nTASK-ENG-01 (انجام شد — اسکلت هسته موجود است).",
+      "labels": ["phase:m0", "type:infrastructure", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "In Progress",
+      "close": false
+    },
+    {
+      "title": "TASK-M0-03 — اولین اجرای سبز CI روی GitHub Actions + فعال‌سازی required checks",
+      "body": "## نیازمندی\nفایل workflow موجود و سالم است (`.github/workflows/ci.yml` — دروازه‌ها محلی سبز). باید اولین رن واقعی سبز شود و سپس required status checks روی main فعال شود (BLOCKER-F05).\n## مانع\nبیلینگ اکانت GitHub — «recent account payments have failed or your spending limit needs to be increased» (همان BLOCKER-005 KB).\n## AC\n۱) رن سبز روی main ۲) image با tag=SHA در GHCR ۳) required checks فعال ۴) ثبت خروجی در این Issue.",
+      "labels": ["phase:m0", "type:infrastructure", "priority:P0", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P0",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "TASK-M0-04 — Spike: TypeScript 7.0.2 (نتیجه: fallback به 6.0.3)",
+      "body": "## نتیجهٔ Spike (2026-11-01)\n- tsc 7.0.2 به‌تنهایی سالم کامپایل می‌کند؛ **اما** typescript-eslint@8.72.1 رسماً `typescript <6.1.0` را پشتیبانی می‌کند (peerDependencies) → toolchain لینت با TS7 پشتیبانی‌شده نیست.\n- **تصمیم (طبق ADR-003 KB):** پین `typescript@6.0.3` (داخل بازهٔ پشتیبانی)؛ TS7 بعد از پشتیبانی رسمی typescript-eslint بازبینی شود.\n- شواهد: `docs/research/STACK-REVALIDATION-2026-11-01.md` + خروجی واقعی دروازه‌ها در `ops/runs/RUN-20261101-01.md` (typecheck/lint/build با 6.0.3 سبز).\n- اقدام باقیمانده: ثبت نتیجه در OTD-004 ریپوی KB (از مسیر spec-gap).",
+      "labels": ["phase:m0", "type:spike", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Done",
+      "close": true,
+      "close_comment": "Spike اجرا و نتیجه‌گذاری شد: پین 6.0.3 در apps/web/package.json اعمال شد؛ ثبت OTD-004 در KB از مسیر spec-gap در صف."
+    },
+    {
+      "title": "TASK-M0-05 — Spike: React Compiler 1.0 (روشن/خاموش + benchmark)",
+      "body": "## نیازمندی\nفعال‌سازی آزمایشی React Compiler در next.config + benchmark کوچک رندر (برش مینی از صفحه) + تصمیم فعال/غیرفعال.\n## مرجع\nKB ADR-002 (React Compiler 1.0.0 — spike B-0) + OTD.\n## AC\n۱) اجرای روشن/خاموش با خروجی واقعی ۲) benchmark مقایسه‌ای ثبت‌شده ۳) تصمیم پیشنهادی صریح + ردیف OTD.\n## وابستگی\nTASK-ENG-01 ✓",
+      "labels": ["phase:m0", "type:spike", "priority:P2"],
+      "milestone": "M0",
+      "priority": "P2",
+      "project_status": "Ready",
+      "close": false
+    },
+    {
+      "title": "TASK-M0-06 — Spike: RTL-audit زیرمجموعهٔ shadcn/Radix (پاپ‌اور/Dialog)",
+      "body": "## نیازمندی\nآزمودن ۹ کامپوننت انتخابی shadcn (روی Radix 1.8 + react-direction) در چیدمان RTL فارسی؛ فهرست سازگار/ناست + جایگزین.\n## مرجع\nKB ADR-004 + bilingual-rtl-ltr.\n## AC\n۱) جدول مؤلفه×رفتار با شواهد ۲) فهرست نهایی ۹ مؤلفهٔ قابل‌تبنی ۳) تصمیم OTD ثبت شود.",
+      "labels": ["phase:m0", "type:spike", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Ready",
+      "close": false
+    },
+    {
+      "title": "TASK-M0-07 — Spike: دسترس‌پذیری فونت‌های سه‌گانه از سرور داخل ایران",
+      "body": "## نیازمندی\nبررسی `next/font/google` برای Vazirmatn + Zen Kaku Gothic New + Noto Serif JP از IP ایران؛ در صورت شکست، الگوی `next/font/local` نسخه‌دار.\n## مرجع\nKB ADR-002/004 + typography (DD-017).\n## AC\n۱) نتیجهٔ واقعی از سرور ایران (شواهد) ۲) الگوی نهایی فونت ۳) تصمیم OTD.",
+      "labels": ["phase:m0", "type:spike", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Ready",
+      "close": false
+    },
+    {
+      "title": "TASK-M0-08 — Spike: رفتار <ruby> در پاراگراف RTL (FT-003)",
+      "body": "## نیازمندی\nرفتار روبی در پاراگراف RTL در Chrome/FF/Safari + الگوی رندر نهایی (span مجزا در هر واحد روبی).\n## مرجع\nKB bilingual-rtl-ltr + FT-003 + TRK-006.\n## AC\n۱) جدول رفتار ۳ مرورگر با اسکرین‌شات ۲) الگوی رندر پیشنهادی ۳) تصمیم OTD.",
+      "labels": ["phase:m0", "type:spike", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Ready",
+      "close": false
+    },
+    {
+      "title": "TASK-M0-09 — زیرساخت مشترک UI (B-0): tokens + فونت + JaBlock/Bdi/FuriganaText + ۹ کامپوننت shadcn",
+      "body": "## نیازمندی\nپورت کامل tokens/components از KB (با نتیجهٔ spike فونت) + کامپوننت‌های پایهٔ دامنه (کارت جمله، دکمهٔ صوت، روبی) + زیرمجموعهٔ shadcn پس از RTL-audit.\n## مرجع\nKB frontend-architecture §۴-۵ + design-proofs (tokens.css/components.css تک‌منبع DD-067).\n## AC\n۱) صفر left/right فیزیکی (Stylelint use-logical) ۲) نمونهٔ ترکیبی فارسی+ژاپنی+روبی در ۳ مرورگر ۳) توکن‌ها فقط از tokens.css.\n## وابستگی\nM0-06/07/08 (اسپایک‌ها).",
+      "labels": ["phase:m0", "type:feature", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "TASK-M0-10 — استقرار Preview روی VPS + Postgres/PgBouncer/Worker + بکاپ اولیه",
+      "body": "## نیازمندی\nطبق طرح آماده: `docs/deployment/PREVIEW-DEPLOYMENT-PLAN.md` + `infra/` (compose ایزوله + Caddy + deploy/rollback). افزودن postgres/pgbouncer/worker به compose + بکاپ restic با کلید جدا.\n## مانع\nدسترسی VPS (BLOCKER-F02) + DNS (BLOCKER-F04).\n## AC\n۱) staging با HTTPS پاسخ دهد ۲) health سبز ۳) بکاپ قابل-restore اثبات‌شده (دریل کوچک) ۴) worker صف را مصرف کند ۵) هیچ سرویس دیگری آسیب نبیند (شواهد docker ps قبل/بعد).",
+      "labels": ["phase:m0", "type:infrastructure", "priority:P0", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P0",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "TASK-M0-11 — درس نمونهٔ «Hello» با ruby (خروجی M0)",
+      "body": "## نیازمندی\nیک درس نمونه با محتوای فارسی راهنما + ژاپنی با furigana در مسیر `/lesson/[slug]` مینیمال — اثبات زندهٔ زنجیره UI↔محتوا↔استقرار.\n## مرجع\nKB lesson-design + page-spec درس + FT-002/003.\n## AC\n۱) روبی درست در ۳ مرورگر (visual snapshot) ۲) AC-901..903 پوشش ۳) pipeline سبز ۴) روی Preview قابل مشاهده.\n## وابستگی\nM0-09 + M0-10.",
+      "labels": ["phase:m0", "type:feature", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "TASK-DSGN-01 — ادغام Design System v2 (خروجی TASK-DESIGN-04 پس از پذیرش مالک)",
+      "body": "## نیازمندی\nپس از پذیرش TASK-DESIGN-04 در KB: ارزیابی diff توکن‌های v2 نسبت به DD-067 (با compute_contrast) → PR واحد به این ریپو + هماهنگی proofهای KB.\n## قانون\nتا پذیرش مالک، هیچ خروجیِ در-بازبینی وارد محصول نمی‌شود (مأموریت §۱۲) — از توسعهٔ موازی نسخه‌های ناسازگار جلوگیری می‌شود.\n## AC\n۱) جدول مقایسهٔ توکن‌ها با کنتراست ۲) PR واحد با تست بصری ۳) به‌روزرسانی قرارداد طراحی docs/ux-design.",
+      "labels": ["phase:m0", "type:design", "priority:P1", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "🚀 اولین تسک توسعه: B-0 Spikes — TASK-M0-05..08 (با AC کامل)",
+      "body": "## هدف\nبستن چهار عدم‌قطعیت B-0 با شواهد، پیش از ساخت زیرساخت UI (M0-09).\n\n## دامنه\nچهار اسپایک مستقل و موازی روی Branchهای `spike/*` (بدون الزام merge — فقط یادداشت نتیجه + ردیف OTD):\n1. **M0-05 React Compiler 1.0** — روشن/خاموش + benchmark مینی (Skill: frontend-engineering)\n2. **M0-06 RTL-audit شادکن/Radix** — پاپ‌اور/Dialog/DirectionProvider در RTL فارسی (Skill: bilingual-rtl-ltr)\n3. **M0-07 فونت از ایران** — دسترس‌پذیری ۳ فونت + fallback `next/font/local` (Skill: bilingual-rtl-ltr)\n4. **M0-08 روبی در RTL** — رفتار ۳ مرورگر + الگوی رندر (Skill: bilingual-rtl-ltr)\n\n## معیارهای پذیرش (هر اسپایک)\n- [ ] یادداشت نتیجه با شواهد واقعی (خروجی فرمان/اسکرین‌شات/جدول)\n- [ ] ردیف OTD به‌روزشده در KB (از مسیر spec-gap اگر Agent ریپوی KB در دسترس نیست)\n- [ ] تصمیم پیشنهادی صریح + ریسک‌ها\n\n## وابستگی‌ها\n- TASK-ENG-01 ✅ (اسکلت/CI محلی آماده)\n- پیش‌نیاز TASK-M0-09 (زیرساخت UI) = همین اسپایک‌ها\n\n## تعریف Done\nهر اسپایک با یادداشت نتیجه + OTD بسته می‌شود؛ سپس M0-09 وارد Ready می‌شود.\n\n## نکته\nدر صورت مجوز کد مالک، TASK-DLG-POC-01 (PoC دیالوغ) موازی اجرا شود — اولویت راهبردی بالاتر.",
+      "labels": ["phase:m0", "type:spike", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Ready",
+      "close": false
+    },
+    {
+      "title": "Epic — M1: تجربهٔ یادگیری اول (auth/آنبوردینگ/کانا/۴ تمرین/IME/امنیت پنل)",
+      "body": "تسک‌سازی در جلسهٔ ورود فاز (Orchestrator). مرجع: KB ops/TASK_REGISTRY.md — TASK-M1-01..07. خروجی: کاربر واقعی ثبت‌نام و اولین درس کانا را تمام می‌کند؛ «زمان تا اولین درس < ۳ دقیقه». گیت: M0 کامل. شامل شالودهٔ امنیتی پنل مالک (TASK-M1-07: RBAC + MFA + audit) و Analytics v0 (رویدادها از M1 به‌موعد — ADR-016). ESP ایمیل = OTD-015 باید پیش از M1 بسته شود.",
+      "labels": ["phase:m1", "type:epic", "priority:P1"],
+      "milestone": "M1",
+      "priority": "P1",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "Epic — M2: FSRS + مرور + داشبورد v1 + پوستهٔ /admin",
+      "body": "مرجع: KB implementation-roadmap §۲-۳ + TASK-M2-01. ts-fsrs 6 پین‌شده + revlog append-only + idempotency + داشبورد v1 + پوستهٔ /admin (viewer لاگ v0). گیت: M1. معیار: review submit p95 ≤250ms روی staging.",
+      "labels": ["phase:m2", "type:epic", "priority:P1"],
+      "milestone": "M2",
+      "priority": "P1",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "Epic — M3a: شالودهٔ دیالوگ + صوت + ۳ واحد Stage-A",
+      "body": "مرجع: KB §۲-۴ + dialogue-content-schema. VOICEVOX + انکد دوگانه + پلیر مکالمه + شخصیت‌ها + ۳ واحد با Stage-A کامل. **گیت ورود: A/B صوت (OQ-006/OQ-018 — ≥80% تشخیص گوینده، n≥5 کور).** PoC فنی ۱۰آزمونی (TASK-DLG-POC-01) پیش از تولید انبوه صوت.",
+      "labels": ["phase:m3a", "type:epic", "priority:P1"],
+      "milestone": "M3a",
+      "priority": "P1",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "Epic — M3b: موتور درس متصل به دیالوگ + گیت فهم (understood)",
+      "body": "مرجع: KB §۲-۴-ب + DD-046..048. Content CLI v2 + بخش‌های درس با line_refs + ۴ تمرین دیالوگی جدید + موتور mastery پنج‌سنجه + دفترچهٔ خطاها با زمینهٔ دیالوگ + مسیر PG-09. **آزمایش واقعی تمایز `understood` vs `completed` (D → DB/API/UI/Analytics).** گیت: M3a + تست ۳-۵ زبان‌آموز واقعی.",
+      "labels": ["phase:m3b", "type:epic", "priority:P1"],
+      "milestone": "M3b",
+      "priority": "P1",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "Epic — M4: کتابخانه + کتاب‌خوان + ذخیرهٔ واژه→FSRS",
+      "body": "مرجع: KB §۲-۵. مدل محتوای داستان + Reader با روبی/bidi + WordPopover → saveWordFromReader ≤۲ تعامل + LHCI روی Reader ≥90. نیازمند OTD-009 (R2) پیش از دارایی‌های سنگین.",
+      "labels": ["phase:m4", "type:epic", "priority:P2"],
+      "milestone": "M4",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "Epic — M5: دیالوگ تعاملی/شنیداری پیشرفته",
+      "body": "مرجع: KB §۲-۶ (بازآرایی DD-050). نقاط تصمیم ۲-۳مسیره + حالت‌های چالشی (تمام‌سکوت/دیکتهٔ پیشرفته/aizuchi) + گسترش بانک دیالوگ به ۶-۱۰. گیت: عبور A/B صوت در M3a.",
+      "labels": ["phase:m5", "type:epic", "priority:P2"],
+      "milestone": "M5",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "Epic — M6: پیشرفت/تنظیمات/خروجی + Analytics + عملیات پنل مالک",
+      "body": "مرجع: KB §۲-۷ + TASK-M6-01..11 + ADR-016/017. events.yaml → RBAC/audit → داشبوردهای هسته/یادگیری → پروفایل تحلیلی → حریم خصوصی؛ به‌موازات: پشتیبانی/مدیریت کاربران/خانهٔ فرماندهی/سلامت/اطلاعیه‌ها. گیت‌های مالک: OQ-020/021/026.",
+      "labels": ["phase:m6", "type:epic", "priority:P2"],
+      "milestone": "M6",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "Epic — M7: سخت‌افزارسازی + انتشار عمومی (hanaso.ir)",
+      "body": "مرجع: KB §۲-۸ + TASK-M7-01..02. بازبینی امنیتی کامل (OWASP 2025/ASVS L1) + k6/LHCI/RUM + دریل restore + محتوای MVP (۱۰-۲۰ متن/۶-۱۰ دیالوغ/مراحل ۱-۳ کامل) + ماژول billing (گیت OQ-024) + بررسی حقوقی دادهٔ ایران + انتشار روی دامنهٔ اصلی.",
+      "labels": ["phase:m7", "type:epic", "priority:P2"],
+      "milestone": "M7",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "OQ-013 — تأیید فازبندی MVP + تصمیم‌های Provisional بخش ۰۸ (گیت شروع قابلیت‌ها)",
+      "body": "**تصمیم مالک.** مأموریت ۲۰۲۶-۱۱-۰۱ عملاً دامنهٔ زیرساخت را آزاد کرد (TASK-ENG-01 اجرا شد)؛ اما شروع قابلیت‌های آموزشی (M1+) هنوز منتظر تأیید صریح فازبندی MVP و DD-026..034 + تعداد انواع تمرین (TRK-018/OTD-014) است.\n\nمرجع: KB open-questions OQ-013 + BLOCKER-002.\n\n**پاسخ مالک:** تأیید می‌کنم / اصلاح می‌خواهم: …",
+      "labels": ["owner-decision", "priority:P0", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P0",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "OQ-014 — تأیید معماری فنی و Stack (ADR-001..017)",
+      "body": "**تصمیم مالک.** ورودی مستند برای تصمیم:\n- `docs/adr/ADR-000-baseline-adoption.md` (تبنی خط‌پایه + شواهد)\n- `docs/research/STACK-REVALIDATION-2026-11-01.md` (بازارزیابی npm: ۱۵/۱۵ پین به‌روز)\n- `docs/CONSOLIDATION-REPORT.fa.md` §۴\n\nتأیید شما وضعیت ۱۷ ADR را از Provisional به Confirmed می‌برد (BLOCKER-003 KB). پیشنهاد: دامنهٔ تأیید را «ADR-001..017 به‌روزشده» اعلام کنید (رفع ناسازگاری ثبت‌شده در گزارش تجمیعی §۷-۷).",
+      "labels": ["owner-decision", "priority:P0", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P0",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "OQ-017 — تأیید تصمیم‌های مدل مکالمه‌محور (DD-046..051)",
+      "body": "**تصمیم مالک.** مرجع: KB dialogue-based-learning-model + dialogue-requirements §۴. تأیید اجرای مدل A→D: بخش‌های درس با line_refs · پوشش ≥95% · ۴ تمرین دیالوگی جدید · mastery پنج‌سنجه · توقف PoC (DD-051).\n\n**گزینه برای مالک:** (الف) تأیید همه (ب) تأیید با اصلاح (پ) بازبینی موردی — لطفاً صریح.",
+      "labels": ["owner-decision", "priority:P0", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P0",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "OQ-016 — سختی گیت فهم (mastery) در مراحل ۲-۵",
+      "body": "**تصمیم مالک — تا M3b.** گزینه‌ها: سخت همه‌جا / سخت مرحله ۲-۳ و نرم ۴-۵ (گرایش پژوهش) / کاملاً اختیاری. آستانه‌های فعلی: ≥70/75/80% + کف سنجه‌ها + M4 همیشه ≥60%. مرجع: KB dialogue-mastery-model.",
+      "labels": ["owner-decision", "priority:P2"],
+      "milestone": "M3b",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "OQ-020/021 — نقش‌های تحلیلی + دورهٔ نگهداشت رویدادها",
+      "body": "**دو تصمیم مالک — قبل از TASK-M6-02/M6-06.**\n1. **OQ-020:** دامنهٔ دسترسی داشبوردها — گرایش: فقط owner تا M6 (گسترش analyst بعدتر).\n2. **OQ-021:** TTL رویدادهای خام — پیشنهاد DD-056: ۱۲ ماه + رولآپ k-ناشناس نامحدود.\n\nمرجع: KB open-questions + ADR-016.",
+      "labels": ["owner-decision", "priority:P2"],
+      "milestone": "M6",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "OQ-006/OQ-018 — راهبرد صوت و موتور صدای دیالوگ‌های لنگر (گیت A/B)",
+      "body": "**گیت پیش از M3a.** راهبرد سه‌لایه مستند شده (VOICEVOX انبوه ≈$0 / برند = گویندهٔ انسانی یا Azure HD $22/1M فقط build-time / گیت A/B با ~۲۰ جمله × ۳ شخصیت). تصمیم نهایی پس از A/B + استعلام گوینده + بودجه. مرجع: KB audio-architecture §۵ + ADR-009.",
+      "labels": ["owner-decision", "priority:P1"],
+      "milestone": "M3a",
+      "priority": "P1",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "OQ-024 — انتخاب درگاه پرداخت ریالی + مدل اتصال (پیش از M7-01)",
+      "body": "**تحقیق + تصمیم مالک.** مدل دادهٔ billing درگاه-مستقل قفل شده (DD-077)؛ انتخاب درگاه (ZarinPal/IDPay/سایر)، روش اتصال (webhook یا verify دستی)، قرارداد بازپرداخت و کارمزد باز است. تحقیق مستقل با معیارهای فنی/حقوقی/جغرافیایی انجام شود. گسترش OQ-001/023.",
+      "labels": ["owner-decision", "priority:P2"],
+      "milestone": "M7",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "BLOCKER-F03 — رفع بیلینگ GitHub Actions (CI اجرا نمی‌شود)",
+      "body": "**اقدام مالک — بحرانی.** جاب‌های CI شروع نمی‌شوند: «recent account payments have failed or your spending limit needs to be increased».\n\nمسیر: Settings → Billing & plans → روش پرداخت/سقف → re-run یک workflow از ریپوی hanaso → تأیید سبزی → اطلاع به Agent برای فعال‌سازی required checks (BLOCKER-F05).\n\nتا آن زمان: دروازه‌ها محلی با شواهد اجرا می‌شوند (quality-gates).",
+      "labels": ["type:infrastructure", "owner-decision", "priority:P0", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P0",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "BLOCKER-F02/F04 — فراهم‌کردن VPS (اروپا، نه Hetzner) + رکورد DNS دامنه",
+      "body": "**اقدام مالک.** چک‌لیست کامل: `docs/deployment/VPS-OWNER-CHECKLIST.md`.\n- VPS اروپایی ۲vCPU/4GB (Hetzner ممنوع — TRK-010؛ گزینه‌ها: OVH/Contabo/…)\n- Docker/Compose + دسترسی SSH برای Agent\n- تأیید مالکیت `hanaso.ir` + رکورد A برای `preview.hanaso.ir`\n- خروجی `docker ps` فعلی (مبنای عدم-آسیب به سرویس‌های موجود)\n\nپس از آن: TASK-M0-10 (استقرار Preview) اجرا می‌شود — طرح و artefactها آماده‌اند.",
+      "labels": ["type:infrastructure", "owner-decision", "priority:P0", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P0",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "امنیت — جایگزینی PAT با توکن دانه‌ریست با حداقل دسترسی",
+      "body": "**اقدام مالک (توصیهٔ امنیتی ADR-004/SECURITY-BASELINE).** توکن فعلی حساب، دسترسی بسیار بازی دارد (repo/admin:org/workflow/project/…). توصیه: PAT جدید فقط با scopeهای لازم (repo/project/workflow برای این ریپو) + روشن‌کردن 2FA حساب اگر نیست. توکن فعلی هرگز در ریپو/لاگ ثبت نشده است.",
+      "labels": ["type:security", "owner-decision", "priority:P1"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
+      "title": "OTD-015 — انتخاب ارائه‌دهندهٔ ایمیل تراکنشی (پیش از M1)",
+      "body": "**تصمیم مالک — مهلت: قبل از TASK-M1-01 (تأیید ایمیل اجباری است).** گزینه‌ها: Resend / Postmark / relay سازگار با تحریم‌ها. معیار: تحویل به ایمیل‌های ایرانی + هزینه + حریم خصوصی. مرجع: KB security-architecture §۲-۱.",
+      "labels": ["owner-decision", "priority:P2"],
+      "milestone": "M1",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "OTD-011 — پایش خطا: GlitchTip (self-host) یا Sentry (SaaS)",
+      "body": "**تصمیم مالک — تا M2.** ملاک: قرارگاه تحریمی مالک (ToS Sentry ساکنان کشورهای تحریمی را مستثنی می‌کند). GlitchTip 6.2.6 (MIT، خود-نگهداری) جایگزین کامل. مرجع: KB ADR-010/OTD-011.",
+      "labels": ["owner-decision", "priority:P2"],
+      "milestone": "M2",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "OTD-009 — راستی‌آزمایی دسترسی مالک به Cloudflare R2 (پیش از M4)",
+      "body": "**اقدام مالک — آزمایش ثبت‌نام/دسترسی به R2** (طبق OTD-009 KB). در صورت عدم دسترسی: Backblaze B2 یا Garage (خود-میزبان) — انتزاع S3 در معماری پیش‌بینی شده. ضرورت: پیش از تولید انبوه صوت (M3a/M4).",
+      "labels": ["owner-decision", "priority:P2"],
+      "milestone": "M4",
+      "priority": "P2",
+      "project_status": "Backlog",
+      "close": false
+    },
+    {
+      "title": "TASK-DLG-POC-01 — PoC فنی مکالمه ۱۰آزمونی (نیازمند مجوز کد مالک)",
+      "body": "**گیت: مجوز صریح مالک (DD-051/BLOCKER-004 KB — «هنوز کدی زده نشه»).** برنامهٔ کامل ۱۰آزمونی (T1..T10) مستند شده: KB dialogue-technical-poc-plan. اجرا در Branch `poc/dialogue-player` پیش از تولید انبوه صوت؛ پرکردن جدول §۳ با اعداد واقعی (CPU/RAM/تمایز صدا/p95) + OTDها.\n\n**درخواست از مالک:** مجوز اجرا بدهید تا این PoC هم‌زمان با B-0 Spikes اجرا شود.",
+      "labels": ["phase:m3a", "type:spike", "priority:P1", "blocked-external"],
+      "milestone": "M3a",
+      "priority": "P1",
+      "project_status": "Blocked",
+      "close": false
+    }
+  ]
+}

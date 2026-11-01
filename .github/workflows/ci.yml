@@ -1,0 +1,106 @@
+name: CI
+
+# HANASO CI baseline (ADR-005; template: KB TASK-M0-03).
+# NOTE: GitHub Actions on this account currently fails to start due to billing
+# (BLOCKER-F03 / KB BLOCKER-005). The same gates run locally via `pnpm verify`
+# with recorded evidence until the owner fixes billing.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: format / lint / typecheck / test / build / audit / smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7 # v7.0.1
+
+      - uses: pnpm/action-setup@v6 # v6.1.0 — reads packageManager field (pnpm 12.16.1)
+        with:
+          version: 12.16.1
+
+      - uses: actions/setup-node@v7 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build (standalone)
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_APP_VERSION: ${{ github.ref_name }}
+          NEXT_PUBLIC_BUILD_SHA: ${{ github.sha }}
+          NEXT_PUBLIC_ENV: ci
+
+      - name: Audit (fail on high/critical)
+        run: pnpm audit --prod
+
+      - name: Smoke (production standalone server on :3100)
+        run: |
+          env -u DATABASE_URL PORT=3100 HOSTNAME=127.0.0.1 node apps/web/.next/standalone/apps/web/server.js &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:3100/api/health >/dev/null 2>&1 && break
+            sleep 1
+          done
+          HANASO_BASE_URL=http://127.0.0.1:3100 bash scripts/smoke.sh
+
+  docker:
+    name: image → GHCR (tag = SHA)
+    needs: verify
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12.16.1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Build image
+        run: |
+          docker build -f infra/docker/Dockerfile \
+            --build-arg NEXT_PUBLIC_BUILD_SHA=${{ github.sha }} \
+            --build-arg NEXT_PUBLIC_APP_VERSION=${{ github.ref_name }} \
+            -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
+
+      - name: Push image (immutable SHA tag)
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}

@@ -1,0 +1,39 @@
+# HANASO Caddy — preview (TLS automatic via ACME; requires DNS record — BLOCKER-F04)
+# Security headers per KB infrastructure-and-devops. CSP nonce/strict-dynamic is set
+# by the app (proxy layer later); Caddy adds the static headers.
+
+preview.hanaso.ir {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=15552000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		X-Frame-Options "DENY"
+		Cross-Origin-Opener-Policy "same-origin"
+		-Server
+	}
+
+	reverse_proxy web:3000
+}
+
+# --- Production (reserved — do NOT enable before launch, mission §8.3) ---
+# hanaso.ir {
+# 	encode zstd gzip
+# 	header {
+# 		Strict-Transport-Security "max-age=15552000; includeSubDomains"
+# 		X-Content-Type-Options "nosniff"
+# 		Referrer-Policy "strict-origin-when-cross-origin"
+# 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+# 		X-Frame-Options "DENY"
+# 		Cross-Origin-Opener-Policy "same-origin"
+# 		-Server
+# 	}
+# 	reverse_proxy web:3000
+# }
+
+# --- Temporary preview until DNS is verified (BLOCKER-F04): uncomment to serve on plain HTTP :8080 ---
+# :8080 {
+# 	reverse_proxy web:3000
+# }

@@ -1,0 +1,43 @@
+# HANASO — Preview/Staging compose (skeleton phase, no DB yet — M0-10 adds postgres/pgbouncer/worker)
+# Isolation rules (ADR-003): dedicated project name, network, volumes, ports — never touches other stacks.
+# Run from the repo root:  docker compose -f infra/docker/docker-compose.yml --env-file .env up -d
+
+name: hanaso
+
+services:
+  web:
+    image: ${HANASO_WEB_IMAGE:-ghcr.io/abolfazlprog/hanaso:latest}
+    restart: unless-stopped
+    env_file: .env
+    # skeleton: no DATABASE_URL — /api/ready reports database: skipped
+    networks: [hanaso-net]
+    expose: ['3000']
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/api/health']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+  caddy:
+    image: caddy:2.11
+    restart: unless-stopped
+    ports: ['80:80', '443:443'] # the only public ports (ADR-010)
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - hanaso-caddy-data:/data
+      - hanaso-caddy-config:/config
+    networks: [hanaso-net]
+    depends_on:
+      web:
+        condition: service_healthy
+
+networks:
+  hanaso-net:
+    name: hanaso-net
+
+volumes:
+  hanaso-caddy-data:
+    name: hanaso-caddy-data
+  hanaso-caddy-config:
+    name: hanaso-caddy-config

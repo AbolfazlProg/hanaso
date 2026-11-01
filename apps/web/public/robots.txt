@@ -1,0 +1,3 @@
+# HANASO — robots (preview skeleton)
+User-agent: *
+Disallow: /api/
