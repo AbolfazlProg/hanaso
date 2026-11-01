@@ -1,0 +1,34 @@
+# HANASO — voice registry (TASK-DLG-POC-01; pattern per KB audio-multi-speaker-architecture §۲)
+# Production: engine=voicevox with real speaker ids after the license/quality gate.
+# PoC: engine=placeholder-sine — the placeholder audio generator synthesizes a deterministic
+# sine+harmonics tone per line with the F0 below, so the multi-speaker chain (T1) and the
+# pitch-distinctness axis (T2) can be exercised before VOICEVOX assets exist.
+voices:
+  vv-female-01-normal:
+    engine: placeholder-sine
+    character: chr-miki
+    family: female-young
+    params: { f0Hz: 210, harmonics: [1.0, 0.35, 0.12], speedScale: 1.0 }
+  vv-male-02-normal:
+    engine: placeholder-sine
+    character: chr-yamada
+    family: male-mature
+    params: { f0Hz: 110, harmonics: [1.0, 0.5, 0.25, 0.1], speedScale: 0.95 }
+  vv-neutral-03-normal:
+    engine: placeholder-sine
+    character: chr-sora
+    family: neutral-mid
+    params: { f0Hz: 160, harmonics: [1.0, 0.4, 0.18], speedScale: 1.05 }
+
+# Voice distinctness matrix (KB audio-ms §۳) — every co-present pair must differ on ≥2 of 3 axes.
+# Pitch axis: |Δ semitones| between F0s (≥3 semitones required).
+distinctness_matrix:
+  - pair: [vv-female-01-normal, vv-male-02-normal]
+    delta_semitones: 11.17
+    axes_passed: [pitch, timbre, rhythm]
+  - pair: [vv-female-01-normal, vv-neutral-03-normal]
+    delta_semitones: 4.65
+    axes_passed: [pitch, timbre]
+  - pair: [vv-male-02-normal, vv-neutral-03-normal]
+    delta_semitones: 6.51
+    axes_passed: [pitch, timbre, rhythm]
