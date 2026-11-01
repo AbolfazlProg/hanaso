@@ -95,12 +95,15 @@ jobs:
 
       - name: Build image
         run: |
+          # GHCR repository names must be lowercase (github.repository may contain uppercase)
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
           docker build -f infra/docker/Dockerfile \
             --build-arg NEXT_PUBLIC_BUILD_SHA=${{ github.sha }} \
             --build-arg NEXT_PUBLIC_APP_VERSION=${{ github.ref_name }} \
-            -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
+            -t "$IMAGE:${{ github.sha }}" .
 
       - name: Push image (immutable SHA tag)
         run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push "$IMAGE:${{ github.sha }}"

@@ -1,7 +1,7 @@
 # وضعیت پروژه (PROJECT_STATUS) — HANASO
 
 > **این فایل تصویر لحظه‌ای و صادقانهٔ پروژه است — نه یک برنامهٔ قدیمی.** پس از هر Merge مهم و پایان هر فاز به‌روز می‌شود.
-> آخرین به‌روزرسانی: **2026-11-01** · به‌روزرسانی‌کننده: مأموریت Engineering Foundation (TASK-ENG-01) · Commit: در `git log` (پیام `chore(bootstrap)`)
+> آخرین به‌روزرسانی: **2026-11-01** · به‌روزرسانی‌کننده: مأموریت Engineering Foundation (TASK-ENG-01) · Commit: در `git log` (پیام `chore(bootstrap)` + commitهای اصلاحی)
 
 ## نمای یک‌خطی
 
@@ -13,25 +13,25 @@
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **مرحلهٔ فعلی**                | M0 — Bootstrap & Foundation (ورود: با مأموریت ۲۰۲۶-۱۱-۰۱ مالک برای دامنهٔ زیرساخت)                                                                                                                                                                                                 |
 | **آخرین Milestone تکمیل‌شده**  | — (M0 در جریان؛ خروجی M0 = درس نمونهٔ Hello با ruby روی staging)                                                                                                                                                                                                                   |
-| **آخرین نسخهٔ Deploy شده**     | **هنوز هیچ نسخه‌ای Deploy نشده** — دسترسی VPS در محیط Agent موجود نیست (BLOCKER-F02 در `ops/BLOCKERS.md`)؛ تمام artefactهای استقرار آماده است                                                                                                                                      |
-| **قابلیت‌های تکمیل‌شده**       | ریپوی محصول + ساختار Monorepo + اسکلت اجرایی Next.js 16.4.3 (صفحهٔ ریشه + `/api/health` + `/api/ready`) + CI workflow + Docker/Caddy/deploy/rollback + سیستم مدیریت پیشرفت GitHub (Project/Milestones/Issues) + حاکمیت Agent (AGENTS.md/ops) + گزارش تجمیعی دانش + ADRهای 000..005 |
-| **در دست توسعه**               | اجرای اولین CI سبز (وابسته به بیلینگ GitHub — BLOCKER-F03) · تکمیل ساختار کامل frontend (TASK-M0-02)                                                                                                                                                                               |
+| **آخرین نسخهٔ Deploy شده**     | **هنوز هیچ نسخه‌ای Deploy نشده** — دسترسی VPS در محیط Agent موجود نیست (BLOCKER-F02)؛ تمام artefactهای استقرار آماده است                                                                                                                                                           |
+| **قابلیت‌های تکمیل‌شده**       | ریپوی محصول + ساختار Monorepo + اسکلت اجرایی Next.js 16.4.3 (صفحهٔ ریشه + `/api/health` + `/api/ready`) + CI سبز + Docker/Caddy/deploy/rollback + سیستم مدیریت پیشرفت GitHub (Project با ۳۶ آیتم/۹ Milestone) + حاکمیت Agent (AGENTS.md/ops) + گزارش تجمیعی دانش + ADRهای 000..005 |
+| **در دست توسعه**               | سبز کامل CI شامل job داکر/GHCR (اصلاح lowercase در commit دوم push شد) · تکمیل ساختار کامل frontend (TASK-M0-02)                                                                                                                                                                   |
 | **کارهای باقی‌ماندهٔ نزدیک**   | Spikeهای M0-05..08 → زیرساخت UI (M0-09) → استقرار Preview روی VPS (M0-10) → درس Hello (M0-11)                                                                                                                                                                                      |
-| **Blockerها (گیت‌های بیرونی)** | بیلینگ GitHub Actions (مالک) · دسترسی/انتخاب VPS (مالک) · تأیید DNS دامنهٔ `hanaso.ir` (مالک) · گیت‌های تصمیم OQ-013/014/017 (مالک) — فهرست کامل: `ops/BLOCKERS.md`                                                                                                                |
-| **تست‌های انجام‌شده (سبز)**    | `pnpm install` · `lint` · `typecheck` · `test` (unit) · `build` · smoke محلی `/api/health`·`/api/ready` · secret-scan · نصب ۱۶ Skill از KB — خروجی واقعی در `ops/runs/RUN-20261101-01.md`                                                                                          |
-| **تست‌های ناموفق/اجرا‌نشده**   | CI روی GitHub Actions (شروع نشد — بیلینگ) · E2E Playwright (از M1) · استقرار Preview (بدون VPS)                                                                                                                                                                                    |
-| **Issueهای مهم**               | Issueهای لیبل `owner-decision` (گیت‌های مالک) · اولین تسک توسعه: «B-0 Spikes» (لینک در `ops/NEXT_ACTIONS.md`)                                                                                                                                                                      |
-| **اقدام بعدی**                 | (۱) مالک: رفع بیلینگ + پاسخ OQ-013/014 · (۲) Builder: اجرای Spikeهای M0-05..08 — مشخصات کامل: `ops/NEXT_ACTIONS.md`                                                                                                                                                                |
+| **Blockerها (گیت‌های بیرونی)** | قفل Branch Protection در پلن Free (BLOCKER-F07 — مالک) · دسترسی/انتخاب VPS (مالک) · تأیید DNS دامنهٔ `hanaso.ir` (مالک) · گیت‌های تصمیم OQ-013/014/017 (مالک) — فهرست کامل: `ops/BLOCKERS.md`                                                                                      |
+| **تست‌های انجام‌شده (سبز)**    | محلی: install/lint/typecheck/test(۵)/build/smoke/secret-scan — خروجی واقعی در `ops/runs/RUN-20261101-01.md` · **روی GitHub Actions: رن 41286578531 — تمام گام‌های job verify سبز** (فرمت/لینت/تایپ‌چک/تست/بیلد/audit/اسموک)                                                        |
+| **تست‌های ناموفق/اجرا‌نشده**   | job داکر/GHCR در رن اول به‌دلیل حروف بزرگ نام Image شکست خورد (اصلاح شد؛ رن بعدی معیار است) · E2E Playwright (از M1) · استقرار Preview (بدون VPS — BLOCKER-F02)                                                                                                                    |
+| **Issueهای مهم**               | Issueهای لیبل `owner-decision` (گیت‌های مالک) · اولین تسک توسعه: «B-0 Spikes» (#14)                                                                                                                                                                                                |
+| **اقدام بعدی**                 | (۱) مالک: تصمیم Branch Protection (Pro یا وضع فعلی) + پاسخ OQ-013/014 · (۲) Builder: اجرای Spikeهای M0-05..08 — مشخصات کامل: `ops/NEXT_ACTIONS.md`                                                                                                                                 |
 
 ## هم‌گاهی VPS ↔ GitHub
 
-| مورد                        | وضعیت                                                                                              |
-| --------------------------- | -------------------------------------------------------------------------------------------------- |
-| آخرین SHA پذیرفته‌شدهٔ main | پس از merge این مأموریت در `git log origin/main -1` (پیام `feat(foundation)`)                      |
-| وضعیت Deploy                | VPS در دسترس نیست؛ هیچ چیز استقرار نیافته — طرح کامل: `docs/deployment/PREVIEW-DEPLOYMENT-PLAN.md` |
-| وضعیت CI                    | فایل workflow push شده؛ اجرا متوقف بر بیلینگ اکانت GitHub (BLOCKER-005 KB ↔ BLOCKER-F03)           |
+| مورد                        | وضعیت                                                                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| آخرین SHA پذیرفته‌شدهٔ main | در `git log origin/main -1` (پس از commitهای این مأموریت)                                                                       |
+| وضعیت Deploy                | VPS در دسترس نیست؛ هیچ چیز استقرار نیافته — طرح کامل: `docs/deployment/PREVIEW-DEPLOYMENT-PLAN.md`                              |
+| وضعیت CI                    | **در حال اجرا و سبز (بخش verify)** — رن 41286578531 روی push اول؛ نگرانی بیلینگ برای این ریپو برقرار نبود (BLOCKER-F03 بسته شد) |
 
 ## نقشهٔ وضعیت تسک‌ها
 
-تابلوی زنده: **GitHub Project «HANASO Development»** (ستون‌های Backlog/Ready/In Progress/Review/Blocked/Done).
+تابلوی زنده: **GitHub Project «HANASO Development»** (https://github.com/users/AbolfazlProg/projects/1 — ستون‌های Backlog/Ready/In Progress/Review/Blocked/Done).
 رجیستری متناظر در ریپو: `ops/TASK_REGISTRY.md`.

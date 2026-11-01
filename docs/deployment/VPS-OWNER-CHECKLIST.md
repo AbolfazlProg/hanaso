@@ -2,11 +2,10 @@
 
 > این اقدامات **فقط از سمت مالک** قابل انجام‌اند (دسترسی/مالکیت/پرداخت). پس از هر اقدام، Issue متناظر در ریپو را با ذکر نتیجه ببندید.
 
-## ۱. بیلینگ GitHub (بحرانی — BLOCKER-F03)
+## ۱. GitHub — تصمیم Branch Protection (BLOCKER-F07)
 
-- [ ] Settings → **Billing & plans** → روش پرداخت معتبر + سقف هزینه را اصلاح کنید.
-- [ ] یکی از workflowهای ریپوی `hanaso` را **Re-run** کنید و سبزی jobs را ببینید.
-- [ ] خبر دهید تا required status checks روی `main` فعال شود (BLOCKER-F05).
+- [x] ~~بیلینگ Actions~~ — **بررسی شد و لازم نبود**: Actions روی ریپوی hanaso اجرا و سبز شد (رن 41286578531).
+- [ ] تصمیم: ارتقا به **GitHub Pro** (~$4/ماه) برای فعال‌سازی Branch Protection (enforce_admins/linear-history/required checks) — یا صرف‌نظر و اتکا به قاعدهٔ Agentها. جزئیات: Issue «BLOCKER-F07».
 
 ## ۲. سرور (BLOCKER-F02 — طبق ADR-010 KB)
 

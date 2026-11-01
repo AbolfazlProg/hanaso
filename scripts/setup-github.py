@@ -17,6 +17,7 @@ The token is read from the environment ONLY and is never printed or written anyw
 import json
 import os
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -29,11 +30,19 @@ KB_REPO = 'japanese-learning-kb'
 HEADERS = {}
 RESULT = {'stage_runs': [], 'resources': {}}
 
+# Projects v2 field options: color must be one of GRAY/BLUE/GREEN/YELLOW/ORANGE/RED/PINK/PURPLE;
+# description is REQUIRED (non-null) per option.
 STATUS_OPTIONS = [
-    ('Backlog', '8B949E'), ('Ready', '0E8A16'), ('In Progress', 'FBCA04'),
-    ('Review', '1D76DB'), ('Blocked', 'B60205'), ('Done', '5319E7'),
+    ('Backlog', 'GRAY', 'تسک تعریف‌شده؛ پالایش نشده'),
+    ('Ready', 'GREEN', 'مشخصات کامل — قابل شروع'),
+    ('In Progress', 'YELLOW', 'در حال اجرا'),
+    ('Review', 'BLUE', 'در بازبینی مستقل'),
+    ('Blocked', 'RED', 'مسدود بر عامل بیرونی'),
+    ('Done', 'PURPLE', 'تکمیل‌شده با شواهد'),
 ]
-PRIORITY_OPTIONS = [('P0', 'B60205'), ('P1', 'D93F0B'), ('P2', 'FBCA04'), ('P3', 'CCCCCC')]
+PRIORITY_OPTIONS = [
+    ('P0', 'RED', 'بحرانی'), ('P1', 'ORANGE', 'بالا'), ('P2', 'YELLOW', 'متوسط'), ('P3', 'GRAY', 'پایین'),
+]
 
 
 def die(msg):
@@ -200,42 +209,47 @@ def stage_issues(sha=None):
 
 def stage_project():
     data = load_issues_data()
-    user = gql('query($l:String!){ user(login:$l){ id projectsV2(first:20){ nodes{ id title } } } }',
-               {'l': OWNER})['user']
+    # fresh process: fetch issue node_ids from the API
+    if not RESULT.get('resources', {}).get('issues'):
+        status, existing = rest('GET', f'/repos/{OWNER}/{REPO}/issues?state=all&per_page=100')
+        if status == 200:
+            RESULT['resources']['issues'] = [
+                {'number': i['number'], 'title': i['title'], 'node_id': i['node_id']}
+                for i in existing if 'pull_request' not in i]
+            log('project', f"fetched {len(RESULT['resources']['issues'])} issues from API")
+    user = gql('query{ viewer{ id projectsV2(first:20){ nodes{ id title } } } }')['viewer']
     project = next((p for p in user['projectsV2']['nodes'] if p['title'] == data['project_title']), None)
     if project:
         log('project', f"exists: {data['project_title']}")
         pid = project['id']
     else:
         pid = gql('mutation($i:CreateProjectV2Input!){ createProjectV2(input:$i){ projectV2{ id } } }',
-                  {'i': {'ownerId': user['id'], 'title': data['project_title'],
-                         'shortDescription': data['project_description']}})['createProjectV2']['projectV2']['id']
+                  {'i': {'ownerId': user['id'], 'title': data['project_title']}})['createProjectV2']['projectV2']['id']
         log('project', f"CREATED: {data['project_title']}")
+        try:
+            gql('mutation($i:UpdateProjectV2Input!){ updateProjectV2(input:$i){ projectV2{ id } } }',
+                {'i': {'projectId': pid, 'shortDescription': data['project_description'][:140],
+                       'readme': f"# {data['project_title']}\n\n{data['project_description']}\n\nراهنمای مالک: ستون Status = وضعیت تسک · Milestone = فاز · Priority = اولویت. ورودی کامل: PROJECT_STATUS.md ریپوی hanaso."}})
+            log('project', 'readme + shortDescription set via updateProjectV2')
+        except SystemExit:
+            log('project', 'readme/shortDescription skipped (non-blocking)')
     RESULT['resources']['project_id'] = pid
 
     # fetch existing fields
     fields = gql('query($id:ID!){ node(id:$id){ ... on ProjectV2 { fields(first:20){ nodes{ ... on ProjectV2SingleSelectField { id name options{ id name } } } } } } }',
                  {'id': pid})['node']['fields']['nodes']
-    by_name = {f['name']: f for f in fields}
+    by_name = {f['name']: f for f in fields if isinstance(f, dict) and 'name' in f}
 
     def ensure_field(name, options):
         if name in by_name:
             log('project', f'field exists: {name}')
             return by_name[name]
-        colors = [c for _, c in options]
-        try:
-            f = gql('mutation($i:CreateProjectV2FieldInput!){ createProjectV2Field(input:$i){ projectV2Field{ ... on ProjectV2SingleSelectField { id name options{ id name } } } } }',
-                    {'i': {'projectId': pid, 'name': name, 'dataType': 'SINGLE_SELECT',
-                           'singleSelectOptions': [{'name': n, 'color': c} for (n, _), c in zip(options, colors)]}})['createProjectV2Field']['projectV2Field']
-            log('project', f'field created: {name} ({len(f["options"])} options)')
-            return f
-        except SystemExit:
-            # retry with # prefixed colors if the API rejected bare hex
-            f = gql('mutation($i:CreateProjectV2FieldInput!){ createProjectV2Field(input:$i){ projectV2Field{ ... on ProjectV2SingleSelectField { id name options{ id name } } } } }',
-                    {'i': {'projectId': pid, 'name': name, 'dataType': 'SINGLE_SELECT',
-                           'singleSelectOptions': [{'name': n, 'color': '#' + c} for (n, _), c in zip(options, colors)]}})['createProjectV2Field']['projectV2Field']
-            log('project', f'field created (hash-colors): {name}')
-            return f
+        payload_opts = [{'name': n, 'color': c, 'description': d} for (n, c, d) in options]
+        f = gql('mutation($i:CreateProjectV2FieldInput!){ createProjectV2Field(input:$i){ projectV2Field{ ... on ProjectV2SingleSelectField { id name options{ id name } } } } }',
+                {'i': {'projectId': pid, 'name': name, 'dataType': 'SINGLE_SELECT',
+                       'singleSelectOptions': payload_opts}})['createProjectV2Field']['projectV2Field']
+        log('project', f'field created: {name} ({len(f["options"])} options)')
+        return f
 
     status_field = ensure_field('Status', STATUS_OPTIONS)
     priority_field = ensure_field('Priority', PRIORITY_OPTIONS)
@@ -260,8 +274,7 @@ def stage_project():
                 {'i': {'projectId': pid, 'itemId': item['id'], 'fieldId': priority_field['id'],
                        'value': {'singleSelectOptionId': priority_opts[pr]}}})
         log('project', f"item+fields: #{created_issue['number']} → Status={st}, Priority={pr}")
-    log('project', f'project url: https://github.com/users/{OWNER}/projects — view: '
-        f'https://github.com/users/{OWNER}/projects/{pid.split("_")[-1]}/views/1')
+    log('project', f'project url: https://github.com/users/{OWNER}/projects/1')
 
 
 KB_ISSUES = [
@@ -328,7 +341,8 @@ def main():
     else:
         die(f'unknown stage: {stage}')
 
-    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'gh-setup-result.json')
+    out = os.environ.get('HANASO_GH_RESULT') or os.path.join(
+        tempfile.gettempdir(), 'hanaso-gh-setup-result.json')
     with open(out, 'w', encoding='utf-8') as f:
         json.dump(RESULT, f, ensure_ascii=False, indent=2)
     print(f'\nresult summary written to {out}')

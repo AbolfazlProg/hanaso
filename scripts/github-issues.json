@@ -77,6 +77,15 @@
       "close_comment": "بسته با شواهد: commitهای main + ops/runs/RUN-20261101-01.md + سه گزارش بازبینی در ops/reviews/. پذیرش نهایی: مالک (دیدن ریپو + PROJECT_STATUS.md)."
     },
     {
+      "title": "BLOCKER-F07 — قفل Branch Protection در پلن Free (تصمیم: ارتقا به Pro یا اتکا به قاعدهٔ Agent)",
+      "body": "**کشف 2026-11-01 با شاهد واقعی:** `PUT /branches/main/protection` → HTTP 403: «Upgrade to GitHub Pro or make this repository public to enable this feature.» — پلن فعلی حساب Free است و محافظت شاخه برای ریپوی خصوصی ویژگی پولی است.\n\n**گزینه‌ها:**\n1. ارتقا به GitHub Pro (~$4/ماه) → فعال‌سازی کامل: enforce_admins + linear history + (پس از CI سبز) required checks\n2. عمومی‌کردن ریپو (خلاف سیاست private مأموریت)\n3. فعلاً بدون محافظت سروری — تبعیت Agentها از قاعدهٔ AGENTS.md §۶ (بدون push مستقیم به main) + بازبینی مستقل هر PR\n\nتا تصمیم مالک، گزینه ۳ فعال است. مرتبط: BLOCKER-F05 (required checks پس از بیلینگ).",
+      "labels": ["type:infrastructure", "owner-decision", "priority:P1", "blocked-external"],
+      "milestone": "M0",
+      "priority": "P1",
+      "project_status": "Blocked",
+      "close": false
+    },
+    {
       "title": "TASK-M0-02 — تکمیل بوت‌استرپ frontend (ساختار کامل + قواعد lint L1..L11)",
       "body": "## نیازمندی\nتکمیل آنچه اسکلت ندارد: ساختار کامل `src/messages/fa.ts`، `src/components/{ui,patterns}`، قواعد lint کامل L1..L11 (KB engineering-standards §2)، Stylelint 17 + use-logical، هوک‌های Agent، اسکریپت‌های e2e.\n## دلیل\nمرجع: KB frontend-architecture §۱-۲ + TASK-M0-02 در KB ops/TASK_REGISTRY.md.\n## AC\n۱) `pnpm lint/typecheck/test/build` سبز با قواعد کامل ۲) ساختار پوشه‌ها مطابق §۱ ۳) قاعدهٔ مرز ماژولی فعال (L1) ۴) zero physical left/right (L5).\n## وابستگی\nTASK-ENG-01 (انجام شد — اسکلت هسته موجود است).",
       "labels": ["phase:m0", "type:infrastructure", "priority:P1"],
