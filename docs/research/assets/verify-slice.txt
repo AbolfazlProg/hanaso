@@ -1,9 +1,9 @@
 $ bash scripts/verify-foundation.sh
 ==== [1/7] install (frozen) ====
 Scope: all 2 workspace projects
-✓ Lockfile passes supply-chain policies (verified 55m ago)
+✓ Lockfile passes supply-chain policies (verified 1h ago)
 Lockfile is up to date, resolution step is skipped
-Done in 23ms using pnpm v12.16.1
+Done in 21ms using pnpm v12.16.1
 ==== [2/7] format:check ====
 $ prettier --check .
 Checking formatting...
@@ -21,48 +21,48 @@ $ vitest run
  RUN  v5.0.5 /home/z/my-project/hanaso-poc/apps/web
 
 stdout | tests/unit/dialogue/playback-engine.spec.ts > PlaybackEngine — T1: multi-speaker chain with exact gaps > real-timer overshoot of a 50ms gap stays well under the 100ms T1 budget
-[T1 real-timer probe] gap=50ms mean overshoot=0.18ms max=0.63ms over 12 samples
+[T1 real-timer probe] gap=50ms mean overshoot=0.22ms max=0.30ms over 12 samples
 
- ✓ tests/unit/dialogue/playback-engine.spec.ts (9 tests) 621ms
+ ✓ tests/unit/dialogue/playback-engine.spec.ts (9 tests) 619ms
    ✓ PlaybackEngine — T1: multi-speaker chain with exact gaps (4)
-     ✓ real-timer overshoot of a 50ms gap stays well under the 100ms T1 budget 604ms
- ✓ tests/integration/learning-slice.spec.ts (3 tests) 25ms
- ✓ tests/integration/mastery-api.spec.ts (7 tests) 19ms
+     ✓ real-timer overshoot of a 50ms gap stays well under the 100ms T1 budget 605ms
+ ✓ tests/integration/mastery-api.spec.ts (7 tests) 46ms
+ ✓ tests/integration/learning-slice.spec.ts (3 tests) 26ms
  ✓ tests/unit/dialogue/audio-errors.spec.ts (4 tests) 18ms
- ✓ tests/unit/dialogue/subtitles-sync.spec.ts (2 tests) 11ms
  ✓ tests/unit/practice/practice-generator.spec.ts (10 tests) 14ms
- ✓ tests/unit/dialogue/content-schema.spec.ts (7 tests) 13ms
+ ✓ tests/unit/dialogue/content-schema.spec.ts (7 tests) 14ms
  ✓ tests/unit/character/character-animation.spec.ts (7 tests) 10ms
+ ✓ tests/unit/dialogue/subtitles-sync.spec.ts (2 tests) 10ms
  ✓ tests/unit/fsrs-context.spec.ts (5 tests) 8ms
  ✓ tests/unit/progress/progress-machine.spec.ts (11 tests) 8ms
- ✓ db/tests/schema.spec.ts (18 tests) 7ms
+ ✓ db/tests/schema.spec.ts (18 tests) 8ms
  ✓ tests/unit/practice/practice-checker.spec.ts (8 tests) 7ms
- ✓ tests/unit/envelope.test.ts (5 tests) 4ms
+ ✓ tests/unit/envelope.test.ts (5 tests) 6ms
 
  Test Files  13 passed (13)
       Tests  96 passed (96)
-   Start at  13:43:46
-   Duration  3.48s (import 55%, tests 35%, transform 8%, worker 2%)
+   Start at  14:39:15
+   Duration  3.57s (import 56%, tests 35%, transform 6%, worker 2%)
 
     Isolate  13 workers spawned · ~93ms startup each (spawn + environment, per file)
-             at least ~1.11s faster with isolate: false — reuses workers across files instead of one per file
+             at least ~1.12s faster with isolate: false — reuses workers across files instead of one per file
 
 ==== [6/7] build ====
 $ pnpm --filter web build
 $ next build
 ▲ Next.js 16.4.3 (Turbopack)
-✓ Running next.config.ts took 27ms
+✓ Running next.config.ts took 33ms
 
   Creating an optimized production build ...
-✓ Compiled successfully in 5.4s
+✓ Compiled successfully in 3.4s
   Running TypeScript ...
-  Finished TypeScript in 5.5s ...
+  Finished TypeScript in 3.9s ...
   Collecting page data using 1 worker ...
   Generating static pages using 1 worker (0/9) ...
   Generating static pages using 1 worker (2/9) 
   Generating static pages using 1 worker (4/9) 
   Generating static pages using 1 worker (6/9) 
-✓ Generating static pages using 1 worker (9/9) in 282ms
+✓ Generating static pages using 1 worker (9/9) in 273ms
 Turbopack build encountered 7 warnings:
 ./apps/web/src/modules/audio/audio-manifest.ts:73:35
 Warning: Dynamic filesystem access causes tracing of the whole project
@@ -84,14 +84,20 @@ To resolve this, you can
 - remove them.
 
 Import traces:
-  App Route:
+  #1 [App Route]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/app/api/dialogues/[slug]/route.ts
 
-  Server Component:
+  #2 [Server Component]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/lib/poc/dialogue-bundle.ts
     ./apps/web/src/app/poc/practice/page.tsx
+
+  #3 [App Route]:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/api/attempts/route.ts
 
 
 ./apps/web/src/modules/audio/audio-manifest.ts:104:35
@@ -114,14 +120,20 @@ To resolve this, you can
 - remove them.
 
 Import traces:
-  App Route:
+  #1 [App Route]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/app/api/dialogues/[slug]/route.ts
 
-  Server Component:
+  #2 [Server Component]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/lib/poc/dialogue-bundle.ts
     ./apps/web/src/app/poc/practice/page.tsx
+
+  #3 [App Route]:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/api/attempts/route.ts
 
 
 ./apps/web/src/modules/audio/audio-manifest.ts:114:8
@@ -144,14 +156,20 @@ To resolve this, you can
 - remove them.
 
 Import traces:
-  App Route:
+  #1 [App Route]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/app/api/dialogues/[slug]/route.ts
 
-  Server Component:
+  #2 [Server Component]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/lib/poc/dialogue-bundle.ts
     ./apps/web/src/app/poc/practice/page.tsx
+
+  #3 [App Route]:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/api/attempts/route.ts
 
 
 ./apps/web/src/modules/audio/audio-manifest.ts:82:15
@@ -174,14 +192,20 @@ To resolve this, you can
 - remove them.
 
 Import traces:
-  App Route:
+  #1 [App Route]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/app/api/dialogues/[slug]/route.ts
 
-  Server Component:
+  #2 [Server Component]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/lib/poc/dialogue-bundle.ts
     ./apps/web/src/app/poc/practice/page.tsx
+
+  #3 [App Route]:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/api/attempts/route.ts
 
 
 ./apps/web/src/modules/audio/audio-manifest.ts:115:53
@@ -204,14 +228,20 @@ To resolve this, you can
 - remove them.
 
 Import traces:
-  App Route:
+  #1 [App Route]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/app/api/dialogues/[slug]/route.ts
 
-  Server Component:
+  #2 [Server Component]:
     ./apps/web/src/modules/audio/audio-manifest.ts
     ./apps/web/src/lib/poc/dialogue-bundle.ts
     ./apps/web/src/app/poc/practice/page.tsx
+
+  #3 [App Route]:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/api/attempts/route.ts
 
 
 ./apps/web/src/modules/dialogue/content/loader.ts:21:35
@@ -245,8 +275,9 @@ Import traces:
 
   #3 [App Route]:
     ./apps/web/src/modules/dialogue/content/loader.ts
-    ./apps/web/src/modules/audio/audio-manifest.ts
-    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/api/attempts/route.ts
 
 
 ./apps/web/src/modules/dialogue/content/loader.ts:35:25
@@ -280,8 +311,9 @@ Import traces:
 
   #3 [App Route]:
     ./apps/web/src/modules/dialogue/content/loader.ts
-    ./apps/web/src/modules/audio/audio-manifest.ts
-    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/api/attempts/route.ts
 
 
   Finalizing page optimization ...
@@ -313,8 +345,8 @@ Route (app)
 ✓ Ready in 0ms
 ✓ Running next.config took 3ms
 == smoke: http://127.0.0.1:3100 ==
-health: {"ok":true,"status":"ok","service":"hanaso-web","version":"dev","commit":"dev","env":"local","uptimeSec":1,"timestamp":"2026-11-01T13:44:04.306Z"}
-ready: {"ok":true,"service":"hanaso-web","checks":{"process":{"status":"ok"},"database":{"status":"skipped","detail":"no DATABASE_URL configured (expected until M0-10)"}},"timestamp":"2026-11-01T13:44:04.345Z"}
+health: {"ok":true,"status":"ok","service":"hanaso-web","version":"dev","commit":"dev","env":"local","uptimeSec":1,"timestamp":"2026-11-01T14:39:29.069Z"}
+ready: {"ok":true,"service":"hanaso-web","checks":{"process":{"status":"ok"},"database":{"status":"skipped","detail":"no DATABASE_URL configured (expected until M0-10)"}},"timestamp":"2026-11-01T14:39:29.084Z"}
 == smoke: ALL GREEN ==
 ==== secret scan ====
 secret scan: clean

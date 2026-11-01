@@ -58,7 +58,8 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
   const router = useRouter();
   const [status, setStatus] = useState<PlaybackStatus>('idle');
   const [activeIndex, setActiveIndex] = useState(-1);
-  const [showFa, setShowFa] = useState(true);
+  // KB dialogue-based-learning-model §۲/§۴: translation toggle DEFAULTS OFF (comprehension-first).
+  const [showFa, setShowFa] = useState(false);
   const [speed, setSpeed] = useState<0.75 | 1>(1);
   const [banner, setBanner] = useState<BannerError | null>(null);
   const [lastLineSeen, setLastLineSeen] = useState(false);
@@ -68,7 +69,6 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
   const controllerRef = useRef<AnimationController | null>(null);
   const faceRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lineRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const initialLineHandled = useRef(false);
   const unitStartPosted = useRef(false);
 
   const manifestsById = useMemo(() => {
@@ -181,12 +181,19 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
     logSceneEvent('dialogue_entered_at_line', { line_id: initialLineId });
   }, [initialLineId]);
 
-  // deep link ?line=<id> (T6 «در مکالمه ببین» target)
+  // deep link ?line=<id> (T6 «در مکالمه ببین» target).
+  // S1 fix (visual review #3): key on an engine-generation counter instead of a
+  // one-shot ref — React StrictMode mounts→destroys→remounts the effect chain, and
+  // the ref guard left the SECOND (live) engine without the seek while the UI kept
+  // the stale "playing" status. Re-running per engine instance is idempotent.
+  const [engineGeneration, setEngineGeneration] = useState(0);
   useEffect(() => {
-    if (initialLineHandled.current || !initialLineId || !engineRef.current) return;
-    initialLineHandled.current = true;
+    setEngineGeneration((g) => g + 1);
+  }, [engineRef.current]);
+  useEffect(() => {
+    if (!initialLineId || !engineRef.current) return;
     if (dialogue.lines.some((l) => l.id === initialLineId)) initialPlay();
-  }, [initialLineId, dialogue, initialPlay]);
+  }, [initialLineId, dialogue, initialPlay, engineGeneration]);
 
   // keep the active bubble in view (T3: «خط فعال همیشه در دید»)
   useEffect(() => {
@@ -326,7 +333,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
         <button
           type="button"
           onClick={togglePlay}
-          className="min-w-24 rounded-md bg-ai px-4 py-2 text-small text-paper"
+          className="min-w-24 rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep"
           aria-label={isPlaying ? 'توقف موقت' : 'پخش'}
         >
           {isPlaying ? '⏸ توقف' : '▶ پخش'}
@@ -398,7 +405,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
             <button
               type="button"
               onClick={() => recover('retry')}
-              className="rounded-md bg-ai px-3 py-1.5 text-small text-paper"
+              className="rounded-md bg-ai px-3 py-1.5 text-small text-paper transition-colors hover:bg-ai-deep"
             >
               تلاش دوباره
             </button>
@@ -482,7 +489,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
           type="button"
           onClick={() => void finishWatching()}
           disabled={!lastLineSeen || finishing}
-          className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper disabled:opacity-40"
+          className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
         >
           {finishing ? 'در حال ثبت…' : 'پایان مشاهده — رفتن به درس (B) ←'}
         </button>

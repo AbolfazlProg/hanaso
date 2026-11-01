@@ -3,6 +3,7 @@ import { buildLessonFromDialogue } from '@/lib/poc/lesson-items';
 import { loadDialogue } from '@/modules/dialogue/server';
 import { JpLine } from '../jp-text';
 import { LessonPracticeButton } from './lesson-practice-button';
+import { POC_SCENE_CSS } from '../jp-text';
 
 /**
  * /poc/lesson — TASK-DLG-POC-01 / T6 + TASK-SLICE-01 stage B: vocabulary & grammar
@@ -21,6 +22,7 @@ export default function LessonPage() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-6 px-4 py-10">
+      <style dangerouslySetInnerHTML={{ __html: POC_SCENE_CSS }} />
       <header className="flex flex-col gap-1">
         <p className="text-caption text-ink-soft">TASK-DLG-POC-01 · درس مکالمه‌محور (مرحلهٔ B — نمونه)</p>
         <h1 className="text-h2 font-bold">واژه‌ها و الگوهای «کافه، صبح»</h1>

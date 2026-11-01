@@ -12,14 +12,22 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(_req: Request, ctx: { params: Promise<{ slug: string }> }) {
   const { slug } = await ctx.params;
+  // S2 fix (engineering review F3): block path traversal — slugs are kebab-case
+  // content ids only; `path.join` would otherwise normalize `../` segments and
+  // leak arbitrary YAML existence/details from outside the content directory.
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return NextResponse.json(fail({ code: 'dialogue/invalid_slug', message: 'slug must match ^[a-z0-9-]+$' }), {
+      status: 404,
+    });
+  }
   try {
     loadVoices(); // fail fast on an invalid voices.yaml
     return NextResponse.json(ok(loadDialogueBundle(slug)), { headers: { 'cache-control': 'no-store' } });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       fail({
         code: 'dialogue/not_found',
-        message: err instanceof Error ? err.message : String(err),
+        message: 'dialogue not found',
       }),
       { status: 404 },
     );

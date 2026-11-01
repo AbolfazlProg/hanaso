@@ -117,12 +117,18 @@ describe('learning slice — full A→D cycle through the API surface', () => {
     expect(d.progress!.stage).toBe('D_mastery');
     expect(d.progress!.status).toBe('active'); // D ≠ understood (DD-048)
 
-    // ---- D: mastery attempt (server-side scoring in /api/attempts)
-    const passedScores = { M1: 0.9, M2: 0.8, M3: 1, M4: 0.7, M5: 1 };
+    // ---- D: mastery attempt — RAW answers, graded server-side (remediation F1/S1)
+    const allCorrect = {
+      'q-m1-kekkou': 'b',
+      'q-m2-shoushou': 'b',
+      'q-m3-wo': 'a',
+      'q-m4-blind': 'b',
+      'q-m5-speaker': 'a',
+    };
     const attemptData = await json<{
       attempt: { id: string; outcome: string; attemptNo: number };
       scoring: { outcome: string };
-    }>(await postAttempt(post(`${BASE}/attempts`, { dialogueId: DLG, scores: passedScores, weakPoints: [] })));
+    }>(await postAttempt(post(`${BASE}/attempts`, { dialogueId: DLG, answers: allCorrect })));
     expect(attemptData.attempt.outcome).toBe('passed');
     await fire('mastery_passed', { dialogue_id: DLG, attempt_id: attemptData.attempt.id });
 
@@ -175,13 +181,16 @@ describe('learning slice — full A→D cycle through the API surface', () => {
     );
     getProgressStore().upsert(d);
 
+    // RAW answers with only M4 missed → server grades M4=0 < floor → remediate
+    const weakAnswers = {
+      'q-m1-kekkou': 'b',
+      'q-m2-shoushou': 'b',
+      'q-m3-wo': 'a',
+      'q-m4-blind': 'a', // wrong
+      'q-m5-speaker': 'a',
+    };
     const weak = await postAttempt(
-      post(`${BASE}/attempts`, {
-        dialogueId: DLG,
-        userId: remediateUser,
-        scores: { M1: 0.9, M2: 0.9, M3: 0.9, M4: 0.3, M5: 0.9 }, // M4 < floor → remediate
-        weakPoints: [{ lineId: 's-cafe-morning-01-l6', objective: 'listening-comprehension', severity: 'high' }],
-      }),
+      post(`${BASE}/attempts`, { dialogueId: DLG, userId: remediateUser, answers: weakAnswers }),
     );
     const weakBody = (await weak.json()) as { data: { attempt: { id: string; outcome: string } } };
     expect(weakBody.data.attempt.outcome).toBe('remediate');

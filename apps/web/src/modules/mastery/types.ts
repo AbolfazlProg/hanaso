@@ -59,3 +59,16 @@ export const attemptInputSchema = z.object({
   weakPoints: z.array(weakPointSchema).default([]),
 });
 export type AttemptInput = z.infer<typeof attemptInputSchema>;
+
+/**
+ * TASK-SLICE-01 remediation (review F1/S1): the PUBLIC submission schema.
+ * Clients submit RAW ANSWERS only (questionId → optionId); per-question grading
+ * happens server-side (KB dialogue-mastery-model §۱ — the answer key never
+ * reaches the client). `attemptInputSchema` stays for internal/server grading.
+ */
+export const attemptSubmissionSchema = z.object({
+  dialogueId: z.string().min(1),
+  userId: z.string().min(1).optional(),
+  answers: z.record(z.string().min(1), z.string().min(1)),
+});
+export type AttemptSubmission = z.infer<typeof attemptSubmissionSchema>;

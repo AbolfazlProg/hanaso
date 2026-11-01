@@ -98,6 +98,30 @@ const CATALOG: Omit<LessonItem, 'lineIds'>[] = [
     meaningFa: 'چشم / بله، حتماً (پاسخ مؤدبانهٔ کاری)',
     noteFa: 'پاسخ رسمال کارمند به درخواست مشتری.',
   },
+  {
+    id: 'chrk-onegai',
+    kind: 'chunk',
+    surface: 'お願い',
+    reading: 'おねがい',
+    meaningFa: 'لطفاً / درخواست',
+    noteFa: 'هستهٔ درخواست داخل الگوی «[مفعول]をお願いします» — در بافت سفارش.',
+  },
+  {
+    id: 'chrk-omachi',
+    kind: 'chunk',
+    surface: 'お待ち',
+    reading: 'おまち',
+    meaningFa: 'انتظار / صبر',
+    noteFa: 'با «ください» = «لحظه‌ای صبر کنید» — عبارت خدمت مؤدبانه.',
+  },
+  {
+    id: 'chrk-kekkou',
+    kind: 'chunk',
+    surface: 'けっこう',
+    reading: 'けっこう',
+    meaningFa: 'کافی است / نه ممنون',
+    noteFa: 'هستهٔ رد مؤدبانه در «けっこうです».',
+  },
 ];
 
 export interface LessonData {

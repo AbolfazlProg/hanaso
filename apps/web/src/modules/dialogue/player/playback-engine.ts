@@ -177,8 +177,12 @@ export class PlaybackEngine {
         this.retryError();
         return;
       case 'ended':
+        this.startLine(0); // replay the whole conversation from the top
+        return;
       case 'idle':
-        this.startLine(0);
+        // S1 fix (visual review #2): a seeked-to line (T6 «در مکالمه ببین») must play
+        // from THAT line, not from line 1 — jumpTo() has already set this.index.
+        this.startLine(this.index >= 0 ? this.index : 0);
         return;
     }
   }

@@ -66,6 +66,19 @@
   --radius-lg: 12px;
 }
 
+/* Runtime-referenced palette (S1 fix — visual review #1): Tailwind 4 tree-shakes
+   `@theme` variables that only appear inside dynamic `var(--color-speaker-${i})`
+   string interpolations. These `:root` copies guarantee the speaker colors, hover
+   deep and shu are ALWAYS emitted for runtime consumption (bubble rings, names,
+   placeholder renderer, focus accents). Values = DD-067 locked set, 1:1. */
+:root {
+  --color-speaker-1: #2e5f7a;
+  --color-speaker-2: #7a4e26;
+  --color-speaker-3: #5a6b3a;
+  --color-ai-deep: #16324a;
+  --color-shu: #c2401c;
+}
+
 /* Non-utility tokens (motion/z-index/measures) — copied verbatim from KB tokens.css.
    Tailwind 4 spacing utilities already match the KB 4px scale (1 unit = 4px). */
 :root {

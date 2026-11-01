@@ -172,7 +172,11 @@ export function PracticeRunner({
               قبلی
             </button>
             {allAnswered ? (
-              <button type="button" onClick={submit} className="rounded-md bg-ai px-4 py-2 text-small text-paper">
+              <button
+                type="button"
+                onClick={submit}
+                className="rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep"
+              >
                 ثبت پاسخ‌ها و دیدن نتیجه
               </button>
             ) : (
@@ -180,7 +184,7 @@ export function PracticeRunner({
                 type="button"
                 onClick={() => setIndex((i) => Math.min(exercises.length - 1, i + 1))}
                 disabled={!answers[exercise.id] || index === exercises.length - 1}
-                className="rounded-md bg-ai px-4 py-2 text-small text-paper disabled:opacity-40"
+                className="rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
               >
                 بعدی
               </button>
@@ -233,9 +237,12 @@ function ExerciseBody({
           type="button"
           onClick={() => onPlay(item.lineId)}
           disabled={!audioAvailable}
-          className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper disabled:opacity-40"
+          className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
         >
-          ▶ پخش جمله
+          ▶ پخش جمله{' '}
+          {audioAvailable && (
+            <span className="rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft">صوت آزمایشی</span>
+          )}
         </button>
         <div className="flex flex-col gap-2">
           {item.options.map((opt) => (
@@ -413,7 +420,11 @@ function ResultPanel({
       )}
 
       <div className="flex flex-wrap gap-3">
-        <button type="button" onClick={onGoAssess} className="rounded-md bg-ai px-4 py-2 text-small text-paper">
+        <button
+          type="button"
+          onClick={onGoAssess}
+          className="rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep"
+        >
           برای ارزیابی نهایی آماده‌ام ← مرحلهٔ D
         </button>
         <button type="button" onClick={onRetry} className="rounded-md border border-ink-faint px-4 py-2 text-small">

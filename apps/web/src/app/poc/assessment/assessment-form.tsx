@@ -1,8 +1,9 @@
 'use client';
 /**
  * HANASO — PoC assessment form (TASK-DLG-POC-01 + TASK-SLICE-01) — stage D.
- * 5 comprehension questions covering M1..M5 from the same dialogue → POST
- * /api/attempts (server-side scoring) → qualitative verdict + weak points.
+ * 5 comprehension questions covering M1..M5 from the same dialogue. The client
+ * holds NO answer key: it submits RAW ANSWERS to /api/attempts where grading
+ * happens server-side (remediation of review F1/S1 — KB dialogue-mastery-model §۱).
  * outcome=passed → POST /api/progress (mastery_passed) → «فهمیدم / understood»
  * (never "completed" — DD-048). outcome=remediate → targeted return links to the
  * lesson card / practice session per the recorded weak points.
@@ -10,19 +11,7 @@
 import { useState } from 'react';
 import { logEvent, postProgressEvent } from '@/lib/poc/client';
 import { JpLine, POC_SCENE_CSS } from '../jp-text';
-
-export interface AssessmentQuestion {
-  id: string;
-  measure: 'M1' | 'M2' | 'M3' | 'M4' | 'M5';
-  measureLabelFa: string;
-  promptFa: string;
-  jpTokens?: { surface: string; reading: string }[];
-  /** M4 blind listening: the line to play (no text shown). */
-  audioLineId?: string;
-  options: { id: string; labelFa: string; jp?: boolean }[];
-  correctOptionId: string;
-  weakPoint: { lineId: string; objective: string; severity: 'low' | 'medium' | 'high' };
-}
+import type { AssessmentQuestionClient } from '@/lib/poc/assessment-bank';
 
 interface AttemptResponse {
   ok: boolean;
@@ -39,6 +28,8 @@ interface AttemptResponse {
       unassessed: string[];
       outcome: string;
     };
+    /** revealed by the server AFTER grading — safe for feedback */
+    perQuestion: { questionId: string; measure: string; correct: boolean; correctOptionId: string }[];
   };
   error?: { code: string; message: string };
 }
@@ -50,7 +41,7 @@ export function AssessmentForm({
   audioAvailable,
 }: {
   dialogueId: string;
-  questions: AssessmentQuestion[];
+  questions: AssessmentQuestionClient[];
   audioByLine: Record<string, string>;
   audioAvailable: boolean;
 }) {
@@ -61,6 +52,7 @@ export function AssessmentForm({
   const [understood, setUnderstood] = useState<{ recorded: boolean; message?: string } | null>(null);
 
   const allAnswered = questions.every((q) => answers[q.id]);
+  const graded = result ? new Map(result.perQuestion.map((p) => [p.questionId, p])) : null;
 
   function playAudio(lineId: string): void {
     const url = audioByLine[lineId];
@@ -75,18 +67,11 @@ export function AssessmentForm({
     setError(null);
     setResult(null);
     setUnderstood(null);
-    const scores: Record<string, number | null> = { M1: null, M2: null, M3: null, M4: null, M5: null };
-    const weakPoints: AssessmentQuestion['weakPoint'][] = [];
-    for (const q of questions) {
-      const correct = answers[q.id] === q.correctOptionId;
-      scores[q.measure] = correct ? 1 : 0;
-      if (!correct) weakPoints.push(q.weakPoint);
-    }
     try {
       const res = await fetch('/api/attempts', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ dialogueId, scores, weakPoints }),
+        body: JSON.stringify({ dialogueId, answers }),
       });
       const body = (await res.json()) as AttemptResponse;
       if (!res.ok || !body.ok || !body.data) {
@@ -132,61 +117,81 @@ export function AssessmentForm({
     }
   }
 
-  const correctCount = result ? questions.filter((q) => answers[q.id] === q.correctOptionId).length : 0;
+  const correctCount = result ? result.perQuestion.filter((p) => p.correct).length : 0;
 
   return (
     <div className="flex flex-col gap-4">
       <style dangerouslySetInnerHTML={{ __html: POC_SCENE_CSS }} />
-      {questions.map((q, qi) => (
-        <fieldset key={q.id} className="flex flex-col gap-2 rounded-lg border border-ink-faint bg-paper p-4">
-          <legend className="px-1 text-small text-ink-soft">
-            سؤال {qi + 1} از {questions.length} · {q.measureLabelFa} ({q.measure})
-          </legend>
-          <p className="text-body font-bold">{q.promptFa}</p>
-          {q.jpTokens && <JpLine tokens={q.jpTokens} className="rounded-md bg-surface-warm px-3 py-2 text-ja" />}
-          {q.audioLineId && (
-            <button
-              type="button"
-              onClick={() => playAudio(q.audioLineId!)}
-              disabled={!audioAvailable}
-              className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper disabled:opacity-40"
-            >
-              ▶ پخش جمله (بدون متن)
-            </button>
-          )}
-          <div className="flex flex-col gap-2">
-            {q.options.map((opt) => (
-              <label
-                key={opt.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-body ${
-                  answers[q.id] === opt.id ? 'border-ai bg-surface-warm' : 'border-ink-faint'
-                }`}
+      {questions.map((q, qi) => {
+        const g = graded?.get(q.id);
+        return (
+          <fieldset key={q.id} className="flex flex-col gap-2 rounded-lg border border-ink-faint bg-paper p-4">
+            <legend className="px-1 text-small text-ink-soft">
+              سؤال {qi + 1} از {questions.length} · {q.measureLabelFa} ({q.measure})
+              {g ? (g.correct ? ' — درست ✓' : ' — نادرست ✗') : ''}
+            </legend>
+            <p className="text-body font-bold">{q.promptFa}</p>
+            {q.jpTokens && <JpLine tokens={q.jpTokens} className="rounded-md bg-surface-warm px-3 py-2 text-ja" />}
+            {q.audioLineId && (
+              <button
+                type="button"
+                onClick={() => playAudio(q.audioLineId!)}
+                disabled={!audioAvailable}
+                className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
               >
-                <input
-                  type="radio"
-                  name={q.id}
-                  value={opt.id}
-                  checked={answers[q.id] === opt.id}
-                  onChange={() => setAnswers((a) => ({ ...a, [q.id]: opt.id }))}
-                />
-                {opt.jp ? (
-                  <JpLine tokens={[{ surface: opt.labelFa, reading: opt.labelFa }]} className="text-ja" />
-                ) : (
-                  <span>{opt.labelFa}</span>
+                ▶ پخش جمله (بدون متن)
+                {audioAvailable && (
+                  <span className="ms-2 rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft">
+                    صوت آزمایشی
+                  </span>
                 )}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-      ))}
+              </button>
+            )}
+            <div className="flex flex-col gap-2">
+              {q.options.map((opt) => {
+                const chosen = answers[q.id] === opt.id;
+                const isCorrectReveal = g && g.correctOptionId === opt.id;
+                return (
+                  <label
+                    key={opt.id}
+                    className={`flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-body ${
+                      g
+                        ? isCorrectReveal
+                          ? 'border-success bg-surface-warm font-bold'
+                          : 'border-ink-faint opacity-70'
+                        : chosen
+                          ? 'border-ai bg-surface-warm'
+                          : 'border-ink-faint hover:border-ai hover:bg-surface-warm'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name={q.id}
+                      value={opt.id}
+                      checked={chosen}
+                      onChange={() => setAnswers((a) => ({ ...a, [q.id]: opt.id }))}
+                      disabled={Boolean(graded)}
+                    />
+                    {opt.jp ? (
+                      <JpLine tokens={[{ surface: opt.labelFa, reading: opt.labelFa }]} className="text-ja" />
+                    ) : (
+                      <span>{opt.labelFa}</span>
+                    )}
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+        );
+      })}
 
       <button
         type="button"
         onClick={() => void submit()}
         disabled={!allAnswered || submitting}
-        className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper disabled:opacity-40"
+        className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
       >
-        {submitting ? 'در حال ثبت…' : 'ثبت پاسخ‌ها'}
+        {submitting ? 'در حال ثبت…' : 'ثبت پاسخ‌ها (نمره‌گذاری در سرور)'}
       </button>
 
       {error && (
@@ -203,10 +208,13 @@ export function AssessmentForm({
             {result.attempt.attemptNo} با نتیجهٔ {result.attempt.outcome} ثبت شد و پیشرفت واحد از همان جا ادامه می‌یابد.
           </p>
           <div className="flex flex-wrap gap-3 text-small">
-            <a href="/learn" className="rounded-md bg-ai px-3 py-1.5 text-paper">
+            <a href="/learn" className="rounded-md bg-ai px-3 py-1.5 text-paper transition-colors hover:bg-ai-deep">
               بازگشت به مسیر یادگیری
             </a>
-            <a href="/poc/dialogue" className="rounded-md border border-ink-faint px-3 py-1.5">
+            <a
+              href="/poc/dialogue"
+              className="rounded-md border border-ink-faint px-3 py-1.5 transition-colors hover:border-ai hover:bg-surface-warm"
+            >
               شنیدن دوبارهٔ مکالمه
             </a>
           </div>
@@ -223,8 +231,8 @@ export function AssessmentForm({
                 : 'هنوز زود است؛ اول درس و تمرین را مرور کن'}
           </h3>
           <p className="text-small text-ink-soft">
-            نتیجهٔ موتور: <code>{result.attempt.outcome}</code> (تلاش شمارهٔ {result.attempt.attemptNo})
-            {understood?.message ? ` — ${understood.message}` : ''}
+            {correctCount} از {questions.length} پاسخ درست · نتیجه: <b>{result.attempt.outcome}</b> (تلاش شمارهٔ{' '}
+            {result.attempt.attemptNo}){understood?.message ? ` — ${understood.message}` : ''}
             {result.scoring.unassessed.length > 0
               ? ` · سنجه‌های سنجیده‌نشده: ${result.scoring.unassessed.join('، ')}`
               : ''}
@@ -256,10 +264,16 @@ export function AssessmentForm({
           )}
           {result.attempt.outcome !== 'passed' && (
             <div className="flex flex-wrap gap-3 text-small">
-              <a href="/poc/lesson" className="rounded-md border border-ink-faint px-3 py-1.5">
+              <a
+                href="/poc/lesson"
+                className="rounded-md border border-ink-faint px-3 py-1.5 transition-colors hover:border-ai hover:bg-surface-warm"
+              >
                 بازگشت به درس (B)
               </a>
-              <a href="/poc/practice" className="rounded-md border border-ink-faint px-3 py-1.5">
+              <a
+                href="/poc/practice"
+                className="rounded-md border border-ink-faint px-3 py-1.5 transition-colors hover:border-ai hover:bg-surface-warm"
+              >
                 بازگشت به تمرین (C)
               </a>
             </div>
