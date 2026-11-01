@@ -1,0 +1,146 @@
+# HANASO — Dialogue content: cafe-morning-01 (TASK-DLG-POC-01)
+# Source of truth: KB dialogue-content-schema.md §۴ (unit cafe-morning-01 sample).
+# PoC extension: third speaker `chr-sora` (companion-2) joins as a colleague in the cafe —
+# natural third-voice lines for the T1/T2 multi-speaker chain (3 voices, 10 lines).
+meta:
+  id: dlg-cafe-morning-01
+  format: 2
+  stage: 2
+  jlpt: Pre-N5
+  review: true
+  generated:
+    tool: dialogue-poc@0.1.0
+    at: 2026-11-01
+
+dialogue_ref: dlg-cafe-morning-01
+scene: کافه‌ای در توکیو، صبح
+characters: [chr-miki, chr-yamada, chr-sora]
+turn_gap_default_ms: 550
+
+lines:
+  - id: s-cafe-morning-01-l1
+    speaker: chr-yamada
+    frame: speaker-a
+    tokens:
+      - { surface: いらっしゃいませ, reading: いらっしゃいませ, pos: interjection, chunk: chrk-irasshaimase }
+    fa: خوش‌آمدید.
+    emotion_tag: neutral
+    gap_after_ms: 500
+
+  - id: s-cafe-morning-01-l2
+    speaker: chr-miki
+    frame: speaker-b
+    tokens:
+      - { surface: おはよう, reading: おはよう, pos: interjection }
+      - { surface: ございます, reading: ございます, pos: verb-polite }
+      - { surface: コーヒー, reading: こーひー, pos: noun, katakana: true }
+      - { surface: を, reading: を, pos: particle }
+      - { surface: お願い, reading: おねがい, pos: noun, chunk: chrk-onegai }
+      - { surface: します, reading: します, pos: verb-polite }
+    fa: صبح بخیر. یک قهوه لطفاً.
+    teaches: [voc-coffee, voc-onegaishimasu, gr-wo-object]
+    emotion_tag: neutral
+    gap_after_ms: 600
+
+  - id: s-cafe-morning-01-l3
+    speaker: chr-yamada
+    frame: speaker-a
+    tokens:
+      - { surface: しょうしょう, reading: しょうしょう, pos: adverb }
+      - { surface: お待ち, reading: おまち, pos: noun, chunk: chrk-omachi }
+      - { surface: ください, reading: ください, pos: verb-polite }
+    fa: لحظه‌ای صبر کنید لطفاً.
+    teaches: [voc-shoushou]
+    emotion_tag: neutral
+    gap_after_ms: 550
+
+  - id: s-cafe-morning-01-l4
+    speaker: chr-sora
+    frame: wide
+    tokens:
+      - { surface: おはよう, reading: おはよう, pos: interjection }
+      - { surface: ミキさん, reading: みきさん, pos: proper-noun }
+    fa: صبح بخیر، میکی!
+    emotion_tag: happy
+    gap_after_ms: 450
+
+  - id: s-cafe-morning-01-l5
+    speaker: chr-miki
+    frame: close
+    tokens:
+      - { surface: おはよう, reading: おはよう, pos: interjection }
+      - { surface: ソラくん, reading: そらくん, pos: proper-noun }
+      - { surface: 今日, reading: きょう, pos: noun }
+      - { surface: も, reading: も, pos: particle }
+      - { surface: いい, reading: いい, pos: adjective }
+      - { surface: 天気, reading: てんき, pos: noun }
+      - { surface: です, reading: です, pos: copula }
+      - { surface: ね, reading: ね, pos: particle }
+    fa: صبح بخیر، سورا. امروز هم هوا خوب است، نه؟
+    emotion_tag: surprised
+    gap_after_ms: 550
+
+  - id: s-cafe-morning-01-l6
+    speaker: chr-sora
+    frame: speaker-b
+    tokens:
+      - { surface: うん, reading: うん, pos: interjection }
+      - { surface: でも, reading: でも, pos: conjunction }
+      - { surface: 今日, reading: きょう, pos: noun }
+      - { surface: は, reading: は, pos: particle }
+      - { surface: 寒い, reading: さむい, pos: adjective }
+      - { surface: よ, reading: よ, pos: particle }
+    fa: آره! اما امروز سرمای زیادی دارد.
+    emotion_tag: neutral
+    gap_after_ms: 450
+
+  - id: s-cafe-morning-01-l7
+    speaker: chr-yamada
+    frame: speaker-a
+    tokens:
+      - { surface: お待たせ, reading: おまたせ, pos: noun, chunk: chrk-omatase }
+      - { surface: しました, reading: しました, pos: verb-polite }
+      - { surface: コーヒー, reading: こーひー, pos: noun, katakana: true }
+      - { surface: です, reading: です, pos: copula }
+    fa: معذرت، منتظر گذاشتیم. قهوه‌تان.
+    emotion_tag: apologetic
+    gap_after_ms: 500
+
+  - id: s-cafe-morning-01-l8
+    speaker: chr-miki
+    frame: speaker-b
+    tokens:
+      - { surface: ありがとう, reading: ありがとう, pos: interjection }
+      - { surface: ございます, reading: ございます, pos: verb-polite }
+      - { surface: あの, reading: あの, pos: filler }
+      - { surface: ミルク, reading: みるく, pos: noun, katakana: true }
+      - { surface: は, reading: は, pos: particle }
+      - { surface: けっこう, reading: けっこう, pos: adverb, chunk: chrk-kekkou }
+      - { surface: です, reading: です, pos: copula }
+    fa: ممنونم. اِو… شیر نمی‌خواهم، ممنون.
+    teaches: [voc-kekkou-desu]
+    emotion_tag: apologetic
+    gap_after_ms: 600
+
+  - id: s-cafe-morning-01-l9
+    speaker: chr-yamada
+    frame: speaker-a
+    tokens:
+      - { surface: かしこまりました, reading: かしこまりました, pos: verb-polite, chunk: chrk-kashikomari }
+      - { surface: ごゆっくり, reading: ごゆっくり, pos: adverb }
+      - { surface: どうぞ, reading: どうぞ, pos: adverb }
+    fa: چشم. خواهش می‌کنم، در آرامش.
+    emotion_tag: confident
+    gap_after_ms: 500
+
+  - id: s-cafe-morning-01-l10
+    speaker: chr-sora
+    frame: wide
+    tokens:
+      - { surface: また, reading: また, pos: adverb }
+      - { surface: あとで, reading: あとで, pos: noun }
+      - { surface: ね, reading: ね, pos: particle }
+      - { surface: ミキさん, reading: みきさん, pos: proper-noun }
+    fa: بعداً می‌بینمت، میکی!
+    emotion_tag: happy
+    gap_after_ms: 450
