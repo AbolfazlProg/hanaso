@@ -1,0 +1,288 @@
+'use client';
+
+/**
+ * SPIKE TASK-M0-06 (temporary — code archived to docs/research/spike-m0-06/page.tsx.txt).
+ * RTL audit of Radix primitives (Dialog/Popover/DropdownMenu/Tooltip) in an RTL page
+ * with Persian + Japanese content. Global <html dir="rtl"> comes from the root layout.
+ */
+
+import * as Dialog from '@radix-ui/react-dialog';
+import * as Popover from '@radix-ui/react-popover';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import * as Tooltip from '@radix-ui/react-tooltip';
+import { DirectionProvider } from '@radix-ui/react-direction';
+import React, { useState } from 'react';
+
+const styles: Record<string, React.CSSProperties> = {
+  page: { fontFamily: 'sans-serif', padding: '24px', maxWidth: 1100, margin: '0 auto' },
+  card: { border: '1px solid #ccc', borderRadius: 12, padding: 16, marginBlockEnd: 20 },
+  btn: {
+    padding: '8px 16px',
+    borderRadius: 8,
+    border: '1px solid #888',
+    background: '#f5f5f5',
+    cursor: 'pointer',
+  },
+  overlay: { background: 'rgba(0,0,0,.45)', position: 'fixed', inset: 0 },
+  content: {
+    background: 'white',
+    borderRadius: 12,
+    padding: 24,
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    minWidth: 380,
+    maxWidth: '90vw',
+  },
+  popover: { background: 'white', border: '1px solid #ccc', borderRadius: 10, padding: 16, maxWidth: 320 },
+  tooltip: { background: '#222', color: 'white', borderRadius: 6, padding: '6px 10px', fontSize: 13 },
+  dropdown: { background: 'white', border: '1px solid #ccc', borderRadius: 10, padding: 6, minWidth: 220 },
+  item: {
+    padding: '8px 10px',
+    borderRadius: 6,
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  ja: { direction: 'ltr', display: 'inline-block', unicodeBidi: 'isolate' as const },
+};
+
+export default function SpikeRtlAuditPage() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [log, setLog] = useState<string[]>([]);
+
+  const addLog = (s: string) => setLog((l) => [...l.slice(-6), s]);
+
+  return (
+    <DirectionProvider dir="rtl">
+      <main style={styles.page}>
+        <h1>Spike M0-06 — RTL audit: Radix Dialog / Popover / DropdownMenu / Tooltip</h1>
+        <p>
+          صفحهٔ ریشه <code>dir="rtl"</code> است (از layout). تعداد log: {log.length}
+        </p>
+
+        {/* ---------- 1) Dialog ---------- */}
+        <section style={styles.card}>
+          <h2>۱) Dialog</h2>
+          <p>چالش‌ها: فلش/مرکز‌چینی، focus trap، Escape، scroll lock، محتوای دوزبانه.</p>
+          <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+            <Dialog.Trigger style={styles.btn}>باز کردن دیالوگ — «日本語の会話」</Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay style={styles.overlay} />
+              <Dialog.Content
+                style={styles.content}
+                onOpenAutoFocus={(e) => {
+                  addLog(
+                    'dialog: openAutoFocus → ' +
+                      (document.activeElement as HTMLElement | null)?.textContent?.slice(0, 20),
+                  );
+                  void e;
+                }}
+                onCloseAutoFocus={() => addLog('dialog: closeAutoFocus')}
+                onEscapeKeyDown={() => addLog('dialog: escape')}
+              >
+                <Dialog.Title>
+                  درس ۵ —{' '}
+                  <span lang="ja" style={styles.ja}>
+                    「はじめまして」
+                  </span>
+                </Dialog.Title>
+                <Dialog.Description dir="rtl">
+                  جملهٔ نمونه:{' '}
+                  <span lang="ja" style={styles.ja}>
+                    私の名前はアリです。
+                  </span>{' '}
+                  (اسم من علی است.)
+                </Dialog.Description>
+                <p>
+                  متن طولانی برای تست اسکرول‌لاک — پاراگراف فارسی با اعداد ۱۲۳۴۵ و عبارت ژاپنی{' '}
+                  <span lang="ja" style={styles.ja}>
+                    東京タワー
+                  </span>{' '}
+                  در میانهٔ جمله. اگر اسکرول‌لاک فعال باشد پشت دیالوگ نباید اسکرول شود.
+                </p>
+                <Dialog.Close style={styles.btn}>بستن (Esc هم کار می‌کند)</Dialog.Close>
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
+        </section>
+
+        {/* ---------- 2) Popover — edge positioning ---------- */}
+        <section style={styles.card}>
+          <h2>۲) Popover — لبهٔ راست/چپ</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+            {/* آیتم چسبیده به لبهٔ راست RTL */}
+            <Popover.Root open={popoverOpen} onOpenChange={setPopoverOpen}>
+              <Popover.Trigger style={styles.btn}>پاپ‌آور لبهٔ راست ⟵</Popover.Trigger>
+              <Popover.Portal>
+                <Popover.Content side="left" align="center" style={styles.popover} sideOffset={8}>
+                  <Popover.Arrow />
+                  محتوای پاپ‌آور: واژهٔ{' '}
+                  <span lang="ja" style={styles.ja}>
+                    教科書
+                  </span>{' '}
+                  (کتاب درسی) — side=left از تریگرِ چسبیده به لبهٔ راست.
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
+
+            {/* آیتم چسبیده به لبهٔ چپ RTL */}
+            <Popover.Root>
+              <Popover.Trigger style={styles.btn}>⟶ پاپ‌آور لبهٔ چپ</Popover.Trigger>
+              <Popover.Portal>
+                <Popover.Content side="right" align="start" style={styles.popover} sideOffset={8}>
+                  <Popover.Arrow />
+                  پاپ‌آور سمت راست تریگرِ لبهٔ چپ — متن بلندتر برای دیدن رفع برخورد (collision) با لبهٔ viewport: خوانش
+                  واژه{' '}
+                  <span lang="ja" style={styles.ja}>
+                    きょうかしょ
+                  </span>{' '}
+                  و معنی «کتابِ درسی».
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
+          </div>
+        </section>
+
+        {/* ---------- 3) DropdownMenu ---------- */}
+        <section style={styles.card}>
+          <h2>۳) DropdownMenu</h2>
+          <p>چالش: جهت بازشدن زیرمنو، آیتم با متن مخلوط فارسی/ژاپنی، highlight آیتم با کیبورد.</p>
+          <div style={{ display: 'flex', gap: 24, justifyContent: 'space-between' }}>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger style={styles.btn}>منوی کاربر (سمت راست)</DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content style={styles.dropdown} sideOffset={6} align="start">
+                  <DropdownMenu.Item style={styles.item} onSelect={() => addLog('dm: profile')}>
+                    <span>پروفایل</span>{' '}
+                    <span lang="ja" style={styles.ja}>
+                      プロフィール
+                    </span>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Sub>
+                    <DropdownMenu.SubTrigger style={styles.item}>
+                      <span>سطح زبان</span> <span>▸</span>
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.SubContent style={styles.dropdown} sideOffset={4}>
+                        <DropdownMenu.Item style={styles.item}>
+                          مبتدی —{' '}
+                          <span lang="ja" style={styles.ja}>
+                            初心者
+                          </span>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item style={styles.item}>
+                          متوسط —{' '}
+                          <span lang="ja" style={styles.ja}>
+                            中級
+                          </span>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item style={styles.item}>
+                          پیشرفته —{' '}
+                          <span lang="ja" style={styles.ja}>
+                            上級
+                          </span>
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                  <DropdownMenu.CheckboxItem checked onCheckedChange={() => {}} style={styles.item}>
+                    <DropdownMenu.ItemIndicator>✓</DropdownMenu.ItemIndicator> حالت furigana
+                  </DropdownMenu.CheckboxItem>
+                  <DropdownMenu.Separator style={{ height: 1, background: '#ddd', margin: 4 }} />
+                  <DropdownMenu.Item style={styles.item} onSelect={() => addLog('dm: logout')}>
+                    خروج —{' '}
+                    <span lang="ja" style={styles.ja}>
+                      ログアウト
+                    </span>
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger style={styles.btn}>منوی کنار لبهٔ چپ</DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content style={styles.dropdown} sideOffset={6} align="end">
+                  <DropdownMenu.Item style={styles.item}>آیتم ۱</DropdownMenu.Item>
+                  <DropdownMenu.Item style={styles.item}>
+                    آیتم ۲ —{' '}
+                    <span lang="ja" style={styles.ja}>
+                      項目二
+                    </span>
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          </div>
+        </section>
+
+        {/* ---------- 4) Tooltip ---------- */}
+        <section style={styles.card}>
+          <h2>۴) Tooltip</h2>
+          <p>چالش: جای tooltip نسبت به لینک در RTL + متن مخلوط.</p>
+          <Tooltip.Provider delayDuration={100}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button type="button" style={styles.btn}>
+                    واژهٔ{' '}
+                    <span lang="ja" style={styles.ja}>
+                      先生
+                    </span>{' '}
+                    (لبهٔ راست)
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content side="left" style={styles.tooltip}>
+                    <Tooltip.Arrow />
+                    خوانش:{' '}
+                    <span lang="ja" style={styles.ja}>
+                      せんせい
+                    </span>{' '}
+                    — معنی: معلم
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button type="button" style={styles.btn}>
+                    واژهٔ{' '}
+                    <span lang="ja" style={styles.ja}>
+                      学生
+                    </span>{' '}
+                    (لبهٔ چپ)
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content side="top" style={styles.tooltip}>
+                    <Tooltip.Arrow />
+                    خوانش:{' '}
+                    <span lang="ja" style={styles.ja}>
+                      がくせい
+                    </span>{' '}
+                    — معنی: دانش‌آموز
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </div>
+          </Tooltip.Provider>
+        </section>
+
+        {/* ---------- log ---------- */}
+        <section style={styles.card}>
+          <h2>event log</h2>
+          <ul>
+            {log.map((l, i) => (
+              <li key={i}>{l}</li>
+            ))}
+          </ul>
+        </section>
+      </main>
+    </DirectionProvider>
+  );
+}
