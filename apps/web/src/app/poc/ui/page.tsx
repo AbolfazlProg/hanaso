@@ -48,6 +48,8 @@ const weatherTokens = parseFuriganaDsl('今日[きょう]も 天気[てんき]�
 const studyTokens = parseFuriganaDsl('日本語[にほんご]を 勉強[べんきょう]しています。');
 const towerTokens = parseFuriganaDsl('東京[とうきょう]タワーは 高[たか]い です。');
 const sentenceTokens = parseFuriganaDsl('コーヒーを お願い[おねがい]します。');
+/* کارت نیلی: جملهٔ صحنهٔ تیره (Aizen DD-084) — دادهٔ آزمایشی مهندسی */
+const darkCardTokens = parseFuriganaDsl('今日[きょう]は 暑[あつ]いですね。冷[つめ]たい 水[みず]を どうぞ。');
 
 export default function UiSamplePage() {
   const [audioState, setAudioState] = useState<'idle' | 'loading' | 'playing'>('idle');
@@ -101,6 +103,7 @@ export default function UiSamplePage() {
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button>{fa.uiKit.primaryBtn}</Button>
+          <Button variant="cta">{fa.uiKit.ctaBtn}</Button>
           <Button variant="secondary">{fa.uiKit.secondaryBtn}</Button>
           <Button variant="ghost">{fa.uiKit.ghostBtn}</Button>
           <Button loading>{fa.uiKit.loadingBtn}</Button>
@@ -203,6 +206,90 @@ export default function UiSamplePage() {
           <ChevronDown aria-hidden className="size-4" />
           {fa.uiKit.footer}
         </p>
+      </section>
+
+      {/* ۵ — امضاهای Aizen (DD-084 — TASK-DSGN-01) */}
+      <section className="mt-10">
+        <h2 className="text-h3 font-extrabold text-ink">{fa.uiKit.aizenSection}</h2>
+        <p className="mt-2 text-small text-ink-soft">{fa.uiKit.aizenIntro}</p>
+
+        {/* مُهر + نوار فاز پستی */}
+        <div className="mt-5 flex flex-wrap items-center gap-10">
+          <figure className="flex flex-col items-center gap-2">
+            <span className="seal-round ja-block text-h2" lang="ja" dir="ltr" aria-label={fa.uiKit.aizenSealLabel}>
+              分かった
+            </span>
+            <figcaption className="text-caption text-ink-soft">{fa.uiKit.aizenSealLabel}</figcaption>
+          </figure>
+          <div className="min-w-64 flex-1">
+            <p className="mb-1.5 text-caption text-ink-soft">{fa.uiKit.aizenRulerLabel}</p>
+            <ol className="frame-ink flex overflow-hidden rounded-md text-small font-bold" aria-label="A to D">
+              <li className="flex-1 bg-indigo py-2.5 text-center text-paper">{fa.uiKit.aizenRulerDone}</li>
+              <li className="flex-1 border-s-2 border-ink bg-indigo py-2.5 text-center text-paper">
+                {fa.uiKit.aizenRulerDone2}
+              </li>
+              <li className="flex-1 border-s-2 border-ink bg-shu py-2.5 text-center text-card">
+                {fa.uiKit.aizenRulerNow}
+              </li>
+              <li className="flex-1 border-s-2 border-ink bg-card py-2.5 text-center text-ink-soft">
+                {fa.uiKit.aizenRulerNext}
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        {/* پیشرفت راه‌راه مورب (hatching — دوکاناله با متن) */}
+        <div className="mt-6 max-w-md">
+          <div className="mb-1.5 flex justify-between text-caption text-ink-soft">
+            <span>{fa.uiKit.aizenProgressLabel}</span>
+            <span className="ja-block font-bold" lang="ja" dir="ltr">
+              {fa.uiKit.aizenProgressValue}
+            </span>
+          </div>
+          <div
+            role="progressbar"
+            aria-valuenow={50}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={fa.uiKit.aizenProgressLabel}
+            className="frame-ink h-3 max-w-md bg-surface-warm"
+          >
+            <div className="hatch-fill h-full w-1/2" />
+          </div>
+        </div>
+
+        {/* چیپ‌های قاب‌دار */}
+        <div className="mt-6">
+          <p className="mb-1.5 text-caption text-ink-soft">{fa.uiKit.aizenChipsLabel}</p>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="rounded-sm border-[1.5px] border-ink bg-card px-3 py-0.5 text-small font-bold">
+              {fa.uiKit.aizenChip1}
+            </span>
+            <span className="rounded-sm border-[1.5px] border-ink bg-indigo px-3 py-0.5 text-small font-bold text-paper">
+              {fa.uiKit.aizenChipOn}
+            </span>
+            <span className="rounded-sm border-[1.5px] border-ink bg-card px-3 py-0.5 text-small font-bold">
+              {fa.uiKit.aizenChip2}
+            </span>
+          </div>
+        </div>
+
+        {/* کارت نیلی مکالمه — زبان صحنهٔ تیره (روبی روشن با قاعدهٔ band-indigo) */}
+        <div className="mt-6">
+          <p className="mb-1.5 text-caption text-ink-soft">{fa.uiKit.aizenDarkCardLabel}</p>
+          <div className="band-indigo max-w-2xl rounded-lg p-6 shadow-raised">
+            <p className="flex flex-wrap items-center gap-2.5 text-small font-bold text-speaker-2-l">
+              {fa.uiKit.aizenDarkWho}
+              <span className="rounded-sm border border-speaker-2-l/50 px-2 font-medium">
+                {fa.uiKit.aizenDarkRegister}
+              </span>
+            </p>
+            <p className="ja-block serif mt-2.5 text-h2 leading-[2.05] text-paper">
+              <FuriganaText variant="serif" tokens={darkCardTokens} />
+            </p>
+            <p className="mt-3 text-small text-indigo-mist">{fa.uiKit.aizenDarkTranslation}</p>
+          </div>
+        </div>
       </section>
     </main>
   );

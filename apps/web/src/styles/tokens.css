@@ -1,42 +1,52 @@
 /* ============================================================================
-   HANASO — Design Tokens (Tailwind 4 `@theme` port of KB DD-067 LOCKED values)
+   HANASO — Design Tokens (Tailwind 4 `@theme` port — AIZEN art direction)
    ----------------------------------------------------------------------------
-   Source of truth: KB `docs/knowledge-base/design-proofs/assets/tokens.css`
-   (v1.0 LOCKED 2026-10-31, WCAG-verified via compute_contrast.py — see KB design-proofs/README).
+   Source of truth: KB DD-084 (Confirmed — owner decision 2026-11-02):
+   «مسیر هنری نهایی = Aizen آی‌زِن (藍染)» — direction B of TASK-DESIGN-04.
+   Canonical references (KB main):
+     - design-lab/visual-direction/02-art-directions.md  (§مسیر ب — palette+contrast)
+     - design-lab/visual-direction/styleboards/direction-b-aizen.html (exact CSS)
+   Partial supersede of DD-067 VALUES (its numeric-lock method persists):
+   every Aizen pair was pre-computed in the KB (contrast_d04.py — 0 FAIL).
    Rules:
    - Raw hex/px/ms values in components are FORBIDDEN — tokens only (KB ADR-004 L6).
    - This file is a coordination point: sequential changes only, announced in
      AGENT_PROGRESS.md; any change must originate in the KB (spec-gap), never here.
-   - Design System v2 (TASK-DESIGN-04, in review on the KB design branch) is NOT
-     merged here until the owner accepts it (mission §12) — see TASK-DSGN-01.
-   - FULL PORT completed in TASK-M0-09 (review B-8 debt cleared): --info, --scrim,
-     --overlay-audio, --radius-full, --dur-shimmer/--dur-spin (+ reduced-motion
-     zeroing), --leading-fa/ja, --tracking-ja-heading, hairlines/shadows, z-scale,
-     --frame-scene-w, and the KB font names (--font-ja-ui, --font-ja-ud).
    - Font stacks resolve the `*-loaded` CSS variables that next/font/local writes
      onto <html> (see src/styles/fonts.ts). If the webfont layer is absent, each
      stack degrades to the same system-font chain the KB defines — no raw values
      leave this file.
+   Aizen key contrast pairs (computed, KB RUN-20261101-04):
+     ink/paper-b 13.39:1 · paper/indigo 12.61:1 · paper/indigo-deep 14.51:1
+     indigo-mist/indigo 9.27:1 · white/shu 4.85:1 · spk-light/indigo ≥7.1:1
    ========================================================================== */
 
 @theme {
-  /* -- ۱. رنگ: پالت «کاغذ و مرکب» (قفل‌شده با FT-004-۱) ------------------- */
+  /* -- ۱. رنگ: پالت «Aizen — نیلیِ ساختاری» (DD-084) ---------------------- */
 
-  /* سطوح */
-  --color-paper: #f7f3e9; /* kinari — main background (12.9:1 with ink) */
-  --color-surface-warm: #fff1cf; /* torinoko — JP sentence cards/bubbles */
-  --color-surface-muted: #e9e2d0; /* usuzakura — separators/secondary bg */
-  --color-surface-sunken: #efe9db; /* sunken — toolbars/disabled chips */
+  /* سطوح روشن */
+  --color-paper: #faf7ef; /* paper-b — main background (ink 13.39:1) */
+  --color-card: #ffffff; /* card — panels/sentence cards on paper */
+  --color-surface-warm: #f0ebdf; /* sand — art panels/secondary surfaces */
+  --color-surface-muted: #f0ebdf; /* sand — separators/secondary bg */
+  --color-surface-sunken: #e8e2d4; /* toolbars/disabled chips (one step deeper) */
+
+  /* نیلی ساختاری — لنگر ترکیب‌بندی (هیرو/قاب صحنه/فوتر/دکمهٔ اصلی) */
+  --color-indigo: #173049; /* paper on it 12.61:1 */
+  --color-indigo-deep: #12253a; /* header/frame/gradient end — paper 14.51:1 */
+  --color-indigo-mist: #c9d8e4; /* secondary text ON indigo — 9.27:1 */
+  --color-indigo-wash: #e8eef3; /* hover wash for line-style controls */
 
   /* مرکب */
   --color-ink: #2b2a28; /* sumi — body text (AAA) */
   --color-ink-soft: #5a5852; /* captions/furigana (6.4:1) */
-  --color-ink-faint: #857f73; /* hairline — non-text only (3.6:1) */
+  --color-ink-faint: #8a8578; /* hairline — non-text only (3.6:1) */
 
   /* لهجه‌ها */
-  --color-ai: #1d4e70; /* traditional indigo — links/CTA/brand (AAA 8.0:1) */
+  --color-ai: #1d4e70; /* traditional indigo — links/accents (AAA 8.0:1) */
   --color-ai-deep: #16324a; /* hover/chart text (11.9:1) */
-  --color-shu: #c2401c; /* vermilion — comprehension seal & critical only */
+  --color-shu: #c2401c; /* vermilion — CTA/seal/critical focus (white 4.85:1) */
+  --color-shu-deep: #a33317; /* CTA hover */
 
   /* وضعیت (دوکاناله همیشه: رنگ + آیکون + متن — WCAG 1.4.1) */
   --color-success: #3d6b4f;
@@ -44,10 +54,14 @@
   --color-warning: #7a6119;
   --color-info: #1d4e70; /* KB: var(--ai) — Tailwind @theme needs a literal */
 
-  /* رنگ گوینده‌ها — سنت رنگرزی ژاپن (همه ≥4.5 متن و ≥3 غیرمتنی روی paper/torinoko) */
+  /* رنگ گوینده‌ها — دو مجموعه (DD-084):
+     تیره روی سطوح روشن (≥4.5 متن) · روشن روی نیلی (≥7.1) */
   --color-speaker-1: #2e5f7a;
   --color-speaker-2: #7a4e26;
   --color-speaker-3: #5a6b3a;
+  --color-speaker-1-l: #8fc3e8; /* light — on indigo scenes */
+  --color-speaker-2-l: #e5b483;
+  --color-speaker-3-l: #b7cc93;
 
   /* طیف تحلیلی ai — نمودارهای admin (متن فقط پله‌های ۱–۳) */
   --color-chart-1: #16324a;
@@ -58,12 +72,12 @@
 
   /* شفافیت‌های معنادار */
   --color-scrim: rgba(43, 42, 40, 0.4); /* modal backdrop */
-  --color-overlay-audio: rgba(247, 243, 233, 0.86); /* audio-only vignette */
+  --color-overlay-audio: rgba(250, 247, 239, 0.86); /* audio-only vignette */
 
-  /* -- ۲. تایپوگرافی (قفل‌شده — مبنا ALREQ/JLREQ) ------------------------ */
+  /* -- ۲. تایپوگرافی (ALREQ/JLREQ + درام پوستری Aizen) ------------------- */
 
   /* فونت‌ها: مقدار واقعی را next/font در متغیر *-loaded روی <html> می‌نویسد؛
-     زنجیرهٔ fallback همان زنجیرهٔ KB است (fonts.ts = TASK-M0-09). */
+     زنجیرهٔ fallback همان زنجیرهٔ KB است (fonts.ts + DD-084 وزن‌های ۸۰۰/۹۰۰/Black). */
   --font-fa: var(--font-fa-loaded, 'Vazirmatn'), 'Estedad', 'Segoe UI', Tahoma, sans-serif;
   --font-ja-ui:
     var(--font-ja-ui-loaded, 'Zen Kaku Gothic New'), 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
@@ -81,25 +95,37 @@
   --text-h2: 1.75rem; /* 28 — section heading */
   --text-h1: 2rem; /* 32 — page heading */
   --text-display: 2.5rem; /* 40 — editorial big numbers */
+  --text-hero-fa: clamp(2.5rem, 5.6vw, 4.375rem); /* Aizen hero — Vazirmatn 900 (40→70) */
+  --text-hero-ja: clamp(1.75rem, 3.4vw, 2.625rem); /* Aizen JA hero — Zen Kaku 900 (28→42) */
 
   --leading-fa: 1.8; /* ALREQ */
   --leading-ja: 1.9; /* JLREQ — ruby-bearing lines */
   --tracking-ja-heading: 0.05em;
+  --tracking-poster: 0.22em; /* Aizen — CJK poster letter-spacing (signboard language) */
+  --tracking-fa-display: -0.015em; /* Aizen — compact Persian display setting */
 
   /* Furigana: نسبت ۵۰٪ + کف ۱۲px خوانا (اصلاح R4-V7) */
   --furigana-size: max(0.5em, 12px);
 
   /* -- ۳. فاصله: مقیاس 4px — همان مقیاس پیش‌فرض Tailwind 4 (p-1=4px … p-24=96px) */
 
-  /* -- ۴. شعاع («چاپ‌مانند» — گردِ کم) ------------------------------------ */
-  --radius-sm: 4px; /* chip/input/label */
-  --radius-md: 8px; /* button/sentence card */
-  --radius-lg: 12px; /* main card/panel/sheet */
+  /* -- ۴. شعاع («چاپ ستونی» — تیزتر از v1؛ DD-084) ------------------------ */
+  --radius-sm: 2px; /* chip/label */
+  --radius-md: 3px; /* button/input */
+  --radius-lg: 4px; /* main card/panel/sheet */
   --radius-full: 9999px; /* badge/avatar only */
 
-  /* -- ۵. سایه (اولویت با border ظریف؛ سایه مکمل) ------------------------ */
-  --shadow-card: 0 1px 2px rgba(43, 42, 40, 0.05), 0 1px 6px rgba(43, 42, 40, 0.04);
-  --shadow-raised: 0 2px 6px rgba(43, 42, 40, 0.08), 0 4px 12px rgba(43, 42, 40, 0.06);
+  /* -- ۵. سایه (Aizen: نرم ظریف + آفستِ سخت لترپرس/چاپ ستونی) ------------- */
+  --shadow-card: 0 1px 3px rgba(18, 37, 58, 0.1);
+  --shadow-raised: 0 4px 10px rgba(18, 37, 58, 0.12), 0 14px 34px rgba(18, 37, 58, 0.14);
+  /* آفست سخت — امضای Aizen (فقط تعامل؛ زیر reduced-motion مقدار duration صفر است) */
+  --shadow-offset-cta: 4px 4px 0 var(--color-indigo); /* shu CTA resting */
+  --shadow-offset-cta-hover: 5px 5px 0 var(--color-indigo);
+  --shadow-offset-cta-active: 1px 1px 0 var(--color-indigo);
+  --shadow-offset-indigo: 4px 4px 0 rgba(18, 37, 58, 0.25); /* indigo button resting */
+  --shadow-offset-indigo-hover: 5px 5px 0 rgba(18, 37, 58, 0.25);
+  --shadow-offset-indigo-active: 1px 1px 0 rgba(18, 37, 58, 0.25);
+  --shadow-focus-input: 4px 4px 0 rgba(194, 64, 28, 0.35); /* input focus — shu ghost */
   /* سایهٔ رنگی/گلو ممنوع (art-direction §۷) */
 
   /* -- ۶. حرکت (توکن‌های ease در @theme تا utility ها هم منحنی DD-067 بگیرند) -- */
@@ -117,23 +143,35 @@
 /* Runtime-referenced palette (S1 fix — visual review #1): Tailwind 4 tree-shakes
    `@theme` variables that only appear inside dynamic `var(--color-speaker-${i})`
    string interpolations. These `:root` copies guarantee the speaker colors, hover
-   deep and shu are ALWAYS emitted for runtime consumption (bubble rings, names,
-   placeholder renderer, focus accents). Values = DD-067 locked set, 1:1. */
+   deep, shu and the Aizen indigo/light-speaker set are ALWAYS emitted for runtime
+   consumption (bubble rings, names, placeholder renderer, focus accents,
+   dark-scene rendering). Values = DD-084 Aizen set, 1:1. */
 :root {
   --color-speaker-1: #2e5f7a;
   --color-speaker-2: #7a4e26;
   --color-speaker-3: #5a6b3a;
+  --color-speaker-1-l: #8fc3e8;
+  --color-speaker-2-l: #e5b483;
+  --color-speaker-3-l: #b7cc93;
   --color-ai-deep: #16324a;
   --color-shu: #c2401c;
+  --color-shu-deep: #a33317;
+  --color-indigo: #173049;
+  --color-indigo-deep: #12253a;
+  --color-indigo-mist: #c9d8e4;
 }
 
-/* Non-utility tokens (motion/hairline/measures) — verbatim from KB tokens.css.
+/* Non-utility tokens (frames/motion/measures) — Aizen frames + verbatim KB motion.
    @theme emits the utility-generating subset; these shorthand/measure tokens are
    consumed via var() from globals.css and components. */
 :root {
-  /* خط و سایه */
+  /* خط و قاب — زبان newspaper-grid (DD-084) */
   --hairline: 1px solid var(--color-ink-faint);
-  --hairline-soft: 1px solid rgba(133, 127, 115, 0.55);
+  --hairline-soft: 1px solid rgba(138, 133, 120, 0.55);
+  --frame-ink: 2px solid var(--color-ink); /* کارت/قاب اصلی */
+  --frame-ink-thin: 1.5px solid var(--color-ink); /* چیپ */
+  --rule-indigo: 2px solid var(--color-indigo); /* زیر برچسب بخش/فوتر */
+  --band-edge: 6px; /* نوار شنگرف/کاغذ پای نوار نیلی */
 
   /* حرکت (معنادار؛ همه تابع prefers-reduced-motion) — easeها در @theme بالا */
   --dur-micro: 120ms; /* touch feedback / button state */
@@ -147,7 +185,7 @@
   --touch-min: 44px; /* WCAG 2.5.8 + our policy floor */
   --touch-main: 48px; /* primary touch action / answer button */
   --frame-scene-w: 1024px; /* desktop scene frame (16:9) */
-  --focus-ring: 2px solid var(--color-ai); /* focus ring ≥3:1 */
+  --focus-ring: 3px solid var(--color-shu); /* focus ring ≥3:1 (4.85 on paper) */
 }
 
 /* کاهش حرکت: مقدار مؤثر = سیستم OR کلید درون‌برنامه‌ای (FEAT-109) */

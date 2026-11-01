@@ -76,53 +76,51 @@ export function LearnCard({
   }
 
   return (
-    <article className="flex flex-col gap-4 rounded-lg border-2 border-ink-faint bg-paper p-5 shadow-sm">
+    <article className="frame-ink flex flex-col gap-4 rounded-lg bg-card p-5 shadow-card">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h2 className="text-h2 font-bold">{titleFa}</h2>
+          <h2 className="text-h2 font-extrabold">{titleFa}</h2>
           <p className="text-body text-ink-soft">{sceneFa}</p>
         </div>
-        <span className="rounded-sm bg-surface-muted px-2 py-1 text-caption">{jlpt}</span>
+        <span className="rounded-sm border-[1.5px] border-ink bg-card px-2 py-1 text-caption font-bold">{jlpt}</span>
       </div>
 
-      {/* A→D stepper */}
-      <ol className="flex flex-wrap items-center gap-2" aria-label="مراحل واحد">
+      {/* A→D stepper — نوار پستی segmented (امضای Aizen · DD-084) */}
+      <ol
+        className="frame-ink flex max-w-xl flex-wrap overflow-hidden rounded-md text-small font-bold"
+        aria-label="مراحل واحد"
+      >
         {CYCLE_STAGES.map((stage, i) => {
           const current = progress?.stage === stage;
           const passed = progress ? CYCLE_STAGES.indexOf(progress.stage) > i : false;
           return (
-            <li key={stage} className="flex items-center gap-2">
+            <li key={stage} className="min-w-0 flex-1">
               <a
                 href={STAGE_ROUTES[stage]}
-                className={`rounded-md border px-2.5 py-1 text-small ${
+                className={`flex items-center justify-center gap-1.5 px-2.5 py-2.5 text-center ${
                   current && !understood
-                    ? 'border-ai bg-ai text-paper'
+                    ? 'bg-shu text-card'
                     : passed || understood
-                      ? 'border-success text-success'
-                      : 'border-ink-faint text-ink-soft'
-                }`}
+                      ? 'bg-indigo text-paper'
+                      : 'bg-card text-ink-soft'
+                } ${i > 0 ? 'border-s-2 border-ink' : ''}`}
                 aria-current={current ? 'step' : undefined}
               >
                 {stage[0]} · {STAGE_LABELS_FA[stage]}
               </a>
-              {i < CYCLE_STAGES.length - 1 && (
-                <span aria-hidden className="text-ink-faint">
-                  ←
-                </span>
-              )}
             </li>
           );
         })}
       </ol>
 
       {understood && (
-        <p className="rounded-md border-2 border-success bg-surface-warm px-4 py-3 text-body text-success">
+        <p className="rounded-md border-2 border-success bg-card px-4 py-3 text-body font-bold text-success">
           ✓ این مکالمه را <b>فهمیدی</b> (understood) — نه «تمام کردی»؛ هر وقت بخواهی دوباره گوش بده و بخوان.
         </p>
       )}
 
       {error && (
-        <p role="alert" className="rounded-md border-2 border-error bg-surface-warm px-4 py-2 text-small text-error">
+        <p role="alert" className="rounded-md border-2 border-error bg-card px-4 py-2 text-small text-error">
           خواندن پیشرفت ناموفق بود: {error}
         </p>
       )}
@@ -132,7 +130,7 @@ export function LearnCard({
           type="button"
           onClick={() => void continueUnit()}
           disabled={loading}
-          className="rounded-md bg-ai px-5 py-2.5 text-body text-paper disabled:opacity-40"
+          className="rounded-md bg-shu px-5 py-2.5 font-extrabold text-body text-card shadow-offset-cta transition-[background-color,box-shadow,translate] hover:bg-shu-deep hover:shadow-offset-cta-hover hover:-translate-x-px hover:-translate-y-px active:translate-x-0.5 active:translate-y-0.5 active:shadow-offset-cta-active focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-shu disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none"
         >
           {loading
             ? '…'

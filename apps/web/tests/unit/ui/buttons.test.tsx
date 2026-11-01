@@ -9,9 +9,10 @@ import { AudioSentenceButton } from '@/components/patterns/audio-button';
 import { Button } from '@/components/ui/button';
 
 describe('Button', () => {
-  it('variant پیش‌فرض primary با کلاس bg-ai (توکن)', () => {
+  it('variant پیش‌فرض primary با کلاس bg-indigo + سایهٔ آفست Aizen (توکن · DD-084)', () => {
     const m = renderToStaticMarkup(<Button>ذخیره</Button>);
-    expect(m).toContain('bg-ai');
+    expect(m).toContain('bg-indigo');
+    expect(m).toContain('shadow-offset-indigo'); // امضای Aizen — آفست سخت
     expect(m).toContain('type="button"');
   });
 

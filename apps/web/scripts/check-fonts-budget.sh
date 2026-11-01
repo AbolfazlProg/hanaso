@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # TASK-M0-09 — font size budget gate (spike M0-07 §۶-۲).
-# Hard caps (MiB): fa ≤ 0.1 · zenkaku-starter ≤ 0.5 · noto-serif-vf ≤ 1.2 · total ≤ 2.3.
+# TASK-DSGN-01 (DD-084 — Aizen): per-family caps raised to admit heavy weights
+# (Vazirmatn 800/900 + Zen Kaku Black 900 — poster typography is part of the
+# locked art direction). Hard caps (MiB): fa ≤ 0.17 · zenkaku-starter ≤ 0.7 ·
+# noto-serif-vf ≤ 1.2 · total ≤ 2.3 (total cap UNCHANGED).
 # Also enforces the OFL license file next to every shipped family (OFL requirement).
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -19,8 +22,8 @@ check() { # name glob cap_bytes
   fi
 }
 
-check "fa (vazirmatn-fd)"      'vazirmatn-fd-*.woff2'        $((100 * 1024))
-check "ja-ui (zenkaku starter)" 'zenkaku-starter-*.woff2'     $((500 * 1024))
+check "fa (vazirmatn-fd)"      'vazirmatn-fd-*.woff2'        $((170 * 1024))
+check "ja-ui (zenkaku starter)" 'zenkaku-starter-*.woff2'     $((700 * 1024))
 check "ja-serif (noto vf)"      'notoserif-vf.woff2'          $((1200 * 1024))
 
 total=0

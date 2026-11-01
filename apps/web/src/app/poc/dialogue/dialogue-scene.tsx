@@ -297,10 +297,10 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
         </p>
       )}
 
-      {/* --- character stage (3 placeholder faces, ADR-018 §۲-۴) --- */}
+      {/* --- character stage (3 placeholder faces, ADR-018 §۲-۴) — قاب newspaper-grid Aizen --- */}
       <div
         data-hnsp-scene-order={characters.map((c) => c.id).join(',')}
-        className="grid grid-cols-3 gap-3 rounded-lg border border-ink-faint bg-paper p-4"
+        className="frame-ink grid grid-cols-3 gap-3 rounded-lg bg-card p-4 shadow-card"
       >
         {characters.map((c, i) => {
           const speaking = activeLine?.speaker === c.id && isPlaying;
@@ -329,11 +329,11 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
       </div>
 
       {/* --- transport controls --- */}
-      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-ink-faint bg-paper p-3">
+      <div className="frame-ink flex flex-wrap items-center gap-2 rounded-lg bg-card p-3 shadow-card">
         <button
           type="button"
           onClick={togglePlay}
-          className="min-w-24 rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep"
+          className="min-w-24 rounded-md bg-indigo px-4 py-2 text-small font-bold text-paper shadow-offset-indigo transition-[background-color,box-shadow,translate] hover:bg-indigo-deep hover:shadow-offset-indigo-hover hover:-translate-x-px hover:-translate-y-px active:translate-x-0.5 active:translate-y-0.5 active:shadow-offset-indigo-active"
           aria-label={isPlaying ? 'توقف موقت' : 'پخش'}
         >
           {isPlaying ? '⏸ توقف' : '▶ پخش'}
@@ -342,7 +342,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
           type="button"
           onClick={() => jump(-1)}
           disabled={!started}
-          className="rounded-md border border-ink-faint px-3 py-2 text-small disabled:opacity-40"
+          className="rounded-md border-2 border-indigo px-3 py-2 text-small font-bold text-indigo hover:bg-indigo-wash disabled:pointer-events-none disabled:opacity-45"
           aria-label="خط قبلی"
         >
           ⏮ قبلی
@@ -351,7 +351,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
           type="button"
           onClick={replay}
           disabled={activeIndex < 0}
-          className="rounded-md border border-ink-faint px-3 py-2 text-small disabled:opacity-40"
+          className="rounded-md border-2 border-indigo px-3 py-2 text-small font-bold text-indigo hover:bg-indigo-wash disabled:pointer-events-none disabled:opacity-45"
           aria-label="پخش دوبارهٔ همین جمله"
         >
           ↺ جمله
@@ -360,7 +360,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
           type="button"
           onClick={() => jump(1)}
           disabled={!started}
-          className="rounded-md border border-ink-faint px-3 py-2 text-small disabled:opacity-40"
+          className="rounded-md border-2 border-indigo px-3 py-2 text-small font-bold text-indigo hover:bg-indigo-wash disabled:pointer-events-none disabled:opacity-45"
           aria-label="خط بعدی"
         >
           بعدی ⏭
@@ -369,7 +369,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
           type="button"
           onClick={toggleSpeed}
           aria-pressed={speed === 0.75}
-          className="rounded-md border border-ink-faint px-3 py-2 text-small"
+          className="rounded-md border-2 border-indigo px-3 py-2 text-small font-bold text-indigo hover:bg-indigo-wash"
         >
           سرعت: {speed === 1 ? '۱×' : '۰٫۷۵×'}
         </button>
@@ -377,7 +377,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
           type="button"
           onClick={toggleFa}
           aria-pressed={showFa}
-          className="rounded-md border border-ink-faint px-3 py-2 text-small"
+          className="rounded-md border-2 border-indigo px-3 py-2 text-small font-bold text-indigo hover:bg-indigo-wash"
         >
           زیرنویس فارسی: {showFa ? 'روشن' : 'خاموش'}
         </button>
@@ -390,10 +390,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
 
       {/* --- error banner (typed AudioError → user recovery, AC-957) --- */}
       {banner && (
-        <div
-          role="alert"
-          className="flex flex-col gap-2 rounded-md border-2 border-error bg-surface-warm px-4 py-3 text-small"
-        >
+        <div role="alert" className="frame-ink flex flex-col gap-2 rounded-md bg-card px-4 py-3 text-small">
           <p className="font-bold text-error">خطای صوت — {banner.code}</p>
           <p className="text-ink-soft">{banner.message}</p>
           {banner.lineFa && (
@@ -405,21 +402,21 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
             <button
               type="button"
               onClick={() => recover('retry')}
-              className="rounded-md bg-ai px-3 py-1.5 text-small text-paper transition-colors hover:bg-ai-deep"
+              className="rounded-md bg-indigo px-3 py-1.5 text-small font-bold text-paper shadow-offset-indigo transition-[background-color,box-shadow] hover:bg-indigo-deep"
             >
               تلاش دوباره
             </button>
             <button
               type="button"
               onClick={() => recover('skip')}
-              className="rounded-md border border-ink-faint px-3 py-1.5 text-small"
+              className="rounded-md border-2 border-indigo px-3 py-1.5 text-small font-bold text-indigo hover:bg-indigo-wash"
             >
               رد کردن این خط
             </button>
             <button
               type="button"
               onClick={() => recover('silent')}
-              className="rounded-md border border-ink-faint px-3 py-1.5 text-small"
+              className="rounded-md border-2 border-indigo px-3 py-1.5 text-small font-bold text-indigo hover:bg-indigo-wash"
             >
               ادامه بدون صوت
             </button>
@@ -437,15 +434,15 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
               ref={(el) => {
                 lineRefs.current[i] = el;
               }}
-              className={`flex flex-col gap-1 rounded-lg border p-3 transition-colors ${
-                active ? 'border-ai bg-surface-warm' : 'border-ink-faint bg-paper'
-              }`}
+              className={`flex flex-col gap-1 rounded-lg border-2 p-3 transition-colors ${
+                active ? 'border-shu bg-card' : 'border-ink-faint bg-paper'
+              } ${active ? 'outline-2 outline-offset-2 outline-shu outline-dashed' : ''}`}
             >
               <div className="flex items-start gap-2">
                 <button
                   type="button"
                   onClick={() => playFrom(line.id)}
-                  className="mt-1 rounded-md border border-ink-faint px-2 py-1 text-caption"
+                  className="mt-1 rounded-md border-2 border-indigo px-2 py-1 text-caption font-bold text-indigo hover:bg-indigo-wash"
                   aria-label={`پخش از این خط: ${line.fa}`}
                 >
                   ▶
@@ -489,7 +486,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
           type="button"
           onClick={() => void finishWatching()}
           disabled={!lastLineSeen || finishing}
-          className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
+          className="self-start rounded-md bg-indigo px-4 py-2 text-small font-bold text-paper shadow-offset-indigo transition-[background-color,box-shadow] hover:bg-indigo-deep disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none"
         >
           {finishing ? 'در حال ثبت…' : 'پایان مشاهده — رفتن به درس (B) ←'}
         </button>

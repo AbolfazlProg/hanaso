@@ -24,7 +24,7 @@ export const fa = {
   },
   uiKit: {
     title: 'نمونهٔ رندر دوزبانه — HANASO',
-    subtitle: 'برگهٔ مرجع رندر فارسی + ژاپنی + روبی (TASK-M0-09 · AC-2)',
+    subtitle: 'برگهٔ مرجع رندر فارسی + ژاپنی + روبی (TASK-M0-09 · AC-2 · جهت هنری: Aizen — DD-084)',
     mixedSection: 'پاراگراف ترکیبی',
     rubySection: 'روبی (FuriganaText)',
     cardSection: 'کارت جمله و دکمهٔ صوت',
@@ -66,6 +66,27 @@ export const fa = {
     commandItem2: 'お願いします — لطفاً',
     footer: 'انتهای برگهٔ مرجع رندر.',
     translation: 'یک قهوه لطفاً.',
+    /* امضاهای Aizen — TASK-DSGN-01 (DD-084) */
+    aizenSection: 'امضاهای Aizen — نیلیِ ساختاری و شنگرف',
+    aizenIntro:
+      'عناصر هویتی جهت هنری منتخب (DD-084): مُهر دایره‌ای فهم، نوار فاز A→D پستی، پیشرفت راه‌راه مورب و کارت نیلی مکالمه.',
+    aizenSealLabel: 'مُهر فهم — پایان مرحلهٔ D',
+    aizenRulerLabel: 'نوار فاز A→D (نمونه: مرحلهٔ C فعال)',
+    aizenRulerDone: 'A مکالمه',
+    aizenRulerDone2: 'B درس',
+    aizenRulerNow: 'C تمرین',
+    aizenRulerNext: 'D فهم',
+    aizenProgressLabel: 'گام ۳ از ۶ — مرحلهٔ B',
+    aizenProgressValue: '۵۰٪',
+    aizenChipsLabel: 'چیپ‌های قاب‌دار',
+    aizenChipOn: 'روبی: تطبیقی',
+    aizenChip1: 'فاز A · مکالمه',
+    aizenChip2: '۰٫۹× سرعت',
+    aizenDarkCardLabel: 'کارت نیلی مکالمه — زبان صحنهٔ تیره',
+    aizenDarkWho: 'ミキ · میکی',
+    aizenDarkRegister: 'رجیستر: محترمانهٔ پایه',
+    aizenDarkTranslation: '«امروز هوا گرم است. لطفاً آب سرد.» — «کافهٔ صبح»، خط ۳',
+    ctaBtn: 'شروع مکالمه',
   },
 } as const;
 

@@ -1,8 +1,12 @@
 /**
- * دروازهٔ توکن‌ها (TASK-M0-09 · AC-3 + پورت کامل DD-067).
+ * دروازهٔ توکن‌ها (TASK-M0-09 · AC-3 + پورت کامل؛ مقادیر: DD-084/Aizen).
  * ۱) فهرست کامل توکن‌های قفل‌شدهٔ KB باید در tokens.css موجود باشد.
  * ۲) هیچ مقدار خام رنگ (hex) در کامپوننت‌ها مجاز نیست — فقط توکن.
  * ۳) هیچ کلاس left/right فیزیکی Tailwind در کامپوننت‌ها نیست (تکمیل stylelint).
+ * TASK-DSGN-01 (DD-084 — Aizen): مقدارهای قفل، از پالت «کاغذ و مرکب» DD-067 به
+ * پالت Aizen تغییر کردند (ابطال جزئی مقدارهای DD-064/067 با دستور مالک
+ * 2026-11-02)؛ روش قفل عددی و الزام WCAG پابرجاست — این دروازه حالا پالت
+ * Aizen را ۱:۱ قفل می‌کند تا drift نیفتد.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -56,6 +60,19 @@ const REQUIRED_TOKENS = [
   // سایه‌ها
   '--shadow-card',
   '--shadow-raised',
+  // Aizen (DD-084) — نیلی ساختاری + گوینده‌های روشن + آفست سخت
+  '--color-indigo',
+  '--color-indigo-deep',
+  '--color-indigo-mist',
+  '--color-indigo-wash',
+  '--color-speaker-1-l',
+  '--color-speaker-2-l',
+  '--color-speaker-3-l',
+  '--shadow-offset-cta',
+  '--shadow-offset-indigo',
+  '--text-hero-fa',
+  '--text-hero-ja',
+  '--tracking-poster',
   // حرکت — شامل shimmer/spin (بدهی review B-8)
   '--dur-micro',
   '--dur-fast',
@@ -77,19 +94,25 @@ const REQUIRED_TOKENS = [
   '--focus-ring',
 ];
 
-describe('tokens.css — پورت کامل DD-067 (AC-3)', () => {
+describe('tokens.css — پورت کامل (مقادیر Aizen · DD-084/AC-3)', () => {
   it('همهٔ توکن‌های الزامی KB موجودند', () => {
     const missing = REQUIRED_TOKENS.filter((t) => !tokensCss.includes(t));
     expect(missing, `missing tokens: ${missing.join(', ')}`).toEqual([]);
   });
 
-  it('مقادیر قفل‌شدهٔ کلیدی ۱:۱ با DD-067 هستند (نمونه‌گیری نقطه‌ای)', () => {
-    // Values locked by FT-004-1 (KB design-proofs/tokens.css v1.0)
+  it('مقادیر قفل‌شدهٔ کلیدی ۱:۱ با DD-084 (Aizen) هستند (نمونه‌گیری نقطه‌ای)', () => {
+    // Values locked by DD-084 (owner decision 2026-11-02) — Aizen palette
+    // (KB design-lab/visual-direction/02-art-directions.md §مسیر ب).
     const locked = {
-      '--color-paper': '#f7f3e9',
+      '--color-paper': '#faf7ef', // paper-b (indigo 12.61:1)
       '--color-ink': '#2b2a28',
+      '--color-indigo': '#173049', // structural anchor
+      '--color-indigo-deep': '#12253a',
+      '--color-indigo-mist': '#c9d8e4',
       '--color-ai': '#1d4e70',
       '--color-shu': '#c2401c',
+      '--color-shu-deep': '#a33317',
+      '--color-speaker-1-l': '#8fc3e8',
       '--color-warning': '#7a6119', // the REJECTED 8A6D1F must never come back
       '--radius-full': '9999px',
       '--touch-main': '48px',
