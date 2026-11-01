@@ -1,0 +1,149 @@
+'use client';
+
+/**
+ * SPIKE TASK-M0-05 (temporary — removed before final commit).
+ * Runtime benchmark vehicle for React Compiler on/off comparison.
+ *
+ * Protocol (identical source for both builds — only next.config flips):
+ *  - `VocabListNoMemo`    : no manual memoization → compiler candidate.
+ *  - `VocabListManualMemo`: hand-written useMemo (reference for "good manual code").
+ *  - Driver: createRoot on a detached, display:none host; N forced synchronous
+ *    re-renders of the parent frame with UNCHANGED child props (the exact
+ *    scenario memoization targets). display:none ⇒ measured work = React
+ *    reconciliation + DOM mutation only (no layout/paint) — documented in report.
+ * Results → window.__BENCH__ (JSON).
+ */
+
+import React, { useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { flushSync } from 'react-dom';
+
+type VocabItem = { id: number; surface: string; reading: string; meaning: string };
+type ListComponent = React.ComponentType<{ prefix: string }>;
+
+const N_ITEMS = 200;
+const WARMUP = 200;
+const N_RENDERS = 1000;
+const N_RUNS = 5;
+
+const VOCAB: VocabItem[] = Array.from({ length: N_ITEMS }, (_, i) => ({
+  id: i + 1,
+  surface: `日本語${i}`,
+  reading: `にほんご${i}`,
+  meaning: `واژهٔ ${i} از واژه‌نامهٔ آزمون`,
+}));
+
+function decorate(items: VocabItem[], prefix: string): string[] {
+  return items.map((it) => `${prefix}${it.id}: ${it.surface}（${it.reading}） — ${it.meaning}`);
+}
+
+/** Variant B — no manual memoization. */
+function VocabListNoMemo({ prefix }: { prefix: string }) {
+  const lines = decorate(VOCAB, prefix);
+  return (
+    <ul>
+      {lines.map((l) => (
+        <li key={l}>{l}</li>
+      ))}
+    </ul>
+  );
+}
+
+/** Variant A — hand-written memoization. */
+function VocabListManualMemo({ prefix }: { prefix: string }) {
+  const lines = React.useMemo(() => decorate(VOCAB, prefix), [prefix]);
+  const list = React.useMemo(
+    () => (
+      <ul>
+        {lines.map((l) => (
+          <li key={l}>{l}</li>
+        ))}
+      </ul>
+    ),
+    [lines],
+  );
+  return list;
+}
+
+function benchOne(Component: ListComponent, nRenders: number): number {
+  const host = document.createElement('div');
+  host.style.display = 'none';
+  document.body.appendChild(host);
+  const root = createRoot(host);
+  const Frame = () => (
+    <section>
+      <Component prefix="» " />
+    </section>
+  );
+  flushSync(() => {
+    root.render(<Frame />);
+  });
+  for (let i = 0; i < WARMUP; i++) {
+    flushSync(() => {
+      root.render(<Frame />);
+    });
+  }
+  const t0 = performance.now();
+  for (let i = 0; i < nRenders; i++) {
+    flushSync(() => {
+      root.render(<Frame />);
+    });
+  }
+  const dt = performance.now() - t0;
+  root.unmount();
+  host.remove();
+  return dt;
+}
+
+function median(xs: number[]): number {
+  const s = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  const hi = s[m] ?? 0;
+  const lo = s[m - 1] ?? hi;
+  return Math.round((s.length % 2 ? hi : (hi + lo) / 2) * 100) / 100;
+}
+
+function runBench(): Record<string, unknown> {
+  const noMemo: number[] = [];
+  const manual: number[] = [];
+  for (let r = 0; r < N_RUNS; r++) {
+    noMemo.push(benchOne(VocabListNoMemo, N_RENDERS));
+    manual.push(benchOne(VocabListManualMemo, N_RENDERS));
+  }
+  return {
+    items: N_ITEMS,
+    warmup: WARMUP,
+    rendersPerRun: N_RENDERS,
+    runs: N_RUNS,
+    noMemoMs: noMemo.map((x) => Math.round(x * 100) / 100),
+    manualMemoMs: manual.map((x) => Math.round(x * 100) / 100),
+    noMemoMedianMs: median(noMemo),
+    manualMemoMedianMs: median(manual),
+    ua: navigator.userAgent,
+  };
+}
+
+export default function SpikeReactCompilerPage() {
+  const [result, setResult] = useState('در حال اجرا…');
+  React.useEffect(() => {
+    const id = window.setTimeout(() => {
+      let out: Record<string, unknown>;
+      try {
+        out = runBench();
+      } catch (e) {
+        out = { error: String(e) };
+      }
+      (window as unknown as { __BENCH__: unknown }).__BENCH__ = out;
+      setResult(JSON.stringify(out, null, 2));
+    }, 50);
+    return () => window.clearTimeout(id);
+  }, []);
+  return (
+    <main style={{ fontFamily: 'sans-serif', padding: '2rem', direction: 'rtl' }}>
+      <h1>Spike M0-05 — React Compiler bench</h1>
+      <pre id="bench-result" style={{ whiteSpace: 'pre-wrap' }}>
+        {result}
+      </pre>
+    </main>
+  );
+}

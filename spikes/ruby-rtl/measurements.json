@@ -1,0 +1,137 @@
+{
+  "s1": {
+    "rtAboveBase": true,
+    "rtTopDelta": 12,
+    "rtHeight": 18,
+    "baseHeight": 26,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s2a": {
+    "rtAboveBase": true,
+    "rtTopDelta": 11,
+    "rtHeight": 17,
+    "baseHeight": 25,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s3bdi": {
+    "rtAboveBase": true,
+    "rtTopDelta": 12,
+    "rtHeight": 18,
+    "baseHeight": 26,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s3span": {
+    "rtAboveBase": true,
+    "rtTopDelta": 11,
+    "rtHeight": 17,
+    "baseHeight": 25,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s4": {
+    "rtAboveBase": true,
+    "rtTopDelta": 11,
+    "rtHeight": 17,
+    "baseHeight": 25,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s6a": {
+    "rtAboveBase": true,
+    "rtTopDelta": 11,
+    "rtHeight": 17,
+    "baseHeight": 25,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s6b": {
+    "rtAboveBase": true,
+    "rtTopDelta": 11,
+    "rtHeight": 17,
+    "baseHeight": 25,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s7under": {
+    "rtAboveBase": false,
+    "rtTopDelta": -20,
+    "rtHeight": 17,
+    "baseHeight": 25,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s8pattern": {
+    "rtAboveBase": true,
+    "rtTopDelta": 11,
+    "rtHeight": 17,
+    "baseHeight": 25,
+    "rtCenterOverBase": 0,
+    "rtWiderThanBase": 0,
+    "rubyLineHeightRatio": 1
+  },
+  "s1Baseline": {
+    "faTop": 154.1,
+    "faBottom": 180.1,
+    "rubyTop": 154.1,
+    "rubyBottom": 180.1,
+    "bottomDelta": 0,
+    "rubyBoxGrowsUpward": false
+  },
+  "s5lh14": {
+    "rtCount": 5,
+    "neighborOverlaps": 7,
+    "detail": [
+      "とうきょう×متن فا",
+      "にほんご×متن فا",
+      "べんきょう×متن فا",
+      "まいにち×و باز ",
+      "まいにち×پایان ",
+      "れんしゅう×و باز ",
+      "れんしゅう×پایان "
+    ]
+  },
+  "s5lh20": {
+    "rtCount": 5,
+    "neighborOverlaps": 7,
+    "detail": [
+      "とうきょう×متن فا",
+      "にほんご×متن فا",
+      "べんきょう×متن فا",
+      "まいにち×و باز ",
+      "まいにち×پایان ",
+      "れんしゅう×و باز ",
+      "れんしゅう×پایان "
+    ]
+  },
+  "selection": {
+    "includesFurigana": true,
+    "includesBase": true,
+    "sampleOrder": "جملهٔ امروز: 今日きょうは良いい天気です。私わたしは日本語にほんごを勉強べんきょうします。 این جمله را بلند بخوانید."
+  },
+  "rp": {
+    "display": "none",
+    "contentHidden": true
+  },
+  "computedDefaults": {
+    "rubyPosition": "over",
+    "rubyAlign": "space-around",
+    "writingMode": "horizontal-tb",
+    "direction": "rtl",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+  },
+  "s8island": {
+    "direction": "ltr",
+    "unicodeBidi": "isolate"
+  }
+}
