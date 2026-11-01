@@ -5,7 +5,7 @@
 ## System Context (C4-L1)
 
 ```
-[Persian-speaking Learner] ──HTTPS──> [HANASO Web App (preview.hanaso.ir / hanaso.ir)]
+[Persian-speaking Learner] ──HTTPS──> [HANASO Web App (Preview زنده: learn.kotodama.ir؛ انتشار آتی: hanaso.ir)]
 [Owner/Admin]            ──HTTPS──>        │ (role-gated /admin/*, MFA)
                                             ├──> [PostgreSQL 18] (content/app/analytics schemas)
                                             ├──> [pg-boss queues] (FSRS optimizer · daily stats · content publish · audio regen)

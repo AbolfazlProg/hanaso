@@ -1,0 +1,36 @@
+# HANASO preview — learn.kotodama.ir — VPS-specific compose.
+# This VPS (kotodama shared host) already terminates TLS on HAProxy (*:443, ALPN)
+# -> nginx (:81/:82 proxy_protocol) -> loopback upstream. The repo's caddy sidecar
+# (infra/docker/docker-compose.yml) is for a DEDICATED host owning 80/443 and is NOT
+# used here. Only the web service runs, loopback-only (KB ADR-010 isolation rules:
+# dedicated project name, network, stateless web).
+# Usage:  docker compose -f docker-compose.yml --env-file .env up -d
+name: hanaso
+
+services:
+  web:
+    # Immutable SHA tag from GHCR (CI docker job) — never "latest" (KB policy).
+    image: ${HANASO_WEB_IMAGE:?set HANASO_WEB_IMAGE=ghcr.io/abolfazlprog/hanaso:<SHA> in .env}
+    container_name: hanaso-web
+    restart: unless-stopped
+    env_file: .env
+    networks: [hanaso-net]
+    expose: ['3000']
+    # Loopback-only publish so host-side nginx/health gates reach the app
+    # WITHOUT exposing it publicly (HAProxy/nginx remain the only public entry).
+    ports: ['127.0.0.1:3100:3000']
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/api/health']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+networks:
+  hanaso-net:
+    name: hanaso-net
