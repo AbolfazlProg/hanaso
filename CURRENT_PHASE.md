@@ -1,6 +1,6 @@
 # فاز جاری (CURRENT_PHASE) — HANASO
 
-**فاز: M0 — Bootstrap & Foundation** · به‌روزرسانی: 2026-11-01 · مسیر canonical: `ROADMAP.md` + KB `implementation-roadmap.md`
+**فاز: M0 → گذر به توسعهٔ قابلیت‌ها (B-0 کامل + PoC/Slice ادغام‌شده)** · به‌روزرسانی: 2026-11-01 (سشن دوم) · مسیر canonical: `ROADMAP.md` + KB `implementation-roadmap.md`
 
 ## کجا ایستاده‌ایم
 
@@ -11,15 +11,18 @@
 - ✅ حاکمیت چند-Agentی: AGENTS.md + مالکیت ماژول‌ها + DoD + قالب‌های ops
 - ✅ گزارش تجمیعی دانش + ADR-000..005 + بازارزیابی Stack (npm registry، ۲۰۲۶-۱۱-۰۱)
 - ✅ Spike TypeScript: **پین 6.0.3** (typescript-eslint رسماً <6.1.0؛ تأیید زنده با شکست PR دیپندابات TS7) — جزئیات در `docs/research/STACK-REVALIDATION-2026-11-01.md`
-- ⬜ Spikeهای M0-05..08 (اولین تسک توسعه — Issue «B-0 Spikes»)
-- ⬜ زیرساخت مشترک UI (M0-09) — پس از اسپایک‌ها
-- ⬜ استقرار Preview روی VPS (M0-10) — **نیازمند دسترسی مالک**
-- ⬜ درس «Hello» (M0-11) — خروجی فاز
+- ✅ **Spikeهای M0-05..08 اجرا و ادغام شدند** (PR #62 → `9ed1ec8`): React Compiler (~۲۴× رندر — فعال‌سازی در M0-09) · RTL Radix (DirectionProvider اجباری؛ بدون flyout موبایل) · فونت‌ها (self-host کامل — اولیه ~۵۸۰KB) · Ruby در RTL (جزیرهٔ LTR + lh≥2 + الگوی FuriganaText)
+- ✅ **TASK-DLG-POC-01 تحویل شد** (در PR #64): موتور پخش + قرارداد ADR-018 + صوت + FSRS درون‌بافت + ۴ صفحهٔ /poc — T1/T3/T4/T6/T7 سبز در سطح موتور
+- ✅ **اولین Vertical Slice تحویل شد** (PR #64 → `3b652ae`): چرخهٔ A→D کامل + Drizzle دو-شیمایی + نمره‌گذاری سروری مرحلهٔ D + ۹۶/۹۶ تست
+- ✅ تصمیم‌های مالک ۲۰۲۶-۱۱-۰۱ در KB ثبت شد (DD-080..083 + ADR-018 + بستن ۵ OQ) + Milestone شخصیت‌ها (#39..52) و صوت (#53..61) در GitHub
+- ⬜ زیرساخت مشترک UI (M0-09) — ورودی‌هایش از اسپایک‌ها آماده است
+- ⬜ استقرار Preview روی VPS (M0-10) — **نیازمند دسترسی مالک (BLOCKER-F02/F04)**
+- ⬜ درس «Hello» (M0-11) — خروجی فاز M0
 
 ## گیت‌های عبور از فاز (۹بندی — متن کامل: KB `task-lifecycle.md` §۸)
 
-تسک‌های ضروری Closed · خودراستی‌آزمایی ثبت‌شده · بازبینی مستقل · S0..S2 حل‌شده · یکپارچگی سبز · مستندات به‌روز · Traceability · هم‌گاهی VPS↔GitHub · شرایط فاز بعد (گیت مالک OQ-013 برای شروع قابلیت‌های M1).
+تسک‌های ضروری Closed · خودراستی‌آزمایی ثبت‌شده · بازبینی مستقل · S0..S2 حل‌شده · یکپارچگی سبز · مستندات به‌روز · Traceability · هم‌گاهی VPS↔GitHub · شرایط فاز بعد — **گیت OQ-013 توسط مالک باز شد (DD-080، ۲۰۲۶-۱۱-۰۱)**؛ توسعهٔ قابلیت‌های M1 مجاز است.
 
 ## قدم بعدی (واحد)
 
-**اجرای Spikeهای M0-05..08** (React Compiler · RTL-audit شادکن · فونت از ایران · ruby در RTL) — مشخصات کامل در Issue متناظر و `ops/NEXT_ACTIONS.md`.
+**TASK-M0-09 (زیرساخت مشترک UI)** — ورودی‌هایش کامل است: tokens (DD-067) + الگوی FuriganaText (Spike M0-08) + DirectionProvider RTL (Spike M0-06) + فونت‌های self-host (Spike M0-07) + فعال‌سازی React Compiler (Spike M0-05). هم‌زمان: تکمیل بدهی‌های S3 ثبت‌شده و اتصال DB واقعی پس از دسترسی VPS.
