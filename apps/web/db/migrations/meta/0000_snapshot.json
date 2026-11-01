@@ -134,12 +134,8 @@
           "tableFrom": "audio_assets",
           "tableTo": "dialogue_lines",
           "schemaTo": "content",
-          "columnsFrom": [
-            "line_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["line_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -148,12 +144,8 @@
           "tableFrom": "audio_assets",
           "tableTo": "characters",
           "schemaTo": "content",
-          "columnsFrom": [
-            "character_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["character_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -347,12 +339,8 @@
           "tableFrom": "comprehension_banks",
           "tableTo": "dialogues",
           "schemaTo": "content",
-          "columnsFrom": [
-            "dialogue_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dialogue_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -459,12 +447,8 @@
           "tableFrom": "dialogue_lines",
           "tableTo": "dialogues",
           "schemaTo": "content",
-          "columnsFrom": [
-            "dialogue_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dialogue_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -473,12 +457,8 @@
           "tableFrom": "dialogue_lines",
           "tableTo": "characters",
           "schemaTo": "content",
-          "columnsFrom": [
-            "speaker_character_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["speaker_character_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -561,12 +541,8 @@
           "tableFrom": "dialogue_scenes",
           "tableTo": "dialogues",
           "schemaTo": "content",
-          "columnsFrom": [
-            "dialogue_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dialogue_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -575,12 +551,8 @@
           "tableFrom": "dialogue_scenes",
           "tableTo": "characters",
           "schemaTo": "content",
-          "columnsFrom": [
-            "speaker_character_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["speaker_character_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -949,12 +921,8 @@
           "tableFrom": "lesson_items",
           "tableTo": "lessons",
           "schemaTo": "content",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -963,12 +931,8 @@
           "tableFrom": "lesson_items",
           "tableTo": "learning_objectives",
           "schemaTo": "content",
-          "columnsFrom": [
-            "objective_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["objective_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1086,12 +1050,8 @@
           "tableFrom": "lesson_sections",
           "tableTo": "lessons",
           "schemaTo": "content",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1100,12 +1060,8 @@
           "tableFrom": "lesson_sections",
           "tableTo": "learning_objectives",
           "schemaTo": "content",
-          "columnsFrom": [
-            "objective_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["objective_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1238,12 +1194,8 @@
           "tableFrom": "lessons",
           "tableTo": "dialogues",
           "schemaTo": "content",
-          "columnsFrom": [
-            "dialogue_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dialogue_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1470,12 +1422,8 @@
           "tableFrom": "dialogue_mastery_attempts",
           "tableTo": "dialogues",
           "schemaTo": "content",
-          "columnsFrom": [
-            "dialogue_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dialogue_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1571,12 +1519,8 @@
           "tableFrom": "lesson_progress",
           "tableTo": "lessons",
           "schemaTo": "content",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1585,12 +1529,8 @@
           "tableFrom": "lesson_progress",
           "tableTo": "dialogues",
           "schemaTo": "content",
-          "columnsFrom": [
-            "dialogue_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dialogue_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1598,10 +1538,7 @@
       "compositePrimaryKeys": {
         "lesson_progress_user_id_lesson_id_pk": {
           "name": "lesson_progress_user_id_lesson_id_pk",
-          "columns": [
-            "user_id",
-            "lesson_id"
-          ]
+          "columns": ["user_id", "lesson_id"]
         }
       },
       "uniqueConstraints": {},

@@ -9,12 +9,7 @@
  */
 import type { DialogueToken } from '@/modules/dialogue';
 
-export const EXERCISE_KINDS = [
-  'speaker-identify',
-  'order-reconstruct',
-  'listen-no-text',
-  'fill-token',
-] as const;
+export const EXERCISE_KINDS = ['speaker-identify', 'order-reconstruct', 'listen-no-text', 'fill-token'] as const;
 export type ExerciseKind = (typeof EXERCISE_KINDS)[number];
 
 /** A Persian-labelled choice option (character names / translations). */
@@ -72,11 +67,7 @@ export interface FillTokenItem {
   correctOptionId: string;
 }
 
-export type ExerciseItem =
-  | SpeakerIdentifyItem
-  | OrderReconstructItem
-  | ListenNoTextItem
-  | FillTokenItem;
+export type ExerciseItem = SpeakerIdentifyItem | OrderReconstructItem | ListenNoTextItem | FillTokenItem;
 
 /**
  * One practice question. v1 generators emit exactly ONE item per exercise (the

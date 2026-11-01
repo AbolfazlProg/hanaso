@@ -32,10 +32,16 @@ describe('progress machine — the full cycle A→D→understood', () => {
     expect(d.stage).toBe('D_mastery');
     expect(d.status).toBe('active'); // reaching D is NOT understanding (DD-048)
 
-    const done = applyProgressEvent(d, DLG, USER, {
-      type: 'mastery_passed',
-      attemptId: 'att-1',
-    }, { attemptOutcome: 'passed' });
+    const done = applyProgressEvent(
+      d,
+      DLG,
+      USER,
+      {
+        type: 'mastery_passed',
+        attemptId: 'att-1',
+      },
+      { attemptOutcome: 'passed' },
+    );
     expect(done.stage).toBe('D_mastery');
     expect(done.status).toBe('understood'); // «فهمیدم» — never "completed"
     expect(done.masteryAttemptId).toBe('att-1');
@@ -47,12 +53,9 @@ describe('progress machine — the full cycle A→D→understood', () => {
 
   it('the mastery gate: only outcome=passed flips D→understood', () => {
     const d = applyProgressEvent(
-      applyProgressEvent(
-        applyProgressEvent(start(), DLG, USER, { type: 'dialogue_watched' }),
-        DLG,
-        USER,
-        { type: 'lesson_studied' },
-      ),
+      applyProgressEvent(applyProgressEvent(start(), DLG, USER, { type: 'dialogue_watched' }), DLG, USER, {
+        type: 'lesson_studied',
+      }),
       DLG,
       USER,
       { type: 'practice_done' },
@@ -122,9 +125,7 @@ describe('progress machine — illegal transitions (typed errors)', () => {
 
   it('rejects a record that belongs to another user/dialogue (defensive)', () => {
     const a = start();
-    expect(() => applyProgressEvent(a, DLG, 'user-2', { type: 'dialogue_watched' })).toThrow(
-      ProgressTransitionError,
-    );
+    expect(() => applyProgressEvent(a, DLG, 'user-2', { type: 'dialogue_watched' })).toThrow(ProgressTransitionError);
     expect(() => applyProgressEvent(a, 'dlg-other', USER, { type: 'dialogue_watched' })).toThrow(
       ProgressTransitionError,
     );
@@ -140,36 +141,27 @@ describe('progress machine — idempotency (safe re-fires from the UI)', () => {
   });
 
   it('re-completing an already-passed milestone is a no-op (user revisits pages)', () => {
-    const c = applyProgressEvent(
-      applyProgressEvent(start(), DLG, USER, { type: 'dialogue_watched' }),
-      DLG,
-      USER,
-      { type: 'lesson_studied' },
-    );
+    const c = applyProgressEvent(applyProgressEvent(start(), DLG, USER, { type: 'dialogue_watched' }), DLG, USER, {
+      type: 'lesson_studied',
+    });
     const rewired = applyProgressEvent(c, DLG, USER, { type: 'dialogue_watched' });
     expect(rewired.stage).toBe('C_practice');
     expect(rewired.updatedAt).toBe(c.updatedAt);
   });
 
   it('unit_started on an existing record is an idempotent ping', () => {
-    const c = applyProgressEvent(
-      applyProgressEvent(start(), DLG, USER, { type: 'dialogue_watched' }),
-      DLG,
-      USER,
-      { type: 'lesson_studied' },
-    );
+    const c = applyProgressEvent(applyProgressEvent(start(), DLG, USER, { type: 'dialogue_watched' }), DLG, USER, {
+      type: 'lesson_studied',
+    });
     expect(applyProgressEvent(c, DLG, USER, { type: 'unit_started' })).toBe(c);
   });
 
   it('mastery_passed on an already-understood unit is a no-op', () => {
     const done = applyProgressEvent(
       applyProgressEvent(
-        applyProgressEvent(
-          applyProgressEvent(start(), DLG, USER, { type: 'dialogue_watched' }),
-          DLG,
-          USER,
-          { type: 'lesson_studied' },
-        ),
+        applyProgressEvent(applyProgressEvent(start(), DLG, USER, { type: 'dialogue_watched' }), DLG, USER, {
+          type: 'lesson_studied',
+        }),
         DLG,
         USER,
         { type: 'practice_done' },
@@ -179,9 +171,15 @@ describe('progress machine — idempotency (safe re-fires from the UI)', () => {
       { type: 'mastery_passed', attemptId: 'att-1' },
       { attemptOutcome: 'passed' },
     );
-    const again = applyProgressEvent(done, DLG, USER, { type: 'mastery_passed', attemptId: 'att-1' }, {
-      attemptOutcome: 'passed',
-    });
+    const again = applyProgressEvent(
+      done,
+      DLG,
+      USER,
+      { type: 'mastery_passed', attemptId: 'att-1' },
+      {
+        attemptOutcome: 'passed',
+      },
+    );
     expect(again).toBe(done);
     // even without re-verifying the attempt (already understood — the gate latched)
     expect(applyProgressEvent(done, DLG, USER, { type: 'mastery_passed', attemptId: 'att-1' })).toBe(done);
@@ -198,9 +196,15 @@ describe('nextRouteForStage — «ادامه از همان مرحله»', () => 
     expect(nextRouteForStage(c)).toEqual({ stage: 'C_practice', route: '/poc/practice' });
     const d = applyProgressEvent(c, DLG, USER, { type: 'practice_done' });
     expect(nextRouteForStage(d)).toEqual({ stage: 'D_mastery', route: '/poc/assessment' });
-    const done = applyProgressEvent(d, DLG, USER, { type: 'mastery_passed', attemptId: 'a' }, {
-      attemptOutcome: 'passed',
-    });
+    const done = applyProgressEvent(
+      d,
+      DLG,
+      USER,
+      { type: 'mastery_passed', attemptId: 'a' },
+      {
+        attemptOutcome: 'passed',
+      },
+    );
     expect(nextRouteForStage(done)).toEqual({ stage: 'D_mastery', route: '/poc/dialogue' }); // revisit
   });
 });

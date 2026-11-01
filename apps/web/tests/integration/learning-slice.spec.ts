@@ -61,9 +61,7 @@ interface ProgressData {
 describe('learning slice — full A→D cycle through the API surface', () => {
   it('runs Dialogue → Learn → Practice → Mastery → understood', async () => {
     // ---- A: nothing yet; starting the unit records stage A
-    const before = await json<ProgressData>(
-      await getProgress(new Request(`${BASE}/progress?dialogueId=${DLG}`)),
-    );
+    const before = await json<ProgressData>(await getProgress(new Request(`${BASE}/progress?dialogueId=${DLG}`)));
     expect(before.progress).toBeNull();
 
     await fire('unit_started', { dialogue_id: DLG });
@@ -73,9 +71,7 @@ describe('learning slice — full A→D cycle through the API surface', () => {
     expect(a.progress!.stage).toBe('A_selfcheck');
 
     // jump attempts are rejected with typed codes (no skipping the cycle)
-    const jump = await postProgress(
-      post(`${BASE}/progress`, { dialogueId: DLG, event: { type: 'lesson_studied' } }),
-    );
+    const jump = await postProgress(post(`${BASE}/progress`, { dialogueId: DLG, event: { type: 'lesson_studied' } }));
     expect(jump.status).toBe(400);
     expect(((await jump.json()) as { error: { code: string } }).error.code).toBe('progress/invalid_transition');
 
@@ -126,11 +122,7 @@ describe('learning slice — full A→D cycle through the API surface', () => {
     const attemptData = await json<{
       attempt: { id: string; outcome: string; attemptNo: number };
       scoring: { outcome: string };
-    }>(
-      await postAttempt(
-        post(`${BASE}/attempts`, { dialogueId: DLG, scores: passedScores, weakPoints: [] }),
-      ),
-    );
+    }>(await postAttempt(post(`${BASE}/attempts`, { dialogueId: DLG, scores: passedScores, weakPoints: [] })));
     expect(attemptData.attempt.outcome).toBe('passed');
     await fire('mastery_passed', { dialogue_id: DLG, attempt_id: attemptData.attempt.id });
 
@@ -149,9 +141,7 @@ describe('learning slice — full A→D cycle through the API surface', () => {
     await fire('unit_understood', { dialogue_id: DLG });
 
     // the unit record survives re-reads (repository round-trip)
-    const reread = await json<ProgressData>(
-      await getProgress(new Request(`${BASE}/progress?dialogueId=${DLG}`)),
-    );
+    const reread = await json<ProgressData>(await getProgress(new Request(`${BASE}/progress?dialogueId=${DLG}`)));
     expect(reread.progress!.status).toBe('understood');
 
     // the whole journey is visible in the event sink (ADR-016 object_verb names)
@@ -221,9 +211,7 @@ describe('learning slice — full A→D cycle through the API surface', () => {
   it('GET /api/progress requires dialogueId and honors userId scoping', async () => {
     const missing = await getProgress(new Request(`${BASE}/progress`));
     expect(missing.status).toBe(400);
-    expect(((await missing.json()) as { error: { code: string } }).error.code).toBe(
-      'progress/missing_dialogue_id',
-    );
+    expect(((await missing.json()) as { error: { code: string } }).error.code).toBe('progress/missing_dialogue_id');
 
     // userId scoping: the remediate user's record is D/active (gate never opened),
     // while a third user sees null

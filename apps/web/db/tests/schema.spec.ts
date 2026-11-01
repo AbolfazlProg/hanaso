@@ -22,9 +22,7 @@ function migrationSql(): string {
 }
 
 function tableBody(sql: string, schema: string, table: string): string {
-  const re = new RegExp(
-    `CREATE TABLE "${schema}"."${table}" \\(([\\s\\S]*?)\\n\\);`,
-  );
+  const re = new RegExp(`CREATE TABLE "${schema}"."${table}" \\(([\\s\\S]*?)\\n\\);`);
   const match = sql.match(re);
   expect(match, `table ${schema}.${table} must be created`).toBeTruthy();
   return match![1] as string;

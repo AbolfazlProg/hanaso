@@ -82,10 +82,7 @@ export async function POST(req: Request) {
     return NextResponse.json(ok({ progress: saved, event }), { status: 201 });
   } catch (err) {
     if (err instanceof ProgressTransitionError) {
-      return NextResponse.json(
-        fail({ code: err.code, message: err.message, details: err.details }),
-        { status: 400 },
-      );
+      return NextResponse.json(fail({ code: err.code, message: err.message, details: err.details }), { status: 400 });
     }
     throw err;
   }

@@ -13,7 +13,13 @@ import type { Exercise, ExerciseAnswer } from '@/modules/practice';
 const dialogue = loadDialogue('cafe-morning-01');
 const characters: CharacterRef[] = dialogue.characterIds.map((id) => {
   const { manifest, voiceId } = resolveSpeaker(id);
-  return { id: manifest.id, nameJa: manifest.nameJa, nameFa: manifest.nameFa, colorToken: manifest.colorToken, voiceId };
+  return {
+    id: manifest.id,
+    nameJa: manifest.nameJa,
+    nameFa: manifest.nameFa,
+    colorToken: manifest.colorToken,
+    voiceId,
+  };
 });
 
 // deterministic session built via the generator itself (integration of gen→check)

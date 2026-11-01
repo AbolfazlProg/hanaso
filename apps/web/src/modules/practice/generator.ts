@@ -10,7 +10,16 @@
  * ≤3 items (here: strict round-robin), everything recalled from the dialogue itself.
  */
 import type { CharacterRef, Dialogue, DialogueLine } from '@/modules/dialogue';
-import { EXERCISE_KINDS, type Exercise, type ExerciseOption, type FillTokenItem, type ListenNoTextItem, type OrderReconstructItem, type SpeakerIdentifyItem, type TokenOption } from './types';
+import {
+  EXERCISE_KINDS,
+  type Exercise,
+  type ExerciseOption,
+  type FillTokenItem,
+  type ListenNoTextItem,
+  type OrderReconstructItem,
+  type SpeakerIdentifyItem,
+  type TokenOption,
+} from './types';
 
 /* ------------------------------------------------------------ deterministic randomness */
 
@@ -117,11 +126,7 @@ function particleLines(dialogue: Dialogue): { line: DialogueLine; blankIndex: nu
 
 /* ------------------------------------------------------------------ exercise builders */
 
-function buildSpeakerIdentify(
-  line: DialogueLine,
-  characters: CharacterRef[],
-  rand: () => number,
-): Exercise {
+function buildSpeakerIdentify(line: DialogueLine, characters: CharacterRef[], rand: () => number): Exercise {
   const options: ExerciseOption[] = seededShuffle(
     characters.map((c) => ({ id: c.id, labelFa: c.nameFa })),
     rand,
@@ -162,21 +167,13 @@ function buildOrderReconstruct(window: DialogueLine[], rand: () => number): Exer
   };
 }
 
-function buildListenNoText(
-  line: DialogueLine,
-  dialogue: Dialogue,
-  lineIndex: number,
-  rand: () => number,
-): Exercise {
+function buildListenNoText(line: DialogueLine, dialogue: Dialogue, lineIndex: number, rand: () => number): Exercise {
   const n = dialogue.lines.length;
   const distractors = faDistractorIndices(lineIndex, n)
     .map((i) => dialogue.lines[i]!)
     .filter((l) => l.id !== line.id);
   const options: ExerciseOption[] = seededShuffle(
-    [
-      { id: line.id, labelFa: line.fa },
-      ...distractors.map((l) => ({ id: l.id, labelFa: l.fa })),
-    ],
+    [{ id: line.id, labelFa: line.fa }, ...distractors.map((l) => ({ id: l.id, labelFa: l.fa }))],
     rand,
   );
   const item: ListenNoTextItem = {
@@ -195,12 +192,7 @@ function buildListenNoText(
   };
 }
 
-function buildFillToken(
-  line: DialogueLine,
-  blankIndex: number,
-  dialogue: Dialogue,
-  rand: () => number,
-): Exercise {
+function buildFillToken(line: DialogueLine, blankIndex: number, dialogue: Dialogue, rand: () => number): Exercise {
   const correct = line.tokens[blankIndex]!;
   // distractors: other particle surfaces from the same dialogue, first-appearance order
   const surfaces: string[] = [];
