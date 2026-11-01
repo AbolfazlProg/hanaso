@@ -1,6 +1,6 @@
 # فاز جاری (CURRENT_PHASE) — HANASO
 
-**فاز: M0 → گذر به توسعهٔ قابلیت‌ها (B-0 کامل + PoC/Slice ادغام‌شده + نخستین استقرار زنده)** · به‌روزرسانی: 2026-11-01 (سشن سوم) · مسیر canonical: `ROADMAP.md` + KB `implementation-roadmap.md`
+**فاز: M0 → گذر به توسعهٔ قابلیت‌ها (B-0 کامل + زیرساخت UI کامل + PoC/Slice ادغام‌شده + نخستین استقرار زنده)** · به‌روزرسانی: 2026-11-01 (سشن چهارم) · مسیر canonical: `ROADMAP.md` + KB `implementation-roadmap.md`
 
 ## کجا ایستاده‌ایم
 
@@ -16,7 +16,7 @@
 - ✅ **اولین Vertical Slice تحویل شد** (PR #64 → `3b652ae`): چرخهٔ A→D کامل + Drizzle دو-شیمایی + نمره‌گذاری سروری مرحلهٔ D + ۹۶/۹۶ تست
 - ✅ تصمیم‌های مالک ۲۰۲۶-۱۱-۰۱ در KB ثبت شد (DD-080..083 + ADR-018 + بستن ۵ OQ) + Milestone شخصیت‌ها (#39..52) و صوت (#53..61) در GitHub
 - ✅ **نخستین استقرار زنده (سشن سوم، RUN-20261101-03):** Preview روی **https://learn.kotodama.ir** — image `ea701342` از GHCR، Docker ایزوله پشت HAProxy+nginx میزبان مشترک، پروژهٔ قبلی همان آدرس (genesis-learn) به دستور مالک بازنشسته شد، smoke رسمی ALL GREEN — رویه/کپی دقیق: `infra/deploy/learn-kotodama/`
-- ⬜ زیرساخت مشترک UI (M0-09) — ورودی‌هایش از اسپایک‌ها آماده است
+- ✅ **TASK-M0-09 زیرساخت مشترک UI اجرا شد (سشن چهارم، RUN-20261101-04):** پورت کامل توکن‌های DD-067 + فونت سلف‌هاست (۷ فایل woff2/OFL، ۱٫۷۳MB) + FuriganaText (جزیرهٔ LTR + group-ruby) + DirectionProvider + React Compiler روشن + ۹ کامپوننت shadcn با RTL-audit + الگوهای دامنه + fa.ts + /poc/ui · ۹ گیت ALL GREEN · ۱۲۴/۱۲۴ تست · آزمون واقعی مرورگر: Chromium ✓ Firefox ✓ (WebKit بلاک محیطی → FT-002)
 - ⬜ ادامهٔ M0-10: لایهٔ DB (Postgres/PgBouncer/Worker + بکاپ) — VPS آماده است
 - ⬜ درس «Hello» (M0-11) — خروجی فاز M0
 
@@ -26,4 +26,4 @@
 
 ## قدم بعدی (واحد)
 
-**TASK-M0-09 (زیرساخت مشترک UI)** — ورودی‌هایش کامل است: tokens (DD-067) + الگوی FuriganaText (Spike M0-08) + DirectionProvider RTL (Spike M0-06) + فونت‌های self-host (Spike M0-07) + فعال‌سازی React Compiler (Spike M0-05). هم‌زمان: اتصال DB واقعی (ادامهٔ M0-10 — VPS در دسترس است) و تکمیل بدهی‌های S3 ثبت‌شده.
+**ادامهٔ M0-10 (لایهٔ DB: Postgres/PgBouncer/Worker + بکاپ روی learn.kotodama.ir)** — VPS در دسترس است و ظرفیت کافی دارد؛ اتصال DB واقعی، پیش‌نیاز M1 (Identity) و تعویض repositoryهای درون-حافظه است. هم‌زمان: بدهی‌های S3 (#66..69) و مرور مالک: انتخاب مسیر هنری (TASK-DESIGN-04: Sumi/Aizen) + دیدن Preview.

@@ -2,7 +2,8 @@
 @import './tokens.css';
 
 /* HANASO base — Persian-first, RTL-safe, WCAG 2.2 AA.
-   Japanese text always lives inside explicit `lang="ja" dir="ltr"` blocks. */
+   Japanese text always lives inside explicit `lang="ja" dir="ltr"` blocks.
+   Tokens only — no raw hex/px/ms in components (KB ADR-004 L6). */
 
 html {
   color-scheme: light; /* v1 is Light-only (DD-023) */
@@ -12,20 +13,95 @@ body {
   background-color: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-fa);
-  line-height: 1.8; /* ALREQ */
-  min-height: 100dvh;
+  font-size: var(--text-body);
+  line-height: var(--leading-fa); /* ALREQ */
+  min-block-size: 100dvh;
 }
 
-/* Japanese blocks (JaBlock pattern seed — full component in TASK-M0-09) */
+/* -- لایه‌بندی z-index — توکن‌محور (بررسی r1-F1: namespace ای برای z در Tailwind 4
+   نیست؛ کلاس‌های z-modal/z-drawer/... بدون این @utility ها CSS تولید نمی‌کردند) -- */
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-drawer {
+  z-index: var(--z-drawer);
+}
+@utility z-fab {
+  z-index: var(--z-fab);
+}
+@utility z-toast {
+  z-index: var(--z-toast);
+}
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+
+/* -- انیمیشن‌های پایه (بررسی r3-F2: keyframes تعریف‌نشده = انیمیشن مرده) -------
+   همه با توکن dur/ease؛ زیر prefers-reduced-motion مقدارها صفرند → بی‌حرکت. */
+@keyframes hanaso-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes hanaso-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* -- JaBlock — جزیرهٔ LTR برای هر متن ژاپنی (KB components.css) ------------- */
 .ja-block {
   direction: ltr;
-  font-family: var(--font-ja);
-  line-height: 1.9; /* JLREQ */
-  text-align: left;
+  font-family: var(--font-ja-ui);
+  line-height: var(--leading-ja); /* JLREQ */
+  text-align: start; /* داخل جزیرهٔ ltr → همان left؛ logical برای دروازهٔ use-logical */
   unicode-bidi: isolate;
 }
+.ja-block.serif {
+  font-family: var(--font-ja-serif);
+}
+.ja-block.ud {
+  font-family: var(--font-ja-ud);
+}
 
-/* Focus visibility (WCAG 2.4.7 / 2.5.8) */
+/* -- FuriganaText (spike M0-08 §6-2 — verbatim contract) ------------------- */
+.fg {
+  /* ریشهٔ FuriganaText — جزیرهٔ LTR اجباری (شرط صحت، نه سلیقه) */
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: var(--font-ja-ui);
+}
+.fg.serif {
+  font-family: var(--font-ja-serif);
+}
+.fg ruby {
+  ruby-position: over;
+  ruby-align: center; /* group-ruby only; Chrome 128+; safe default otherwise */
+}
+.fg[data-position='under'] ruby {
+  ruby-position: under;
+}
+.fg rt {
+  font-size: var(--furigana-size); /* 50% + 12px floor (KB token) */
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1; /* 17px box → ~12px; less bleed into previous line */
+  color: var(--color-ink-soft);
+  user-select: none; /* clean copy — text output must come from `base`s */
+}
+/* قاعدهٔ ≥۲ برای بلوک روبی‌دار (spike M0-08 §۴: 1.4 = ink collision, 2.0 clean) */
+.fg-block,
+:has(> .fg) {
+  line-height: 2;
+}
+
+/* -- Focus visibility (WCAG 2.4.7 / 2.5.8) --------------------------------- */
 :focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;

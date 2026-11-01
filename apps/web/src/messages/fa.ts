@@ -1,0 +1,72 @@
+/**
+ * دیکشنری تایپ‌دار فارسی (ADR-013 KB — رشتهٔ UI هاردکد در کامپوننت ممنوع).
+ * استثنا: محتوای ژاپنی «داده» است نه رشتهٔ UI و از مسیر محتوا می‌آید.
+ * این فایل نقطهٔ هماهنگی است — تغییر فقط ترتیبی با اعلام در AGENT_PROGRESS.md.
+ */
+export const fa = {
+  common: {
+    save: 'ذخیره',
+    cancel: 'انصراف',
+    close: 'بستن',
+    confirm: 'تأیید',
+    retry: 'تلاش دوباره',
+    loading: 'در حال بارگذاری…',
+    openMenu: 'باز کردن منو',
+  },
+  audio: {
+    playSentence: 'پخش صدای این جمله',
+    replay: 'پخش دوباره',
+    stop: 'توقف',
+  },
+  sentence: {
+    revealTranslation: 'نمایش ترجمه',
+    hideTranslation: 'پنهان کردن ترجمه',
+  },
+  uiKit: {
+    title: 'نمونهٔ رندر دوزبانه — HANASO',
+    subtitle: 'برگهٔ مرجع رندر فارسی + ژاپنی + روبی (TASK-M0-09 · AC-2)',
+    mixedSection: 'پاراگراف ترکیبی',
+    rubySection: 'روبی (FuriganaText)',
+    cardSection: 'کارت جمله و دکمهٔ صوت',
+    componentsSection: 'کامپوننت‌های رابط (RTL)',
+    mixedIntro: 'مقدمهٔ فارسی:',
+    mixedMeans: 'یعنی «صبح بخیر» —',
+    mixedAfter: 'و ادامهٔ فارسی پس از جزیره — ترتیب قطعه‌ها باید حفظ شود.',
+    serifNote: 'نسخهٔ سرِیف (متن بلند):',
+    primaryBtn: 'دکمهٔ اصلی',
+    secondaryBtn: 'ثانویه',
+    ghostBtn: 'شفاف',
+    loadingBtn: 'در حال انجام',
+    disabledBtn: 'غیرفعال',
+    mainActionBtn: 'اکشن اصلی لمسی',
+    hoverMe: 'هاور کن',
+    tooltipDemo: 'تولتیپ فارسی با عرض محدود',
+    modalBtn: 'مودال',
+    modalTitle: 'عنوان مودال',
+    modalBody: 'توضیح فارسی مودال — پس‌زمینه با توکن scrim و لایهٔ z-modal.',
+    sheetBtn: 'پنل کشویی',
+    sheetTitle: 'پنل «در مکالمه ببین»',
+    sheetBody: 'side=start در RTL از لبهٔ چپ باز می‌شود.',
+    menuBtn: 'منو',
+    menuLabel: 'گزینه‌ها',
+    menuItemReview: 'شروع مرور',
+    menuItemDisabled: 'غیرفعال',
+    menuSub: 'زیرمنو',
+    menuSubItem: 'عمق ۲',
+    tabA: 'الف',
+    tabB: 'ب',
+    tabAContent: 'محتوای زبانهٔ اول.',
+    tabBContent: 'محتوای زبانهٔ دوم.',
+    accordionQ: 'چرا جزیرهٔ LTR لازم است؟',
+    accordionA: 'بدون isolate، ترتیب قطعه‌های ژاپنی در پاراگراف فارسی وارونه می‌شود (spike M0-08).',
+    commandPlaceholder: 'جست‌وجو…',
+    commandEmpty: 'نتیجه‌ای نبود.',
+    commandGroup: 'واژه‌ها',
+    commandItem1: 'コーヒー — قهوه',
+    commandItem2: 'お願いします — لطفاً',
+    footer: 'انتهای برگهٔ مرجع رندر.',
+    translation: 'یک قهوه لطفاً.',
+  },
+} as const;
+
+export type Dict = typeof fa; // کلیدها compile-time چک می‌شوند

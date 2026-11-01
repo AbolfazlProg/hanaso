@@ -4,26 +4,32 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo "==== [1/7] install (frozen) ===="
+echo "==== [1/9] install (frozen) ===="
 command -v pnpm >/dev/null 2>&1 || { echo "pnpm 12.16.1 required (npm i -g pnpm@12.16.1)" >&2; exit 1; }
 pnpm install --frozen-lockfile
 
-echo "==== [2/7] format:check ===="
+echo "==== [2/9] format:check ===="
 pnpm format:check
 
-echo "==== [3/7] lint ===="
+echo "==== [3/9] lint ===="
 pnpm lint
 
-echo "==== [4/7] typecheck ===="
+echo "==== [4/9] stylelint (RTL logical gate — TASK-M0-09 AC-1) ===="
+pnpm --filter web lint:css
+
+echo "==== [5/9] typecheck ===="
 pnpm typecheck
 
-echo "==== [5/7] unit tests ===="
+echo "==== [6/9] unit tests ===="
 pnpm test
 
-echo "==== [6/7] build ===="
+echo "==== [7/9] build ===="
 pnpm build
 
-echo "==== [7/7] smoke (production standalone server) + secret scan ===="
+echo "==== [7b/9] font budget (spike M0-07 §۶-۲) ===="
+pnpm --filter web check:fonts
+
+echo "==== [8/9] smoke (production standalone server) ===="
 # Production-faithful: run the standalone server (same as the Docker image CMD).
 # The skeleton has NO db layer — an unrelated DATABASE_URL in the ambient
 # environment would (correctly!) make /api/ready report 503, so it is unset here.
@@ -42,8 +48,7 @@ fi
 HANASO_BASE_URL=http://127.0.0.1:3100 bash scripts/smoke.sh
 kill $SERVER_PID 2>/dev/null || true
 
-# secret scan: token-like strings must not appear in tracked files
-echo "==== secret scan ===="
+echo "==== [9/9] secret scan ===="
 if git ls-files -z \
   | xargs -0 grep -InE '(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----)' \
   -- 2>/dev/null; then

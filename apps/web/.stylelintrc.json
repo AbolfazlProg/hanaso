@@ -1,0 +1,13 @@
+{
+  "plugins": ["stylelint-use-logical"],
+  "rules": {
+    "csstools/use-logical": [
+      true,
+      {
+        "severity": "error",
+        "direction": "rtl"
+      }
+    ]
+  },
+  "ignoreFiles": ["src/styles/woff2/**", ".next/**", "node_modules/**"]
+}

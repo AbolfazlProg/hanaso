@@ -2,68 +2,116 @@
    HANASO — Design Tokens (Tailwind 4 `@theme` port of KB DD-067 LOCKED values)
    ----------------------------------------------------------------------------
    Source of truth: KB `docs/knowledge-base/design-proofs/assets/tokens.css`
-   (v1.0 LOCKED 2026-10-31, WCAG-verified via compute_contrast.py).
+   (v1.0 LOCKED 2026-10-31, WCAG-verified via compute_contrast.py — see KB design-proofs/README).
    Rules:
    - Raw hex/px/ms values in components are FORBIDDEN — tokens only (KB ADR-004 L6).
    - This file is a coordination point: sequential changes only, announced in
      AGENT_PROGRESS.md; any change must originate in the KB (spec-gap), never here.
    - Design System v2 (TASK-DESIGN-04, in review on the KB design branch) is NOT
      merged here until the owner accepts it (mission §12) — see TASK-DSGN-01.
-   - Full port = TASK-M0-09. Deliberately deferred here (review B-8): --info, --scrim,
-     --overlay-audio, --radius-full, --dur-shimmer/--dur-spin (+ their reduced-motion
-     zeroing), --leading-fa/ja, --tracking-ja-heading, and the KB name --font-ja-ui
-     (ported here as --font-ja). Present values match KB 1:1.
+   - FULL PORT completed in TASK-M0-09 (review B-8 debt cleared): --info, --scrim,
+     --overlay-audio, --radius-full, --dur-shimmer/--dur-spin (+ reduced-motion
+     zeroing), --leading-fa/ja, --tracking-ja-heading, hairlines/shadows, z-scale,
+     --frame-scene-w, and the KB font names (--font-ja-ui, --font-ja-ud).
+   - Font stacks resolve the `*-loaded` CSS variables that next/font/local writes
+     onto <html> (see src/styles/fonts.ts). If the webfont layer is absent, each
+     stack degrades to the same system-font chain the KB defines — no raw values
+     leave this file.
    ========================================================================== */
 
 @theme {
-  /* -- Paper & Ink palette (DD-067) ------------------------------------- */
+  /* -- ۱. رنگ: پالت «کاغذ و مرکب» (قفل‌شده با FT-004-۱) ------------------- */
+
+  /* سطوح */
   --color-paper: #f7f3e9; /* kinari — main background (12.9:1 with ink) */
   --color-surface-warm: #fff1cf; /* torinoko — JP sentence cards/bubbles */
   --color-surface-muted: #e9e2d0; /* usuzakura — separators/secondary bg */
-  --color-surface-sunken: #efe9db; /* toolbars/disabled chips */
+  --color-surface-sunken: #efe9db; /* sunken — toolbars/disabled chips */
 
+  /* مرکب */
   --color-ink: #2b2a28; /* sumi — body text (AAA) */
   --color-ink-soft: #5a5852; /* captions/furigana (6.4:1) */
   --color-ink-faint: #857f73; /* hairline — non-text only (3.6:1) */
 
+  /* لهجه‌ها */
   --color-ai: #1d4e70; /* traditional indigo — links/CTA/brand (AAA 8.0:1) */
   --color-ai-deep: #16324a; /* hover/chart text (11.9:1) */
   --color-shu: #c2401c; /* vermilion — comprehension seal & critical only */
 
+  /* وضعیت (دوکاناله همیشه: رنگ + آیکون + متن — WCAG 1.4.1) */
   --color-success: #3d6b4f;
   --color-error: #b3402a;
   --color-warning: #7a6119;
+  --color-info: #1d4e70; /* KB: var(--ai) — Tailwind @theme needs a literal */
 
+  /* رنگ گوینده‌ها — سنت رنگرزی ژاپن (همه ≥4.5 متن و ≥3 غیرمتنی روی paper/torinoko) */
   --color-speaker-1: #2e5f7a;
   --color-speaker-2: #7a4e26;
   --color-speaker-3: #5a6b3a;
 
+  /* طیف تحلیلی ai — نمودارهای admin (متن فقط پله‌های ۱–۳) */
   --color-chart-1: #16324a;
   --color-chart-2: #1d4e70;
   --color-chart-3: #35688c;
-  --color-chart-4: #5a87a8; /* non-text only */
-  --color-chart-5: #6791ae; /* fills only */
+  --color-chart-4: #5a87a8; /* فقط غیرمتنی (۳٫۵:۱) */
+  --color-chart-5: #6791ae; /* فقط پُر/ستون (۳٫۰:۱) */
 
-  /* -- Type scale (ALREQ/JLREQ) ----------------------------------------- */
+  /* شفافیت‌های معنادار */
+  --color-scrim: rgba(43, 42, 40, 0.4); /* modal backdrop */
+  --color-overlay-audio: rgba(247, 243, 233, 0.86); /* audio-only vignette */
+
+  /* -- ۲. تایپوگرافی (قفل‌شده — مبنا ALREQ/JLREQ) ------------------------ */
+
+  /* فونت‌ها: مقدار واقعی را next/font در متغیر *-loaded روی <html> می‌نویسد؛
+     زنجیرهٔ fallback همان زنجیرهٔ KB است (fonts.ts = TASK-M0-09). */
+  --font-fa: var(--font-fa-loaded, 'Vazirmatn'), 'Estedad', 'Segoe UI', Tahoma, sans-serif;
+  --font-ja-ui:
+    var(--font-ja-ui-loaded, 'Zen Kaku Gothic New'), 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  --font-ja-serif: var(--font-ja-serif-loaded, 'Noto Serif JP'), 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --font-ja-ud:
+    'BIZ UDPGothic', 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif; /* بارگذاری: تسک مؤخر (بودجهٔ §۶-۲ اسپایک M0-07) */
+
+  /* مقیاس (rem — ریشه 16px؛ body فارسی ≥16) */
   --text-caption: 0.75rem; /* 12 — furigana floor/micro meta */
   --text-small: 0.875rem; /* 14 — chips/secondary buttons */
   --text-body: 1rem; /* 16 — Persian body */
   --text-lead: 1.125rem; /* 18 — JP body/intro */
-  --text-ja: 1.0625rem; /* 17 — JP body (FEAT-109 adjustable) */
-  --text-h3: 1.375rem;
-  --text-h2: 1.75rem;
-  --text-h1: 2rem;
-  --text-display: 2.5rem; /* editorial big numbers */
+  --text-ja: 1.0625rem; /* 17 — JP body (FEAT-109 adjustable 0.9–1.3×) */
+  --text-h3: 1.375rem; /* 22 — subsection */
+  --text-h2: 1.75rem; /* 28 — section heading */
+  --text-h1: 2rem; /* 32 — page heading */
+  --text-display: 2.5rem; /* 40 — editorial big numbers */
 
-  /* -- Font stacks (webfont loading = TASK-M0-07/M0-09; system fallbacks for now) */
-  --font-fa: 'Vazirmatn', 'Estedad', 'Segoe UI', Tahoma, sans-serif;
-  --font-ja: 'Zen Kaku Gothic New', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
-  --font-ja-serif: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --leading-fa: 1.8; /* ALREQ */
+  --leading-ja: 1.9; /* JLREQ — ruby-bearing lines */
+  --tracking-ja-heading: 0.05em;
 
-  /* -- Radii (“print-like”) ---------------------------------------------- */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* Furigana: نسبت ۵۰٪ + کف ۱۲px خوانا (اصلاح R4-V7) */
+  --furigana-size: max(0.5em, 12px);
+
+  /* -- ۳. فاصله: مقیاس 4px — همان مقیاس پیش‌فرض Tailwind 4 (p-1=4px … p-24=96px) */
+
+  /* -- ۴. شعاع («چاپ‌مانند» — گردِ کم) ------------------------------------ */
+  --radius-sm: 4px; /* chip/input/label */
+  --radius-md: 8px; /* button/sentence card */
+  --radius-lg: 12px; /* main card/panel/sheet */
+  --radius-full: 9999px; /* badge/avatar only */
+
+  /* -- ۵. سایه (اولویت با border ظریف؛ سایه مکمل) ------------------------ */
+  --shadow-card: 0 1px 2px rgba(43, 42, 40, 0.05), 0 1px 6px rgba(43, 42, 40, 0.04);
+  --shadow-raised: 0 2px 6px rgba(43, 42, 40, 0.08), 0 4px 12px rgba(43, 42, 40, 0.06);
+  /* سایهٔ رنگی/گلو ممنوع (art-direction §۷) */
+
+  /* -- ۶. حرکت (توکن‌های ease در @theme تا utility ها هم منحنی DD-067 بگیرند) -- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* -- ۷. لایه‌بندی (مقدارها با @utility در globals.css به z-* وصل می‌شوند) -- */
+  --z-sticky: 10; /* reader toolbar/sticky player */
+  --z-drawer: 40; /* «در مکالمه ببین» panel */
+  --z-fab: 50; /* floating review button */
+  --z-toast: 60;
+  --z-modal: 70;
 }
 
 /* Runtime-referenced palette (S1 fix — visual review #1): Tailwind 4 tree-shakes
@@ -79,26 +127,37 @@
   --color-shu: #c2401c;
 }
 
-/* Non-utility tokens (motion/z-index/measures) — copied verbatim from KB tokens.css.
-   Tailwind 4 spacing utilities already match the KB 4px scale (1 unit = 4px). */
+/* Non-utility tokens (motion/hairline/measures) — verbatim from KB tokens.css.
+   @theme emits the utility-generating subset; these shorthand/measure tokens are
+   consumed via var() from globals.css and components. */
 :root {
-  --dur-micro: 120ms;
-  --dur-fast: 200ms;
-  --dur-phase: 250ms;
-  --dur-ceremonial: 1200ms;
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
-  --furigana-size: max(0.5em, 12px);
-  --touch-min: 44px;
-  --touch-main: 48px;
-  --focus-ring: 2px solid var(--color-ai);
+  /* خط و سایه */
+  --hairline: 1px solid var(--color-ink-faint);
+  --hairline-soft: 1px solid rgba(133, 127, 115, 0.55);
+
+  /* حرکت (معنادار؛ همه تابع prefers-reduced-motion) — easeها در @theme بالا */
+  --dur-micro: 120ms; /* touch feedback / button state */
+  --dur-fast: 200ms; /* panel/card — ease-out */
+  --dur-phase: 250ms; /* A→B→C→D phase transition */
+  --dur-ceremonial: 1200ms; /* comprehension seal — once */
+  --dur-shimmer: 1400ms; /* skeleton loop — stops under reduced motion (AC-907) */
+  --dur-spin: 800ms; /* button spinner — same rule */
+
+  /* ابعاد مرجع */
+  --touch-min: 44px; /* WCAG 2.5.8 + our policy floor */
+  --touch-main: 48px; /* primary touch action / answer button */
+  --frame-scene-w: 1024px; /* desktop scene frame (16:9) */
+  --focus-ring: 2px solid var(--color-ai); /* focus ring ≥3:1 */
 }
 
+/* کاهش حرکت: مقدار مؤثر = سیستم OR کلید درون‌برنامه‌ای (FEAT-109) */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-micro: 0ms;
     --dur-fast: 0ms;
     --dur-phase: 0ms;
-    --dur-ceremonial: 0ms;
+    --dur-ceremonial: 0ms; /* seal → simple fade via components.css contract */
+    --dur-shimmer: 0ms; /* loops stop too — AC-907 (review P2 fix) */
+    --dur-spin: 0ms;
   }
 }

@@ -1,0 +1,56 @@
+{
+  "playwrightVersion": "1.57.0",
+  "url": "http://127.0.0.1:3100/poc/ui",
+  "checkedAt": "2026-11-01T20:14:57.035Z",
+  "browsers": [
+    {
+      "name": "chromium",
+      "engine": "chromium",
+      "ok": true,
+      "popperDir": "rtl",
+      "dir": "rtl",
+      "lang": "fa",
+      "fgExists": true,
+      "fgDirection": "ltr",
+      "fgUnicodeBidi": "isolate",
+      "fgLang": "ja",
+      "rubyExists": true,
+      "rtText": "おはよう",
+      "rtUserSelect": "none",
+      "persianInsideJaIsland": false,
+      "islandCount": 4,
+      "fontsLoaded": "loaded",
+      "vazirLoaded": true,
+      "zenkakuLoaded": true,
+      "bodyText": true
+    },
+    {
+      "name": "firefox",
+      "engine": "firefox",
+      "ok": true,
+      "popperDir": "rtl",
+      "dir": "rtl",
+      "lang": "fa",
+      "fgExists": true,
+      "fgDirection": "ltr",
+      "fgUnicodeBidi": "isolate",
+      "fgLang": "ja",
+      "rubyExists": true,
+      "rtText": "おはよう",
+      "rtUserSelect": "none",
+      "persianInsideJaIsland": false,
+      "islandCount": 4,
+      "fontsLoaded": "loaded",
+      "vazirLoaded": true,
+      "zenkakuLoaded": true,
+      "bodyText": true
+    },
+    {
+      "name": "webkit",
+      "engine": "webkit",
+      "ok": false,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    }
+  ],
+  "note": "WebKit blocked in agent sandbox (no WPE graphics stack, no sudo) — deferred to FT-002; see RUN-20261101-04 §8"
+}
