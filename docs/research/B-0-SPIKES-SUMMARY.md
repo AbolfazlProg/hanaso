@@ -31,7 +31,7 @@
 - `apps/web/next.config.ts` **به حالت اول برگشت** (صفر diff با main) — کانفیگ اسپایک فقط در گزارش.
 - مسیرهای موقت `src/app/spike-*` حذف و کدشان در `docs/research/spike-m0-0{6,8}/page.tsx.txt` بایگانی شد؛ `public/spike-tmp-fonts/` حذف شد (فونت‌ها از `reproduce.sh` بازتولید می‌شوند).
 - devDeps افزوده (همه با `pnpm add -D`): ۵ پکیج Radix + `babel-plugin-react-compiler@1.0.0` — عمداً برای M0-09 باقی ماندند.
-- فایل‌های مسیرهای ممنوع (`modules/**`, `api/**`, `ops/**`, ADRها، `.env*`، ریپوی POC همسایه) لمس نشدند. push/merge انجام نشد.
+- فایل‌های مسیرهای ممنوع (`modules/**`, `api/**`, `ops/**`, ADRها، `.env*`، ریپوی POC همسایه) لمس نشدند. push نهایی صرفاً برای بازکردن PR #62 انجام شد؛ merge به main در این اسپایک انجام نشد (تصحیح ۲۰۲۶-11-01 پس از بازبینی مستقل — یافتهٔ F1).
 - دروازهٔ نهایی: `pnpm verify` (ریشه) — خروجی کامل و واقعی در [`spikes/verify-output.txt`](../spikes/verify-output.txt).
 
 ## کامیت‌های این شاخه (B-0)
