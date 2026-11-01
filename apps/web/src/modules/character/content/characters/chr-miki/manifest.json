@@ -1,0 +1,28 @@
+{
+  "id": "chr-miki",
+  "version": "0.1.0",
+  "nameJa": "ミキ",
+  "nameFa": "میکی",
+  "role": "central",
+  "colorToken": "speaker-1",
+  "voiceId": "vv-female-01-normal",
+  "states": ["idle", "listening", "speaking"],
+  "expressions": {
+    "neutral": null,
+    "happy": null,
+    "surprised": null,
+    "apologetic": null,
+    "thinking": null,
+    "sad": null,
+    "confident": null
+  },
+  "assets": {
+    "renderer": "svg-css",
+    "entry": "modules/character/renderers/svg-placeholder",
+    "layers": ["base", "eyes", "brows", "mouth"],
+    "totalBytes": 0,
+    "checksums": {}
+  },
+  "performance": { "fps60Mobile": true, "measuredBytes": 0 },
+  "_note": "PLACEHOLDER manifest — final art assets arrive from the character track (ADR-018 §۲-۴); expression refs are null → neutral fallback."
+}

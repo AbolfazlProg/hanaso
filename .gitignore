@@ -37,3 +37,6 @@ Thumbs.db
 *.log
 logs/
 tmp/
+
+# PoC placeholder audio (binary, generated) — regenerate with: pnpm gen:audio
+apps/web/public/poc-audio/

@@ -1,3 +1,7 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+# esbuild's install script only unpacks the platform binary (used by drizzle-kit /
+# vitest / tsx); explicitly allow-listed so frozen installs stay reproducible.
+allowBuilds:
+  esbuild: true
