@@ -274,7 +274,11 @@ def stage_project():
                 {'i': {'projectId': pid, 'itemId': item['id'], 'fieldId': priority_field['id'],
                        'value': {'singleSelectOptionId': priority_opts[pr]}}})
         log('project', f"item+fields: #{created_issue['number']} → Status={st}, Priority={pr}")
-    log('project', f'project url: https://github.com/users/{OWNER}/projects/1')
+    try:
+        url = gql('query($id:ID!){ node(id:$id){ ... on ProjectV2 { url } } }', {'id': pid})['node']['url']
+        log('project', f'project url: {url}')
+    except Exception:
+        log('project', 'project url: https://github.com/users/AbolfazlProg/projects (see profile)')
 
 
 KB_ISSUES = [
@@ -322,7 +326,10 @@ def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     sha = None
     if '--sha' in sys.argv:
-        sha = sys.argv[sys.argv.index('--sha') + 1]
+        try:
+            sha = sys.argv[sys.argv.index('--sha') + 1]
+        except IndexError:
+            die('--sha requires a value')
     stage = args[0] if args else 'all'
 
     stages = {
@@ -330,7 +337,7 @@ def main():
         'milestones': stage_milestones, 'issues': stage_issues,
         'project': stage_project, 'kb-issues': stage_kb_issues,
     }
-    order = ['repo', 'settings', 'labels', 'milestones', 'issues', 'project']
+    order = ['repo', 'settings', 'labels', 'milestones', 'issues', 'project', 'kb-issues']
     if stage == 'all':
         for name in order:
             stages[name]() if name != 'issues' else stage_issues(sha)

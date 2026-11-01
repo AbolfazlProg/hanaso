@@ -6,8 +6,9 @@
 set -euo pipefail
 
 TAG="${1:?usage: deploy.sh <IMAGE_TAG_SHA> (a git commit SHA — immutable GHCR tag)}"
-COMPOSE="docker compose -f infra/docker/docker-compose.yml"
-HEALTH_URL="${HANASO_HEALTH_URL:-http://127.0.0.1:3000/api/health}"
+export HANASO_WEB_IMAGE="ghcr.io/abolfazlprog/hanaso:${TAG}"
+COMPOSE="docker compose -f infra/docker/docker-compose.yml --project-directory ."
+HEALTH_URL="${HANASO_HEALTH_URL:-http://127.0.0.1:3000/api/health}" # loopback publish on web
 
 echo "== HANASO deploy: ${TAG} =="
 
@@ -18,7 +19,7 @@ $COMPOSE pull web
 #    $COMPOSE run --rm migrate
 
 # 3) switch traffic to the new image
-HANASO_WEB_IMAGE="ghcr.io/abolfazlprog/hanaso:${TAG}" $COMPOSE up -d web caddy
+$COMPOSE up -d web caddy
 
 # 4) health gate: /api/health must be 200-ok (30 x 2s)
 echo "== health gate: ${HEALTH_URL} =="

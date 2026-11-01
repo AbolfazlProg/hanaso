@@ -21,7 +21,7 @@
 ۱۶ Skill استاندارد (`SKL-001..016`) از KB نصب می‌شود — منبع canonical فقط KB است؛ این ریپو کپی نمی‌سازد:
 
 ```bash
-KB_PATH=../japanese-learning-kb "$KB_PATH/scripts/install-skills.sh ."   # → .claude/skills/ (خروجی بازتولیدشدنی)
+../japanese-learning-kb/scripts/install-skills.sh .   # → .claude/skills/ (خروجی بازتولیدشدنی)
 ```
 
 فهرست و کاربرد هر Skill: `docs/knowledge-base/10-agent-engineering/agent-skills-catalog.md` در KB.
@@ -43,7 +43,7 @@ KB (PROJECT-CONSTITUTION > DESIGN-MASTER-BLUEPRINT > بخش‌های ۰۸/۰۹/�
 
 ## ۶. قوانین سخت (تخلف = خطا)
 
-- خواندن/کامیت `.env*` ممنوع (فقط نام متغیرها در `.env.example`).
+- خواندن/کامیت فایل‌های `.env` واقعی ممنوع (فقط فایل‌های نمونهٔ `*.example` با نام متغیر و مقدار غیرمحرمانه در ریپو هستند).
 - هیچ DD/ADR در PR کدی تغییر نمی‌کند (فقط مسیر KB).
 - Commit: Conventional با scope ماژولی — `type(scope): What — Why`.
 - بدون ثبت Issue، تسک قابل‌ردیابی شروع نمی‌شود؛ بدون Branch مستقل (`feat|fix|spike/<module>-<slug>`) روی main کار ممنوع؛ merge فقط از طریق PR.

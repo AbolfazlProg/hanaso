@@ -7,7 +7,7 @@
 | -------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | **تجمیع و تصمیم‌ها** | [`CONSOLIDATION-REPORT.fa.md`](CONSOLIDATION-REPORT.fa.md)                               | ممیزی کل دانش: وضعیت تصمیم‌ها/تناقض‌ها/گیت‌های مالک (بخش ۱ مأموریت) |
 |                      | [`research/STACK-REVALIDATION-2026-11-01.md`](research/STACK-REVALIDATION-2026-11-01.md) | بازارزیابی Stack با npm registry + نتیجهٔ Spike TS7                 |
-| **معماری**           | [`adr/`](adr/)                                                                           | ADRهای این ریپو: 000 (تبنی خط‌مbase KB) .. 005                      |
+| **معماری**           | [`adr/`](adr/)                                                                           | ADRهای این ریپو: 000 (تبنی خط‌پایهٔ KB) .. 005                      |
 |                      | [`architecture/SYSTEM-ARCHITECTURE.md`](architecture/SYSTEM-ARCHITECTURE.md)             | خلاصهٔ معماری + دیاگرام Context/Container                           |
 |                      | [`architecture/DATA-ARCHITECTURE.md`](architecture/DATA-ARCHITECTURE.md)                 | ERD خلاصه، شِماها، سیاست Migration                                  |
 |                      | [`architecture/API-AND-EVENTS.md`](architecture/API-AND-EVENTS.md)                       | قرارداد Envelope، سطح REST، تاکسونومی رویدادها                      |

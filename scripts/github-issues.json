@@ -28,8 +28,16 @@
       "title": "M3b — Lesson Engine & Mastery Gate",
       "description": "درس از دیالوگ + تمرین‌های دیالوگی + گیت فهم understood"
     },
-    { "alias": "M4", "title": "M4 — Library & Reader", "description": "کتابخانه + کتاب‌خوان + ذخیرهٔ واژه→FSRS" },
-    { "alias": "M5", "title": "M5 — Interactive Dialogue", "description": "نقاط تصمیم + حالت‌های چالشی + دیکته" },
+    {
+      "alias": "M4",
+      "title": "M4 — Library & Reader",
+      "description": "کتابخانه + کتاب‌خوان + ذخیرهٔ واژه→FSRS"
+    },
+    {
+      "alias": "M5",
+      "title": "M5 — Interactive Dialogue",
+      "description": "نقاط تصمیم + حالت‌های چالشی + دیکته"
+    },
     {
       "alias": "M6",
       "title": "M6 — Analytics & Admin Operations",
@@ -42,33 +50,121 @@
     }
   ],
   "labels": [
-    { "name": "phase:m0", "color": "1D76DB", "description": "فاز M0 — بوت‌استرپ" },
-    { "name": "phase:m1", "color": "BFD4F2", "description": "فاز M1" },
-    { "name": "phase:m2", "color": "BFD4F2", "description": "فاز M2" },
-    { "name": "phase:m3a", "color": "C5DEF5", "description": "فاز M3a" },
-    { "name": "phase:m3b", "color": "C5DEF5", "description": "فاز M3b" },
-    { "name": "phase:m4", "color": "D4C5F9", "description": "فاز M4" },
-    { "name": "phase:m5", "color": "D4C5F9", "description": "فاز M5" },
-    { "name": "phase:m6", "color": "E99695", "description": "فاز M6" },
-    { "name": "phase:m7", "color": "E99695", "description": "فاز M7" },
-    { "name": "type:feature", "color": "A2EEEF", "description": "قابلیت محصول" },
-    { "name": "type:infrastructure", "color": "D4C5F9", "description": "زیرساخت/DevOps" },
-    { "name": "type:spike", "color": "FBCA04", "description": "اسپایک/تحقیق فنی با نتیجهٔ تصمیم" },
-    { "name": "type:epic", "color": "3E4B9E", "description": "اسپایک فاز — تسک‌سازی در ورود فاز" },
-    { "name": "type:docs", "color": "0075CA", "description": "مستندات" },
-    { "name": "type:security", "color": "B60205", "description": "امنیت" },
-    { "name": "type:design", "color": "C5DEF5", "description": "طراحی/Design System" },
-    { "name": "priority:P0", "color": "B60205", "description": "بحرانی" },
-    { "name": "priority:P1", "color": "D93F0B", "description": "بالا" },
-    { "name": "priority:P2", "color": "FBCA04", "description": "متوسط" },
-    { "name": "priority:P3", "color": "CCCCCC", "description": "پایین" },
-    { "name": "owner-decision", "color": "5319E7", "description": "نیازمند تصمیم/اقدام مالک" },
-    { "name": "blocked-external", "color": "7057FF", "description": "مسدود بر عامل بیرونی (بیلینگ/VPS/دسترسی)" }
+    {
+      "name": "phase:m0",
+      "color": "1D76DB",
+      "description": "فاز M0 — بوت‌استرپ"
+    },
+    {
+      "name": "phase:m1",
+      "color": "BFD4F2",
+      "description": "فاز M1"
+    },
+    {
+      "name": "phase:m2",
+      "color": "BFD4F2",
+      "description": "فاز M2"
+    },
+    {
+      "name": "phase:m3a",
+      "color": "C5DEF5",
+      "description": "فاز M3a"
+    },
+    {
+      "name": "phase:m3b",
+      "color": "C5DEF5",
+      "description": "فاز M3b"
+    },
+    {
+      "name": "phase:m4",
+      "color": "D4C5F9",
+      "description": "فاز M4"
+    },
+    {
+      "name": "phase:m5",
+      "color": "D4C5F9",
+      "description": "فاز M5"
+    },
+    {
+      "name": "phase:m6",
+      "color": "E99695",
+      "description": "فاز M6"
+    },
+    {
+      "name": "phase:m7",
+      "color": "E99695",
+      "description": "فاز M7"
+    },
+    {
+      "name": "type:feature",
+      "color": "A2EEEF",
+      "description": "قابلیت محصول"
+    },
+    {
+      "name": "type:infrastructure",
+      "color": "D4C5F9",
+      "description": "زیرساخت/DevOps"
+    },
+    {
+      "name": "type:spike",
+      "color": "FBCA04",
+      "description": "اسپایک/تحقیق فنی با نتیجهٔ تصمیم"
+    },
+    {
+      "name": "type:epic",
+      "color": "3E4B9E",
+      "description": "اپیک فاز — تسک‌سازی در ورود فاز"
+    },
+    {
+      "name": "type:docs",
+      "color": "0075CA",
+      "description": "مستندات"
+    },
+    {
+      "name": "type:security",
+      "color": "B60205",
+      "description": "امنیت"
+    },
+    {
+      "name": "type:design",
+      "color": "C5DEF5",
+      "description": "طراحی/Design System"
+    },
+    {
+      "name": "priority:P0",
+      "color": "B60205",
+      "description": "بحرانی"
+    },
+    {
+      "name": "priority:P1",
+      "color": "D93F0B",
+      "description": "بالا"
+    },
+    {
+      "name": "priority:P2",
+      "color": "FBCA04",
+      "description": "متوسط"
+    },
+    {
+      "name": "priority:P3",
+      "color": "CCCCCC",
+      "description": "پایین"
+    },
+    {
+      "name": "owner-decision",
+      "color": "5319E7",
+      "description": "نیازمند تصمیم/اقدام مالک"
+    },
+    {
+      "name": "blocked-external",
+      "color": "7057FF",
+      "description": "مسدود بر عامل بیرونی (بیلینگ/VPS/دسترسی)"
+    }
   ],
   "issues": [
     {
       "title": "TASK-ENG-01 — مأموریت پایه‌گذاری مهندسی (ریپو + CI + اسکلت + GitHub PM + حاکمیت Agent)",
-      "body": "## چه شد\nریپوی محصول hanaso ساخته شد: ساختار Monorepo سبک + اسکلت اجرایی Next.js 16.4.3 (TS 6.0.3 strict، Tailwind 4.3.3 با توکن‌های DD-067) + `/api/health` و `/api/ready` + قرارداد Envelope + CI کامل + Docker/Caddy/deploy/rollback + AGENTS.md + ops/ + گزارش تجمیعی + ADR-000..005 + بازارزیابی Stack + سه بازبینی مستقل.\n\n## شواهد\nدروازه‌های محلی سبز (خروجی واقعی در `ops/runs/RUN-20261101-01.md`) · اسکیل‌ها از KB نصب شد (16) · Branch Protection (PR-only).\n\n## وضعیت\nمأموریت زیرساختی — هیچ قابلیت آموزشی ساخته نشده (گیت OQ-13). پذیرش: مالک.",
+      "body": "## چه شد\nریپوی محصول hanaso ساخته شد: ساختار Monorepo سبک + اسکلت اجرایی Next.js 16.4.3 (TS 6.0.3 strict، Tailwind 4.3.3 با توکن‌های DD-067) + `/api/health` و `/api/ready` + قرارداد Envelope + CI کامل + Docker/Caddy/deploy/rollback + AGENTS.md + ops/ + گزارش تجمیعی + ADR-000..005 + بازارزیابی Stack + سه بازبینی مستقل.\n\n## شواهد\nدروازه‌های محلی سبز (خروجی واقعی در `ops/runs/RUN-20261101-01.md`) · اسکیل‌ها از KB نصب شد (16) · Branch Protection (PR-only).\n\n## وضعیت\nمأموریت زیرساختی — هیچ قابلیت آموزشی ساخته نشده (گیت OQ-013). پذیرش: مالک.",
       "labels": ["phase:m0", "type:infrastructure", "priority:P0"],
       "milestone": "M0",
       "priority": "P0",

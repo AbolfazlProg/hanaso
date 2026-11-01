@@ -4,14 +4,14 @@
 
 - **Node.js 24 LTS** و **pnpm 12.16.1** (`corepack enable`)
 - دسترسی خواندن به `japanese-learning-kb` (clone هم‌سطح این ریپو؛ یا متغیر `KB_PATH`)
-- هیچ فایل `.env` برای اجرای اسکلت لازم نیست (D نصب نشده — از M0-10)
+- هیچ فایل `.env` برای اجرای اسکلت لازم نیست (DB هنوز نصب نشده — از M0-10)
 
 ## راه‌اندازی
 
 ```bash
 git clone https://github.com/AbolfazlProg/hanaso.git && cd hanaso
 corepack enable && pnpm install
-KB_PATH=../japanese-learning-kb "$KB_PATH/scripts/install-skills.sh ."   # نصب ۱۶ Skill (خروجی: .claude/skills/)
+../japanese-learning-kb/scripts/install-skills.sh .   # نصب ۱۶ Skill (خروجی: .claude/skills/)
 pnpm verify    # format:check + lint + typecheck + test + build + smoke + secret-scan — همه با یک فرمان
 pnpm dev       # http://localhost:3000 · سلامت: /api/health و /api/ready
 ```

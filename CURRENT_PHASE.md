@@ -4,13 +4,13 @@
 
 ## کجا ایستاده‌ایم
 
-- ✅ ریپوی محصول ساخته و Push شد (`hanaso`، private، main محافظت‌شده، PR-only)
+- ✅ ریپوی محصول ساخته و Push شد (`hanaso`، private) — محافظت سروری main تلاش شد و در پلن Free قفل است (BLOCKER-F07)؛ کنترل جبرانی: قاعدهٔ AGENTS.md §۶ + بازبینی مستقل هر PR
 - ✅ اسکلت اجرایی: Next.js 16.4.3 + TS strict + Tailwind 4.3 + `/api/health` + `/api/ready` — همهٔ دروازه‌های محلی سبز
 - ✅ CI workflow + Docker/Caddy/deploy/rollback + طرح Preview
 - ✅ سیستم مدیریت پیشرفت: GitHub Project + Milestones + Issues + Labels
 - ✅ حاکمیت چند-Agentی: AGENTS.md + مالکیت ماژول‌ها + DoD + قالب‌های ops
 - ✅ گزارش تجمیعی دانش + ADR-000..005 + بازارزیابی Stack (npm registry، ۲۰۲۶-۱۱-۰۱)
-- ⏳ Spike TypeScript 7.0.2: **نتیجهٔ واقعی ثبت شد** — جزئیات در `docs/research/STACK-REVALIDATION-2026-11-01.md`
+- ✅ Spike TypeScript: **پین 6.0.3** (typescript-eslint رسماً <6.1.0؛ تأیید زنده با شکست PR دیپندابات TS7) — جزئیات در `docs/research/STACK-REVALIDATION-2026-11-01.md`
 - ⬜ Spikeهای M0-05..08 (اولین تسک توسعه — Issue «B-0 Spikes»)
 - ⬜ زیرساخت مشترک UI (M0-09) — پس از اسپایک‌ها
 - ⬜ استقرار Preview روی VPS (M0-10) — **نیازمند دسترسی مالک**

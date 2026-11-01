@@ -21,7 +21,7 @@
 ```ts
 type Envelope<T> =
   | { ok: true; data: T }
-  | { ok: false; error: { code: `${Module}/${cause}`; message: string; details?: unknown; requestId: string } };
+  | { ok: false; error: { code: `${Module}/${cause}`; message: string; details?: unknown; requestId?: string } };
 ```
 
 Codes like `validation/invalid_input`, `auth/forbidden`, `review/duplicate_review`, `unknown/internal` (only this one goes to Sentry). HTTP mapping 400/401/403/404/409/500. zod `safeParse` at every boundary; keyset pagination (`cursor = base64(createdAtISO|id)`, limit ≤ 50). Seeded implementation: `apps/web/src/modules/shared`.

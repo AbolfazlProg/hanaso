@@ -1,17 +1,22 @@
 # HANASO — Preview/Staging compose (skeleton phase, no DB yet — M0-10 adds postgres/pgbouncer/worker)
 # Isolation rules (ADR-003): dedicated project name, network, volumes, ports — never touches other stacks.
-# Run from the repo root:  docker compose -f infra/docker/docker-compose.yml --env-file .env up -d
+# IMPORTANT: always run with the repo root as the compose project directory:
+#   docker compose -f infra/docker/docker-compose.yml --project-directory . --env-file .env up -d
 
 name: hanaso
 
 services:
   web:
-    image: ${HANASO_WEB_IMAGE:-ghcr.io/abolfazlprog/hanaso:latest}
+    # No default tag on purpose: CI pushes immutable SHA tags only (never "latest" — KB policy).
+    image: ${HANASO_WEB_IMAGE:?set HANASO_WEB_IMAGE=ghcr.io/abolfazlprog/hanaso:<SHA> in .env}
     restart: unless-stopped
     env_file: .env
     # skeleton: no DATABASE_URL — /api/ready reports database: skipped
     networks: [hanaso-net]
     expose: ['3000']
+    # Loopback-only publish so host-side deploy/health gates can reach the app
+    # WITHOUT exposing it publicly (Caddy remains the only public entry, ADR-010).
+    ports: ['127.0.0.1:3000:3000']
     healthcheck:
       test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/api/health']
       interval: 30s

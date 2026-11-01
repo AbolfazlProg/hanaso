@@ -2,7 +2,7 @@
  * Shared module — the only module every other module may import (KB ADR-001).
  * Seeds the project-wide error envelope contract (KB backend-architecture):
  * every API/action response is an Envelope<T>; codes are `module/cause` strings;
- * only `unknown/internal` errors are reported to Sentry.
+ * only `unknown/internal` errors are reported to the error monitor (Sentry or GlitchTip — OTD-011 open).
  */
 
 export type ErrorCode = `${string}/${string}`;

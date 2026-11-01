@@ -1,9 +1,8 @@
 name: CI
 
 # HANASO CI baseline (ADR-005; template: KB TASK-M0-03).
-# NOTE: GitHub Actions on this account currently fails to start due to billing
-# (BLOCKER-F03 / KB BLOCKER-005). The same gates run locally via `pnpm verify`
-# with recorded evidence until the owner fixes billing.
+# Status 2026-11-01: verify job proven green on GitHub Actions (run 41286578531).
+# Branch protection / required checks are deferred to BLOCKER-F07 (Free plan lock).
 
 on:
   push:
@@ -64,10 +63,12 @@ jobs:
           env -u DATABASE_URL PORT=3100 HOSTNAME=127.0.0.1 node apps/web/.next/standalone/apps/web/server.js &
           SERVER_PID=$!
           trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          READY=0
           for i in $(seq 1 30); do
-            curl -fsS http://127.0.0.1:3100/api/health >/dev/null 2>&1 && break
+            if curl -fsS http://127.0.0.1:3100/api/health >/dev/null 2>&1; then READY=1; break; fi
             sleep 1
           done
+          if [ "$READY" -ne 1 ]; then echo "server not healthy on :3100" >&2; exit 1; fi
           HANASO_BASE_URL=http://127.0.0.1:3100 bash scripts/smoke.sh
 
   docker:
@@ -80,18 +81,6 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 12.16.1
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install (frozen lockfile)
-        run: pnpm install --frozen-lockfile
 
       - name: Build image
         run: |

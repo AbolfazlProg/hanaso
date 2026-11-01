@@ -1,0 +1,21 @@
+# HANASO — .dockerignore (build context = repo root)
+# Secrets and local state must NEVER enter the build context/cache (review B-3/C-9).
+.git
+.env
+.env.*
+!.env.example
+!.env.*.example
+node_modules
+**/node_modules
+.next
+**/.next
+out
+coverage
+test-results
+playwright-report
+*.tsbuildinfo
+.claude
+.vscode
+.idea
+docs
+ops

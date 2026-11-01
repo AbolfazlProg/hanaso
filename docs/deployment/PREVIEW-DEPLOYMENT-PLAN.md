@@ -31,7 +31,7 @@ docker login ghcr.io                         # PAT با read:packages
 bash infra/deploy/deploy.sh <SHA>            # pull→up→health-gate→smoke؛ شکست=خروج امن
 ```
 
-`deploy.sh`: پایش `/api/health` تا ۳۰×۲ثانیه؛ سپس `scripts/smoke.sh` (health + صفحهٔ ریشه + Envelope). `rollback.sh <SHA-قبلی>`: استقرار مجدد تگ immutable قبلی + همان گیت.
+`deploy.sh`: پایش `/api/health` تا ۳۰×۲ثانیه؛ سپس `scripts/smoke.sh` (سه بررسی: `/api/health` + `/api/ready` + صفحهٔ ریشهٔ RTL/ژاپنی). `rollback.sh <SHA-قبلی>`: استقرار مجدد تگ immutable قبلی + همان گیت.
 
 ## ۴. امنیت و بازگشت
 

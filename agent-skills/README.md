@@ -5,8 +5,8 @@
 
 ```bash
 # نصب/همگام‌سازی در این ریپو (خروجی: .claude/skills/ — تولیدی و gitignore شده):
-KB_PATH=../japanese-learning-kb "$KB_PATH/scripts/install-skills.sh" .
-"$KB_PATH/scripts/install-skills.sh" --list    # فهرست ۱۶ Skill
+../japanese-learning-kb/scripts/install-skills.sh .
+../japanese-learning-kb/scripts/install-skills.sh --list    # فهرست ۱۶ Skill
 ```
 
 قواعد: تغییر Skill فقط در KB (با ثبت کاتالوگ)؛ `.claude/skills/` هرگز دستی ویرایش نمی‌شود؛ هر تسک Skillهای استفاده‌شده را اعلام می‌کند. نامزدهای Skill جدید ابتدا توسعهٔ Skill موجود را بررسی می‌کنند (قاعدهٔ ضد-پراکنده‌سازی KB).

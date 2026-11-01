@@ -1,6 +1,6 @@
 # Domain Model Essentials — HANASO
 
-> **خلاصهٔ فارسی:** هستهٔ دامنه حول مدل A→B→C·D و تمایز حیاتی `completed` (مراحل طی شده) در برابر `understood` (فهم اثبات‌شده) بنا شده — این تمایز در DB، API، Analytics و پنل مالک قابل‌مشاهده است. مرجع کامل: KB `dialogue-based-learning-model.md` + `dialogue-mastery-model.md` + `dialogue-content-schema.md`.
+> **خلاصهٔ فارسی:** هستهٔ دامنه حول مدل A→B→C→D و تمایز حیاتی `completed` (مراحل طی شده) در برابر `understood` (فهم اثبات‌شده) بنا شده — این تمایز در DB، API، Analytics و پنل مالک قابل‌مشاهده است. مرجع کامل: KB `dialogue-based-learning-model.md` + `dialogue-mastery-model.md` + `dialogue-content-schema.md`.
 
 ## Core aggregates
 
@@ -26,4 +26,4 @@
 
 ## انطباق Analytics (ADR-016)
 
-Engagement ≠ Learning Effectiveness: داشبورد Effectiveness مرجع داوری است؛ متر «میانگین زمان در اپ» هرگز سنجهٔ موفقیت نیست (EV-199). رویدادهای مرتبط: `unit_understood`، `mastery_attempt_completed`، `unit_revisited{days_since_understood}`.
+Engagement ≠ Learning Effectiveness: داشبورد Effectiveness مرجع داوری است؛ متر «میانگین زمان در اپ» هرگز سنجهٔ موفقیت نیست (EV-199). رویدادهای مرتبط (طبق تاکسونومی KB — نام‌ها تغییرناپذیرند): `unit_assessment_completed` (سمت-سرور؛ attempt/passed/score/m1..m5)، `assessment_answered`، `remediation_completed`، `unit_revisited{days_since_understood}`.

@@ -9,7 +9,7 @@
 | ----------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------- |
 | Phase 0 — Product & Engineering Alignment | ممیزی/تجمیع KB                                   | ✅ انجام شد (گزارش تجمیعی + بازارزیابی Stack ۲۰۲۶-۱۱-۰۱)            |
 | Phase 1 — Engineering Foundation          | TASK-ENG-01 + M0-01..04                          | ✅ همین مأموریت (ریپو/CI/اسکلت/حاکمیت Agent)                        |
-| Phase 2 — Infrastructure & Preview        | M0-10 (+ M0-03 تکمیل)                            | ⏳ وابسته به دسترسی VPS/بیلینگ                                      |
+| Phase 2 — Infrastructure & Preview        | M0-10 (+ M0-03 تکمیل)                            | ⏳ وابسته به دسترسی VPS (CI سبز است)                                |
 | Phase 3 — Core Platform                   | M0-09 + M1                                       | Backlog (گیت OQ-013/014)                                            |
 | Phase 4 — First Learning Vertical Slice   | M3a + M3b (برش A→D)                              | Backlog — **خروجی کلیدی: آزمایش واقعی `understood` vs `completed`** |
 | Phase 5 — Learning Expansion              | M2 (FSRS) + M4 (کتابخانه) + M5 (دیالوگ پیشرفته)  | Backlog                                                             |

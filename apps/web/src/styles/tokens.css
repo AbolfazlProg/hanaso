@@ -9,7 +9,10 @@
      AGENT_PROGRESS.md; any change must originate in the KB (spec-gap), never here.
    - Design System v2 (TASK-DESIGN-04, in review on the KB design branch) is NOT
      merged here until the owner accepts it (mission §12) — see TASK-DSGN-01.
-   - Full port (fonts loading, motion utilities, components.css) = TASK-M0-09.
+   - Full port = TASK-M0-09. Deliberately deferred here (review B-8): --info, --scrim,
+     --overlay-audio, --radius-full, --dur-shimmer/--dur-spin (+ their reduced-motion
+     zeroing), --leading-fa/ja, --tracking-ja-heading, and the KB name --font-ja-ui
+     (ported here as --font-ja). Present values match KB 1:1.
    ========================================================================== */
 
 @theme {

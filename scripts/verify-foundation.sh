@@ -30,10 +30,15 @@ echo "==== [7/7] smoke (production standalone server) + secret scan ===="
 env -u DATABASE_URL PORT=3100 HOSTNAME=127.0.0.1 node apps/web/.next/standalone/apps/web/server.js &
 SERVER_PID=$!
 trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+READY=0
 for i in $(seq 1 30); do
-  curl -fsS http://127.0.0.1:3100/api/health >/dev/null 2>&1 && break
+  if curl -fsS http://127.0.0.1:3100/api/health >/dev/null 2>&1; then READY=1; break; fi
   sleep 1
 done
+if [ "$READY" -ne 1 ]; then
+  echo "server did not become healthy on :3100 within 30s (check for a stale process holding the port)" >&2
+  exit 1
+fi
 HANASO_BASE_URL=http://127.0.0.1:3100 bash scripts/smoke.sh
 kill $SERVER_PID 2>/dev/null || true
 

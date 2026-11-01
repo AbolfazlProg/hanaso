@@ -13,7 +13,7 @@
 1. **مسیر ورود استاندارد:** `AGENTS.md` (این ریپو) → `README.md`/`PROJECT_STATUS.md` → KB: `START-HERE.md` → `IMPLEMENTATION-BLUEPRINT.md` → Skill متناظر.
 2. **اولین قدم عملی:** Issue «B-0 Spikes (TASK-M0-05..08)» — مشخصات کامل با AC در GitHub Issues این ریپو. در صورت مجوز کد مالک، **TASK-DLG-POC-01** (PoC فنی دیالوگ) اولویت موازی دارد.
 3. **قوانین کار:** چرخهٔ ۱۲مرحله‌ای + شدت S0..S3 + نقش‌ها → KB `task-lifecycle.md`؛ هر اجرا = رکورد در `ops/runs/` + ردیف در `AGENT_RUN_LOG.md`.
-4. **گیت‌های باز:** بیلینگ GitHub Actions (BLOCKER-F03) · VPS/DNS (BLOCKER-F02/F04) · OQ-013/014/017 (مالک) — فهرست کامل: `ops/BLOCKERS.md`.
+4. **گیت‌های باز (به‌روز):** تصمیم Branch Protection/پلن Pro (BLOCKER-F07) · VPS/DNS (BLOCKER-F02/F04) · OQ-013/014/017 (مالک) — فهرست کامل: `ops/BLOCKERS.md`. (Actions اجرا می‌شود — BLOCKER-F03 بسته شد.)
 5. **هیچ ادعای اتمام/push/deploy بدون شواهد واقعی** — اگر مانع بود، در `ops/BLOCKERS.md` ثبت کن.
 
 ## نقاط ورود
