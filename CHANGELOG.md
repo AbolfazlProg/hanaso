@@ -3,6 +3,31 @@
 > قالب نسخه‌ها: **CalVer `YYYY.0M.N`** · محور استقرار: تگ=SHA · پیام‌ها فارسی و قابل‌فهم.
 > هیچ ادعایی بدون شناسهٔ commit قابل‌استناد ثبت نمی‌شود.
 
+## 2026.11.1 — Real Development Start: B-0 Spikes + Dialogue PoC + First Vertical Slice (2026-11-01)
+
+**نوع:** نخستین قابلیت‌های واقعی محصول — مجوز صریح مالک (DD-080) + ثبت تصمیم‌های صوت/شخصیت/انیمیشن (DD-081..083).
+
+### افزوده شد
+
+- **B-0 Spikes** (PR #62، `9ed1ec8`): چهار اسپایک مهندسی با اعداد قابل‌بازتولید — React Compiler 1.0 (رندر مجدد ۷۲٫۸→۳٫۰ms ≈ ۲۴×) · RTL-audit Radix (DirectionProvider اجباری؛ flyout موبایل ممنوع — ۱۳۷px سرریز) · فونت‌ها از ایران (توصیهٔ self-host؛ اولیه ~۵۸۰KB در برابر 11.4MB CDN) · رفتار `<ruby>` در RTL (جزیرهٔ LTR اجباری؛ lh≥2؛ الگوی FuriganaText)
+- **TASK-DLG-POC-01** (در PR #64): موتور پخش pure-TS با `AudioBackend` تزریق‌پذیر (gap دقیق؛ dispatch ۰ms؛ probe واقعی max 1.3ms) · قرارداد سه‌لایهٔ ADR-018 (CharacterAssetManifest/Renderer/AnimationController) + رندرر SVG Placeholder متحرک · ماژول صوت (dual-source، prefetch دوخطی، خطاهای typed) · FSRS درون‌بافت (`context_line_id`) · دیالوگ کافهٔ ۱۰خطی/۳گوینده · صفحات `/poc/{dialogue,lesson,assessment,t2-eval}` · اسکریپت بنچمارک VOICEVOX
+- **اولین Learning Vertical Slice** (PR #64، `3b652ae`): چرخهٔ کامل `Dialogue→Learn→Practice→Mastery` با گیت سروری `understood` (فقط از passed مرحلهٔ D — DD-048) · ماژول Practice (۴ نوع تمرین تولیدشده از خود مکالمه) · ماشین حالت A→D · `/learn` · **اسکیمای Drizzle دو-شیمایی** (۱۲ جدول content + ۲ app + `audio_assets` با ردیابی کامل DD-081) + migration + ۱۸ تست SQL
+- **نمره‌گذاری سروری مرحلهٔ D**: کلاینت فقط پاسخ خام می‌فرستد؛ کلید پاسخ هرگز به باندل کلاینت نمی‌رسد (رفع S1 بازبینی مستقل)
+- ۹۱ تست جدید (۵ → ۹۶): موتور پخش/زیرنویس/خطاهای صوت/انیمیشن شخصیت/اسکیما/FSRS/تمرین/پیشرفت/مسیر کامل
+
+### تغییر داد
+
+- گیت‌های مالک OQ-006/013/014/017/018 بسته شدند (تصمیم‌های DD-080..083 در KB `7450a49`)؛ BLOCKER-002/003/004 بسته شد
+- ترجمهٔ فارسی در صحنهٔ دیالوگ پیش‌فرض **خاموش** شد (comprehension-first — KB)
+- DD-012 با ابطال جزئی مستند به DD-083 به‌روز شد (انیمیشن سبک سر و صورت از v1 الزامی)
+
+### شناخته‌شده/محدودیت‌ها
+
+- DB زنده در Sandbox اجرا نشد (repositoryهای in-memory `DEV-ONLY`؛ اتصال واقعی = M0-10/M1 با `DATABASE_URL`)
+- T2 (دوسوکور — فرم `/poc/t2-eval` آماده) · T9 (ماتریس دستگاه) · T10 (بنچمارک VOICEVOX) نیازمند Preview/VPS/ارزیاب
+- صدوهای فعلی placeholder سینوسی (F0 متمایز ۲۱۰/۱۱۰/۱۶۰Hz) — `pnpm gen:audio`
+- بدهی‌های S3 بازبینی (FSRS wiring مرحلهٔ C، بازآزمون هدفمند، ۰٫۹×، …) در GitHub Issues ثبت شده‌اند
+
 ## 2026.11.0 — Engineering Foundation (2026-11-01)
 
 **نوع:** زیرساخت — هیچ قابلیت آموزشی در این نسخه نیست (عمدی).
