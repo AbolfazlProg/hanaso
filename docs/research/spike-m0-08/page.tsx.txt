@@ -1,0 +1,442 @@
+'use client';
+
+/**
+ * Spike TASK-M0-08 — رفتار <ruby> در پاراگراف RTL (FT-003) — صفحهٔ موقت، قبل از کامیت حذف می‌شود.
+ * کد نهایی در docs/research/spike-m0-08/page.tsx.txt نگهداری می‌شود.
+ */
+import { useEffect, useState } from 'react';
+
+const FONT_FACES = `
+@font-face { font-family: 'Vazirmatn'; src: url('/spike-tmp-fonts/vazirmatn-fd-400.woff2') format('woff2'); font-weight: 400; font-display: block; }
+@font-face { font-family: 'Zen Kaku Gothic New'; src: url('/spike-tmp-fonts/zenkaku-400.woff2') format('woff2'); font-weight: 400; font-display: block; }
+@font-face { font-family: 'Zen Kaku Gothic New'; src: url('/spike-tmp-fonts/zenkaku-700.woff2') format('woff2'); font-weight: 700; font-display: block; }
+@font-face { font-family: 'Noto Serif JP'; src: url('/spike-tmp-fonts/notoserif-400.woff2') format('woff2'); font-weight: 400; font-display: block; }
+`;
+
+const SHARED = `
+  body { font-family: 'Vazirmatn', sans-serif; }
+  .jp { font-family: 'Zen Kaku Gothic New', sans-serif; }
+  .serif { font-family: 'Noto Serif JP', serif; }
+  section { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin: 16px 0; }
+  h2 { font-size: 15px; color: #555; margin: 0 0 10px; font-weight: 700; }
+  p { margin: 0; font-size: 17px; line-height: 1.9; }
+  .narrow { max-width: 300px; }
+  .lh-14 p { line-height: 1.4; }
+  .lh-20 p { line-height: 2.0; }
+  rt { font-size: max(0.5em, 12px); color: #5a5852; }
+  .under ruby { ruby-position: under; }
+  /* الگوی پیشنهادی FuriganaText */
+  .fg { font-family: 'Zen Kaku Gothic New', sans-serif; }
+  .fg ruby { ruby-align: center; ruby-position: over; }
+  .fg rt { font-size: max(0.5em, 12px); font-weight: 400; letter-spacing: 0; }
+  .fg.island { unicode-bidi: isolate; direction: ltr; }
+`;
+
+type M = Record<string, unknown>;
+
+function measure(): M {
+  const out: M = {};
+  const q = (id: string) => document.querySelector<HTMLElement>(`[data-s="${id}"]`);
+  const rect = (el: Element) => el.getBoundingClientRect().toJSON();
+
+  // ۱) جای rt نسبت به پایه — بالای پایه است؟ افقی مرکز؟
+  for (const id of ['s1', 's2a', 's3bdi', 's3span', 's4', 's6a', 's6b', 's7under', 's8pattern']) {
+    const sec = q(id);
+    if (!sec) continue;
+    const ruby = sec.querySelector('ruby');
+    const rt = ruby?.querySelector('rt');
+    const baseSpan = ruby?.querySelector('[data-nb]');
+    if (!ruby || !rt) continue;
+    const rr = rect(ruby), tr = rect(rt);
+    type R = { top: number; left: number; width: number; height: number };
+    let baseRect: R | undefined;
+    if (baseSpan) {
+      baseRect = rect(baseSpan);
+    } else {
+      const base = ruby.firstChild;
+      if (!base) continue;
+      const br = document.createRange();
+      br.selectNodeContents(base);
+      baseRect = Array.from(br.getClientRects())[0]?.toJSON();
+    }
+    if (!baseRect) continue;
+    out[id] = {
+      rtAboveBase: tr.top < baseRect.top,
+      rtTopDelta: +(baseRect.top - tr.top).toFixed(1),
+      rtHeight: +(tr.height).toFixed(1),
+      baseHeight: +(baseRect.height).toFixed(1),
+      rtCenterOverBase: baseRect.width
+        ? +((tr.left + tr.width / 2 - (baseRect.left + baseRect.width / 2))).toFixed(1)
+        : null,
+      rtWiderThanBase: +(tr.width - baseRect.width).toFixed(1),
+      rubyLineHeightRatio: +(rr.height / baseRect.height).toFixed(2),
+    };
+  }
+
+  // ۲) هم‌ترازی خط پایهٔ ruby با متن فارسی اطراف
+  const s1 = q('s1');
+  if (s1) {
+    const fa = s1.querySelector('[data-fa]');
+    const ruby = s1.querySelector('ruby');
+    if (fa && ruby) {
+      const fr = rect(fa), rr = rect(ruby);
+      out.s1Baseline = {
+        faTop: +fr.top.toFixed(1), faBottom: +fr.bottom.toFixed(1),
+        rubyTop: +rr.top.toFixed(1), rubyBottom: +rr.bottom.toFixed(1),
+        // کف جعبهٔ ruby با کف جعبهٔ متن فارسی یکی است؟
+        bottomDelta: +(rr.bottom - fr.bottom).toFixed(1),
+        rubyBoxGrowsUpward: rr.top < fr.top,
+      };
+    }
+  }
+
+  // ۳) تداخل خطی در line-height تنگ — rt خط n با متن خط n-1 برخورد می‌کند؟
+  for (const id of ['s5lh14', 's5lh20']) {
+    const sec = q(id);
+    if (!sec) continue;
+    const rts = Array.from(sec.querySelectorAll('rt'));
+    const spans = Array.from(sec.querySelectorAll('[data-nb]')); // همسایه‌های غیرروبی
+    let overlaps = 0;
+    const detail: string[] = [];
+    for (const rt of rts) {
+      const a = rt.getBoundingClientRect();
+      for (const sp of spans) {
+        if (sp.contains(rt) || rt.contains(sp)) continue;
+        const b = sp.getBoundingClientRect();
+        const inter = !(a.right < b.left || b.right < a.left || a.bottom < b.top || b.bottom < a.top);
+        if (inter) {
+          overlaps++;
+          detail.push(`${(rt.textContent || '').slice(0, 6)}×${(sp.textContent || '').slice(0, 6)}`);
+        }
+      }
+    }
+    out[id] = { rtCount: rts.length, neighborOverlaps: overlaps, detail: detail.slice(0, 8) };
+  }
+
+  // ۴) انتخاب متن — آیا روبی وارد selection می‌شود؟
+  const s2 = q('s2a');
+  if (s2) {
+    const p = s2.querySelector('p');
+    if (p) {
+      const range = document.createRange();
+      range.selectNodeContents(p);
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+      const text = sel?.toString() || '';
+      out.selection = {
+        includesFurigana: text.includes('にほんご') || text.includes('きょう'),
+        includesBase: text.includes('日本語') || text.includes('今日'),
+        sampleOrder: text.replace(/\s+/g, ' ').slice(0, 80),
+      };
+      sel?.removeAllRanges();
+    }
+  }
+
+  // ۵) rp — در مرورگر پشتیبان‌دار مخفی است؟
+  const rp = document.querySelector('rp');
+  if (rp) {
+    const cs = getComputedStyle(rp);
+    out.rp = { display: cs.display, contentHidden: cs.display === 'none' };
+  }
+
+  // ۶) مقادیر پیش‌فرض محاسبه‌شدهٔ CSS روبی در این مرورگر
+  const ruby = document.querySelector('ruby');
+  if (ruby) {
+    const cs = getComputedStyle(ruby);
+    out.computedDefaults = {
+      rubyPosition: cs.rubyPosition || (cs as unknown as Record<string, string>)['ruby-position'],
+      rubyAlign: cs.rubyAlign || (cs as unknown as Record<string, string>)['ruby-align'],
+      writingMode: cs.writingMode,
+      direction: cs.direction,
+      userAgent: navigator.userAgent,
+    };
+  }
+
+  // ۷) رندر دوزبانهٔ الگوی نهایی — وجود خط پایه/شکست
+  const s8 = q('s8pattern');
+  if (s8) {
+    const island = s8.querySelector('.island');
+    if (island) {
+      const cs = getComputedStyle(island);
+      out.s8island = { direction: cs.direction, unicodeBidi: cs.unicodeBidi };
+    }
+  }
+  return out;
+}
+
+export default function SpikeRubyRtlPage() {
+  const [m, setM] = useState<M | null>(null);
+  const [fontsReady, setFontsReady] = useState(false);
+
+  useEffect(() => {
+    document.fonts?.ready.then(() => setFontsReady(true));
+  }, []);
+
+  useEffect(() => {
+    if (fontsReady) setM(measure());
+  }, [fontsReady]);
+
+  return (
+    <main style={{ maxWidth: 760, margin: '0 auto', padding: 24, direction: 'rtl' }}>
+      <style dangerouslySetInnerHTML={{ __html: FONT_FACES + SHARED }} />
+      <h1 style={{ fontSize: 18 }}>Spike M0-08 — ruby در پاراگراف RTL</h1>
+      <p style={{ fontSize: 13, color: '#666' }}>
+        مرورگر: {typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 90) : ''} · فونت‌ها:{' '}
+        {fontsReady ? 'آماده' : '…'}
+      </p>
+
+      <section data-s="s1">
+        <h2>۱) تک‌روبی وسط جملهٔ فارسی</h2>
+        <p>
+          <span data-fa>در این درس واژهٔ</span>{' '}
+          <ruby>
+            日本語
+            <rt>にほんご</rt>
+          </ruby>{' '}
+          <span data-fa>را می‌آموزیم و تمرین می‌کنیم.</span>
+        </p>
+      </section>
+
+      <section data-s="s2a">
+        <h2>۲) چند روبی پشت‌سرهم + علائم ژاپنی</h2>
+        <p>
+          <span data-fa>جملهٔ امروز:</span>{' '}
+          <span className="jp">
+            <ruby>
+              今日<rt>きょう</rt>
+            </ruby>
+            は<ruby>
+              良<rt>いい</rt>
+            </ruby>
+            <span data-nb>天気です</span>。
+            <ruby>
+              私<rt>わたし</rt>
+            </ruby>
+            <span data-nb>は</span>
+            <ruby>
+              日本語<rt>にほんご</rt>
+            </ruby>
+            を<ruby>
+              勉強
+              <rp>(</rp>
+              <rt>べんきょう</rt>
+              <rp>)</rp>
+            </ruby>
+            します。
+          </span>{' '}
+          <span data-fa>این جمله را بلند بخوانید.</span>
+        </p>
+      </section>
+
+      <section data-s="s3bdi">
+        <h2>۳a) روبی داخل bdi</h2>
+        <p>
+          <span data-fa>نمونهٔ اول با bdi:</span>{' '}
+          <bdi>
+            <ruby>
+              日本語<rt>にほんご</rt>
+            </ruby>
+            の<ruby>
+              授業<rt>じゅぎょう</rt>
+            </ruby>
+          </bdi>{' '}
+          <span data-fa>ادامهٔ متن فارسی.</span>
+        </p>
+      </section>
+
+      <section data-s="s3span">
+        <h2>۳b) روبی داخل span با dir=ltr و lang=ja (الگوی KB)</h2>
+        <p>
+          <span data-fa>نمونهٔ دوم با span:</span>{' '}
+          <span className="jp" dir="ltr" lang="ja">
+            <ruby>
+              日本語<rt>にほんご</rt>
+            </ruby>
+            の<ruby>
+              授業<rt>じゅぎょう</rt>
+            </ruby>
+          </span>{' '}
+          <span data-fa>ادامهٔ متن فارسی.</span>
+        </p>
+      </section>
+
+      <section data-s="s4">
+        <h2>۴) متن ترکیبی کاتاکانا/کانجی</h2>
+        <p>
+          <span className="jp">
+            コーヒーを<ruby>
+              飲<rt>の</rt>
+            </ruby>
+            みます。スマホで<ruby>
+              写真<rt>しゃしん</rt>
+            </ruby>
+            を<ruby>
+              撮<rt>と</rt>
+            </ruby>
+            ります。
+          </span>{' '}
+          <span data-fa>یعنی: قهوه می‌نوشم و با گوشی عکس می‌گیرم.</span>
+        </p>
+      </section>
+
+      <section className="lh-14" data-s="s5lh14">
+        <h2>۵a) line-height تنگ ۱.۴ + شکست خط (عرض ۳۰۰px)</h2>
+        <p className="narrow">
+          <span data-nb>متن فارسی طولانی برای اجبار شکست خط در چند سطر</span>{' '}
+          <span className="jp">
+            <ruby>
+              東京<rt>とうきょう</rt>
+            </ruby>
+            で<ruby>
+              日本語<rt>にほんご</rt>
+            </ruby>
+            を<ruby>
+              勉強<rt>べんきょう</rt>
+            </ruby>
+            します。
+          </span>{' '}
+          <span data-nb>و باز متن فارسی بعد از بخش ژاپنی برای خط بعدی و سنجش تداخل روبی با سطر قبلی</span>{' '}
+          <span className="jp">
+            <ruby>
+              毎日<rt>まいにち</rt>
+            </ruby>
+            <ruby>
+              練習<rt>れんしゅう</rt>
+            </ruby>
+            します。
+          </span>{' '}
+          <span data-nb>پایان پاراگراف فارسی.</span>
+        </p>
+      </section>
+
+      <section className="lh-20" data-s="s5lh20">
+        <h2>۵b) line-height بلند ۲.۰ (همان محتوا)</h2>
+        <p className="narrow">
+          <span data-nb>متن فارسی طولانی برای اجبار شکست خط در چند سطر</span>{' '}
+          <span className="jp">
+            <ruby>
+              東京<rt>とうきょう</rt>
+            </ruby>
+            で<ruby>
+              日本語<rt>にほんご</rt>
+            </ruby>
+            を<ruby>
+              勉強<rt>べんきょう</rt>
+            </ruby>
+            します。
+          </span>{' '}
+          <span data-nb>و باز متن فارسی بعد از بخش ژاپنی برای خط بعدی و سنجش تداخل روبی با سطر قبلی</span>{' '}
+          <span className="jp">
+            <ruby>
+              毎日<rt>まいにち</rt>
+            </ruby>
+            <ruby>
+              練習<rt>れんしゅう</rt>
+            </ruby>
+            します。
+          </span>{' '}
+          <span data-nb>پایان پاراگراف فارسی.</span>
+        </p>
+      </section>
+
+      <section data-s="s6a">
+        <h2>۶a) rt بلند چندکاراکتری روی پایهٔ سه‌حرفی</h2>
+        <p>
+          <span className="jp">
+            <ruby>
+              東京都<rt>とうきょうと</rt>
+            </ruby>
+            は<ruby>
+              日本<rt>にほん</rt>
+            </ruby>
+            の<ruby>
+              首都<rt>しゅと</rt>
+            </ruby>
+            です。
+          </span>
+        </p>
+      </section>
+
+      <section data-s="s6b">
+        <h2>۶b) rt بلند روی پایهٔ تک‌حرفی (بدترین حالت)</h2>
+        <p>
+          <span className="jp">
+            <ruby>
+              行<rt>おこな</rt>
+            </ruby>
+            う、
+            <ruby>
+              食<rt>た</rt>
+            </ruby>
+            べる、
+            <ruby>
+              見<rt>み</rt>
+            </ruby>
+            る。
+          </span>
+        </p>
+      </section>
+
+      <section className="under" data-s="s7under">
+        <h2>۷) ruby-position: under (گزینهٔ جایگزین)</h2>
+        <p>
+          <span className="jp">
+            <ruby>
+              日本語<rt>にほんご</rt>
+            </ruby>
+            の<ruby>
+              授業<rt>じゅぎょう</rt>
+            </ruby>
+            です。
+          </span>{' '}
+          <span data-fa>روبی زیر پایه (برای مقایسه).</span>
+        </p>
+      </section>
+
+      <section data-s="s8pattern">
+        <h2>۸) الگوی پیشنهادی FuriganaText (جزیرهٔ ایزوله + Zen Kaku + rt توکن‌دار)</h2>
+        <p>
+          <span data-fa>درس پنجم:</span>{' '}
+          <span className="fg island" lang="ja">
+            <ruby>
+              <span data-nb>私</span>
+              <rt>わたし</rt>
+            </ruby>
+            は<ruby>
+              <span data-nb>学生</span>
+              <rt>がくせい</rt>
+            </ruby>
+            です。
+          </span>{' '}
+          <span data-fa>— این الگو با کلاس fg/island است.</span>
+        </p>
+        <p className="serif" style={{ marginTop: 10 }}>
+          <span className="fg island serif" lang="ja">
+            <ruby>
+              <span data-nb>今日</span>
+              <rt>きょう</rt>
+            </ruby>
+            も<ruby>
+              <span data-nb>一生懸命</span>
+              <rt>いっしょうけんめい</rt>
+            </ruby>
+            <ruby>
+              <span data-nb>勉強</span>
+              <rt>べんきょう</rt>
+            </ruby>
+            します。
+          </span>{' '}
+          <span data-fa>(نسخهٔ متن بلند با Noto Serif JP)</span>
+        </p>
+      </section>
+
+      <section>
+        <h2>اندازه‌گیری‌ها (خودکار پس از آماده‌شدن فونت‌ها)</h2>
+        <pre data-testid="measurements" style={{ direction: 'ltr', textAlign: 'left', fontSize: 11, background: '#f6f6f6', padding: 10, borderRadius: 6, overflow: 'auto' }}>
+          {m ? JSON.stringify(m, null, 2) : '…'}
+        </pre>
+      </section>
+    </main>
+  );
+}
