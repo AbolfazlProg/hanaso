@@ -30,12 +30,12 @@
 
 ## ۲. فایل‌های روی VPS
 
-| مسیر روی VPS | معادل در ریپو |
-|---|---|
-| `/opt/hanaso/docker-compose.yml` | `infra/deploy/learn-kotodama/docker-compose.shared-vps.yml` |
-| `/opt/hanaso/.env` | الگو: `infra/docker/.env.preview.example` (فقط `HANASO_WEB_IMAGE` + مقادیر عمومی) |
-| `/opt/hanaso/smoke.sh` | `scripts/smoke.sh` |
-| `/etc/nginx/sites-available/hanaso-learn` (+ symlink در sites-enabled) | `infra/deploy/learn-kotodama/hanaso-learn.nginx.conf` |
+| مسیر روی VPS                                                           | معادل در ریپو                                                                     |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `/opt/hanaso/docker-compose.yml`                                       | `infra/deploy/learn-kotodama/docker-compose.shared-vps.yml`                       |
+| `/opt/hanaso/.env`                                                     | الگو: `infra/docker/.env.preview.example` (فقط `HANASO_WEB_IMAGE` + مقادیر عمومی) |
+| `/opt/hanaso/smoke.sh`                                                 | `scripts/smoke.sh`                                                                |
+| `/etc/nginx/sites-available/hanaso-learn` (+ symlink در sites-enabled) | `infra/deploy/learn-kotodama/hanaso-learn.nginx.conf`                             |
 
 ## ۳. deploy نسخهٔ جدید (SHA جدید main)
 

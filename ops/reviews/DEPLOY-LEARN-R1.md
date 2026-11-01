@@ -5,17 +5,17 @@
 
 ## (الف) نتیجهٔ بررسی‌های زنده — هر ۹ بررسی اجرا شد
 
-| # | بررسی | انتظار | مشاهده | حکم |
-|---|---|---|---|---|
-| ۱ | `GET /api/health` | ok:true، hanaso-web، commit `ea701342…365d4` | مطابق انتظار (uptimeSec ۸۴۷) | PASS |
-| ۲ | `GET /api/ready` | ok:true، database skipped | مطابق انتظار | PASS |
-| ۳ | HTML صفحهٔ اصلی | `dir="rtl"` + `lang="fa"` | مطابق (+ یک بلوک `lang="ja"`) | PASS |
-| ۴ | `/learn`، `/poc/{dialogue,lesson,practice,assessment}` | 200 | ۵×۲۰۰ (+ `/poc/t2-eval` ۲۰۰؛ مسیر ناشناس API → 404) | PASS |
-| ۵ | `/api/dialogues/cafe-morning-01` | ok:true، ۳ characterId | مطابق (۱۰ خط؛ token ژاپنی + ترجمهٔ فارسی) | PASS |
-| ۶ | `http://learn.kotodama.ir/` | 301 → https | `301 https://learn.kotodama.ir/` | PASS |
-| ۷ | ACME توکن جعلی | 404 | `404` | PASS |
-| ۸ | `https://kotodama.ir/` | 200 (دست‌نخورده) | `200` (+ `bbb.kotodama.ir` ۲۰۰) | PASS |
-| ۹ | هدرهای دارایی ایستا | دقیقاً ۱ Cache-Control + X-Content-Type-Options | ۱×Cache-Control ✓ · nosniff ✓ · **اما X-Frame-Options/Referrer-Policy غایب بودند** (یافتهٔ ۴) | PASS با تذکر |
+| #   | بررسی                                                  | انتظار                                          | مشاهده                                                                                        | حکم          |
+| --- | ------------------------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------ |
+| ۱   | `GET /api/health`                                      | ok:true، hanaso-web، commit `ea701342…365d4`    | مطابق انتظار (uptimeSec ۸۴۷)                                                                  | PASS         |
+| ۲   | `GET /api/ready`                                       | ok:true، database skipped                       | مطابق انتظار                                                                                  | PASS         |
+| ۳   | HTML صفحهٔ اصلی                                        | `dir="rtl"` + `lang="fa"`                       | مطابق (+ یک بلوک `lang="ja"`)                                                                 | PASS         |
+| ۴   | `/learn`، `/poc/{dialogue,lesson,practice,assessment}` | 200                                             | ۵×۲۰۰ (+ `/poc/t2-eval` ۲۰۰؛ مسیر ناشناس API → 404)                                           | PASS         |
+| ۵   | `/api/dialogues/cafe-morning-01`                       | ok:true، ۳ characterId                          | مطابق (۱۰ خط؛ token ژاپنی + ترجمهٔ فارسی)                                                     | PASS         |
+| ۶   | `http://learn.kotodama.ir/`                            | 301 → https                                     | `301 https://learn.kotodama.ir/`                                                              | PASS         |
+| ۷   | ACME توکن جعلی                                         | 404                                             | `404`                                                                                         | PASS         |
+| ۸   | `https://kotodama.ir/`                                 | 200 (دست‌نخورده)                                | `200` (+ `bbb.kotodama.ir` ۲۰۰)                                                               | PASS         |
+| ۹   | هدرهای دارایی ایستا                                    | دقیقاً ۱ Cache-Control + X-Content-Type-Options | ۱×Cache-Control ✓ · nosniff ✓ · **اما X-Frame-Options/Referrer-Policy غایب بودند** (یافتهٔ ۴) | PASS با تذکر |
 
 راستی‌آزمایی‌های تکمیلی بازبین: گواهی TLS (SAN: kotodama.ir/www/bbb/learn؛ انقضا ۲۰۲۷-۰۱-۲۴) · DNS → 87.107.129.210 · `git rev-parse origin/main` = SHA مستقر = HEAD شاخه · PR #65 merged ✓ · وضعیت GitHub (#1/#14/#38/#40 بسته ✓، #11 باز ✓، **#33 باز** → یافتهٔ ۱) · مجموعهٔ فایل‌های تغییرکرده دقیقاً مطابق §۶ رکورد اجرا · YAML معتبر compose · دستورات README بش معتبر · engines `>=24<25` + `node:24-alpine` با ادعای «اجرای فقط Docker» سازگار · محتوای «کافه» در `/learn` ✓.
 
@@ -53,9 +53,9 @@
 
 ## (پ) شمارش بر حسب شدت (پس از اصلاح)
 
-| S0 | S1 | S2 | S3 | خارج از محدوده |
-|----|----|----|----|----------------|
-| ۰ | ۱ (رفع شد) | ۸ (همه رفع شد) | ۶ (۵ رفع شد؛ ۱ پیگیری جداگانه) | ۱ (رفع شد) |
+| S0  | S1         | S2             | S3                             | خارج از محدوده |
+| --- | ---------- | -------------- | ------------------------------ | -------------- |
+| ۰   | ۱ (رفع شد) | ۸ (همه رفع شد) | ۶ (۵ رفع شد؛ ۱ پیگیری جداگانه) | ۱ (رفع شد)     |
 
 ## (ت) حکم نهایی
 
