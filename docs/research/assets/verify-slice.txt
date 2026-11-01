@@ -1,0 +1,321 @@
+$ bash scripts/verify-foundation.sh
+==== [1/7] install (frozen) ====
+Scope: all 2 workspace projects
+✓ Lockfile passes supply-chain policies (verified 55m ago)
+Lockfile is up to date, resolution step is skipped
+Done in 23ms using pnpm v12.16.1
+==== [2/7] format:check ====
+$ prettier --check .
+Checking formatting...
+All matched files use Prettier code style!
+==== [3/7] lint ====
+$ pnpm -r lint
+$ eslint .
+==== [4/7] typecheck ====
+$ pnpm -r typecheck
+$ tsc --noEmit
+==== [5/7] unit tests ====
+$ pnpm -r test
+$ vitest run
+
+ RUN  v5.0.5 /home/z/my-project/hanaso-poc/apps/web
+
+stdout | tests/unit/dialogue/playback-engine.spec.ts > PlaybackEngine — T1: multi-speaker chain with exact gaps > real-timer overshoot of a 50ms gap stays well under the 100ms T1 budget
+[T1 real-timer probe] gap=50ms mean overshoot=0.18ms max=0.63ms over 12 samples
+
+ ✓ tests/unit/dialogue/playback-engine.spec.ts (9 tests) 621ms
+   ✓ PlaybackEngine — T1: multi-speaker chain with exact gaps (4)
+     ✓ real-timer overshoot of a 50ms gap stays well under the 100ms T1 budget 604ms
+ ✓ tests/integration/learning-slice.spec.ts (3 tests) 25ms
+ ✓ tests/integration/mastery-api.spec.ts (7 tests) 19ms
+ ✓ tests/unit/dialogue/audio-errors.spec.ts (4 tests) 18ms
+ ✓ tests/unit/dialogue/subtitles-sync.spec.ts (2 tests) 11ms
+ ✓ tests/unit/practice/practice-generator.spec.ts (10 tests) 14ms
+ ✓ tests/unit/dialogue/content-schema.spec.ts (7 tests) 13ms
+ ✓ tests/unit/character/character-animation.spec.ts (7 tests) 10ms
+ ✓ tests/unit/fsrs-context.spec.ts (5 tests) 8ms
+ ✓ tests/unit/progress/progress-machine.spec.ts (11 tests) 8ms
+ ✓ db/tests/schema.spec.ts (18 tests) 7ms
+ ✓ tests/unit/practice/practice-checker.spec.ts (8 tests) 7ms
+ ✓ tests/unit/envelope.test.ts (5 tests) 4ms
+
+ Test Files  13 passed (13)
+      Tests  96 passed (96)
+   Start at  13:43:46
+   Duration  3.48s (import 55%, tests 35%, transform 8%, worker 2%)
+
+    Isolate  13 workers spawned · ~93ms startup each (spawn + environment, per file)
+             at least ~1.11s faster with isolate: false — reuses workers across files instead of one per file
+
+==== [6/7] build ====
+$ pnpm --filter web build
+$ next build
+▲ Next.js 16.4.3 (Turbopack)
+✓ Running next.config.ts took 27ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 5.4s
+  Running TypeScript ...
+  Finished TypeScript in 5.5s ...
+  Collecting page data using 1 worker ...
+  Generating static pages using 1 worker (0/9) ...
+  Generating static pages using 1 worker (2/9) 
+  Generating static pages using 1 worker (4/9) 
+  Generating static pages using 1 worker (6/9) 
+✓ Generating static pages using 1 worker (9/9) in 282ms
+Turbopack build encountered 7 warnings:
+./apps/web/src/modules/audio/audio-manifest.ts:73:35
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m71 |[0m   [36mconst[0m rel = path.join([32m'src'[0m, [32m'modules'[0m, [32m'audio'[0m, [32m'content'[0m, file);
+  [90m72 |[0m   [36mconst[0m candidates = [path.join(process.cwd(), rel), path.join(process.cwd(), [32m'apps'[0m, [32m'web.[0m..
+[33m[1m>[0m [90m73 |[0m   [36mfor[0m ([36mconst[0m c [36mof[0m candidates) [36mif[0m (existsSync(c)) [36mreturn[0m c;
+  [90m   |[0m                                   [33m[1m^^^^^^^^^^^^^[0m
+  [90m74 |[0m   [36mthrow[0m [36mnew[0m [33mError[0m([32m`audio content file not found: [0m${file[32m} (tried: [0m${candidates.join([32m', '[0m)[32m})`[0m);
+  [90m75 |[0m }
+  [90m76 |[0m
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.existsSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  App Route:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+  Server Component:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/poc/practice/page.tsx
+
+
+./apps/web/src/modules/audio/audio-manifest.ts:104:35
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m102 |[0m   [36mconst[0m rel = path.join([32m'public'[0m, [32m'poc-audio'[0m, [32m'manifest.json'[0m);
+  [90m103 |[0m   [36mconst[0m candidates = [path.join(process.cwd(), rel), path.join(process.cwd(), [32m'apps'[0m, [32m'we..[0m.
+[33m[1m>[0m [90m104 |[0m   [36mfor[0m ([36mconst[0m c [36mof[0m candidates) [36mif[0m (existsSync(c)) [36mreturn[0m c;
+  [90m    |[0m                                   [33m[1m^^^^^^^^^^^^^[0m
+  [90m105 |[0m   [36mreturn[0m candidates[[35m0[0m]!;
+  [90m106 |[0m }
+  [90m107 |[0m
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.existsSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  App Route:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+  Server Component:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/poc/practice/page.tsx
+
+
+./apps/web/src/modules/audio/audio-manifest.ts:114:8
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m112 |[0m [36mexport[0m [36mfunction[0m loadAudioSidecar(): [33mAudioSidecar[0m | [36mnull[0m {
+  [90m113 |[0m   [36mconst[0m p = resolveSidecarPath();
+[33m[1m>[0m [90m114 |[0m   [36mif[0m (!existsSync(p)) [36mreturn[0m [36mnull[0m;
+  [90m    |[0m        [33m[1m^^^^^^^^^^^^^[0m
+  [90m115 |[0m   [36mconst[0m parsed = sidecarSchema.safeParse([33mJSON[0m.parse(readFileSync(p, [32m'utf8'[0m)));
+  [90m116 |[0m   [36mreturn[0m parsed.success ? parsed.data : [36mnull[0m;
+  [90m117 |[0m }
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.existsSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  App Route:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+  Server Component:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/poc/practice/page.tsx
+
+
+./apps/web/src/modules/audio/audio-manifest.ts:82:15
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m80 |[0m [36mexport[0m [36mfunction[0m loadVoices(): [33mMap[0m<string, [33mVoiceConfig[0m> {
+  [90m81 |[0m   [36mif[0m (voicesCache) [36mreturn[0m voicesCache;
+[33m[1m>[0m [90m82 |[0m   [36mconst[0m raw = readFileSync(resolveModuleContentPath([32m'voices.yaml'[0m), [32m'utf8'[0m);
+  [90m   |[0m               [33m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m83 |[0m   [36mconst[0m parsed = voicesSchema.parse(parseYaml(raw));
+  [90m84 |[0m   voicesCache = [36mnew[0m [33mMap[0m(
+  [90m85 |[0m     [33mObject[0m.entries(parsed.voices).map(([voiceId, v]) => [
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.readFileSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  App Route:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+  Server Component:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/poc/practice/page.tsx
+
+
+./apps/web/src/modules/audio/audio-manifest.ts:115:53
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m113 |[0m   [36mconst[0m p = resolveSidecarPath();
+  [90m114 |[0m   [36mif[0m (!existsSync(p)) [36mreturn[0m [36mnull[0m;
+[33m[1m>[0m [90m115 |[0m   [36mconst[0m parsed = sidecarSchema.safeParse([33mJSON[0m.parse(readFileSync(p, [32m'utf8'[0m)));
+  [90m    |[0m                                                     [33m[1m^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m116 |[0m   [36mreturn[0m parsed.success ? parsed.data : [36mnull[0m;
+  [90m117 |[0m }
+  [90m118 |[0m
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.readFileSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  App Route:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+  Server Component:
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/lib/poc/dialogue-bundle.ts
+    ./apps/web/src/app/poc/practice/page.tsx
+
+
+./apps/web/src/modules/dialogue/content/loader.ts:21:35
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m19 |[0m   [36mconst[0m rel = path.join([32m'src'[0m, [32m'modules'[0m, [32m'dialogue'[0m, [32m'content'[0m, file);
+  [90m20 |[0m   [36mconst[0m candidates = [path.join(process.cwd(), rel), path.join(process.cwd(), [32m'apps'[0m, [32m'web.[0m..
+[33m[1m>[0m [90m21 |[0m   [36mfor[0m ([36mconst[0m c [36mof[0m candidates) [36mif[0m (existsSync(c)) [36mreturn[0m c;
+  [90m   |[0m                                   [33m[1m^^^^^^^^^^^^^[0m
+  [90m22 |[0m   [36mthrow[0m [36mnew[0m [33mError[0m(
+  [90m23 |[0m     [32m`dialogue content file not found: [0m${file[32m} (tried: [0m${candidates.join([32m', '[0m)[32m}) — run insi...[0m
+  [90m24 |[0m   );
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.existsSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  #1 [Server Component]:
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/app/learn/page.tsx
+
+  #2 [App Route]:
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+  #3 [App Route]:
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+
+./apps/web/src/modules/dialogue/content/loader.ts:35:25
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m33 |[0m
+  [90m34 |[0m   [36mconst[0m file = resolveContentPath([32m`dialogue.[0m${slug[32m}.yaml`[0m);
+[33m[1m>[0m [90m35 |[0m   [36mconst[0m doc = parseYaml(readFileSync(file, [32m'utf8'[0m));
+  [90m   |[0m                         [33m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m36 |[0m   [36mconst[0m dialogue = parseDialogueDocument(slug, doc);
+  [90m37 |[0m   cache.set(slug, dialogue);
+  [90m38 |[0m   [36mreturn[0m dialogue;
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.readFileSync(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  #1 [Server Component]:
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/app/learn/page.tsx
+
+  #2 [App Route]:
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+  #3 [App Route]:
+    ./apps/web/src/modules/dialogue/content/loader.ts
+    ./apps/web/src/modules/audio/audio-manifest.ts
+    ./apps/web/src/app/api/dialogues/[slug]/route.ts
+
+
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/attempts
+├ ƒ /api/dialogues/[slug]
+├ ƒ /api/events
+├ ƒ /api/health
+├ ƒ /api/progress
+├ ƒ /api/ready
+├ ○ /learn
+├ ○ /poc/assessment
+├ ƒ /poc/dialogue
+├ ○ /poc/lesson
+├ ○ /poc/practice
+└ ○ /poc/t2-eval
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+==== [7/7] smoke (production standalone server) + secret scan ====
+▲ Next.js 16.4.3
+- Local:         http://127.0.0.1:3100
+- Network:       http://127.0.0.1:3100
+✓ Ready in 0ms
+✓ Running next.config took 3ms
+== smoke: http://127.0.0.1:3100 ==
+health: {"ok":true,"status":"ok","service":"hanaso-web","version":"dev","commit":"dev","env":"local","uptimeSec":1,"timestamp":"2026-11-01T13:44:04.306Z"}
+ready: {"ok":true,"service":"hanaso-web","checks":{"process":{"status":"ok"},"database":{"status":"skipped","detail":"no DATABASE_URL configured (expected until M0-10)"}},"timestamp":"2026-11-01T13:44:04.345Z"}
+== smoke: ALL GREEN ==
+==== secret scan ====
+secret scan: clean
+==== ALL GATES GREEN ====
