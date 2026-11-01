@@ -11,3 +11,10 @@
 | 2026-11-01 ~14:00  | Z.ai (Builder — DLG PoC)    | **شروع** TASK-DLG-POC-01 (اجرای PoC فنی مکالمه T1..T10) در worktree مستقل — برنچ `poc/dialogue-player`؛ ماژول‌های جدید dialogue/character/audio/fsrs/mastery (index.ts عمومی تازه‌سازی، بدون تداخل با ماژول موجود)                                                                              | `poc/dialogue-player`          | TASK-DLG-POC-01        |
 | 2026-11-01 ~19:00  | Z.ai (Builder — UI)         | **شروع** TASK-M0-09 (زیرساخت مشترک UI) — **اعلام هماهنگی: `apps/web/src/styles/tokens.css` + `src/messages/fa.ts` قفل این Agent** (مالکیت matrix: UI/Design → صف Builder طبق NEXT_ACTIONS ۰۰۰۰۰؛ Agent هنری مستقل در حال حاضر فقط در ریپوی KB فعالیت می‌کند)                                    | `feat/ui-m0-09-infrastructure` | TASK-M0-09             |
 | 2026-11-01 ~21:30  | Z.ai (Builder — UI)         | **پایان** TASK-M0-09: پورت کامل توکن‌ها + فونت سلف‌هاست + FuriganaText + DirectionProvider + RC on + ۹ کامپوننت + دروازه‌های stylelint/بودجه — ۹ گیت ALL GREEN، ۱۲۴/۱۲۴ تست، Chromium+Firefox واقعی ✓ (WebKit بلاک محیطی → FT-002) — رکورد: `ops/runs/RUN-20261101-04.md` — قفل هماهنگی آزاد شد | `feat/ui-m0-09-infrastructure` | TASK-M0-09 → In Review |
+
+## 2026-11-02 — TASK-DSGN-01 (Aizen · DD-084) + تکمیل Deploy — RUN-20261102-01
+
+- **تکمیل مأموریت قبل:** استقرار `3d247ed` روی learn.kotodama.ir انجام شد (بدهای Runtime متوقف‌شده) — health gate ~۴s، smoke ALL GREEN، `/poc/ui` زنده، kotodama.ir دست‌نخورده (۲۰۰ قبل/بعد).
+- **Aizen:** تصمیم مالک در KB ثبت شد (**DD-084**، PR #5 ریپوی KB)؛ سپس در این ریپو اجرا شد: token-swap پالت + توکن‌های ساختاری جدید + فونت‌های ۸۰۰/۹۰۰/Black + امضاها (باند نیلی青海波/قاب ۲px/آفست سخت/segmented A→D/مُهر/hatching/کارت نیلی) روی خانه، learn، poc/dialogue و poc/ui.
+- **فایل‌های هم‌نقطه:** `tokens.css`، `fa.ts`، `button.tsx` — تغییر ترتیبی و تک‌Agent (این اجرا تنها Agent فعال بود).
+- شواهد: ۹/۹ دروازه ALL GREEN · ۱۲۵/۱۲۵ تست · ۱۹/۱۹ سنجهٔ رندر · ۳ بازبینی مستقل (S1/S2 صفر باقی‌مانده).
