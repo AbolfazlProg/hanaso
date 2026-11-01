@@ -100,7 +100,9 @@ export function FuriganaText({
         ) : (
           <ruby key={i}>
             {tok.base}
+            <rp aria-hidden>（</rp>
             <rt>{tok.rt}</rt>
+            <rp aria-hidden>）</rp>
           </ruby>
         ),
       )}

@@ -63,13 +63,18 @@ function Button({
   return (
     <button
       type={type}
-      className={cn(buttonVariants({ variant, size }), className)}
+      className={cn(buttonVariants({ variant, size }), 'relative', loading && 'pointer-events-none', className)}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...props}
     >
-      {loading ? <LoaderCircle aria-hidden className="size-4 motion-safe:animate-spin" /> : null}
-      {children}
+      {loading ? (
+        <LoaderCircle
+          aria-hidden
+          className="absolute inset-0 m-auto size-4 motion-safe:animate-[spin_var(--dur-spin)_linear_infinite]"
+        />
+      ) : null}
+      <span className={cn('inline-flex items-center gap-2', loading && 'invisible')}>{children}</span>
     </button>
   );
 }

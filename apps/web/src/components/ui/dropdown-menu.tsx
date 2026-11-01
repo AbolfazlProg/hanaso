@@ -34,7 +34,7 @@ function DropdownMenuContent({
         sideOffset={sideOffset}
         className={cn(
           'z-modal min-w-48 overflow-hidden rounded-md border border-ink-faint/55 bg-paper p-1 shadow-raised',
-          'data-[state=open]:animate-[fade-in_var(--dur-fast)_var(--ease-out)]',
+          'data-[state=open]:animate-[hanaso-fade-in_var(--dur-fast)_var(--ease-out)]',
           className,
         )}
         {...props}

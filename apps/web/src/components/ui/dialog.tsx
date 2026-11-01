@@ -13,6 +13,7 @@ import { X } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
+import { fa } from '@/messages/fa';
 
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
@@ -24,7 +25,7 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Dial
     <DialogPrimitive.Overlay
       className={cn(
         'fixed inset-0 z-modal bg-scrim',
-        'data-[state=open]:animate-[fade-in_var(--dur-fast)_var(--ease-out)]',
+        'data-[state=open]:animate-[hanaso-fade-in_var(--dur-fast)_var(--ease-out)]',
         className,
       )}
       {...props}
@@ -41,6 +42,7 @@ function DialogContent({ className, children, ...props }: React.ComponentProps<t
           'fixed inset-x-0 top-1/2 z-modal mx-auto -translate-y-1/2',
           'w-full max-w-lg rounded-lg border border-ink-faint/55 bg-paper shadow-raised',
           'p-6 focus:outline-none',
+          'data-[state=open]:animate-[hanaso-fade-in_var(--dur-fast)_var(--ease-out)]',
           className,
         )}
         {...props}
@@ -53,7 +55,7 @@ function DialogContent({ className, children, ...props }: React.ComponentProps<t
             'transition-colors hover:text-ink',
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai',
           )}
-          aria-label="بستن"
+          aria-label={fa.common.close}
         >
           <X aria-hidden className="size-4" />
         </DialogPrimitive.Close>

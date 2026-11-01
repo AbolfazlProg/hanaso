@@ -26,8 +26,8 @@ function Toaster({ ...props }: ToasterProps) {
             'group rounded-md border border-ink-faint/55 bg-paper text-ink shadow-raised text-small leading-fa font-[family-name:var(--font-fa)]',
           title: 'text-ink font-semibold',
           description: 'text-ink-soft',
-          actionButton: 'bg-ai text-paper rounded-sm min-h-9',
-          cancelButton: 'bg-surface-sunken text-ink rounded-sm min-h-9',
+          actionButton: 'bg-ai text-paper rounded-sm min-h-11',
+          cancelButton: 'bg-surface-sunken text-ink rounded-sm min-h-11',
         },
       }}
       {...props}

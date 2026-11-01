@@ -18,6 +18,43 @@ body {
   min-block-size: 100dvh;
 }
 
+/* -- لایه‌بندی z-index — توکن‌محور (بررسی r1-F1: namespace ای برای z در Tailwind 4
+   نیست؛ کلاس‌های z-modal/z-drawer/... بدون این @utility ها CSS تولید نمی‌کردند) -- */
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-drawer {
+  z-index: var(--z-drawer);
+}
+@utility z-fab {
+  z-index: var(--z-fab);
+}
+@utility z-toast {
+  z-index: var(--z-toast);
+}
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+
+/* -- انیمیشن‌های پایه (بررسی r3-F2: keyframes تعریف‌نشده = انیمیشن مرده) -------
+   همه با توکن dur/ease؛ زیر prefers-reduced-motion مقدارها صفرند → بی‌حرکت. */
+@keyframes hanaso-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes hanaso-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* -- JaBlock — جزیرهٔ LTR برای هر متن ژاپنی (KB components.css) ------------- */
 .ja-block {
   direction: ltr;

@@ -24,7 +24,7 @@ function AccordionTrigger({ className, children, ...props }: React.ComponentProp
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         className={cn(
-          'flex flex-1 items-center justify-between gap-4 py-4 text-start text-body font-medium',
+          'group flex flex-1 items-center justify-between gap-4 py-4 text-start text-body font-medium',
           'min-h-11 transition-colors hover:text-ai',
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai',
           'disabled:pointer-events-none disabled:opacity-45',
@@ -35,7 +35,7 @@ function AccordionTrigger({ className, children, ...props }: React.ComponentProp
         {children}
         <ChevronDown
           aria-hidden
-          className="size-4 shrink-0 text-ink-soft transition-transform duration-200 motion-reduce:transition-none"
+          className="size-4 shrink-0 text-ink-soft transition-transform duration-[var(--dur-fast)] ease-[var(--ease-out)] motion-reduce:transition-none group-data-[state=open]:rotate-180"
         />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

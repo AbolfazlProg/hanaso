@@ -3,6 +3,8 @@
  * این صفحه برگهٔ آزمون بصری پایدار است: پاراگراف ترکیبی فارسی+ژاپنی+روبی،
  * کارت جمله، دکمهٔ صوت و زیرمجموعهٔ کامپوننت‌های رابط در RTL.
  * محتوای ژاپنی این صفحه «دادهٔ آزمایشی مهندسی» است نه محتوای آموزشی.
+ * اصلاح بازبینی r1-F6/r2-F1: متن فارسی بیرون جزیره‌های ژاپنی (spike §۶-۱:
+ * هر قطعهٔ ژاپنی = یک island؛ مرزهای پاراگراف فارسی = همان مرز توکن‌ها).
  */
 'use client';
 
@@ -40,10 +42,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { fa } from '@/messages/fa';
 
-const mixedParagraphTokens = parseFuriganaDsl(
-  '「おはよう」 یعنی «صبح بخیر» — 今日[きょう]も 天気[てんき]が いい ですね。',
-);
-
+/* جزیره‌ها: فقط متن ژاپنی — فارسی هرگز داخل island نمی‌رود (spike §۶-۳-۲) */
+const greetingTokens = parseFuriganaDsl('おはよう[おはよう]ございます');
+const weatherTokens = parseFuriganaDsl('今日[きょう]も 天気[てんき]が いい ですね');
+const studyTokens = parseFuriganaDsl('日本語[にほんご]を 勉強[べんきょう]しています。');
+const towerTokens = parseFuriganaDsl('東京[とうきょう]タワーは 高[たか]い です。');
 const sentenceTokens = parseFuriganaDsl('コーヒーを お願い[おねがい]します。');
 
 export default function UiSamplePage() {
@@ -53,12 +56,12 @@ export default function UiSamplePage() {
       <h1 className="text-h1 font-semibold text-ink">{fa.uiKit.title}</h1>
       <p className="mt-2 text-small text-ink-soft">{fa.uiKit.subtitle}</p>
 
-      {/* ۱ — پاراگراف ترکیبی: فارسی + جزیره‌های ژاپنی روبی‌دار در یک سطر */}
+      {/* ۱ — پاراگراف ترکیبی: فارسی + دو جزیرهٔ ژاپنی روبی‌دار در یک سطر */}
       <section className="mt-10">
         <h2 className="text-h3 font-semibold text-ink">{fa.uiKit.mixedSection}</h2>
         <p className="fg-block mt-4 text-body text-ink">
-          مقدمهٔ فارسی: <FuriganaText tokens={mixedParagraphTokens} /> و ادامهٔ فارسی پس از جزیره — ترتیب قطعه‌ها باید
-          حفظ شود.
+          {fa.uiKit.mixedIntro} <FuriganaText tokens={greetingTokens} /> {fa.uiKit.mixedMeans}{' '}
+          <FuriganaText tokens={weatherTokens} /> {fa.uiKit.mixedAfter}
         </p>
       </section>
 
@@ -66,10 +69,10 @@ export default function UiSamplePage() {
       <section className="mt-10">
         <h2 className="text-h3 font-semibold text-ink">{fa.uiKit.rubySection}</h2>
         <p className="fg-block mt-4">
-          <FuriganaText>日本語[にほんご]を 勉強[べんきょう]しています。</FuriganaText>
+          <FuriganaText tokens={studyTokens} />
         </p>
         <p className="fg-block mt-4">
-          <FuriganaText variant="serif">東京[とうきょう]タワーは 高[たか]い です。</FuriganaText>
+          {fa.uiKit.serifNote} <FuriganaText variant="serif" tokens={towerTokens} />
         </p>
       </section>
 
@@ -79,7 +82,7 @@ export default function UiSamplePage() {
         <div className="mt-4">
           <JapaneseSentence
             tokens={sentenceTokens}
-            translation="یک قهوه لطفاً."
+            translation={fa.uiKit.translation}
             revealLabel={fa.sentence.revealTranslation}
             action={
               <AudioSentenceButton
@@ -97,13 +100,13 @@ export default function UiSamplePage() {
         <h2 className="text-h3 font-semibold text-ink">{fa.uiKit.componentsSection}</h2>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Button>دکمهٔ اصلی</Button>
-          <Button variant="secondary">ثانویه</Button>
-          <Button variant="ghost">شفاف</Button>
-          <Button loading>در حال انجام</Button>
-          <Button disabled>غیرفعال</Button>
+          <Button>{fa.uiKit.primaryBtn}</Button>
+          <Button variant="secondary">{fa.uiKit.secondaryBtn}</Button>
+          <Button variant="ghost">{fa.uiKit.ghostBtn}</Button>
+          <Button loading>{fa.uiKit.loadingBtn}</Button>
+          <Button disabled>{fa.uiKit.disabledBtn}</Button>
           <Button variant="primary" size="main">
-            اکشن اصلی لمسی
+            {fa.uiKit.mainActionBtn}
           </Button>
         </div>
 
@@ -111,19 +114,19 @@ export default function UiSamplePage() {
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline">هاور کن</Button>
+                <Button variant="outline">{fa.uiKit.hoverMe}</Button>
               </TooltipTrigger>
-              <TooltipContent>تولتیپ فارسی با عرض محدود</TooltipContent>
+              <TooltipContent>{fa.uiKit.tooltipDemo}</TooltipContent>
             </Tooltip>
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="secondary">مودال</Button>
+                <Button variant="secondary">{fa.uiKit.modalBtn}</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>عنوان مودال</DialogTitle>
-                  <DialogDescription>توضیح فارسی مودال — پس‌زمینه با توکن scrim و لایهٔ z-modal.</DialogDescription>
+                  <DialogTitle>{fa.uiKit.modalTitle}</DialogTitle>
+                  <DialogDescription>{fa.uiKit.modalBody}</DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                   <Button>{fa.common.confirm}</Button>
@@ -133,29 +136,29 @@ export default function UiSamplePage() {
 
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="secondary">پنل کشویی</Button>
+                <Button variant="secondary">{fa.uiKit.sheetBtn}</Button>
               </SheetTrigger>
               <SheetContent side="start">
                 <SheetHeader>
-                  <SheetTitle>پنل «در مکالمه ببین»</SheetTitle>
-                  <SheetDescription>side=start در RTL از لبهٔ چپ باز می‌شود.</SheetDescription>
+                  <SheetTitle>{fa.uiKit.sheetTitle}</SheetTitle>
+                  <SheetDescription>{fa.uiKit.sheetBody}</SheetDescription>
                 </SheetHeader>
               </SheetContent>
             </Sheet>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">منو</Button>
+                <Button variant="outline">{fa.uiKit.menuBtn}</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuLabel>گزینه‌ها</DropdownMenuLabel>
+                <DropdownMenuLabel>{fa.uiKit.menuLabel}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>شروع مرور</DropdownMenuItem>
-                <DropdownMenuItem disabled>غیرفعال</DropdownMenuItem>
+                <DropdownMenuItem>{fa.uiKit.menuItemReview}</DropdownMenuItem>
+                <DropdownMenuItem disabled>{fa.uiKit.menuItemDisabled}</DropdownMenuItem>
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>زیرمنو</DropdownMenuSubTrigger>
+                  <DropdownMenuSubTrigger>{fa.uiKit.menuSub}</DropdownMenuSubTrigger>
                   <DropdownMenuSubContent>
-                    <DropdownMenuItem>عمق ۲</DropdownMenuItem>
+                    <DropdownMenuItem>{fa.uiKit.menuSubItem}</DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               </DropdownMenuContent>
@@ -165,34 +168,32 @@ export default function UiSamplePage() {
 
         <Tabs defaultValue="a" className="mt-4">
           <TabsList>
-            <TabsTrigger value="a">الف</TabsTrigger>
-            <TabsTrigger value="b">ب</TabsTrigger>
+            <TabsTrigger value="a">{fa.uiKit.tabA}</TabsTrigger>
+            <TabsTrigger value="b">{fa.uiKit.tabB}</TabsTrigger>
           </TabsList>
           <TabsContent value="a">
-            <p className="text-body text-ink">محتوای زبانهٔ اول.</p>
+            <p className="text-body text-ink">{fa.uiKit.tabAContent}</p>
           </TabsContent>
           <TabsContent value="b">
-            <p className="text-body text-ink">محتوای زبانهٔ دوم.</p>
+            <p className="text-body text-ink">{fa.uiKit.tabBContent}</p>
           </TabsContent>
         </Tabs>
 
         <Accordion type="single" collapsible className="mt-4">
           <AccordionItem value="q1">
-            <AccordionTrigger>چرا جزیرهٔ LTR لازم است؟</AccordionTrigger>
-            <AccordionContent>
-              بدون isolate، ترتیب قطعه‌های ژاپنی در پاراگراف فارسی وارونه می‌شود (spike M0-08).
-            </AccordionContent>
+            <AccordionTrigger>{fa.uiKit.accordionQ}</AccordionTrigger>
+            <AccordionContent>{fa.uiKit.accordionA}</AccordionContent>
           </AccordionItem>
         </Accordion>
 
         <div className="mt-4 rounded-md border border-ink-faint/55">
           <Command>
-            <CommandInput placeholder="جست‌وجو…" />
+            <CommandInput placeholder={fa.uiKit.commandPlaceholder} />
             <CommandList>
-              <CommandEmpty>نتیجه‌ای نبود.</CommandEmpty>
-              <CommandGroup heading="واژه‌ها">
-                <CommandItem>コーヒー — قهوه</CommandItem>
-                <CommandItem>お願いします — لطفاً</CommandItem>
+              <CommandEmpty>{fa.uiKit.commandEmpty}</CommandEmpty>
+              <CommandGroup heading={fa.uiKit.commandGroup}>
+                <CommandItem>{fa.uiKit.commandItem1}</CommandItem>
+                <CommandItem>{fa.uiKit.commandItem2}</CommandItem>
               </CommandGroup>
             </CommandList>
           </Command>
@@ -200,7 +201,7 @@ export default function UiSamplePage() {
 
         <p className="mt-4 flex items-center gap-1 text-small text-ink-soft">
           <ChevronDown aria-hidden className="size-4" />
-          انتهای برگهٔ مرجع رندر.
+          {fa.uiKit.footer}
         </p>
       </section>
     </main>

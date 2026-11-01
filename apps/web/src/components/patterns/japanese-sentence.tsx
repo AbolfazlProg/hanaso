@@ -7,6 +7,7 @@
 import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
+import { fa } from '@/messages/fa';
 import { FuriganaText, type FuriganaToken } from './furigana-text';
 
 export interface JapaneseSentenceProps {
@@ -25,7 +26,7 @@ export interface JapaneseSentenceProps {
 export function JapaneseSentence({
   tokens,
   translation,
-  revealLabel = 'نمایش ترجمه',
+  revealLabel = fa.sentence.revealTranslation,
   action,
   variant = 'ui',
   className,

@@ -15,12 +15,12 @@ describe('Button', () => {
     expect(m).toContain('type="button"');
   });
 
-  it('loading → disabled + aria-busy + اسپینر', () => {
+  it('loading → disabled + aria-busy + اسپینر + برچسب نامرئی (بدون جهش عرض — KB btn--loading)', () => {
     const m = renderToStaticMarkup(<Button loading>در حال انجام</Button>);
     expect(m).toContain('disabled');
     expect(m).toContain('aria-busy="true"');
-    expect(m).toContain('animate-spin');
-    expect(m).toContain('motion-safe:animate-spin');
+    expect(m).toContain('invisible');
+    expect(m).toContain('motion-safe:animate-[spin_var(--dur-spin)_linear_infinite]');
   });
 
   it('کف لمسی ۴۴px (min-h-11) روی همهٔ سایزها', () => {

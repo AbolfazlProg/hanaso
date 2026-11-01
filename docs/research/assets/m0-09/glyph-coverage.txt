@@ -1,0 +1,9 @@
+# TASK-M0-09 glyph coverage — 2026-11-01 (fontTools 4.62.1)
+# FA sample: Persian letters+digits+ZWJ forms; JA sample: kana/kanji/common punctuation
+apps/web/src/styles/woff2/notoserif-vf.woff2: JA sample -> OK (0 missing)
+apps/web/src/styles/woff2/vazirmatn-fd-400.woff2: FA sample -> OK (0 missing)
+apps/web/src/styles/woff2/vazirmatn-fd-500.woff2: FA sample -> OK (0 missing)
+apps/web/src/styles/woff2/vazirmatn-fd-700.woff2: FA sample -> OK (0 missing)
+apps/web/src/styles/woff2/zenkaku-starter-Bold.woff2: JA sample -> OK (0 missing)
+apps/web/src/styles/woff2/zenkaku-starter-Medium.woff2: JA sample -> OK (0 missing)
+apps/web/src/styles/woff2/zenkaku-starter-Regular.woff2: JA sample -> OK (0 missing)

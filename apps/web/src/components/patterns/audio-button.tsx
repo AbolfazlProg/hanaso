@@ -36,7 +36,7 @@ export function AudioSentenceButton({ className, state = 'idle', children, ...pr
       {...props}
     >
       {state === 'loading' ? (
-        <LoaderCircle aria-hidden className="size-5 motion-safe:animate-spin" />
+        <LoaderCircle aria-hidden className="size-5 motion-safe:animate-[spin_var(--dur-spin)_linear_infinite]" />
       ) : state === 'playing' ? (
         <Pause aria-hidden className="size-5" />
       ) : (

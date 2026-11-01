@@ -1,73 +1,56 @@
-[
- {
-  "name": "chromium",
-  "ok": true,
-  "dir": "rtl",
-  "lang": "fa",
-  "fgExists": true,
-  "fgDirection": "ltr",
-  "fgUnicodeBidi": "isolate",
-  "fgLang": "ja",
-  "rubyExists": true,
-  "rtText": "きょう",
-  "rtUserSelect": "none",
-  "rtFontFamily": "zenkaku, \"zenkaku Fallback\", \"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", sans-serif",
-  "islandCount": 3,
-  "islandRects": [
-   {
-    "l": 462,
-    "w": 445
-   },
-   {
-    "l": 788,
-    "w": 212
-   },
-   {
-    "l": 795,
-    "w": 205
-   }
+{
+  "playwrightVersion": "1.57.0",
+  "url": "http://127.0.0.1:3100/poc/ui",
+  "checkedAt": "2026-11-01T20:14:57.035Z",
+  "browsers": [
+    {
+      "name": "chromium",
+      "engine": "chromium",
+      "ok": true,
+      "popperDir": "rtl",
+      "dir": "rtl",
+      "lang": "fa",
+      "fgExists": true,
+      "fgDirection": "ltr",
+      "fgUnicodeBidi": "isolate",
+      "fgLang": "ja",
+      "rubyExists": true,
+      "rtText": "おはよう",
+      "rtUserSelect": "none",
+      "persianInsideJaIsland": false,
+      "islandCount": 4,
+      "fontsLoaded": "loaded",
+      "vazirLoaded": true,
+      "zenkakuLoaded": true,
+      "bodyText": true
+    },
+    {
+      "name": "firefox",
+      "engine": "firefox",
+      "ok": true,
+      "popperDir": "rtl",
+      "dir": "rtl",
+      "lang": "fa",
+      "fgExists": true,
+      "fgDirection": "ltr",
+      "fgUnicodeBidi": "isolate",
+      "fgLang": "ja",
+      "rubyExists": true,
+      "rtText": "おはよう",
+      "rtUserSelect": "none",
+      "persianInsideJaIsland": false,
+      "islandCount": 4,
+      "fontsLoaded": "loaded",
+      "vazirLoaded": true,
+      "zenkakuLoaded": true,
+      "bodyText": true
+    },
+    {
+      "name": "webkit",
+      "engine": "webkit",
+      "ok": false,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    }
   ],
-  "fontsLoaded": "loaded",
-  "vazirLoaded": true,
-  "zenkakuLoaded": true,
-  "bodyText": true
- },
- {
-  "name": "firefox",
-  "ok": true,
-  "dir": "rtl",
-  "lang": "fa",
-  "fgExists": true,
-  "fgDirection": "ltr",
-  "fgUnicodeBidi": "isolate",
-  "fgLang": "ja",
-  "rubyExists": true,
-  "rtText": "きょう",
-  "rtUserSelect": "none",
-  "rtFontFamily": "\"zenkaku\", \"zenkaku Fallback\", \"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", sans-serif",
-  "islandCount": 3,
-  "islandRects": [
-   {
-    "l": 453,
-    "w": 453
-   },
-   {
-    "l": 776,
-    "w": 224
-   },
-   {
-    "l": 780,
-    "w": 220
-   }
-  ],
-  "fontsLoaded": "loaded",
-  "vazirLoaded": true,
-  "zenkakuLoaded": true,
-  "bodyText": true
- },
- {
-  "name": "webkit",
-  "ok": false,
-  "error": "Error: browser.newPage: Target page, context or browser has been closed"
- }
-]
+  "note": "WebKit blocked in agent sandbox (no WPE graphics stack, no sudo) — deferred to FT-002; see RUN-20261101-04 §8"
+}

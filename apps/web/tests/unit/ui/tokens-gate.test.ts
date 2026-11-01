@@ -83,6 +83,27 @@ describe('tokens.css — پورت کامل DD-067 (AC-3)', () => {
     expect(missing, `missing tokens: ${missing.join(', ')}`).toEqual([]);
   });
 
+  it('مقادیر قفل‌شدهٔ کلیدی ۱:۱ با DD-067 هستند (نمونه‌گیری نقطه‌ای)', () => {
+    // Values locked by FT-004-1 (KB design-proofs/tokens.css v1.0)
+    const locked = {
+      '--color-paper': '#f7f3e9',
+      '--color-ink': '#2b2a28',
+      '--color-ai': '#1d4e70',
+      '--color-shu': '#c2401c',
+      '--color-warning': '#7a6119', // the REJECTED 8A6D1F must never come back
+      '--radius-full': '9999px',
+      '--touch-main': '48px',
+      '--frame-scene-w': '1024px',
+      '--furigana-size': 'max(0.5em, 12px)',
+      '--dur-spin': '800ms',
+      '--dur-shimmer': '1400ms',
+      '--leading-fa': '1.8',
+      '--leading-ja': '1.9',
+    };
+    const offenders = Object.entries(locked).filter(([k, v]) => !tokensCss.includes(`${k}: ${v}`));
+    expect(offenders, `value drift: ${JSON.stringify(offenders)}`).toEqual([]);
+  });
+
   it('کاهش حرکت، shimmer و spin را صفر می‌کند (AC-907)', () => {
     const reduced = tokensCss.slice(tokensCss.indexOf('prefers-reduced-motion'));
     expect(reduced).toContain('--dur-shimmer: 0ms');

@@ -2,7 +2,7 @@
    HANASO — Design Tokens (Tailwind 4 `@theme` port of KB DD-067 LOCKED values)
    ----------------------------------------------------------------------------
    Source of truth: KB `docs/knowledge-base/design-proofs/assets/tokens.css`
-   (v1.0 LOCKED 2026-10-31, WCAG-verified via compute_contrast.py).
+   (v1.0 LOCKED 2026-10-31, WCAG-verified via compute_contrast.py — see KB design-proofs/README).
    Rules:
    - Raw hex/px/ms values in components are FORBIDDEN — tokens only (KB ADR-004 L6).
    - This file is a coordination point: sequential changes only, announced in
@@ -102,7 +102,11 @@
   --shadow-raised: 0 2px 6px rgba(43, 42, 40, 0.08), 0 4px 12px rgba(43, 42, 40, 0.06);
   /* سایهٔ رنگی/گلو ممنوع (art-direction §۷) */
 
-  /* -- ۶. لایه‌بندی --------------------------------------------------------- */
+  /* -- ۶. حرکت (توکن‌های ease در @theme تا utility ها هم منحنی DD-067 بگیرند) -- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* -- ۷. لایه‌بندی (مقدارها با @utility در globals.css به z-* وصل می‌شوند) -- */
   --z-sticky: 10; /* reader toolbar/sticky player */
   --z-drawer: 40; /* «در مکالمه ببین» panel */
   --z-fab: 50; /* floating review button */
@@ -131,15 +135,13 @@
   --hairline: 1px solid var(--color-ink-faint);
   --hairline-soft: 1px solid rgba(133, 127, 115, 0.55);
 
-  /* حرکت (معنادار؛ همه تابع prefers-reduced-motion) */
+  /* حرکت (معنادار؛ همه تابع prefers-reduced-motion) — easeها در @theme بالا */
   --dur-micro: 120ms; /* touch feedback / button state */
   --dur-fast: 200ms; /* panel/card — ease-out */
   --dur-phase: 250ms; /* A→B→C→D phase transition */
   --dur-ceremonial: 1200ms; /* comprehension seal — once */
   --dur-shimmer: 1400ms; /* skeleton loop — stops under reduced motion (AC-907) */
   --dur-spin: 800ms; /* button spinner — same rule */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ابعاد مرجع */
   --touch-min: 44px; /* WCAG 2.5.8 + our policy floor */

@@ -92,7 +92,9 @@ describe('FuriganaText markup (SSR)', () => {
   });
 
   it('ساختار ruby/rt گروهی — نه توزیع کاراکتری', () => {
-    expect(markup).toContain('<ruby>今日<rt>きょう</rt></ruby>');
+    expect(markup).toContain(
+      '<ruby>今日<rp aria-hidden="true">（</rp><rt>きょう</rt><rp aria-hidden="true">）</rp></ruby>',
+    );
     expect(markup).not.toMatch(/<ruby>[^<]<\/ruby>/);
   });
 
@@ -111,6 +113,8 @@ describe('FuriganaText markup (SSR)', () => {
 
   it('children رشته‌ای با همان DSL توکن می‌شود', () => {
     const m3 = renderToStaticMarkup(<FuriganaText>今日[きょう]は</FuriganaText>);
-    expect(m3).toContain('<ruby>今日<rt>きょう</rt></ruby>');
+    expect(m3).toContain(
+      '<ruby>今日<rp aria-hidden="true">（</rp><rt>きょう</rt><rp aria-hidden="true">）</rp></ruby>',
+    );
   });
 });

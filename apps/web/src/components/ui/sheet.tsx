@@ -14,6 +14,7 @@ import { X } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
+import { fa } from '@/messages/fa';
 
 const Sheet = SheetPrimitive.Root;
 const SheetTrigger = SheetPrimitive.Trigger;
@@ -45,6 +46,7 @@ function SheetContent({ side = 'end', className, children, ...props }: SheetCont
       <SheetPrimitive.Content
         className={cn(
           'fixed z-drawer bg-paper shadow-raised flex flex-col gap-4 p-6 focus:outline-none',
+          'data-[state=open]:animate-[hanaso-fade-in_var(--dur-fast)_var(--ease-out)]',
           s.position,
           s.size,
           className,
@@ -58,7 +60,7 @@ function SheetContent({ side = 'end', className, children, ...props }: SheetCont
             'transition-colors hover:text-ink',
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai',
           )}
-          aria-label="بستن"
+          aria-label={fa.common.close}
         >
           <X aria-hidden className="size-4" />
         </SheetPrimitive.Close>
