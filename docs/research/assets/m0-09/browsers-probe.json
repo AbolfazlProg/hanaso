@@ -1,0 +1,73 @@
+[
+ {
+  "name": "chromium",
+  "ok": true,
+  "dir": "rtl",
+  "lang": "fa",
+  "fgExists": true,
+  "fgDirection": "ltr",
+  "fgUnicodeBidi": "isolate",
+  "fgLang": "ja",
+  "rubyExists": true,
+  "rtText": "きょう",
+  "rtUserSelect": "none",
+  "rtFontFamily": "zenkaku, \"zenkaku Fallback\", \"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", sans-serif",
+  "islandCount": 3,
+  "islandRects": [
+   {
+    "l": 462,
+    "w": 445
+   },
+   {
+    "l": 788,
+    "w": 212
+   },
+   {
+    "l": 795,
+    "w": 205
+   }
+  ],
+  "fontsLoaded": "loaded",
+  "vazirLoaded": true,
+  "zenkakuLoaded": true,
+  "bodyText": true
+ },
+ {
+  "name": "firefox",
+  "ok": true,
+  "dir": "rtl",
+  "lang": "fa",
+  "fgExists": true,
+  "fgDirection": "ltr",
+  "fgUnicodeBidi": "isolate",
+  "fgLang": "ja",
+  "rubyExists": true,
+  "rtText": "きょう",
+  "rtUserSelect": "none",
+  "rtFontFamily": "\"zenkaku\", \"zenkaku Fallback\", \"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", sans-serif",
+  "islandCount": 3,
+  "islandRects": [
+   {
+    "l": 453,
+    "w": 453
+   },
+   {
+    "l": 776,
+    "w": 224
+   },
+   {
+    "l": 780,
+    "w": 220
+   }
+  ],
+  "fontsLoaded": "loaded",
+  "vazirLoaded": true,
+  "zenkakuLoaded": true,
+  "bodyText": true
+ },
+ {
+  "name": "webkit",
+  "ok": false,
+  "error": "Error: browser.newPage: Target page, context or browser has been closed"
+ }
+]

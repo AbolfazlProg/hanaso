@@ -3,6 +3,33 @@
 > قالب نسخه‌ها: **CalVer `YYYY.0M.N`** · محور استقرار: تگ=SHA · پیام‌ها فارسی و قابل‌فهم.
 > هیچ ادعایی بدون شناسهٔ commit قابل‌استناد ثبت نمی‌شود.
 
+## 2026.11.3 — UI Infrastructure: پورت کامل توکن‌ها + فونت سلف‌هاست + FuriganaText + ۹ کامپوننت (2026-11-01)
+
+**نوع:** زیرساخت مشترک UI — TASK-M0-09 (RUN-20261101-04).
+
+### افزوده شد
+
+- **پورت کامل tokens.css** از KB DD-067 LOCKED (رفع بدهی review B-8): info/scrim/overlay-audio · radius-full · dur-shimmer/spin (+صفرشدن زیر reduced-motion — AC-907) · leading-fa/ja · tracking-ja-heading · hairline/shadow/z/touch/frame · نام‌های فونت KB (--font-ja-ui/serif/ud)
+- **فونت‌های سلف‌هاست** (طرح اسپایک M0-07): ۷ فایل woff2 ساب‌ست‌شده + OFL — Vazirmatn FD 400/500/700 (۹۵KB) + Zen Kaku starter 400/500/700 (۴۸۸KB) + Noto Serif JP VF 200–900 (۱٫۱۵MB) — جمع ۱٫۷۳MB زیر هاردکپ ۲٫۳MB · فقط Vazirmatn preload · `fonts.ts` با next/font/local
+- **FuriganaText** طبق قرارداد spike M0-08 §۶: جزیرهٔ LTR اجباری + group-ruby فقط + rt غیر‌انتخاب‌پذیر + DSL `base[reading]` + سازگاری ساختاری با DialogueToken
+- **DirectionProvider dir="rtl"** در ریشه (الزام spike M0-06 برای رفتار Radix)
+- **۹ کامپوننت shadcn** (Button/Dialog/Sheet/Tabs/Accordion/Tooltip/DropdownMenu/Command/Toast) با استایل توکنی HANASO + سربرگ RTL-audit هر فایل
+- **الگوهای دامنه:** JapaneseSentence (کارت جمله + ترجمهٔ بازیابی فعال) · AudioSentenceButton · JaBlock
+- **دیکشنری تایپ‌دار فارسی** `src/messages/fa.ts` (ADR-013)
+- **صفحهٔ مرجع رندر** `/poc/ui` — نمونهٔ ترکیبی FA+JA+روبی + هر ۹ کامپوننت در RTL
+- **۲ دروازهٔ جدید در verify:** `lint:css` (stylelint use-logical — AC-1: صفر left/right فیزیکی) و `check:fonts` (بودجهٔ حجم + الزام OFL) — دروازه‌ها ۷→۹
+
+### تغییر داد
+
+- `next.config.ts`: **React Compiler روشن** (`reactCompiler: true` — توصیهٔ عددی spike M0-05: ~۲۴× رندر مجدد سریع‌تر)
+- `vitest.config.ts`: پشتیبانی از تست‌های tsx
+- ledgers هم‌گاه شدند (TASK_REGISTRY/AGENT_RUN_LOG/AGENT_PROGRESS/NEXT_ACTIONS/CURRENT_PHASE/PROJECT_STATUS)
+
+### شناخته‌شده/محدودیت‌ها
+
+- WebKit در محیط Agent قابل‌اجرا نیست (گرافیک‌استک WPE بدون sudo) — آزمون مرورگر سوم به FT-002 موکل شد؛ Chromium+Firefox با اندازه‌گیری کامل سبز
+- `--font-ja-ud` (BIZ UDPGothic) تعریف شد ولی بارگذاری نشد — مؤخر طبق بودجهٔ spike §۶-۲ (+≤700KB) و انتخاب مالک دربارهٔ فونت مبتدی
+
 ## 2026.11.2 — First Live Deployment: Preview روی learn.kotodama.ir (2026-11-01)
 
 **نوع:** نخستین استقرار واقعی محصول — TASK-M0-10 لایهٔ Web (RUN-20261101-03).

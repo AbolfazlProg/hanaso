@@ -9,6 +9,7 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts', 'db/tests/**/*.spec.ts'],
+    // .tsx (component markup via react-dom/server) added in TASK-M0-09
+    include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts', 'tests/**/*.test.tsx', 'db/tests/**/*.spec.ts'],
   },
 });
