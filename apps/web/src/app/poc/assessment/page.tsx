@@ -1,13 +1,16 @@
-import { loadDialogue } from '@/modules/dialogue/server';
+import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import { AssessmentForm, type AssessmentQuestion } from './assessment-form';
 
 /**
- * /poc/assessment — TASK-DLG-POC-01 stage-D sample: 3 comprehension questions
- * (M1 meaning / M3 grammar / M5 speaker&intent) from the cafe dialogue → POST /api/attempts.
+ * /poc/assessment — TASK-SLICE-01 stage D: 5 comprehension questions covering ALL
+ * measures M1..M5 (meaning / vocab-in-context / grammar cloze / blind listening /
+ * speaker & intent) from the cafe dialogue → POST /api/attempts → D→understood via
+ * /api/progress when passed. The production bank lives in content.comprehension_banks
+ * (separate from the C exercises — AC-952); this is the slice's sample of that bank.
  */
 export default function AssessmentPage() {
-  const dialogue = loadDialogue('cafe-morning-01');
-  const linesById = new Map(dialogue.lines.map((l) => [l.id, l]));
+  const bundle = loadDialogueBundle('cafe-morning-01');
+  const linesById = new Map(bundle.dialogue.lines.map((l) => [l.id, l]));
   const l3 = linesById.get('s-cafe-morning-01-l3');
   const l8 = linesById.get('s-cafe-morning-01-l8');
 
@@ -27,6 +30,20 @@ export default function AssessmentPage() {
       weakPoint: { lineId: 's-cafe-morning-01-l8', objective: 'voc-kekkou-desu', severity: 'high' },
     },
     {
+      id: 'q-m2-shoushou',
+      measure: 'M2',
+      measureLabelFa: 'واژه در بافت',
+      promptFa: 'در جملهٔ زیر، واژهٔ «しょうしょう» چه معنایی دارد؟',
+      jpTokens: l3?.tokens,
+      options: [
+        { id: 'a', labelFa: 'خیلی زیاد / بسیار' },
+        { id: 'b', labelFa: 'لحظه‌ای / کمی' },
+        { id: 'c', labelFa: 'بلافاصله / همین حالا' },
+      ],
+      correctOptionId: 'b',
+      weakPoint: { lineId: 's-cafe-morning-01-l3', objective: 'voc-shoushou', severity: 'medium' },
+    },
+    {
       id: 'q-m3-wo',
       measure: 'M3',
       measureLabelFa: 'ساختار (cloze ذره)',
@@ -38,6 +55,20 @@ export default function AssessmentPage() {
       ],
       correctOptionId: 'a',
       weakPoint: { lineId: 's-cafe-morning-01-l2', objective: 'gr-wo-object', severity: 'medium' },
+    },
+    {
+      id: 'q-m4-blind',
+      measure: 'M4',
+      measureLabelFa: 'شنیداری بدون متن',
+      promptFa: 'به جملهٔ پخش‌شده گوش بده (متنی نشان داده نمی‌شود). کدام ترجمه درست است؟',
+      audioLineId: 's-cafe-morning-01-l6',
+      options: [
+        { id: 'a', labelFa: 'صبح بخیر، میکی!' },
+        { id: 'b', labelFa: 'آره! اما امروز سرمای زیادی دارد.' },
+        { id: 'c', labelFa: 'بعداً می‌بینمت، میکی!' },
+      ],
+      correctOptionId: 'b',
+      weakPoint: { lineId: 's-cafe-morning-01-l6', objective: 'listening-comprehension', severity: 'high' },
     },
     {
       id: 'q-m5-speaker',
@@ -55,20 +86,29 @@ export default function AssessmentPage() {
     },
   ];
 
+  const audioByLine: Record<string, string> = {};
+  for (const entry of bundle.audio.entries) audioByLine[entry.lineId] = entry.files.opus;
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-6 px-4 py-10">
       <header className="flex flex-col gap-1">
-        <p className="text-caption text-ink-soft">TASK-DLG-POC-01 · آزمون فهم (مرحلهٔ D — نمونهٔ ۳سؤالی)</p>
+        <p className="text-caption text-ink-soft">TASK-SLICE-01 · آزمون فهم (مرحلهٔ D — هر ۵ سنجه)</p>
         <h1 className="text-h2 font-bold">مکالمهٔ کافه را چقدر فهمیدی؟</h1>
         <p className="text-small text-ink-soft">
-          پاسخ‌ها در سرور نمره‌گذاری و در /api/attempts ثبت می‌شوند؛ نتیجه کیفی است (AC-947).
+          پاسخ‌ها در سرور نمره‌گذاری و در /api/attempts ثبت می‌شوند؛ نتیجه کیفی است (AC-947). قبولی = ثبت رسمی «فهمیدم»
+          برای واحد.
         </p>
       </header>
-      <AssessmentForm dialogueId={dialogue.id} questions={questions} />
+      <AssessmentForm
+        dialogueId={bundle.dialogue.id}
+        questions={questions}
+        audioByLine={audioByLine}
+        audioAvailable={bundle.audio.available}
+      />
       <footer className="mt-auto border-t border-ink-faint pt-4 text-caption text-ink-soft">
         <p>
-          بانک کامل مرحلهٔ D جدا از تمرین‌هاست (comprehension_banks) و هر ۵ سنجهٔ M1..M5 را می‌سنجد؛ این فرم فقط نمونهٔ
-          اتصال برای PoC است.
+          بانک کامل مرحلهٔ D جدا از تمرین‌هاست (comprehension_banks — AC-952) و هر ۵ سنجهٔ M1..M5 را می‌سنجد؛ این نمونهٔ
+          ۵سؤالی همان ساختار را از خودِ مکالمهٔ کافه پیاده می‌کند.
         </p>
       </footer>
     </main>

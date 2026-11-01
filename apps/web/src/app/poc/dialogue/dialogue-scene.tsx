@@ -10,6 +10,7 @@
  * The React tree only renders STATE derived from engine events — the engine owns timing.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { BrowserAudioBackend } from '@/modules/audio';
 import { AnimationController, SvgPlaceholderRenderer, listCharacters } from '@/modules/character';
 import type { CharacterAssetManifest } from '@/modules/character';
@@ -20,6 +21,7 @@ import {
   type Dialogue,
   type PlaybackStatus,
 } from '@/modules/dialogue';
+import { logEvent, postProgressEvent } from '@/lib/poc/client';
 import { JpLine, POC_SCENE_CSS } from '../jp-text';
 
 export interface DialogueSceneProps {
@@ -45,31 +47,29 @@ export interface DialogueSceneProps {
 
 const DIALOGUE_SLUG = 'cafe-morning-01';
 
-function logEvent(name: string, props: Record<string, unknown>): void {
-  void fetch('/api/events', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ name, props: { dialogue_id: DIALOGUE_SLUG, ...props } }),
-  }).catch(() => {
-    /* analytics is best-effort in the PoC */
-  });
+function logSceneEvent(name: string, props: Record<string, unknown>): void {
+  logEvent(name, { dialogue_id: DIALOGUE_SLUG, ...props });
 }
 
 type BannerError = { code: string; message: string; lineId?: string; lineFa?: string };
 
 export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
   const { dialogue, characters, audio } = bundle;
+  const router = useRouter();
   const [status, setStatus] = useState<PlaybackStatus>('idle');
   const [activeIndex, setActiveIndex] = useState(-1);
   const [showFa, setShowFa] = useState(true);
   const [speed, setSpeed] = useState<0.75 | 1>(1);
   const [banner, setBanner] = useState<BannerError | null>(null);
+  const [lastLineSeen, setLastLineSeen] = useState(false);
+  const [finishing, setFinishing] = useState(false);
 
   const engineRef = useRef<PlaybackEngine | null>(null);
   const controllerRef = useRef<AnimationController | null>(null);
   const faceRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lineRefs = useRef<(HTMLLIElement | null)[]>([]);
   const initialLineHandled = useRef(false);
+  const unitStartPosted = useRef(false);
 
   const manifestsById = useMemo(() => {
     const m = new Map<string, CharacterAssetManifest>();
@@ -173,17 +173,20 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
     };
   }, [dialogue, characters, audio, manifestsById]);
 
+  const initialPlay = useCallback(() => {
+    const engine = engineRef.current;
+    if (!engine || !initialLineId) return;
+    engine.seekToLine(initialLineId);
+    engine.play(); // arriving from a click on «در مکالمه ببین» — user-gesture chain
+    logSceneEvent('dialogue_entered_at_line', { line_id: initialLineId });
+  }, [initialLineId]);
+
   // deep link ?line=<id> (T6 «در مکالمه ببین» target)
   useEffect(() => {
     if (initialLineHandled.current || !initialLineId || !engineRef.current) return;
     initialLineHandled.current = true;
-    const engine = engineRef.current;
-    if (dialogue.lines.some((l) => l.id === initialLineId)) {
-      engine.seekToLine(initialLineId);
-      engine.play(); // arriving from a click on «در مکالمه ببین» — user-gesture chain
-      logEvent('dialogue_entered_at_line', { line_id: initialLineId });
-    }
-  }, [initialLineId, dialogue]);
+    if (dialogue.lines.some((l) => l.id === initialLineId)) initialPlay();
+  }, [initialLineId, dialogue, initialPlay]);
 
   // keep the active bubble in view (T3: «خط فعال همیشه در دید»)
   useEffect(() => {
@@ -191,33 +194,44 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
     lineRefs.current[activeIndex]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }, [activeIndex]);
 
+  // stage A→B eligibility: the LAST line has been seen (playing it, or playback ended)
+  useEffect(() => {
+    if (activeIndex === dialogue.lines.length - 1 || status === 'ended') setLastLineSeen(true);
+  }, [activeIndex, status, dialogue.lines.length]);
+
   // ------------------------------------------------------------------ controls
   const togglePlay = useCallback(() => {
     const engine = engineRef.current;
     if (!engine) return;
     if (engine.getStatus() === 'playing') {
       engine.pause();
-      logEvent('dialogue_playback_toggled', { to: 'paused', line_index: engine.getCurrentIndex() });
+      logSceneEvent('dialogue_playback_toggled', { to: 'paused', line_index: engine.getCurrentIndex() });
     } else {
       const to = engine.getCurrentIndex() >= 0 ? 'resumed' : 'started';
       engine.play();
-      logEvent('dialogue_playback_toggled', { to, line_index: engine.getCurrentIndex() });
+      // first play = the unit has truly started (stage A) — record it once, best-effort
+      if (!unitStartPosted.current) {
+        unitStartPosted.current = true;
+        void postProgressEvent(bundle.dialogue.id, { type: 'unit_started' });
+        logSceneEvent('unit_started', {});
+      }
+      logSceneEvent('dialogue_playback_toggled', { to, line_index: engine.getCurrentIndex() });
     }
-  }, []);
+  }, [bundle.dialogue.id]);
 
   const jump = useCallback((direction: 1 | -1) => {
     const engine = engineRef.current;
     if (!engine) return;
     if (direction === 1) engine.next();
     else engine.prev();
-    logEvent('dialogue_line_skipped', { direction: direction === 1 ? 'next' : 'prev' });
+    logSceneEvent('dialogue_line_skipped', { direction: direction === 1 ? 'next' : 'prev' });
   }, []);
 
   const replay = useCallback(() => {
     const engine = engineRef.current;
     if (!engine) return;
     engine.replayLine();
-    logEvent('dialogue_line_replayed', { line_index: engine.getCurrentIndex() });
+    logSceneEvent('dialogue_line_replayed', { line_index: engine.getCurrentIndex() });
   }, []);
 
   const toggleSpeed = useCallback(() => {
@@ -226,12 +240,12 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
     const next = engine.getSpeed() === 1 ? 0.75 : 1;
     engine.setSpeed(next);
     setSpeed(next);
-    logEvent('dialogue_speed_changed', { speed: next, applies_at: 'line_boundary' });
+    logSceneEvent('dialogue_speed_changed', { speed: next, applies_at: 'line_boundary' });
   }, []);
 
   const toggleFa = useCallback(() => {
     setShowFa((v) => {
-      logEvent('dialogue_subtitle_toggled', { fa_visible: !v });
+      logSceneEvent('dialogue_subtitle_toggled', { fa_visible: !v });
       return !v;
     });
   }, []);
@@ -242,7 +256,7 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
     if (action === 'retry') engine.retryError();
     if (action === 'skip') engine.skipError();
     if (action === 'silent') engine.continueWithoutAudio();
-    logEvent('dialogue_error_recovered', { action });
+    logSceneEvent('dialogue_error_recovered', { action });
   }, []);
 
   const playFrom = useCallback((lineId: string) => {
@@ -250,8 +264,16 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
     if (!engine) return;
     engine.seekToLine(lineId);
     engine.play();
-    logEvent('dialogue_line_selected', { line_id: lineId });
+    logSceneEvent('dialogue_line_selected', { line_id: lineId });
   }, []);
+
+  // stage A→B: only after the last line was seen — post the transition, then move on
+  const finishWatching = useCallback(async () => {
+    setFinishing(true);
+    const res = await postProgressEvent(bundle.dialogue.id, { type: 'dialogue_watched' });
+    logSceneEvent('dialogue_watched', { recorded: res.ok });
+    router.push('/poc/lesson');
+  }, [bundle.dialogue.id, router]);
 
   // ------------------------------------------------------------------ render
   const activeLine = activeIndex >= 0 ? (dialogue.lines[activeIndex] ?? null) : null;
@@ -454,7 +476,27 @@ export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
         })}
       </ol>
 
+      {/* --- stage A→B: finish-watching CTA (only after the LAST line was seen) --- */}
+      <div className="flex flex-col gap-1">
+        <button
+          type="button"
+          onClick={() => void finishWatching()}
+          disabled={!lastLineSeen || finishing}
+          className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper disabled:opacity-40"
+        >
+          {finishing ? 'در حال ثبت…' : 'پایان مشاهده — رفتن به درس (B) ←'}
+        </button>
+        <p className="text-caption text-ink-soft">
+          {lastLineSeen
+            ? 'کل مکالمه را دیدی — مشاهدهٔ مرحلهٔ A ثبت و به درس می‌روی.'
+            : 'برای فعال‌شدن این دکمه، مکالمه را تا خط آخر ببین.'}
+        </p>
+      </div>
+
       <nav className="flex flex-wrap gap-3 border-t border-ink-faint pt-3 text-small">
+        <a href="/learn" className="text-ai underline">
+          مسیر یادگیری (/learn)
+        </a>
         <a href="/poc/lesson" className="text-ai underline">
           درس این مکالمه (واژه‌ها و گرامر)
         </a>

@@ -2,11 +2,13 @@ import Link from 'next/link';
 import { buildLessonFromDialogue } from '@/lib/poc/lesson-items';
 import { loadDialogue } from '@/modules/dialogue/server';
 import { JpLine } from '../jp-text';
+import { LessonPracticeButton } from './lesson-practice-button';
 
 /**
- * /poc/lesson — TASK-DLG-POC-01 / T6: vocabulary & grammar cards derived from the SAME
- * dialogue content, each wired to its lines («در مکالمه ببین» → /poc/dialogue?line=…).
- * The dialogue bubbles link back here (bidirectional T6 wiring).
+ * /poc/lesson — TASK-DLG-POC-01 / T6 + TASK-SLICE-01 stage B: vocabulary & grammar
+ * cards derived from the SAME dialogue content, each wired to its lines («در مکالمه
+ * ببین» → /poc/dialogue?line=…). The dialogue bubbles link back here (bidirectional
+ * T6 wiring). «تمرین‌ها» records the B→C transition.
  */
 export default function LessonPage() {
   const dialogue = loadDialogue('cafe-morning-01');
@@ -40,6 +42,7 @@ export default function LessonPage() {
         <Link href="/poc/dialogue" className="rounded-md bg-ai px-3 py-1.5 text-paper">
           بازگشت به مکالمه
         </Link>
+        <LessonPracticeButton dialogueId={dialogue.id} />
       </nav>
 
       <section id="sec-vocab" className="flex flex-col gap-3">
@@ -85,7 +88,11 @@ export default function LessonPage() {
         })}
       </section>
 
-      <footer className="mt-auto border-t border-ink-faint pt-4 text-caption text-ink-soft">
+      <footer className="mt-auto flex flex-col gap-3 border-t border-ink-faint pt-4 text-caption text-ink-soft">
+        <div className="flex flex-wrap items-center gap-3">
+          <LessonPracticeButton dialogueId={dialogue.id} />
+          <span>با رفتن به تمرین‌ها، مرحلهٔ B («درس») در پیشرفت واحد ثبت می‌شود و چرخه به C می‌رسد.</span>
+        </div>
         <p>
           نمونهٔ مرحلهٔ B طبق KB lesson-from-dialogue — تولید کامل بخش‌ها از موتور محتواست، اینجا دستی برای PoC ساخته
           شده و با `teaches` خطوط دیالوگ اعتبارسنجی می‌شود (بدون آیتم یتیم).

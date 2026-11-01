@@ -57,7 +57,13 @@ export default function HomePage() {
 
       <footer className="mt-auto flex w-full flex-col gap-1 border-t border-ink-faint pt-4 text-caption text-ink-soft">
         <p>مشخصات و پژوهش: مرکز دانش japanese-learning-kb · نقشهٔ پروژه: PROJECT_STATUS.md</p>
-        <p>هیچ قابلیت آموزشی در این نسخه نیست — عمدی و مطابق گیت مالک (OQ-013).</p>
+        <p>
+          اولین مسیر واقعی یادگیری (چرخهٔ مکالمه ← درس ← تمرین ← فهم) در{' '}
+          <a className="text-ai underline" href="/learn">
+            /learn
+          </a>{' '}
+          آماده است — TASK-SLICE-01.
+        </p>
       </footer>
     </main>
   );
