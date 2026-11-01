@@ -21,19 +21,19 @@
 
 ## ۳. جدول سناریوها (اعداد واقعی دسکتاپ؛ rt = furigana)
 
-| سناریو | نتیجه | عدد کلیدی |
-|---|---|---|
-| ۱) تک‌روبی وسط جملهٔ فارسی | ✅ سالم | rt دقیقاً بالای پایه و **وسط‌چینِ بی‌نقص** (انحراف مرکز = 0.0px)؛ کف جعبهٔ ruby با کف جعبهٔ متن فارسی یکی (`bottomDelta=0`) — یعنی کانجی و متن فارسی روی یک خط پایه می‌نشینند |
-| ۲a) چندروبی + علائم JP (بدون dir) | ❌ ترتیب وارونه | ببین §۲؛ فاصله‌گذاری داخلی هر روبی سالم |
-| ۳a) همان داخل `bdi` | ✅ | ترتیب صحیح؛ هندسهٔ rt مثل s1 |
-| ۳b) همان داخل `span dir="ltr" lang="ja"` | ✅ | الگوی KB — ترتیب صحیح |
-| ۴) کاتاکانا/کانجی ترکیبی (بدون dir) | ❌ ترتیب وارونه | مثل s2a |
-| ۵a) line-height 1.4 + شکست خط | ❌ برخورد بصری | جعبهٔ rt **6px داخل جعبهٔ متن سطر فارسیِ قبل** نفوذ می‌کند (۵ روبی از ۵)؛ half-leading فارسی در 1.4 منفی است (−1.1px) ⇒ برخورد واقعی جوهر قلم — VLM تأیید کرد |
-| ۵b) line-height 2.0 (همان محتوا) | ✅ | نفوذ جعبه‌ای فقط 3px که در half-leading مثبت (+4px) جذب می‌شود — VLM: «هیچ هم‌پوشانی دیده نمی‌شود» |
-| ۶a) rt بلند روی پایهٔ ۳حرفی (東京都→とうきょうと) | ✅ | پایه با `space-around` به عرض rt کشیده می‌شود؛ بدون overhang |
-| ۶b) rt بلند روی پایهٔ ۱حرفی (行→おこな) | ⚠️ | عرض rt=36px == عرض متن پایه=36px ⇒ حرف پایه‌ تک‌حرفی دور از حرف بعدی «باز» می‌شود (توزیع space-around؛ VLM تأیید). بدون هم‌پوشانی با همسایه، ولی چهرهٔ متن کمی کشیده — برای مبتدی قابل‌قبول |
-| ۷) `ruby-position: under` | ✅ (گزینهٔ جایگزین) | rt می‌رود زیر پایه (rtTopDelta=−20)؛ ترتیب bidi مثل over است (همچنان نیازمند island) |
-| ۸) الگوی پیشنهادی island + Zen Kaku + rt توکن‌دار | ✅ | همهٔ سناریوها سبز: ترتیب صحیح، rt بالا/وسط، ایزوله (`direction:ltr`, `unicode-bidi:isolate`) — نسخهٔ Serif (Noto Serif JP) هم سالم |
+| سناریو                                            | نتیجه               | عدد کلیدی                                                                                                                                                                                   |
+| ------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ۱) تک‌روبی وسط جملهٔ فارسی                        | ✅ سالم             | rt دقیقاً بالای پایه و **وسط‌چینِ بی‌نقص** (انحراف مرکز = 0.0px)؛ کف جعبهٔ ruby با کف جعبهٔ متن فارسی یکی (`bottomDelta=0`) — یعنی کانجی و متن فارسی روی یک خط پایه می‌نشینند               |
+| ۲a) چندروبی + علائم JP (بدون dir)                 | ❌ ترتیب وارونه     | ببین §۲؛ فاصله‌گذاری داخلی هر روبی سالم                                                                                                                                                     |
+| ۳a) همان داخل `bdi`                               | ✅                  | ترتیب صحیح؛ هندسهٔ rt مثل s1                                                                                                                                                                |
+| ۳b) همان داخل `span dir="ltr" lang="ja"`          | ✅                  | الگوی KB — ترتیب صحیح                                                                                                                                                                       |
+| ۴) کاتاکانا/کانجی ترکیبی (بدون dir)               | ❌ ترتیب وارونه     | مثل s2a                                                                                                                                                                                     |
+| ۵a) line-height 1.4 + شکست خط                     | ❌ برخورد بصری      | جعبهٔ rt **6px داخل جعبهٔ متن سطر فارسیِ قبل** نفوذ می‌کند (۵ روبی از ۵)؛ half-leading فارسی در 1.4 منفی است (−1.1px) ⇒ برخورد واقعی جوهر قلم — VLM تأیید کرد                               |
+| ۵b) line-height 2.0 (همان محتوا)                  | ✅                  | نفوذ جعبه‌ای فقط 3px که در half-leading مثبت (+4px) جذب می‌شود — VLM: «هیچ هم‌پوشانی دیده نمی‌شود»                                                                                          |
+| ۶a) rt بلند روی پایهٔ ۳حرفی (東京都→とうきょうと) | ✅                  | پایه با `space-around` به عرض rt کشیده می‌شود؛ بدون overhang                                                                                                                                |
+| ۶b) rt بلند روی پایهٔ ۱حرفی (行→おこな)           | ⚠️                  | عرض rt=36px == عرض متن پایه=36px ⇒ حرف پایه‌ تک‌حرفی دور از حرف بعدی «باز» می‌شود (توزیع space-around؛ VLM تأیید). بدون هم‌پوشانی با همسایه، ولی چهرهٔ متن کمی کشیده — برای مبتدی قابل‌قبول |
+| ۷) `ruby-position: under`                         | ✅ (گزینهٔ جایگزین) | rt می‌رود زیر پایه (rtTopDelta=−20)؛ ترتیب bidi مثل over است (همچنان نیازمند island)                                                                                                        |
+| ۸) الگوی پیشنهادی island + Zen Kaku + rt توکن‌دار | ✅                  | همهٔ سناریوها سبز: ترتیب صحیح، rt بالا/وسط، ایزوله (`direction:ltr`, `unicode-bidi:isolate`) — نسخهٔ Serif (Noto Serif JP) هم سالم                                                          |
 
 **پیش‌فرض‌های محاسبه‌شدهٔ Chromium 156:** `ruby-position: over` · `ruby-align: space-around` · rt همیشه بالای پایه در `writing-mode: horizontal-tb` — جهت RTL تأثیری بر جای rt ندارد (برخلاف عمودی که over=راست است).
 
@@ -41,11 +41,11 @@
 
 آزمون A/B ایزوله (رفتار واقعی Chromium برای رزرو فضا):
 
-| line-height | رشد سطرِ دارای روبی |
-|---|---|
-| 1.4 | +13px (تک‌خط: 23.8 → 36.8px) |
-| 1.9 | +8px |
-| 2.0 | +7px |
+| line-height | رشد سطرِ دارای روبی          |
+| ----------- | ---------------------------- |
+| 1.4         | +13px (تک‌خط: 23.8 → 36.8px) |
+| 1.9         | +8px                         |
+| 2.0         | +7px                         |
 
 یعنی Chromium فضای rt را «تا حدی» رزرو می‌کند؛ ولی جعبهٔ متن Vazirmatn در 17px خودش 26px است — بلندتر از سطرِ 1.4 (23.8px). نتیجهٔ خالص همان §۳-۵a است:
 
@@ -65,14 +65,14 @@
 ```ts
 // apps/web/src/modules/ui/types.ts (طرح — در این اسپایک پیاده نشد)
 export type FuriganaToken =
-  | { t: 'plain'; v: string }                     // متن بدون روبی: は
-  | { t: 'ruby'; base: string; rt: string };      // group-ruby: 今日/きょう
+  | { t: 'plain'; v: string } // متن بدون روبی: は
+  | { t: 'ruby'; base: string; rt: string }; // group-ruby: 今日/きょう
 
 export interface FuriganaTextProps {
-  tokens: FuriganaToken[];        // یا children با DSL رشته‌ای: «今日|きょう|は…»
-  lang?: string;                  // پیش‌فرض 'ja' (WCAG 3.1.2)
-  variant?: 'ui' | 'serif';       // فونت: Zen Kaku Gothic New | Noto Serif JP
-  position?: 'over' | 'under';    // پیش‌فرض 'over' (سازگار با KB)
+  tokens: FuriganaToken[]; // یا children با DSL رشته‌ای: «今日|きょう|は…»
+  lang?: string; // پیش‌فرض 'ja' (WCAG 3.1.2)
+  variant?: 'ui' | 'serif'; // فونت: Zen Kaku Gothic New | Noto Serif JP
+  position?: 'over' | 'under'; // پیش‌فرض 'over' (سازگار با KB)
 }
 ```
 
@@ -82,20 +82,27 @@ export interface FuriganaTextProps {
 ### ۶-۲. CSS پیشنهادی (با اعداد همین اسپایک)
 
 ```css
-.fg {                                        /* ریشهٔ FuriganaText */
-  direction: ltr;                            /* §۲ — شرط صحت، نه سلیقه */
+.fg {
+  /* ریشهٔ FuriganaText */
+  direction: ltr; /* §۲ — شرط صحت، نه سلیقه */
   unicode-bidi: isolate;
-  font-family: var(--font-ja-ui);            /* variant=serif → var(--font-ja-serif) */
+  font-family: var(--font-ja-ui); /* variant=serif → var(--font-ja-serif) */
 }
-.fg ruby { ruby-position: over; ruby-align: center; }
+.fg ruby {
+  ruby-position: over;
+  ruby-align: center;
+}
 .fg rt {
-  font-size: max(0.5em, 12px);               /* توکن --furigana-size (KB) */
+  font-size: max(0.5em, 12px); /* توکن --furigana-size (KB) */
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 1;                            /* جعبهٔ 17px→~12px؛ نفوذ به سطر قبل کمتر */
-  user-select: none;                         /* §۵ — کپی تمیز */
+  line-height: 1; /* جعبهٔ 17px→~12px؛ نفوذ به سطر قبل کمتر */
+  user-select: none; /* §۵ — کپی تمیز */
 }
-.fg-block, :has(> .fg) { line-height: 2; }   /* §۴ — قاعدهٔ ≥2 برای بلوک روبی‌دار */
+.fg-block,
+:has(> .fg) {
+  line-height: 2;
+} /* §۴ — قاعدهٔ ≥2 برای بلوک روبی‌دار */
 ```
 
 - `ruby-align: center` (پشتیبانی Chrome 128+) و `space-around` (پیش‌فرض) در سناریوهای ما خروجی یکسان داشتند؛ center برای group-ruby هدف‌گیری JVREQ-تر است. اگر مرورگر پشتیبانی نداشت، پیش‌فرض مرورگر هم سالم بود (s1 بدون ruby-align دقیقاً وسط‌چین شد).

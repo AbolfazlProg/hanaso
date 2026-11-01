@@ -1,0 +1,72 @@
+# pnpm verify — خروجی واقعی و کامل، شاخهٔ spike/b-0-foundation — 2026-11-01
+# بازتولید: cd /home/z/my-project/hanaso && pnpm verify   (محیط: Node v24.22.1 · pnpm 12.16.1)
+# نکته: قبل از اولین اجرای سبز، .next کهنهٔ حاوی typeهای مسیرهای spike پاک شد (پس از حذف مسیرهای موقت)
+# خروجی: ALL GATES GREEN — exit 0
+
+$ bash scripts/verify-foundation.sh
+==== [1/7] install (frozen) ====
+Scope: all 2 workspace projects
+✓ Lockfile passes supply-chain policies (verified 59m ago)
+Lockfile is up to date, resolution step is skipped
+Done in 24ms using pnpm v12.16.1
+==== [2/7] format:check ====
+$ prettier --check .
+Checking formatting...
+All matched files use Prettier code style!
+==== [3/7] lint ====
+$ pnpm -r lint
+$ eslint .
+==== [4/7] typecheck ====
+$ pnpm -r typecheck
+$ tsc --noEmit
+==== [5/7] unit tests ====
+$ pnpm -r test
+$ vitest run
+
+ RUN  v5.0.5 /home/z/my-project/hanaso/apps/web
+
+ ✓ tests/unit/envelope.test.ts (5 tests) 5ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  12:04:30
+   Duration  135ms (import 39%, transform 27%, tests 19%, worker 14%, environment 1%)
+
+==== [6/7] build ====
+$ pnpm --filter web build
+$ next build
+▲ Next.js 16.4.3 (Turbopack)
+✓ Running next.config.ts took 31ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 999ms
+  Running TypeScript ...
+  Finished TypeScript in 2.1s ...
+  Collecting page data using 1 worker ...
+  Generating static pages using 1 worker (0/3) ...
+✓ Generating static pages using 1 worker (3/3) in 106ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/health
+└ ƒ /api/ready
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+==== [7/7] smoke (production standalone server) + secret scan ====
+▲ Next.js 16.4.3
+- Local:         http://127.0.0.1:3100
+- Network:       http://127.0.0.1:3100
+✓ Ready in 0ms
+✓ Running next.config took 4ms
+== smoke: http://127.0.0.1:3100 ==
+health: {"ok":true,"status":"ok","service":"hanaso-web","version":"dev","commit":"dev","env":"local","uptimeSec":1,"timestamp":"2026-11-01T12:04:36.490Z"}
+ready: {"ok":true,"service":"hanaso-web","checks":{"process":{"status":"ok"},"database":{"status":"skipped","detail":"no DATABASE_URL configured (expected until M0-10)"}},"timestamp":"2026-11-01T12:04:36.504Z"}
+== smoke: ALL GREEN ==
+==== secret scan ====
+secret scan: clean
+==== ALL GATES GREEN ====
