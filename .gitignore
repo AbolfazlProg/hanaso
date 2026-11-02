@@ -40,3 +40,6 @@ tmp/
 
 # PoC placeholder audio (binary, generated) — regenerate with: pnpm gen:audio
 apps/web/public/poc-audio/
+
+# M0-10: generated ops-tool bundles (worker.mjs/db-cli.mjs) — built by pnpm build
+apps/web/.tools/

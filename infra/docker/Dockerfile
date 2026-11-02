@@ -38,6 +38,21 @@ RUN addgroup -S app && adduser -S app -G app
 COPY --from=build --chown=app:app /app/apps/web/.next/standalone ./
 COPY --from=build --chown=app:app /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build --chown=app:app /app/apps/web/public ./apps/web/public
+# M0-10 DB layer: self-contained ops tools (worker + db-cli bundles), the committed
+# migrations, the dialogue content YAML (seed source) — same major as postgres:18.
+COPY --from=build --chown=app:app /app/apps/web/.tools ./apps/web/.tools
+COPY --from=build --chown=app:app /app/apps/web/db/migrations ./apps/web/db/migrations
+COPY --from=build --chown=app:app /app/apps/web/src/modules/dialogue/content ./apps/web/src/modules/dialogue/content
+COPY --from=build --chown=app:app /app/apps/web/src/modules/audio/content ./apps/web/src/modules/audio/content
+# pg_dump/pg_restore for the nightly backup job — copied from the SAME postgres image
+# the stack runs (guaranteed major match: 18; musl→musl, no apk release roulette).
+COPY --from=postgres:18-alpine /usr/local/bin/pg_dump /usr/local/bin/pg_dump
+COPY --from=postgres:18-alpine /usr/local/bin/pg_restore /usr/local/bin/pg_restore
+COPY --from=postgres:18-alpine /usr/local/bin/psql /usr/local/bin/psql
+COPY --from=postgres:18-alpine /usr/local/bin/pg_isready /usr/local/bin/pg_isready
+COPY --from=postgres:18-alpine /usr/local/lib /usr/local/lib
+ENV LD_LIBRARY_PATH=/usr/local/lib
+RUN mkdir -p /backups && chown app:app /backups
 USER app
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

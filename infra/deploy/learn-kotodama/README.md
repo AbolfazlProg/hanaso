@@ -67,9 +67,76 @@ curl -fsS https://learn.kotodama.ir/api/health
 بازگردانی پروژهٔ قبلی (در صورت نیاز واقعی): `systemctl enable --now genesis-learn` + بازگردانی
 symlink قدیمی nginx از `/root/backups/pre-hanaso-20261101/` (پیش از آن، پورت 3100 باید از hanaso آزاد شود).
 
-## ۵. محدودیت‌ها/ریسک‌های شناخته‌شده
+## ۵. لایهٔ دیتابیس M0-10 (استقرار ۲۰۲۶-۱۱-۰۲)
+
+سرویس‌های جدید در همان compose (پروژهٔ `hanaso`، شبکهٔ `hanaso-net`): `postgres` (postgres:18-alpine، Volume اختصاصی `hanaso-pgdata`) · `pgbouncer` (edoburu v1.26.1-p0؛ `pool_mode=transaction`، `auth_type=scram`، `max_prepared_statements=200` — KB §۸-۴) · `worker` (همان image اپ؛ pg-boss 12 در حالت polling چون LISTEN/NOTIFY پشت transaction-pooling کار نمی‌کند) · `migrate` (یک‌بارمصرف، پروفایل `migrate`).
+
+**ایزولاسیون روی میزبان مشترک:** postgres و pgbouncer **هیچ پورتی منتشر نمی‌کنند** (فقط شبکهٔ داخلی Docker)؛ Volumeهای `hanaso-pgdata`/`hanaso-backups` مختص پروژه‌اند؛ سقف منابع: `max_connections=40`، `shared_buffers=64MB`؛ ورودی عمومی همچنان فقط nginx موجود → `127.0.0.1:3100`.
+
+### ۵-۱. استقرار مرحله‌ای (ترتیب الزامی)
+
+```bash
+cd /opt/hanaso
+# ۰) image جدید (شامل Aizen + لایهٔ DB) — مثل قبل:
+echo "<PAT با read:packages>" | docker login ghcr.io -u AbolfazlProg --password-stdin
+sed -i 's|^HANASO_WEB_IMAGE=.*|HANASO_WEB_IMAGE=ghcr.io/abolfazlprog/hanaso:<SHA-جدید>|' .env
+docker compose --env-file .env pull && docker logout ghcr.io
+
+# ۱) فقط دیتابیس را بالا بیاور و منتظر سلامت بمان (web هنوز نسخهٔ قبلی سرو می‌کند):
+docker compose --env-file .env up -d postgres
+docker compose --env-file .env ps postgres   # تا (healthy)
+
+# ۲) PgBouncer + گیت اتصال از مسیر اپ:
+docker compose --env-file .env up -d pgbouncer
+docker compose --env-file .env exec pgbouncer pg_isready -h 127.0.0.1 -p 6432 -U hanaso
+
+# ۳) Migration + Seed روی اتصال مستقیم (هرگز از PgBouncer — KB §۱):
+docker compose --env-file .env run --rm migrate
+
+# ۴) اپ جدید + worker:
+docker compose --env-file .env up -d
+curl -fsS https://learn.kotodama.ir/api/ready   # باید database: ok با serverVersion 18.x بدهد
+HANASO_BASE_URL=https://learn.kotodama.ir bash /opt/hanaso/smoke.sh
+```
+
+### ۵-۲. عملیات دیتابیس (db-cli داخل image)
+
+```bash
+W="docker compose --env-file /opt/hanaso/.env exec -w /app worker node apps/web/.tools/db-cli.mjs"
+$W jobs                       # زمان‌بندی‌ها + وضعیت jobها
+$W verify                     # شمارش رکوردها + عمق صف pgboss
+BACKUP_DIR=/backups $W backup # بکاپ دستی (همان روتین شبانه)
+```
+
+### ۵-۳. بکاپ شبانه و دریل Restore (TR-030 — «بکاپ تست‌شده = تنها بکاپ معتبر»)
+
+- **زمان‌بندی:** jobهای pg-boss در worker — `ops.backup` هر شب ۰۳:۳۰ و `ops.db-verify` ۰۴:۰۰ به وقت تهران؛ هر بکاپ `pg_dump -Fc` است و **بلافاصله با `pg_restore --list` تأیید** می‌شود؛ نگهداشت: ۷ روزانه + ۴ هفتگی + ۶ ماهانه (سیاست KB)؛ خروجی در Volume `hanaso-backups`.
+- **دریل Restore (الزامی، ماهانه یا پس از هر تغییر مهم):**
+
+```bash
+cd /opt/hanaso
+# ۱) بکاپ واقعی بگیر:
+docker compose --env-file .env exec -w /app -e BACKUP_DIR=/backups worker \
+  node apps/web/.tools/db-cli.mjs backup   # خروجی JSON شامل file
+# ۲) به دیتابیس آزمایشی مستقل برگردان (هرگز روی دیتابیس اصلی — CLI خودش هم رد می‌کند):
+docker compose --env-file .env exec -w /app worker \
+  node apps/web/.tools/db-cli.mjs restore --file /backups/<file>.dump --database hanaso_restore_test
+# ۳) صحت: شمارش جدول‌ها در دیتابیس آزمایشی باید با اصلی یکی باشد:
+docker compose --env-file .env exec -w /app worker node apps/web/.tools/db-cli.mjs verify
+docker compose --env-file .env exec -w /app worker node apps/web/.tools/db-cli.mjs verify --database hanaso_restore_test
+# ۴) اتصال اپ به دیتابیس اصلی در تمام مدت دریل دست‌نخورده می‌ماند (ready را چک کن).
+```
+
+### ۵-۴. Rollback (جدا برای اپ و دیتابیس)
+
+- **اپ (بی‌خطر):** مثل §۴ — تعویض `HANASO_WEB_IMAGE` به SHA قبلی + `up -d web worker`. دیتابیس و داده‌ها دست‌نخورده می‌مانند.
+- **دیتابیس (با احتیاط):** migrations اضافه‌شده را نگردانید (drizzle فقط forward-only است). برای بازگردانی داده: از جدیدترین dump با دریل §۵-۳ روی یک دیتابیس موقت restore و صحت‌سنجی کن، سپس با تصمیم آگاهانه جابه‌جا کن. **حذف Volume `hanaso-pgdata` فقط با تأیید صریح مالک** (آخرین راه).
+- **کل استک HANASO:** `docker compose --env-file .env down` فقط برای پروژهٔ `hanaso` خطری برای سایر سرویس‌های میزبان ندارد، ولی طبق قاعدهٔ مالک روی این سرور اجرا نشود؛ کافی است سرویس‌ها را stop کرد.
+
+## ۶. محدودیت‌ها/ریسک‌های شناخته‌شده
 
 - **Node میزبان = v22** ولی اپ `>=24` می‌خواهد → به همین دلیل مسیر اجرا Docker است (image بر base `node:24-alpine`). اجرای bare-metal روی این سرور ممنوع.
 - میزبان Mobinhost (IR) است نه EU طبق TRK-010 — انتخاب مالک. تا امروز pull از `ghcr.io` بدون مشکل بود؛ در صورت اختلال تحریمی آتی، مسیر جایگزین: build لوکال image از git-bundle روی خود VPS.
-- Preview فعلی **DB ندارد** (فاز اسکلت): `/api/ready` → `database: skipped`. با رسیدن لایهٔ دوم M0-10، سرویس postgres/pgbouncer/worker به همین compose (شبکهٔ `hanaso-net`) اضافه می‌شود — بدون تغییر معماری ورودی.
+- **بکاپ خارج از سرور (restic → object storage) هنوز فعال نیست** — بکاپ‌ها فعلاً فقط روی Volume `hanaso-backups` همان VPS هستند (ریسک از دست رفتن هم‌زمان سرور+بکاپ). فعال‌سازی نیازمند دسترسی S3-compatible از مالک است (KB §۸؛ پیگیری).
+- تست restore ماهانهٔ الزامی KB فعلاً به‌صورت دریل §۵-۳ روی همان سرور انجام می‌شود؛ پس از راه‌اندازی staging مستقل، دریل به آن منتقل می‌شود.
 - این سرور هم‌زمان BigBlueButton زنده دارد؛ هر تغییر firewall/HAProxy/nginx **ممنوع** بدون بکاپ + تست + مجوز مالک.

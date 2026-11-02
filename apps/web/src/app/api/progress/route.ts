@@ -3,9 +3,11 @@ import { fail, ok } from '@/modules/shared';
 import { ProgressTransitionError, applyProgressEvent } from '@/modules/progress';
 import { progressInputSchema } from '@/modules/progress';
 import { getAttemptStore, getProgressStore } from '@/lib/poc/stores';
+import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
 
 /**
- * GET/POST /api/progress — the A→D unit cycle (TASK-SLICE-01 / Issue #40).
+ * GET/POST /api/progress — the A→D unit cycle (TASK-SLICE-01 / Issue #40
+ * → Postgres persistence in TASK-M0-10).
  *
  * GET  ?dialogueId=… (&userId=…) → the unit record (or null — null means "stage A, not started").
  * POST { dialogueId, userId?, event } → machine-validated transition. `mastery_passed`
@@ -13,12 +15,9 @@ import { getAttemptStore, getProgressStore } from '@/lib/poc/stores';
  *      (the D→understood gate, DD-048) before the machine flips the status.
  *
  * // DEV-ONLY — no auth in the slice: userId defaults to 'poc-user' until better-auth
- * lands (M1); storage is the in-memory repository (DATABASE_URL = M0-10/M1).
+ * // lands (M1); storage is in-memory without DATABASE_URL, app.lesson_progress with it.
  */
 export const dynamic = 'force-dynamic';
-
-/** DEV-ONLY default principal for the slice (single-user PoC, no auth yet). */
-export const POC_DEFAULT_USER_ID = 'poc-user';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -29,7 +28,7 @@ export async function GET(req: Request) {
     });
   }
   const userId = url.searchParams.get('userId') ?? POC_DEFAULT_USER_ID;
-  const progress = getProgressStore().get(userId, dialogueId);
+  const progress = await getProgressStore().get(userId, dialogueId);
   return NextResponse.json(ok({ userId, dialogueId, progress }), {
     headers: { 'cache-control': 'no-store' },
   });
@@ -55,15 +54,15 @@ export async function POST(req: Request) {
   const { dialogueId, event } = parsed.data;
   const userId = parsed.data.userId ?? POC_DEFAULT_USER_ID;
   const store = getProgressStore();
-  const current = store.get(userId, dialogueId);
+  const current = await store.get(userId, dialogueId);
 
   // D→understood gate: the referenced attempt must exist, belong to this dialogue/user
   // scope, and carry outcome='passed' (verified server-side, never trusted from the client).
   let attemptOutcome: 'passed' | 'remediate' | 'incomplete' | undefined;
   if (event.type === 'mastery_passed') {
-    const attempt = getAttemptStore()
-      .list(dialogueId)
-      .find((a) => a.id === event.attemptId && (a.userId ?? POC_DEFAULT_USER_ID) === userId);
+    const attempt = (await getAttemptStore().list(dialogueId)).find(
+      (a) => a.id === event.attemptId && (a.userId ?? POC_DEFAULT_USER_ID) === userId,
+    );
     if (!attempt) {
       return NextResponse.json(
         fail({
@@ -78,7 +77,7 @@ export async function POST(req: Request) {
 
   try {
     const next = applyProgressEvent(current, dialogueId, userId, event, { attemptOutcome });
-    const saved = next === current ? current : store.upsert(next);
+    const saved = next === current ? current : await store.upsert(next);
     return NextResponse.json(ok({ progress: saved, event }), { status: 201 });
   } catch (err) {
     if (err instanceof ProgressTransitionError) {

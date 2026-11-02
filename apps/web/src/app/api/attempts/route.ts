@@ -7,17 +7,19 @@ import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import { buildAssessmentQuestions, gradeAssessment } from '@/lib/poc/assessment-bank';
 
 /**
- * GET/POST /api/attempts — dialogue mastery attempts (TASK-DLG-POC-01 + TASK-SLICE-01).
+ * GET/POST /api/attempts — dialogue mastery attempts (TASK-DLG-POC-01 + TASK-SLICE-01
+ * → Postgres persistence in TASK-M0-10).
  * POST accepts RAW ANSWERS ONLY: per-question grading happens HERE on the server
  * (KB dialogue-mastery-model §۱ — the answer key never reaches the client), then
- * computeMastery applies weights/floors and the repository persists the attempt.
+ * computeMastery applies weights/floors and the repository persists the attempt
+ * (in-memory DEV-ONLY, or app.dialogue_mastery_attempts when DATABASE_URL is set).
  */
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const dialogueId = url.searchParams.get('dialogueId') ?? undefined;
-  return NextResponse.json(ok({ attempts: getAttemptStore().list(dialogueId) }), {
+  return NextResponse.json(ok({ attempts: await getAttemptStore().list(dialogueId) }), {
     headers: { 'cache-control': 'no-store' },
   });
 }
@@ -69,7 +71,7 @@ export async function POST(req: Request) {
 
   const graded = gradeAssessment(questions, answers);
   const result = computeMastery(graded.scores, 'stage2');
-  const attempt = getAttemptStore().create(
+  const attempt = await getAttemptStore().create(
     { dialogueId, userId, scores: graded.scores, weakPoints: graded.weakPoints },
     result.outcome,
   );

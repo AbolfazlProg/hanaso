@@ -23,16 +23,26 @@ pnpm typecheck
 echo "==== [6/9] unit tests ===="
 pnpm test
 
+# 6b (optional): real-PostgreSQL integration suite — runs when TEST_DATABASE_URL points
+# at a PostgreSQL 18 (CI always provides one; local dev needs a running instance).
+# Without it the gate reports SKIP — the unit suite + CI cover the no-DB path.
+if [ -n "${TEST_DATABASE_URL:-}" ] && command -v pg_dump >/dev/null 2>&1; then
+  echo "==== [6b/9] integration tests (real PostgreSQL) ===="
+  pnpm --filter web test:integration
+else
+  echo "==== [6b/9] integration tests: SKIP (no TEST_DATABASE_URL or pg_dump on PATH) ===="
+fi
+
 echo "==== [7/9] build ===="
 pnpm build
 
 echo "==== [7b/9] font budget (spike M0-07 §۶-۲) ===="
 pnpm --filter web check:fonts
 
-echo "==== [8/9] smoke (production standalone server) ===="
+echo "==== [8/9] smoke (production standalone server, no DATABASE_URL) ===="
 # Production-faithful: run the standalone server (same as the Docker image CMD).
-# The skeleton has NO db layer — an unrelated DATABASE_URL in the ambient
-# environment would (correctly!) make /api/ready report 503, so it is unset here.
+# The no-DB path is intentionally exercised here (in-memory repositories); the
+# with-DB path is covered by the integration suite + the live /api/ready check.
 env -u DATABASE_URL PORT=3100 HOSTNAME=127.0.0.1 node apps/web/.next/standalone/apps/web/server.js &
 SERVER_PID=$!
 trap 'kill $SERVER_PID 2>/dev/null || true' EXIT

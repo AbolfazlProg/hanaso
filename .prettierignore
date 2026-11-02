@@ -8,3 +8,5 @@ next-env.d.ts
 pnpm-lock.yaml
 **/pnpm-lock.yaml
 *.min.js
+# generated esbuild bundles (apps/web/scripts/bundle-tools.mjs)
+apps/web/.tools/

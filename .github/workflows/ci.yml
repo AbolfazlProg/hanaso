@@ -19,8 +19,24 @@ concurrency:
 
 jobs:
   verify:
-    name: format / lint / typecheck / test / build / audit / smoke
+    name: format / lint / typecheck / test / integration(PG18) / build / audit / smoke
     runs-on: ubuntu-latest
+    services:
+      # Real PostgreSQL 18 (uuidv7() requires 18) — the integration suite never mocks it.
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: hanaso
+          POSTGRES_PASSWORD: hanaso-ci
+          POSTGRES_DB: hanaso
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U hanaso"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://hanaso:hanaso-ci@127.0.0.1:5432/postgres
     steps:
       - uses: actions/checkout@v7 # v7.0.1
 
@@ -48,7 +64,18 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
-      - name: Build (standalone)
+      - name: Install pg_dump 18 (real backup/restore drill client)
+        run: |
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo "$VERSION_CODENAME")-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-18
+          pg_dump --version
+
+      - name: Integration tests + backup/restore drill (real PostgreSQL 18)
+        run: pnpm --filter web test:integration
+
+      - name: Build (standalone + ops tool bundles)
         run: pnpm build
         env:
           NEXT_PUBLIC_APP_VERSION: ${{ github.ref_name }}
@@ -58,7 +85,7 @@ jobs:
       - name: Audit (fail on high/critical)
         run: pnpm audit --prod
 
-      - name: Smoke (production standalone server on :3100)
+      - name: Smoke (production standalone server on :3100, no DATABASE_URL)
         run: |
           env -u DATABASE_URL PORT=3100 HOSTNAME=127.0.0.1 node apps/web/.next/standalone/apps/web/server.js &
           SERVER_PID=$!

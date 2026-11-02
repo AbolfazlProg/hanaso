@@ -1,0 +1,3 @@
+{"ok":true,"command":"ready","database":{"status":"ok","latencyMs":9,"serverVersion":"18.6"}}
+{"ok":true,"command":"verify","database":"hanaso_cli_test","checkedAt":"2026-11-02T07:30:29.125Z","serverVersion":"18.6","tables":{"content.characters":3,"content.dialogues":1,"content.dialogue_lines":10,"content.lessons":1,"app.dialogue_mastery_attempts":1,"app.lesson_progress":0},"newest":{"attempts":"2026-11-02 07:20:44.31151+00","lessonProgress":null},"pgboss":{"completed":1},"pgbossAvailable":true}
+{"ok":true,"command":"jobs","schedules":[{"name":"ops.backup","cron":"30 3 * * *","tz":"Asia/Tehran"},{"name":"ops.db-verify","cron":"0 4 * * *","tz":"Asia/Tehran"}],"jobs":{"completed":1}}
