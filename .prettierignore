@@ -8,6 +8,8 @@ next-env.d.ts
 pnpm-lock.yaml
 **/pnpm-lock.yaml
 *.min.js
+# generated esbuild bundles (apps/web/scripts/bundle-tools.mjs)
+apps/web/.tools/
 
 # Vendored external agent skills (upstream verbatim at pinned SHAs — ADR-006; never reformat)
 agent-skills/external/

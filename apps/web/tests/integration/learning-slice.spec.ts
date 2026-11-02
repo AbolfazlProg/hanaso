@@ -179,7 +179,7 @@ describe('learning slice — full A→D cycle through the API surface', () => {
       remediateUser,
       { type: 'practice_done' },
     );
-    getProgressStore().upsert(d);
+    await getProgressStore().upsert(d);
 
     // RAW answers with only M4 missed → server grades M4=0 < floor → remediate
     const weakAnswers = {
