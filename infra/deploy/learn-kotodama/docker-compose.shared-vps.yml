@@ -91,7 +91,13 @@ services:
       - -c
       - log_min_duration_statement=500
     volumes:
-      - hanaso-pgdata:/var/lib/postgresql/data
+      # PG 18+ image layout (docker-library/postgres#1259): datadir lives in a
+      # major-version subdir (/var/lib/postgresql/18/docker) and the entrypoint
+      # HARD-FAILS if a volume is mounted at the legacy /var/lib/postgresql/data
+      # (crash-looped with exitCode=1 in CI run 41438648553 until diagnosed).
+      # Mount the PARENT and let the image manage its subdirs (also what
+      # pg_upgrade --link needs for future major upgrades).
+      - hanaso-pgdata:/var/lib/postgresql
     networks: [hanaso-net]
     # NO ports section: docker-network only (never published to the host/internet).
     healthcheck:
