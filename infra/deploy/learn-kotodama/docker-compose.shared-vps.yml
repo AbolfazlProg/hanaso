@@ -95,11 +95,20 @@ services:
     networks: [hanaso-net]
     # NO ports section: docker-network only (never published to the host/internet).
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-hanaso} -d ${POSTGRES_DB:-hanaso}']
+      # TCP probe — NOT the default unix socket. During first-init the image's
+      # entrypoint runs a TEMPORARY socket-only server (listen_addresses='');
+      # a socket probe can succeed against it and flip the container healthy
+      # prematurely, after which the temp→real server swap counts straight
+      # toward `retries` (observed as a false `unhealthy` in CI run 41433200787).
+      # 127.0.0.1:5432 answers only once the REAL server is up — exactly the
+      # dependency of pgbouncer/migrate (TCP via hanaso-net).
+      # start_period 60s: initdb --data-checksums on a slow shared-VPS disk can
+      # outgrow 20s; retries 10 → worst-case verdict ≈ 60s + 10×10s.
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -p 5432 -U ${POSTGRES_USER:-hanaso} -d ${POSTGRES_DB:-hanaso}']
       interval: 10s
       timeout: 5s
-      start_period: 20s
-      retries: 5
+      start_period: 60s
+      retries: 10
     logging:
       driver: json-file
       options:

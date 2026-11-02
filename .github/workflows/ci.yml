@@ -159,21 +159,28 @@ jobs:
       - name: Staged bring-up 1/2 — postgres, then pgbouncer (healthcheck proves pg_isready ships)
         run: |
           cd infra/deploy/learn-kotodama
+          wait_healthy() {
+            local name="$1" i
+            # 180s ceiling ≥ worst-case health transition (postgres: 60s start_period + 10×10s retries)
+            for i in $(seq 1 90); do
+              [ "$(docker inspect -f '{{.State.Health.Status}}' "$name")" = healthy ] && return 0
+              sleep 2
+            done
+            echo "::error::$name never became healthy — diagnostics:"
+            docker inspect -f 'state={{.State.Status}} restarts={{.RestartCount}} oomKilled={{.State.OOMKilled}} exitCode={{.State.ExitCode}} health={{.State.Health.Status}}' "$name" || true
+            echo '--- healthcheck probe outputs (exit: output) ---'
+            docker inspect -f '{{range .State.Health.Log}}{{.ExitCode}}: {{.Output}}{{end}}' "$name" || true
+            echo "--- docker logs $name (tail 120) ---"
+            docker logs --tail 120 "$name" || true
+            return 1
+          }
           docker compose -f docker-compose.shared-vps.yml --env-file .env up -d postgres
-          for i in $(seq 1 30); do
-            [ "$(docker inspect -f '{{.State.Health.Status}}' hanaso-postgres)" = healthy ] && break
-            sleep 2
-          done
-          docker inspect -f 'postgres: {{.State.Health.Status}}' hanaso-postgres
-          [ "$(docker inspect -f '{{.State.Health.Status}}' hanaso-postgres)" = healthy ]
+          wait_healthy hanaso-postgres
+          echo 'postgres: healthy'
 
           docker compose -f docker-compose.shared-vps.yml --env-file .env up -d pgbouncer
-          for i in $(seq 1 30); do
-            [ "$(docker inspect -f '{{.State.Health.Status}}' hanaso-pgbouncer)" = healthy ] && break
-            sleep 2
-          done
-          docker inspect -f 'pgbouncer: {{.State.Health.Status}}' hanaso-pgbouncer
-          [ "$(docker inspect -f '{{.State.Health.Status}}' hanaso-pgbouncer)" = healthy ]
+          wait_healthy hanaso-pgbouncer
+          echo 'pgbouncer: healthy'
 
       - name: Staged bring-up 2/2 — migrate + seed (direct), then web + worker
         run: |

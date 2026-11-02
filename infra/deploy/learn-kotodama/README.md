@@ -86,7 +86,7 @@ docker compose --env-file .env pull && docker logout ghcr.io
 
 # ۱) فقط دیتابیس را بالا بیاور و منتظر سلامت بمان (web هنوز نسخهٔ قبلی سرو می‌کند):
 docker compose --env-file .env up -d postgres
-docker compose --env-file .env ps postgres   # تا (healthy)
+docker compose --env-file .env ps postgres   # تا (healthy) — نخستین اجرا به‌خاطر initdb (data-checksums) ممکن است تا ~۱ دقیقه طول بکشد؛ healthcheck از مسیر TCP است (سرور موقتِ فاز init فقط سوکت است)
 
 # ۲) PgBouncer + گیت اتصال از مسیر اپ:
 docker compose --env-file .env up -d pgbouncer
