@@ -101,6 +101,44 @@ describe('PgAttemptRepository (app.dialogue_mastery_attempts)', () => {
       ),
     ).rejects.toMatchObject({ code: '23505' });
   });
+
+  // PR #74 review r3/S3 — the 23505 retry loop itself had zero coverage. A one-shot
+  // BEFORE INSERT trigger forces exactly one collision; the repository must recompute
+  // MAX+1 and converge instead of failing. The one-shot state is a SEQUENCE on
+  // purpose: nextval() is non-transactional, so the marker survives the rolled-back
+  // insert (a marker table would roll back with it and collide on every retry).
+  it('recovers from a forced attempt_no collision (the 23505 retry loop, for real)', async () => {
+    await pool.query(`
+      DROP SEQUENCE IF EXISTS app.conflict_fired_seq;
+      CREATE SEQUENCE app.conflict_fired_seq START 1;
+      CREATE OR REPLACE FUNCTION app.force_attempt_conflict() RETURNS trigger AS $$
+      BEGIN
+        IF nextval('app.conflict_fired_seq') = 1 THEN
+          NEW.attempt_no := 1;  -- collide with the existing attempt_no=1
+        END IF;
+        RETURN NEW;
+      END $$ LANGUAGE plpgsql;
+      DROP TRIGGER IF EXISTS force_conflict ON app.dialogue_mastery_attempts;
+      CREATE TRIGGER force_conflict BEFORE INSERT ON app.dialogue_mastery_attempts
+        FOR EACH ROW EXECUTE FUNCTION app.force_attempt_conflict();
+    `);
+    try {
+      const recovered = await attempts.create(INPUT, 'passed');
+      // first insert collided (forced attempt_no=1); the retry recomputed MAX+1 = 3
+      // (repo-user has attempts 1 and 2 from the tests above)
+      expect(recovered.attemptNo).toBe(3);
+      expect(recovered.outcome).toBe('passed');
+      const rows = await pool.query<{ attempt_no: number }>(
+        'SELECT attempt_no FROM app.dialogue_mastery_attempts WHERE user_id = $1 ORDER BY attempt_no',
+        [USER],
+      );
+      expect(rows.rows.map((r) => r.attempt_no)).toEqual([1, 2, 3]);
+    } finally {
+      await pool.query('DROP TRIGGER IF EXISTS force_conflict ON app.dialogue_mastery_attempts');
+      await pool.query('DROP FUNCTION IF EXISTS app.force_attempt_conflict()');
+      await pool.query('DROP SEQUENCE IF EXISTS app.conflict_fired_seq');
+    }
+  });
 });
 
 describe('PgProgressRepository (app.lesson_progress)', () => {
@@ -144,5 +182,13 @@ describe('PgProgressRepository (app.lesson_progress)', () => {
     const listed = await progress.list(DLG);
     expect(listed).toHaveLength(1);
     expect(await progress.get('nobody', DLG)).toBeNull();
+  });
+
+  it('find() resolves a stored attempt id (the D→understood gate lookup)', async () => {
+    const latest = (await attempts.list(DLG)).find((a) => a.userId === USER)!;
+    const found = await attempts.find(latest.id);
+    expect(found?.id).toBe(latest.id);
+    expect(found?.dialogueId).toBe(DLG);
+    expect(await attempts.find('00000000-0000-0000-0000-000000000000')).toBeNull();
   });
 });

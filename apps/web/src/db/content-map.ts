@@ -6,7 +6,7 @@
  * between the two, loading the (small) mapping table once per process and refreshing
  * lazily when a lookup misses (e.g. right after a seed ran on a live process).
  */
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { dialogueContentId } from './ids';
 import { getDbClient } from './client';
 import { dialogues, lessons } from '../../db/schema';
@@ -53,6 +53,9 @@ export function slugToEngineId(slug: string): string {
 /** (Re)load every dialogue + its anchor lesson. Cheap: the content set is tiny. */
 export async function refreshContentMap(): Promise<void> {
   const { db } = getDbClient();
+  // anchor lesson ONLY (unitStage='B_lesson'): when the full content schema attaches
+  // multiple lessons to one dialogue, a bare join would let a non-anchor row win
+  // (PR #74 review r1/S3) — lessonUuid must always be the A→D unit anchor.
   const rows = await db
     .select({
       dialogueUuid: dialogues.id,
@@ -60,7 +63,7 @@ export async function refreshContentMap(): Promise<void> {
       lessonUuid: lessons.id,
     })
     .from(dialogues)
-    .innerJoin(lessons, eq(lessons.dialogueId, dialogues.id));
+    .innerJoin(lessons, and(eq(lessons.dialogueId, dialogues.id), eq(lessons.unitStage, 'B_lesson')));
 
   bySlug.clear();
   byDialogueUuid.clear();

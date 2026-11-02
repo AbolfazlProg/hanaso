@@ -25,10 +25,16 @@ pnpm test
 
 # 6b (optional): real-PostgreSQL integration suite — runs when TEST_DATABASE_URL points
 # at a PostgreSQL 18 (CI always provides one; local dev needs a running instance).
-# Without it the gate reports SKIP — the unit suite + CI cover the no-DB path.
+# pg_dump presence alone is NOT enough (PR #74 review r3/S3): an older client would
+# silently skip the drill's 5 tests while the gate still prints "integration tests".
 if [ -n "${TEST_DATABASE_URL:-}" ] && command -v pg_dump >/dev/null 2>&1; then
-  echo "==== [6b/9] integration tests (real PostgreSQL) ===="
-  pnpm --filter web test:integration
+  PGDUMP_MAJOR="$(pg_dump --version 2>/dev/null | sed -n 's/^pg_dump (PostgreSQL) \([0-9][0-9]*\).*/\1/p')"
+  if [ -n "${PGDUMP_MAJOR}" ] && [ "${PGDUMP_MAJOR}" -ge 18 ]; then
+    echo "==== [6b/9] integration tests (real PostgreSQL, pg_dump ${PGDUMP_MAJOR}) ===="
+    pnpm --filter web test:integration
+  else
+    echo "==== [6b/9] integration tests: SKIP (pg_dump major '${PGDUMP_MAJOR:-unknown}' < 18 — the drill would silently skip) ===="
+  fi
 else
   echo "==== [6b/9] integration tests: SKIP (no TEST_DATABASE_URL or pg_dump on PATH) ===="
 fi

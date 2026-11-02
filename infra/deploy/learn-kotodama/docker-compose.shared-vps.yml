@@ -11,8 +11,11 @@
 #     (hanaso-prefixed, nothing shared with the kotodama/BBB stacks);
 #   - postgres & pgbouncer publish NO ports at all (docker-network only);
 #   - the only public entry stays the existing nginx vhost → 127.0.0.1:3100;
-#   - resource ceiling tuned for a small shared host (max_connections=40,
-#     shared_buffers=64MB; pgbouncer pools the app connections on top).
+#   - resource ceiling tuned for a small shared host: per-service mem_limit/cpus
+#     (review r2/S2 — postgres-internal tuning alone is not a host ceiling) PLUS
+#     max_connections=40, shared_buffers=64MB; pgbouncer pools the app connections.
+#   - infra images are pinned by digest (same as the Dockerfile pg stage — keep in
+#     sync when re-pinning; re-pin quarterly with the maintenance window).
 #
 # Staged bring-up (deploy order — NEVER `docker compose down` on this host):
 #   1) docker compose --env-file .env up -d postgres     → wait healthy
@@ -31,11 +34,18 @@ services:
     container_name: hanaso-web
     restart: unless-stopped
     env_file: .env
+    # DATABASE_URL is INTERPOLATED from the POSTGRES_* values (single source of
+    # truth — review r2/S3: two hand-synced copies of the password confused ops).
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@pgbouncer:6432/${POSTGRES_DB:?}
     networks: [hanaso-net]
     expose: ['3000']
     # Loopback-only publish so host-side nginx/health gates reach the app
     # WITHOUT exposing it publicly (HAProxy/nginx remain the only public entry).
     ports: ['127.0.0.1:3100:3000']
+    # Shared-VPS ceiling (review r2/S2) — Next standalone runs comfortably in 512m.
+    mem_limit: 512m
+    cpus: 1.5
     depends_on:
       pgbouncer:
         condition: service_healthy
@@ -53,9 +63,13 @@ services:
 
   postgres:
     # PG 18 (uuidv7() defaults in the migrations require it) — alpine for a small VPS.
-    image: postgres:18-alpine
+    # Digest-pinned (2026-10-26) — keep in sync with the Dockerfile pg stage.
+    image: postgres:18-alpine@sha256:10a5c69a83035ab5239f5620d708520e8b28f5aa1f2b20143e6024532edadfb5
     container_name: hanaso-postgres
     restart: unless-stopped
+    # Shared-VPS ceiling (review r2/S2): 40 conns × work_mem 4MB + cache stay inside 512m.
+    mem_limit: 512m
+    cpus: 1.5
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?set in .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
@@ -96,9 +110,13 @@ services:
     # KB database-architecture §۸-۴: PgBouncer 1.26.1, pool_mode=transaction,
     # auth_type=scram, max_prepared_statements (protocol-level tracking for
     # node-postgres). App AND worker connect through it.
-    image: edoburu/pgbouncer:v1.26.1-p0
+    # Digest-pinned (2026-10-19) — the image ships pg_isready via postgresql-client
+    # (verified by the CI compose-smoke job's healthcheck wait).
+    image: edoburu/pgbouncer:v1.26.1-p0@sha256:488422e38cff912895d0d65d8963fcd306e6ac589a724398b6eb8e294e94d624
     container_name: hanaso-pgbouncer
     restart: unless-stopped
+    mem_limit: 128m
+    cpus: 0.5
     environment:
       DB_HOST: postgres
       DB_PORT: '5432'
@@ -145,12 +163,18 @@ services:
     volumes:
       - hanaso-backups:/backups
     networks: [hanaso-net]
+    mem_limit: 384m
+    cpus: 0.5
     depends_on:
       pgbouncer:
         condition: service_healthy
     healthcheck:
+      # probe the worker's ACTUAL dependency (pgbouncer:6432 — review r2/S3), not
+      # postgres directly. pg_isready exits 0 for any live server response, so a
+      # pgbouncer answering auth requests reports healthy. True process-liveness
+      # (worker heartbeat row) is tracked as M1 hardening debt.
       test:
-        ['CMD-SHELL', 'pg_isready -h postgres -p 5432 -U ${POSTGRES_USER:-hanaso} -d ${POSTGRES_DB:-hanaso} || exit 1']
+        ['CMD-SHELL', 'pg_isready -h pgbouncer -p 6432 -U ${POSTGRES_USER:-hanaso} -d ${POSTGRES_DB:-hanaso} || exit 1']
       interval: 30s
       timeout: 5s
       start_period: 20s
@@ -171,6 +195,8 @@ services:
       DIRECT_DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@postgres:5432/${POSTGRES_DB:?}
     command: ['sh', '-c', 'node apps/web/.tools/db-cli.mjs migrate && node apps/web/.tools/db-cli.mjs seed']
     networks: [hanaso-net]
+    mem_limit: 512m
+    cpus: 0.5
     depends_on:
       postgres:
         condition: service_healthy

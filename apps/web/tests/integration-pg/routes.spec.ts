@@ -11,7 +11,7 @@ import { GET as getReady } from '@/app/api/ready/route';
 import { GET as getAttempts, POST as postAttempt } from '@/app/api/attempts/route';
 import { GET as getProgress, POST as postProgress } from '@/app/api/progress/route';
 import { resetStoresForTests } from '@/lib/poc/stores';
-import { getDbClient, resetDbClientForTests } from '@/db/client';
+import { resetDbClientForTests } from '@/db/client';
 import { refreshContentMap } from '@/db/content-map';
 import { ensureTestDatabase } from './helpers';
 
@@ -49,10 +49,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   resetStoresForTests();
-  resetDbClientForTests();
-  await getDbClient()
-    .pool.end()
-    .catch(() => undefined);
+  resetDbClientForTests(); // ends the app pool — a fresh getDbClient() would rebuild it
 });
 
 describe('GET /api/ready (real database check)', () => {
@@ -63,6 +60,32 @@ describe('GET /api/ready (real database check)', () => {
     expect(body.ok).toBe(true);
     expect(body.checks.database.status).toBe('ok');
     expect(body.checks.database.serverVersion).toMatch(/^18\./);
+  });
+
+  // PR #74 review r3/S2 — the deploy-gate guarantee "never a fake ready" needs its
+  // FAIL path exercised too: DATABASE_URL set but unreachable → 503, not a green lie.
+  it('reports 503 fail when the database is unreachable (and leaks no connection details)', async () => {
+    const prevUrl = process.env.DATABASE_URL;
+    const prevDirect = process.env.DIRECT_DATABASE_URL;
+    resetDbClientForTests(); // drop the healthy pool — the next one gets the dead URL
+    process.env.DATABASE_URL = 'postgresql://hanaso:SECRET-NOT-TO-LEAK@127.0.0.1:1/hanaso';
+    try {
+      const res = await getReady();
+      expect(res.status).toBe(503);
+      const body = await json<{
+        ok: boolean;
+        checks: { database: { status: string; detail: string } };
+      }>(res);
+      expect(body.ok).toBe(false);
+      expect(body.checks.database.status).toBe('fail');
+      // public detail must stay generic — hosts/users/passwords belong to server logs
+      expect(body.checks.database.detail).not.toMatch(/127\.0\.0\.1|SECRET-NOT-TO-LEAK|hanaso@/i);
+      expect(body.checks.database.detail).not.toMatch(/ECONNREFUSED/);
+    } finally {
+      process.env.DATABASE_URL = prevUrl!;
+      if (prevDirect) process.env.DIRECT_DATABASE_URL = prevDirect;
+      resetDbClientForTests(); // drop the dead pool; later files rebuild with the good URL
+    }
   });
 });
 

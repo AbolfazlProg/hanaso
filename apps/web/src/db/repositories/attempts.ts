@@ -8,6 +8,8 @@
  * - `attempt_no` is 1-based per (user, dialogue): computed as MAX+1 inside a retry
  *   loop — the unique index (user_id, dialogue_id, attempt_no) is the backstop, so a
  *   concurrent insert loses at most one retry, never correctness;
+ * - `list(dialogueId)` filters IN SQL, never post-fetch (PR #74 review r1/S2: a
+ *   post-fetch filter after LIMIT would silently truncate once >500 rows exist);
  * - rows map back to the engine-shaped `DialogueMasteryAttempt` (dialogueId=`dlg-<slug>`).
  */
 import { desc, eq, sql } from 'drizzle-orm';
@@ -16,12 +18,25 @@ import type { AttemptInput, DialogueMasteryAttempt, WeakPoint } from '../../modu
 import { dialogueMasteryAttempts, dialogues } from '../../../db/schema';
 import type { DbClient } from '../client';
 import { newRuntimeId } from '../ids';
-import { engineIdToSlug, resolveDialogue, resolveDialogueByUuid } from '../content-map';
+import { ContentNotSeededError, resolveDialogue, resolveDialogueByUuid } from '../content-map';
 import { POC_DEFAULT_USER_ID } from '../../lib/poc/principal';
 import type { MasteryScoresJson, WeakPointsJson } from '../../../db/schema/app';
 
+/**
+ * 23505 detector that sees THROUGH drizzle's error wrapping (PR #74 review r3:
+ * drizzle re-throws pg errors inside a `cause` chain, so a bare `err.code` check
+ * silently never matches — the retry loop was dead code until the forced-collision
+ * integration test proved it).
+ */
 function isUniqueViolation(err: unknown): boolean {
-  return typeof err === 'object' && err !== null && 'code' in err && (err as { code?: string }).code === '23505';
+  let current: unknown = err;
+  for (let depth = 0; current !== null && current !== undefined && depth < 5; depth += 1) {
+    if (typeof current === 'object' && 'code' in current && (current as { code?: string }).code === '23505') {
+      return true;
+    }
+    current = (current as { cause?: unknown }).cause;
+  }
+  return false;
 }
 
 /** DB row → engine-shaped domain object. */
@@ -91,6 +106,16 @@ export class PgAttemptRepository implements AttemptRepository {
   }
 
   async list(dialogueId?: string): Promise<DialogueMasteryAttempt[]> {
+    // Unknown dialogue → empty list (matches the in-memory contract), NOT an error.
+    let dialogueUuid: string | null = null;
+    if (dialogueId) {
+      try {
+        dialogueUuid = (await resolveDialogue(dialogueId)).dialogueUuid;
+      } catch (err) {
+        if (err instanceof ContentNotSeededError) return [];
+        throw err;
+      }
+    }
     const rows = await this.client.db
       .select({
         id: dialogueMasteryAttempts.id,
@@ -105,13 +130,14 @@ export class PgAttemptRepository implements AttemptRepository {
       })
       .from(dialogueMasteryAttempts)
       .leftJoin(dialogues, eq(dialogues.id, dialogueMasteryAttempts.dialogueId))
+      .where(dialogueUuid ? eq(dialogueMasteryAttempts.dialogueId, dialogueUuid) : undefined)
       .orderBy(desc(dialogueMasteryAttempts.createdAt))
       .limit(500);
+    return rows.map(attemptRowToDomain);
+  }
 
-    const filtered = dialogueId
-      ? rows.filter((r) => r.dialogueSlug === engineIdToSlug(dialogueId) || r.dialogueId === dialogueId)
-      : rows;
-    return filtered.map(attemptRowToDomain);
+  async find(attemptId: string): Promise<DialogueMasteryAttempt | null> {
+    return findAttemptById(this.client, attemptId);
   }
 }
 

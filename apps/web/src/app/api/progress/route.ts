@@ -58,12 +58,11 @@ export async function POST(req: Request) {
 
   // D→understood gate: the referenced attempt must exist, belong to this dialogue/user
   // scope, and carry outcome='passed' (verified server-side, never trusted from the client).
+  // Direct find() — never a bounded list scan (PR #74 review r1/S2).
   let attemptOutcome: 'passed' | 'remediate' | 'incomplete' | undefined;
   if (event.type === 'mastery_passed') {
-    const attempt = (await getAttemptStore().list(dialogueId)).find(
-      (a) => a.id === event.attemptId && (a.userId ?? POC_DEFAULT_USER_ID) === userId,
-    );
-    if (!attempt) {
+    const attempt = await getAttemptStore().find(event.attemptId);
+    if (!attempt || attempt.dialogueId !== dialogueId || (attempt.userId ?? POC_DEFAULT_USER_ID) !== userId) {
       return NextResponse.json(
         fail({
           code: 'progress/attempt_not_found',

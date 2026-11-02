@@ -10,12 +10,12 @@
  * real `INSERT … ON CONFLICT (user_id, lesson_id) DO UPDATE` — concurrent transitions
  * converge on the last write, exactly like the in-memory map did.
  */
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import type { ProgressRepository } from '../../modules/progress/repository';
 import type { UnitProgress, UnitStage, UnitStatus } from '../../modules/progress/types';
-import { dialogues, lessonProgress, lessons } from '../../../db/schema';
+import { dialogues, lessonProgress } from '../../../db/schema';
 import type { DbClient } from '../client';
-import { engineIdToSlug, resolveDialogue, slugToEngineId } from '../content-map';
+import { ContentNotSeededError, resolveDialogue, slugToEngineId } from '../content-map';
 
 /** DB row (+ join) → engine-shaped UnitProgress. */
 export function progressRowToDomain(row: {
@@ -80,6 +80,9 @@ export class PgProgressRepository implements ProgressRepository {
       .onConflictDoUpdate({
         target: [lessonProgress.userId, lessonProgress.lessonId],
         set: {
+          // keep the dialogue anchor honest if a lesson's anchor dialogue ever changes
+          // (review r1/S3: a stale dialogue_id would make get() silently miss the row)
+          dialogueId: ref.dialogueUuid,
           unitStage: progress.stage,
           status: progress.status,
           masteryAttemptId: progress.masteryAttemptId ?? null,
@@ -99,18 +102,23 @@ export class PgProgressRepository implements ProgressRepository {
   }
 
   async list(dialogueId?: string): Promise<UnitProgress[]> {
+    // Unknown dialogue → empty list (matches the in-memory contract), NOT an error.
+    let dialogueUuid: string | null = null;
+    if (dialogueId) {
+      try {
+        dialogueUuid = (await resolveDialogue(dialogueId)).dialogueUuid;
+      } catch (err) {
+        if (err instanceof ContentNotSeededError) return [];
+        throw err;
+      }
+    }
     const rows = await this.client.db
       .select(progressColumns)
       .from(lessonProgress)
       .leftJoin(dialogues, eq(dialogues.id, lessonProgress.dialogueId))
+      .where(dialogueUuid ? eq(lessonProgress.dialogueId, dialogueUuid) : undefined)
+      .orderBy(desc(lessonProgress.updatedAt))
       .limit(500);
-    const filtered = dialogueId ? rows.filter((r) => r.dialogueSlug === engineIdToSlug(dialogueId)) : rows;
-    return filtered.map(progressRowToDomain);
+    return rows.map(progressRowToDomain);
   }
-}
-
-/** Anchor-lesson join for ops queries (worker/db-verify). */
-export async function countLessonProgress(client: DbClient): Promise<number> {
-  const rows = await client.db.select({ lessonId: lessons.id }).from(lessons);
-  return rows.length;
 }

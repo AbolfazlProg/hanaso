@@ -11,6 +11,9 @@ import type { AttemptInput, DialogueMasteryAttempt } from './types';
 export interface AttemptRepository {
   create(input: AttemptInput, outcome: DialogueMasteryAttempt['outcome']): Promise<DialogueMasteryAttempt>;
   list(dialogueId?: string): Promise<DialogueMasteryAttempt[]>;
+  /** Single-row lookup by stored attempt id — the D→understood gate uses this instead
+   * of list()+find (PR #74 review r1: a list is LIMIT-bounded and the wrong shape). */
+  find(attemptId: string): Promise<DialogueMasteryAttempt | null>;
 }
 
 export class InMemoryAttemptRepository implements AttemptRepository {
@@ -35,5 +38,9 @@ export class InMemoryAttemptRepository implements AttemptRepository {
 
   async list(dialogueId?: string): Promise<DialogueMasteryAttempt[]> {
     return dialogueId ? this.attempts.filter((a) => a.dialogueId === dialogueId) : [...this.attempts];
+  }
+
+  async find(attemptId: string): Promise<DialogueMasteryAttempt | null> {
+    return this.attempts.find((a) => a.id === attemptId) ?? null;
   }
 }

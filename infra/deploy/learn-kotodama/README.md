@@ -69,9 +69,11 @@ symlink قدیمی nginx از `/root/backups/pre-hanaso-20261101/` (پیش از 
 
 ## ۵. لایهٔ دیتابیس M0-10 (استقرار ۲۰۲۶-۱۱-۰۲)
 
-سرویس‌های جدید در همان compose (پروژهٔ `hanaso`، شبکهٔ `hanaso-net`): `postgres` (postgres:18-alpine، Volume اختصاصی `hanaso-pgdata`) · `pgbouncer` (edoburu v1.26.1-p0؛ `pool_mode=transaction`، `auth_type=scram`، `max_prepared_statements=200` — KB §۸-۴) · `worker` (همان image اپ؛ pg-boss 12 در حالت polling چون LISTEN/NOTIFY پشت transaction-pooling کار نمی‌کند) · `migrate` (یک‌بارمصرف، پروفایل `migrate`).
+سرویس‌های جدید در همان compose (پروژهٔ `hanaso`، شبکهٔ `hanaso-net`): `postgres` (postgres:18-alpine، pin دیجست، Volume اختصاصی `hanaso-pgdata`) · `pgbouncer` (edoburu v1.26.1-p0 با pin دیجست؛ `pool_mode=transaction`، `auth_type=scram`، `max_prepared_statements=200` — KB §۸-۴) · `worker` (همان image اپ؛ pg-boss 12 در حالت polling چون LISTEN/NOTIFY پشت transaction-pooling کار نمی‌کند؛ healthcheck از مسیر واقعی خودش یعنی `pgbouncer:6432`) · `migrate` (یک‌بارمصرف، پروفایل `migrate`).
 
-**ایزولاسیون روی میزبان مشترک:** postgres و pgbouncer **هیچ پورتی منتشر نمی‌کنند** (فقط شبکهٔ داخلی Docker)؛ Volumeهای `hanaso-pgdata`/`hanaso-backups` مختص پروژه‌اند؛ سقف منابع: `max_connections=40`، `shared_buffers=64MB`؛ ورودی عمومی همچنان فقط nginx موجود → `127.0.0.1:3100`.
+**ایزولاسیون روی میزبان مشترک:** postgres و pgbouncer **هیچ پورتی منتشر نمی‌کنند** (فقط شبکهٔ داخلی Docker)؛ Volumeهای `hanaso-pgdata`/`hanaso-backups` مختص پروژه‌اند؛ سقف منابع در دو لایه: **سطح کانتینر** (`mem_limit`/`cpus` برای هر سرویس — دورهٔ بازبینی PR #74) و **سطح postgres** (`max_connections=40`، `shared_buffers=64MB`)؛ ورودی عمومی همچنان فقط nginx موجود → `127.0.0.1:3100`.
+
+**نکتهٔ پیکربندی .env (پس از بازبینی):** `DATABASE_URL` و `DIRECT_DATABASE_URL` دیگر در `.env` نوشته نمی‌شوند — compose آنها را از سه مقدار `POSTGRES_USER/PASSWORD/DB` interpolate می‌کند (منبع یگانهٔ رمز). همچنین ابزارهای pg داخل image از همان image پین‌شدهٔ postgres کپی می‌شوند و جاب CI جدید `compose-smoke` کل استقرار مرحله‌ای + دریل بکاپ/ریستور را با image واقعی قبل از merge تکرار می‌کند.
 
 ### ۵-۱. استقرار مرحله‌ای (ترتیب الزامی)
 

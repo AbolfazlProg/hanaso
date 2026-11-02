@@ -35,6 +35,14 @@ export async function checkDatabaseReadiness(): Promise<DatabaseReadiness> {
       serverVersion: result.rows[0]?.server_version,
     };
   } catch (err) {
+    // server-side log keeps the raw driver error for ops; the public route redacts it
+    console.error(
+      JSON.stringify({
+        at: new Date().toISOString(),
+        kind: 'readiness-database-fail',
+        message: err instanceof Error ? err.message : String(err),
+      }),
+    );
     return {
       status: 'fail',
       detail: err instanceof Error ? err.message : String(err),

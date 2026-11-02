@@ -31,7 +31,13 @@ export async function GET() {
           }
         : database.status === 'skipped'
           ? { status: 'skipped', detail: database.detail }
-          : { status: 'fail', detail: database.detail },
+          : {
+              status: 'fail',
+              // raw driver errors (hosts, users, auth internals) stay in server logs —
+              // never on the public response body (PR #74 review r2/S3)
+              detail: 'database check failed — see server logs',
+              latencyMs: database.latencyMs,
+            },
   };
 
   const ready = Object.values(checks).every((c) => c.status !== 'fail');

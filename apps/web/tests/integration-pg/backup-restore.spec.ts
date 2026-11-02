@@ -13,7 +13,7 @@
  * real in CI (postgresql-client-18 via PGDG apt) and on the VPS (the app image ships
  * pg_dump/pg_restore copied from postgres:18-alpine).
  */
-import { mkdtemp, readdir } from 'node:fs/promises';
+import { mkdtemp, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -36,6 +36,7 @@ let url = '';
 let backupDir = '';
 let boss: PgBoss | null = null;
 let serverVersion = '';
+let attemptsRepo: PgAttemptRepository | null = null; // the APP pool (getDbClient) — kept for the still-connected step
 
 /** Synchronous pg_dump probe — skipIf() needs the answer at COLLECTION time. */
 function detectPgDump(): { available: boolean; clientVersion: string } {
@@ -68,6 +69,7 @@ beforeAll(async () => {
   const client = getDbClient();
   const attempts = new PgAttemptRepository(client);
   const progress = new PgProgressRepository(client);
+  attemptsRepo = attempts;
   await attempts.create(
     {
       dialogueId: 'dlg-cafe-morning-01',
@@ -139,11 +141,58 @@ describe.skipIf(!drillAvailable)(DRILL_TITLE, () => {
     ).rejects.toThrow(/LIVE database/);
   });
 
-  it('step 5 — the source database stayed untouched and connected throughout', async () => {
+  it('step 5 — the source database stayed untouched, and the APP connection stayed live', async () => {
     const source = await runDbVerify({ url });
     expect(source.tables['app.dialogue_mastery_attempts']).toBe(1);
     expect(source.tables['app.lesson_progress']).toBe(1);
     expect(source.pgbossAvailable).toBe(true);
+
+    // PR #74 review r3/S3: "stayed connected" must mean the APP's own pool (the
+    // singleton from before the drill), not a fresh throwaway pool.
+    const viaAppPool = await attemptsRepo!.list('dlg-cafe-morning-01');
+    expect(viaAppPool.length).toBeGreaterThanOrEqual(1);
+    expect(viaAppPool[0]!.dialogueId).toBe('dlg-cafe-morning-01');
+  });
+
+  // PR #74 review r2/S2 + r3/S3 — negative paths of the backup/restore primitives.
+  it('step 6 — fails (redacted) when the database is unreachable — never a partial file', async () => {
+    let message = '';
+    await runBackup({ directUrl: 'postgresql://u:DRILL-SECRET-PW@127.0.0.1:1/nope', backupDir }).catch((err) => {
+      message = err instanceof Error ? err.message : String(err);
+    });
+    expect(message).not.toBe('');
+    // the password must never surface in the error, and no .part/.dump may remain
+    expect(message).not.toContain('DRILL-SECRET-PW');
+    expect((await readdir(backupDir)).filter((f) => f.includes('nope') || f.endsWith('.part'))).toEqual([]);
+  });
+
+  it('step 7 — rejects a corrupt archive (pg_restore non-zero)', async () => {
+    const badFile = path.join(backupDir, 'corrupt.dump');
+    await writeFile(badFile, 'this is not a real pg_dump -Fc archive');
+    await expect(
+      restoreDump({ serverUrl: serverUrl(), file: badFile, target: 'hanaso_restore_corrupt' }),
+    ).rejects.toThrow(/pg_restore exited/);
+  });
+
+  it('step 8 — refuses hostile/invalid restore targets (hardened live-DB guard)', async () => {
+    const files = (await readdir(backupDir)).filter((f) => f.endsWith('.dump'));
+    const file = path.join(backupDir, files[0]!);
+    // path traversal that URL-normalization would silently resolve onto the live DB
+    await expect(restoreDump({ serverUrl: url, file, target: '../hanaso_test' })).rejects.toThrow(
+      /invalid database name/i,
+    );
+    // identifier injection into DROP DATABASE
+    await expect(restoreDump({ serverUrl: url, file, target: 'x"; DROP DATABASE hanaso; --' })).rejects.toThrow(
+      /invalid database name/i,
+    );
+    // percent-encoding that libpq would decode to the live name
+    await expect(restoreDump({ serverUrl: url, file, target: 'hanaso_t%65st' })).rejects.toThrow(
+      /invalid database name/i,
+    );
+    // the maintenance database is never a legal target either
+    await expect(restoreDump({ serverUrl: url, file, target: 'postgres' })).rejects.toThrow(/LIVE|system/i);
+    // and the exact live name still refuses, of course
+    await expect(restoreDump({ serverUrl: url, file, target: 'hanaso_test' })).rejects.toThrow(/LIVE database/);
   });
 });
 

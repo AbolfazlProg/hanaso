@@ -17,9 +17,7 @@
 import { PgBoss, type Job } from 'pg-boss';
 import { runBackup } from './backup';
 import { runDbVerify } from './verify';
-
-const JOB_BACKUP = 'ops.backup';
-const JOB_DB_VERIFY = 'ops.db-verify';
+import { JOB_BACKUP, JOB_BACKUP_CRON, JOB_DB_VERIFY, JOB_DB_VERIFY_CRON, JOB_TZ } from './schedules';
 
 function requiredEnv(name: string): string {
   const value = process.env[name];
@@ -75,10 +73,13 @@ export async function main(): Promise<void> {
   });
 
   // Idempotent upserts on every boot (pg-boss scheduling docs) — tz pinned to the users' zone.
-  await boss.schedule(JOB_BACKUP, '30 3 * * *', null, { tz: 'Asia/Tehran' });
-  await boss.schedule(JOB_DB_VERIFY, '0 4 * * *', null, { tz: 'Asia/Tehran' });
+  await boss.schedule(JOB_BACKUP, JOB_BACKUP_CRON, null, { tz: JOB_TZ });
+  await boss.schedule(JOB_DB_VERIFY, JOB_DB_VERIFY_CRON, null, { tz: JOB_TZ });
 
-  log('worker', `started — jobs: ${JOB_BACKUP} (03:30 Asia/Tehran), ${JOB_DB_VERIFY} (04:00 Asia/Tehran)`);
+  log(
+    'worker',
+    `started — jobs: ${JOB_BACKUP} (${JOB_BACKUP_CRON} ${JOB_TZ}), ${JOB_DB_VERIFY} (${JOB_DB_VERIFY_CRON} ${JOB_TZ})`,
+  );
 
   const shutdown = async (signal: string) => {
     log('worker', `shutting down (${signal})`);

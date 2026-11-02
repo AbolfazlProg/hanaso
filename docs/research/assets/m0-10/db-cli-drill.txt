@@ -1,3 +1,35 @@
+# db-cli drill — TASK-M0-10 — captured output of the SHIPPED bundle (apps/web/.tools/db-cli.mjs)
+
+## Round 1 — 2026-11-02 07:30 UTC (first build, portable local PostgreSQL 18.6)
+
 {"ok":true,"command":"ready","database":{"status":"ok","latencyMs":9,"serverVersion":"18.6"}}
-{"ok":true,"command":"verify","database":"hanaso_cli_test","checkedAt":"2026-11-02T07:30:29.125Z","serverVersion":"18.6","tables":{"content.characters":3,"content.dialogues":1,"content.dialogue_lines":10,"content.lessons":1,"app.dialogue_mastery_attempts":1,"app.lesson_progress":0},"newest":{"attempts":"2026-11-02 07:20:44.31151+00","lessonProgress":null},"pgboss":{"completed":1},"pgbossAvailable":true}
+{"ok":true,"command":"verify","database":"hanaso_cli_test","checkedAt":"2026-11-02T07:30:29.125Z","serverVersion":"18.6","tables":{"content.characters":3,"content.dialogues":1,"content.dialogue_lines":10,"content.lessons":1,"app.dialogue_mastery_attempts":1,"app.lesson_progress":0},"newest":{"attempts":"2026-11-02 07:20:44.31151+00","lessonProgress":null},"pgboss":{"completed":1},"pgbossAvailable":true}}
 {"ok":true,"command":"jobs","schedules":[{"name":"ops.backup","cron":"30 3 * * *","tz":"Asia/Tehran"},{"name":"ops.db-verify","cron":"0 4 * * *","tz":"Asia/Tehran"}],"jobs":{"completed":1}}
+
+## Round 2 — 2026-11-02 10:52 UTC (post-review rebuild: atomic .part writes, enforced
+## pg_dump/server version compatibility, advisory lock, PGPASSWORD instead of argv,
+## hardened live-DB guard; PGDG postgresql-18.6 client+server on PATH)
+
+$ DATABASE_URL=DIRECT_DATABASE_URL=postgresql://hanaso@127.0.0.1:55432/hanaso_drill_cli
+
+{"ok":true,"command":"migrate","migrationsFolder":"apps/web/db/migrations","applied":true}
+{"ok":true,"command":"seed","characters":3,"dialogues":1,"dialogueLines":10,"lessons":1}
+{"ok":true,"command":"ready","database":{"status":"ok","latencyMs":9,"serverVersion":"18.6 (Debian 18.6-1.pgdg13+2)"}}
+
+$ BACKUP_DIR=/tmp/pg18/drill-backups db-cli backup
+{"ok":true,"command":"backup","file":"hanaso-2026-11-02-10-52-42.dump","bytes":35542,"dumpedAt":"2026-11-02T10:52:42.627Z","pgDumpVersion":"18.6 (Debian 18.6-1.pgdg13+2)","serverVersion":"18.6 (Debian 18.6-1.pgdg13+2)","archiveEntries":85,"durationMs":74,"pruned":[],"kept":["hanaso-2026-11-02-10-52-42.dump"]}
+
+$ db-cli restore --file …/hanaso-2026-11-02-10-52-42.dump --database hanaso_drill_restore
+{"ok":true,"command":"restore","database":"hanaso_drill_restore","file":"/tmp/pg18/drill-backups/hanaso-2026-11-02-10-52-42.dump","seconds":0.073}
+
+$ db-cli verify            (source)
+{"ok":true,"command":"verify","database":"hanaso_drill_cli","checkedAt":"2026-11-02T10:52:49.095Z","serverVersion":"18.6 (Debian 18.6-1.pgdg13+2)","tables":{"content.characters":3,"content.dialogues":1,"content.dialogue_lines":10,"content.lessons":1,"app.dialogue_mastery_attempts":0,"app.lesson_progress":0},"newest":{"attempts":null,"lessonProgress":null},"pgboss":{},"pgbossAvailable":false}
+
+$ db-cli verify --database hanaso_drill_restore   (restored — counts MATCH the source)
+{"ok":true,"command":"verify","database":"hanaso_drill_restore","checkedAt":"2026-11-02T10:52:49.204Z","serverVersion":"18.6 (Debian 18.6-1.pgdg13+2)","tables":{"content.characters":3,"content.dialogues":1,"content.dialogue_lines":10,"content.lessons":1,"app.dialogue_mastery_attempts":0,"app.lesson_progress":0},"newest":{"attempts":null,"lessonProgress":null},"pgboss":{},"pgbossAvailable":false}
+
+$ db-cli restore --file … --database hanaso_drill_cli        (the LIVE database)
+-> exit 1: refusing to restore into the LIVE database "hanaso_drill_cli" — pick a test database (e.g. hanaso_restore_test)
+
+$ db-cli restore --file … --database "../hanaso_drill_cli"   (path traversal)
+-> exit 1: invalid database name "../hanaso_drill_cli" — must match /^[A-Za-z_][A-Za-z0-9_]*$/ (no paths, quotes, or percent-encoding)

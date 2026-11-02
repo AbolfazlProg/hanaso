@@ -23,8 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     services:
       # Real PostgreSQL 18 (uuidv7() requires 18) — the integration suite never mocks it.
+      # Digest-pinned to the exact image the VPS compose + Dockerfile pg stage use.
       postgres:
-        image: postgres:18-alpine
+        image: postgres:18-alpine@sha256:10a5c69a83035ab5239f5620d708520e8b28f5aa1f2b20143e6024532edadfb5
         env:
           POSTGRES_USER: hanaso
           POSTGRES_PASSWORD: hanaso-ci
@@ -100,7 +101,7 @@ jobs:
 
   docker:
     name: image → GHCR (tag = SHA)
-    needs: verify
+    needs: [verify, compose-smoke]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -123,3 +124,104 @@ jobs:
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker push "$IMAGE:${{ github.sha }}"
+
+  compose-smoke:
+    # PR #74 review r2/S2: the production connection path (PgBouncer transaction
+    # pooling + scram) and the pg binaries SHIPPED IN THE IMAGE were never executed
+    # by any test. This job is a dress rehearsal of the staged VPS bring-up: it
+    # builds the real image, brings up postgres + pgbouncer + migrate + web + worker
+    # from the EXACT production compose file, and runs a REAL backup + restore drill
+    # with the image's own pg_dump/pg_restore.
+    name: compose smoke (real image · pgbouncer path · backup drill)
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the production image (includes the pg-toolchain build gate)
+        run: |
+          docker build -f infra/docker/Dockerfile \
+            --build-arg NEXT_PUBLIC_BUILD_SHA=${{ github.sha }} \
+            --build-arg NEXT_PUBLIC_APP_VERSION=compose-smoke \
+            --build-arg NEXT_PUBLIC_ENV=ci \
+            -t hanaso:compose-smoke .
+
+      - name: Write the compose env file (throwaway — never committed)
+        run: |
+          cat > infra/deploy/learn-kotodama/.env <<'EOF'
+          HANASO_WEB_IMAGE=hanaso:compose-smoke
+          POSTGRES_USER=hanaso
+          POSTGRES_PASSWORD=hanaso-compose-smoke
+          POSTGRES_DB=hanaso
+          EOF
+
+      - name: Staged bring-up 1/2 — postgres, then pgbouncer (healthcheck proves pg_isready ships)
+        run: |
+          cd infra/deploy/learn-kotodama
+          docker compose --env-file .env up -d postgres
+          for i in $(seq 1 30); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' hanaso-postgres)" = healthy ] && break
+            sleep 2
+          done
+          docker inspect -f 'postgres: {{.State.Health.Status}}' hanaso-postgres
+          [ "$(docker inspect -f '{{.State.Health.Status}}' hanaso-postgres)" = healthy ]
+
+          docker compose --env-file .env up -d pgbouncer
+          for i in $(seq 1 30); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' hanaso-pgbouncer)" = healthy ] && break
+            sleep 2
+          done
+          docker inspect -f 'pgbouncer: {{.State.Health.Status}}' hanaso-pgbouncer
+          [ "$(docker inspect -f '{{.State.Health.Status}}' hanaso-pgbouncer)" = healthy ]
+
+      - name: Staged bring-up 2/2 — migrate + seed (direct), then web + worker
+        run: |
+          cd infra/deploy/learn-kotodama
+          docker compose --env-file .env run --rm migrate
+          docker compose --env-file .env up -d
+          for i in $(seq 1 45); do
+            BODY=$(curl -fsS http://127.0.0.1:3100/api/ready 2>/dev/null || true)
+            echo "$BODY" | grep -q '"database":{"status":"ok"' \
+              && echo "$BODY" | grep -q '"serverVersion":"18\.' && break
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:3100/api/ready | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["ok"] is True; c=d["checks"]["database"]; assert c["status"]=="ok" and c["serverVersion"].startswith("18."), c; print("ready ok:", c)'
+          curl -fsS http://127.0.0.1:3100/api/health | python3 -c 'import json,sys; assert json.load(sys.stdin)["ok"] is True; print("health ok")'
+
+      - name: Worker registered the nightly schedules (through PgBouncer)
+        run: |
+          cd infra/deploy/learn-kotodama
+          for i in $(seq 1 30); do
+            OUT=$(docker compose --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs jobs 2>/dev/null || true)
+            echo "$OUT" | grep -q 'ops.backup' && echo "$OUT" | grep -q 'ops.db-verify' && { echo "$OUT"; break; }
+            sleep 2
+          done
+          docker compose --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs jobs \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); names={s["name"] for s in d["schedules"]}; assert {"ops.backup","ops.db-verify"} <= names, d; assert all(s["tz"]=="Asia/Tehran" for s in d["schedules"]), d; print("schedules ok:", sorted(names))'
+
+      - name: REAL backup + restore drill with the IMAGE's own pg binaries
+        run: |
+          cd infra/deploy/learn-kotodama
+          BACKUP_JSON=$(docker compose --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs backup)
+          echo "$BACKUP_JSON"
+          FILE=$(echo "$BACKUP_JSON" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["ok"] and d["archiveEntries"]>0 and d["bytes"]>1000, d; print(d["file"])')
+          docker compose --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs restore --file "/backups/$FILE" --database hanaso_restore_smoke
+          docker compose --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs verify > /tmp/verify-live.json
+          docker compose --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs verify --database hanaso_restore_smoke > /tmp/verify-restored.json
+          python3 - <<'EOF'
+          import json
+          live = json.load(open('/tmp/verify-live.json'))
+          restored = json.load(open('/tmp/verify-restored.json'))
+          assert live["tables"] == restored["tables"], (live["tables"], restored["tables"])
+          assert live["serverVersion"].startswith("18."), live["serverVersion"]
+          print("drill ok — table counts match:", live["tables"])
+          EOF
+          # the live app kept serving THROUGHOUT the drill (never a fake ready):
+          curl -fsS http://127.0.0.1:3100/api/ready | grep -q '"database":{"status":"ok"'
+
+      - name: Teardown (CI-only — NEVER run `down` on the shared VPS)
+        if: always()
+        run: |
+          cd infra/deploy/learn-kotodama
+          docker compose --env-file .env down -v --remove-orphans || true

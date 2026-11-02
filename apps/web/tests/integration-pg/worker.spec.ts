@@ -4,10 +4,15 @@
  * Boots the queue the same way the compose worker does (useListenNotify:false — the
  * PgBouncer transaction-mode constraint), then round-trips a real job and asserts the
  * production schedule rows (03:30 backup / 04:00 verify, Asia/Tehran).
+ *
+ * PR #74 review r3/S2: queue names/crons/tz come from src/worker/schedules.ts — the
+ * SAME constants the production worker registers with — so this test fails if the
+ * worker's registration ever drifts from the documented schedule.
  */
 import { PgBoss, type Job } from 'pg-boss';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Pool } from 'pg';
+import { WORKER_SCHEDULES, JOB_TZ } from '@/worker/schedules';
 import { ensureTestDatabase } from './helpers';
 
 let boss: PgBoss | null = null;
@@ -51,19 +56,20 @@ describe('pg-boss 12 (polling mode — the production wiring)', () => {
   });
 
   it('stores the production cron schedules in pgboss.schedule', async () => {
-    // the worker registers these on every boot (idempotent upserts) — same calls here
-    await boss!.createQueue('ops.backup');
-    await boss!.createQueue('ops.db-verify');
-    await boss!.schedule('ops.backup', '30 3 * * *', null, { tz: 'Asia/Tehran' });
-    await boss!.schedule('ops.db-verify', '0 4 * * *', null, { tz: 'Asia/Tehran' });
+    // register with the SHARED constants — exactly what the worker does on boot
+    for (const { name, cron } of WORKER_SCHEDULES) {
+      await boss!.createQueue(name);
+      await boss!.schedule(name, cron, null, { tz: JOB_TZ });
+    }
 
     const { rows } = await pool!.query<{ name: string; cron: string; timezone: string }>(
       'SELECT name, cron, timezone FROM pgboss.schedule ORDER BY name',
     );
-    expect(rows).toEqual([
-      { name: 'ops.backup', cron: '30 3 * * *', timezone: 'Asia/Tehran' },
-      { name: 'ops.db-verify', cron: '0 4 * * *', timezone: 'Asia/Tehran' },
-    ]);
+    expect(rows).toEqual(
+      [...WORKER_SCHEDULES]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(({ name, cron }) => ({ name, cron, timezone: JOB_TZ })),
+    );
   });
 
   it('records completed jobs for observability (db-cli jobs reads this table)', async () => {
