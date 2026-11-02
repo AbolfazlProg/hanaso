@@ -3,6 +3,30 @@
 > قالب نسخه‌ها: **CalVer `YYYY.0M.N`** · محور استقرار: تگ=SHA · پیام‌ها فارسی و قابل‌فهم.
 > هیچ ادعایی بدون شناسهٔ commit قابل‌استناد ثبت نمی‌شود.
 
+## 2026.11.5 — Database Layer: PostgreSQL + PgBouncer + Worker + بکاپ اثبات‌شده (2026-11-02)
+
+**نوع:** TASK-M0-10 لایهٔ DB (PR #74 · merge `2d73080` · RUN-20261102-02/03).
+
+### افزوده شد
+
+- **لایهٔ DB کامل:** ‏PostgreSQL 18 repositories (attempts/progress) + سوییچ `DATABASE_URL` + `/api/ready` واقعی (چک `SELECT 1` از pool خود اپ؛ fail → 503 بدون لو رفتن جزئیات)
+- **Migration + Seed:** migrator ران‌تایم drizzle (هم‌فرمت drizzle-kit) + seed idempotent با uuidv5 قطعی
+- **Worker:** ‏pg-boss 12 در حالت polling (سازگار با PgBouncer transaction-pooling) + صف‌های `ops.backup` (۰۳:۳۰) و `ops.db-verify` (۰۴:۰۰) به وقت تهران
+- **زیرساخت میزبان مشترک:** postgres (بدون پورت منتشرشده؛ چیدمان volume ‏PG18 روی والد) + PgBouncer (6432، scram-sha-256، max_prepared_statements=200) + سقف منابع هر سرویس + Volumeهای اختصاصی `hanaso-pgdata`/`hanaso-backups`
+- **Dockerfile:** ابزارهای pg_dump/pg_restore/psql/pg_isready هم‌major از همان image پین‌شدهٔ postgres + گیت اجرای build
+- **CI:** جاب `compose-smoke` — تمرین کامل استقرار مرحله‌ای + دریل واقعی بکاپ/ریستور با image واقعی؛ داشبورد تشخیصی هنگام شکست (لاگ کانتینر/پراب‌ها/OOMKilled)
+- **بکاپ:** ‏`pg_dump -Fc` اتمیک (.part → rename) + تأیید `pg_restore --list` + نگهداشت ۷/۴/۶ (KB) + گارد رد restore روی DB زنده
+
+### رفع شده
+
+- سه باگ واقعی استقرار که فقط اجرای واقعی آشکار کرد: پراب سوکتی زودهنگام-healthy · مسیر legacy حجم در PG18 (crash-loop) · پیکربندی نامعتبر edoburu/pgbouncer (`scram` → `scram-sha-256`؛ نبودن `LISTEN_PORT=6432`)
+- باگ واقعی ۲۳۵۰۵: دیتکتور retry حالا زنجیرهٔ `cause` را می‌بیند (خطای pg داخل drizzle پیچیده می‌شود)
+
+### تست
+
+- ۱۵۱ تست واحد (۲۰ فایل؛ +۱۸ جدید) · ۳۲ تست integration روی PostgreSQL 18 واقعی (۵ فایل؛ +۷ جدید شامل دریل بکاپ/ریستور) · دروازه‌ها ALL GREEN
+- استقرار زنده + راستی‌آزمایی: هر ۴ سرویس healthy · POST واقعی → ردیف در PG · دریل restore روی VPS: شمارش ۶ جدول دقیقاً برابر
+
 ## 2026.11.3 — UI Infrastructure: پورت کامل توکن‌ها + فونت سلف‌هاست + FuriganaText + ۹ کامپوننت (2026-11-01)
 
 **نوع:** زیرساخت مشترک UI — TASK-M0-09 (RUN-20261101-04).
