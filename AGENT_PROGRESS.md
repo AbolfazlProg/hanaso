@@ -18,3 +18,14 @@
 - **Aizen:** تصمیم مالک در KB ثبت شد (**DD-084**، PR #5 ریپوی KB)؛ سپس در این ریپو اجرا شد: token-swap پالت + توکن‌های ساختاری جدید + فونت‌های ۸۰۰/۹۰۰/Black + امضاها (باند نیلی青海波/قاب ۲px/آفست سخت/segmented A→D/مُهر/hatching/کارت نیلی) روی خانه، learn، poc/dialogue و poc/ui.
 - **فایل‌های هم‌نقطه:** `tokens.css`، `fa.ts`، `button.tsx` — تغییر ترتیبی و تک‌Agent (این اجرا تنها Agent فعال بود).
 - شواهد: ۹/۹ دروازه ALL GREEN · ۱۲۵/۱۲۵ تست · ۱۹/۱۹ سنجهٔ رندر · ۳ بازبینی مستقل (S1/S2 صفر باقی‌مانده).
+
+## 2026-11-02 (بعدازظهر) — تکمیل TASK-M0-10: CI سبز ← merge ← استقرار ← دریل — RUN-20261102-03
+
+- **بازیابی وضعیت:** سندباکس قبلی بازیافت شده بود؛ کار فقط روی remote بود (شاخه + ۳ کامیت + PR #74 باز). از همان‌جا ادامه شد.
+- **سه ریشه‌یابی واقعی در compose-smoke** (هر کدام پس از داشبورد تشخیصی جدید CI): پراب TCP + start_period ۶۰ث (`67c2655`) · چیدمان volume ‏PG18 (`dc073fd` — crash-loop واقعی) · پیکربندی edoburu/pgbouncer: ‏6432 + scram-sha-256 (`be47a55`).
+- **بازبینی مستقل REV-INC-1:** ‏APPROVE_WITH_S3 (دو S3 اعمال، یک S3 عمداً رد شد — حفظ پنجرهٔ بازیابی unhealthy→healthy).
+- **Merge:** ‏CI سبز روی شاخه (رن 41441179189) ← merge اسکواش PR #74 ← `main` = `2d73080` ← هر سه جاب CI روی main سبز + image GHCR.
+- **استقرار مرحله‌ای VPS** (طبق README §۵-۱، هرگز `down`): postgres → pgbouncer → migrate/seed → web+worker — هر چهار سرویس healthy.
+- **راستی‌آزمایی زنده:** `/api/ready` چک واقعی DB (18.6/2ms از مسیر PgBouncer) · Aizen زنده (پالت/فونت/وزن راستی‌آزمایی شد) · POST واقعی attempts → ردیف در PostgreSQL · smoke ALL GREEN · kotodama.ir ‏200 قبل/بعد.
+- **دریل بکاپ/ریستور روی VPS (TR-030):** بکاپ ۸۲۰۷۲B/۱۶۴ مدخل · restore به `hanaso_restore_test` در 0.8s · شمارش ۶ جدول دقیقاً برابر · رد restore روی DB زنده · اپ حین دریل متصل ماند.
+- رکورد کامل: `ops/runs/RUN-20261102-03.md` — **TASK-M0-10: هر دو لایه Deployed و Verified**.
