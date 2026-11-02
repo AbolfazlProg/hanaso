@@ -1,7 +1,7 @@
 # وضعیت پروژه (PROJECT_STATUS) — HANASO
 
 > **این فایل تصویر لحظه‌ای و صادقانهٔ پروژه است — نه یک برنامهٔ قدیمی.** پس از هر Merge مهم و پایان هر فاز به‌روز می‌شود.
-> آخرین به‌روزرسانی: **2026-11-02 (سشن پنجم — لایهٔ DB کامل و زنده)** · به‌روزرسانی‌کننده: Orchestrator · Mergeهای اصلی امروز: `bbc872a` (Aizen · PR #73)، `2d73080` (لایهٔ DB · PR #74) · رکوردها: `RUN-20261102-01` (Aizen)، `RUN-20261102-02/03` (DB) · **deploy زنده: `2d73080` روی https://learn.kotodama.ir — Aizen + PostgreSQL**
+> آخرین به‌روزرسانی: **2026-11-03 (سشن ششم — TASK-OPS-01 ممیزی/نقشهٔ راه/راهنمای مالک)** · به‌روزرسانی: Orchestrator · Mergeهای جدید: `eb80e88` (زیرساخت Skillها · PR #76 — پس از حل تعارض و CI #36 سبز) + شاخهٔ `docs/task-ops-01-completion` (مستندات ممیزی) · **deploy زنده: `2d73080` روی https://learn.kotodama.ir — هم‌ارز کد محصول main (فاصله فقط مستنداتی)**
 
 ## نمای یک‌خطی
 
@@ -15,7 +15,7 @@
 | **آخرین Milestone تکمیل‌شده**  | TASK-M0-10 (استقرار کامل: Web + Database) — 2026-11-02                                                                                                                                                                                                                                                   |
 | **آخرین نسخهٔ Deploy شده**     | **`2d73080` — زنده روی https://learn.kotodama.ir** (2026-11-02؛ Aizen + PostgreSQL 18 + PgBouncer + worker؛ migrate/seed انجام شد؛ بکاپ اثبات‌شده) — جزئیات: `infra/deploy/learn-kotodama/` · رکوردها: `RUN-20261102-02/03.md`                                                                           |
 | **قابلیت‌های تکمیل‌شده**       | بوت‌استرپ کامل + ۴ Spike B-0 + PoC مکالمهٔ چندگوینده + اولین Vertical Slice (چرخهٔ A→D) + قرارداد ADR-018 + deploy زنده + زیرساخت مشترک UI + **طراحی Aizen در کل رابط (DD-084)** + **لایهٔ DB: PostgreSQL repositories + migration/seed + pg-boss worker + PgBouncer + بکاپ شبانهٔ اثبات‌شده**           |
-| **در دست توسعه**               | درس نمونهٔ Hello (TASK-M0-11) · زیرساخت Skillهای خارجی (TASK-ENG — PR #76 در بازبینی) · بدهی‌های S3 (#66..69) · Track شخصیت (Agent هنری مستقل — Issues #41..47)                                                                                                                                          |
+| **در دست توسعه**               | درس نمونهٔ Hello (TASK-M0-11 — تسک اصلی بعدی: `docs/engineering/roadmap/NEXT_EXECUTION_TASK.md`) · اصلاحات کوچک OPS-01-Q1 (تولید صدا در Docker)/Q2 (متن فنی UI) · بدهی‌های S3 (#66..69) · Track شخصیت (Agent هنری مستقل — Issues #41..47)                                                                |
 | **کارهای باقی‌ماندهٔ نزدیک**   | درس Hello (M0-11) → M1 (auth/کانا/تمرین‌ها) — زیرساخت DB آماده است                                                                                                                                                                                                                                       |
 | **Blockerها (گیت‌های بیرونی)** | قفل Branch Protection در پلن Free (BLOCKER-F07 — مالک) · گیت‌های تصمیم باقی‌ماندهٔ مالک — فهرست کامل: `ops/BLOCKERS.md`                                                                                                                                                                                  |
 | **تست‌های انجام‌شده (سبز)**    | **۱۵۱ تست واحد + ۳۲ تست integration روی PostgreSQL 18 واقعی** (شامل دریل بکاپ/ریستور) + `pnpm verify` ALL GREEN (**۹ گیت**) · CI سبز روی main (هر سه جاب: verify/compose-smoke/docker) · **smoke رسمی در برابر URL عمومی: ALL GREEN** · **راستی‌آزمایی زندهٔ DB: POST واقعی → ردیف در PostgreSQL → GET** |

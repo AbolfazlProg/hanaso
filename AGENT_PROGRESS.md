@@ -36,3 +36,10 @@
 - **راستی‌آزمایی زنده:** `/api/ready` چک واقعی DB (18.6/2ms از مسیر PgBouncer) · Aizen زنده (پالت/فونت/وزن راستی‌آزمایی شد) · POST واقعی attempts → ردیف در PostgreSQL · smoke ALL GREEN · kotodama.ir ‏200 قبل/بعد.
 - **دریل بکاپ/ریستور روی VPS (TR-030):** بکاپ ۸۲۰۷۲B/۱۶۴ مدخل · restore به `hanaso_restore_test` در 0.8s · شمارش ۶ جدول دقیقاً برابر · رد restore روی DB زنده · اپ حین دریل متصل ماند.
 - رکورد کامل: `ops/runs/RUN-20261102-03.md` — **TASK-M0-10: هر دو لایه Deployed و Verified**.
+
+## 2026-11-02/03 — TASK-OPS-01: ممیزی/نقشهٔ راه/راهنمای مالک — RUN-20261102-05
+
+- **شروع:** ادامهٔ مأموریت نیمه‌تمام (Checkpoint ۲۰۲۶-۱۱-۰۲ ۱۷:۲۵)؛ sandbox یک‌بار بازیافت شد و از remote بازسازی شد (push از قبل رسیده بود).
+- **انجام:** Integration واقعی روی PG18.6 ایزوله (۳۱+۱ سبز؛ دریل بکاپ/ریستور با شمارش برابر) · راستی‌آزمایی زندهٔ Production (health/ready/progress/dialogues + kotodama.ir) · ممیزی UI ۸ مسیر × ۲ viewport (۱۶/۱۶ سالم؛ ۱۶ اسکرین‌شات مرجع) · ممیزی بصری VLM و طبقه‌بندی بلوغ صفحات · ممیزی Skillها + **حل تعارض PR #76 و merge آن** (`eb80e88`؛ بازشماره‌گذاری RUN-20261102-02→04 تسک TASK-ENG) · ARCHITECTURE_MAP/MASTER_ROADMAP/NEXT_EXECUTION_TASK · راهنمای ۱۵ فصلی مالک + به‌روزرسانی BRIEFING/STATUS/REGISTRY.
+- **یافته‌ها:** D-01 (تولید صدا در Docker build نیست → 404 در prod) · D-02 (اولین بکاپ زمان‌بندی‌شده هنوز ثبت نشده) · D-04 (متن فنی در UI) · ۴ رکورد اجرای قدیمی بدون بخش Skill (USAGE NOT VERIFIED).
+- **تسک بعدی:** TASK-M0-11 درس Hello (+Q1/Q2 موازی) — سند: `docs/engineering/roadmap/NEXT_EXECUTION_TASK.md`.
