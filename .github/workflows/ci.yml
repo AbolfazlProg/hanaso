@@ -19,8 +19,25 @@ concurrency:
 
 jobs:
   verify:
-    name: format / lint / typecheck / test / build / audit / smoke
+    name: format / lint / typecheck / test / integration(PG18) / build / audit / smoke
     runs-on: ubuntu-latest
+    services:
+      # Real PostgreSQL 18 (uuidv7() requires 18) — the integration suite never mocks it.
+      # Digest-pinned to the exact image the VPS compose + Dockerfile pg stage use.
+      postgres:
+        image: postgres:18-alpine@sha256:10a5c69a83035ab5239f5620d708520e8b28f5aa1f2b20143e6024532edadfb5
+        env:
+          POSTGRES_USER: hanaso
+          POSTGRES_PASSWORD: hanaso-ci
+          POSTGRES_DB: hanaso
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U hanaso"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://hanaso:hanaso-ci@127.0.0.1:5432/postgres
     steps:
       - uses: actions/checkout@v7 # v7.0.1
 
@@ -48,7 +65,18 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
-      - name: Build (standalone)
+      - name: Install pg_dump 18 (real backup/restore drill client)
+        run: |
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo "$VERSION_CODENAME")-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-18
+          pg_dump --version
+
+      - name: Integration tests + backup/restore drill (real PostgreSQL 18)
+        run: pnpm --filter web test:integration
+
+      - name: Build (standalone + ops tool bundles)
         run: pnpm build
         env:
           NEXT_PUBLIC_APP_VERSION: ${{ github.ref_name }}
@@ -58,7 +86,7 @@ jobs:
       - name: Audit (fail on high/critical)
         run: pnpm audit --prod
 
-      - name: Smoke (production standalone server on :3100)
+      - name: Smoke (production standalone server on :3100, no DATABASE_URL)
         run: |
           env -u DATABASE_URL PORT=3100 HOSTNAME=127.0.0.1 node apps/web/.next/standalone/apps/web/server.js &
           SERVER_PID=$!
@@ -73,7 +101,7 @@ jobs:
 
   docker:
     name: image → GHCR (tag = SHA)
-    needs: verify
+    needs: [verify, compose-smoke]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -96,3 +124,111 @@ jobs:
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker push "$IMAGE:${{ github.sha }}"
+
+  compose-smoke:
+    # PR #74 review r2/S2: the production connection path (PgBouncer transaction
+    # pooling + scram) and the pg binaries SHIPPED IN THE IMAGE were never executed
+    # by any test. This job is a dress rehearsal of the staged VPS bring-up: it
+    # builds the real image, brings up postgres + pgbouncer + migrate + web + worker
+    # from the EXACT production compose file, and runs a REAL backup + restore drill
+    # with the image's own pg_dump/pg_restore.
+    name: compose smoke (real image · pgbouncer path · backup drill)
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the production image (includes the pg-toolchain build gate)
+        run: |
+          docker build -f infra/docker/Dockerfile \
+            --build-arg NEXT_PUBLIC_BUILD_SHA=${{ github.sha }} \
+            --build-arg NEXT_PUBLIC_APP_VERSION=compose-smoke \
+            --build-arg NEXT_PUBLIC_ENV=ci \
+            -t hanaso:compose-smoke .
+
+      - name: Write the compose env file (throwaway — never committed)
+        run: |
+          cat > infra/deploy/learn-kotodama/.env <<'EOF'
+          HANASO_WEB_IMAGE=hanaso:compose-smoke
+          POSTGRES_USER=hanaso
+          POSTGRES_PASSWORD=hanaso-compose-smoke
+          POSTGRES_DB=hanaso
+          EOF
+
+      - name: Staged bring-up 1/2 — postgres, then pgbouncer (healthcheck proves pg_isready ships)
+        run: |
+          cd infra/deploy/learn-kotodama
+          wait_healthy() {
+            local name="$1" i
+            # 180s ceiling ≥ worst-case health transition (postgres: 60s start_period + 10×10s retries)
+            for i in $(seq 1 90); do
+              [ "$(docker inspect -f '{{.State.Health.Status}}' "$name")" = healthy ] && return 0
+              sleep 2
+            done
+            echo "::error::$name never became healthy — diagnostics:"
+            docker inspect -f 'state={{.State.Status}} restarts={{.RestartCount}} oomKilled={{.State.OOMKilled}} exitCode={{.State.ExitCode}} health={{.State.Health.Status}}' "$name" || true
+            echo '--- healthcheck probe outputs (exit: output) ---'
+            docker inspect -f '{{range .State.Health.Log}}{{.ExitCode}}: {{.Output}}{{end}}' "$name" || true
+            echo "--- docker logs $name (tail 120) ---"
+            docker logs --tail 120 "$name" || true
+            return 1
+          }
+          docker compose -f docker-compose.shared-vps.yml --env-file .env up -d postgres
+          wait_healthy hanaso-postgres
+          echo 'postgres: healthy'
+
+          docker compose -f docker-compose.shared-vps.yml --env-file .env up -d pgbouncer
+          wait_healthy hanaso-pgbouncer
+          echo 'pgbouncer: healthy'
+
+      - name: Staged bring-up 2/2 — migrate + seed (direct), then web + worker
+        run: |
+          cd infra/deploy/learn-kotodama
+          docker compose -f docker-compose.shared-vps.yml --env-file .env run --rm migrate
+          docker compose -f docker-compose.shared-vps.yml --env-file .env up -d
+          for i in $(seq 1 45); do
+            BODY=$(curl -fsS http://127.0.0.1:3100/api/ready 2>/dev/null || true)
+            echo "$BODY" | grep -q '"database":{"status":"ok"' \
+              && echo "$BODY" | grep -q '"serverVersion":"18\.' && break
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:3100/api/ready | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["ok"] is True; c=d["checks"]["database"]; assert c["status"]=="ok" and c["serverVersion"].startswith("18."), c; print("ready ok:", c)'
+          curl -fsS http://127.0.0.1:3100/api/health | python3 -c 'import json,sys; assert json.load(sys.stdin)["ok"] is True; print("health ok")'
+
+      - name: Worker registered the nightly schedules (through PgBouncer)
+        run: |
+          cd infra/deploy/learn-kotodama
+          for i in $(seq 1 30); do
+            OUT=$(docker compose -f docker-compose.shared-vps.yml --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs jobs 2>/dev/null || true)
+            echo "$OUT" | grep -q 'ops.backup' && echo "$OUT" | grep -q 'ops.db-verify' && { echo "$OUT"; break; }
+            sleep 2
+          done
+          docker compose -f docker-compose.shared-vps.yml --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs jobs \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); names={s["name"] for s in d["schedules"]}; assert {"ops.backup","ops.db-verify"} <= names, d; assert all(s["tz"]=="Asia/Tehran" for s in d["schedules"]), d; print("schedules ok:", sorted(names))'
+
+      - name: REAL backup + restore drill with the IMAGE's own pg binaries
+        run: |
+          cd infra/deploy/learn-kotodama
+          BACKUP_JSON=$(docker compose -f docker-compose.shared-vps.yml --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs backup)
+          echo "$BACKUP_JSON"
+          FILE=$(echo "$BACKUP_JSON" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["ok"] and d["archiveEntries"]>0 and d["bytes"]>1000, d; print(d["file"])')
+          docker compose -f docker-compose.shared-vps.yml --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs restore --file "/backups/$FILE" --database hanaso_restore_smoke
+          docker compose -f docker-compose.shared-vps.yml --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs verify > /tmp/verify-live.json
+          docker compose -f docker-compose.shared-vps.yml --env-file .env exec -T worker node apps/web/.tools/db-cli.mjs verify --database hanaso_restore_smoke > /tmp/verify-restored.json
+          python3 - <<'EOF'
+          import json
+          live = json.load(open('/tmp/verify-live.json'))
+          restored = json.load(open('/tmp/verify-restored.json'))
+          assert live["tables"] == restored["tables"], (live["tables"], restored["tables"])
+          assert live["serverVersion"].startswith("18."), live["serverVersion"]
+          print("drill ok — table counts match:", live["tables"])
+          EOF
+          # the live app kept serving THROUGHOUT the drill (never a fake ready):
+          curl -fsS http://127.0.0.1:3100/api/ready | grep -q '"database":{"status":"ok"'
+
+      - name: Teardown (CI-only — NEVER run `down` on the shared VPS)
+        if: always()
+        run: |
+          cd infra/deploy/learn-kotodama
+          docker compose -f docker-compose.shared-vps.yml --env-file .env down -v --remove-orphans || true

@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { checkDatabaseReadiness } from '@/db/readiness';
 
 /**
- * Readiness endpoint (KB backend-architecture): verifies configured dependencies.
- * Skeleton phase: only the process itself; the database check activates with
- * PostgreSQL in M0-10 (honest reporting — never a fake "ready").
+ * Readiness endpoint (KB backend-architecture + infrastructure-and-devops §پایش):
+ * verifies configured dependencies — `SELECT 1` on PostgreSQL from the app's own pool
+ * when DATABASE_URL is set, honestly skipped when it is not. Never a fake "ready".
  */
 export const dynamic = 'force-dynamic';
 
@@ -12,14 +13,31 @@ type CheckStatus = 'ok' | 'skipped' | 'fail';
 interface Check {
   status: CheckStatus;
   detail?: string;
+  latencyMs?: number;
+  serverVersion?: string;
 }
 
-export function GET() {
+export async function GET() {
+  const database = await checkDatabaseReadiness();
   const checks: Record<string, Check> = {
     process: { status: 'ok' },
-    database: process.env.DATABASE_URL
-      ? { status: 'fail', detail: 'DATABASE_URL set but DB layer lands in M0-10 — do not deploy with a DB URL yet' }
-      : { status: 'skipped', detail: 'no DATABASE_URL configured (expected until M0-10)' },
+    database:
+      database.status === 'ok'
+        ? {
+            status: 'ok',
+            detail: 'SELECT 1 via the app pool',
+            latencyMs: database.latencyMs,
+            serverVersion: database.serverVersion,
+          }
+        : database.status === 'skipped'
+          ? { status: 'skipped', detail: database.detail }
+          : {
+              status: 'fail',
+              // raw driver errors (hosts, users, auth internals) stay in server logs —
+              // never on the public response body (PR #74 review r2/S3)
+              detail: 'database check failed — see server logs',
+              latencyMs: database.latencyMs,
+            },
   };
 
   const ready = Object.values(checks).every((c) => c.status !== 'fail');

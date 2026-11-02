@@ -2,8 +2,28 @@
 # This VPS (kotodama shared host) already terminates TLS on HAProxy (*:443, ALPN)
 # -> nginx (:81/:82 proxy_protocol) -> loopback upstream. The repo's caddy sidecar
 # (infra/docker/docker-compose.yml) is for a DEDICATED host owning 80/443 and is NOT
-# used here. Only the web service runs, loopback-only (KB ADR-010 isolation rules:
-# dedicated project name, network, stateless web).
+# used here. Only hanaso services run, loopback-only (KB ADR-010 isolation rules:
+# dedicated project name, network, volumes).
+#
+# M0-10 DB layer (2026-11-02): postgres + pgbouncer + worker + one-shot migrate.
+# Isolation on the SHARED VPS — hard rules (owner constraints + KB ADR-010):
+#   - project `hanaso`, network `hanaso-net`, volumes `hanaso-pgdata`/`hanaso-backups`
+#     (hanaso-prefixed, nothing shared with the kotodama/BBB stacks);
+#   - postgres & pgbouncer publish NO ports at all (docker-network only);
+#   - the only public entry stays the existing nginx vhost → 127.0.0.1:3100;
+#   - resource ceiling tuned for a small shared host: per-service mem_limit/cpus
+#     (review r2/S2 — postgres-internal tuning alone is not a host ceiling) PLUS
+#     max_connections=40, shared_buffers=64MB; pgbouncer pools the app connections.
+#   - infra images are pinned by digest (same as the Dockerfile pg stage — keep in
+#     sync when re-pinning; re-pin quarterly with the maintenance window).
+#
+# Staged bring-up (deploy order — NEVER `docker compose down` on this host):
+#   1) docker compose --env-file .env up -d postgres     → wait healthy
+#   2) docker compose --env-file .env up -d pgbouncer    → then `db-cli ready`
+#   3) docker compose --env-file .env run --rm migrate   → migrations + seed (direct conn)
+#   4) docker compose --env-file .env up -d              → web (new image) + worker
+# Full commands + rollback: infra/deploy/learn-kotodama/README.md
+#
 # Usage:  docker compose -f docker-compose.yml --env-file .env up -d
 name: hanaso
 
@@ -14,11 +34,21 @@ services:
     container_name: hanaso-web
     restart: unless-stopped
     env_file: .env
+    # DATABASE_URL is INTERPOLATED from the POSTGRES_* values (single source of
+    # truth — review r2/S3: two hand-synced copies of the password confused ops).
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@pgbouncer:6432/${POSTGRES_DB:?}
     networks: [hanaso-net]
     expose: ['3000']
     # Loopback-only publish so host-side nginx/health gates reach the app
     # WITHOUT exposing it publicly (HAProxy/nginx remain the only public entry).
     ports: ['127.0.0.1:3100:3000']
+    # Shared-VPS ceiling (review r2/S2) — Next standalone runs comfortably in 512m.
+    mem_limit: 512m
+    cpus: 1.5
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
     healthcheck:
       test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/api/health']
       interval: 30s
@@ -31,6 +61,173 @@ services:
         max-size: '10m'
         max-file: '3'
 
+  postgres:
+    # PG 18 (uuidv7() defaults in the migrations require it) — alpine for a small VPS.
+    # Digest-pinned (2026-10-26) — keep in sync with the Dockerfile pg stage.
+    image: postgres:18-alpine@sha256:10a5c69a83035ab5239f5620d708520e8b28f5aa1f2b20143e6024532edadfb5
+    container_name: hanaso-postgres
+    restart: unless-stopped
+    # Shared-VPS ceiling (review r2/S2): 40 conns × work_mem 4MB + cache stay inside 512m.
+    mem_limit: 512m
+    cpus: 1.5
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set in .env}
+      # dedicated instance on a SHARED host — stay small
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    command:
+      - postgres
+      - -c
+      - max_connections=40
+      - -c
+      - shared_buffers=64MB
+      - -c
+      - effective_cache_size=192MB
+      - -c
+      - work_mem=4MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - log_min_duration_statement=500
+    volumes:
+      # PG 18+ image layout (docker-library/postgres#1259): datadir lives in a
+      # major-version subdir (/var/lib/postgresql/18/docker) and the entrypoint
+      # HARD-FAILS if a volume is mounted at the legacy /var/lib/postgresql/data
+      # (crash-looped with exitCode=1 in CI run 41438648553 until diagnosed).
+      # Mount the PARENT and let the image manage its subdirs (also what
+      # pg_upgrade --link needs for future major upgrades).
+      - hanaso-pgdata:/var/lib/postgresql
+    networks: [hanaso-net]
+    # NO ports section: docker-network only (never published to the host/internet).
+    healthcheck:
+      # TCP probe — NOT the default unix socket. During first-init the image's
+      # entrypoint runs a TEMPORARY socket-only server (listen_addresses='');
+      # a socket probe can succeed against it and flip the container healthy
+      # prematurely, after which the temp→real server swap counts straight
+      # toward `retries` (observed as a false `unhealthy` in CI run 41433200787).
+      # 127.0.0.1:5432 answers only once the REAL server is up — exactly the
+      # dependency of pgbouncer/migrate (TCP via hanaso-net).
+      # start_period 60s: initdb --data-checksums on a slow shared-VPS disk can
+      # outgrow 20s; retries 10 → worst-case verdict ≈ 60s + 10×10s.
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -p 5432 -U ${POSTGRES_USER:-hanaso} -d ${POSTGRES_DB:-hanaso}']
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  pgbouncer:
+    # KB database-architecture §۸-۴: PgBouncer 1.26.1, pool_mode=transaction,
+    # auth_type=scram-sha-256, max_prepared_statements (protocol-level tracking for
+    # node-postgres). App AND worker connect through it.
+    # NOTE (diagnosed in CI run 41441058728): edoburu listens on :5432 by default —
+    # LISTEN_PORT=6432 is REQUIRED to match DATABASE_URL/healthchecks; and the
+    # valid pgbouncer value is "scram-sha-256" (bare "scram" fails config load).
+    # Digest-pinned (2026-10-19) — the image ships pg_isready via postgresql-client
+    # (verified by the CI compose-smoke job's healthcheck wait).
+    image: edoburu/pgbouncer:v1.26.1-p0@sha256:488422e38cff912895d0d65d8963fcd306e6ac589a724398b6eb8e294e94d624
+    container_name: hanaso-pgbouncer
+    restart: unless-stopped
+    mem_limit: 128m
+    cpus: 0.5
+    environment:
+      DB_HOST: postgres
+      DB_PORT: '5432'
+      DB_USER: ${POSTGRES_USER:?set in .env}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      DB_NAME: ${POSTGRES_DB:?set in .env}
+      # inside-container listen port — MUST be 6432 (DATABASE_URL/healthchecks)
+      LISTEN_PORT: '6432'
+      POOL_MODE: transaction
+      AUTH_TYPE: scram-sha-256
+      MAX_CLIENT_CONN: '100'
+      DEFAULT_POOL_SIZE: '10'
+      RESERVE_POOL_SIZE: '5'
+      MAX_PREPARED_STATEMENTS: '200'
+      SERVER_RESET_QUERY: 'DISCARD ALL'
+    networks: [hanaso-net]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # NO ports section: docker-network only.
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -p 6432 -U ${POSTGRES_USER:-hanaso} -d ${POSTGRES_DB:-hanaso}']
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  worker:
+    # Same image as web (KB deployment-strategy: worker = separate service, same image).
+    # pg-boss 12, polling mode (useListenNotify:false — PgBouncer transaction mode).
+    image: ${HANASO_WEB_IMAGE:?set HANASO_WEB_IMAGE=ghcr.io/abolfazlprog/hanaso:<SHA> in .env}
+    container_name: hanaso-worker
+    restart: unless-stopped
+    command: ['node', 'apps/web/.tools/worker.mjs']
+    env_file: .env
+    environment:
+      # boss + queries go through PgBouncer; pg_dump/pg_restore go DIRECT (KB §۱).
+      DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@pgbouncer:6432/${POSTGRES_DB:?}
+      DIRECT_DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@postgres:5432/${POSTGRES_DB:?}
+      BACKUP_DIR: /backups
+    volumes:
+      - hanaso-backups:/backups
+    networks: [hanaso-net]
+    mem_limit: 384m
+    cpus: 0.5
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+    healthcheck:
+      # probe the worker's ACTUAL dependency (pgbouncer:6432 — review r2/S3), not
+      # postgres directly. pg_isready exits 0 for any live server response, so a
+      # pgbouncer answering auth requests reports healthy. True process-liveness
+      # (worker heartbeat row) is tracked as M1 hardening debt.
+      test:
+        ['CMD-SHELL', 'pg_isready -h pgbouncer -p 6432 -U ${POSTGRES_USER:-hanaso} -d ${POSTGRES_DB:-hanaso} || exit 1']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  migrate:
+    # One-shot (profiles: never started by plain `up -d`): migrations + seed on a
+    # DIRECT connection (never through PgBouncer — KB database-architecture §۱).
+    image: ${HANASO_WEB_IMAGE:?set HANASO_WEB_IMAGE=ghcr.io/abolfazlprog/hanaso:<SHA> in .env}
+    profiles: ['migrate']
+    env_file: .env
+    environment:
+      DIRECT_DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@postgres:5432/${POSTGRES_DB:?}
+    command: ['sh', '-c', 'node apps/web/.tools/db-cli.mjs migrate && node apps/web/.tools/db-cli.mjs seed']
+    networks: [hanaso-net]
+    mem_limit: 512m
+    cpus: 0.5
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+
 networks:
   hanaso-net:
     name: hanaso-net
+
+volumes:
+  hanaso-pgdata:
+    name: hanaso-pgdata
+  hanaso-backups:
+    name: hanaso-backups
