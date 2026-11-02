@@ -123,8 +123,11 @@ services:
 
   pgbouncer:
     # KB database-architecture §۸-۴: PgBouncer 1.26.1, pool_mode=transaction,
-    # auth_type=scram, max_prepared_statements (protocol-level tracking for
+    # auth_type=scram-sha-256, max_prepared_statements (protocol-level tracking for
     # node-postgres). App AND worker connect through it.
+    # NOTE (diagnosed in CI run 41441058728): edoburu listens on :5432 by default —
+    # LISTEN_PORT=6432 is REQUIRED to match DATABASE_URL/healthchecks; and the
+    # valid pgbouncer value is "scram-sha-256" (bare "scram" fails config load).
     # Digest-pinned (2026-10-19) — the image ships pg_isready via postgresql-client
     # (verified by the CI compose-smoke job's healthcheck wait).
     image: edoburu/pgbouncer:v1.26.1-p0@sha256:488422e38cff912895d0d65d8963fcd306e6ac589a724398b6eb8e294e94d624
@@ -138,8 +141,10 @@ services:
       DB_USER: ${POSTGRES_USER:?set in .env}
       DB_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
       DB_NAME: ${POSTGRES_DB:?set in .env}
+      # inside-container listen port — MUST be 6432 (DATABASE_URL/healthchecks)
+      LISTEN_PORT: '6432'
       POOL_MODE: transaction
-      AUTH_TYPE: scram
+      AUTH_TYPE: scram-sha-256
       MAX_CLIENT_CONN: '100'
       DEFAULT_POOL_SIZE: '10'
       RESERVE_POOL_SIZE: '5'
