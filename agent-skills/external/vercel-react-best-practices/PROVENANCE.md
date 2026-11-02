@@ -1,0 +1,34 @@
+# PROVENANCE — vercel-react-best-practices (EXT-005)
+
+> Mandatory provenance record for every vendored external skill (TASK-ENG / Issue #75).
+> Canonical registry: `docs/engineering/skills/SKILL_REGISTRY.md` · Security audit: `docs/engineering/skills/SKILL_SECURITY_AUDIT.md` · Selection matrix: `docs/engineering/skills/SKILL_SELECTION_MATRIX.md`
+
+| Field                            | Value                                                                                                                                                                                                                                                |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Skill ID                         | EXT-005                                                                                                                                                                                                                                              |
+| Name                             | vercel-react-best-practices                                                                                                                                                                                                                          |
+| Category                         | Frontend Engineering / Performance                                                                                                                                                                                                                   |
+| Priority                         | P1                                                                                                                                                                                                                                                   |
+| Source repository                | https://github.com/vercel-labs/agent-skills                                                                                                                                                                                                          |
+| Source path                      | skills/react-best-practices                                                                                                                                                                                                                          |
+| Pinned commit (version)          | `1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62`                                                                                                                                                                                                           |
+| License                          | MIT — declared in upstream README (“## License — MIT”) + per-skill frontmatter `license: MIT`; upstream ships no root LICENSE file at the pinned commit (recorded in LICENSE in this folder)                                                         |
+| Upstream stars at review         | 33,376 (repo-level, 2026-11-02)                                                                                                                                                                                                                      |
+| Upstream last push               | 2026-10-28                                                                                                                                                                                                                                           |
+| Installed on                     | 2026-11-02 (TASK-ENG, Issue #75)                                                                                                                                                                                                                     |
+| Last verified                    | 2026-11-02                                                                                                                                                                                                                                           |
+| Maintainer (upstream)            | Vercel Labs (official org)                                                                                                                                                                                                                           |
+| Security review                  | PASS — 77 files scanned; all URLs point to react.dev / nextjs.org / MDN / esbuild / csstriggers (reference docs); two benign mentions of the word “telemetry” in rule text; no scripts, no secret access, no injection patterns.                     |
+| Trigger conditions               | Writing, reviewing or refactoring React/Next.js code; data fetching; bundle optimization; performance work on components/pages.                                                                                                                      |
+| Required tools                   | None (markdown rules; pair with `next-bundle-optimizer` EXT-012 for measurement).                                                                                                                                                                    |
+| Limitations / project precedence | SKL-002 (frontend-engineering) + ADRs stay authoritative for architecture (RSC-first, client islands, budgets). Apply these rules WITHIN those pinned patterns; when a rule conflicts with a pinned ADR, the ADR wins and the deviation is recorded. |
+| Dependencies                     | Self-contained: SKILL.md + compiled AGENTS.md + 70 rule files in rules/.                                                                                                                                                                             |
+| Local adaptations                | Folder renamed `react-best-practices` → `vercel-react-best-practices` to match the skill's own frontmatter `name` (Agent Skills spec requires name == folder). No content changes.                                                                   |
+| Status                           | Active                                                                                                                                                                                                                                               |
+
+## Update rules
+
+Upstream changes are NEVER pulled automatically. Follow
+`docs/engineering/skills/SKILL_MAINTENANCE_POLICY.md`: fetch → diff → re-run
+`scripts/audit-external-skills.py` → human review → replace via PR, and update
+this file (pinned commit, dates, verdicts).

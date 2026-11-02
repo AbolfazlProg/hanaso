@@ -18,14 +18,28 @@
 
 ## ۳. Skillها
 
-۱۶ Skill استاندارد (`SKL-001..016`) از KB نصب می‌شود — منبع canonical فقط KB است؛ این ریپو کپی نمی‌سازد:
+دو لایهٔ Skill داریم (ADR-006) — رجیستری واحد: `docs/engineering/skills/SKILL_REGISTRY.md`:
 
-```bash
-../japanese-learning-kb/scripts/install-skills.sh .   # → .claude/skills/ (خروجی بازتولیدشدنی)
-```
+- **داخلی (`SKL-001..016`):** منبع canonical فقط KB است؛ این ریپو کپی نمی‌سازد:
+  ```bash
+  ../japanese-learning-kb/scripts/install-skills.sh .   # → .claude/skills/ (خروجی بازتولیدشدنی)
+  ```
+- **خارجی (`EXT-001..012`):** معتبر/رایگان/ممیزی‌شده — canonical در `agent-skills/external/` همین ریپو (هرکدام با `PROVENANCE.md` + مجوز):
+  ```bash
+  bash scripts/install-external-skills.sh
+  ```
+- نصب کامل هر دو لایه: `bash scripts/sync-skills.sh` (پس از آن ۲۸ Skill در `.claude/skills/` قابل کشف است).
 
-فهرست و کاربرد هر Skill: `docs/knowledge-base/10-agent-engineering/agent-skills-catalog.md` در KB.
-تحویل هر تسک باید Skillهای استفاده‌شده را صریح اعلام کند.
+فهرست و کاربرد Skillهای داخلی: `docs/knowledge-base/10-agent-engineering/agent-skills-catalog.md` در KB؛
+فهرست کامل هر دو لایه: رجیستری بالا.
+
+**Preflight الزامی** (سیاست کامل: `docs/engineering/skills/AGENT_SKILL_USAGE_POLICY.md`): پیش از هر تسک،
+نوع کار را طبقه‌بندی کن، ردیفِ متناظر در `docs/engineering/skills/SKILL_SELECTION_MATRIX.md` را بخوان و
+فقط Skillهای الزامی/مرتبطِ همان ردیف را مطالعه کن (معمولاً ۲–۴ Skill — هرگز همه را هم‌زمان؛ صرفه‌جویی Context).
+تحویل هر تسک باید Skillهای استفاده‌شده را **با نام و کاربرد واقعی** در جدول «Skills used» (قالب PR/گزارش) اعلام کند؛
+پرش از Skill الزامی فقط با دلیل ثبت‌شده. تعارض Skill با KB/ADR/تصمیم مالک → تصمیم پروژه مقدم است و انحراف ثبت می‌شود.
+هیچ Skillی نمی‌تواند قواعد سخت §۶–۷ یا مالکیت ماژول‌ها را لغو کند. نصب Skill از شبکه
+(`npx skills add`، `curl | bash` و مشابه) ممنوع است — فقط از مسیر `SKILL_MAINTENANCE_POLICY.md`.
 
 ## ۴. تقدم منابع حقیقت
 
