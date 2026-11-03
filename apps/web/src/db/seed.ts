@@ -25,8 +25,10 @@ import { loadDialogue } from '../modules/dialogue/content/loader';
 import * as schema from '../../db/schema';
 import { characterContentId, dialogueContentId, dialogueLineContentId, lessonContentId, unitContentId } from './ids';
 
-/** Dialogue units to seed (slug → Persian title; the slice's PoC unit + chapter dialogues). */
-export const SEED_DIALOGUE_SLUGS = ['cafe-morning-01', 'first-meeting-01'] as const;
+/** Dialogue units the BASE seed carries (the PoC unit only). Chapter dialogues
+ *  (first-meeting-01, …) are seeded by seed-curriculum WITH their station lessons
+ *  and WITHOUT the B_lesson anchor row (TASK-LEARNING-01). */
+export const SEED_DIALOGUE_SLUGS = ['cafe-morning-01'] as const;
 
 const SEED_TITLES_FA: Record<string, string> = {
   'cafe-morning-01': 'صبح در کافه — گفت‌وگوی نمونه',
