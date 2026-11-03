@@ -28,10 +28,7 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
   const lineIds = dialogue.lines.map((l) => l.id);
 
   it('passes the full content validation (caps, S/O rules, exercise quality)', () => {
-    const violations = [
-      ...validateChapter(chapter, level),
-      ...validateChapterAgainstDialogue(chapter, level, lineIds),
-    ];
+    const violations = [...validateChapter(chapter, level), ...validateChapterAgainstDialogue(chapter, level, lineIds)];
     expect(violations).toEqual([]);
   });
 
@@ -88,9 +85,7 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
         }
       }
     }
-    const masteryCount = Object.values(chapter.exercises).filter((e) =>
-      e.assessmentRole.startsWith('mastery_'),
-    ).length;
+    const masteryCount = Object.values(chapter.exercises).filter((e) => e.assessmentRole.startsWith('mastery_')).length;
     expect(masteryCount).toBe(10); // 2 switches × 5 measures
   });
 });
@@ -116,7 +111,12 @@ describe('journey resolution', () => {
       bestScore: 1,
       attemptCount: 4,
     }));
-    const journey = resolveJourney(chapter, level, done, { status: 'started', bestWeighted: null, bestMeasures: null, remediationCount: 0 });
+    const journey = resolveJourney(chapter, level, done, {
+      status: 'started',
+      bestWeighted: null,
+      bestMeasures: null,
+      remediationCount: 0,
+    });
     expect(journey.coreCompleted).toBe(3);
     expect(nextStation(journey)?.slug).toBe('stn-fm01-04-structure');
     // optional review (off grammar-1) is available too but never blocks
@@ -179,17 +179,11 @@ describe('grading (server-side answer key)', () => {
     expect(wrong3.reveal).toBeTruthy();
 
     const order = chapter.exercises['ex-fm01-g1-01']!;
-    expect(
-      gradeExerciseAnswer(order, { kind: 'order', orderedIds: ['c1', 'c2', 'c3'] }).correct,
-    ).toBe(true);
-    expect(
-      gradeExerciseAnswer(order, { kind: 'order', orderedIds: ['c2', 'c1', 'c3'] }).correct,
-    ).toBe(false);
+    expect(gradeExerciseAnswer(order, { kind: 'order', orderedIds: ['c1', 'c2', 'c3'] }).correct).toBe(true);
+    expect(gradeExerciseAnswer(order, { kind: 'order', orderedIds: ['c2', 'c1', 'c3'] }).correct).toBe(false);
 
     const build = chapter.exercises['ex-fm01-g1-03']!;
-    expect(
-      gradeExerciseAnswer(build, { kind: 'build', chipOrder: ['c1', 'c2', 'c3', 'c4'] }).correct,
-    ).toBe(true);
+    expect(gradeExerciseAnswer(build, { kind: 'build', chipOrder: ['c1', 'c2', 'c3', 'c4'] }).correct).toBe(true);
   });
 
   it('grades a perfect mastery submission as passed', () => {
@@ -216,7 +210,8 @@ describe('grading (server-side answer key)', () => {
         ex.acceptedChipOrder?.slice().reverse();
       if (ex.correctOptionId && wrong) answers[ex.id] = { kind: 'option', optionId: String(wrong) };
       else if (ex.correctOrder) answers[ex.id] = { kind: 'order', orderedIds: ex.correctOrder.slice().reverse() };
-      else if (ex.acceptedChipOrder) answers[ex.id] = { kind: 'build', chipOrder: ex.acceptedChipOrder.slice().reverse() };
+      else if (ex.acceptedChipOrder)
+        answers[ex.id] = { kind: 'build', chipOrder: ex.acceptedChipOrder.slice().reverse() };
     }
     const result = gradeMasterySubmission(chapter, answers);
     expect(result.outcome).toBe('remediate');

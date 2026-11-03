@@ -15,11 +15,7 @@ import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
  * what renders (blocks in authored order); this page never special-cases types.
  * Answer keys are stripped server-side (SKL-013); grading round-trips the API.
  */
-export default async function StationPage({
-  params,
-}: {
-  params: Promise<{ chapter: string; station: string }>;
-}) {
+export default async function StationPage({ params }: { params: Promise<{ chapter: string; station: string }> }) {
   const { chapter: chapterSlug, station: stationSlug } = await params;
   let bundle;
   try {
@@ -77,23 +73,23 @@ export default async function StationPage({
           </p>
         </div>
 
-      <StationRunner
-        chapterSlug={chapterSlug}
-        station={toClientStation(station)}
-        chapter={{ words: chapter.words, expressions: chapter.expressions }}
-        clientExercises={clientExercises}
-        dialogue={{
-          lines: dialogue.lines.map((l) => ({
-            id: l.id,
-            tokens: l.tokens.map((t) => ({ surface: t.surface })),
-            fa: l.fa,
-            speaker: l.speaker,
-          })),
-          speakers,
-        }}
-        audioByLine={audioByLine}
-        audioAvailable={bundle!.bundle.audio.available}
-      />
+        <StationRunner
+          chapterSlug={chapterSlug}
+          station={toClientStation(station)}
+          chapter={{ words: chapter.words, expressions: chapter.expressions }}
+          clientExercises={clientExercises}
+          dialogue={{
+            lines: dialogue.lines.map((l) => ({
+              id: l.id,
+              tokens: l.tokens.map((t) => ({ surface: t.surface })),
+              fa: l.fa,
+              speaker: l.speaker,
+            })),
+            speakers,
+          }}
+          audioByLine={audioByLine}
+          audioAvailable={bundle!.bundle.audio.available}
+        />
       </div>
     </main>
   );

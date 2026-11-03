@@ -47,13 +47,22 @@ export function applyStationEvent(state: StationState | undefined, event: Statio
 
 /** Completion of the station walk that satisfies prerequisites. */
 export function stationSatisfiesPrereq(state: StationState | undefined): boolean {
-  return state !== undefined && (state.status === 'completed' || state.status === 'skipped' || state.status === 'needs_retry');
+  return (
+    state !== undefined &&
+    (state.status === 'completed' || state.status === 'skipped' || state.status === 'needs_retry')
+  );
 }
 
 export type ChapterEvent =
   | { type: 'chapter_started' }
   | { type: 'stations_completed' }
-  | { type: 'gate_attempted'; passed: boolean; weighted: number | null; measures: Record<string, number | null>; attemptId?: string }
+  | {
+      type: 'gate_attempted';
+      passed: boolean;
+      weighted: number | null;
+      measures: Record<string, number | null>;
+      attemptId?: string;
+    }
   | { type: 'remediation_loop' };
 
 const CHAPTER_FLOW: Record<ChapterState['status'], ChapterState['status'][]> = {
@@ -74,7 +83,12 @@ export function applyChapterEvent(
   event: ChapterEvent,
   maxLoops = 3,
 ): ChapterState | null {
-  const base: ChapterState = state ?? { status: 'started', bestWeighted: null, bestMeasures: null, remediationCount: 0 };
+  const base: ChapterState = state ?? {
+    status: 'started',
+    bestWeighted: null,
+    bestMeasures: null,
+    remediationCount: 0,
+  };
   switch (event.type) {
     case 'chapter_started':
       return base.status === 'started' ? null : base; // idempotent entry

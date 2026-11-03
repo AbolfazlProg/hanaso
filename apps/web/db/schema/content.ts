@@ -253,10 +253,7 @@ export const lessons = content.table(
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
-  (t) => [
-    index('lessons_unit_id_order_idx').on(t.unitId, t.order),
-    index('lessons_type_idx').on(t.type),
-  ],
+  (t) => [index('lessons_unit_id_order_idx').on(t.unitId, t.order), index('lessons_type_idx').on(t.type)],
 );
 
 /* ------------------------------------------------------------------ learning_objectives (§۲ new) */

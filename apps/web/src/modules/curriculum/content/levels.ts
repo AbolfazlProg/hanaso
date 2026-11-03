@@ -145,6 +145,4 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
   },
 ];
 
-export const LEVELS_BY_CODE: Record<string, LevelPolicy> = Object.fromEntries(
-  LEVEL_POLICIES.map((l) => [l.code, l]),
-);
+export const LEVELS_BY_CODE: Record<string, LevelPolicy> = Object.fromEntries(LEVEL_POLICIES.map((l) => [l.code, l]));

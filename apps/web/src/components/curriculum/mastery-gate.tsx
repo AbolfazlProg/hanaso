@@ -35,7 +35,9 @@ type GateResult = {
 export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailable, stationTitles }: MasteryGateProps) {
   const [phase, setPhase] = useState<Phase>('intro');
   const [index, setIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, { kind: string; optionId?: string; orderedIds?: string[]; chipOrder?: string[] }>>({});
+  const [answers, setAnswers] = useState<
+    Record<string, { kind: string; optionId?: string; orderedIds?: string[]; chipOrder?: string[] }>
+  >({});
   const [selected, setSelected] = useState<string | null>(null);
   const [ordered, setOrdered] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -130,7 +132,10 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
         {passed ? (
           <>
             <div className="flex items-center gap-4">
-              <span aria-hidden className="grid size-16 place-items-center rounded-full border-2 border-success text-h2 font-black text-success">
+              <span
+                aria-hidden
+                className="grid size-16 place-items-center rounded-full border-2 border-success text-h2 font-black text-success"
+              >
                 理解
               </span>
               <div>
@@ -149,7 +154,10 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
         ) : (
           <>
             <div className="flex items-center gap-4">
-              <span aria-hidden className="grid size-16 place-items-center rounded-full border-2 border-warning text-h2 font-black text-warning">
+              <span
+                aria-hidden
+                className="grid size-16 place-items-center rounded-full border-2 border-warning text-h2 font-black text-warning"
+              >
                 もう一度
               </span>
               <div>
@@ -209,7 +217,12 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
 
         {ex.audioLineRef && (
           <div className="flex items-center gap-3 rounded-md bg-surface-warm p-3">
-            <LineAudioButton lineId={ex.audioLineRef} audioUrl={audioByLine[ex.audioLineRef] ?? ''} audioAvailable={audioAvailable} rate={0.9} />
+            <LineAudioButton
+              lineId={ex.audioLineRef}
+              audioUrl={audioByLine[ex.audioLineRef] ?? ''}
+              audioAvailable={audioAvailable}
+              rate={0.9}
+            />
             <span className="text-small text-ink-soft">🎧 فقط گوش کن</span>
           </div>
         )}
@@ -218,7 +231,9 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
           <div className="rounded-md bg-surface-warm p-4">
             {ex.clozeTokens ? (
               <JaBlock className="text-lead">
-                {ex.clozeTokens.map((tok, i) => (tok === null ? <span key={i}>＿＿</span> : <span key={i}>{tok}</span>))}
+                {ex.clozeTokens.map((tok, i) =>
+                  tok === null ? <span key={i}>＿＿</span> : <span key={i}>{tok}</span>,
+                )}
               </JaBlock>
             ) : (
               <JaBlock className="text-lead">{ex.promptJa}</JaBlock>
@@ -237,7 +252,9 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
                 onClick={() => setSelected(opt.id)}
                 className={[
                   'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
-                  selected === opt.id ? 'border-ai bg-indigo-wash font-bold' : 'border-ink-faint bg-card hover:border-ai',
+                  selected === opt.id
+                    ? 'border-ai bg-indigo-wash font-bold'
+                    : 'border-ink-faint bg-card hover:border-ai',
                 ].join(' ')}
               >
                 <span dir="auto">{opt.label}</span>
@@ -246,7 +263,11 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
           </div>
         ) : ex.chunks ? (
           <div className="flex flex-col gap-3">
-            <div className="flex min-h-14 flex-wrap items-center gap-2 rounded-md border border-dashed border-ink-faint bg-card p-3" dir="ltr" lang="ja">
+            <div
+              className="flex min-h-14 flex-wrap items-center gap-2 rounded-md border border-dashed border-ink-faint bg-card p-3"
+              dir="ltr"
+              lang="ja"
+            >
               {ordered.map((id) => (
                 <button
                   key={id}
@@ -293,7 +314,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
               const prev = exercises[index - 1]!;
               setIndex(index - 1);
               setSelected(prev.options ? (answers[prev.id]?.optionId ?? null) : null);
-              setOrdered(prev.chunks ? (answers[prev.id]?.orderedIds as string[] | undefined) ?? [] : []);
+              setOrdered(prev.chunks ? ((answers[prev.id]?.orderedIds as string[] | undefined) ?? []) : []);
             }}
             className="h-11 rounded-md border border-ink-faint px-5 text-body font-bold text-ink transition-colors hover:bg-surface-warm"
           >
@@ -308,7 +329,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
               const nxt = exercises[index + 1]!;
               setIndex(index + 1);
               setSelected(nxt.options ? (answers[nxt.id]?.optionId ?? null) : null);
-              setOrdered(nxt.chunks ? (answers[nxt.id]?.orderedIds as string[] | undefined) ?? [] : []);
+              setOrdered(nxt.chunks ? ((answers[nxt.id]?.orderedIds as string[] | undefined) ?? []) : []);
             }}
             disabled={ex.options ? !selected : ex.chunks ? ordered.length !== ex.chunks.length : true}
             className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep disabled:opacity-45"
@@ -320,10 +341,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
           <button
             type="button"
             onClick={submit}
-            disabled={
-              submitting ||
-              (ex.options ? !selected : ex.chunks ? ordered.length !== ex.chunks.length : true)
-            }
+            disabled={submitting || (ex.options ? !selected : ex.chunks ? ordered.length !== ex.chunks.length : true)}
             className="flex h-11 items-center gap-2 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep disabled:opacity-45"
           >
             {fa.curriculum.gateSubmit}

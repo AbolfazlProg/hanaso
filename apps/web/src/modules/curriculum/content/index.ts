@@ -45,9 +45,7 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
 /** All bundled chapters, ordered by level/position. */
 export const CHAPTERS: Chapter[] = [CHAPTER_FIRST_MEETING];
 
-const CHAPTERS_BY_SLUG: Record<string, Chapter> = Object.fromEntries(
-  CHAPTERS.map((c) => [c.slug, c]),
-);
+const CHAPTERS_BY_SLUG: Record<string, Chapter> = Object.fromEntries(CHAPTERS.map((c) => [c.slug, c]));
 
 export function listChapters(): Chapter[] {
   return CHAPTERS;

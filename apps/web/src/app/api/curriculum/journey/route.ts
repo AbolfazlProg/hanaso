@@ -22,14 +22,19 @@ export async function GET(req: Request) {
   try {
     bundle = loadChapterBundle(chapterSlug);
   } catch (err) {
-    return NextResponse.json(fail({ code: 'journey/unknown_chapter', message: (err as Error).message }), { status: 404 });
+    return NextResponse.json(fail({ code: 'journey/unknown_chapter', message: (err as Error).message }), {
+      status: 404,
+    });
   }
   const chapter = bundle.chapter;
   const level = LEVELS_BY_CODE[chapter.levelCode]!;
 
   const stationStore = getStationProgressStore();
   const chapterStore = getChapterProgressStore();
-  const states = await stationStore.listForUnit(POC_DEFAULT_USER_ID, chapter.stations.map((s) => s.slug));
+  const states = await stationStore.listForUnit(
+    POC_DEFAULT_USER_ID,
+    chapter.stations.map((s) => s.slug),
+  );
   const chapterState = await chapterStore.get(POC_DEFAULT_USER_ID, chapter.slug);
 
   const journey = resolveJourney(chapter, level, states, chapterState);

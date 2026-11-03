@@ -154,7 +154,9 @@ export async function seedChapter(
 }
 
 /** Full curriculum seed (levels + every bundled chapter). */
-export async function runCurriculumSeed(options: { url: string }): Promise<CurriculumSeedResult & { dialogueSlug: string }> {
+export async function runCurriculumSeed(options: {
+  url: string;
+}): Promise<CurriculumSeedResult & { dialogueSlug: string }> {
   const pool = new Pool({
     connectionString: options.url,
     max: 1,
@@ -193,8 +195,15 @@ export async function clearCurriculumSeed(options: { url: string }): Promise<voi
     });
     // station lessons + the anchor lesson rows of the chapter dialogues
     await db.delete(schema.lessons).where(sql`${schema.lessons.id} = ANY(${stationIds}::uuid[])`);
-    await db.delete(schema.units).where(sql`${schema.units.slug} = ANY(${sql.raw(`ARRAY[${chapterSlugs.map((s) => `'${s}'`).join(',')}]::text[]`)})`);
-    await clearDialogueBase(options, listChapters().map((c) => c.dialogueSlug));
+    await db
+      .delete(schema.units)
+      .where(
+        sql`${schema.units.slug} = ANY(${sql.raw(`ARRAY[${chapterSlugs.map((s) => `'${s}'`).join(',')}]::text[]`)})`,
+      );
+    await clearDialogueBase(
+      options,
+      listChapters().map((c) => c.dialogueSlug),
+    );
   } finally {
     await pool.end();
   }

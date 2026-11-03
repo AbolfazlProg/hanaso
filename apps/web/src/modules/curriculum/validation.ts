@@ -110,7 +110,10 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
       if (!p) {
         v.push({ rule: RULES.prereqOrder, message: `${s.slug}: unknown prerequisite ${ref}` });
       } else if (p.order >= s.order) {
-        v.push({ rule: RULES.prereqOrder, message: `${s.slug}: prerequisite ${ref} has order ${p.order} >= ${s.order}` });
+        v.push({
+          rule: RULES.prereqOrder,
+          message: `${s.slug}: prerequisite ${ref} has order ${p.order} >= ${s.order}`,
+        });
       }
     }
   }
@@ -128,7 +131,10 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
   /* ---- topological walk covers everything ---- */
   const ordered = orderedStations(chapter);
   if (ordered.length !== chapter.stations.length) {
-    v.push({ rule: RULES.prereqOrder, message: `journey resolver dropped stations (${ordered.length}/${chapter.stations.length})` });
+    v.push({
+      rule: RULES.prereqOrder,
+      message: `journey resolver dropped stations (${ordered.length}/${chapter.stations.length})`,
+    });
   }
 
   /* ---- exercise rules ---- */
@@ -184,8 +190,9 @@ function chapterStationsLines(chapter: Chapter): Set<string> {
   // Dialogue line ids are validated lazily against the loaded dialogue (server-side
   // `validateChapterAgainstDialogue`); here we collect refs from a helper the caller
   // provides via chapter.lineUniverse when available.
-  return (chapter as Chapter & { lineUniverse?: Set<string> }).lineUniverse ?? new Set(
-    chapter.stations.flatMap((s) => s.lineRefs),
+  return (
+    (chapter as Chapter & { lineUniverse?: Set<string> }).lineUniverse ??
+    new Set(chapter.stations.flatMap((s) => s.lineRefs))
   );
 }
 
@@ -196,7 +203,16 @@ function validateExercise(
   slug: string,
   v: ContentViolation[],
 ): void {
-  const usesOptions = ['meaning-select', 'audio-meaning', 'response-select', 'cloze', 'gist-select', 'match-in-line', 'speaker-identify', 'listen-minimal-pair'].includes(ex.type);
+  const usesOptions = [
+    'meaning-select',
+    'audio-meaning',
+    'response-select',
+    'cloze',
+    'gist-select',
+    'match-in-line',
+    'speaker-identify',
+    'listen-minimal-pair',
+  ].includes(ex.type);
   if (usesOptions) {
     const count = ex.options?.length ?? 0;
     const allowed = ex.type === 'listen-minimal-pair' ? [2, 3] : [3];

@@ -123,29 +123,29 @@ async function main() {
   mkdirSync(OUT_DIR, { recursive: true });
 
   for (const file of files) {
-  const dialogue = parseYaml(readFileSync(file, 'utf8'));
-  for (const line of dialogue.lines) {
-    const speaker = line.speaker;
-    const voice = Object.values(voicesDoc.voices).find((v) => v.character === speaker);
-    if (!voice) throw new Error(`no voice configured for speaker ${speaker}`);
-    const voiceId = Object.entries(voicesDoc.voices).find(([, v]) => v.character === speaker)[0];
-    const text = line.tokens.map((t) => t.surface).join('');
-    const hash = hashLine(text, voiceId);
-    const durationMs = estimateDurationMs(line.tokens.length);
-    const seed = parseInt(hash.slice(0, 8), 16);
-    const wav = synthesize({
-      f0Hz: voice.params.f0Hz,
-      harmonics: voice.params.harmonics,
-      durationMs,
-      seed,
-    });
-    const file = path.join(OUT_DIR, `${line.id}.wav`);
-    writeFileSync(file, wav);
-    totalBytes += wav.length;
-    manifests[line.id] = { bytes: wav.length, durationMs };
-    lineCount += 1;
-  }
-  console.log(`  ${path.basename(file)}: ${dialogue.lines.length} lines`);
+    const dialogue = parseYaml(readFileSync(file, 'utf8'));
+    for (const line of dialogue.lines) {
+      const speaker = line.speaker;
+      const voice = Object.values(voicesDoc.voices).find((v) => v.character === speaker);
+      if (!voice) throw new Error(`no voice configured for speaker ${speaker}`);
+      const voiceId = Object.entries(voicesDoc.voices).find(([, v]) => v.character === speaker)[0];
+      const text = line.tokens.map((t) => t.surface).join('');
+      const hash = hashLine(text, voiceId);
+      const durationMs = estimateDurationMs(line.tokens.length);
+      const seed = parseInt(hash.slice(0, 8), 16);
+      const wav = synthesize({
+        f0Hz: voice.params.f0Hz,
+        harmonics: voice.params.harmonics,
+        durationMs,
+        seed,
+      });
+      const file = path.join(OUT_DIR, `${line.id}.wav`);
+      writeFileSync(file, wav);
+      totalBytes += wav.length;
+      manifests[line.id] = { bytes: wav.length, durationMs };
+      lineCount += 1;
+    }
+    console.log(`  ${path.basename(file)}: ${dialogue.lines.length} lines`);
   }
 
   writeFileSync(

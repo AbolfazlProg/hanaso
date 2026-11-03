@@ -13,10 +13,7 @@
  *   station list, not from the client.
  */
 import { and, eq, inArray } from 'drizzle-orm';
-import type {
-  ChapterState,
-  StationState,
-} from '@/modules/curriculum/types';
+import type { ChapterState, StationState } from '@/modules/curriculum/types';
 import type { StationProgressRepository, ChapterProgressRepository } from '@/modules/curriculum/repository';
 import { chapterProgress, lessons, stationProgress } from '../../../db/schema';
 import type { DbClient } from '../client';
@@ -172,7 +169,12 @@ export class PgChapterProgressRepository implements ChapterProgressRepository {
     return row ? chapterRowToState(row) : null;
   }
 
-  async upsert(userId: string, chapterSlug: string, state: ChapterState, masteryAttemptId?: string): Promise<ChapterState> {
+  async upsert(
+    userId: string,
+    chapterSlug: string,
+    state: ChapterState,
+    masteryAttemptId?: string,
+  ): Promise<ChapterState> {
     const unitId = chapterProgressId(chapterSlug);
     const [row] = await this.client.db
       .insert(chapterProgress)

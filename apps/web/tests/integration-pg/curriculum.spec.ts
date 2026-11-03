@@ -58,9 +58,10 @@ describe('curriculum seed (content rows)', () => {
   });
 
   it('deterministic station ids match the repository resolver (FK target)', async () => {
-    const { rows } = await pool!.query('select id, slug from content.lessons where unit_id = (select id from content.units where slug = $1)', [
-      'first-meeting-01',
-    ]);
+    const { rows } = await pool!.query(
+      'select id, slug from content.lessons where unit_id = (select id from content.units where slug = $1)',
+      ['first-meeting-01'],
+    );
     const byslug = new Map(rows.map((r: { slug: string; id: string }) => [r.slug, r.id]));
     expect(byslug.get('stn-fm01-02-vocab')).toBe(lessonContentId('stn-fm01-02-vocab'));
   });
@@ -109,7 +110,8 @@ describe('island walk through the Postgres stores', () => {
     expect(chapterState!.status).toBe('stations_complete');
 
     // a perfect gate submission → understood (DD-048: only from a passed attempt)
-    const answers: Record<string, { kind: string; optionId?: string; orderedIds?: string[]; chipOrder?: string[] }> = {};
+    const answers: Record<string, { kind: string; optionId?: string; orderedIds?: string[]; chipOrder?: string[] }> =
+      {};
     for (const ex of Object.values(chapter.exercises)) {
       if (ex.assessmentRole === 'practice') continue;
       if (ex.correctOptionId) answers[ex.id] = { kind: 'option', optionId: ex.correctOptionId };

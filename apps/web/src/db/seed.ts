@@ -198,9 +198,13 @@ export async function clearSeededContent(
     const db = drizzle(pool);
     const slugs = [...new Set([...SEED_DIALOGUE_SLUGS, ...extraDialogueSlugs])];
     const dialogueUuids = slugs.map((slug) => dialogueContentId(slug));
-    await db.delete(schema.dialogueLines).where(sql`${schema.dialogueLines.dialogueId} = ANY(${dialogueUuids}::uuid[])`);
+    await db
+      .delete(schema.dialogueLines)
+      .where(sql`${schema.dialogueLines.dialogueId} = ANY(${dialogueUuids}::uuid[])`);
     await db.delete(schema.lessons).where(eq(schema.lessons.unitStage, 'B_lesson'));
-    await db.delete(schema.dialogues).where(sql`${schema.dialogues.slug} = ANY(${sql.raw(`ARRAY[${slugs.map((s) => `'${s}'`).join(',')}]::text[]`)})`);
+    await db
+      .delete(schema.dialogues)
+      .where(sql`${schema.dialogues.slug} = ANY(${sql.raw(`ARRAY[${slugs.map((s) => `'${s}'`).join(',')}]::text[]`)})`);
     await db.delete(schema.characters);
   } finally {
     await pool.end();

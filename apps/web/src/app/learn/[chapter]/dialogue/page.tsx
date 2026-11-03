@@ -38,9 +38,7 @@ export default async function AnchorDialoguePage({ params }: { params: Promise<{
           audio: bundle!.bundle.audio,
         }}
       />
-      <footer className="mt-auto pt-6 text-caption text-ink-faint">
-        {fa.curriculum.prerequisitesNote}
-      </footer>
+      <footer className="mt-auto pt-6 text-caption text-ink-faint">{fa.curriculum.prerequisitesNote}</footer>
     </main>
   );
 }

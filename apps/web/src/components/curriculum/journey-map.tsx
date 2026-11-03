@@ -14,7 +14,20 @@
  */
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, BookOpenText, CircleCheck, Ear, FlaskConical, Hammer, MessageCircle, Repeat2, Scale, Sparkles, Star, Ticket } from 'lucide-react';
+import {
+  ArrowLeft,
+  BookOpenText,
+  CircleCheck,
+  Ear,
+  FlaskConical,
+  Hammer,
+  MessageCircle,
+  Repeat2,
+  Scale,
+  Sparkles,
+  Star,
+  Ticket,
+} from 'lucide-react';
 import { fa } from '@/messages/fa';
 
 export interface JourneyNodeDto {
@@ -48,7 +61,15 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
     const refresh = async () => {
       try {
         const res = await fetch(`/api/curriculum/journey?chapter=${chapterSlug}`);
-        const json = (await res.json()) as { data?: { nodes: JourneyNodeDto[]; coreCompleted: number; coreTotal: number; chapterState: { status: string } | null; nextStationSlug: string | null } };
+        const json = (await res.json()) as {
+          data?: {
+            nodes: JourneyNodeDto[];
+            coreCompleted: number;
+            coreTotal: number;
+            chapterState: { status: string } | null;
+            nextStationSlug: string | null;
+          };
+        };
         if (json.data) {
           setState({
             nodes: json.data.nodes,
@@ -109,7 +130,10 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
           ].join(' ')}
         >
           <span className="flex items-center gap-3">
-            <span aria-hidden className="grid size-10 place-items-center rounded-full border-2 border-shu text-body font-black text-shu">
+            <span
+              aria-hidden
+              className="grid size-10 place-items-center rounded-full border-2 border-shu text-body font-black text-shu"
+            >
               理解
             </span>
             <span className="text-body font-bold">
@@ -128,7 +152,11 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
           className="absolute inset-y-2 start-2 w-1 rounded-full bg-[repeating-linear-gradient(180deg,var(--color-indigo-mist)_0_10px,transparent_10px_18px)]"
         />
         {state.nodes.map((node) => {
-          const optionalDivider = !node.core && !state.nodes.some((n) => !n.core && n.slug !== node.slug && state.nodes.indexOf(n) < state.nodes.indexOf(node));
+          const optionalDivider =
+            !node.core &&
+            !state.nodes.some(
+              (n) => !n.core && n.slug !== node.slug && state.nodes.indexOf(n) < state.nodes.indexOf(node),
+            );
           return (
             <li key={node.slug} className="relative">
               {optionalDivider && (
@@ -192,7 +220,10 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
                     )}
                   </Link>
                 ) : (
-                  <span className="grid size-11 shrink-0 place-items-center self-center text-caption text-ink-faint" aria-label={fa.curriculum.stationLocked}>
+                  <span
+                    className="grid size-11 shrink-0 place-items-center self-center text-caption text-ink-faint"
+                    aria-label={fa.curriculum.stationLocked}
+                  >
                     🔒
                   </span>
                 )}
@@ -206,15 +237,24 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
       <div
         className={[
           'flex flex-col gap-3 rounded-md border-2 p-5',
-          understood ? 'border-success bg-card' : gateReady ? 'border-shu bg-card shadow-[var(--shadow-raised)]' : 'border-ink-faint bg-surface-muted/50',
+          understood
+            ? 'border-success bg-card'
+            : gateReady
+              ? 'border-shu bg-card shadow-[var(--shadow-raised)]'
+              : 'border-ink-faint bg-surface-muted/50',
         ].join(' ')}
       >
         <div className="flex items-center gap-3">
-          <span aria-hidden className="grid size-12 place-items-center rounded-full border-2 border-shu text-h3 font-black text-shu">
+          <span
+            aria-hidden
+            className="grid size-12 place-items-center rounded-full border-2 border-shu text-h3 font-black text-shu"
+          >
             理解
           </span>
           <div>
-            <h3 className="text-h3 font-bold">{understood ? fa.curriculum.understoodBadge : fa.curriculum.journeyFinish}</h3>
+            <h3 className="text-h3 font-bold">
+              {understood ? fa.curriculum.understoodBadge : fa.curriculum.journeyFinish}
+            </h3>
             <p className="text-small text-ink-soft">
               {understood
                 ? 'مُهر فهم این فصل خورده است.'
@@ -257,30 +297,48 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
 
 function availabilityLabel(a: JourneyNodeDto['availability']): string {
   switch (a) {
-    case 'locked': return fa.curriculum.stationLocked;
-    case 'available': return fa.curriculum.stationAvailable;
-    case 'in_progress': return fa.curriculum.stationInProgress;
-    case 'completed': return fa.curriculum.stationCompleted;
-    case 'needs_retry': return fa.curriculum.stationNeedsRetry;
-    case 'skipped': return fa.curriculum.stationCompleted;
+    case 'locked':
+      return fa.curriculum.stationLocked;
+    case 'available':
+      return fa.curriculum.stationAvailable;
+    case 'in_progress':
+      return fa.curriculum.stationInProgress;
+    case 'completed':
+      return fa.curriculum.stationCompleted;
+    case 'needs_retry':
+      return fa.curriculum.stationNeedsRetry;
+    case 'skipped':
+      return fa.curriculum.stationCompleted;
   }
 }
 
 function StationIcon({ type }: { type: string }) {
   const cls = 'size-5';
   switch (type) {
-    case 'anchor': return <Sparkles aria-hidden className={cls} />;
-    case 'vocab': return <BookOpenText aria-hidden className={cls} />;
-    case 'grammar': return <Scale aria-hidden className={cls} />;
-    case 'structure': return <Hammer aria-hidden className={cls} />;
-    case 'expression': return <MessageCircle aria-hidden className={cls} />;
-    case 'listen': return <Ear aria-hidden className={cls} />;
-    case 'practice': return <Repeat2 aria-hidden className={cls} />;
-    case 'integrate': return <Ticket aria-hidden className={cls} />;
-    case 'mastery': return <Star aria-hidden className={cls} />;
-    case 'review': return <Repeat2 aria-hidden className={cls} />;
-    case 'deepdive': return <FlaskConical aria-hidden className={cls} />;
-    default: return <BookOpenText aria-hidden className={cls} />;
+    case 'anchor':
+      return <Sparkles aria-hidden className={cls} />;
+    case 'vocab':
+      return <BookOpenText aria-hidden className={cls} />;
+    case 'grammar':
+      return <Scale aria-hidden className={cls} />;
+    case 'structure':
+      return <Hammer aria-hidden className={cls} />;
+    case 'expression':
+      return <MessageCircle aria-hidden className={cls} />;
+    case 'listen':
+      return <Ear aria-hidden className={cls} />;
+    case 'practice':
+      return <Repeat2 aria-hidden className={cls} />;
+    case 'integrate':
+      return <Ticket aria-hidden className={cls} />;
+    case 'mastery':
+      return <Star aria-hidden className={cls} />;
+    case 'review':
+      return <Repeat2 aria-hidden className={cls} />;
+    case 'deepdive':
+      return <FlaskConical aria-hidden className={cls} />;
+    default:
+      return <BookOpenText aria-hidden className={cls} />;
   }
 }
 

@@ -14,10 +14,7 @@ import Link from 'next/link';
 import { ArrowLeft, BookOpenText, CheckCircle2, Ear, MessageCircleQuestion, PlayCircle, Sparkles } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
-import type {
-  ClientStation,
-  ClientTeachingBlock,
-} from '@/modules/curriculum/client-transport';
+import type { ClientStation, ClientTeachingBlock } from '@/modules/curriculum/client-transport';
 import type { Chapter, Station } from '@/modules/curriculum/types';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { MixedFaJaText } from './mixed-fa-ja-text';
@@ -179,7 +176,11 @@ export function StationRunner(props: StationRunnerProps) {
       )}
 
       {completed && (
-        <div role="status" aria-live="polite" className="flex flex-col gap-3 rounded-md border border-success bg-card p-5">
+        <div
+          role="status"
+          aria-live="polite"
+          className="flex flex-col gap-3 rounded-md border border-success bg-card p-5"
+        >
           <p className="flex items-center gap-2 text-body font-bold text-success">
             <CheckCircle2 aria-hidden className="size-5" />
             {fa.curriculum.stationDone}
@@ -395,9 +396,7 @@ function BlockView({
               <MixedFaJaText text={`🌉 ${block.persianBridgeFa}`} />
             </p>
           )}
-          {block.honestyLabelFa && (
-            <p className="mt-2 text-caption text-ink-faint">{block.honestyLabelFa}</p>
-          )}
+          {block.honestyLabelFa && <p className="mt-2 text-caption text-ink-faint">{block.honestyLabelFa}</p>}
         </section>
       );
 
@@ -408,10 +407,10 @@ function BlockView({
           {block.examples.map((example) => (
             <article key={example.id} className="rounded-md border border-ink-faint bg-card p-4">
               <div className="flex items-center justify-between gap-2">
-                <span className="rounded-full border border-ai px-3 py-1 text-caption text-ai">{roleLabel(example.role)}</span>
-                {example.lineRef && (
-                  <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>
-                )}
+                <span className="rounded-full border border-ai px-3 py-1 text-caption text-ai">
+                  {roleLabel(example.role)}
+                </span>
+                {example.lineRef && <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>}
               </div>
               <JaBlock className="mt-3 text-lead font-bold">{example.ja}</JaBlock>
               <p className="mt-1 text-caption text-ink-soft" dir="ltr" lang="ja">
@@ -517,7 +516,9 @@ function DiscoveryBlock({
   audioByLine,
   audioAvailable,
 }: {
-  block: Extract<ClientTeachingBlock, { kind: 'guided-discovery' }> | Extract<ClientTeachingBlock, { kind: 'structured-input' }>;
+  block:
+    | Extract<ClientTeachingBlock, { kind: 'guided-discovery' }>
+    | Extract<ClientTeachingBlock, { kind: 'structured-input' }>;
   stationSlug: string;
   chapterSlug: string;
   lineById: Map<string, Line>;
@@ -542,7 +543,8 @@ function DiscoveryBlock({
   };
 
   const displayLine = 'displayLineRef' in block ? lineById.get(block.displayLineRef) : undefined;
-  const compareLine = 'compareLineRef' in block && block.compareLineRef ? lineById.get(block.compareLineRef) : undefined;
+  const compareLine =
+    'compareLineRef' in block && block.compareLineRef ? lineById.get(block.compareLineRef) : undefined;
 
   return (
     <section className="flex flex-col gap-4 rounded-md border border-ink-faint bg-card p-5">
@@ -557,7 +559,8 @@ function DiscoveryBlock({
               <LineAudioButton lineId={l!.id} audioUrl={audioByLine[l!.id] ?? ''} audioAvailable={audioAvailable} />
               <JaBlock className="text-body">
                 {l!.tokens.map((t, i) => {
-                  const hl = 'highlightSurfaces' in block && block.highlightSurfaces?.some((h) => t.surface.endsWith(h));
+                  const hl =
+                    'highlightSurfaces' in block && block.highlightSurfaces?.some((h) => t.surface.endsWith(h));
                   return (
                     <span key={i} className={hl ? 'rounded-sm bg-indigo-wash px-0.5 font-bold text-shu' : undefined}>
                       {t.surface}
@@ -668,13 +671,15 @@ function CharacterSceneBlock({
             ].join(' ')}
           >
             <p className="text-caption font-bold text-ink-soft">
-              {isUser ? fa.curriculum.yourTurn : speakers[s.speaker] ?? s.speaker}
+              {isUser ? fa.curriculum.yourTurn : (speakers[s.speaker] ?? s.speaker)}
             </p>
             <JaBlock className="mt-2 text-lead font-bold">
               {s.ja.split('___NAME___').map((part, j, arr) => (
                 <span key={j}>
                   {part}
-                  {j < arr.length - 1 && <span className="rounded-sm bg-shu/15 px-1 text-shu">{nameValue || '___'}</span>}
+                  {j < arr.length - 1 && (
+                    <span className="rounded-sm bg-shu/15 px-1 text-shu">{nameValue || '___'}</span>
+                  )}
                 </span>
               ))}
             </JaBlock>
@@ -696,7 +701,9 @@ function CharacterSceneBlock({
                         onClick={() => setChoice(opt.id)}
                         className={[
                           'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
-                          choice === opt.id ? 'border-ai bg-indigo-wash font-bold' : 'border-ink-faint bg-card hover:border-ai',
+                          choice === opt.id
+                            ? 'border-ai bg-indigo-wash font-bold'
+                            : 'border-ink-faint bg-card hover:border-ai',
                         ].join(' ')}
                       >
                         <span dir="auto">{opt.label}</span>
@@ -705,7 +712,11 @@ function CharacterSceneBlock({
                   </div>
                 ) : (
                   <div className="flex flex-col gap-3">
-                    <div className="flex min-h-12 flex-wrap items-center gap-2 rounded-md border border-dashed border-ink-faint bg-card p-3" dir="ltr" lang="ja">
+                    <div
+                      className="flex min-h-12 flex-wrap items-center gap-2 rounded-md border border-dashed border-ink-faint bg-card p-3"
+                      dir="ltr"
+                      lang="ja"
+                    >
                       {built.map((id) => {
                         const chip = (s.userReply!.chips ?? []).find((c) => c.id === id)!;
                         return chip.ja === '___NAME___' ? (
@@ -751,9 +762,7 @@ function CharacterSceneBlock({
                   onClick={submitReply}
                   disabled={
                     busy ||
-                    (s.userReply.kind === 'choice'
-                      ? !choice
-                      : built.length !== (s.userReply.chips?.length ?? 0))
+                    (s.userReply.kind === 'choice' ? !choice : built.length !== (s.userReply.chips?.length ?? 0))
                   }
                   className="h-11 w-fit rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep disabled:opacity-45"
                 >
@@ -794,11 +803,16 @@ function CharacterSceneBlock({
 
 function roleLabel(role: string): string {
   switch (role) {
-    case 'anchor': return 'لنگر از مکالمه';
-    case 'near': return 'هم‌قاب';
-    case 'varied': return 'بافت جدید';
-    case 'faded': return 'جای‌خالی';
-    default: return role;
+    case 'anchor':
+      return 'لنگر از مکالمه';
+    case 'near':
+      return 'هم‌قاب';
+    case 'varied':
+      return 'بافت جدید';
+    case 'faded':
+      return 'جای‌خالی';
+    default:
+      return role;
   }
 }
 

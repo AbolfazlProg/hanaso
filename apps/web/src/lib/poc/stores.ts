@@ -17,10 +17,7 @@ import {
   type ChapterProgressRepository,
   type StationProgressRepository,
 } from '@/modules/curriculum/repository';
-import {
-  PgChapterProgressRepository,
-  PgStationProgressRepository,
-} from '@/db/repositories/curriculum';
+import { PgChapterProgressRepository, PgStationProgressRepository } from '@/db/repositories/curriculum';
 import type { PocEvent } from './event-store';
 import { InMemoryEventStore } from './event-store';
 import { databaseConfigured, getDbClient } from '@/db/client';

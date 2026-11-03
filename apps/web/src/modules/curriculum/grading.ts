@@ -34,16 +34,8 @@ export function gradeExerciseAnswer(ex: Exercise, answer: ExerciseAnswerPayload,
     return { correct: true, level: 0, feedbackFa: 'درست!' };
   }
   const level = attemptNo <= 1 ? 1 : attemptNo === 2 ? 2 : 3;
-  const feedbackFa =
-    level === 1
-      ? ex.feedback.f1Fa
-      : level === 2
-        ? ex.feedback.f2HintFa
-        : ex.feedback.f3ExplainFa;
-  const reveal =
-    level >= 3
-      ? revealText(ex)
-      : undefined;
+  const feedbackFa = level === 1 ? ex.feedback.f1Fa : level === 2 ? ex.feedback.f2HintFa : ex.feedback.f3ExplainFa;
+  const reveal = level >= 3 ? revealText(ex) : undefined;
   return { correct: false, level, feedbackFa, reveal };
 }
 
@@ -60,10 +52,7 @@ function isCorrect(ex: Exercise, answer: ExerciseAnswerPayload): boolean {
       return answer.kind === 'option' && answer.optionId === ex.correctOptionId;
     case 'word-order':
     case 'dialogue-order':
-      return (
-        answer.kind === 'order' &&
-        arraysEqual(answer.orderedIds, ex.correctOrder ?? [])
-      );
+      return answer.kind === 'order' && arraysEqual(answer.orderedIds, ex.correctOrder ?? []);
     case 'produce-template':
       return answer.kind === 'build' && arraysEqual(answer.chipOrder, ex.acceptedChipOrder ?? []);
   }
@@ -81,10 +70,7 @@ function revealText(ex: Exercise): string {
     case 'produce-template':
       return (ex.chips ?? [])
         .slice()
-        .sort(
-          (a, b) =>
-            (ex.acceptedChipOrder?.indexOf(a.id) ?? 0) - (ex.acceptedChipOrder?.indexOf(b.id) ?? 0),
-        )
+        .sort((a, b) => (ex.acceptedChipOrder?.indexOf(a.id) ?? 0) - (ex.acceptedChipOrder?.indexOf(b.id) ?? 0))
         .map((c) => c.ja)
         .join(' ');
     default: {
@@ -113,11 +99,7 @@ export interface StationSessionScore {
  * - task_completed: the INTEGRATE flow reports the task done
  * - exercise_threshold: server-recorded session score must meet the threshold
  */
-export function stationMeetsCompletion(
-  station: Station,
-  score: number | null,
-  taskCompleted = false,
-): boolean {
+export function stationMeetsCompletion(station: Station, score: number | null, taskCompleted = false): boolean {
   switch (station.completion.kind) {
     case 'viewed':
       return true;
@@ -155,8 +137,16 @@ export function gradeMasterySubmission(
   const perQuestion: Record<string, boolean> = {};
   const wrongByMeasure: Record<string, string[]> = {};
 
-  let m1 = 0, m2 = 0, m3 = 0, m4 = 0, m5 = 0;
-  let c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0;
+  let m1 = 0,
+    m2 = 0,
+    m3 = 0,
+    m4 = 0,
+    m5 = 0;
+  let c1 = 0,
+    c2 = 0,
+    c3 = 0,
+    c4 = 0,
+    c5 = 0;
 
   for (const ex of bank) {
     const answer = answers[ex.id];
@@ -167,11 +157,26 @@ export function gradeMasterySubmission(
       (wrongByMeasure[measure] ??= []).push(ex.id);
     }
     switch (measure) {
-      case 'M1': m1 += ok ? 1 : 0; c1 += 1; break;
-      case 'M2': m2 += ok ? 1 : 0; c2 += 1; break;
-      case 'M3': m3 += ok ? 1 : 0; c3 += 1; break;
-      case 'M4': m4 += ok ? 1 : 0; c4 += 1; break;
-      case 'M5': m5 += ok ? 1 : 0; c5 += 1; break;
+      case 'M1':
+        m1 += ok ? 1 : 0;
+        c1 += 1;
+        break;
+      case 'M2':
+        m2 += ok ? 1 : 0;
+        c2 += 1;
+        break;
+      case 'M3':
+        m3 += ok ? 1 : 0;
+        c3 += 1;
+        break;
+      case 'M4':
+        m4 += ok ? 1 : 0;
+        c4 += 1;
+        break;
+      case 'M5':
+        m5 += ok ? 1 : 0;
+        c5 += 1;
+        break;
     }
   }
 
@@ -225,7 +230,9 @@ function shuffleSeeded<T>(items: T[], seed: string): T[] {
     h = Math.imul(h, 16777619);
   }
   const rand = () => {
-    h ^= h << 13; h ^= h >>> 17; h ^= h << 5;
+    h ^= h << 13;
+    h ^= h >>> 17;
+    h ^= h << 5;
     return ((h >>> 0) % 10000) / 10000;
   };
   const arr = [...items];

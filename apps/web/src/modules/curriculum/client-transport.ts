@@ -45,16 +45,18 @@ export type ClientTeachingBlock =
   | {
       kind: 'example-set';
       id: string;
-      examples: TeachingBlock extends never ? never : {
-        id: string;
-        role: 'anchor' | 'near' | 'varied' | 'faded';
-        ja: string;
-        reading: string;
-        fa: string;
-        whyFa: string;
-        lineRef?: string;
-        selfExplainFa?: string;
-      }[];
+      examples: TeachingBlock extends never
+        ? never
+        : {
+            id: string;
+            role: 'anchor' | 'near' | 'varied' | 'faded';
+            ja: string;
+            reading: string;
+            fa: string;
+            whyFa: string;
+            lineRef?: string;
+            selfExplainFa?: string;
+          }[];
     }
   | {
       kind: 'structured-input';
@@ -67,7 +69,13 @@ export type ClientTeachingBlock =
   | {
       kind: 'character-scene';
       id: string;
-      steps: { speaker: string; ja: string; reading: string; fa: string; userReply?: Omit<UserReplySpec, 'correctOptionId' | 'acceptedOrders'> }[];
+      steps: {
+        speaker: string;
+        ja: string;
+        reading: string;
+        fa: string;
+        userReply?: Omit<UserReplySpec, 'correctOptionId' | 'acceptedOrders'>;
+      }[];
     }
   | { kind: 'listening-task'; id: string; taskId: string }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };

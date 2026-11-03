@@ -16,12 +16,7 @@ export interface StationProgressRepository {
 
 export interface ChapterProgressRepository {
   get(userId: string, chapterSlug: string): Promise<ChapterState | null>;
-  upsert(
-    userId: string,
-    chapterSlug: string,
-    state: ChapterState,
-    masteryAttemptId?: string,
-  ): Promise<ChapterState>;
+  upsert(userId: string, chapterSlug: string, state: ChapterState, masteryAttemptId?: string): Promise<ChapterState>;
 }
 
 /** DEV-ONLY in-memory fallback (no DATABASE_URL) — same contract as the Pg impls. */

@@ -127,14 +127,8 @@ export function ExerciseSession({
     reset();
   }, [firstTryCorrect, isLast, onSessionDone, reset, total]);
 
-  const remainingChunks = useMemo(
-    () => ex?.chunks?.filter((c) => !ordered.includes(c.id)) ?? [],
-    [ex, ordered],
-  );
-  const remainingChips = useMemo(
-    () => ex?.chips?.filter((c) => !built.includes(c.id)) ?? [],
-    [ex, built],
-  );
+  const remainingChunks = useMemo(() => ex?.chunks?.filter((c) => !ordered.includes(c.id)) ?? [], [ex, ordered]);
+  const remainingChips = useMemo(() => ex?.chips?.filter((c) => !built.includes(c.id)) ?? [], [ex, built]);
 
   if (!ex) return null;
 
@@ -143,10 +137,14 @@ export function ExerciseSession({
       ? selected !== null
       : ex.chunks
         ? ordered.length === ex.chunks.length
-        : built.length === ex.chips!.length && (!ex.chips!.some((c) => c.ja === '___NAME___') || nameValue.trim().length > 0);
+        : built.length === ex.chips!.length &&
+          (!ex.chips!.some((c) => c.ja === '___NAME___') || nameValue.trim().length > 0);
 
   return (
-    <section aria-label={`${fa.curriculum.gateQuestion} ${index + 1} ${fa.curriculum.gateOf} ${total}`} className="flex flex-col gap-4">
+    <section
+      aria-label={`${fa.curriculum.gateQuestion} ${index + 1} ${fa.curriculum.gateOf} ${total}`}
+      className="flex flex-col gap-4"
+    >
       <header className="flex items-center justify-between gap-2">
         <p className="text-small text-ink-soft">
           {index + 1} / {total}
@@ -221,7 +219,11 @@ export function ExerciseSession({
       {/* ---- order (click-to-order) ---- */}
       {ex.chunks && (
         <div className="flex flex-col gap-3">
-          <div className="flex min-h-14 flex-wrap items-center gap-2 rounded-md border border-dashed border-ink-faint bg-card p-3" dir="ltr" lang="ja">
+          <div
+            className="flex min-h-14 flex-wrap items-center gap-2 rounded-md border border-dashed border-ink-faint bg-card p-3"
+            dir="ltr"
+            lang="ja"
+          >
             {ordered.map((id) => {
               const chunk = ex.chunks!.find((c) => c.id === id)!;
               return (
@@ -257,7 +259,11 @@ export function ExerciseSession({
       {/* ---- build (template chips + free name slot) ---- */}
       {ex.chips && (
         <div className="flex flex-col gap-3">
-          <div className="flex min-h-14 flex-wrap items-center gap-2 rounded-md border border-dashed border-ink-faint bg-card p-3" dir="ltr" lang="ja">
+          <div
+            className="flex min-h-14 flex-wrap items-center gap-2 rounded-md border border-dashed border-ink-faint bg-card p-3"
+            dir="ltr"
+            lang="ja"
+          >
             {built.map((id) => {
               const chip = ex.chips!.find((c) => c.id === id)!;
               return chip.ja === '___NAME___' ? (
@@ -374,9 +380,7 @@ export function ExerciseSession({
           </button>
         )}
       </div>
-      {hintRevealed && !feedback && (
-        <p className="text-small text-ink-soft">{fa.curriculum.showHint}…</p>
-      )}
+      {hintRevealed && !feedback && <p className="text-small text-ink-soft">{fa.curriculum.showHint}…</p>}
     </section>
   );
 }
@@ -387,11 +391,17 @@ function labelFor(ex: ClientExercise, optionId: string): string {
 
 function skillLabel(skill: ClientExercise['targetSkill']): string {
   switch (skill) {
-    case 'vocab': return 'واژگان';
-    case 'grammar': return 'گرامر';
-    case 'listening': return 'شنیداری';
-    case 'expression': return 'عبارت‌ها';
-    case 'production': return 'تولید';
-    case 'structure': return 'ساختار';
+    case 'vocab':
+      return 'واژگان';
+    case 'grammar':
+      return 'گرامر';
+    case 'listening':
+      return 'شنیداری';
+    case 'expression':
+      return 'عبارت‌ها';
+    case 'production':
+      return 'تولید';
+    case 'structure':
+      return 'ساختار';
   }
 }

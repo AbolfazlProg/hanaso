@@ -80,7 +80,9 @@ export async function POST(req: Request) {
   }
   const parsed = bodySchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json(fail({ code: 'station/validation_failed', message: parsed.error.message }), { status: 400 });
+    return NextResponse.json(fail({ code: 'station/validation_failed', message: parsed.error.message }), {
+      status: 400,
+    });
   }
   const payload = parsed.data;
   const userId = POC_DEFAULT_USER_ID;
@@ -89,10 +91,9 @@ export async function POST(req: Request) {
   try {
     bundle = loadChapterBundle(payload.chapterSlug);
   } catch (err) {
-    return NextResponse.json(
-      fail({ code: 'station/unknown_chapter', message: (err as Error).message }),
-      { status: 404 },
-    );
+    return NextResponse.json(fail({ code: 'station/unknown_chapter', message: (err as Error).message }), {
+      status: 404,
+    });
   }
   const station = bundle.chapter.stations.find((s) => s.slug === payload.stationSlug);
   if (!station) {
@@ -149,10 +150,9 @@ export async function POST(req: Request) {
     }
     const explainFa = found.blockKind === 'userReply' ? '' : found.explainFa;
     await store.incrementAttempts(userId, station.slug);
-    return NextResponse.json(
-      ok({ outcome: { correct, level: 0 as const, feedbackFa: correct ? '' : explainFa } }),
-      { headers: { 'cache-control': 'no-store' } },
-    );
+    return NextResponse.json(ok({ outcome: { correct, level: 0 as const, feedbackFa: correct ? '' : explainFa } }), {
+      headers: { 'cache-control': 'no-store' },
+    });
   }
 
   // complete — the SERVER enforces the walk order (prerequisites), not just the UI
@@ -163,9 +163,7 @@ export async function POST(req: Request) {
   }
   const prereqSlugs = station.prerequisites;
   if (prereqSlugs.length > 0) {
-    const prereqStates = new Map(
-      (await store.listForUnit(userId, prereqSlugs)).map((s) => [s.stationSlug, s]),
-    );
+    const prereqStates = new Map((await store.listForUnit(userId, prereqSlugs)).map((s) => [s.stationSlug, s]));
     const unsatisfied = prereqSlugs.filter(
       (slug) => !prereqStates.has(slug) || prereqStates.get(slug)!.status === 'in_progress',
     );
@@ -199,9 +197,7 @@ export async function POST(req: Request) {
   const chapterStore = getChapterProgressStore();
   const coreSlugs = bundle.chapter.stations.filter((s) => s.core).map((s) => s.slug);
   const states = new Map((await store.listForUnit(userId, coreSlugs)).map((s) => [s.stationSlug, s]));
-  const allDone = coreSlugs.every(
-    (slug) => states.has(slug) && states.get(slug)!.status !== 'in_progress',
-  );
+  const allDone = coreSlugs.every((slug) => states.has(slug) && states.get(slug)!.status !== 'in_progress');
   let chapterState = await chapterStore.get(userId, payload.chapterSlug);
   if (allDone && (!chapterState || chapterState.status === 'started')) {
     chapterState = {
@@ -224,7 +220,9 @@ export async function GET(req: Request) {
   const chapterSlug = url.searchParams.get('chapter');
   const stationSlug = url.searchParams.get('station');
   if (!chapterSlug || !stationSlug) {
-    return NextResponse.json(fail({ code: 'station/missing_params', message: 'chapter & station required' }), { status: 400 });
+    return NextResponse.json(fail({ code: 'station/missing_params', message: 'chapter & station required' }), {
+      status: 400,
+    });
   }
   const state: StationState | null = await getStationProgressStore().get(POC_DEFAULT_USER_ID, stationSlug);
   return NextResponse.json(ok({ stationSlug, state }), { headers: { 'cache-control': 'no-store' } });

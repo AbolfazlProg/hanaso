@@ -54,12 +54,7 @@ export default function LearnPage() {
 
       <section className="flex flex-col gap-3 border-t border-ink-faint pt-6">
         <p className="text-caption text-ink-soft">{fa.curriculum.poUnitLabel}</p>
-        <LearnCard
-          dialogueId={dialogue.id}
-          titleFa="کافه — صبح"
-          sceneFa={dialogue.scene}
-          jlpt="Pre-N5"
-        />
+        <LearnCard dialogueId={dialogue.id} titleFa="کافه — صبح" sceneFa={dialogue.scene} jlpt="Pre-N5" />
       </section>
 
       <footer className="mt-auto border-t border-ink-faint pt-4 text-caption text-ink-soft">

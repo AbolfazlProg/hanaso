@@ -21,7 +21,18 @@
  *   carries `dialogue_id` as the anchor column for dialogue-keyed lookups.
  */
 import { sql } from 'drizzle-orm';
-import { index, integer, jsonb, pgSchema, primaryKey, real, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import {
+  index,
+  integer,
+  jsonb,
+  pgSchema,
+  primaryKey,
+  real,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { dialogues, lessons, units } from './content';
 
 /** Schema `app` — user data; never rewritten from content publishes. */
@@ -96,10 +107,7 @@ export const stationProgress = app.table(
     completedAt: timestamp('completed_at', { withTimezone: true }),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [
-    primaryKey({ columns: [t.userId, t.stationId] }),
-    index('station_progress_user_idx').on(t.userId),
-  ],
+  (t) => [primaryKey({ columns: [t.userId, t.stationId] }), index('station_progress_user_idx').on(t.userId)],
 );
 
 /* ------------------------------------------------------- chapter_progress (TASK-LEARNING-01) */
@@ -132,10 +140,7 @@ export const chapterProgress = app.table(
     startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [
-    primaryKey({ columns: [t.userId, t.unitId] }),
-    index('chapter_progress_user_idx').on(t.userId),
-  ],
+  (t) => [primaryKey({ columns: [t.userId, t.unitId] }), index('chapter_progress_user_idx').on(t.userId)],
 );
 
 /* ------------------------------------------------------- lesson_progress (§۳ extension — PoC unit record) */

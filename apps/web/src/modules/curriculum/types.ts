@@ -282,9 +282,7 @@ export type StationType = (typeof STATION_TYPES)[number];
 
 /** Completion criterion (station 15-field spec #12). */
 export type CompletionCriteria =
-  | { kind: 'viewed' }
-  | { kind: 'task_completed' }
-  | { kind: 'exercise_threshold'; threshold: number };
+  { kind: 'viewed' } | { kind: 'task_completed' } | { kind: 'exercise_threshold'; threshold: number };
 
 /** One station (≡ lesson) of a chapter's island journey. */
 export interface Station {
@@ -350,13 +348,7 @@ export interface Chapter {
 /* ------------------------------------------------------------------ journey (runtime view) */
 
 /** Derived (never stored) availability — island architecture §۹. */
-export type StationAvailability =
-  | 'locked'
-  | 'available'
-  | 'in_progress'
-  | 'completed'
-  | 'needs_retry'
-  | 'skipped';
+export type StationAvailability = 'locked' | 'available' | 'in_progress' | 'completed' | 'needs_retry' | 'skipped';
 
 /** Stored station walk state (app.station_progress mirror). */
 export interface StationState {

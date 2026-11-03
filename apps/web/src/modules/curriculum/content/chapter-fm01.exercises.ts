@@ -1104,6 +1104,4 @@ export const FM01_EXERCISES: Exercise[] = [
 ];
 
 /** Practice-pool ids keyed for station block wiring. */
-export const FM01_EXERCISES_BY_ID: Record<string, Exercise> = Object.fromEntries(
-  FM01_EXERCISES.map((e) => [e.id, e]),
-);
+export const FM01_EXERCISES_BY_ID: Record<string, Exercise> = Object.fromEntries(FM01_EXERCISES.map((e) => [e.id, e]));

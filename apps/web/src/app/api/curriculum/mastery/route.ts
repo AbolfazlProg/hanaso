@@ -42,7 +42,9 @@ export async function POST(req: Request) {
   }
   const parsed = bodySchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json(fail({ code: 'mastery/validation_failed', message: parsed.error.message }), { status: 400 });
+    return NextResponse.json(fail({ code: 'mastery/validation_failed', message: parsed.error.message }), {
+      status: 400,
+    });
   }
   const { chapterSlug, answers } = parsed.data;
   const userId = POC_DEFAULT_USER_ID;
@@ -51,7 +53,9 @@ export async function POST(req: Request) {
   try {
     bundle = loadChapterBundle(chapterSlug);
   } catch (err) {
-    return NextResponse.json(fail({ code: 'mastery/unknown_chapter', message: (err as Error).message }), { status: 404 });
+    return NextResponse.json(fail({ code: 'mastery/unknown_chapter', message: (err as Error).message }), {
+      status: 404,
+    });
   }
   const chapter = bundle.chapter;
 
@@ -59,9 +63,7 @@ export async function POST(req: Request) {
   // D-stage replay tests comprehension of a dialogue the learner has studied).
   const stationStore = getStationProgressStore();
   const coreSlugs = chapter.stations.filter((s) => s.core).map((s) => s.slug);
-  const walkStates = new Map(
-    (await stationStore.listForUnit(userId, coreSlugs)).map((s) => [s.stationSlug, s]),
-  );
+  const walkStates = new Map((await stationStore.listForUnit(userId, coreSlugs)).map((s) => [s.stationSlug, s]));
   const unwalked = coreSlugs.filter((slug) => !walkStates.has(slug) || walkStates.get(slug)!.status === 'in_progress');
   if (unwalked.length > 0) {
     return NextResponse.json(
@@ -128,9 +130,7 @@ export async function POST(req: Request) {
     },
     LEVELS_BY_CODE[chapter.levelCode]?.caps.maxRemediationLoops ?? 3,
   );
-  const chapterState = next
-    ? await chapterStore.upsert(userId, chapterSlug, next, attempt.id)
-    : current!;
+  const chapterState = next ? await chapterStore.upsert(userId, chapterSlug, next, attempt.id) : current!;
 
   return NextResponse.json(
     ok({
@@ -156,7 +156,9 @@ export async function GET(req: Request) {
   try {
     bundle = loadChapterBundle(chapterSlug);
   } catch (err) {
-    return NextResponse.json(fail({ code: 'mastery/unknown_chapter', message: (err as Error).message }), { status: 404 });
+    return NextResponse.json(fail({ code: 'mastery/unknown_chapter', message: (err as Error).message }), {
+      status: 404,
+    });
   }
   const { toClientExercise } = await import('@/modules/curriculum');
   const bank = Object.values(bundle.chapter.exercises)

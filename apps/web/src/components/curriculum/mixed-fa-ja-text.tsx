@@ -11,7 +11,8 @@
 import type { ReactNode } from 'react';
 
 /** CJK ideographs, kana, prolonged sound mark, CJK punctuation. */
-const JA_RUN = /([\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3005\u3006\u30fc\u3001\u3002\uff0c\uff01\uff1f]+)/g;
+const JA_RUN =
+  /([\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3005\u3006\u30fc\u3001\u3002\uff0c\uff01\uff1f]+)/g;
 
 export function MixedFaJaText({ text, className }: { text: string; className?: string }): ReactNode {
   const parts = text.split(JA_RUN);

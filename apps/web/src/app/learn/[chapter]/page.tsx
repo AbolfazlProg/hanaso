@@ -29,8 +29,8 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
         <h1 className="text-h1 font-black text-indigo">{chapter.titleFa}</h1>
         <p className="text-lead text-ink-soft">{chapter.summaryFa}</p>
         <p className="flex items-center gap-2 text-small text-ink-soft">
-          <Clock3 aria-hidden className="size-4" />
-          ~{new Intl.NumberFormat('fa-IR').format(chapter.estMinutes)} {fa.curriculum.minutes} ·{' '}
+          <Clock3 aria-hidden className="size-4" />~{new Intl.NumberFormat('fa-IR').format(chapter.estMinutes)}{' '}
+          {fa.curriculum.minutes} ·{' '}
           {new Intl.NumberFormat('fa-IR').format(chapter.stations.filter((s) => s.core).length)}{' '}
           {fa.curriculum.stations}
         </p>
