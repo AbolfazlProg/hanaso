@@ -18,6 +18,7 @@
 import { existsSync } from 'node:fs';
 import { runMigrations } from './migrate';
 import { runSeed } from './seed';
+import { runCurriculumSeed } from './seed-curriculum';
 import { checkDatabaseReadiness } from './readiness';
 import { restoreDump, urlForDatabase } from './restore';
 import { runBackup } from '../worker/backup';
@@ -163,6 +164,11 @@ async function main(): Promise<void> {
     case 'migrate':
       await cmdMigrate();
       break;
+    case 'seed:curriculum': {
+      const result = await runCurriculumSeed({ url: directUrl() });
+      console.log(JSON.stringify({ ok: true, command: 'seed:curriculum', ...result }));
+      break;
+    }
     case 'seed':
       await cmdSeed();
       break;

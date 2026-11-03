@@ -11,6 +11,16 @@
  */
 import { InMemoryAttemptRepository, PgAttemptRepository, type AttemptRepository } from '@/modules/mastery/server';
 import { InMemoryProgressRepository, PgProgressRepository, type ProgressRepository } from '@/modules/progress/server';
+import {
+  InMemoryChapterProgressRepository,
+  InMemoryStationProgressRepository,
+  type ChapterProgressRepository,
+  type StationProgressRepository,
+} from '@/modules/curriculum/repository';
+import {
+  PgChapterProgressRepository,
+  PgStationProgressRepository,
+} from '@/db/repositories/curriculum';
 import type { PocEvent } from './event-store';
 import { InMemoryEventStore } from './event-store';
 import { databaseConfigured, getDbClient } from '@/db/client';
@@ -18,6 +28,8 @@ import { databaseConfigured, getDbClient } from '@/db/client';
 let attemptStore: AttemptRepository | null = null;
 let eventStore: InMemoryEventStore | null = null;
 let progressStore: ProgressRepository | null = null;
+let stationProgressStore: StationProgressRepository | null = null;
+let chapterProgressStore: ChapterProgressRepository | null = null;
 
 /** True when the Postgres-backed repositories are active. */
 export function usingPostgresStores(): boolean {
@@ -39,11 +51,29 @@ export function getProgressStore(): ProgressRepository {
   return progressStore;
 }
 
+/** Island walk progress (TASK-LEARNING-01) — station states. */
+export function getStationProgressStore(): StationProgressRepository {
+  stationProgressStore ??= usingPostgresStores()
+    ? new PgStationProgressRepository(getDbClient())
+    : new InMemoryStationProgressRepository();
+  return stationProgressStore;
+}
+
+/** Island walk progress (TASK-LEARNING-01) — chapter A→D aggregate. */
+export function getChapterProgressStore(): ChapterProgressRepository {
+  chapterProgressStore ??= usingPostgresStores()
+    ? new PgChapterProgressRepository(getDbClient())
+    : new InMemoryChapterProgressRepository();
+  return chapterProgressStore;
+}
+
 /** TEST-ONLY: drop cached singletons (switch env between unit/integration runs). */
 export function resetStoresForTests(): void {
   attemptStore = null;
   progressStore = null;
   eventStore = null;
+  stationProgressStore = null;
+  chapterProgressStore = null;
 }
 
 export type { PocEvent };

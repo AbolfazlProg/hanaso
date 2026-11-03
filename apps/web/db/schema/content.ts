@@ -134,16 +134,92 @@ export const dialogueScenes = content.table(
   (t) => [index('dialogue_scenes_dialogue_id_idx').on(t.dialogueId)],
 );
 
-/* ------------------------------------------------------------------ lessons (§۳-۱ + §۲) */
+/* ------------------------------------------------------------------ levels (TASK-LEARNING-01) */
+/**
+ * Level band policies (L1..L7) — DATA, not code (KB LEVEL_BASED_CONTENT_MATRIX §۲,
+ * DD-091). The curriculum engine reads caps/thresholds from these rows; an owner
+ * decision (e.g. OQ-016 gate hardness) becomes a data change, never a code change.
+ */
+export const levels = content.table(
+  'levels',
+  {
+    id: id(),
+    /** 'L1'..'L7' — stable band code. */
+    code: text('code').notNull(),
+    titleFa: text('title_fa').notNull(),
+    /** Approximate public-facing labels (honesty: planning bands, not official mapping). */
+    jlptLabel: text('jlpt_label'),
+    cefrLabel: text('cefr_label'),
+    /** Can-do summary for this band (Persian). */
+    canDoFa: text('can_do_fa'),
+    orderInCourse: integer('order_in_course').notNull(),
+    /**
+     * Band policy bundle (LEVEL_MATRIX §۲ + LOAD_SPEC): vocab/grammar/station/time caps,
+     * listening speed, furigana policy, mastery gate thresholds {weighted, minMeasure}.
+     * Content-validation tests read the same values from the bundled module.
+     */
+    policy: jsonb('policy').notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [uniqueIndex('levels_code_key').on(t.code)],
+);
+
+/* ------------------------------------------------------------------ units = chapters (TASK-LEARNING-01) */
+/**
+ * Chapter ≡ Unit (KB CHAPTER_COMPOSITION §۲, DD-090): the smallest "understood"
+ * entity — one anchor dialogue + a station graph + a mastery gate. `understood`
+ * is only ever issued at this level (DD-048).
+ */
+export const units = content.table(
+  'units',
+  {
+    id: id(),
+    slug: text('slug').notNull(),
+    levelId: uuid('level_id')
+      .notNull()
+      .references(() => levels.id),
+    titleFa: text('title_fa').notNull(),
+    /** Can-do goal card shown BEFORE the anchor dialogue (COMPOSITION §۳-۲). */
+    canDoFa: text('can_do_fa').notNull(),
+    /** One-sentence scene summary (Persian). */
+    summaryFa: text('summary_fa').notNull(),
+    /** Anchor dialogue (1:1 — double-anchor is forbidden, DD-090). */
+    dialogueId: uuid('dialogue_id')
+      .notNull()
+      .references(() => dialogues.id),
+    /** Position inside the level. */
+    orderInLevel: integer('order_in_level').notNull(),
+    estMinutes: integer('est_minutes').notNull(),
+    /** 'light' | 'medium' | 'heavy' (LOAD_SPEC §۵). */
+    estLoad: text('est_load').notNull(),
+    /** Story-arc tag (split chapters share it — S3-3). */
+    bandArc: text('band_arc'),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex('units_slug_key').on(t.slug),
+    uniqueIndex('units_dialogue_id_key').on(t.dialogueId),
+    index('units_level_order_idx').on(t.levelId, t.orderInLevel),
+  ],
+);
+
+/* ------------------------------------------------------------------ lessons (§۳-۱ + §۲ + TASK-LEARNING-01 station model) */
+/**
+ * Lesson ≡ Station (KB DD-090): one learning objective per row, walked as one node
+ * of the chapter's island journey. The PoC-era columns stay untouched; the station
+ * extension (core/lineRefs/estLoad/criteria) is additive (expand — SKL-006).
+ */
 export const lessons = content.table(
   'lessons',
   {
     id: id(),
-    /** Logical ref → content.units (units/courses land with the full content schema, M3). */
+    /** Logical ref → content.units (chapters); FK-able in a later contract phase. */
     unitId: uuid('unit_id').notNull(),
     slug: text('slug').notNull(),
     titleFa: text('title_fa').notNull(),
-    /** 'kana' | 'vocab' | 'grammar' | 'kanji' | 'conversation'. */
+    /** Station type enum (DATA-CONTRACT §۲): anchor|context|vocab|kana|kanji|grammar|particles|structure|expression|register|pronunciation|culture|listen|practice|integrate|mastery|review|deepdive|extra-examples (+ legacy 'conversation' for the PoC row). */
     type: text('type').notNull(),
     stage: integer('stage').notNull(),
     jlpt: text('jlpt'),
@@ -154,14 +230,33 @@ export const lessons = content.table(
       .notNull()
       .default(sql`'{}'::uuid[]`),
     order: integer('order').notNull(),
-    /** Unit anchor (G1): NOT NULL for stage-2+ dialogue-anchored units; NULL for support/kana lessons. */
+    /** Unit anchor (G1): NOT NULL for stage-2+ dialogue-anchored units; NULL for support lessons. */
     dialogueId: uuid('dialogue_id').references(() => dialogues.id),
     /** Cycle stage this lesson serves in the A→D model (anchor lesson = 'B_lesson'); NULL for support lessons. */
     unitStage: text('unit_stage'),
+    /* ---- station extension (TASK-LEARNING-01) ---- */
+    /** Core-path station vs optional off-path branch (island architecture §۷). */
+    core: boolean('core').notNull().default(true),
+    /** Source dialogue lines (station 15-field spec #4; CONTENT-080) — resolved line UUIDs. */
+    lineRefs: uuid('line_refs')
+      .array()
+      .notNull()
+      .default(sql`'{}'::uuid[]`),
+    /** Learning objective code (logical ref → learning_objectives.code). */
+    objectiveCode: text('objective_code'),
+    /** 'light' | 'medium' | 'heavy' cognitive load (S1 #14). */
+    estLoad: text('est_load'),
+    /** Completion criterion — {kind:'viewed'|'exercise_threshold'|'task_completed', threshold?}. */
+    completionCriteria: jsonb('completion_criteria'),
+    /** Mastery criterion (station-level, feeds FSRS/Test-Out) — nullable. */
+    masteryCriteria: jsonb('mastery_criteria'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
-  (t) => [index('lessons_unit_id_order_idx').on(t.unitId, t.order)],
+  (t) => [
+    index('lessons_unit_id_order_idx').on(t.unitId, t.order),
+    index('lessons_type_idx').on(t.type),
+  ],
 );
 
 /* ------------------------------------------------------------------ learning_objectives (§۲ new) */

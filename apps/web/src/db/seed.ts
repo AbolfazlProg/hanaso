@@ -25,11 +25,12 @@ import { loadDialogue } from '../modules/dialogue/content/loader';
 import * as schema from '../../db/schema';
 import { characterContentId, dialogueContentId, dialogueLineContentId, lessonContentId, unitContentId } from './ids';
 
-/** Dialogue units to seed (slug → Persian title; the slice's single unit today). */
-export const SEED_DIALOGUE_SLUGS = ['cafe-morning-01'] as const;
+/** Dialogue units to seed (slug → Persian title; the slice's PoC unit + chapter dialogues). */
+export const SEED_DIALOGUE_SLUGS = ['cafe-morning-01', 'first-meeting-01'] as const;
 
 const SEED_TITLES_FA: Record<string, string> = {
   'cafe-morning-01': 'صبح در کافه — گفت‌وگوی نمونه',
+  'first-meeting-01': 'اولین دیدار — معرفی خود در کافه (فصل ۱)',
 };
 
 export interface SeedResult {
@@ -46,7 +47,9 @@ const CHARACTER_DESCRIPTIONS_FA: Record<string, string> = {
   'chr-sora': 'سورا — همدم دوم؛ همکار و دوست صمیمی.',
 };
 
-export async function runSeed(options: { url: string }): Promise<SeedResult> {
+export async function runSeed(
+  options: { url: string; extraDialogueSlugs?: readonly string[] } = { url: '' },
+): Promise<SeedResult> {
   const pool = new Pool({
     connectionString: options.url,
     max: 1,
@@ -94,7 +97,10 @@ export async function runSeed(options: { url: string }): Promise<SeedResult> {
     let dialogueLines = 0;
     let lessons = 0;
 
-    for (const slug of SEED_DIALOGUE_SLUGS) {
+    const slugs = options.extraDialogueSlugs?.length
+      ? [...new Set([...SEED_DIALOGUE_SLUGS, ...options.extraDialogueSlugs])]
+      : [...SEED_DIALOGUE_SLUGS];
+    for (const slug of slugs) {
       const dialogue = loadDialogue(slug);
       const dialogueUuid = dialogueContentId(slug);
 
@@ -183,13 +189,18 @@ export async function runSeed(options: { url: string }): Promise<SeedResult> {
 }
 
 /** Drop all seeded content rows (TEST-ONLY — never runs against production). */
-export async function clearSeededContent(options: { url: string }): Promise<void> {
+export async function clearSeededContent(
+  options: { url: string },
+  extraDialogueSlugs: readonly string[] = [],
+): Promise<void> {
   const pool = new Pool({ connectionString: options.url, max: 1 });
   try {
     const db = drizzle(pool);
-    await db.delete(schema.dialogueLines);
+    const slugs = [...new Set([...SEED_DIALOGUE_SLUGS, ...extraDialogueSlugs])];
+    const dialogueUuids = slugs.map((slug) => dialogueContentId(slug));
+    await db.delete(schema.dialogueLines).where(sql`${schema.dialogueLines.dialogueId} = ANY(${dialogueUuids}::uuid[])`);
     await db.delete(schema.lessons).where(eq(schema.lessons.unitStage, 'B_lesson'));
-    await db.delete(schema.dialogues);
+    await db.delete(schema.dialogues).where(sql`${schema.dialogues.slug} = ANY(${sql.raw(`ARRAY[${slugs.map((s) => `'${s}'`).join(',')}]::text[]`)})`);
     await db.delete(schema.characters);
   } finally {
     await pool.end();

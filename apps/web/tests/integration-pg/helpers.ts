@@ -8,6 +8,7 @@
  */
 import { runMigrations } from '@/db/migrate';
 import { runSeed } from '@/db/seed';
+import { runCurriculumSeed } from '@/db/seed-curriculum';
 import { resetDatabase, urlForDatabase } from '@/db/restore';
 
 export const TEST_DB_NAME = 'hanaso_test';
@@ -33,6 +34,8 @@ export function ensureTestDatabase(): Promise<string> {
     const url = urlForDatabase(base, TEST_DB_NAME);
     await runMigrations({ url });
     await runSeed({ url });
+    // TASK-LEARNING-01: levels + chapter unit + station lesson rows (idempotent)
+    await runCurriculumSeed({ url });
     // switch the app modules (stores, readiness) onto the test database
     process.env.DATABASE_URL = url;
     process.env.DIRECT_DATABASE_URL = url;
