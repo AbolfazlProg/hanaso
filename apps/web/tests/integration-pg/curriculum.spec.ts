@@ -48,7 +48,7 @@ describe('curriculum seed (content rows)', () => {
     expect(unit.est_minutes).toBe(25);
 
     const { rows: stationRows } = await pool!.query(
-      'select slug, type, core, order_index from content.lessons where unit_id = $1 order by order_index',
+      'select slug, type, core, "order" from content.lessons where unit_id = $1 order by "order"',
       [unit.id],
     );
     expect(stationRows).toHaveLength(12);

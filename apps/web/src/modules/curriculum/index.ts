@@ -8,4 +8,5 @@ export * from './validation';
 export * from './grading';
 export * from './progress-machine';
 export * from './repository';
+export * from './client-transport';
 export * from './content';

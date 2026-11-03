@@ -2,49 +2,70 @@
 /**
  * HANASO — StationRunner (TASK-LEARNING-01) — the LESSON ENGINE island.
  *
- * Walks a station's teaching blocks IN AUTHORED ORDER (the order lives in data —
- * this component never reorders, merges or skips: DATA-CONTRACT §۲). Each block
- * kind renders through its dedicated renderer below; exercise blocks delegate to
- * ExerciseSession (server-graded). Completion is POSTed to /api/curriculum/station
- * which re-checks the criterion server-side.
- *
- * A11y: linear focus flow RTL; one primary action visible at a time; in-place
- * status regions (no modals) per SKL-002 §۳-۶.
+ * Walks a station's teaching blocks IN AUTHORED ORDER (order lives in data —
+ * DATA-CONTRACT §۲). The station arrives PRE-STRIPPED from the RSC shell
+ * (client-transport.ts — no answer keys cross the boundary); EVERY interaction
+ * grades through /api/curriculum/station (bank exercises AND block interactions:
+ * discovery / prediction / integrate replies — SKL-013).
  */
 import { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, BookOpenText, CheckCircle2, Ear, MessageCircleQuestion, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowLeft, BookOpenText, CheckCircle2, Ear, MessageCircleQuestion, PlayCircle, Sparkles } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import type {
-  Chapter,
-  Station,
-  TeachingBlock,
-  UserReplySpec,
-} from '@/modules/curriculum/types';
+  ClientStation,
+  ClientTeachingBlock,
+} from '@/modules/curriculum/client-transport';
+import type { Chapter, Station } from '@/modules/curriculum/types';
 import { JaBlock } from '@/components/patterns/ja-block';
+import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 
-export interface StationRunnerProps {
-  chapterSlug: string;
-  station: Station;
-  chapter: Pick<Chapter, 'words' | 'expressions' | 'exercises'>;
-  /** Stripped exercise payloads (answers removed server-side). */
-  clientExercises: Record<string, ClientExercise>;
-  dialogue: {
-    lines: { id: string; tokens: { surface: string }[]; fa: string; speaker: string }[];
-    speakers: Record<string, string>;
-  };
-  audioByLine: Record<string, string>;
-  audioAvailable: boolean;
-}
+const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
 interface Line {
   id: string;
   tokens: { surface: string }[];
   fa: string;
   speaker: string;
+}
+
+export interface StationRunnerProps {
+  chapterSlug: string;
+  /** The stripped station (no answer material — server grades everything). */
+  station: ClientStation;
+  chapter: Pick<Chapter, 'words' | 'expressions'>;
+  clientExercises: Record<string, ClientExercise>;
+  dialogue: {
+    lines: Line[];
+    speakers: Record<string, string>;
+  };
+  audioByLine: Record<string, string>;
+  audioAvailable: boolean;
+}
+
+/** Grading round-trip for one block interaction. */
+async function gradeBlock(payload: {
+  chapterSlug: string;
+  stationSlug: string;
+  blockId: string;
+  stepIndex?: number;
+  answer: { kind: string; optionId?: string; orderedIds?: string[]; chipOrder?: string[]; nameValue?: string };
+}): Promise<{ correct: boolean; feedbackFa: string } | null> {
+  try {
+    const res = await fetch('/api/curriculum/station', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'grade-block', ...payload }),
+    });
+    const json = (await res.json()) as { data?: { outcome: { correct: boolean; feedbackFa: string } } };
+    return json.data?.outcome ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export function StationRunner(props: StationRunnerProps) {
@@ -54,7 +75,6 @@ export function StationRunner(props: StationRunnerProps) {
   const [sessionScore, setSessionScore] = useState<number | null>(null);
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(false);
-  const [discovery, setDiscovery] = useState<Record<string, { picked: string; correct: boolean }>>({});
 
   const blocks = station.blocks;
   const block = blocks[step];
@@ -89,17 +109,12 @@ export function StationRunner(props: StationRunnerProps) {
       setStep((s) => s + 1);
       return;
     }
-    // last block reached — completion depends on the criterion
     if (station.completion.kind === 'viewed') {
       void finishSession(null);
     } else if (station.completion.kind === 'task_completed') {
       void finishSession(null, true);
-    } else if (sessionScore === null) {
-      // exercise_threshold but the session wasn't run (or its score lost) — the
-      // server will reject if the criterion isn't met; that's the guard.
-      void finishSession(0);
     } else {
-      void finishSession(sessionScore);
+      void finishSession(sessionScore ?? 0);
     }
   }, [blocks.length, finishSession, sessionScore, station.completion.kind, step]);
 
@@ -121,28 +136,33 @@ export function StationRunner(props: StationRunnerProps) {
           ))}
         </div>
         <p className="shrink-0 text-caption text-ink-soft" aria-live="polite">
-          {new Intl.NumberFormat('fa-IR').format(step + 1)} / {new Intl.NumberFormat('fa-IR').format(blocks.length)}
+          {faNum(step + 1)} / {faNum(blocks.length)}
         </p>
       </div>
 
-      {block && <BlockView
-        block={block}
-        chapter={chapter}
-        clientExercises={clientExercises}
-        lineById={lineById}
-        speakers={dialogue.speakers}
-        audioByLine={audioByLine}
-        audioAvailable={audioAvailable}
-        chapterSlug={chapterSlug}
-        stationSlug={station.slug}
-        discovery={discovery}
-        setDiscovery={setDiscovery}
-        onExerciseDone={(score) => {
-          setSessionScore(score);
-          if (step < blocks.length - 1) setStep((s) => s + 1);
-          else void finishSession(score);
-        }}
-      />}
+      {block && (
+        <BlockView
+          block={block}
+          stationSlug={station.slug}
+          chapterSlug={chapterSlug}
+          chapter={chapter}
+          clientExercises={clientExercises}
+          lineById={lineById}
+          speakers={dialogue.speakers}
+          audioByLine={audioByLine}
+          audioAvailable={audioAvailable}
+          onExerciseDone={(score) => {
+            setSessionScore(score);
+            if (step < blocks.length - 1) setStep((s) => s + 1);
+            else void finishSession(score);
+          }}
+          onSceneDone={() => {
+            // INTEGRATE: the communicative task finished → complete the station
+            if (step < blocks.length - 1) setStep((s) => s + 1);
+            else void finishSession(null, true);
+          }}
+        />
+      )}
 
       {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && (
         <div className="flex items-center gap-3">
@@ -183,30 +203,28 @@ export function StationRunner(props: StationRunnerProps) {
 
 function BlockView({
   block,
+  stationSlug,
+  chapterSlug,
   chapter,
   clientExercises,
   lineById,
   speakers,
   audioByLine,
   audioAvailable,
-  chapterSlug,
-  stationSlug,
-  discovery,
-  setDiscovery,
   onExerciseDone,
+  onSceneDone,
 }: {
-  block: TeachingBlock;
-  chapter: StationRunnerProps['chapter'];
+  block: ClientTeachingBlock;
+  stationSlug: string;
+  chapterSlug: string;
+  chapter: Pick<Chapter, 'words' | 'expressions'>;
   clientExercises: Record<string, ClientExercise>;
   lineById: Map<string, Line>;
   speakers: Record<string, string>;
   audioByLine: Record<string, string>;
   audioAvailable: boolean;
-  chapterSlug: string;
-  stationSlug: string;
-  discovery: Record<string, { picked: string; correct: boolean }>;
-  setDiscovery: React.Dispatch<React.SetStateAction<Record<string, { picked: string; correct: boolean }>>>;
   onExerciseDone: (score: number) => void;
+  onSceneDone: () => void;
 }) {
   switch (block.kind) {
     case 'scene':
@@ -216,7 +234,9 @@ function BlockView({
             <Sparkles aria-hidden className="size-5" />
             {block.titleFa}
           </h2>
-          <p className="mt-3 text-body leading-[var(--leading-fa)] text-ink">{block.bodyFa}</p>
+          <p className="mt-3 text-body leading-[var(--leading-fa)] text-ink">
+            <MixedFaJaText text={block.bodyFa} />
+          </p>
         </section>
       );
 
@@ -312,37 +332,38 @@ function BlockView({
 
     case 'guided-discovery':
       return (
-        <GuidedDiscoveryBlock
+        <DiscoveryBlock
           block={block}
+          stationSlug={stationSlug}
+          chapterSlug={chapterSlug}
           lineById={lineById}
           audioByLine={audioByLine}
           audioAvailable={audioAvailable}
-          state={discovery[block.id]}
-          onAnswer={(picked, correct) =>
-            setDiscovery((d) => ({ ...d, [block.id]: { picked, correct } }))
-          }
         />
       );
 
     case 'structured-input':
       return (
-        <StructuredInputBlock
+        <DiscoveryBlock
           block={block}
-          state={discovery[block.id]}
-          onAnswer={(picked, correct) =>
-            setDiscovery((d) => ({ ...d, [block.id]: { picked, correct } }))
-          }
+          stationSlug={stationSlug}
+          chapterSlug={chapterSlug}
+          lineById={lineById}
+          audioByLine={audioByLine}
+          audioAvailable={audioAvailable}
         />
       );
 
     case 'rule-card':
       return (
         <section className="rounded-md border-2 border-indigo bg-card p-5">
-          <div className="flex items-center justify-between gap-3">
-            <JaBlock className="text-h3 font-bold text-indigo">{block.patternJa}</JaBlock>
-          </div>
-          <h3 className="mt-2 text-body font-bold">{block.titleFa}</h3>
-          <p className="mt-3 text-body leading-[var(--leading-fa)]">{block.bodyFa}</p>
+          <JaBlock className="text-h3 font-bold text-indigo">{block.patternJa}</JaBlock>
+          <h3 className="mt-2 text-body font-bold">
+            <MixedFaJaText text={block.titleFa} />
+          </h3>
+          <p className="mt-3 text-body leading-[var(--leading-fa)]">
+            <MixedFaJaText text={block.bodyFa} />
+          </p>
           {block.structureTable && (
             <div className="mt-4 overflow-x-auto">
               <table className="w-full border-collapse text-small">
@@ -360,7 +381,7 @@ function BlockView({
                     <tr key={i} className="border-b border-ink-faint/50">
                       {row.map((cell, j) => (
                         <td key={j} dir="auto" className="px-3 py-2">
-                          {cell}
+                          <MixedFaJaText text={cell} />
                         </td>
                       ))}
                     </tr>
@@ -371,7 +392,7 @@ function BlockView({
           )}
           {block.persianBridgeFa && (
             <p className="mt-4 rounded-md border-s-2 border-s-ai bg-surface-warm p-3 text-body">
-              🌉 {block.persianBridgeFa}
+              <MixedFaJaText text={`🌉 ${block.persianBridgeFa}`} />
             </p>
           )}
           {block.honestyLabelFa && (
@@ -397,10 +418,12 @@ function BlockView({
                 {example.reading}
               </p>
               <p className="mt-2 text-body">{example.fa}</p>
-              <p className="mt-1 text-small text-ink-soft">{example.whyFa}</p>
+              <p className="mt-1 text-small text-ink-soft">
+                <MixedFaJaText text={example.whyFa} />
+              </p>
               {example.selfExplainFa && (
                 <p className="mt-3 rounded-md bg-surface-warm p-3 text-small">
-                  💭 {example.selfExplainFa}
+                  <MixedFaJaText text={`💭 ${example.selfExplainFa}`} />
                 </p>
               )}
             </article>
@@ -439,7 +462,15 @@ function BlockView({
       );
 
     case 'character-scene':
-      return <CharacterSceneBlock block={block} speakers={speakers} />;
+      return (
+        <CharacterSceneBlock
+          block={block}
+          stationSlug={stationSlug}
+          chapterSlug={chapterSlug}
+          speakers={speakers}
+          onSceneDone={onSceneDone}
+        />
+      );
 
     case 'wrap-up':
       return (
@@ -449,7 +480,7 @@ function BlockView({
             {block.itemsFa.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-body">
                 <CheckCircle2 aria-hidden className="mt-1 size-4 shrink-0 text-success" />
-                <span dir="auto">{item}</span>
+                <MixedFaJaText text={item} />
               </li>
             ))}
           </ul>
@@ -459,185 +490,168 @@ function BlockView({
 
     case 'dialogue-player':
       return (
-        <section className="rounded-md border border-ink-faint bg-card p-5">
-          <p className="text-body">
-            🎬 مکالمه را این‌جا در همین صفحه پخش کن — از پلیر بالا؛ سپس ادامه بده.
-          </p>
+        <section className="flex flex-col gap-3 rounded-md border-2 border-ai bg-card p-5">
+          <h3 className="flex items-center gap-2 text-h3 font-bold text-ai">
+            <PlayCircle aria-hidden className="size-5" />
+            {fa.curriculum.replayDialogue}
+          </h3>
+          <p className="text-body text-ink-soft">{fa.curriculum.dialogueGoToListen}</p>
+          <Link
+            href={`/learn/${chapterSlug}/dialogue`}
+            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+          >
+            {fa.curriculum.replayDialogue}
+            <ArrowLeft aria-hidden className="size-4" />
+          </Link>
         </section>
       );
   }
 }
 
-/* ---- guided discovery + structured input (shared choice-with-feedback shape) ---- */
-function ChoiceWithFeedback({
-  questionFa,
-  options,
-  correctOptionId,
-  explainFa,
-  state,
-  onAnswer,
-  children,
+/* ---- guided discovery + structured input (server-graded choice) ---- */
+function DiscoveryBlock({
+  block,
+  stationSlug,
+  chapterSlug,
+  lineById,
+  audioByLine,
+  audioAvailable,
 }: {
-  questionFa: string;
-  options: { id: string; label: string }[];
-  correctOptionId: string;
-  explainFa: string;
-  state?: { picked: string; correct: boolean };
-  onAnswer: (picked: string, correct: boolean) => void;
-  children?: React.ReactNode;
+  block: Extract<ClientTeachingBlock, { kind: 'guided-discovery' }> | Extract<ClientTeachingBlock, { kind: 'structured-input' }>;
+  stationSlug: string;
+  chapterSlug: string;
+  lineById: Map<string, Line>;
+  audioByLine: Record<string, string>;
+  audioAvailable: boolean;
 }) {
+  const [picked, setPicked] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<{ correct: boolean; feedbackFa: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const answer = async (optionId: string) => {
+    setPicked(optionId);
+    setBusy(true);
+    const result = await gradeBlock({
+      chapterSlug,
+      stationSlug,
+      blockId: block.id,
+      answer: { kind: 'option', optionId },
+    });
+    setOutcome(result ?? { correct: false, feedbackFa: '' });
+    setBusy(false);
+  };
+
+  const displayLine = 'displayLineRef' in block ? lineById.get(block.displayLineRef) : undefined;
+  const compareLine = 'compareLineRef' in block && block.compareLineRef ? lineById.get(block.compareLineRef) : undefined;
+
   return (
     <section className="flex flex-col gap-4 rounded-md border border-ink-faint bg-card p-5">
-      {children}
-      <p className="text-body font-bold">{questionFa}</p>
+      {(displayLine || compareLine) && (
+        <div className="flex flex-col gap-3">
+          <p className="flex items-center gap-2 text-caption text-ink-soft">
+            <MessageCircleQuestion aria-hidden className="size-4" />
+            به این خط‌ها نگاه کن:
+          </p>
+          {[displayLine, compareLine].filter(Boolean).map((l) => (
+            <div key={l!.id} className="flex items-center gap-3 rounded-md bg-surface-warm p-3">
+              <LineAudioButton lineId={l!.id} audioUrl={audioByLine[l!.id] ?? ''} audioAvailable={audioAvailable} />
+              <JaBlock className="text-body">
+                {l!.tokens.map((t, i) => {
+                  const hl = 'highlightSurfaces' in block && block.highlightSurfaces?.some((h) => t.surface.endsWith(h));
+                  return (
+                    <span key={i} className={hl ? 'rounded-sm bg-indigo-wash px-0.5 font-bold text-shu' : undefined}>
+                      {t.surface}
+                    </span>
+                  );
+                })}
+              </JaBlock>
+            </div>
+          ))}
+        </div>
+      )}
+      {'lineRef' in block && block.lineRef && !displayLine && (
+        <p className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</p>
+      )}
+      <p className="text-body font-bold">
+        <MixedFaJaText text={block.questionFa} />
+      </p>
       <div role="radiogroup" className="flex flex-col gap-2">
-        {options.map((opt) => {
-          const picked = state?.picked === opt.id;
-          const isCorrect = opt.id === correctOptionId;
-          return (
-            <button
-              key={opt.id}
-              type="button"
-              role="radio"
-              aria-checked={picked}
-              disabled={state !== undefined}
-              onClick={() => onAnswer(opt.id, isCorrect)}
-              className={[
-                'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
-                state && isCorrect
-                  ? 'border-success bg-card font-bold'
-                  : picked
-                    ? 'border-error bg-card'
-                    : 'border-ink-faint bg-card hover:border-ai',
-              ].join(' ')}
-            >
-              <span dir="auto">{opt.label}</span>
-            </button>
-          );
-        })}
+        {block.options.map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            role="radio"
+            aria-checked={picked === opt.id}
+            disabled={outcome !== null || busy}
+            onClick={() => void answer(opt.id)}
+            className={[
+              'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
+              picked === opt.id ? 'border-ai bg-indigo-wash font-bold' : 'border-ink-faint bg-card hover:border-ai',
+            ].join(' ')}
+          >
+            <span dir="auto">{opt.label}</span>
+          </button>
+        ))}
       </div>
-      {state && (
+      {outcome && (
         <div role="status" aria-live="polite" className="rounded-md bg-surface-warm p-3 text-body">
-          {state.correct ? `${fa.curriculum.correct} ` : ''}
-          {explainFa}
+          {outcome.correct && <p className="font-bold text-success">{fa.curriculum.correct}</p>}
+          {outcome.feedbackFa && <p className="mt-1">{outcome.feedbackFa}</p>}
         </div>
       )}
     </section>
   );
 }
 
-function GuidedDiscoveryBlock({
-  block,
-  lineById,
-  audioByLine,
-  audioAvailable,
-  state,
-  onAnswer,
-}: {
-  block: Extract<TeachingBlock, { kind: 'guided-discovery' }>;
-  lineById: Map<string, Line>;
-  audioByLine: Record<string, string>;
-  audioAvailable: boolean;
-  state?: { picked: string; correct: boolean };
-  onAnswer: (picked: string, correct: boolean) => void;
-}) {
-  const line = lineById.get(block.displayLineRef);
-  const compare = block.compareLineRef ? lineById.get(block.compareLineRef) : undefined;
-  return (
-    <ChoiceWithFeedback
-      questionFa={block.questionFa}
-      options={block.options}
-      correctOptionId={block.correctOptionId}
-      explainFa={block.explainFa}
-      state={state}
-      onAnswer={onAnswer}
-    >
-      <div className="flex flex-col gap-3">
-        <p className="flex items-center gap-2 text-caption text-ink-soft">
-          <MessageCircleQuestion aria-hidden className="size-4" />
-          به این خط‌ها نگاه کن:
-        </p>
-        {[line, compare].filter(Boolean).map((l) => (
-          <div key={l!.id} className="flex items-center gap-3 rounded-md bg-surface-warm p-3">
-            <LineAudioButton lineId={l!.id} audioUrl={audioByLine[l!.id] ?? ''} audioAvailable={audioAvailable} />
-            <JaBlock className="text-body">
-              {l!.tokens.map((t, i) => (
-                <span
-                  key={i}
-                  className={
-                    block.highlightSurfaces.some((h) => t.surface.endsWith(h))
-                      ? 'rounded-sm bg-indigo-wash px-0.5 font-bold text-shu'
-                      : undefined
-                  }
-                >
-                  {t.surface}
-                </span>
-              ))}
-            </JaBlock>
-          </div>
-        ))}
-      </div>
-    </ChoiceWithFeedback>
-  );
-}
-
-function StructuredInputBlock({
-  block,
-  state,
-  onAnswer,
-}: {
-  block: Extract<TeachingBlock, { kind: 'structured-input' }>;
-  state?: { picked: string; correct: boolean };
-  onAnswer: (picked: string, correct: boolean) => void;
-}) {
-  return (
-    <ChoiceWithFeedback
-      questionFa={block.questionFa}
-      options={block.options}
-      correctOptionId={block.correctOptionId}
-      explainFa={block.explainFa}
-      state={state}
-      onAnswer={onAnswer}
-    />
-  );
-}
-
-/* ---- character scene (INTEGRATE) ---- */
+/* ---- character scene (INTEGRATE — server-graded replies) ---- */
 function CharacterSceneBlock({
   block,
+  stationSlug,
+  chapterSlug,
   speakers,
+  onSceneDone,
 }: {
-  block: Extract<TeachingBlock, { kind: 'character-scene' }>;
+  block: Extract<ClientTeachingBlock, { kind: 'character-scene' }>;
+  stationSlug: string;
+  chapterSlug: string;
   speakers: Record<string, string>;
+  onSceneDone: () => void;
 }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [reply, setReply] = useState<Record<number, { ok: boolean }>>({});
   const [built, setBuilt] = useState<string[]>([]);
   const [nameValue, setNameValue] = useState('');
   const [choice, setChoice] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const visible = block.steps.slice(0, stepIndex + 1);
   const current = block.steps[stepIndex];
   const replySpec = current?.userReply;
+  const finished = stepIndex === block.steps.length - 1 && reply[stepIndex];
 
-  const advance = () => setStepIndex((i) => Math.min(block.steps.length - 1, i + 1));
+  const advance = () => {
+    if (stepIndex < block.steps.length - 1) setStepIndex(stepIndex + 1);
+    else onSceneDone();
+  };
 
-  const submitReply = () => {
+  const submitReply = async () => {
     if (!replySpec) return;
+    setBusy(true);
+    let answer: { kind: string; optionId?: string; chipOrder?: string[]; nameValue?: string };
     if (replySpec.kind === 'choice') {
-      const ok = choice === replySpec.correctOptionId;
-      setReply((r) => ({ ...r, [stepIndex]: { ok } }));
+      answer = { kind: 'option', optionId: choice ?? '' };
     } else {
-      const hasName = replySpec.nameSlotChipId
-        ? nameValue.trim().length > 0
-        : true;
-      const orderOk =
-        replySpec.acceptedOrders?.some(
-          (order) =>
-            order.length === built.length && order.every((id, i) => built[i] === id),
-        ) ?? true;
-      setReply((r) => ({ ...r, [stepIndex]: { ok: hasName && orderOk } }));
+      answer = { kind: 'build', chipOrder: built, nameValue };
     }
+    const result = await gradeBlock({
+      chapterSlug,
+      stationSlug,
+      blockId: block.id,
+      stepIndex,
+      answer,
+    });
+    setReply((r) => ({ ...r, [stepIndex]: { ok: result?.correct ?? false } }));
+    setBusy(false);
   };
 
   return (
@@ -735,7 +749,12 @@ function CharacterSceneBlock({
                 <button
                   type="button"
                   onClick={submitReply}
-                  disabled={s.userReply.kind === 'choice' ? !choice : built.length !== (s.userReply.chips?.length ?? 0)}
+                  disabled={
+                    busy ||
+                    (s.userReply.kind === 'choice'
+                      ? !choice
+                      : built.length !== (s.userReply.chips?.length ?? 0))
+                  }
                   className="h-11 w-fit rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep disabled:opacity-45"
                 >
                   {fa.curriculum.checkAnswer}
@@ -751,7 +770,7 @@ function CharacterSceneBlock({
         );
       })}
 
-      {stepIndex < block.steps.length - 1 && reply[stepIndex] && (
+      {reply[stepIndex] && !finished && (
         <button
           type="button"
           onClick={advance}
@@ -760,10 +779,14 @@ function CharacterSceneBlock({
           {fa.curriculum.continueBlock}
         </button>
       )}
-      {stepIndex === block.steps.length - 1 && reply[stepIndex] && (
-        <p role="status" className="rounded-md border border-success bg-card p-4 text-body font-bold text-success">
-          ✓ {fa.curriculum.stationDone}
-        </p>
+      {finished && (
+        <button
+          type="button"
+          onClick={onSceneDone}
+          className="flex h-11 w-fit items-center gap-2 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep"
+        >
+          {fa.curriculum.stationDone}
+        </button>
       )}
     </section>
   );
@@ -779,4 +802,4 @@ function roleLabel(role: string): string {
   }
 }
 
-export type { UserReplySpec };
+export type { Station };

@@ -184,9 +184,13 @@ export function gradeMasterySubmission(
   } as const;
 
   const result = computeMastery(scores, 'stage2');
-  const remediationStations = Object.keys(wrongByMeasure)
-    .map((m) => chapter.mastery.weakPointMap[m])
-    .filter((s): s is string => Boolean(s));
+  const remediationStations = [
+    ...new Set(
+      Object.keys(wrongByMeasure)
+        .flatMap((m) => chapter.mastery.weakPointMap[m] ?? [])
+        .filter(Boolean),
+    ),
+  ];
 
   return { ...result, scores, wrongByMeasure, remediationStations, perQuestion };
 }
@@ -208,6 +212,30 @@ export interface ClientExercise {
   lineRef?: string;
 }
 
+/**
+ * Deterministic per-exercise shuffle (QUESTION §۲-۴ anti-guess): options leave the
+ * server in a stable-but-varied order so the correct answer's position carries no
+ * pattern across the bank (authored positions are a/b/c-biased — this kills the bias
+ * without unstable re-shuffles inside a session).
+ */
+function shuffleSeeded<T>(items: T[], seed: string): T[] {
+  let h = 2166136261;
+  for (const c of seed) {
+    h ^= c.charCodeAt(0);
+    h = Math.imul(h, 16777619);
+  }
+  const rand = () => {
+    h ^= h << 13; h ^= h >>> 17; h ^= h << 5;
+    return ((h >>> 0) % 10000) / 10000;
+  };
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
+  }
+  return arr;
+}
+
 /** Strip the answer key + feedback from an exercise for client transport. */
 export function toClientExercise(ex: Exercise): ClientExercise {
   return {
@@ -218,9 +246,9 @@ export function toClientExercise(ex: Exercise): ClientExercise {
     promptJa: ex.promptJa,
     promptJaReading: ex.promptJaReading,
     audioLineRef: ex.audioLineRef,
-    options: ex.options,
+    options: ex.options ? shuffleSeeded(ex.options, ex.id) : undefined,
     clozeTokens: ex.clozeTokens,
-    chunks: ex.chunks,
+    chunks: ex.chunks ? shuffleSeeded(ex.chunks, `${ex.id}:chunks`) : undefined,
     chips: ex.chips,
     lineRef: ex.lineRef,
   };

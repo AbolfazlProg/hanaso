@@ -8,6 +8,7 @@ import {
   applyStationEvent,
   stationMeetsCompletion,
   gradeExerciseAnswer,
+  findBlockAnswer,
   type ExerciseAnswerPayload,
 } from '@/modules/curriculum';
 import type { StationState } from '@/modules/curriculum/types';
@@ -43,6 +44,16 @@ const bodySchema = z.discriminatedUnion('action', [
     stationSlug: z.string().min(1),
     exerciseId: z.string().min(1),
     attemptNo: z.number().int().min(1).max(3),
+    answer: answerSchema,
+  }),
+  z.object({
+    /** Block-interaction grading (guided-discovery / prediction / integrate replies):
+     *  the SAME no-key-in-client rule as bank exercises — answers live only here. */
+    action: z.literal('grade-block'),
+    chapterSlug: z.string().min(1),
+    stationSlug: z.string().min(1),
+    blockId: z.string().min(1),
+    stepIndex: z.number().int().min(0).optional(),
     answer: answerSchema,
   }),
   z.object({
@@ -113,11 +124,60 @@ export async function POST(req: Request) {
     return NextResponse.json(ok({ outcome }), { headers: { 'cache-control': 'no-store' } });
   }
 
-  // complete
+  if (payload.action === 'grade-block') {
+    const found = findBlockAnswer(station, payload.blockId, payload.stepIndex);
+    if (!found) {
+      return NextResponse.json(
+        fail({ code: 'station/unknown_block', message: `block ${payload.blockId} has no gradable answer` }),
+        { status: 404 },
+      );
+    }
+    let correct = false;
+    if (found.blockKind === 'userReply') {
+      const ans = payload.answer as ExerciseAnswerPayload;
+      if (ans.kind === 'option' && found.correctOptionId) correct = ans.optionId === found.correctOptionId;
+      if (ans.kind === 'build') {
+        const orderOk =
+          found.acceptedOrders?.some(
+            (o) => o.length === ans.chipOrder.length && o.every((id, i) => ans.chipOrder[i] === id),
+          ) ?? true;
+        const nameOk = found.nameSlotChipId ? (ans.nameValue ?? '').trim().length > 0 : true;
+        correct = orderOk && nameOk;
+      }
+    } else {
+      correct = payload.answer.kind === 'option' && payload.answer.optionId === found.correctOptionId;
+    }
+    const explainFa = found.blockKind === 'userReply' ? '' : found.explainFa;
+    await store.incrementAttempts(userId, station.slug);
+    return NextResponse.json(
+      ok({ outcome: { correct, level: 0 as const, feedbackFa: correct ? '' : explainFa } }),
+      { headers: { 'cache-control': 'no-store' } },
+    );
+  }
+
+  // complete — the SERVER enforces the walk order (prerequisites), not just the UI
   const score = payload.score == null ? null : Math.max(0, Math.min(1, payload.score));
   const current = await store.get(userId, station.slug);
   if (current?.status === 'completed') {
     return NextResponse.json(ok({ stationSlug: station.slug, state: current, already: true }));
+  }
+  const prereqSlugs = station.prerequisites;
+  if (prereqSlugs.length > 0) {
+    const prereqStates = new Map(
+      (await store.listForUnit(userId, prereqSlugs)).map((s) => [s.stationSlug, s]),
+    );
+    const unsatisfied = prereqSlugs.filter(
+      (slug) => !prereqStates.has(slug) || prereqStates.get(slug)!.status === 'in_progress',
+    );
+    if (unsatisfied.length > 0) {
+      return NextResponse.json(
+        fail({
+          code: 'station/prerequisites_not_met',
+          message: `station prerequisites not walked: ${unsatisfied.join(', ')}`,
+        }),
+        { status: 409 },
+      );
+    }
   }
   if (!stationMeetsCompletion(station, score, payload.taskCompleted ?? false)) {
     return NextResponse.json(

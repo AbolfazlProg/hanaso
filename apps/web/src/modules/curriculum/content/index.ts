@@ -33,10 +33,11 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
   mastery: {
     weights: { M1: 0.3, M2: 0.2, M3: 0.2, M4: 0.2, M5: 0.1 },
     weakPointMap: {
-      M2: 'stn-fm01-02-vocab',
-      M3: 'stn-fm01-03-grammar-desu',
-      M4: 'stn-fm01-07-listen',
-      M5: 'stn-fm01-06-expression',
+      M1: ['stn-fm01-01-anchor'],
+      M2: ['stn-fm01-02-vocab'],
+      M3: ['stn-fm01-03-grammar-desu', 'stn-fm01-05-grammar-qa'],
+      M4: ['stn-fm01-07-listen'],
+      M5: ['stn-fm01-06-expression'],
     },
   },
 };

@@ -318,8 +318,9 @@ export interface Station {
 export interface MasteryBank {
   /** Measures with their weight (sum = 1 — dialogue-mastery-model §۱). */
   weights: Record<'M1' | 'M2' | 'M3' | 'M4' | 'M5', number>;
-  /** Weakness-measure → station slug remediation map (DD-048 point-return). */
-  weakPointMap: Record<string, string>;
+  /** Weakness-measure → station slugs (DD-048 point-return — arrays so a measure
+   *  probing two stations (e.g. M3: は + ですか) can return to both). */
+  weakPointMap: Record<string, string[]>;
 }
 
 /** One chapter (≡ unit) — the complete vertical-slice unit. */

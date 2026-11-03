@@ -35,7 +35,7 @@ export default async function AssessmentPage({ params }: { params: Promise<{ cha
         exercises={gate as ClientExercise[]}
         audioByLine={audioByLine}
         audioAvailable={bundle!.bundle.audio.available}
-        remediationHrefs={{}}
+        stationTitles={Object.fromEntries(chapter.stations.map((s) => [s.slug, s.titleFa]))}
       />
     </main>
   );

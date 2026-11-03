@@ -169,9 +169,11 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
   if (gate.weighted !== expectedGate && level.code === 'L2') {
     v.push({ rule: RULES.gateThreshold, message: `L2 gate ${gate.weighted} differs from scoring stage2 threshold` });
   }
-  for (const [measure, stationSlug] of Object.entries(chapter.mastery.weakPointMap)) {
-    if (!byslug.has(stationSlug)) {
-      v.push({ rule: RULES.gateThreshold, message: `weakPointMap ${measure} → unknown station ${stationSlug}` });
+  for (const [measure, stationSlugs] of Object.entries(chapter.mastery.weakPointMap)) {
+    for (const stationSlug of stationSlugs) {
+      if (!byslug.has(stationSlug)) {
+        v.push({ rule: RULES.gateThreshold, message: `weakPointMap ${measure} → unknown station ${stationSlug}` });
+      }
     }
   }
 

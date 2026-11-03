@@ -5,6 +5,7 @@ import { getChapterProgressStore, getAttemptStore, getStationProgressStore } fro
 import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import { applyChapterEvent, gradeMasterySubmission, type ExerciseAnswerPayload } from '@/modules/curriculum';
+import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
 
 /**
  * POST /api/curriculum/mastery — the chapter gate (stage D — TASK-LEARNING-01).
@@ -125,11 +126,11 @@ export async function POST(req: Request) {
       },
       attemptId: attempt.id,
     },
-    3,
+    LEVELS_BY_CODE[chapter.levelCode]?.caps.maxRemediationLoops ?? 3,
   );
   const chapterState = next
     ? await chapterStore.upsert(userId, chapterSlug, next, attempt.id)
-    : (current ?? { status: 'understood' as const, bestWeighted: null, bestMeasures: null, remediationCount: 0 });
+    : current!;
 
   return NextResponse.json(
     ok({

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { loadChapterBundle } from '@/modules/curriculum/server';
-import { toClientExercise } from '@/modules/curriculum';
+import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
 import { StationRunner } from '@/components/curriculum/station-runner';
 import { fa } from '@/messages/fa';
@@ -79,8 +79,8 @@ export default async function StationPage({
 
       <StationRunner
         chapterSlug={chapterSlug}
-        station={station}
-        chapter={{ words: chapter.words, expressions: chapter.expressions, exercises: chapter.exercises }}
+        station={toClientStation(station)}
+        chapter={{ words: chapter.words, expressions: chapter.expressions }}
         clientExercises={clientExercises}
         dialogue={{
           lines: dialogue.lines.map((l) => ({

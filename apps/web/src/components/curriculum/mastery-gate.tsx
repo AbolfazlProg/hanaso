@@ -21,7 +21,8 @@ export interface MasteryGateProps {
   exercises: ClientExercise[];
   audioByLine: Record<string, string>;
   audioAvailable: boolean;
-  remediationHrefs: Record<string, string>;
+  /** slug → Persian title (data-driven — no hardcoded station names). */
+  stationTitles: Record<string, string>;
 }
 
 type Phase = 'intro' | 'questions' | 'result';
@@ -31,7 +32,7 @@ type GateResult = {
   wrongByMeasure: Record<string, string[]>;
 };
 
-export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailable }: MasteryGateProps) {
+export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailable, stationTitles }: MasteryGateProps) {
   const [phase, setPhase] = useState<Phase>('intro');
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, { kind: string; optionId?: string; orderedIds?: string[]; chipOrder?: string[] }>>({});
@@ -39,6 +40,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
   const [ordered, setOrdered] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<GateResult | null>(null);
+  const [gateError, setGateError] = useState<string | null>(null);
 
   const ex = exercises[index];
   const isLast = index === exercises.length - 1;
@@ -67,10 +69,17 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ chapterSlug, answers: payload }),
       });
-      const json = (await res.json()) as { data?: GateResult };
-      if (json.data) {
+      const json = (await res.json()) as { data?: GateResult; error?: { code?: string; message?: string } };
+      if (res.ok && json.data) {
         setResult(json.data);
         setPhase('result');
+      } else {
+        // e.g. 409 mastery/gate_locked — the walk is incomplete (direct URL entry)
+        setGateError(
+          json.error?.code === 'mastery/gate_locked'
+            ? 'دروازهٔ فهم هنوز بسته است — اول همهٔ ایستگاه‌های اصلی مسیر را کامل کن.'
+            : (json.error?.message ?? 'ارسال پاسخ‌ها ناموفق بود — دوباره تلاش کن.'),
+        );
       }
     } finally {
       setSubmitting(false);
@@ -156,7 +165,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
                     className="flex min-h-11 items-center gap-2 rounded-md border border-ai bg-indigo-wash/40 px-4 text-body transition-colors hover:bg-indigo-wash"
                   >
                     <CircleCheck aria-hidden className="size-4 text-ai" />
-                    {stationTitle(slug)}
+                    {stationTitles[slug] ?? slug}
                   </Link>
                 </li>
               ))}
@@ -181,10 +190,10 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
     <div className="flex flex-col gap-5">
       <header className="flex items-center justify-between gap-2">
         <p className="text-small text-ink-soft">
-          {fa.curriculum.gateQuestion} {index + 1} {fa.curriculum.gateOf} {exercises.length}
+          {fa.curriculum.gateQuestion} {faNum(index + 1)} {fa.curriculum.gateOf} {faNum(exercises.length)}
         </p>
         <p className="text-caption text-ink-faint">
-          {faNum(answeredCount)}/{faNum(exercises.length)}
+          {faNum(answeredCount)} از {faNum(exercises.length)}
         </p>
       </header>
 
@@ -266,6 +275,15 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
         ) : null}
       </section>
 
+      {gateError && (
+        <div role="alert" className="flex flex-col gap-2 rounded-md border border-error bg-card p-4 text-body">
+          <p>{gateError}</p>
+          <Link href={`/learn/${chapterSlug}/journey`} className="w-fit font-bold text-ai underline underline-offset-4">
+            {fa.curriculum.backToJourney}
+          </Link>
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
         {index > 0 && (
           <button
@@ -314,17 +332,6 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
       </div>
     </div>
   );
-}
-
-function stationTitle(slug: string): string {
-  const titles: Record<string, string> = {
-    'stn-fm01-02-vocab': 'واژه‌های هویت',
-    'stn-fm01-03-grammar-desu': 'الگوی هویت: AはBです',
-    'stn-fm01-05-grammar-qa': 'پرسش و تأیید: ですか / ですね',
-    'stn-fm01-06-expression': 'عبارت‌های اولین دیدار',
-    'stn-fm01-07-listen': 'گوشِ اول: کشش و آهنگ',
-  };
-  return titles[slug] ?? slug;
 }
 
 function faNum(n: number): string {

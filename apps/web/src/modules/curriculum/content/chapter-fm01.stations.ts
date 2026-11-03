@@ -74,7 +74,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-vocab-core',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.5 },
+    completion: { kind: 'exercise_threshold', threshold: 0.75 },
     blocks: [
       {
         kind: 'scene',
@@ -136,7 +136,7 @@ export const FM01_STATIONS: Station[] = [
         id: 'b-fm01-g1-1',
         displayLineRef: L(6),
         highlightSurfaces: ['は', 'です'],
-        compareLineRef: L(8),
+        compareLineRef: L(3),
         questionFa: 'ذرهٔ は همیشه بلافاصله بعد از چه چیزی می‌آید؟',
         options: [
           { id: 'a', label: 'بعد از فعل/هویت‌ساز پایانیِ جمله' },
@@ -144,7 +144,7 @@ export const FM01_STATIONS: Station[] = [
         ],
         correctOptionId: 'b',
         explainFa:
-          'در L6 (わたしは ちゅうごくじんです) و L8 (アリさんは だいがくの せんせいです)、は بعد از موضوع می‌آید و آن را علامت می‌زند؛ بعد از は گزاره/هویت‌ساز جمله می‌آید.',
+          'در L3 (わたしは にほんじんです) و L6 (わたしは ちゅうごくじんです)،は بلافاصله بعد از «من» می‌آید — یعنی بعد از موضوعِ جمله — و آن را علامت می‌زند؛ بعد از は گزاره/هویت‌ساز می‌آید. (در L8 موضوع حذف شده است — アリさんは نگفته نشد.)',
       },
       {
         kind: 'rule-card',
@@ -162,7 +162,7 @@ export const FM01_STATIONS: Station[] = [
           ],
         },
         persianBridgeFa:
-          'فعل/هویت‌ساز در فارسی هم آخر جمله می‌آید: «من دانشجو هستم» ← わたしは がくせいです — ترتیب برای تو غریبه نیست.',
+          'فعل/هویت‌ساز در فارسی هم آخر جمله می‌آید: «من ایرانی هستم» ← わたしは イランじんです — ترتیب برای تو غریبه نیست.',
         honestyLabelFa: 'مزیت فارسی‌زبانان در ترتیبِ مشابه، پیش‌بینی ماست — هنوز با آزمایش تأیید نشده.',
       },
       {
@@ -172,19 +172,19 @@ export const FM01_STATIONS: Station[] = [
           {
             id: 'ex-g1-anchor',
             role: 'anchor',
-            ja: 'ソラさんは ちゅうごくじんです。',
-            reading: 'ソラさんは ちゅうごくじんです。',
-            fa: 'سورا چینی است.',
-            whyFa: 'لنگر از خود مکالمه (L6).',
+            ja: 'わたしは ちゅうごくじんです。',
+            reading: 'わたしは ちゅうごくじんです。',
+            fa: 'من چینی‌ام.',
+            whyFa: 'لنگر از خود مکالمه — بخش دوم L6.',
             lineRef: L(6),
           },
           {
             id: 'ex-g1-near',
             role: 'near',
-            ja: 'ミキさんは にほんじんです。',
-            reading: 'ミキさんは にほんじんです。',
-            fa: 'میکی ژاپنی است.',
-            whyFa: 'فقط موضوع عوض شد — هم‌قاب.',
+            ja: 'ソラさんは ちゅうごくじんです。',
+            reading: 'ソラさんは ちゅうごくじんです。',
+            fa: 'سورا چینی است.',
+            whyFa: 'فقط موضوع عوض شد — هم‌قاب (بر پایهٔ L5/L6).',
             selfExplainFa: 'چرا فقط موضوع عوض شد و بقیهٔ جمله همان ماند؟',
           },
           {
@@ -193,8 +193,7 @@ export const FM01_STATIONS: Station[] = [
             ja: 'アリさんは だいがくの せんせいです。',
             reading: 'アリさんは だいがくの せんせいです。',
             fa: 'آقای علی استاد دانشگاه است.',
-            whyFa: 'هویتِ دو-تکه‌ای با の — همان L8.',
-            lineRef: L(8),
+            whyFa: 'هویتِ دو-تکه‌ای با の — بر پایهٔ L8، این بار با موضوعِ صریح (アリさんは).',
           },
         ],
       },
@@ -376,7 +375,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'greet-first-meeting',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.67 },
+    completion: { kind: 'exercise_threshold', threshold: 1 },
     blocks: [
       {
         kind: 'scene',
@@ -455,7 +454,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-vocab-core',
     estMinutes: 3,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'exercise_threshold', threshold: 0.7 },
     blocks: [
       {
         kind: 'scene',
@@ -488,7 +487,7 @@ export const FM01_STATIONS: Station[] = [
           'بپرس و تأیید کن: ですか / ですね',
           'آیین معرفی را کامل اجرا کن: こんにちは → はじめまして → よろしく',
         ],
-        fsrsNoteFa: '۲۳ کارتِ این فصل وارد صف مرور می‌شوند (موتور مرور در فاز بعدی فعال می‌شود).',
+        fsrsNoteFa: 'کارت‌های این فصل (۲۴ کارت) ثبت می‌شوند و با فعال‌شدن موتور مرور، در صف روزانه می‌آیند.',
       },
     ],
     fsrsItems: [],
@@ -568,9 +567,9 @@ export const FM01_STATIONS: Station[] = [
           },
           {
             speaker: 'chr-miki',
-            ja: 'そうですか！よろしく おねがいします。',
-            reading: 'そうですか！よろしく おねがいします。',
-            fa: 'چه جالب! از رابطه‌مان خوشحال می‌شوم.',
+            ja: 'よろしく おねがいします。',
+            reading: 'よろしく おねがいします。',
+            fa: 'از رابطه‌مان خوشحال می‌شوم. (آینهٔ L9)',
           },
         ],
       },
@@ -587,7 +586,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 10,
     prerequisites: ['stn-fm01-09-integrate'],
-    lineRefs: [L(1), L(3), L(5), L(6), L(7), L(8)],
+    lineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9)],
     objectiveCode: 'identity-statement',
     estMinutes: 3,
     estLoad: 'heavy',
@@ -606,7 +605,15 @@ export const FM01_STATIONS: Station[] = [
         focusLineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9)],
         reducedSupport: true,
       },
-      { kind: 'exercise', id: 'b-fm01-ma-2', exerciseIds: [] },
+      {
+        kind: 'wrap-up',
+        id: 'b-fm01-ma-2',
+        titleFa: 'آمادهٔ آزمون فهم؟',
+        itemsFa: [
+          'مکالمه را یک بار دیگر بشنو — زیرنویس فقط با لمس هر خط.',
+          'سپس در صفحهٔ دروازه، به ده پرسش فهم پاسخ بده.',
+        ],
+      },
     ],
     fsrsItems: [],
   },

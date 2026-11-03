@@ -132,6 +132,8 @@ export const fa = {
     listeningTaskTitle: 'گوشِ فعال',
     listeningTaskBody: 'پخش هر خط را که تمام شد، به پرسش‌های بعدی همین ایستگاه پاسخ بده — متن‌ها نمایش داده نمی‌شوند.',
     replayDialogue: 'شنیدن دوبارهٔ مکالمه',
+    dialogueGoToListen: 'مکالمهٔ کامل با پلیر چندصدایی در صفحهٔ مکالمه پخش می‌شود — بعد به همین ایستگاه برگرد و ادامه بده.',
+    masteryStationNote: 'آزمون فهم (دروازهٔ D) در صفحهٔ جدا اجرا می‌شود.',
     prevQuestion: 'قبلی',
     examplesTitle: 'مثال‌ها',
     yourTurn: 'نوبت تو',

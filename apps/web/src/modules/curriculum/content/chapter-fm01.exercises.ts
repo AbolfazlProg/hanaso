@@ -83,7 +83,7 @@ export const FM01_EXERCISES: Exercise[] = [
     ],
     correctOptionId: 'b',
     distractorRationaleFa: {
-      a: '«تو» در ژاپنی あなた است — در این فصل فقط در یک مثال تمایزی می‌آید.',
+      a: '«تو» در ژاپنی あなた است — اما در مکالمهٔ طبیعی ژاپنی معمولاً حذف می‌شود یا با نام می‌آید.',
       c: 'اشاره به شخص سوم با あのかた است.',
     },
     feedback: {
@@ -111,7 +111,7 @@ export const FM01_EXERCISES: Exercise[] = [
     correctOptionId: 'b',
     distractorRationaleFa: {
       a: 'ともだچی در این فصل نیست — واژهٔ مرحلهٔ بعد است.',
-      c: 'コーヒー مربوط به مکالمهٔ کافهٔ قبلی است، نه این جمله.',
+      c: 'コーヒー واژهٔ موقعیت سفارش است و در مکالمهٔ امروز نیامده.',
     },
     feedback: {
       f1Fa: 'جمله را خط به خط برو: だいがくの せんせい — «استادِ دانشگاه».',
@@ -181,7 +181,7 @@ export const FM01_EXERCISES: Exercise[] = [
     acceptedChipOrder: ['c1', 'c2', 'c3', 'c4'],
     feedback: {
       f1Fa: 'ترتیب: アリさんは → だいがくの → せんせい → です.',
-      f2HintFa: 'だいがくの せんせی یک تکهٔ معنایی است: «استادِِ دانشگاه» — بعدش です.',
+      f2HintFa: 'だいがくの せんせい یک تکهٔ معنایی است: «استادِ دانشگاه» — بعدش です.',
       f3ExplainFa: 'アリさんは だいがくの せんせいです — دقیقاً L8 مکالمهٔ امروز.',
     },
     assessmentRole: 'practice',
@@ -219,7 +219,7 @@ export const FM01_EXERCISES: Exercise[] = [
     lineRef: L(5),
     difficulty: 2,
     promptFa: 'جای خالی را پر کن: «سورا چینی است؟»',
-    promptJa: 'ソラさんは ちゅうごくじんです__？',
+    promptJa: 'ソラさんは ちゅうごくじんです__。',
     promptJaReading: 'ソラさんは ちゅうごくじんですか。',
     clozeTokens: ['ソラさんは', 'ちゅうごくじん', 'です', null, '？'],
     options: [
@@ -288,8 +288,8 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'listen-minimal-pair',
     targetSkill: 'listening',
     targetConcept: 'listen-final-intonation',
-    lineRef: L(5),
-    audioLineRef: L(5),
+    lineRef: L(7),
+    audioLineRef: L(7),
     difficulty: 2,
     promptFa: 'گوش کن: این جمله پرسش است یا تأیید؟',
     options: [
@@ -302,7 +302,7 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'به انتهای جمله گوش کن: صد بالا رفت = پرسش.',
-      f2HintFa: 'این همان L5 است — سورا... نه صبر کن، یامادا دارد می‌پرسد «چینی هستید؟»',
+      f2HintFa: 'این L7 است — میکی دربارهٔ شخص سوم می‌پرسد «او کیست؟»',
       f3ExplainFa: 'ですか با آهنگ پایانیِ بالا = پرسش. ですね با آهنگ پایین = تأیید.',
     },
     assessmentRole: 'practice',
@@ -316,7 +316,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'chrk-hajimemashite',
     lineRef: L(3),
     difficulty: 1,
-    promptFa: 'کسی را برای اولین بار می‌بینی. با کدام عبارت شروع می‌کنی؟',
+    promptFa: 'کدام عبارت مخصوصِ اولین دیدار است (و در دیدارهای بعدی نمی‌آید)؟',
     options: [
       { id: 'a', label: 'こんにちは' },
       { id: 'b', label: 'はじめまして' },
@@ -324,7 +324,7 @@ export const FM01_EXERCISES: Exercise[] = [
     ],
     correctOptionId: 'b',
     distractorRationaleFa: {
-      a: 'سلام روزانه است — برای هر دیدار، نه مخصوص اولین بار.',
+      a: 'سلام روزانه است و در هر دیداری می‌آید — مخصوصِ اولین بار نیست.',
       c: 'این یکی هم در آیین معرفی می‌آید اما بعد از معرفی، نه به‌عنوان آغازگر.',
     },
     feedback: {
@@ -389,7 +389,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'listen-vowel-length',
     audioLineRef: L(3),
     difficulty: 2,
-    promptFa: 'گوش کن (بدون متن): این گفت‌وگو دربارهٔ چیست؟',
+    promptFa: 'گوش کن (بدون متن): این جمله — آغازِ معرفی — چه چیزی را می‌گوید؟',
     options: [
       { id: 'a', label: 'آشنایی و معرفی چند نفر' },
       { id: 'b', label: 'سفارش غذا و نوشیدنی' },
@@ -398,7 +398,7 @@ export const FM01_EXERCISES: Exercise[] = [
     correctOptionId: 'a',
     distractorRationaleFa: {
       b: 'هیچ واژهٔ غذا/نوشیدنی در این خط نیست — صحنهٔ کافه فقط محل ملاقات است.',
-      c: 'واژهٔ هوا (てんき) در این مکالمه نیست.',
+      c: 'واژهٔ هوا (てんき) در این فصل نیست.',
     },
     feedback: {
       f1Fa: 'کلمات کلیدی که شنیدی: はじめまして، です、よろしく — همه مربوط به معرفی.',
@@ -465,8 +465,9 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'listen-vowel-length',
     lineRef: L(8),
+    audioLineRef: L(8),
     difficulty: 2,
-    promptFa: 'کدام تلفظ برای 先生 (استاد) درست است؟',
+    promptFa: 'به L8 گوش کن: واکهٔ پایانیِ 先生 را کشیده شنیدی یا کوتاه؟',
     options: [
       { id: 'a', label: 'せんせい — «اِی» پایانی کشیده' },
       { id: 'b', label: 'せんせ — «اِ» پایانی کوتاه' },
@@ -476,8 +477,8 @@ export const FM01_EXERCISES: Exercise[] = [
       b: 'کوتاه گفتن واکهٔ پایانی، کلمه را غلط می‌کند — در ژاپنی کشش واکه معنایی «کلمه‌ای» دارد.',
     },
     feedback: {
-      f1Fa: 'واکهٔ پایانی بلند است: seeー. در فارسی کشش «حسی» است؛ در ژاپنی «کلمه‌ای».',
-      f2HintFa: 'دو مورا در انتها: せ+ん+せ+い — چهار ضرب، نه سه‌تا.',
+      f1Fa: 'واکهٔ پایانی کشیده است: sen-see. در فارسی کشش «حسی» است؛ در ژاپنی «کلمه‌ای».',
+      f2HintFa: 'در だいがくの せんせい، پایان جمله را با دقت بشنو: e-e.',
       f3ExplainFa: 'せんせい (sensee) درست است. せんせ غلط — کشش واکه کلمه را می‌سازد.',
     },
     assessmentRole: 'practice',
@@ -642,8 +643,8 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'listen-minimal-pair',
     targetSkill: 'grammar',
     targetConcept: 'gr-desu-qa',
-    lineRef: L(5),
-    audioLineRef: L(5),
+    lineRef: L(7),
+    audioLineRef: L(7),
     difficulty: 2,
     promptFa: 'درهم‌آمیزی — گوش کن: کدام است؟',
     options: [
@@ -656,8 +657,8 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'か پایانی + آهنگ بالا = پرسش.',
-      f2HintFa: 'L5 را به خاطر بیاور — یامادا می‌پرسد.',
-      f3ExplainFa: 'ソラさんですね (تأیید) + ちゅうごくじんですか (پرسش) — هر دو در L5.',
+      f2HintFa: 'L7 را به خاطر بیاور — میکی می‌پرسد.',
+      f3ExplainFa: 'どなたですか با か و آهنگ بالا = پرسش. (تأیید با ですね می‌آید — مثل سطر اول L5.)',
     },
     assessmentRole: 'practice',
   },
@@ -776,7 +777,7 @@ export const FM01_EXERCISES: Exercise[] = [
     ],
     correctOptionId: 'a',
     distractorRationaleFa: {
-      b: 'どنان «کی» است — در جملهٔ خبری جواب نمی‌دهد.',
+      b: 'どなた یعنی «کی» — در جملهٔ خبری جواب نمی‌دهد.',
       c: 'せんせい درست است اما معنی جمله «استاد» می‌شود، نه «ایرانی».',
     },
     feedback: {
@@ -850,7 +851,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'identity-statement',
     difficulty: 2,
-    promptFa: 'M1 — هدف اصلی این گفت‌وگو چیست؟',
+    promptFa: 'هدف اصلی این گفت‌وگو چیست؟',
     options: [
       { id: 'a', label: 'آشنایی و معرفی چند نفر به هم' },
       { id: 'b', label: 'سفارش نوشیدنی در کافه' },
@@ -874,7 +875,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'identity-statement',
     difficulty: 2,
-    promptFa: 'M1 — یامادا در L8 علی را چگونه معرفی می‌کند؟',
+    promptFa: 'یامادا در L8 علی را چگونه معرفی می‌کند؟',
     options: [
       { id: 'a', label: 'نام + ملیت + شغل' },
       { id: 'b', label: 'فقط نام' },
@@ -901,7 +902,7 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptJa: 'だいがくの せんせい',
     promptJaReading: 'だいがくの せんせい',
-    promptFa: 'M2 — در L8 این عبارت یعنی چه؟',
+    promptFa: 'در L8 این عبارت یعنی چه؟',
     options: [
       { id: 'a', label: 'استاد دانشگاه' },
       { id: 'b', label: 'دانشجوی دانشگاه' },
@@ -928,7 +929,7 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptJa: 'あのかた',
     promptJaReading: 'あのかた',
-    promptFa: 'M2 — あのかた یعنی چه؟',
+    promptFa: 'あのかた یعنی چه؟',
     options: [
       { id: 'a', label: 'آن شخص (مؤدبانه)' },
       { id: 'b', label: 'اینجا' },
@@ -955,7 +956,7 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptJa: 'わたしは にほんじんです',
     promptJaReading: 'わたしは にほんじんです',
-    promptFa: 'M3 — در این جمله ذرهٔ は چه می‌کند؟',
+    promptFa: 'در این جمله ذرهٔ は چه می‌کند؟',
     options: [
       { id: 'a', label: 'موضوع جمله را نشانه‌گذاری می‌کند' },
       { id: 'b', label: 'مفعول را می‌گیرد' },
@@ -980,7 +981,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-desu-qa',
     lineRef: L(5),
     difficulty: 2,
-    promptFa: 'M3 — کدام خط پرسش است؟',
+    promptFa: 'کدام خط پرسش است؟',
     options: [
       { id: 'a', label: 'ソラさんですね。ちゅうごくじんですか。' },
       { id: 'b', label: 'はい、わたしは ちゅうごくじんです。' },
@@ -1006,7 +1007,7 @@ export const FM01_EXERCISES: Exercise[] = [
     lineRef: L(7),
     audioLineRef: L(7),
     difficulty: 3,
-    promptFa: 'M4 — فقط گوش کن: دربارهٔ چه کسی پرسیده شد؟',
+    promptFa: 'فقط گوش کن: دربارهٔ چه کسی پرسیده شد؟',
     options: [
       { id: 'a', label: 'آقای علی' },
       { id: 'b', label: 'خانم میکی' },
@@ -1032,7 +1033,7 @@ export const FM01_EXERCISES: Exercise[] = [
     lineRef: L(3),
     audioLineRef: L(3),
     difficulty: 3,
-    promptFa: 'M4 — فقط گوش کن: یامادا ملیت خودش را چه گفت؟',
+    promptFa: 'فقط گوش کن: یامادا ملیت خودش را چه گفت؟',
     options: [
       { id: 'a', label: 'چینی' },
       { id: 'b', label: 'ژاپنی' },
@@ -1057,7 +1058,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'chrk-anokata-donata',
     lineRef: L(7),
     difficulty: 3,
-    promptFa: 'M5 — چرا میکی گفت あのかたは どなたですか (نه صورتِ بی‌احترامی‌تر)؟',
+    promptFa: 'چرا میکی گفت あのかたは どなたですか (نه صورتِ بی‌احترامی‌تر)؟',
     options: [
       { id: 'a', label: 'چون اشارهٔ مؤدبانه به شخص سوم می‌خواست' },
       { id: 'b', label: 'چون علی را نمی‌شناخت و عصبانی بود' },
@@ -1070,7 +1071,7 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'あのかた + どなた هر دو مؤدبانه‌اند — برای غریبه‌های محترم.',
-      f2HintFa: 'میکي مهمانِ جدید است و مؤدب بودن مهم.',
+      f2HintFa: 'سورا مهمانِ جدید است و میکی می‌خواهد مؤدبانه دربارهٔ دیگران بپرسد.',
       f3ExplainFa: 'برای پرسیدن دربارهٔ دیگران، شکل مؤدبانه درستِ همان موقعیت است.',
     },
     assessmentRole: 'mastery_M5',
@@ -1082,7 +1083,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'sov-bridge-persian',
     lineRef: L(4),
     difficulty: 3,
-    promptFa: 'M5 — چرا سورا در L4 نگفت わたしは؟',
+    promptFa: 'چرا سورا در L4 نگفت わたしは؟',
     options: [
       { id: 'a', label: 'چون موضوع معلوم بود و حذفش طبیعی است' },
       { id: 'b', label: 'چون わたし ممنوع است' },
