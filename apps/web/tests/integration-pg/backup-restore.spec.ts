@@ -130,7 +130,8 @@ describe.skipIf(!drillAvailable)(DRILL_TITLE, () => {
     expect(restored.tables).toEqual(source.tables);
     expect(restored.tables['app.dialogue_mastery_attempts']).toBe(1);
     expect(restored.tables['app.lesson_progress']).toBe(1);
-    expect(restored.tables['content.dialogue_lines']).toBe(10);
+    // TASK-LEARNING-01: 10 (PoC) + 9 (chapter 1 dialogue) seeded lines
+    expect(restored.tables['content.dialogue_lines']).toBe(19);
     expect(restored.pgbossAvailable).toBe(true);
   });
 

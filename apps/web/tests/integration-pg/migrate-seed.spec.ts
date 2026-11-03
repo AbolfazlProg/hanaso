@@ -42,14 +42,17 @@ describe('migrations (drizzle SQL, direct connection)', () => {
 });
 
 describe('seed (idempotent, deterministic ids)', () => {
-  it('seeded characters, the dialogue with its lines, and the anchor lesson', async () => {
+  it('seeded characters, both dialogues with their lines, and the lesson rows', async () => {
     const counts = async (table: string) =>
       Number((await pool!.query<{ count: string }>(`SELECT count(*) AS count FROM ${table}`)).rows[0]!.count);
 
+    // TASK-LEARNING-01: the seed now carries the PoC unit + chapter 1's dialogue
+    // (10 + 9 lines) and the curriculum seed adds the 12 station lesson rows
+    // (helpers run both). Counts stay exact — determinism is the contract.
     expect(await counts('content.characters')).toBe(3);
-    expect(await counts('content.dialogues')).toBe(1);
-    expect(await counts('content.dialogue_lines')).toBe(10); // the cafe-morning-01 unit
-    expect(await counts('content.lessons')).toBe(1);
+    expect(await counts('content.dialogues')).toBe(2);
+    expect(await counts('content.dialogue_lines')).toBe(19);
+    expect(await counts('content.lessons')).toBe(13); // 1 anchor B_lesson + 12 stations
   });
 
   it('uses deterministic uuidv5 ids — re-seeding updates the same rows', async () => {
@@ -65,11 +68,11 @@ describe('seed (idempotent, deterministic ids)', () => {
     await runSeed({ url: process.env.DIRECT_DATABASE_URL! }); // idempotent re-run
 
     const after = await pool!.query<{ count: string }>('SELECT count(*) AS count FROM content.dialogues');
-    expect(Number(after.rows[0]!.count)).toBe(1); // no duplicate
+    expect(Number(after.rows[0]!.count)).toBe(2); // no duplicates (PoC + chapter 1)
 
     const lesson = (
       await pool!.query<{ id: string; dialogue_id: string; unit_stage: string }>(
-        'SELECT id, dialogue_id, unit_stage FROM content.lessons',
+        "SELECT id, dialogue_id, unit_stage FROM content.lessons WHERE unit_stage = 'B_lesson'",
       )
     ).rows[0]!;
     expect(lesson.id).toBe(lessonId);
@@ -90,7 +93,7 @@ describe('seed (idempotent, deterministic ids)', () => {
       `SELECT c.slug AS speaker FROM content.dialogue_lines l
        JOIN content.characters c ON c.id = l.speaker_character_id`,
     );
-    expect(rows.length).toBe(10);
+    expect(rows.length).toBe(19); // 10 (PoC) + 9 (chapter 1)
     for (const row of rows) expect(row.speaker).toMatch(/^chr-(miki|yamada|sora)$/);
   });
 });
