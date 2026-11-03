@@ -9,6 +9,7 @@
  * - the full walk (10 stations → stations_complete) + a passed gate →
  *   `understood` — the DD-048 invariant against the real database.
  */
+import { randomUUID } from 'node:crypto';
 import { Pool } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ensureTestDatabase } from './helpers';
@@ -127,7 +128,7 @@ describe('island walk through the Postgres stores', () => {
       weighted: graded.weightedScore,
       measures: { M1: 1, M2: 1, M3: 1, M4: 1, M5: 1 },
     });
-    const finalState = await chapterStore.upsert(POC_DEFAULT_USER_ID, chapter.slug, afterGate!, 'attempt-1');
+    const finalState = await chapterStore.upsert(POC_DEFAULT_USER_ID, chapter.slug, afterGate!, randomUUID());
     expect(finalState.status).toBe('understood');
 
     // persisted: re-read from a FRESH store (proves it is the database, not memory)

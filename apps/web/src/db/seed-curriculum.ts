@@ -165,9 +165,14 @@ export async function runCurriculumSeed(options: {
   });
   try {
     const db = drizzle(pool);
-    // dialogue base rows (characters/dialogues/lines + anchor lesson) for every chapter
+    // dialogue base rows (characters/dialogues/lines) for every chapter — the
+    // B_lesson anchor is skipped for them (stations are the chapter's lessons)
     const dialogueSlugs = listChapters().map((c) => c.dialogueSlug);
-    await seedDialogueBase({ url: options.url, extraDialogueSlugs: dialogueSlugs });
+    await seedDialogueBase({
+      url: options.url,
+      extraDialogueSlugs: dialogueSlugs,
+      noAnchorLessonForSlugs: dialogueSlugs,
+    });
 
     const levels = await seedLevels(db);
     let units = 0;

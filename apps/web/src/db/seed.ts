@@ -48,7 +48,13 @@ const CHARACTER_DESCRIPTIONS_FA: Record<string, string> = {
 };
 
 export async function runSeed(
-  options: { url: string; extraDialogueSlugs?: readonly string[] } = { url: '' },
+  options: {
+    url: string;
+    extraDialogueSlugs?: readonly string[];
+    /** TASK-LEARNING-01: dialogues anchored by a CHAPTER get no B_lesson anchor
+     *  row — their walk lives in the station lessons (seed-curriculum). */
+    noAnchorLessonForSlugs?: readonly string[];
+  } = { url: '' },
 ): Promise<SeedResult> {
   const pool = new Pool({
     connectionString: options.url,
@@ -155,6 +161,11 @@ export async function runSeed(
       }
 
       // Anchor lesson (unitStage='B_lesson') — the lesson_progress FK target (KB §۳).
+      // Chapter-anchored dialogues skip it: their unit rows + stations come from
+      // the curriculum seed (the anchor lesson would collide with the chapter unit).
+      if (options.noAnchorLessonForSlugs?.includes(slug)) {
+        continue;
+      }
       await db
         .insert(schema.lessons)
         .values({
