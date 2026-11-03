@@ -43,17 +43,20 @@ export interface DialogueSceneProps {
     };
   };
   initialLineId?: string | null;
+  /** Content id for analytics — defaults to the PoC slug (parameterized in TASK-LEARNING-01). */
+  dialogueSlug?: string;
 }
 
-const DIALOGUE_SLUG = 'cafe-morning-01';
-
-function logSceneEvent(name: string, props: Record<string, unknown>): void {
-  logEvent(name, { dialogue_id: DIALOGUE_SLUG, ...props });
+function makeSceneLogger(slug: string) {
+  return (name: string, props: Record<string, unknown>): void => {
+    logEvent(name, { dialogue_id: slug, ...props });
+  };
 }
 
 type BannerError = { code: string; message: string; lineId?: string; lineFa?: string };
 
-export function DialogueScene({ bundle, initialLineId }: DialogueSceneProps) {
+export function DialogueScene({ bundle, initialLineId, dialogueSlug = 'cafe-morning-01' }: DialogueSceneProps) {
+  const logSceneEvent = makeSceneLogger(dialogueSlug);
   const { dialogue, characters, audio } = bundle;
   const router = useRouter();
   const [status, setStatus] = useState<PlaybackStatus>('idle');

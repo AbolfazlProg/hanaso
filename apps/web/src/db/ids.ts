@@ -32,6 +32,9 @@ export function uuidV5(name: string, namespace: string = HANASO_CONTENT_NAMESPAC
 /** Stable id for a content character (`chr-miki`). */
 export const characterContentId = (characterId: string) => uuidV5(`character:${characterId}`);
 
+/** Stable id for a content level band (`L1`..`L7`). */
+export const levelContentId = (code: string) => uuidV5(`level:${code}`);
+
 /** Stable id for a content dialogue (slug, e.g. `cafe-morning-01`). */
 export const dialogueContentId = (slug: string) => uuidV5(`dialogue:${slug}`);
 

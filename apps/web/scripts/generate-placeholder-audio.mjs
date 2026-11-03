@@ -21,14 +21,21 @@
  * path is still exercised because both manifest slots point at the generated WAV.
  */
 import { createHash } from 'node:crypto';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 
 const APP_ROOT = process.cwd(); // apps/web when run via pnpm --filter web
-const DIALOGUE_FILE = path.join(APP_ROOT, 'src/modules/dialogue/content/dialogue.cafe-morning-01.yaml');
+const CONTENT_DIR = path.join(APP_ROOT, 'src/modules/dialogue/content');
 const VOICES_FILE = path.join(APP_ROOT, 'src/modules/audio/content/voices.yaml');
 const OUT_DIR = path.join(APP_ROOT, 'public/poc-audio');
+
+/** TASK-LEARNING-01: generate for EVERY bundled dialogue (not just the PoC). */
+function listDialogueFiles() {
+  return readdirSync(CONTENT_DIR)
+    .filter((f) => f.startsWith('dialogue.') && f.endsWith('.yaml'))
+    .map((f) => path.join(CONTENT_DIR, f));
+}
 
 const SAMPLE_RATE = 22050;
 
@@ -106,35 +113,39 @@ function synthesize({ f0Hz, harmonics, durationMs, seed }) {
 }
 
 async function main() {
-  const dialogue = parseYaml(await import('node:fs').then((fs) => fs.readFileSync(DIALOGUE_FILE, 'utf8')));
-  const voicesDoc = parseYaml(await import('node:fs').then((fs) => fs.readFileSync(VOICES_FILE, 'utf8')));
+  const voicesDoc = parseYaml(readFileSync(VOICES_FILE, 'utf8'));
+  const files = listDialogueFiles();
+  if (files.length === 0) throw new Error(`no dialogue.*.yaml files under ${CONTENT_DIR}`);
 
   const manifests = {};
   let totalBytes = 0;
+  let lineCount = 0;
   mkdirSync(OUT_DIR, { recursive: true });
 
-  for (const line of dialogue.lines) {
-    const speaker = line.speaker;
-    const voice = Object.values(voicesDoc.voices).find((v) => v.character === speaker);
-    if (!voice) throw new Error(`no voice configured for speaker ${speaker}`);
-    const voiceId = Object.entries(voicesDoc.voices).find(([, v]) => v.character === speaker)[0];
-    const text = line.tokens.map((t) => t.surface).join('');
-    const hash = hashLine(text, voiceId);
-    const durationMs = estimateDurationMs(line.tokens.length);
-    const seed = parseInt(hash.slice(0, 8), 16);
-    const wav = synthesize({
-      f0Hz: voice.params.f0Hz,
-      harmonics: voice.params.harmonics,
-      durationMs,
-      seed,
-    });
-    const file = path.join(OUT_DIR, `${line.id}.wav`);
-    writeFileSync(file, wav);
-    totalBytes += wav.length;
-    manifests[line.id] = { bytes: wav.length, durationMs };
-    console.log(
-      `  ${line.id}  voice=${voiceId} f0=${voice.params.f0Hz}Hz  ${durationMs}ms  ${(wav.length / 1024).toFixed(1)}KB  hash=${hash}`,
-    );
+  for (const file of files) {
+    const dialogue = parseYaml(readFileSync(file, 'utf8'));
+    for (const line of dialogue.lines) {
+      const speaker = line.speaker;
+      const voice = Object.values(voicesDoc.voices).find((v) => v.character === speaker);
+      if (!voice) throw new Error(`no voice configured for speaker ${speaker}`);
+      const voiceId = Object.entries(voicesDoc.voices).find(([, v]) => v.character === speaker)[0];
+      const text = line.tokens.map((t) => t.surface).join('');
+      const hash = hashLine(text, voiceId);
+      const durationMs = estimateDurationMs(line.tokens.length);
+      const seed = parseInt(hash.slice(0, 8), 16);
+      const wav = synthesize({
+        f0Hz: voice.params.f0Hz,
+        harmonics: voice.params.harmonics,
+        durationMs,
+        seed,
+      });
+      const file = path.join(OUT_DIR, `${line.id}.wav`);
+      writeFileSync(file, wav);
+      totalBytes += wav.length;
+      manifests[line.id] = { bytes: wav.length, durationMs };
+      lineCount += 1;
+    }
+    console.log(`  ${path.basename(file)}: ${dialogue.lines.length} lines`);
   }
 
   writeFileSync(
@@ -142,7 +153,7 @@ async function main() {
     JSON.stringify({ generatedBy: 'generate-placeholder-audio.mjs', format: 'wav-pcm16', entries: manifests }, null, 2),
   );
   console.log(
-    `\n✓ ${Object.keys(manifests).length} placeholder WAVs → ${path.relative(APP_ROOT, OUT_DIR)} (total ${(totalBytes / 1024).toFixed(1)}KB)`,
+    `\n✓ ${lineCount} placeholder WAVs (${files.length} dialogues) → ${path.relative(APP_ROOT, OUT_DIR)} (total ${(totalBytes / 1024).toFixed(1)}KB)`,
   );
   console.log('  sidecar manifest.json written (bytes/durationMs per line)');
   console.log('  NOTE: production pipeline emits dual Opus+m4a (ADR-009); this placeholder is WAV.');

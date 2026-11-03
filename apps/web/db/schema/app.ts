@@ -21,8 +21,19 @@
  *   carries `dialogue_id` as the anchor column for dialogue-keyed lookups.
  */
 import { sql } from 'drizzle-orm';
-import { index, integer, jsonb, pgSchema, primaryKey, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
-import { dialogues, lessons } from './content';
+import {
+  index,
+  integer,
+  jsonb,
+  pgSchema,
+  primaryKey,
+  real,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core';
+import { dialogues, lessons, units } from './content';
 
 /** Schema `app` — user data; never rewritten from content publishes. */
 export const app = pgSchema('app');
@@ -67,11 +78,77 @@ export const dialogueMasteryAttempts = app.table(
   ],
 );
 
-/* ------------------------------------------------------- lesson_progress (§۳ extension) */
+/* ------------------------------------------------------- station_progress (TASK-LEARNING-01) */
 /**
- * The A→D cycle record for a dialogue-anchored unit. `status='understood'` is ONLY set from
- * a stage-D mastery attempt with outcome='passed' (DD-048: understood, never "completed").
- * No separate `unit_progress` table exists — this IS the unit record (KB §۳).
+ * Station-level state per user (island architecture §۹): the walk record of one
+ * lesson≡station node. Station states are LOCKED/AVAILABLE (derived — never stored),
+ * then in_progress → completed | needs_retry (+ skipped via Test-Out, equivalent to
+ * completed for prerequisite checks — O5-2). `completed` is a WALK fact, never a
+ * comprehension claim (understood lives on chapter_progress — DD-048).
+ */
+export const stationProgress = app.table(
+  'station_progress',
+  {
+    /** Logical ref → app."user" (better-auth) — FK lands with the auth tables (M1). */
+    userId: text('user_id').notNull(),
+    /** FK → content.lessons (the station row). */
+    stationId: uuid('station_id')
+      .notNull()
+      .references(() => lessons.id),
+    /** 'in_progress' | 'completed' | 'needs_retry' | 'skipped'. */
+    status: text('status').notNull().default('in_progress'),
+    /** Best exercise score 0..1 at this station (null for viewed/task stations). */
+    bestScore: real('best_score'),
+    /** Total exercise attempts at this station. */
+    attemptCount: integer('attempt_count').notNull().default(0),
+    /** Resume anchor: last teaching-block id the user reached. */
+    currentBlock: text('current_block'),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.stationId] }), index('station_progress_user_idx').on(t.userId)],
+);
+
+/* ------------------------------------------------------- chapter_progress (TASK-LEARNING-01) */
+/**
+ * Chapter (unit) A→D aggregate per user (island architecture §۹):
+ * started → stations_complete → mastery_attempted → understood | remediate.
+ * `understood` is ONLY set from a passed mastery attempt (DD-048) — the gate the
+ * island map's 「فهمیدم」 seal displays. Remediation loops are capped (max 3 per
+ * session, then "rest + FSRS tomorrow" — station-design §۸).
+ */
+export const chapterProgress = app.table(
+  'chapter_progress',
+  {
+    /** Logical ref → app."user" (better-auth) — FK lands with the auth tables (M1). */
+    userId: text('user_id').notNull(),
+    /** FK → content.units (the chapter row). */
+    unitId: uuid('unit_id')
+      .notNull()
+      .references(() => units.id),
+    /** 'started' | 'stations_complete' | 'mastery_attempted' | 'understood' | 'remediate'. */
+    status: text('status').notNull().default('started'),
+    /** Best weighted gate score 0..1 across attempts (display: qualitative only — AC-947). */
+    bestWeighted: real('best_weighted'),
+    /** Best per-measure fractions { M1..M5: 0..1 | null }. */
+    bestMeasures: jsonb('best_measures'),
+    /** Logical ref → app.dialogue_mastery_attempts (the passing attempt, when understood). */
+    masteryAttemptId: uuid('mastery_attempt_id'),
+    /** Remediation loop counter within the current session (reset on pass / new session). */
+    remediationCount: integer('remediation_count').notNull().default(0),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.unitId] }), index('chapter_progress_user_idx').on(t.userId)],
+);
+
+/* ------------------------------------------------------- lesson_progress (§۳ extension — PoC unit record) */
+/**
+ * The A→D cycle record for a dialogue-anchored unit (PoC flow keyed by its anchor
+ * lesson). `status='understood'` is ONLY set from a stage-D mastery attempt with
+ * outcome='passed' (DD-048: understood, never "completed"). The chapter flow
+ * (TASK-LEARNING-01) writes chapter_progress instead; this table stays untouched.
  */
 export const lessonProgress = app.table(
   'lesson_progress',

@@ -49,7 +49,13 @@ describe('FSRS dialogue-context cards (T7)', () => {
 
   it('serializes/deserializes with context_line_id intact (persistence roundtrip)', () => {
     const line = dialogue.lines[4]!;
-    const reviewed = review(createCardFromLine(line, new Date('2026-11-01T09:00:00Z')), 'easy');
+    // FIXED review dates (deterministic — a defaulted `now` made the follow-up review
+    // land BEFORE the first review's last_review once the wall clock passed it: delta_t -1)
+    const reviewed = review(
+      createCardFromLine(line, new Date('2026-11-01T09:00:00Z')),
+      'easy',
+      new Date('2026-11-01T12:00:00Z'),
+    );
     const json = serializeCard(reviewed.item);
     const restored: DialogueFsrsCard = deserializeCard(json);
 

@@ -1,0 +1,72 @@
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowLeft, CircleCheck } from 'lucide-react';
+import { loadChapterBundle } from '@/modules/curriculum/server';
+import { fa } from '@/messages/fa';
+
+/**
+ * /learn/[chapter]/complete — TASK-LEARNING-01 page 7: chapter completion.
+ * Qualitative mastery verdict (AC-947 — no raw %), the 「理解」 seal, and what's next.
+ */
+export const dynamic = 'force-dynamic';
+
+export default async function ChapterCompletePage({ params }: { params: Promise<{ chapter: string }> }) {
+  const { chapter: slug } = await params;
+  let bundle;
+  try {
+    bundle = loadChapterBundle(slug);
+  } catch {
+    notFound();
+  }
+  const chapter = bundle!.chapter;
+
+  return (
+    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col items-center gap-8 px-4 py-16 text-center">
+      <span
+        aria-hidden
+        className="grid size-28 place-items-center rounded-full border-4 border-success text-hero-ja font-black text-success"
+      >
+        理解
+      </span>
+      <div className="flex flex-col gap-3">
+        <h1 className="text-h1 font-black text-indigo">{fa.curriculum.chapterCompleteTitle}</h1>
+        <p className="text-lead text-ink-soft">{chapter.titleFa}</p>
+        <p className="flex items-center justify-center gap-2 text-body font-bold text-success">
+          <CircleCheck aria-hidden className="size-5" />
+          {fa.curriculum.gatePassedTitle}
+        </p>
+      </div>
+
+      <section className="w-full rounded-md border border-ink-faint bg-card p-6 text-start">
+        <h2 className="text-h3 font-bold">{fa.curriculum.canDoTitle}</h2>
+        <ul className="mt-3 flex flex-col gap-2 text-body">
+          {chapter.canDoFa.split('،').map((part, i) => (
+            <li key={i} className="flex items-start gap-2">
+              <CircleCheck aria-hidden className="mt-1 size-4 shrink-0 text-success" />
+              <span>{part.trim()}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 text-caption text-ink-soft">
+          کارت‌های مرور این فصل (۲۳ کارت) در صف FSRS ثبت شدند — صف مرور با موتور M2 فعال می‌شود.
+        </p>
+      </section>
+
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Link
+          href="/learn"
+          className="flex h-12 items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+        >
+          {fa.curriculum.backToChapters}
+          <ArrowLeft aria-hidden className="size-4" />
+        </Link>
+        <Link
+          href={`/learn/${chapter.slug}/journey`}
+          className="flex h-12 items-center gap-2 rounded-md border border-ai px-6 text-body font-bold text-ai transition-colors hover:bg-indigo-wash"
+        >
+          {fa.curriculum.backToJourney}
+        </Link>
+      </div>
+    </main>
+  );
+}

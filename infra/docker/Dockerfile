@@ -23,6 +23,10 @@ ARG NEXT_PUBLIC_ENV=production
 ENV NEXT_PUBLIC_APP_VERSION=$NEXT_PUBLIC_APP_VERSION
 ENV NEXT_PUBLIC_BUILD_SHA=$NEXT_PUBLIC_BUILD_SHA
 ENV NEXT_PUBLIC_ENV=$NEXT_PUBLIC_ENV
+# D-01 fix (TASK-LEARNING-01): generate the placeholder audio INSIDE the image so
+# /poc-audio/* exists in the runner (previously 404 in production deploys — the
+# files were gitignored and only generated in dev environments).
+RUN pnpm --filter web gen:audio
 RUN pnpm --filter web build
 
 # ---- pg toolchain source (pinned to the exact same digest the VPS compose runs) ----

@@ -43,3 +43,9 @@
 - **انجام:** Integration واقعی روی PG18.6 ایزوله (۳۱+۱ سبز؛ دریل بکاپ/ریستور با شمارش برابر) · راستی‌آزمایی زندهٔ Production (health/ready/progress/dialogues + kotodama.ir) · ممیزی UI ۸ مسیر × ۲ viewport (۱۶/۱۶ سالم؛ ۱۶ اسکرین‌شات مرجع) · ممیزی بصری VLM و طبقه‌بندی بلوغ صفحات · ممیزی Skillها + **حل تعارض PR #76 و merge آن** (`eb80e88`؛ بازشماره‌گذاری RUN-20261102-02→04 تسک TASK-ENG) · ARCHITECTURE_MAP/MASTER_ROADMAP/NEXT_EXECUTION_TASK · راهنمای ۱۵ فصلی مالک + به‌روزرسانی BRIEFING/STATUS/REGISTRY.
 - **یافته‌ها:** D-01 (تولید صدا در Docker build نیست → 404 در prod) · D-02 (اولین بکاپ زمان‌بندی‌شده هنوز ثبت نشده) · D-04 (متن فنی در UI) · ۴ رکورد اجرای قدیمی بدون بخش Skill (USAGE NOT VERIFIED).
 - **تسک بعدی:** TASK-M0-11 درس Hello (+Q1/Q2 موازی) — سند: `docs/engineering/roadmap/NEXT_EXECUTION_TASK.md`.
+
+## ۲۰۲۶-۱۱-۰۴ — TASK-LEARNING-01 (Builder/Z.ai)
+
+- **شاخه:** `feat/learning-01-island-chapter` → PR #86 — نخستین فصل کامل جزیره‌ای (بازتعریف M0-11).
+- **فایل‌های مشترک تغییرکرده (ترتیبی، طبق قاعده):** `docs/engineering/roadmap/NEXT_EXECUTION_TASK.md` (بازنویسی — هدف M0-11 بازتعریف شد) · `MASTER_ROADMAP.md` (ردیف M0 + حوزه‌های D..H) · `docs/owner/OWNER_BRIEFING.fa.md` · `docs/owner/HANASO_PROJECT_GUIDE.fa.md` (فصل ۷/۱۲).
+- **هم‌نقطه با دیگر Agentها:** هیچ (Agent هنری/تحقیق در این بازه فعال نبودند).
