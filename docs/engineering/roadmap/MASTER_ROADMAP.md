@@ -34,12 +34,13 @@ flowchart TD
 
 ### M0 — تکمیل بوت‌استرپ
 
-| ID                                                 | تسک                        | وضعیت                  | باقی‌مانده                                  | پیش‌نیاز        | Agent             | تست‌ها                           | AC                                                 |
-| -------------------------------------------------- | -------------------------- | ---------------------- | ------------------------------------------- | --------------- | ----------------- | -------------------------------- | -------------------------------------------------- |
-| TASK-M0-11                                         | درس نمونهٔ «Hello» با ruby | `READY` (زیرساخت کامل) | محتوای درس + صفحهٔ درس واقعی + اتصال پیشرفت | M0-09 ✓ M0-10 ✓ | Builder + محتوایی | unit + integration + مرور مرورگر | AC-901..903 · FT-002/003 · قابل مشاهده روی Preview |
-| (تسک اصلی بعدی — جزئیات: `NEXT_EXECUTION_TASK.md`) |                            |                        |                                             |                 |                   |                                  |                                                    |
+| ID               | تسک                                                                                               | وضعیت                                     | باقی‌مانده                       | پیش‌نیاز        | Agent             | تست‌ها                          | AC                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------- | -------------------------------- | --------------- | ----------------- | ------------------------------- | --------------------------------------------------------- |
+| TASK-LEARNING-01 | **نخستین فصل کامل جزیره‌ای** (بازتعریف M0-11: موتور یادگیری + دیالوگ اصیل + ۱۲ ایستگاه + گیت فهم) | `IN REVIEW` — PR #86 · Check2 کامل رفع شد | CI سبز → merge → Check3 → deploy | M0-09 ✓ M0-10 ✓ | Builder + محتوایی | ۱۴۰ unit + integration-PG + E2E | AC-901..903 ارتقا‌یافته + اسناد docs/engineering/learning |
 
-**خروجی M0 = اولین تجربهٔ کامل «درس» برای مرور مالک.**
+**خروجی M0 = اولین تجربهٔ کامل «فصل» برای مرور مالک — نقشهٔ جزیره‌ای واقعی روی Preview.**
+
+> تاریخچه: هدف پیشین «درس نمونهٔ Hello» (TASK-M0-11) عمداً ارتقا یافت — درس نمایشی تک‌صفحه‌ای جای خود را به Vertical Slice کامل داد (تصمیم مأموریت TASK-LEARNING-01؛ سند کامل انتخاب و طراحی: `docs/engineering/learning/`).
 
 ### M1 — تجربهٔ یادگیری اول (اولین گره بحرانی محصول)
 
@@ -81,23 +82,23 @@ FSRS واقعی (ts-fsrs موجود است، wrapper آزمایشی در ماژ�
 
 ## ۲. جدول وضعیت خلاصهٔ همهٔ حوزه‌ها (§۶ مأموریت)
 
-| حوزه                           | وضعیت                                                                                     | کلاس                                                     |
-| ------------------------------ | ----------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| A Platform Foundation          | زیرساخت کامل CI/CD/deploy/monorepo                                                        | `DONE_VERIFIED`                                          |
-| B Design System & Aizen        | توکن‌ها/فونت/کامپوننت/امضاها + در `/poc/ui` مرجع؛ اعمال یکنواخت ناقص                      | `DONE_VERIFIED` (سیستم) / `IN_PROGRESS` (اعمال در صفحات) |
-| C Core Product Architecture    | معماری ماژولار + استقرار زنده                                                             | `DONE_VERIFIED`                                          |
-| D Educational Content Contract | قرارداد اسکیما/seed یک-دیالوگ؛ registry کامل 🔴                                           | `IN_PROGRESS`                                            |
-| E Lesson Engine                | PoC درس سطح B                                                                             | `PROTOTYPE`                                              |
-| F Dialogue Experience          | پخش‌کنندهٔ قوی + خطایابی؛ محتوا ۱ واحد                                                    | `PROTOTYPE` (فنی قوی)                                    |
-| G Vocabulary & Grammar         | در seed محدود                                                                             | `PROTOTYPE`                                              |
-| H Exercises & Assessment       | ۶ نوع تمرین + ارزیابی سروری                                                               | `PROTOTYPE`                                              |
-| I/J Kanji Reading/Writing      | فقط پژوهش KB                                                                              | `DEFERRED` (M6)                                          |
-| K Speaking                     | فقط پژوهش KB                                                                              | `DEFERRED` (M6)                                          |
-| L Audio Pipeline               | پلیر/مدیریت خطا ✓؛ تولید صدا placeholder (و در prod 🔴 تولید نمی‌شود — D-01)؛ VOICEVOX 🔴 | `IN_PROGRESS`                                            |
-| M FSRS                         | ts-fsrs + wrapper آزمایشی                                                                 | `READY` (پیاده‌سازی در M2)                               |
-| N Learning Analytics           | sink رویداد PoC                                                                           | `DEFERRED` (M6)                                          |
-| O Admin & Content Ops          | blueprint فقط                                                                             | `DEFERRED` (M6)                                          |
-| P Security/QA/Beta             | ۱۸۳ تست · ممیزی مخرب PRها · smoke زنده؛ auth/RBAC/E2E 🔴                                  | `IN_PROGRESS`                                            |
+| حوزه                           | وضعیت                                                                                      | کلاس                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| A Platform Foundation          | زیرساخت کامل CI/CD/deploy/monorepo                                                         | `DONE_VERIFIED`                                          |
+| B Design System & Aizen        | توکن‌ها/فونت/کامپوننت/امضاها + در `/poc/ui` مرجع؛ اعمال یکنواخت ناقص                       | `DONE_VERIFIED` (سیستم) / `IN_PROGRESS` (اعمال در صفحات) |
+| C Core Product Architecture    | معماری ماژولار + استقرار زنده                                                              | `DONE_VERIFIED`                                          |
+| D Educational Content Contract | فصل ۱ کاملِ داده‌محور (levels/units/stations در DB + ماژول محتوا) — الگو برای M1+ تثبیت شد | `DONE` (فصل ۱ — PR #86، در بازبینی)                      |
+| E Lesson Engine                | موتور درس بلوک‌محور (۱۱ نوع بلوک TB از داده) + رندرر ایستگاه + نردبان F1..F3               | `DONE` (v1 — PR #86؛ FSRS-enroll نمایشی تا M2)           |
+| F Dialogue Experience          | پخش‌کنندهٔ قوی + دیالوگ اصیل فصل ۱ + نقشهٔ جزیره‌ای هفت‌صفحه‌ای                            | `DONE` (v1 — PR #86)                                     |
+| G Vocabulary & Grammar         | ۸ واژه + ۲ خوشه با کارت صدا-اول/قاعده/مثال پلکانی — از دل دیالوگ                           | `DONE` (v1 — PR #86)                                     |
+| H Exercises & Assessment       | ۳۳ تمرین در دو استخر ناهم‌پوشان + گیت M1..M5 سروری + بازگشت نقطه‌ای                        | `DONE` (v1 — PR #86)                                     |
+| I/J Kanji Reading/Writing      | فقط پژوهش KB                                                                               | `DEFERRED` (M6)                                          |
+| K Speaking                     | فقط پژوهش KB                                                                               | `DEFERRED` (M6)                                          |
+| L Audio Pipeline               | پلیر/مدیریت خطا ✓؛ تولید صدا placeholder (و در prod 🔴 تولید نمی‌شود — D-01)؛ VOICEVOX 🔴  | `IN_PROGRESS`                                            |
+| M FSRS                         | ts-fsrs + wrapper آزمایشی                                                                  | `READY` (پیاده‌سازی در M2)                               |
+| N Learning Analytics           | sink رویداد PoC                                                                            | `DEFERRED` (M6)                                          |
+| O Admin & Content Ops          | blueprint فقط                                                                              | `DEFERRED` (M6)                                          |
+| P Security/QA/Beta             | ۱۸۳ تست · ممیزی مخرب PRها · smoke زنده؛ auth/RBAC/E2E 🔴                                   | `IN_PROGRESS`                                            |
 
 ## ۳. تصمیم‌های باز مالک (گیت‌های تصمیم — از ممیزی این مأموریت)
 
@@ -120,4 +121,4 @@ FSRS واقعی (ts-fsrs موجود است، wrapper آزمایشی در ماژ�
 
 ---
 
-**تسک اجرایی بعدی (یک‌تا):** [`NEXT_EXECUTION_TASK.md`](./NEXT_EXECUTION_TASK.md) — **TASK-M0-11 درس Hello**
+**تسک اجرایی بعدی (یک‌تا):** [`NEXT_EXECUTION_TASK.md`](./NEXT_EXECUTION_TASK.md) — **TASK-M1-01 احراز هویت** (پس از merge و deploy تسک TASK-LEARNING-01)
