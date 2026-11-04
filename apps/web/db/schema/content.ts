@@ -223,7 +223,8 @@ export const lessons = content.table(
     type: text('type').notNull(),
     stage: integer('stage').notNull(),
     jlpt: text('jlpt'),
-    estMinutes: integer('est_minutes'),
+    /** TASK-LEARNING-02: real — blueprint station minutes are fractional (2.5/1.5 — KB 13-09 §۳). */
+    estMinutes: real('est_minutes'),
     /** Validated at publish (CONTENT-060 pattern — array refs carry no DB FK). */
     prerequisiteIds: uuid('prerequisite_ids')
       .array()

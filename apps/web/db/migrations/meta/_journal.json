@@ -15,6 +15,13 @@
       "when": 1793731094658,
       "tag": "0001_smooth_alice",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793740000000,
+      "tag": "0002_station_minutes_real",
+      "breakpoints": true
     }
   ]
 }
