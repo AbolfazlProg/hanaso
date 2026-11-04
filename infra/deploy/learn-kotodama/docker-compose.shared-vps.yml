@@ -213,7 +213,9 @@ services:
     env_file: .env
     environment:
       DIRECT_DATABASE_URL: postgresql://${POSTGRES_USER:?}:${POSTGRES_PASSWORD:?}@postgres:5432/${POSTGRES_DB:?}
-    command: ['sh', '-c', 'node apps/web/.tools/db-cli.mjs migrate && node apps/web/.tools/db-cli.mjs seed']
+    # TASK-LEARNING-02: seed:curriculum added — the chapter unit + stations are part of
+    # a complete deployment (without it the /learn journey has no rows on a fresh DB).
+    command: ['sh', '-c', 'node apps/web/.tools/db-cli.mjs migrate && node apps/web/.tools/db-cli.mjs seed && node apps/web/.tools/db-cli.mjs seed:curriculum']
     networks: [hanaso-net]
     mem_limit: 512m
     cpus: 0.5
