@@ -13,8 +13,20 @@
 ## ۲. ترتیب مطالعهٔ اجباری
 
 ۱) همین فایل → ۲) `README.md` + `PROJECT_STATUS.md` این ریپو → ۳) در KB به‌ترتیب: `START-HERE.md` →
-`docs/knowledge-base/11-implementation-foundation/IMPLEMENTATION-BLUEPRINT.md` → Skill متناظر با کار.
+`docs/knowledge-base/11-implementation-foundation/IMPLEMENTATION-BLUEPRINT.md` → Skill متناسب با کار.
 هیچ تسکی بدون خواندن این زنجیره شروع نمی‌شود.
+
+**پروتکل آمادگی Agent (TASK-LEARNING-04 — الزامی برای هر تسک توسعه‌ای):**
+`docs/engineering/learning/AGENT_READINESS_PROTOCOL.md` — ده گام اجباری (Product Guide → Decision Registry →
+Research → قرارداد آموزشی → Skillها → Issueها → وضعیت پیاده‌سازی → Baseline → Evidence → بررسی از Checkout تمیز)
+
+- دو بخش الزامی گزارش پایان تسک: `Skills Used` و `Source Documents Reviewed`.
+  اگر دو سند تعارض دارند، پیش از پیاده‌سازی گزارش کن — نه انتخاب خودسرانه. مرجع تعارض‌های توالی آموزشی:
+  `docs/engineering/learning/LEARNING_SEQUENCE_POLICY.md` (بستن C1).
+
+**گیت‌های کیفیت آموزشی (EQA-1..7):** هر تغییر محتوای آموزشی از `pnpm eqa` عبور می‌کند (CI گام
+«Educational QA gates»). نقض پداگوژیک جدید merge را متوقف می‌کند مگر با معافیت ثبت‌شدهٔ Issueدار
+(`apps/web/src/modules/curriculum/content/eqa-waivers.ts`). رجیستری: `docs/engineering/learning/EQA_GATE_REGISTRY.md`.
 
 ## ۳. Skillها
 

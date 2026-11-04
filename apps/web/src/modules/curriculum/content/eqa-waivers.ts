@@ -56,7 +56,7 @@ export const EQA_WAIVERS: EqaWaiver[] = [
     key: 'EQA-3:practice-pool:recall-first-share',
     issue: 106,
     reason:
-      'استخر practice فصل ۱۵/۳۴ آیتم recall-first است (۴۴٪ < ۶۰٪) — ترکیب جلسه به تشخیص آسان انحراف دارد؛ با طبقه‌بندی بستهٔ انواع (exercise-design §۱ + QUESTION §۳) محاسبه شده.',
+      'استخر practice فصل ۱۵/۳۳ آیتم recall-first است (۴۵٫۵٪ < ۶۰٪) — ترکیب جلسه به تشخیص آسان انحراف دارد؛ با طبقه‌بندی بستهٔ انواع (exercise-design §۱ + QUESTION §۳) محاسبه شده.',
     resolvedBy: 'TASK-LEARNING-05 (بازطراحی ترکیب تمرین‌ها — افزایش اقلام cloze/word-order/produce/درک شنیداری)',
     registeredAt: '2026-11-04',
     chapter: 'first-meeting-01',
