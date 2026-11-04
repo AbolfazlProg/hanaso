@@ -80,7 +80,6 @@ E2E کامل: گیت قفل → grade-block → رد پرش → پیمایش ۱�
 
 _پیوند: [OWNER-REPORT-FA.md](./OWNER-REPORT-FA.md) — خلاصهٔ مالک_
 
-
 ---
 
 # TASK-LEARNING-02 — راستی‌آزمایی تطبیق با جزوهٔ مالک (۲۰۲۶-۱۱-۰۴)
@@ -99,13 +98,13 @@ _پیوند: [OWNER-REPORT-FA.md](./OWNER-REPORT-FA.md) — خلاصهٔ مال�
 
 ## Check ۳ — انتشار نهایی ✅
 
-| قلم | شاهد |
-|---|---|
-| CI PR #90 | سبز `ba57c7f` (پس از migration 0002 — ریشهٔ شکست #57: est_minutes integer) |
-| CI main | سبز `41de07b` (run #59 شامل ایمیج) |
-| Integration واقعی | ۶ فایل/۲۸ تست سبز — PG18 روی VPS از تونل SSH |
-| Deploy | learn.kotodama.ir = `41de07b` · health/ready سبز · smoke ALL GREEN · kotodama.ir دست‌نخورده |
-| DB زنده | migration 0002 ✓ · seed:curriculum = ۷ سطح/۱ واحد/۱۲ ایستگاه · دقیقه‌های کسری درست |
-| صوت زنده | ۱۰/۱۰ مسیر = 200 · VOICEVOX credit در UI |
-| مرورگر زنده | پیش‌بینی سروری (قرمز/سبز) · پخش opus واقعی · zenkaku لود · نردبان F زنده · پیشرفت ۱/۱۰ مانا در DB |
-| موبایل ۳۹۰ | بدون سرریز · ۸ اسکرین‌شات غیرخالی |
+| قلم               | شاهد                                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| CI PR #90         | سبز `ba57c7f` (پس از migration 0002 — ریشهٔ شکست #57: est_minutes integer)                        |
+| CI main           | سبز `41de07b` (run #59 شامل ایمیج)                                                                |
+| Integration واقعی | ۶ فایل/۲۸ تست سبز — PG18 روی VPS از تونل SSH                                                      |
+| Deploy            | learn.kotodama.ir = `41de07b` · health/ready سبز · smoke ALL GREEN · kotodama.ir دست‌نخورده       |
+| DB زنده           | migration 0002 ✓ · seed:curriculum = ۷ سطح/۱ واحد/۱۲ ایستگاه · دقیقه‌های کسری درست                |
+| صوت زنده          | ۱۰/۱۰ مسیر = 200 · VOICEVOX credit در UI                                                          |
+| مرورگر زنده       | پیش‌بینی سروری (قرمز/سبز) · پخش opus واقعی · zenkaku لود · نردبان F زنده · پیشرفت ۱/۱۰ مانا در DB |
+| موبایل ۳۹۰        | بدون سرریز · ۸ اسکرین‌شات غیرخالی                                                                 |
