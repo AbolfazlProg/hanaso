@@ -1,13 +1,30 @@
-# HANASO — Dialogue content: first-meeting-01 (TASK-LEARNING-01)
+# HANASO — Dialogue content: first-meeting-01 (TASK-LEARNING-01/02).
 # Chapter 1 anchor dialogue — Level L2 «اولین دیدار» (unit-first-meeting-01).
-# Content: ORIGINAL HANASO (OQ-033 safe path — no Attain text copied). Didactic
-# structure per KB 13-09 §2 blueprint: greeting → full self-intro (AはBです with
-# nationality) → short intro (subject omission, L3↔L4 pair) → confirmation +
-# nationality question (ですか/ですね on one line) → polite third-person question
-# (あのかた どなた) → triple identity statement → mutual yoroshiku close.
+#
+# PROVENANCE (TASK-LEARNING-02, per owner's notes HANASO-OWNER-EDUCATIONAL-NOTES-COMPLETE.fa.md):
+# The dialogue's STRUCTURE and didactic beats trace to the owner's notes Lesson 1
+# conversation «わたしは学生です» (Ando/Wang/Kim — Attain N5 course; KB 13-09 §2
+# adapted it to 9 lines): greeting → full self-intro (AはBです + nationality) →
+# short intro (subject omission, L3↔L4 pair) → confirmation + nationality question
+# (ですか/ですね on one line) → polite third-person question (あのかた どなた) →
+# identity statement → mutual yoroshiku close.
+# SURFACE is HANASO-original: re-scened to the HANASO cafe world with HANASO
+# characters (Miki/Yamada/Sora + background Ali) and NO verbatim Attain text
+# (KB audit §۲-۲ — Attain reproduction in the product is forbidden pending OQ-029/030/033).
+# Deviations from the notes' conversation, all documented in
+# DIALOGUE_TO_LEARNING_TRACEABILITY.md: (1) L8 adds イランじんです (HANASO
+# personalization — vocab home for イランじん), (2) the negative beat
+# (〜ではありません / いいえ / そうですか) is DEFERRED to chapter 2 (KB 13-09 §۸
+# Unit 2 by the S3 unit-split rule), (3) joint final よろしく is voiced by Sora
+# alone (schema = one speaker per line; the fa gloss notes «با هم»).
+#
 # Scene: a small cafe near the university, afternoon. Miki brings her friend
 # Sora (Chinese student) to Yamada's cafe for the first time. By the window,
 # a new customer — Ali, an Iranian university lecturer — reads a Japanese book.
+#
+# AUDIO (TASK-LEARNING-02): pre-generated VOICEVOX (0.15.7, build-time) dual
+# opus+m4a assets committed under public/audio/dialogues/ — see the sidecar
+# manifest there. Characters' voices: miki=四国めたん, yamada=玄野武宏, sora=九州そら.
 meta:
   id: dlg-first-meeting-01
   format: 2

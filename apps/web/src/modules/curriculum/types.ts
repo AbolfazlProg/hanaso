@@ -54,6 +54,12 @@ export interface VocabItem {
   id: string;
   /** Japanese surface (kanji form when applicable). */
   term: string;
+  /**
+   * TASK-LEARNING-02: furigana DSL for the term (FuriganaText children format,
+   * e.g. '中国人[ちゅうごくじん]') — rendered as group-ruby on the vocab card.
+   * Present whenever the term carries kanji (L2: recognition-only kanji).
+   */
+  termFurigana?: string;
   /** Kana reading. */
   readingKana: string;
   /** HANASO-standard romaji (double-vowel style: sensee, chuugoku — 13-09 §۴-۲). */

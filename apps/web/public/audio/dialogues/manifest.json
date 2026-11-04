@@ -1,0 +1,129 @@
+{
+  "generatedBy": "voicevox:0.15.7 (VPS engine) — TASK-LEARNING-02 pre-generation",
+  "format": "dual-opus32k-m4a96k",
+  "params": {
+    "speedScale": 0.95,
+    "volumeScale": 1.0,
+    "pitchScale": 0.0,
+    "intonationScale": 1.0,
+    "prePhonemeLength": 0.06,
+    "postPhonemeLength": 0.18
+  },
+  "voices": {
+    "vv-male-02-normal": {
+      "engine": "voicevox",
+      "speakerName": "玄野武宏",
+      "speakerStyleId": 11,
+      "credit": "VOICEVOX:玄野武宏"
+    },
+    "vv-neutral-03-normal": {
+      "engine": "voicevox",
+      "speakerName": "九州そら",
+      "speakerStyleId": 16,
+      "credit": "VOICEVOX:九州そら"
+    },
+    "vv-female-01-normal": {
+      "engine": "voicevox",
+      "speakerName": "四国めたん",
+      "speakerStyleId": 2,
+      "credit": "VOICEVOX:四国めたん"
+    }
+  },
+  "entries": {
+    "s-cafe-morning-01-l1": {
+      "bytes": 4399,
+      "bytesM4a": 15032,
+      "durationMs": 1105
+    },
+    "s-cafe-morning-01-l10": {
+      "bytes": 8408,
+      "bytesM4a": 25929,
+      "durationMs": 2033
+    },
+    "s-cafe-morning-01-l2": {
+      "bytes": 11514,
+      "bytesM4a": 37627,
+      "durationMs": 2876
+    },
+    "s-cafe-morning-01-l3": {
+      "bytes": 6089,
+      "bytesM4a": 19900,
+      "durationMs": 1521
+    },
+    "s-cafe-morning-01-l4": {
+      "bytes": 6947,
+      "bytesM4a": 22123,
+      "durationMs": 1713
+    },
+    "s-cafe-morning-01-l5": {
+      "bytes": 10709,
+      "bytesM4a": 34599,
+      "durationMs": 2641
+    },
+    "s-cafe-morning-01-l6": {
+      "bytes": 9657,
+      "bytesM4a": 29034,
+      "durationMs": 2289
+    },
+    "s-cafe-morning-01-l7": {
+      "bytes": 7099,
+      "bytesM4a": 23549,
+      "durationMs": 1788
+    },
+    "s-cafe-morning-01-l8": {
+      "bytes": 12050,
+      "bytesM4a": 38631,
+      "durationMs": 2993
+    },
+    "s-cafe-morning-01-l9": {
+      "bytes": 8058,
+      "bytesM4a": 27116,
+      "durationMs": 2012
+    },
+    "s-first-meeting-01-l1": {
+      "bytes": 7928,
+      "bytesM4a": 26083,
+      "durationMs": 2033
+    },
+    "s-first-meeting-01-l2": {
+      "bytes": 6435,
+      "bytesM4a": 23154,
+      "durationMs": 1734
+    },
+    "s-first-meeting-01-l3": {
+      "bytes": 20371,
+      "bytesM4a": 69009,
+      "durationMs": 5340
+    },
+    "s-first-meeting-01-l4": {
+      "bytes": 25244,
+      "bytesM4a": 85466,
+      "durationMs": 6908
+    },
+    "s-first-meeting-01-l5": {
+      "bytes": 9920,
+      "bytesM4a": 33684,
+      "durationMs": 2577
+    },
+    "s-first-meeting-01-l6": {
+      "bytes": 15684,
+      "bytesM4a": 52710,
+      "durationMs": 4177
+    },
+    "s-first-meeting-01-l7": {
+      "bytes": 6934,
+      "bytesM4a": 23166,
+      "durationMs": 1702
+    },
+    "s-first-meeting-01-l8": {
+      "bytes": 14297,
+      "bytesM4a": 48683,
+      "durationMs": 3782
+    },
+    "s-first-meeting-01-l9": {
+      "bytes": 8756,
+      "bytesM4a": 27542,
+      "durationMs": 2172
+    }
+  }
+}

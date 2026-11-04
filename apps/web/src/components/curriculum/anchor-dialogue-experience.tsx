@@ -32,6 +32,8 @@ export interface AnchorDialogueExperienceProps {
     audio: {
       available: boolean;
       note?: string;
+      audioSource?: 'voicevox' | 'placeholder';
+      voiceCredits?: string[];
       entries: {
         lineId: string;
         voiceId: string;
@@ -106,6 +108,13 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
 
       {/* the proven multi-speaker player (parameterized slug — analytics stay honest) */}
       <DialogueScene bundle={bundle} dialogueSlug={chapterSlug} />
+
+      {/* TASK-LEARNING-02: real-TTS provenance + VOICEVOX character credit (terms) */}
+      {bundle.audio.audioSource === 'voicevox' && bundle.audio.voiceCredits?.length ? (
+        <p className="text-caption text-ink-faint">
+          🗣 صداها با موتور VOICEVOX از پیش تولید شده‌اند — {bundle.audio.voiceCredits.join('・')}
+        </p>
+      ) : null}
 
       {!done ? (
         <button

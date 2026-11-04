@@ -14,6 +14,9 @@ import { gradeMasterySubmission, gradeExerciseAnswer, toClientExercise } from '@
 import type { ExerciseAnswerPayload } from '@/modules/curriculum/grading';
 import { loadDialogue } from '@/modules/dialogue/server';
 import { FM01_EXERCISES } from '@/modules/curriculum/content/chapter-fm01.exercises';
+import { loadRealAudioAssets } from '@/modules/audio/audio-manifest';
+import { existsSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 
 describe('bundled chapters', () => {
   it('ships exactly the first chapter', () => {
@@ -241,5 +244,62 @@ describe('exercise bank sanity (QUESTION §۲ quality rules)', () => {
     const practice = FM01_EXERCISES.filter((e) => e.assessmentRole === 'practice');
     const pureRecognition = practice.filter((e) => e.type === 'meaning-select');
     expect(pureRecognition.length / practice.length).toBeLessThanOrEqual(0.4);
+  });
+});
+
+describe('TASK-LEARNING-02 — owner-notes fidelity gates', () => {
+  const chapter = getChapter('first-meeting-01')!;
+
+  it('vocab cards match the owner notes Lesson-1 forms (kanji term + kana reading + furigana)', () => {
+    // Owner notes Lesson 1 list (N5-01 vocabulary §Ⅲ) — sha256-pinned reference copy in
+    // the private KB (00-source-materials). Forms below are the notes' exact kanji/kana.
+    const expected: Record<string, { term: string; reading: string }> = {
+      'voc-watashi': { term: '私', reading: 'わたし' },
+      'voc-san': { term: '〜さん', reading: '〜さん' },
+      'voc-nihonjin': { term: '日本人', reading: 'にほんじん' },
+      'voc-chuugokujin': { term: '中国人', reading: 'ちゅうごくじん' },
+      'voc-daigaku': { term: '大学', reading: 'だいがく' },
+      'voc-sensee': { term: '先生', reading: 'せんせい' },
+      'voc-anokata': { term: 'あの方', reading: 'あのかた' },
+      'voc-iranjin': { term: 'イラン人', reading: 'イランじん' }, // HANASO addition (marked on card)
+    };
+    for (const w of chapter.words) {
+      const exp = expected[w.id];
+      expect(exp, `word ${w.id} is expected in the notes-fidelity map`).toBeDefined();
+      expect(w.term).toBe(exp!.term);
+      expect(w.readingKana).toBe(exp!.reading);
+      if (/[一-龯]/.test(w.term)) {
+        // kanji-carrying cards MUST ship furigana (L2: furigana 'all' — LEVEL_MATRIX §۲)
+        expect(w.termFurigana, `${w.id} needs termFurigana`).toBeTruthy();
+      }
+    }
+  });
+
+  it('every dialogue line of every bundled dialogue has REAL pre-generated audio (opus+m4a)', () => {
+    // TASK-LEARNING-02 §۷: no placeholder may be presented as real audio. This gate
+    // fails the build when a dialogue line lacks a committed VOICEVOX asset.
+    const assets = loadRealAudioAssets();
+    expect(assets, 'public/audio/dialogues/manifest.json present').not.toBeNull();
+    for (const ch of listChapters()) {
+      const dlg = loadDialogue(ch.dialogueSlug);
+      for (const line of dlg.lines) {
+        expect(assets!.entries[line.id], `real audio manifest entry for ${line.id}`).toBeDefined();
+        for (const ext of ['opus', 'm4a'] as const) {
+          const p = join(process.cwd(), 'public', 'audio', 'dialogues', `${line.id}.${ext}`);
+          expect(existsSync(p), `committed asset ${line.id}.${ext}`).toBe(true);
+          expect(statSync(p).size, `${line.id}.${ext} non-empty`).toBeGreaterThan(1000);
+        }
+      }
+    }
+  });
+
+  it('the real audio manifest declares the VOICEVOX casting + credits for every voice in use', () => {
+    const assets = loadRealAudioAssets()!;
+    for (const voiceId of ['vv-female-01-normal', 'vv-male-02-normal', 'vv-neutral-03-normal']) {
+      const v = assets.voices?.[voiceId];
+      expect(v, `casting for ${voiceId}`).toBeDefined();
+      expect(v!.engine).toBe('voicevox');
+      expect(v!.credit.startsWith('VOICEVOX:')).toBe(true);
+    }
   });
 });

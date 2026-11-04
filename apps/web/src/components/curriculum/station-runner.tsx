@@ -17,6 +17,7 @@ import type { ClientExercise } from '@/modules/curriculum/grading';
 import type { ClientStation, ClientTeachingBlock } from '@/modules/curriculum/client-transport';
 import type { Chapter, Station } from '@/modules/curriculum/types';
 import { JaBlock } from '@/components/patterns/ja-block';
+import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
@@ -248,7 +249,13 @@ function BlockView({
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <JaBlock className="text-h2 font-bold">{word.term}</JaBlock>
+              {word.termFurigana ? (
+                <JaBlock className="text-h2 font-bold">
+                  <FuriganaText>{word.termFurigana}</FuriganaText>
+                </JaBlock>
+              ) : (
+                <JaBlock className="text-h2 font-bold">{word.term}</JaBlock>
+              )}
               <p className="mt-1 text-small text-ink-soft" dir="ltr" lang="ja">
                 {word.readingKana} · {word.romaji}
               </p>
