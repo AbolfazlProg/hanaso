@@ -9,7 +9,8 @@
 import { describe, expect, it } from 'vitest';
 import { GET as getAttempts, POST as postAttempt } from '@/app/api/attempts/route';
 import { GET as getEvents, POST as postEvent } from '@/app/api/events/route';
-import { computeMastery, MASTERY_THRESHOLDS, MASTERY_WEIGHTS } from '@/modules/mastery';
+import { computeMastery, MASTERY_WEIGHTS } from '@/modules/mastery';
+import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
 
 const BASE = 'http://localhost/api';
 
@@ -129,16 +130,17 @@ describe('GET /api/attempts', () => {
   });
 });
 
-describe('computeMastery (scoring constants — DD-048 provisional)', () => {
-  it('stage2 thresholds: weighted 0.70, per-measure floor 0.50', () => {
-    expect(MASTERY_THRESHOLDS.stage2).toEqual({ weighted: 0.7, minMeasure: 0.5 });
+describe('computeMastery (thresholds injected from level policy — TASK-LEARNING-04 #110)', () => {
+  it('the PoC/dialogue path uses the L2 policy gate (0.70/0.50) — the LEVEL_MATRIX §۶ L2–L3 band', () => {
+    const l2Gate = LEVELS_BY_CODE['L2']!.caps.gate;
+    expect(l2Gate).toEqual({ weighted: 0.7, minMeasure: 0.5 });
     expect(
       MASTERY_WEIGHTS.M1 + MASTERY_WEIGHTS.M2 + MASTERY_WEIGHTS.M3 + MASTERY_WEIGHTS.M4 + MASTERY_WEIGHTS.M5,
     ).toBeCloseTo(1, 10);
   });
 
   it('unassessed measures make the attempt incomplete (the D-gate needs all five)', () => {
-    const result = computeMastery({ M1: 1, M2: null, M3: 1, M4: 1, M5: 1 });
+    const result = computeMastery({ M1: 1, M2: null, M3: 1, M4: 1, M5: 1 }, LEVELS_BY_CODE['L2']!.caps.gate);
     expect(result.outcome).toBe('incomplete');
     expect(result.unassessed).toEqual(['M2']);
   });

@@ -10,7 +10,7 @@
  * - The mastery gate reuses the existing mastery scoring (computeMastery) over
  *   the non-overlapping mastery bank (this module only maps answers → measures).
  */
-import type { Chapter, Exercise, Station } from './types';
+import type { Chapter, Exercise, LevelPolicy, Station } from './types';
 import { computeMastery, type MasteryResult } from '@/modules/mastery';
 
 export type ExerciseAnswerPayload =
@@ -129,10 +129,18 @@ export interface MasteryGradingResult extends MasteryResult {
   perQuestion: Record<string, boolean>;
 }
 
-/** Grade a full gate submission (raw answers only) against the chapter bank. */
+/**
+ * Grade a full gate submission (raw answers only) against the chapter bank.
+ *
+ * TASK-LEARNING-04 (#110 / EQA-7): gate thresholds and measure weights are
+ * INJECTED from data — the caller passes the chapter's level policy (single
+ * source: LEVELS_BY_CODE[chapter.levelCode]) and the chapter's own mastery
+ * weights. No stage2-style hardcoded threshold can reach this path.
+ */
 export function gradeMasterySubmission(
   chapter: Chapter,
   answers: Record<string, ExerciseAnswerPayload>,
+  level: Pick<LevelPolicy, 'caps'>,
 ): MasteryGradingResult {
   const bank = Object.values(chapter.exercises).filter((e) => e.assessmentRole.startsWith('mastery_'));
   const perQuestion: Record<string, boolean> = {};
@@ -189,7 +197,7 @@ export function gradeMasterySubmission(
     M5: c5 ? m5 / c5 : null,
   } as const;
 
-  const result = computeMastery(scores, 'stage2');
+  const result = computeMastery(scores, level.caps.gate, chapter.mastery.weights);
   const remediationStations = [
     ...new Set(
       Object.keys(wrongByMeasure)
@@ -242,6 +250,16 @@ function shuffleSeeded<T>(items: T[], seed: string): T[] {
     [arr[i], arr[j]] = [arr[j]!, arr[i]!];
   }
   return arr;
+}
+
+/**
+ * TASK-LEARNING-04 (EQA-4): the 0-based position of the correct option in the
+ * order the learner actually sees (after the deterministic server shuffle).
+ * Returns null for non-option exercises.
+ */
+export function servedCorrectPosition(ex: Exercise): number | null {
+  if (!ex.options || !ex.correctOptionId) return null;
+  return shuffleSeeded(ex.options, ex.id).findIndex((o) => o.id === ex.correctOptionId);
 }
 
 /** Strip the answer key + feedback from an exercise for client transport. */

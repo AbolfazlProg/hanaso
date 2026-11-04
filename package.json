@@ -19,7 +19,8 @@
     "verify": "bash scripts/verify-foundation.sh",
     "smoke": "bash scripts/smoke.sh",
     "gen:audio": "pnpm --filter web gen:audio",
-    "bench:voicevox": "pnpm --filter web bench:voicevox"
+    "bench:voicevox": "pnpm --filter web bench:voicevox",
+    "eqa": "pnpm --filter web test:eqa"
   },
   "devDependencies": {
     "prettier": "3.9.10"

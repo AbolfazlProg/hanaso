@@ -65,6 +65,14 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
+      # TASK-LEARNING-04 (#97): pedagogical quality gates EQA-1..7 — a content edit
+      # that violates a learning rule (assessment before teaching, unpacked card
+      # dumps, recall-starved pools, biased answer positions, incomplete vocab
+      # cards, off-policy thresholds) fails here BEFORE review. Known violations
+      # are only passable with a registered, issue-linked waiver (content/eqa-waivers.ts).
+      - name: Educational QA gates (EQA-1..7 — Issue #97)
+        run: pnpm eqa
+
       - name: Install pg_dump 18 (real backup/restore drill client)
         run: |
           sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo "$VERSION_CODENAME")-pgdg main" > /etc/apt/sources.list.d/pgdg.list'

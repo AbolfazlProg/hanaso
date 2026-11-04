@@ -119,7 +119,7 @@ describe('island walk through the Postgres stores', () => {
       else if (ex.correctOrder) answers[ex.id] = { kind: 'order', orderedIds: ex.correctOrder };
       else if (ex.acceptedChipOrder) answers[ex.id] = { kind: 'build', chipOrder: ex.acceptedChipOrder };
     }
-    const graded = gradeMasterySubmission(chapter, answers as never);
+    const graded = gradeMasterySubmission(chapter, answers as never, level);
     expect(graded.outcome).toBe('passed');
 
     const afterGate = applyChapterEvent(chapterState ?? undefined, {

@@ -161,6 +161,7 @@ describe('journey resolution', () => {
 
 describe('grading (server-side answer key)', () => {
   const chapter = getChapter('first-meeting-01')!;
+  const level = LEVELS_BY_CODE[chapter.levelCode]!;
 
   it('never leaks the answer key through the client payload builder', () => {
     for (const ex of Object.values(chapter.exercises)) {
@@ -199,7 +200,7 @@ describe('grading (server-side answer key)', () => {
       else if (ex.correctOrder) answers[ex.id] = { kind: 'order', orderedIds: ex.correctOrder };
       else if (ex.acceptedChipOrder) answers[ex.id] = { kind: 'build', chipOrder: ex.acceptedChipOrder };
     }
-    const result = gradeMasterySubmission(chapter, answers);
+    const result = gradeMasterySubmission(chapter, answers, level);
     expect(result.outcome).toBe('passed');
     expect(result.weightedScore).toBe(1);
     expect(result.wrongByMeasure).toEqual({});
@@ -218,7 +219,7 @@ describe('grading (server-side answer key)', () => {
       else if (ex.acceptedChipOrder)
         answers[ex.id] = { kind: 'build', chipOrder: ex.acceptedChipOrder.slice().reverse() };
     }
-    const result = gradeMasterySubmission(chapter, answers);
+    const result = gradeMasterySubmission(chapter, answers, level);
     expect(result.outcome).toBe('remediate');
     expect(Object.keys(result.wrongByMeasure)).toEqual(['M1', 'M2', 'M3', 'M4', 'M5']);
     expect(result.remediationStations).toContain('stn-fm01-02-vocab');

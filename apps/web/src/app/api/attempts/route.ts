@@ -5,6 +5,7 @@ import { fail, ok } from '@/modules/shared';
 import { getAttemptStore } from '@/lib/poc/stores';
 import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import { buildAssessmentQuestions, gradeAssessment } from '@/lib/poc/assessment-bank';
+import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
 
 /**
  * GET/POST /api/attempts — dialogue mastery attempts (TASK-DLG-POC-01 + TASK-SLICE-01
@@ -70,7 +71,10 @@ export async function POST(req: Request) {
   }
 
   const graded = gradeAssessment(questions, answers);
-  const result = computeMastery(graded.scores, 'stage2');
+  // TASK-LEARNING-04 (#110): thresholds are injected from the level policy — the
+  // PoC dialogues are the L2 pilot band (N5-low), so the L2 gate applies. The PoC
+  // pages are scheduled for removal in TASK-LEARNING-06 (#101).
+  const result = computeMastery(graded.scores, LEVELS_BY_CODE['L2']!.caps.gate);
   const attempt = await getAttemptStore().create(
     { dialogueId, userId, scores: graded.scores, weakPoints: graded.weakPoints },
     result.outcome,

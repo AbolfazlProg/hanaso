@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:eqa": "vitest run tests/unit/eqa-gates.test.ts",
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "gen:audio": "node scripts/generate-placeholder-audio.mjs",
