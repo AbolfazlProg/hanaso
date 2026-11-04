@@ -170,11 +170,10 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
   if (Math.abs(weightSum - 1) > 1e-9) {
     v.push({ rule: RULES.weightsSum, message: `weights sum ${weightSum} ≠ 1` });
   }
-  const gate = level.caps.gate;
-  const expectedGate = 0.7; // L2 policy value — cross-checked against the mastery flow
-  if (gate.weighted !== expectedGate && level.code === 'L2') {
-    v.push({ rule: RULES.gateThreshold, message: `L2 gate ${gate.weighted} differs from scoring stage2 threshold` });
-  }
+  // TASK-LEARNING-04 (#110 / EQA-7): the old hardcoded L2 gate check (expectedGate
+  // = 0.7) is gone. Gate thresholds now flow from level_policy into the mastery
+  // path by construction (gradeMasterySubmission injects them); policy sanity
+  // (bounds, escalation, level existence) is enforced by EQA-7 in modules/curriculum/eqa.
   for (const [measure, stationSlugs] of Object.entries(chapter.mastery.weakPointMap)) {
     for (const stationSlug of stationSlugs) {
       if (!byslug.has(stationSlug)) {

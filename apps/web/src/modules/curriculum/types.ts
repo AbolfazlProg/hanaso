@@ -134,6 +134,14 @@ export interface Exercise {
   targetSkill: TargetSkill;
   /** Objective / pattern / word this item measures (single-target rule §۲-۱). */
   targetConcept: string;
+  /**
+   * TASK-LEARNING-04 (EQA-1): EVERY concept the item's prompt requires the learner
+   * to handle — including sentence-structure/particles of the prompt (e.g. the の
+   * of an audio-meaning line). Declared by the author so gate EQA-1 can verify
+   * «assessed ⊆ taught» fully. Absent → the gate verifies targetConcept + the
+   * line-anchored structure layer only (semantic remainder = human EQA-9 review).
+   */
+  assessesConcepts?: string[];
   /** Source dialogue line (CONTENT-085 — exercises are anchored to the dialogue). */
   lineRef?: string;
   difficulty: 1 | 2 | 3;
@@ -308,6 +316,13 @@ export interface Station {
   /** Source dialogue lines (CONTENT-080 — empty only for pure-new-context stations). */
   lineRefs: string[];
   objectiveCode: string;
+  /**
+   * TASK-LEARNING-04 (EQA-1/EQA-5): concepts taught here BEYOND the machine-derivable
+   * ones (vocab-card→wordId, expression-card→expressionId, grammar clusters anchored
+   * by lineRefs). Use it to register e.g. listening sub-skills
+   * (「listen-final-intonation」) so exercise references resolve.
+   */
+  teachesConcepts?: string[];
   estMinutes: number;
   estLoad: 'light' | 'medium' | 'heavy';
   completion: CompletionCriteria;

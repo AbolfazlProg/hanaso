@@ -85,7 +85,20 @@ export async function POST(req: Request) {
     );
   }
 
-  const graded = gradeMasterySubmission(chapter, answers as Record<string, ExerciseAnswerPayload>);
+  // TASK-LEARNING-04 (#110): gate thresholds come from the chapter's LEVEL POLICY
+  // (single source of truth — EQA-7), never from a hardcoded stage. A chapter
+  // with an unresolvable level cannot reach the gate (EQA-7 fails the build).
+  const level = LEVELS_BY_CODE[chapter.levelCode];
+  if (!level) {
+    return NextResponse.json(
+      fail({
+        code: 'mastery/unknown_level',
+        message: `chapter ${chapterSlug} has no level policy ${chapter.levelCode}`,
+      }),
+      { status: 500 },
+    );
+  }
+  const graded = gradeMasterySubmission(chapter, answers as Record<string, ExerciseAnswerPayload>, level);
 
   // persist the attempt via the SAME store as the PoC (app.dialogue_mastery_attempts with PG)
   const attempt = await getAttemptStore().create(
