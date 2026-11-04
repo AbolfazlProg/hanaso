@@ -148,9 +148,19 @@ export async function POST(req: Request) {
     } else {
       correct = payload.answer.kind === 'option' && payload.answer.optionId === found.correctOptionId;
     }
-    const explainFa = found.blockKind === 'userReply' ? '' : found.explainFa;
+    // Predictions are unscored warm-ups (COMPOSITION §۳-۲): the reveal is
+    // educational in BOTH outcomes, so return it regardless of correctness
+    // (TASK-LEARNING-02 — anchor prediction now server-graded).
+    const explainFa =
+      found.blockKind === 'userReply'
+        ? ''
+        : found.blockKind === 'prediction'
+          ? found.explainFa
+          : correct
+            ? ''
+            : found.explainFa;
     await store.incrementAttempts(userId, station.slug);
-    return NextResponse.json(ok({ outcome: { correct, level: 0 as const, feedbackFa: correct ? '' : explainFa } }), {
+    return NextResponse.json(ok({ outcome: { correct, level: 0 as const, feedbackFa: explainFa } }), {
       headers: { 'cache-control': 'no-store' },
     });
   }

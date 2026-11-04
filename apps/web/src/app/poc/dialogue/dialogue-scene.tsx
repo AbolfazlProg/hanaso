@@ -445,7 +445,8 @@ export function DialogueScene({ bundle, initialLineId, dialogueSlug = 'cafe-morn
                 <button
                   type="button"
                   onClick={() => playFrom(line.id)}
-                  className="mt-1 rounded-md border-2 border-indigo px-2 py-1 text-caption font-bold text-indigo hover:bg-indigo-wash"
+                  /* min 44×44 touch target (WCAG 2.5.5 — Reviewer-B S2 mobile) */
+                  className="mt-1 grid size-11 place-items-center rounded-md border-2 border-indigo px-2 py-1 text-caption font-bold text-indigo hover:bg-indigo-wash"
                   aria-label={`پخش از این خط: ${line.fa}`}
                 >
                   ▶

@@ -14,6 +14,8 @@ import { fa } from '@/messages/fa';
 export interface LineAudioButtonProps {
   lineId: string;
   audioUrl: string;
+  /** TASK-LEARNING-02 (Reviewer-C S2): m4a fallback for browsers without Opus (Safari). */
+  audioUrlFallback?: string;
   audioAvailable: boolean;
   /** Aria label prefix (e.g. fa.curriculum.playLine). */
   label?: string;
@@ -27,6 +29,7 @@ export interface LineAudioButtonProps {
 export function LineAudioButton({
   lineId,
   audioUrl,
+  audioUrlFallback,
   audioAvailable,
   label,
   disabled,
@@ -55,11 +58,20 @@ export function LineAudioButton({
         setState('idle');
         onPlayed?.();
       });
-      el.addEventListener('error', () => setState('idle'));
+      // dual-format fallback (ADR-009): if the primary (Opus) source can't load/decode,
+      // retry once with the m4a twin (Safari ≤ 18.3 has no Opus — Reviewer-C S2).
+      el.addEventListener('error', () => {
+        if (audioUrlFallback && !el.src.endsWith(audioUrlFallback)) {
+          el.src = audioUrlFallback;
+          void el.play().catch(() => setState('idle'));
+        } else {
+          setState('idle');
+        }
+      });
       ref.current = el;
     }
     void ref.current.play().catch(() => setState('idle'));
-  }, [audioAvailable, audioUrl, onPlayed, rate]);
+  }, [audioAvailable, audioUrl, audioUrlFallback, onPlayed, rate]);
 
   return (
     <AudioSentenceButton

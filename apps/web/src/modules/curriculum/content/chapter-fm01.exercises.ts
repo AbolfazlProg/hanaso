@@ -11,7 +11,7 @@ import type { Exercise } from '../types';
 
 const L = (n: number) => `s-first-meeting-01-l${n}`;
 
-/** Distractor rationales are the documented-confusion kind (Persesian-learner errors). */
+/** Distractor rationales are the documented-confusion kind (Persian-learner errors). */
 export const FM01_EXERCISES: Exercise[] = [
   /* ---------------- VOCAB-1 (4 diagnostic items — station-design §۱) ---------------- */
   {
@@ -150,17 +150,17 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-desu-identity',
     lineRef: L(3),
     difficulty: 2,
-    promptFa: 'با قطعه‌ها بساز: «میکی ژاپنی است.»',
+    promptFa: 'با قطعه‌ها بساز: «یامادا ژاپنی است.» (طبق L3)',
     chips: [
-      { id: 'c1', ja: 'ミキさんは' },
+      { id: 'c1', ja: 'やまださんは' },
       { id: 'c2', ja: 'にほんじん' },
       { id: 'c3', ja: 'です' },
     ],
     acceptedChipOrder: ['c1', 'c2', 'c3'],
     feedback: {
-      f1Fa: 'موضوع (میکی) + は، بعد هویت (にほんじん)، بعد です.',
+      f1Fa: 'موضوع (یامادا) + は، بعد هویت (にほんじん)، بعد です.',
       f2HintFa: 'الگوی L3 یامادا را به یاد بیاور: わたしは にほんじんです — فقط موضوع عوض شد.',
-      f3ExplainFa: 'ミキさんは にほんじんです — همان الگوی AはBです با موضوعِ میکی.',
+      f3ExplainFa: 'やまださんは にほんじんです — همان الگوی AはBです با موضوعِ یامادا (بر پایهٔ L3).',
     },
     assessmentRole: 'practice',
   },
@@ -221,7 +221,7 @@ export const FM01_EXERCISES: Exercise[] = [
     promptFa: 'جای خالی را پر کن: «سورا چینی است؟»',
     promptJa: 'ソラさんは ちゅうごくじんです__。',
     promptJaReading: 'ソラさんは ちゅうごくじんですか。',
-    clozeTokens: ['ソラさんは', 'ちゅうごくじん', 'です', null, '？'],
+    clozeTokens: ['ソラさんは', 'ちゅうごくじん', 'です', null, '。'],
     options: [
       { id: 'a', label: 'か' },
       { id: 'b', label: 'ね' },
@@ -246,9 +246,9 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-desu-qa',
     lineRef: L(7),
     difficulty: 2,
-    promptFa: 'از جملهٔ خبری، پرسش بساز: «ミキさんは にほんじんです» → «میکی ژاپنی است؟»',
+    promptFa: 'از جملهٔ خبری، پرسش بساز: «やまださんは にほんじんです» → «یامادا ژاپنی است؟» (طبق L3)',
     chips: [
-      { id: 'c1', ja: 'ミキさんは' },
+      { id: 'c1', ja: 'やまださんは' },
       { id: 'c2', ja: 'にほんじん' },
       { id: 'c3', ja: 'です' },
       { id: 'c4', ja: 'か' },
@@ -257,7 +257,7 @@ export const FM01_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'فقط یک تکه اضافه می‌شود — پرسش‌ساز か، آخر جمله.',
       f2HintFa: 'ترتیب جملهٔ خبری دست‌نخورده می‌ماند؛ か می‌آید آخر.',
-      f3ExplainFa: 'ミキさんは にほんじんですか — جملهٔ خبری + か = پرسش.',
+      f3ExplainFa: 'やまださんは にほんじんですか — جملهٔ خبری + か = پرسش.',
     },
     assessmentRole: 'practice',
   },
@@ -316,7 +316,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'chrk-hajimemashite',
     lineRef: L(3),
     difficulty: 1,
-    promptFa: 'کدام عبارت مخصوصِ اولین دیدار است (و در دیدارهای بعدی نمی‌آید)؟',
+    promptFa: 'کدام عبارت آغازگرِ مخصوصِ اولین دیدار است؟',
     options: [
       { id: 'a', label: 'こんにちは' },
       { id: 'b', label: 'はじめまして' },
@@ -606,7 +606,7 @@ export const FM01_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'موضوع + は → هویت → です. ترتیب از L8.',
       f2HintFa: 'だいがくの せんせい یک واحد معنایی است.',
-      f3ExplainFa: 'アリさんは だいがくの せんせいです — الگوی AはB입니다 با の.',
+      f3ExplainFa: 'アリさんは だいがくの せんせいです — الگوی AはBです با の.',
     },
     assessmentRole: 'practice',
   },
@@ -855,12 +855,12 @@ export const FM01_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'آشنایی و معرفی چند نفر به هم' },
       { id: 'b', label: 'سفارش نوشیدنی در کافه' },
-      { id: 'c', label: 'صحبت دربارهٔ هوا' },
+      { id: 'c', label: 'توافق برای قرار دیگری' },
     ],
     correctOptionId: 'a',
     distractorRationaleFa: {
       b: 'هیچ سفارشی ثبت نشد — کافه فقط محل ملاقات است.',
-      c: 'هیچ واژهٔ هواشناسی در مکالمه نیست.',
+      c: 'هیچ قرار یا وعده‌ای در مکالمه نیست — گفت‌وگو با よろしく بسته می‌شود.',
     },
     feedback: {
       f1Fa: 'مکالمه با سلام و معرفی شروع می‌شود و با よろしく بسته می‌شود.',
@@ -1027,27 +1027,27 @@ export const FM01_EXERCISES: Exercise[] = [
   },
   {
     id: 'ex-fm01-m4-b',
-    type: 'listen-minimal-pair',
+    type: 'listen-who-asked',
     targetSkill: 'listening',
-    targetConcept: 'listen-vowel-length',
-    lineRef: L(3),
-    audioLineRef: L(3),
+    targetConcept: 'identity-question',
+    lineRef: L(5),
+    audioLineRef: L(5),
     difficulty: 3,
-    promptFa: 'فقط گوش کن: یامادا ملیت خودش را چه گفت؟',
+    promptFa: 'فقط گوش کن: یامادا در این خط از سورا چه پرسید؟',
     options: [
-      { id: 'a', label: 'چینی' },
-      { id: 'b', label: 'ژاپنی' },
-      { id: 'c', label: 'ایرانی' },
+      { id: 'a', label: 'ملیتش را' },
+      { id: 'b', label: 'شغلش را' },
+      { id: 'c', label: 'اسمش را' },
     ],
-    correctOptionId: 'b',
+    correctOptionId: 'a',
     distractorRationaleFa: {
-      a: 'ちゅうごくじん دربارهٔ سورا بود (L5).',
-      c: 'イランじん دربارهٔ علی بود (L8).',
+      b: 'هیچ واژهٔ شغلی (せんせい/がくせい) در این خط نیست — شغل فقط در L8 دربارهٔ علی آمد.',
+      c: 'نامِ سورا را قبل‌تر می‌دانست — همین خط با ソラさんですね (تأییدِ نام) شروع شد، پرسشِ نام نبود.',
     },
     feedback: {
-      f1Fa: 'در L3: わたしは にほんじんです — ژاپنی.',
-      f2HintFa: 'صدای «نیهون‌جین» را جست‌وجو کن.',
-      f3ExplainFa: 'یامادا گفت ژاپنی است (L3).',
+      f1Fa: 'پرسش با ですか تمام شد و دربارهٔ ملیت بود.',
+      f2HintFa: 'ちゅうごくじんですか — «چینی هستید؟».',
+      f3ExplainFa: 'یامادا پرسید: ちゅうごくじんですか — پرسشِ ملیت (L5، نیمهٔ دوم خط).',
     },
     assessmentRole: 'mastery_M4',
   },

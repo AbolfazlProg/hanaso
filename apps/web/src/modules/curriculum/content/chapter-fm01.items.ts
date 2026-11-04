@@ -1,9 +1,18 @@
 /**
- * HANASO — Chapter 1 content items (TASK-LEARNING-01) — ORIGINAL HANASO content.
+ * HANASO — Chapter 1 content items (TASK-LEARNING-01/02).
+ *
+ * PROVENANCE (TASK-LEARNING-02 — per owner's notes «HANASO-OWNER-EDUCATIONAL-NOTES-COMPLETE.fa.md»):
+ * Word SELECTION traces to the owner's notes Lesson 1 vocabulary list (40 items):
+ *   #1 わたし · #3 〜さん · #4+#30 にほん+じん · #5+#30 ちゅうごく+じん · #10 大学 · #13 先生 · #16 あの方
+ *   (+ イランじん — HANASO personalization, NOT in the notes — dialogue L8/INTEGRATE).
+ * Kanji/reading forms match the notes' list exactly (kanji + kana reading per card);
+ * L2 shows kanji as RECOGNITION ONLY (island kanji: Int — no independent kanji station).
+ * Romaji standard: double-vowel (sensee, chuugoku) — notes' notation rules + 13-09 §۴-۲.
+ * Deferred from notes Lesson 1 (KB 13-09 §۱ unit-split, S3 density): がくせい (#14) +
+ * occupation words → Unit 3; あなた/ともだち/どなた (standalone) → later units.
  *
  * Words/grammar/expressions of unit-first-meeting-01 per CHAPTER_CONTENT_BLUEPRINT §۳
  * (8 core words — L2 cap 4..8 ✓, 2 grammar clusters — cap 1..2 ✓, 4 expressions).
- * Romaji standard: double-vowel (sensee, chuugoku) — 13-09 §۴-۲.
  */
 import type { ExpressionItem, GrammarCluster, VocabItem } from '../types';
 
@@ -12,7 +21,8 @@ const L = (n: number) => `s-first-meeting-01-l${n}`;
 export const FM01_WORDS: VocabItem[] = [
   {
     id: 'voc-watashi',
-    term: 'わたし',
+    term: '私',
+    termFurigana: '私[わたし]',
     readingKana: 'わたし',
     romaji: 'watashi',
     meaningFa: 'من',
@@ -33,7 +43,8 @@ export const FM01_WORDS: VocabItem[] = [
   },
   {
     id: 'voc-nihonjin',
-    term: 'にほんじん',
+    term: '日本人',
+    termFurigana: '日本人[にほんじん]',
     readingKana: 'にほんじん',
     romaji: 'nihonjin',
     meaningFa: 'ژاپنی (اهل ژاپن)',
@@ -44,7 +55,8 @@ export const FM01_WORDS: VocabItem[] = [
   },
   {
     id: 'voc-chuugokujin',
-    term: 'ちゅうごくじん',
+    term: '中国人',
+    termFurigana: '中国人[ちゅうごくじん]',
     readingKana: 'ちゅうごくじん',
     romaji: 'chuugokujin',
     meaningFa: 'چینی (اهل چین)',
@@ -56,6 +68,7 @@ export const FM01_WORDS: VocabItem[] = [
   {
     id: 'voc-daigaku',
     term: '大学',
+    termFurigana: '大学[だいがく]',
     readingKana: 'だいがく',
     romaji: 'daigaku',
     meaningFa: 'دانشگاه',
@@ -66,6 +79,7 @@ export const FM01_WORDS: VocabItem[] = [
   {
     id: 'voc-sensee',
     term: '先生',
+    termFurigana: '先生[せんせい]',
     readingKana: 'せんせい',
     romaji: 'sensee',
     meaningFa: 'استاد / معلم',
@@ -77,10 +91,11 @@ export const FM01_WORDS: VocabItem[] = [
   {
     id: 'voc-anokata',
     term: 'あの方',
+    termFurigana: 'あの方[かた]',
     readingKana: 'あのかた',
     romaji: 'anokata',
     meaningFa: 'آن شخص (اشارهٔ مؤدبانه به نفر سوم)',
-    noteFa: 'مؤدبانه‌تر از آن است که با انگشت اشاره کنی — همین که می‌شنوی، جای درستش را یاد بگیر.',
+    noteFa: 'همان «آن آقا/آن خانم» اما مؤدبانه؛ برای اشاره به حاضرِ جمع از こちら استفاده کن.',
     lineRef: L(7),
     fsrs: { w: 'w-fm01-anokata', s: 's-fm01-anokata' },
     surfaceInLine: 'あのかた',
@@ -88,10 +103,11 @@ export const FM01_WORDS: VocabItem[] = [
   {
     id: 'voc-iranjin',
     term: 'イラン人',
+    termFurigana: 'イラン人[じん]',
     readingKana: 'イランじん',
     romaji: 'iranjin',
     meaningFa: 'ایرانی (اهل ایران) — خودِ تویی!',
-    noteFa: 'افزودهٔ HANASO برای تو؛ الگو همان 〜じん است.',
+    noteFa: 'افزودهٔ HANASO برای تو (در فهرست جزوه نیست)؛ الگو همان 〜じん است.',
     lineRef: L(8),
     fsrs: { w: 'w-fm01-iranjin', s: 's-fm01-iranjin' },
     surfaceInLine: 'イランじん',

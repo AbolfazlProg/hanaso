@@ -1,27 +1,46 @@
 # HANASO — voice registry (TASK-DLG-POC-01; pattern per KB audio-multi-speaker-architecture §۲)
-# Production: engine=voicevox with real speaker ids after the license/quality gate.
-# PoC: engine=placeholder-sine — the placeholder audio generator synthesizes a deterministic
-# sine+harmonics tone per line with the F0 below, so the multi-speaker chain (T1) and the
-# pitch-distinctness axis (T2) can be exercised before VOICEVOX assets exist.
+# TASK-LEARNING-02: REAL VOICEVOX v1 casting (DD-081 engine decision; OQ-018 closed).
+# Audio is PRE-GENERATED offline (engine 0.15.7 on the VPS, build-time only — never
+# runtime TTS) and committed under public/audio/dialogues/<lineId>.{opus,m4a} with a
+# sidecar manifest. The sine placeholder below remains only as the dev/CI fallback
+# for lines without real assets (scripts/generate-placeholder-audio.mjs).
+#
+# Casting (distinctness matrix §۳ — every co-present pair differs on ≥2 of 3 axes):
+#   miki   -> VOICEVOX:四国めたん (ノーマル, style 2)  — bright young female, high pitch
+#   yamada -> VOICEVOX:玄野武宏 (ノーマル, style 11) — mature male, low pitch
+#   sora   -> VOICEVOX:九州そら (ノーマル, style 16)  — calm adult female, mid pitch
+# Credit (VOICEVOX character terms): "VOICEVOX:四国めたん・玄野武宏・九州そら" — surfaced
+# in the dialogue player UI and docs. Per-voice terms re-verified before public launch.
 voices:
   vv-female-01-normal:
-    engine: placeholder-sine
+    engine: voicevox
+    speakerName: 四国めたん
+    speakerStyleId: 2
+    credit: VOICEVOX:四国めたん
     character: chr-miki
     family: female-young
-    params: { f0Hz: 210, harmonics: [1.0, 0.35, 0.12], speedScale: 1.0 }
+    params: { f0Hz: 210, harmonics: [1.0, 0.35, 0.12], speedScale: 0.95 }
   vv-male-02-normal:
-    engine: placeholder-sine
+    engine: voicevox
+    speakerName: 玄野武宏
+    speakerStyleId: 11
+    credit: VOICEVOX:玄野武宏
     character: chr-yamada
     family: male-mature
     params: { f0Hz: 110, harmonics: [1.0, 0.5, 0.25, 0.1], speedScale: 0.95 }
   vv-neutral-03-normal:
-    engine: placeholder-sine
+    engine: voicevox
+    speakerName: 九州そら
+    speakerStyleId: 16
+    credit: VOICEVOX:九州そら
     character: chr-sora
     family: neutral-mid
-    params: { f0Hz: 160, harmonics: [1.0, 0.4, 0.18], speedScale: 1.05 }
+    params: { f0Hz: 160, harmonics: [1.0, 0.4, 0.18], speedScale: 0.95 }
 
 # Voice distinctness matrix (KB audio-ms §۳) — every co-present pair must differ on ≥2 of 3 axes.
 # Pitch axis: |Δ semitones| between F0s (≥3 semitones required).
+# With real VOICEVOX speakers all three pairs differ on pitch AND timbre (different
+# speaker identities — not the same voice pitch-shifted), so the matrix holds unchanged.
 distinctness_matrix:
   - pair: [vv-female-01-normal, vv-male-02-normal]
     delta_semitones: 11.17

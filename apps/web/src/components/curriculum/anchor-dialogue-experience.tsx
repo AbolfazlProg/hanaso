@@ -1,11 +1,15 @@
 'use client';
 /**
- * HANASO — AnchorDialogueExperience (TASK-LEARNING-01) — stage A island.
+ * HANASO — AnchorDialogueExperience (TASK-LEARNING-01/02) — stage A island.
  *
  * Wraps the proven PoC player (DialogueScene — playback engine + character
  * placeholders + error paths) with the ANCHOR station's didactic shell:
  * prediction question (exactly one, L2 — COMPOSITION §۳-۲) → full play →
  * free per-line replay → «مسیر را شروع کن» CTA → completion POST (viewed).
+ *
+ * TASK-LEARNING-02 (Check-2 Reviewer-C S1): the prediction is graded via
+ * /api/curriculum/station `grade-block` — the correct option + reveal text are
+ * NOT in the client payload (SKL-013), unlike station blocks.
  */
 import { useState } from 'react';
 import { ArrowLeft, CircleCheck } from 'lucide-react';
@@ -14,13 +18,13 @@ import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 import type { Station } from '@/modules/curriculum/types';
 import { DialogueScene } from '@/app/poc/dialogue/dialogue-scene';
 
+/** The stripped prediction the page ships (answer key lives server-side — SKL-013). */
+type StrippedPrediction = {
+  questionFa: string;
+  options: { id: string; label: string }[];
+};
 type PredictionBlock = Extract<Station['blocks'][number], { kind: 'dialogue-player' }> & {
-  prediction?: {
-    questionFa: string;
-    options: { id: string; label: string }[];
-    correctOptionId: string;
-    revealFa: string;
-  };
+  prediction?: StrippedPrediction;
 };
 
 export interface AnchorDialogueExperienceProps {
@@ -32,6 +36,8 @@ export interface AnchorDialogueExperienceProps {
     audio: {
       available: boolean;
       note?: string;
+      audioSource?: 'voicevox' | 'placeholder';
+      voiceCredits?: string[];
       entries: {
         lineId: string;
         voiceId: string;
@@ -48,8 +54,41 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
   const playerBlock = station.blocks.find((b): b is PredictionBlock => b.kind === 'dialogue-player');
   const prediction = playerBlock?.prediction;
   const [picked, setPicked] = useState<string | null>(null);
+  const [correct, setCorrect] = useState<boolean | null>(null);
+  const [revealFa, setRevealFa] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [posting, setPosting] = useState(false);
+
+  /** Server-side grading (SKL-013) — the key never ships with the page. */
+  const pick = async (optionId: string) => {
+    if (picked !== null || !playerBlock) return;
+    setPicked(optionId);
+    try {
+      const res = await fetch('/api/curriculum/station', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          action: 'grade-block',
+          chapterSlug,
+          stationSlug: station.slug,
+          blockId: playerBlock.id,
+          answer: { kind: 'option', optionId },
+        }),
+      });
+      const json = (await res.json()) as { ok: boolean; data?: { outcome: { correct: boolean; feedbackFa: string } } };
+      const outcome = json.data?.outcome;
+      if (outcome) {
+        setCorrect(outcome.correct);
+        setRevealFa(outcome.feedbackFa || fa.curriculum.predictionDefaultReveal);
+      } else {
+        setCorrect(null);
+        setRevealFa(fa.curriculum.gradingUnavailable);
+      }
+    } catch {
+      setCorrect(null);
+      setRevealFa(fa.curriculum.gradingUnavailable);
+    }
+  };
 
   const complete = async () => {
     setPosting(true);
@@ -72,8 +111,8 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
           <p className="text-body font-bold">🔮 {prediction.questionFa}</p>
           <div role="radiogroup" className="mt-3 flex flex-col gap-2">
             {prediction.options.map((opt) => {
-              const isCorrect = opt.id === prediction.correctOptionId;
-              const show = picked !== null;
+              const show = picked !== null && correct !== null;
+              const isCorrect = correct === true && picked === opt.id;
               return (
                 <button
                   key={opt.id}
@@ -81,12 +120,12 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
                   role="radio"
                   aria-checked={picked === opt.id}
                   disabled={picked !== null}
-                  onClick={() => setPicked(opt.id)}
+                  onClick={() => void pick(opt.id)}
                   className={[
                     'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
                     show && isCorrect
                       ? 'border-success bg-card font-bold'
-                      : picked === opt.id
+                      : picked === opt.id && correct === false
                         ? 'border-error bg-card'
                         : 'border-ink-faint bg-card hover:border-ai',
                   ].join(' ')}
@@ -96,9 +135,9 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
               );
             })}
           </div>
-          {picked !== null && (
+          {picked !== null && revealFa !== null && (
             <p role="status" aria-live="polite" className="mt-3 rounded-md bg-card p-3 text-body">
-              {prediction.revealFa}
+              {revealFa}
             </p>
           )}
         </section>
@@ -106,6 +145,13 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
 
       {/* the proven multi-speaker player (parameterized slug — analytics stay honest) */}
       <DialogueScene bundle={bundle} dialogueSlug={chapterSlug} />
+
+      {/* TASK-LEARNING-02: real-TTS provenance + VOICEVOX character credit (terms) */}
+      {bundle.audio.audioSource === 'voicevox' && bundle.audio.voiceCredits?.length ? (
+        <p className="text-caption text-ink-faint">
+          🗣 صداها با موتور VOICEVOX از پیش تولید شده‌اند — {bundle.audio.voiceCredits.join('・')}
+        </p>
+      ) : null}
 
       {!done ? (
         <button

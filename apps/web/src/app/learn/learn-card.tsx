@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { CYCLE_STAGES, nextRouteForStage } from '@/modules/progress';
 import type { UnitProgress, UnitStage } from '@/modules/progress';
 import { fetchProgress, logEvent, postProgressEvent } from '@/lib/poc/client';
+import { fa } from '@/messages/fa';
 
 const STAGE_LABELS_FA: Record<UnitStage, string> = {
   A_selfcheck: 'خودآزمایی با مکالمه',
@@ -121,7 +122,7 @@ export function LearnCard({
 
       {error && (
         <p role="alert" className="rounded-md border-2 border-error bg-card px-4 py-2 text-small text-error">
-          خواندن پیشرفت ناموفق بود: {error}
+          {fa.curriculum.progressUnavailable} {/* no raw exception strings to learners (Reviewer-B S1) */}
         </p>
       )}
 

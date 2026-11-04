@@ -59,13 +59,13 @@ export const POC_SCENE_CSS = `
   unicode-bidi: isolate;
   text-align: left;
   line-height: 2.1; /* furigana headroom (Spike M0-08: ≥2) */
-  font-family: var(--font-ja);
+  font-family: var(--font-ja-ui); /* TASK-LEARNING-02 (Reviewer-B S2): was var(--font-ja) — undefined token → system fallback */
 }
 .poc-ja-line rt {
   user-select: none;
   font-size: var(--furigana-size);
   color: var(--color-ink-soft);
-  font-family: var(--font-ja);
+  font-family: var(--font-ja-ui);
 }
 .poc-token-link {
   text-decoration: underline dotted;

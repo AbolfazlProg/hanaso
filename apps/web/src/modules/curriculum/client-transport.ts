@@ -159,6 +159,82 @@ export function toClientStation(station: Station): ClientStation {
   };
 }
 
+/**
+ * TASK-LEARNING-02 (Reviewer-C S1): strip answer material from a FULL Station while
+ * keeping the Station shape (pages that need lineRefs/objectiveCode/estMinutes, like
+ * the anchor dialogue page). Same no-key rule as toClientStation — for pages whose
+ * client islands consume the richer Station type.
+ */
+export function stripStationAnswerMaterial(station: Station): Station {
+  return {
+    ...station,
+    blocks: station.blocks.map((block) => {
+      const stripped = stripBlock(block) as unknown as TeachingBlock;
+      // stripBlock already removed all answer fields; re-attach the non-answer
+      // extras the full Station type carries for these block kinds.
+      if (block.kind === 'dialogue-player') {
+        return {
+          ...stripped,
+          kind: 'dialogue-player',
+          id: block.id,
+          focusLineRefs: block.focusLineRefs,
+          prediction: block.prediction
+            ? { questionFa: block.prediction.questionFa, options: block.prediction.options }
+            : undefined,
+          reducedSupport: block.reducedSupport,
+        } as TeachingBlock;
+      }
+      if (block.kind === 'guided-discovery') {
+        return {
+          ...stripped,
+          kind: 'guided-discovery',
+          id: block.id,
+          displayLineRef: block.displayLineRef,
+          highlightSurfaces: block.highlightSurfaces,
+          compareLineRef: block.compareLineRef,
+          questionFa: block.questionFa,
+          options: block.options,
+        } as TeachingBlock;
+      }
+      if (block.kind === 'structured-input') {
+        return {
+          ...stripped,
+          kind: 'structured-input',
+          id: block.id,
+          questionFa: block.questionFa,
+          lineRef: block.lineRef,
+          options: block.options,
+        } as TeachingBlock;
+      }
+      if (block.kind === 'character-scene') {
+        return {
+          ...stripped,
+          kind: 'character-scene',
+          id: block.id,
+          steps: block.steps.map((s) => ({
+            speaker: s.speaker,
+            ja: s.ja,
+            reading: s.reading,
+            fa: s.fa,
+            userReply: s.userReply
+              ? {
+                  kind: s.userReply.kind,
+                  promptFa: s.userReply.promptFa,
+                  chips: s.userReply.chips,
+                  options: s.userReply.options,
+                  nameSlotChipId: s.userReply.nameSlotChipId,
+                }
+              : undefined,
+          })),
+        } as TeachingBlock;
+      }
+      // scene / vocab-card / expression-card / rule-card / example-set / exercise /
+      // listening-task / wrap-up carry no answer material — pass through unchanged.
+      return block;
+    }) as Station['blocks'],
+  };
+}
+
 /** Server-side lookup of a block answer (grading side — never sent to the client). */
 export type BlockAnswerKind =
   | { blockKind: 'guided-discovery' | 'structured-input' | 'prediction'; correctOptionId: string; explainFa: string }
