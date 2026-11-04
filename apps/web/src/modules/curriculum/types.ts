@@ -117,6 +117,7 @@ export type ExerciseType =
   | 'response-select' // Q8 — situational reply
   | 'dialogue-order' // Q13 — order a 3-line mini exchange
   | 'listen-minimal-pair' // Q14 — minimal pair (vowel length / intonation)
+  | 'listen-who-asked' // Q15 — audio-only: what/whom was asked about
   | 'produce-template' // Q10 semi-free — build from chips (L2 no-IME pattern)
   | 'gist-select'; // listening gist (LISTEN station)
 

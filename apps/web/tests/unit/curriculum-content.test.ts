@@ -14,7 +14,9 @@ import { gradeMasterySubmission, gradeExerciseAnswer, toClientExercise } from '@
 import type { ExerciseAnswerPayload } from '@/modules/curriculum/grading';
 import { loadDialogue } from '@/modules/dialogue/server';
 import { FM01_EXERCISES } from '@/modules/curriculum/content/chapter-fm01.exercises';
-import { loadRealAudioAssets } from '@/modules/audio/audio-manifest';
+import { loadRealAudioAssets, loadVoices as loadVoicesForTest } from '@/modules/audio/audio-manifest';
+import { hashAudioLine } from '@/modules/dialogue/content/loader';
+import { resolveSpeaker } from '@/modules/character/registry';
 import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -283,12 +285,36 @@ describe('TASK-LEARNING-02 — owner-notes fidelity gates', () => {
     for (const ch of listChapters()) {
       const dlg = loadDialogue(ch.dialogueSlug);
       for (const line of dlg.lines) {
-        expect(assets!.entries[line.id], `real audio manifest entry for ${line.id}`).toBeDefined();
+        const entry = assets!.entries[line.id];
+        expect(entry, `real audio manifest entry for ${line.id}`).toBeDefined();
         for (const ext of ['opus', 'm4a'] as const) {
           const p = join(process.cwd(), 'public', 'audio', 'dialogues', `${line.id}.${ext}`);
           expect(existsSync(p), `committed asset ${line.id}.${ext}`).toBe(true);
           expect(statSync(p).size, `${line.id}.${ext} non-empty`).toBeGreaterThan(1000);
         }
+        // byte-exactness (Reviewer-C S3): committed files must match the manifest.
+        const opus = join(process.cwd(), 'public', 'audio', 'dialogues', `${line.id}.opus`);
+        expect(statSync(opus).size, `${line.id}.opus bytes === manifest`).toBe(entry!.bytes);
+        // content-hash binding (Reviewer-C S2): the asset was generated from THIS text —
+        // a dialogue edit without re-generation fails here (stale audio).
+        expect(entry!.hash, `${line.id} manifest hash present`).toBeDefined();
+      }
+    }
+  });
+
+  it('binds every audio asset to the CURRENT dialogue text (hash equality — no stale TTS)', () => {
+    // Reviewer-C S2: the manifest hash must equal hashAudioLine(currentText, voiceId)
+    // for every line — editing dialogue text without re-generating audio breaks this gate.
+    const assets = loadRealAudioAssets()!;
+    const voices = loadVoicesForTest();
+    for (const ch of listChapters()) {
+      const dlg = loadDialogue(ch.dialogueSlug);
+      for (const line of dlg.lines) {
+        const voiceId = resolveSpeaker(line.speaker).voiceId;
+        expect(voices.has(voiceId), `voice ${voiceId} for ${line.speaker}`).toBe(true);
+        const text = line.tokens.map((t) => t.surface).join('');
+        const expected = hashAudioLine(text, voiceId);
+        expect(assets.entries[line.id]!.hash, `${line.id} hash matches current text`).toBe(expected);
       }
     }
   });

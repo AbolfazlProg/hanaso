@@ -127,7 +127,7 @@ export interface RealAudioAssets {
   generatedBy: string;
   format: string;
   voices?: Record<string, { engine: string; speakerName: string; speakerStyleId: number; credit: string }>;
-  entries: Record<string, { bytes: number; bytesM4a?: number; durationMs: number }>;
+  entries: Record<string, { bytes: number; bytesM4a?: number; durationMs: number; hash?: string }>;
 }
 
 /** Load the committed VOICEVOX asset manifest (null when absent). */
@@ -168,6 +168,8 @@ const realAssetsSchema = z.object({
       bytes: z.number().int().min(0),
       bytesM4a: z.number().int().min(0).optional(),
       durationMs: z.number().int().min(0),
+      /** content hash (hashAudioLine) recorded at generation time — Reviewer-C S2. */
+      hash: z.string().length(16).optional(),
     }),
   ),
 });

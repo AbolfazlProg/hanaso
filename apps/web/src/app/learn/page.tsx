@@ -18,7 +18,7 @@ export default function LearnPage() {
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-4 py-14">
       <header className="flex flex-col gap-2">
         <p className="text-caption text-ink-soft">هاناسو · مسیر یادگیری</p>
-        <h1 className="text-h1 font-bold">{fa.curriculum.learnIndexTitle}</h1>
+        <h1 className="text-h1 font-black text-indigo">{fa.curriculum.learnIndexTitle}</h1>
         <p className="text-lead text-ink-soft">{fa.curriculum.learnIndexLead}</p>
       </header>
 

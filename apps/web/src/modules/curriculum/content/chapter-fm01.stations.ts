@@ -44,7 +44,8 @@ export const FM01_STATIONS: Station[] = [
             { id: 'c', label: 'دربارهٔ هوا حرف می‌زند' },
           ],
           correctOptionId: 'b',
-          revealFa: 'درست! یامادا می‌گوید: はじめまして、やまだです。わたしは にほんじんです — هم اسم، هم ملیت.',
+          revealFa:
+            'جواب درست: «اسم و ملیتش را می‌گوید». یامادا می‌گوید: はじめまして、やまだです。わたしは にほんじんです — هم اسم، هم ملیت.',
         },
       },
       {
@@ -72,7 +73,7 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-01-anchor'],
     lineRefs: [L(1), L(3), L(5), L(7), L(8)],
     objectiveCode: 'identity-vocab-core',
-    estMinutes: 3,
+    estMinutes: 2.5,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.75 },
     blocks: [
@@ -160,7 +161,7 @@ export const FM01_STATIONS: Station[] = [
         patternJa: '[موضوع]は [هویت] です',
         titleFa: 'گزارهٔ هویت — «X هست Y»',
         bodyFa:
-          'は موضوع جمله را نشانه‌گذاری می‌کند (وقتی ذره است «wa» تلفظ می‌شود، نه «ha»). です درست مثل فعلِ «بودن» فارسی، جمله را مؤدبانه می‌بندد. با این یک الگو می‌توانی بگویی کی هستی، چه ملیتی داری و چه شغلی.',
+          'は موضوع جمله را نشانه‌گذاری می‌کند (وقتی ذره است «wa» تلفظ می‌شود، نه «ha»). です جمله را مؤدبانه می‌بندد و مثل فعلِ «بودن» نقشِ پایان‌دهنده دارد — فعل در فارسی هم آخر می‌آید. با این یک الگو می‌توانی بگویی کی هستی، چه ملیتی داری و چه شغلی.',
         structureTable: {
           headers: ['موضوع', 'هویت', 'پایان'],
           rows: [
@@ -239,7 +240,7 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-03-grammar-desu'],
     lineRefs: [L(3), L(4)],
     objectiveCode: 'sov-bridge-persian',
-    estMinutes: 2,
+    estMinutes: 1.5,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 1 },
     blocks: [
@@ -381,7 +382,7 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-05-grammar-qa'],
     lineRefs: [L(1), L(3), L(4), L(7), L(9)],
     objectiveCode: 'greet-first-meeting',
-    estMinutes: 3,
+    estMinutes: 2.5,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 1 },
     blocks: [
@@ -415,19 +416,14 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'listen-vowel-length',
     estMinutes: 2,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'exercise_threshold', threshold: 0.75 },
     blocks: [
       {
         kind: 'scene',
         id: 'b-fm01-li-0',
         titleFa: 'سه‌شنونده',
         bodyFa:
-          'اول بدون متن گوش کن (درکل دربارهٔ چیست؟)؛ بعد جزئیات (چه کسی گفت؟)؛ آخر زبان‌محور (کشش واکه و آهنگ پایانی). نکتهٔ فارسی‌ویژه: در فارسی کششِ صدا «حسی» است؛ در ژاپنی «کلمه‌ای» — せんせ(✗) کلمهٔ دیگری است!',
-      },
-      {
-        kind: 'listening-task',
-        id: 'b-fm01-li-1',
-        taskId: 'fm01-three-listener',
+          'سه مرحله: (۱) درک کلی — بدون متن گوش کن و ببین دربارهٔ چیست؛ (۲) جزئیات — چه کسی گفت و چه پرسید؟؛ (۳) زبان‌محور — کشش واکه و آهنگ پایانی. نکتهٔ فارسی‌ویژه: در فارسی کششِ صدا «حسی» است؛ در ژاپنی «کلمه‌ای» — せんせ(✗) کلمهٔ دیگری است!',
       },
       {
         kind: 'exercise',
@@ -501,7 +497,7 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-08-practice'],
     lineRefs: [],
     objectiveCode: 'self-intro-production',
-    estMinutes: 3,
+    estMinutes: 2.5,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     blocks: [
@@ -668,14 +664,13 @@ export const FM01_STATIONS: Station[] = [
         patternJa: '〜じん / 〜ご',
         titleFa: 'کشور + پسوند',
         bodyFa:
-          'به نامِ کشور، پسوند می‌چسبد: じん = اهلِ آن کشور · ご = زبانِ آن کشور. فعلاً فقط 〜じین را کامل یاد بگیر — 〜ご در فصل بعد آموزش داده می‌شود.',
+          'به نامِ کشور، پسوند می‌چسبد: じん = اهلِ آن کشور · ご = زبانِ آن کشور. فعلاً فقط 〜じん را کامل یاد بگیر — 〜ご در فصل بعد آموزش داده می‌شود.',
         structureTable: {
           headers: ['کشور', 'اهل (〜じん)', 'زبان (〜ご)'],
           rows: [
             ['にほん (ژاپن)', 'にほんじん (ژاپنی)', 'にほんご (ژاپنی)'],
             ['ちゅうごく (چین)', 'ちゅうごくじん (چینی)', 'ちゅうごくご (چینی)'],
             ['イラン (ایران)', 'イランじん (ایرانی)', 'ペルシアご (فارسی)'],
-            ['かんこく (کره)', 'かんこくじん (کره‌ای)', 'かんこくご (کره‌ای)'],
           ],
         },
       },

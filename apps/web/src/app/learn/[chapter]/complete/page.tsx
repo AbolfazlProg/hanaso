@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowLeft, CircleCheck } from 'lucide-react';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import { fa } from '@/messages/fa';
+import { JaBlock } from '@/components/patterns/ja-block';
 
 /**
  * /learn/[chapter]/complete — TASK-LEARNING-01 page 7: chapter completion.
@@ -26,7 +27,7 @@ export default async function ChapterCompletePage({ params }: { params: Promise<
         aria-hidden
         className="grid size-28 place-items-center rounded-full border-4 border-success text-hero-ja font-black text-success"
       >
-        理解
+        <JaBlock>理解</JaBlock>
       </span>
       <div className="flex flex-col gap-3">
         <h1 className="text-h1 font-black text-indigo">{fa.curriculum.chapterCompleteTitle}</h1>

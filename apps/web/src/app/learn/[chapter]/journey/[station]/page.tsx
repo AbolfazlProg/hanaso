@@ -42,7 +42,11 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
   const speakers: Record<string, string> = {};
   for (const id of dialogue.characterIds) speakers[id] = resolveSpeaker(id).manifest.nameFa;
   const audioByLine: Record<string, string> = {};
-  for (const entry of bundle!.bundle.audio.entries) audioByLine[entry.lineId] = entry.files.opus;
+  const audioFallbackByLine: Record<string, string> = {};
+  for (const entry of bundle!.bundle.audio.entries) {
+    audioByLine[entry.lineId] = entry.files.opus;
+    audioFallbackByLine[entry.lineId] = entry.files.m4a;
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-6">
@@ -88,6 +92,7 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
             speakers,
           }}
           audioByLine={audioByLine}
+          audioFallbackByLine={audioFallbackByLine}
           audioAvailable={bundle!.bundle.audio.available}
         />
       </div>

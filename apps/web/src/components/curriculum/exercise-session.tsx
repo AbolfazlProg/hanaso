@@ -23,6 +23,8 @@ export interface ExerciseSessionProps {
   stationSlug: string;
   exercises: ClientExercise[];
   audioByLine: Record<string, string>;
+  /** TASK-LEARNING-02: m4a fallback (dual-format — Reviewer-C S2). */
+  audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
   /** Fires after the whole set finishes with the first-try score (0..1). */
   onSessionDone?: (score: number, graded: number) => void;
@@ -37,6 +39,7 @@ export function ExerciseSession({
   stationSlug,
   exercises,
   audioByLine,
+  audioFallbackByLine,
   audioAvailable,
   onSessionDone,
 }: ExerciseSessionProps) {
@@ -86,6 +89,10 @@ export function ExerciseSession({
         setFeedback(outcome);
         if (outcome.correct && attemptNo === 1) setFirstTryCorrect((n) => n + 1);
         return outcome;
+      } catch {
+        // Reviewer-B S1: never fail silently — a dead «بررسی پاسخ» button reads as broken.
+        setFeedback({ correct: false, level: 0, feedbackFa: fa.curriculum.gradingUnavailable });
+        return null;
       } finally {
         setBusy(false);
       }
@@ -159,6 +166,7 @@ export function ExerciseSession({
           <LineAudioButton
             lineId={ex.audioLineRef}
             audioUrl={audioByLine[ex.audioLineRef] ?? ''}
+            audioUrlFallback={audioFallbackByLine?.[ex.audioLineRef]}
             audioAvailable={audioAvailable}
             rate={0.9}
           />
@@ -323,6 +331,11 @@ export function ExerciseSession({
                 <CheckCircle2 aria-hidden className="size-5 text-success" />
                 {fa.curriculum.correct}
               </>
+            ) : feedback.level === 0 ? (
+              <>
+                <CircleAlert aria-hidden className="size-5 text-ink-soft" />
+                {fa.curriculum.gradingUnavailableTitle}
+              </>
             ) : (
               <>
                 <CircleAlert aria-hidden className="size-5 text-error" />
@@ -336,7 +349,7 @@ export function ExerciseSession({
               ✓ {feedback.reveal}
             </p>
           )}
-          {!feedback.correct && !feedback.reveal && attemptNo < 3 && (
+          {!feedback.correct && !feedback.reveal && feedback.level > 0 && attemptNo < 3 && (
             <button
               type="button"
               onClick={() => setHintRevealed(true)}

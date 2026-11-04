@@ -49,6 +49,7 @@ function isCorrect(ex: Exercise, answer: ExerciseAnswerPayload): boolean {
     case 'match-in-line':
     case 'speaker-identify':
     case 'listen-minimal-pair':
+    case 'listen-who-asked':
       return answer.kind === 'option' && answer.optionId === ex.correctOptionId;
     case 'word-order':
     case 'dialogue-order':

@@ -42,6 +42,7 @@ export interface StationRunnerProps {
     speakers: Record<string, string>;
   };
   audioByLine: Record<string, string>;
+  audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
 }
 
@@ -67,7 +68,8 @@ async function gradeBlock(payload: {
 }
 
 export function StationRunner(props: StationRunnerProps) {
-  const { station, chapter, clientExercises, dialogue, audioByLine, audioAvailable, chapterSlug } = props;
+  const { station, chapter, clientExercises, dialogue, audioByLine, audioFallbackByLine, audioAvailable, chapterSlug } =
+    props;
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [sessionScore, setSessionScore] = useState<number | null>(null);
@@ -148,6 +150,7 @@ export function StationRunner(props: StationRunnerProps) {
           lineById={lineById}
           speakers={dialogue.speakers}
           audioByLine={audioByLine}
+          audioFallbackByLine={audioFallbackByLine}
           audioAvailable={audioAvailable}
           onExerciseDone={(score) => {
             setSessionScore(score);
@@ -212,6 +215,7 @@ function BlockView({
   lineById,
   speakers,
   audioByLine,
+  audioFallbackByLine,
   audioAvailable,
   onExerciseDone,
   onSceneDone,
@@ -224,6 +228,7 @@ function BlockView({
   lineById: Map<string, Line>;
   speakers: Record<string, string>;
   audioByLine: Record<string, string>;
+  audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
   onExerciseDone: (score: number) => void;
   onSceneDone: () => void;
@@ -264,6 +269,7 @@ function BlockView({
               <LineAudioButton
                 lineId={line.id}
                 audioUrl={audioByLine[line.id] ?? ''}
+                audioUrlFallback={audioFallbackByLine?.[line.id]}
                 audioAvailable={audioAvailable}
                 label={fa.curriculum.playLine}
               />
@@ -311,7 +317,12 @@ function BlockView({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <JaBlock className="text-h3 font-bold">{expr.ja}</JaBlock>
             {line && (
-              <LineAudioButton lineId={line.id} audioUrl={audioByLine[line.id] ?? ''} audioAvailable={audioAvailable} />
+              <LineAudioButton
+                lineId={line.id}
+                audioUrl={audioByLine[line.id] ?? ''}
+                audioUrlFallback={audioFallbackByLine?.[line.id]}
+                audioAvailable={audioAvailable}
+              />
             )}
           </div>
           <dl className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -346,6 +357,7 @@ function BlockView({
           chapterSlug={chapterSlug}
           lineById={lineById}
           audioByLine={audioByLine}
+          audioFallbackByLine={audioFallbackByLine}
           audioAvailable={audioAvailable}
         />
       );
@@ -358,6 +370,7 @@ function BlockView({
           chapterSlug={chapterSlug}
           lineById={lineById}
           audioByLine={audioByLine}
+          audioFallbackByLine={audioFallbackByLine}
           audioAvailable={audioAvailable}
         />
       );
@@ -449,6 +462,7 @@ function BlockView({
             stationSlug={stationSlug}
             exercises={items}
             audioByLine={audioByLine}
+            audioFallbackByLine={audioFallbackByLine}
             audioAvailable={audioAvailable}
             onSessionDone={(score) => onExerciseDone(score)}
           />
@@ -521,6 +535,7 @@ function DiscoveryBlock({
   chapterSlug,
   lineById,
   audioByLine,
+  audioFallbackByLine,
   audioAvailable,
 }: {
   block:
@@ -530,6 +545,7 @@ function DiscoveryBlock({
   chapterSlug: string;
   lineById: Map<string, Line>;
   audioByLine: Record<string, string>;
+  audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
 }) {
   const [picked, setPicked] = useState<string | null>(null);
@@ -563,7 +579,12 @@ function DiscoveryBlock({
           </p>
           {[displayLine, compareLine].filter(Boolean).map((l) => (
             <div key={l!.id} className="flex items-center gap-3 rounded-md bg-surface-warm p-3">
-              <LineAudioButton lineId={l!.id} audioUrl={audioByLine[l!.id] ?? ''} audioAvailable={audioAvailable} />
+              <LineAudioButton
+                lineId={l!.id}
+                audioUrl={audioByLine[l!.id] ?? ''}
+                audioUrlFallback={audioFallbackByLine?.[l!.id]}
+                audioAvailable={audioAvailable}
+              />
               <JaBlock className="text-body">
                 {l!.tokens.map((t, i) => {
                   const hl =
