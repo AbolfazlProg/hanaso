@@ -140,8 +140,7 @@ export const fa = {
     /* block navigation + revisit (Issue #102) */
     prevBlock: 'مرحلهٔ قبل',
     exerciseAlreadyDoneTitle: 'این تمرین را کامل کرده‌ای',
-    exerciseAlreadyDoneBody:
-      'نتیجه‌اش ثبت شده و با رفت‌وآمد بین مراحل از بین نمی‌رود؛ بدون تکرار می‌توانی ادامه بدهی.',
+    exerciseAlreadyDoneBody: 'نتیجه‌اش ثبت شده و با رفت‌وآمد بین مراحل از بین نمی‌رود؛ بدون تکرار می‌توانی ادامه بدهی.',
     /* station runner */
     continueBlock: 'ادامه',
     checkAnswer: 'بررسی پاسخ',

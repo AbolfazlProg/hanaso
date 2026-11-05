@@ -53,7 +53,10 @@ const dialogue: Dialogue = {
   ],
 };
 
-function entry(lineId: string, voiceId: string): { lineId: string; voiceId: string; hash: string; files: { opus: string; m4a: string }; bytes: number } {
+function entry(
+  lineId: string,
+  voiceId: string,
+): { lineId: string; voiceId: string; hash: string; files: { opus: string; m4a: string }; bytes: number } {
   return {
     lineId,
     voiceId,
@@ -114,9 +117,7 @@ describe('DialogueScene — embedded mode (Issue #101: no PoC leak into product)
   });
 
   it('renders the finish CTA with host-owned routing when onFinish is provided (Issue #100)', () => {
-    const m = renderToStaticMarkup(
-      <DialogueScene bundle={bundle} embedded onFinish={() => {}} />,
-    );
+    const m = renderToStaticMarkup(<DialogueScene bundle={bundle} embedded onFinish={() => {}} />);
     expect(m).toContain('>پایان مشاهده</button>'); // the CTA exists …
     expect(m).not.toContain('رفتن به درس'); // … without the PoC-stage routing label
     expect(m).toContain('disabled'); // still gated on last-line-seen

@@ -176,7 +176,13 @@ export class AnimationController implements AnimationControllerContract {
         rt.state.state = 'listening';
         rt.state.gazeTargetId = null;
         rt.state.mouthActive = false;
-        this.push(id, { characterId: id, state: 'listening', atMs: this.now(), gazeTargetId: null, mouthActive: false });
+        this.push(id, {
+          characterId: id,
+          state: 'listening',
+          atMs: this.now(),
+          gazeTargetId: null,
+          mouthActive: false,
+        });
       }
       return;
     }

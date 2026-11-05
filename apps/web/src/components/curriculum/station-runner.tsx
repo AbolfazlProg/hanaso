@@ -123,8 +123,17 @@ async function recordWritingPractice(payload: {
 }
 
 export function StationRunner(props: StationRunnerProps) {
-  const { station, chapter, clientExercises, dialogue, audioByLine, audioFallbackByLine, audioAvailable, wordAudioByWord, chapterSlug } =
-    props;
+  const {
+    station,
+    chapter,
+    clientExercises,
+    dialogue,
+    audioByLine,
+    audioFallbackByLine,
+    audioAvailable,
+    wordAudioByWord,
+    chapterSlug,
+  } = props;
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [sessionScore, setSessionScore] = useState<number | null>(null);
@@ -469,8 +478,8 @@ function BlockView({
       const wordAudio = wordAudioByWord?.[word.id] ?? null;
       const useWordAudio = wordAudio !== null;
       const audioLineId = useWordAudio ? word.id : line?.id;
-      const audioUrl = useWordAudio ? wordAudio!.opus : (line ? (audioByLine[line.id] ?? '') : '');
-      const audioFallback = useWordAudio ? wordAudio!.m4a : (line ? audioFallbackByLine?.[line.id] : undefined);
+      const audioUrl = useWordAudio ? wordAudio!.opus : line ? (audioByLine[line.id] ?? '') : '';
+      const audioFallback = useWordAudio ? wordAudio!.m4a : line ? audioFallbackByLine?.[line.id] : undefined;
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -749,9 +758,7 @@ function BlockView({
     case 'writing-practice':
       /* TASK-LEARNING-07 (DD-105/DD-111): practice-layer block — the forward
        * button stays available; summaries are recorded best-effort (never a gate). */
-      return (
-        <WritingPracticeBlock block={block} chapterSlug={chapterSlug} stationSlug={stationSlug} />
-      );
+      return <WritingPracticeBlock block={block} chapterSlug={chapterSlug} stationSlug={stationSlug} />;
 
     case 'exercise': {
       const items = block.exerciseIds
@@ -770,7 +777,9 @@ function BlockView({
               <CheckCircle2 aria-hidden className="size-5" />
               {fa.curriculum.exerciseAlreadyDoneTitle}
             </h3>
-            <p className="text-body leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.exerciseAlreadyDoneBody}</p>
+            <p className="text-body leading-[var(--leading-fa)] text-ink-soft">
+              {fa.curriculum.exerciseAlreadyDoneBody}
+            </p>
             <button
               type="button"
               onClick={() => onExerciseDone(exerciseScore)}

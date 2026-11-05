@@ -31,7 +31,13 @@ const count = (markup: string, needle: string): number => markup.split(needle).l
 describe('ExerciseSession — initial render', () => {
   it('renders every option as a radio with none eliminated or disabled', () => {
     const m = renderToStaticMarkup(
-      <ExerciseSession chapterSlug="kana-foundation-01" stationSlug="stn-x" exercises={[ex]} audioByLine={{}} audioAvailable={false} />,
+      <ExerciseSession
+        chapterSlug="kana-foundation-01"
+        stationSlug="stn-x"
+        exercises={[ex]}
+        audioByLine={{}}
+        audioAvailable={false}
+      />,
     );
     const radios = m.split('<button').filter((s) => s.includes('role="radio"'));
     expect(radios).toHaveLength(3);
@@ -81,7 +87,13 @@ describe('OptionRow — F2 elimination rendering (Issue #106)', () => {
 
   it('accumulated eliminations all render (2nd + 3rd attempt union)', () => {
     const m = renderToStaticMarkup(
-      <OptionRow options={ex.options!} selected={null} eliminated={['opt-b', 'opt-c']} locked={false} onSelect={() => {}} />,
+      <OptionRow
+        options={ex.options!}
+        selected={null}
+        eliminated={['opt-b', 'opt-c']}
+        locked={false}
+        onSelect={() => {}}
+      />,
     );
     expect(count(m, 'aria-disabled="true"')).toBe(2);
     expect(count(m, 'disabled=""')).toBe(2);

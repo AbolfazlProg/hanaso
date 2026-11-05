@@ -264,7 +264,10 @@ export function WritingPractice({
         onCorrectStroke: (data: { strokeNum: number; totalMistakes: number }) => {
           setActiveStroke(data.strokeNum);
           const ev = analyzeCurrentStroke(data.strokeNum);
-          setStrokeEvals((prev) => [...prev, ev ?? ({ accepted: true, metrics: { overall: 1, direction: 1, shape: 1, position: 1 }, errorKind: null })]);
+          setStrokeEvals((prev) => [
+            ...prev,
+            ev ?? { accepted: true, metrics: { overall: 1, direction: 1, shape: 1, position: 1 }, errorKind: null },
+          ]);
           if (strokeMistakeCountRef.current === 0) setFirstTryCorrect((n) => n + 1);
           strokeMistakeCountRef.current = 0;
           setFeedbackFa(null);
@@ -272,8 +275,7 @@ export function WritingPractice({
         onMistake: (data: { strokeNum: number; mistakesOnStroke: number; totalMistakes: number }) => {
           setActiveStroke(data.strokeNum);
           setMistakes(data.totalMistakes);
-          if (data.mistakesOnStroke >= 2)
-            setHintsShown((h) => (data.mistakesOnStroke === 2 ? h + 1 : h));
+          if (data.mistakesOnStroke >= 2) setHintsShown((h) => (data.mistakesOnStroke === 2 ? h + 1 : h));
           strokeMistakeCountRef.current = data.mistakesOnStroke;
         },
         onComplete: (data: { totalMistakes: number }) => {
@@ -300,7 +302,10 @@ export function WritingPractice({
       completed: true,
       verdict: verdictFrom({ completed: true, totalMistakes: mistakes, hintsShown, evaluations: strokeEvals }),
       dimensions: dimensionsFrom(strokeEvals, charData.medians.length, firstTryCorrect),
-      durationMs: (startedAtRef.current ?? startedAt ?? Date.now()) !== 0 ? Date.now() - (startedAtRef.current ?? startedAt ?? Date.now()) : 0,
+      durationMs:
+        (startedAtRef.current ?? startedAt ?? Date.now()) !== 0
+          ? Date.now() - (startedAtRef.current ?? startedAt ?? Date.now())
+          : 0,
     };
     setVerdict(summary.verdict);
     onAttempt?.(summary);
@@ -337,8 +342,8 @@ export function WritingPractice({
       <div className="rounded-md border border-ink-faint bg-card p-4" dir="rtl">
         <p className="text-small font-bold text-ink">دادهٔ نوشتار برای این نویسه موجود نیست</p>
         <p className="mt-1 text-small text-ink-faint">
-          برای «{character}» هنوز دادهٔ ترتیب ضربه‌ها فراهم نشده؛ تمرین ساختگی ساخته نمی‌شود. این نویسه پس از
-          تأمین داده در نسخه‌های بعدی قابل تمرین خواهد بود.
+          برای «{character}» هنوز دادهٔ ترتیب ضربه‌ها فراهم نشده؛ تمرین ساختگی ساخته نمی‌شود. این نویسه پس از تأمین داده
+          در نسخه‌های بعدی قابل تمرین خواهد بود.
         </p>
       </div>
     );
@@ -384,7 +389,11 @@ export function WritingPractice({
             aria-pressed={guideOn}
             className="min-h-11 rounded-md border-2 border-indigo px-3 py-2 text-small font-bold text-indigo hover:bg-indigo-wash"
           >
-            {guideOn ? <EyeOff className="ms-1 inline size-4" aria-hidden /> : <Eye className="ms-1 inline size-4" aria-hidden />}
+            {guideOn ? (
+              <EyeOff className="ms-1 inline size-4" aria-hidden />
+            ) : (
+              <Eye className="ms-1 inline size-4" aria-hidden />
+            )}
             {guideOn ? 'پنهان‌کردن الگو' : 'نمایش الگو'}
           </button>
         ) : null}

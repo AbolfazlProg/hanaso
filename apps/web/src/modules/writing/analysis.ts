@@ -110,10 +110,7 @@ function shapeSimilarity(user: Point[], median: Point[]): number {
   const mc = centroid(m);
   let sum = 0;
   for (let i = 0; i < n; i += 1) {
-    sum += dist(
-      { x: u[i]!.x - uc.x, y: u[i]!.y - uc.y },
-      { x: m[i]!.x - mc.x, y: m[i]!.y - mc.y },
-    );
+    sum += dist({ x: u[i]!.x - uc.x, y: u[i]!.y - uc.y }, { x: m[i]!.x - mc.x, y: m[i]!.y - mc.y });
   }
   const meanDist = sum / n;
   return clamp01(1 - meanDist / (CHAR_SPACE * 0.3)); // 30% of space ≈ score 0
@@ -156,10 +153,7 @@ export const BORDERLINE_BAND = 0.12;
  * (each within BORDERLINE_BAND of its floor) the evidence is inconclusive and
  * the verdict is `uncertain` — never a fabricated diagnosis.
  */
-export function classifyRejection(
-  metrics: StrokeMetrics,
-  leniency: WritingLeniency = 'standard',
-): StrokeErrorKind {
+export function classifyRejection(metrics: StrokeMetrics, leniency: WritingLeniency = 'standard'): StrokeErrorKind {
   const cfg = LENIENCY[leniency];
   const axes: Array<{ kind: StrokeErrorKind; score: number; floor: number }> = [
     { kind: 'direction', score: metrics.direction, floor: cfg.axisFloor },
@@ -167,9 +161,7 @@ export function classifyRejection(
     { kind: 'position', score: metrics.position, floor: cfg.axisFloor },
   ];
   const weakest = axes.reduce((w, a) => (a.score - a.floor < w.score - w.floor ? a : w));
-  const borderline = axes.every(
-    (a) => a.score >= a.floor - BORDERLINE_BAND && a.score <= a.floor + BORDERLINE_BAND,
-  );
+  const borderline = axes.every((a) => a.score >= a.floor - BORDERLINE_BAND && a.score <= a.floor + BORDERLINE_BAND);
   if (borderline) return 'uncertain';
   return weakest.kind;
 }

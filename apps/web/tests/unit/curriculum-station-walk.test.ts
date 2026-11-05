@@ -55,7 +55,7 @@ describe('step math — Issue #102 (back navigation)', () => {
     expect(canGoPrev(blocks.length - 1)).toBe(true);
   });
 
-  it('next is clamped to the last block (finishing the station stays the host\'s job)', () => {
+  it("next is clamped to the last block (finishing the station stays the host's job)", () => {
     expect(nextStep(2, blocks.length)).toBe(3);
     expect(nextStep(3, blocks.length)).toBe(3);
   });
@@ -115,7 +115,7 @@ describe('earned results survive the back/forward walk — Issue #102', () => {
 });
 
 describe('F2 option elimination merge — Issue #106', () => {
-  it('unions the server\'s eliminations with the accumulated set', () => {
+  it("unions the server's eliminations with the accumulated set", () => {
     expect(mergeEliminated(['opt-a'], ['opt-b'])).toEqual(['opt-a', 'opt-b']);
   });
 
@@ -130,7 +130,7 @@ describe('F2 option elimination merge — Issue #106', () => {
 });
 
 describe('station finishing score — Issue #102 (what a threshold station completes with)', () => {
-  it('the LAST authored exercise block\'s earned result finishes the station', () => {
+  it("the LAST authored exercise block's earned result finishes the station", () => {
     const results = withBlockResult(withBlockResult({}, 'blk-ex-warmup', 1), 'blk-ex-drill', 0.8);
     expect(stationFinishScore(walkBlocks, results, null)).toBe(0.8);
   });

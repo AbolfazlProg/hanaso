@@ -70,10 +70,28 @@ describe('writing-practice blocks vs shipped stroke data (TASK-LEARNING-07)', ()
     const stationsWith = new Set(blocks.map((b) => b.station));
     // every base-glyph teaching station (h1..h3, h7..h12, h14..h15, k1..k7, k9..k12) has one
     for (const slug of [
-      'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h7', 'stn-kana-h8', 'stn-kana-h9',
-      'stn-kana-h10', 'stn-kana-h11', 'stn-kana-h12', 'stn-kana-h14', 'stn-kana-h15',
-      'stn-kana-k1', 'stn-kana-k2', 'stn-kana-k3', 'stn-kana-k4', 'stn-kana-k5', 'stn-kana-k6',
-      'stn-kana-k7', 'stn-kana-k9', 'stn-kana-k10', 'stn-kana-k11', 'stn-kana-k12',
+      'stn-kana-h1',
+      'stn-kana-h2',
+      'stn-kana-h3',
+      'stn-kana-h7',
+      'stn-kana-h8',
+      'stn-kana-h9',
+      'stn-kana-h10',
+      'stn-kana-h11',
+      'stn-kana-h12',
+      'stn-kana-h14',
+      'stn-kana-h15',
+      'stn-kana-k1',
+      'stn-kana-k2',
+      'stn-kana-k3',
+      'stn-kana-k4',
+      'stn-kana-k5',
+      'stn-kana-k6',
+      'stn-kana-k7',
+      'stn-kana-k9',
+      'stn-kana-k10',
+      'stn-kana-k11',
+      'stn-kana-k12',
     ]) {
       expect(stationsWith.has(slug), `${slug} must ship a writing block`).toBe(true);
     }

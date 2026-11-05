@@ -131,9 +131,7 @@ class JointAudioHandle implements AudioHandle {
   }
 
   get durationMs(): number | undefined {
-    const vals = [this.primary.durationMs, this.co?.durationMs].filter(
-      (v): v is number => typeof v === 'number',
-    );
+    const vals = [this.primary.durationMs, this.co?.durationMs].filter((v): v is number => typeof v === 'number');
     return vals.length > 0 ? Math.max(...vals) : undefined;
   }
 

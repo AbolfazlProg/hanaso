@@ -58,9 +58,7 @@ function walk(dir: string): string[] {
  */
 function stripComments(src: string, isYaml: boolean): string {
   if (isYaml) return src.replace(/^[ \t]*#[^\n]*/gm, ' ');
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
+  return src.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
 }
 
 /** Product UI surfaces where ALSO typographic arrows are banned. */

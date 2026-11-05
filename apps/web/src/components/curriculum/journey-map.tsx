@@ -237,7 +237,10 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
     if (!el) return false;
     const rect = el.getBoundingClientRect();
     const top = Math.max(0, rect.top + window.scrollY - window.innerHeight / 2 + rect.height / 2);
-    window.scrollTo({ top, behavior: smooth && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto' });
+    window.scrollTo({
+      top,
+      behavior: smooth && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto',
+    });
     return true;
   }, []);
 
@@ -267,10 +270,9 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
     if (!focusSlug) return;
     const el = document.querySelector<HTMLElement>(`[data-trail-focus="true"]`);
     if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => setFocusOffscreen(!entries[0]!.isIntersecting),
-      { rootMargin: '-18% 0px -18% 0px' },
-    );
+    const io = new IntersectionObserver((entries) => setFocusOffscreen(!entries[0]!.isIntersecting), {
+      rootMargin: '-18% 0px -18% 0px',
+    });
     io.observe(el);
     return () => io.disconnect();
   }, [focusSlug, rows]);
@@ -317,10 +319,7 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
         style={{ backgroundImage: PAPER_TEXTURE }}
       >
         {/* inner hairline frame — old-map plate feel */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-2 rounded-md border border-indigo/10"
-        />
+        <span aria-hidden className="pointer-events-none absolute inset-2 rounded-md border border-indigo/10" />
         {scrolledNotice && (
           <p
             role="status"
@@ -371,7 +370,11 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
             <div
               className={[
                 'flex items-center gap-4 rounded-md border-2 p-4',
-                understood ? 'border-success bg-card' : gateReady ? 'border-shu bg-card' : 'border-dashed border-ink-faint/70 bg-card/70',
+                understood
+                  ? 'border-success bg-card'
+                  : gateReady
+                    ? 'border-shu bg-card'
+                    : 'border-dashed border-ink-faint/70 bg-card/70',
               ].join(' ')}
             >
               <span
@@ -487,13 +490,18 @@ function UnitPlaque({ unit, done, total }: { unit: JourneyUnitDto; done: number;
     <li className="relative z-10 my-1">
       <div
         className="relative overflow-hidden rounded-md border-2 border-indigo px-4 py-3"
-        style={{ backgroundImage: `${SEIGAIHA_URL}, linear-gradient(160deg, var(--color-indigo) 0%, var(--color-indigo-deep) 100%)` }}
+        style={{
+          backgroundImage: `${SEIGAIHA_URL}, linear-gradient(160deg, var(--color-indigo) 0%, var(--color-indigo-deep) 100%)`,
+        }}
       >
         <div className="relative flex flex-wrap items-center gap-x-3 gap-y-1">
           <MapPin aria-hidden className="size-4 shrink-0 text-paper/80" />
           <span className="text-small font-black text-paper">{unit.titleFa}</span>
           {unit.summaryFa ? <span className="text-micro text-indigo-mist">{unit.summaryFa}</span> : null}
-          <span className="ms-auto rounded-full bg-paper/10 px-2.5 py-0.5 text-micro font-bold text-paper" aria-live="polite">
+          <span
+            className="ms-auto rounded-full bg-paper/10 px-2.5 py-0.5 text-micro font-bold text-paper"
+            aria-live="polite"
+          >
             {faNum(done)} / {faNum(total)}
           </span>
         </div>

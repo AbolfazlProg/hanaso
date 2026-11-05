@@ -259,7 +259,9 @@ describe('JointTurnBackend × PlaybackEngine (end-to-end chain)', () => {
     const refs = new Map<string, AudioAssetRef>(
       dialogue.lines.flatMap((l) => {
         const primary = mkRef(l.id);
-        return l.coSpeaker ? [[l.id, primary] as const, [`${l.id}-co`, mkRef(`${l.id}-co`)] as const] : ([[l.id, primary]] as const);
+        return l.coSpeaker
+          ? [[l.id, primary] as const, [`${l.id}-co`, mkRef(`${l.id}-co`)] as const]
+          : ([[l.id, primary]] as const);
       }),
     );
     const engine = new PlaybackEngine({

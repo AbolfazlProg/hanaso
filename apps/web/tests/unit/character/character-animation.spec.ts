@@ -176,10 +176,22 @@ describe('AnimationController — scene state machine (ADR-018 §۲-۱ج)', () =
       atMs: 1,
     });
     // both joint speakers: speaking + mouth
-    expect(renderers['chr-sora']!.lastState).toMatchObject({ state: 'speaking', mouthActive: true, gazeTargetId: null });
-    expect(renderers['chr-yamada']!.lastState).toMatchObject({ state: 'speaking', mouthActive: true, gazeTargetId: null });
+    expect(renderers['chr-sora']!.lastState).toMatchObject({
+      state: 'speaking',
+      mouthActive: true,
+      gazeTargetId: null,
+    });
+    expect(renderers['chr-yamada']!.lastState).toMatchObject({
+      state: 'speaking',
+      mouthActive: true,
+      gazeTargetId: null,
+    });
     // the third character listens and gazes at the primary speaker
-    expect(renderers['chr-miki']!.lastState).toMatchObject({ state: 'listening', gazeTargetId: 'chr-sora', mouthActive: false });
+    expect(renderers['chr-miki']!.lastState).toMatchObject({
+      state: 'listening',
+      gazeTargetId: 'chr-sora',
+      mouthActive: false,
+    });
     // mouthActive appears ONLY in speaking states across the whole timeline
     for (const r of Object.values(renderers)) {
       for (const s of r.states) {

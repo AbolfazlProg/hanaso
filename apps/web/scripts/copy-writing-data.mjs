@@ -24,10 +24,7 @@ const outDir = path.join(webRoot, 'public', 'writing-data');
 
 /** Characters the shipped content actually practices (92 kana glyphs, Ch01). */
 function requiredChars() {
-  const kanaItems = readFileSync(
-    path.join(webRoot, 'src/modules/curriculum/content/kana-items.ts'),
-    'utf8',
-  );
+  const kanaItems = readFileSync(path.join(webRoot, 'src/modules/curriculum/content/kana-items.ts'), 'utf8');
   const glyphs = [...kanaItems.matchAll(/glyph: '([^']+)'/g)].map((m) => m[1]);
   if (glyphs.length === 0) throw new Error('kana-items.ts yielded no glyphs — refusing to empty the data set');
   // confusable targets must also be present (pair-discrimination drills)

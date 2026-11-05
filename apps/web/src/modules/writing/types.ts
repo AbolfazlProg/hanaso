@@ -64,12 +64,7 @@ export interface WritingDimensions {
 
 /** Final verdict of a completed writing attempt (TASK-LEARNING-07 §4.2). */
 export type WritingVerdict =
-  | 'correct'
-  | 'correct_with_hints'
-  | 'order_error'
-  | 'form_error'
-  | 'position_error'
-  | 'uncertain_retry';
+  'correct' | 'correct_with_hints' | 'order_error' | 'form_error' | 'position_error' | 'uncertain_retry';
 
 /** Structured practice record (DD-111: summary only — raw pen paths are NEVER stored or sent). */
 export interface WritingAttemptSummary {
@@ -91,9 +86,7 @@ export interface WritingAttemptSummary {
 }
 
 /** Honest availability answer for a character (drives the UI's data-missing state). */
-export type WritingAvailability =
-  | { status: 'available'; strokes: number }
-  | { status: 'data_missing' };
+export type WritingAvailability = { status: 'available'; strokes: number } | { status: 'data_missing' };
 
 /** Leniency ladder (DD-106): teaching-lenient → standard → strict. */
 export type WritingLeniency = 'teaching' | 'standard' | 'strict';

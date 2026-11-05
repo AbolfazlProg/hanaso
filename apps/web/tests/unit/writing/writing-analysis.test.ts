@@ -215,9 +215,7 @@ describe('verdictFrom (mission §4.2 verdicts)', () => {
   });
 
   it('an abandoned attempt with no evidence is `uncertain_retry`', () => {
-    expect(verdictFrom({ completed: false, totalMistakes: 1, hintsShown: 0, evaluations: [] })).toBe(
-      'uncertain_retry',
-    );
+    expect(verdictFrom({ completed: false, totalMistakes: 1, hintsShown: 0, evaluations: [] })).toBe('uncertain_retry');
   });
 
   it('an abandoned attempt with only accepted strokes asks for a retry instead of failing', () => {
