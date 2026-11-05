@@ -68,3 +68,10 @@
   انجام‌شده)؛ سلسله‌مراتب کارت واژه به «معنی-محور»؛ جاروی ایموجی باقیمانده (poc ها + صفحهٔ خانه +
   محتوای kana + حذف learn-card.tsx مرده) + گارد تست no-emoji؛ گیت فصل روی دیپ‌لینک ایستگاه/مکالمه.
   دروازه‌ها: typecheck + lint + vitest (28 فایل/273 تست) + eqa (37) سبز — رکورد: `agent-ctx/TASK-LEARNING-07-W3-zai.md`.
+
+## ۲۰۲۶-۱۱-۰۵ — TASK-LEARNING-07 W4-W7 (Z.ai — writing engine + trail map + VPS deploy)
+
+- **W4 (commit a8dc594):** موتور نوشتار مشترک (modules/writing + Hanzi Writer) با لایهٔ تحلیل هندسی اختصاصی هاناسو + ۲۳ بلوک writing-practice در Ch01 + رفع باگ واقعی mount (quiz هرگز شروع نمی‌شد) — ۳۱ تست جدید.
+- **W5 (commits 57f9872+667ebf1):** نقشهٔ مسیر عمودی (بافت کاغذ، مسیر نقطه‌چین SVG، نشانگر شکل‌محور) + auto-scroll هوشمند + ۲ دور بازبینی VLM (verdict: PASS) — شواهد: agent-ctx/tl07-shots/.
+- **W7 (استقرار):** بیلد image روی VPS از git-bundle (11MB) → migrate/seed → تعویض staged → health/ready/smoke ALL GREEN → رسم واقعی کانا روی learn.kotodama.ir تأیید شد → KOTODAMA دست‌نخورده (کاتینرها Up 8-50 روز، kotodama.ir 200 قبل/بعد) → rollback آماده (.env.pre-tl07-backup + imageهای قدیمی).
+- نسخهٔ زنده: `https://learn.kotodama.ir` — commit `667ebf1` (شاخهٔ feat/learning-06-lesson-system، PR #115).
