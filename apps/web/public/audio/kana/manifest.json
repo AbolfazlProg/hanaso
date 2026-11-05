@@ -1,0 +1,574 @@
+{
+ "generatedBy": "voicevox:0.15.7 (VPS engine) — TASK-LEARNING-08 pre-generation",
+ "format": "dual-opus32k-m4a96k",
+ "params": {
+  "speedScale": "per-item (kana 0.9 / dialogue 0.95)",
+  "volumeScale": 1.0,
+  "pitchScale": 0.0,
+  "intonationScale": 1.0,
+  "prePhonemeLength": 0.06,
+  "postPhonemeLength": 0.18
+ },
+ "voices": {
+  "vv-female-01-normal": {
+   "engine": "voicevox",
+   "speakerName": "四国めたん",
+   "speakerStyleId": 2,
+   "credit": "VOICEVOX:四国めたん"
+  }
+ },
+ "entries": {
+  "kn-hira-a": {
+   "bytes": 2444,
+   "bytesM4a": 8965,
+   "durationMs": 657,
+   "hash": "7bf24b9a6707aca7"
+  },
+  "kn-hira-i": {
+   "bytes": 2626,
+   "bytesM4a": 9679,
+   "durationMs": 614,
+   "hash": "a58b9fbb7c4b1b9d"
+  },
+  "kn-hira-u": {
+   "bytes": 2410,
+   "bytesM4a": 9156,
+   "durationMs": 614,
+   "hash": "92ee57cb543c2f18"
+  },
+  "kn-hira-e": {
+   "bytes": 2674,
+   "bytesM4a": 9041,
+   "durationMs": 668,
+   "hash": "eb3f009c24210405"
+  },
+  "kn-hira-o": {
+   "bytes": 2803,
+   "bytesM4a": 9339,
+   "durationMs": 646,
+   "hash": "443500f07b911aaa"
+  },
+  "kn-hira-ka": {
+   "bytes": 2028,
+   "bytesM4a": 7038,
+   "durationMs": 561,
+   "hash": "08ebbbd877161128"
+  },
+  "kn-hira-ki": {
+   "bytes": 2208,
+   "bytesM4a": 7186,
+   "durationMs": 582,
+   "hash": "2134b78ab018e9ae"
+  },
+  "kn-hira-ku": {
+   "bytes": 2138,
+   "bytesM4a": 7605,
+   "durationMs": 550,
+   "hash": "1b1d21c06b58f933"
+  },
+  "kn-hira-ke": {
+   "bytes": 2133,
+   "bytesM4a": 7372,
+   "durationMs": 582,
+   "hash": "a224693d44723353"
+  },
+  "kn-hira-ko": {
+   "bytes": 2342,
+   "bytesM4a": 8207,
+   "durationMs": 593,
+   "hash": "d190c3d678d11702"
+  },
+  "kn-hira-sa": {
+   "bytes": 2274,
+   "bytesM4a": 8575,
+   "durationMs": 614,
+   "hash": "141f74d4227b8a92"
+  },
+  "kn-hira-shi": {
+   "bytes": 2376,
+   "bytesM4a": 9499,
+   "durationMs": 636,
+   "hash": "5f01906095e24880"
+  },
+  "kn-hira-su": {
+   "bytes": 2310,
+   "bytesM4a": 8950,
+   "durationMs": 572,
+   "hash": "3e7bb1bfd532fd77"
+  },
+  "kn-hira-se": {
+   "bytes": 2361,
+   "bytesM4a": 8679,
+   "durationMs": 604,
+   "hash": "59fb63c956414626"
+  },
+  "kn-hira-so": {
+   "bytes": 2557,
+   "bytesM4a": 9243,
+   "durationMs": 646,
+   "hash": "5e3e1201a29fde51"
+  },
+  "kn-hira-ta": {
+   "bytes": 1772,
+   "bytesM4a": 6564,
+   "durationMs": 497,
+   "hash": "dc319fda43d874ab"
+  },
+  "kn-hira-chi": {
+   "bytes": 2510,
+   "bytesM4a": 9524,
+   "durationMs": 657,
+   "hash": "b9229e0c586593dc"
+  },
+  "kn-hira-tsu": {
+   "bytes": 2153,
+   "bytesM4a": 8314,
+   "durationMs": 550,
+   "hash": "b5577f60dbecc1c2"
+  },
+  "kn-hira-te": {
+   "bytes": 1936,
+   "bytesM4a": 6920,
+   "durationMs": 529,
+   "hash": "210d9e53108fd10f"
+  },
+  "kn-hira-to": {
+   "bytes": 2113,
+   "bytesM4a": 7541,
+   "durationMs": 550,
+   "hash": "16749f86646fc4e5"
+  },
+  "kn-hira-na": {
+   "bytes": 1916,
+   "bytesM4a": 7033,
+   "durationMs": 518,
+   "hash": "ab34d822a6254609"
+  },
+  "kn-hira-ni": {
+   "bytes": 1965,
+   "bytesM4a": 7475,
+   "durationMs": 508,
+   "hash": "144da7390a0276d1"
+  },
+  "kn-hira-nu": {
+   "bytes": 1815,
+   "bytesM4a": 6702,
+   "durationMs": 465,
+   "hash": "61cdb1edf8febd13"
+  },
+  "kn-hira-ne": {
+   "bytes": 1913,
+   "bytesM4a": 7240,
+   "durationMs": 518,
+   "hash": "0409c15e7f2085a4"
+  },
+  "kn-hira-no": {
+   "bytes": 2180,
+   "bytesM4a": 8199,
+   "durationMs": 540,
+   "hash": "75d906a18e664009"
+  },
+  "kn-hira-ha": {
+   "bytes": 1879,
+   "bytesM4a": 6971,
+   "durationMs": 518,
+   "hash": "ba9430b1d6e17343"
+  },
+  "kn-hira-hi": {
+   "bytes": 2759,
+   "bytesM4a": 9743,
+   "durationMs": 646,
+   "hash": "eba3d9d36d09f0d6"
+  },
+  "kn-hira-fu": {
+   "bytes": 2074,
+   "bytesM4a": 8045,
+   "durationMs": 508,
+   "hash": "3e63746f84bd9c40"
+  },
+  "kn-hira-he": {
+   "bytes": 2674,
+   "bytesM4a": 9041,
+   "durationMs": 668,
+   "hash": "ec75a95842b715fd"
+  },
+  "kn-hira-ho": {
+   "bytes": 2543,
+   "bytesM4a": 9048,
+   "durationMs": 625,
+   "hash": "a1e17f49bc14a667"
+  },
+  "kn-hira-ma": {
+   "bytes": 1932,
+   "bytesM4a": 7010,
+   "durationMs": 518,
+   "hash": "dd62603dcff73cf4"
+  },
+  "kn-hira-mi": {
+   "bytes": 2138,
+   "bytesM4a": 8392,
+   "durationMs": 540,
+   "hash": "4cfa399d6b9da3f5"
+  },
+  "kn-hira-mu": {
+   "bytes": 1916,
+   "bytesM4a": 7127,
+   "durationMs": 476,
+   "hash": "a96abae099b96703"
+  },
+  "kn-hira-me": {
+   "bytes": 2034,
+   "bytesM4a": 7635,
+   "durationMs": 518,
+   "hash": "7c6387d4fd2984e8"
+  },
+  "kn-hira-mo": {
+   "bytes": 2528,
+   "bytesM4a": 8079,
+   "durationMs": 561,
+   "hash": "cd9d064390872329"
+  },
+  "kn-hira-ya": {
+   "bytes": 2013,
+   "bytesM4a": 7460,
+   "durationMs": 540,
+   "hash": "58148ef72ae4338e"
+  },
+  "kn-hira-yu": {
+   "bytes": 1990,
+   "bytesM4a": 7662,
+   "durationMs": 518,
+   "hash": "51b87c6464812d6c"
+  },
+  "kn-hira-yo": {
+   "bytes": 2276,
+   "bytesM4a": 8041,
+   "durationMs": 582,
+   "hash": "38bd68ba985717ce"
+  },
+  "kn-hira-ra": {
+   "bytes": 1835,
+   "bytesM4a": 6300,
+   "durationMs": 486,
+   "hash": "0548de3be89d59f6"
+  },
+  "kn-hira-ri": {
+   "bytes": 1816,
+   "bytesM4a": 7315,
+   "durationMs": 465,
+   "hash": "04b9f90f68344d24"
+  },
+  "kn-hira-ru": {
+   "bytes": 1620,
+   "bytesM4a": 6443,
+   "durationMs": 433,
+   "hash": "8ebd20ffca803f9b"
+  },
+  "kn-hira-re": {
+   "bytes": 1817,
+   "bytesM4a": 7027,
+   "durationMs": 486,
+   "hash": "73a43fafedc807b2"
+  },
+  "kn-hira-ro": {
+   "bytes": 2042,
+   "bytesM4a": 7139,
+   "durationMs": 508,
+   "hash": "de248ba65afa9b2e"
+  },
+  "kn-hira-wa": {
+   "bytes": 1879,
+   "bytesM4a": 6971,
+   "durationMs": 518,
+   "hash": "3515ae51338e4adb"
+  },
+  "kn-hira-wo": {
+   "bytes": 2803,
+   "bytesM4a": 9339,
+   "durationMs": 646,
+   "hash": "a35c262c38593bf1"
+  },
+  "kn-hira-n": {
+   "bytes": 2120,
+   "bytesM4a": 8139,
+   "durationMs": 561,
+   "hash": "8318dd40408b33ae"
+  },
+  "kn-kata-a": {
+   "bytes": 2444,
+   "bytesM4a": 8965,
+   "durationMs": 657,
+   "hash": "c5a775fb8587bb36"
+  },
+  "kn-kata-i": {
+   "bytes": 2626,
+   "bytesM4a": 9679,
+   "durationMs": 614,
+   "hash": "784cfbfd307e8b62"
+  },
+  "kn-kata-u": {
+   "bytes": 2410,
+   "bytesM4a": 9156,
+   "durationMs": 614,
+   "hash": "782a3aa0a2f49099"
+  },
+  "kn-kata-e": {
+   "bytes": 2674,
+   "bytesM4a": 9041,
+   "durationMs": 668,
+   "hash": "8b35f1109ed3f642"
+  },
+  "kn-kata-o": {
+   "bytes": 2803,
+   "bytesM4a": 9339,
+   "durationMs": 646,
+   "hash": "3da31e34667ba6ee"
+  },
+  "kn-kata-ka": {
+   "bytes": 2028,
+   "bytesM4a": 7038,
+   "durationMs": 561,
+   "hash": "e57add3dcad78172"
+  },
+  "kn-kata-ki": {
+   "bytes": 2208,
+   "bytesM4a": 7186,
+   "durationMs": 582,
+   "hash": "fad08ebd3001147c"
+  },
+  "kn-kata-ku": {
+   "bytes": 2138,
+   "bytesM4a": 7605,
+   "durationMs": 550,
+   "hash": "17468e645574c5d8"
+  },
+  "kn-kata-ke": {
+   "bytes": 2133,
+   "bytesM4a": 7372,
+   "durationMs": 582,
+   "hash": "1888492aa548515e"
+  },
+  "kn-kata-ko": {
+   "bytes": 2342,
+   "bytesM4a": 8207,
+   "durationMs": 593,
+   "hash": "43f974408391919c"
+  },
+  "kn-kata-sa": {
+   "bytes": 2274,
+   "bytesM4a": 8575,
+   "durationMs": 614,
+   "hash": "04438bfb626e5231"
+  },
+  "kn-kata-shi": {
+   "bytes": 2376,
+   "bytesM4a": 9499,
+   "durationMs": 636,
+   "hash": "d0a6a0244d956e41"
+  },
+  "kn-kata-su": {
+   "bytes": 2310,
+   "bytesM4a": 8950,
+   "durationMs": 572,
+   "hash": "7b3348e2da81f202"
+  },
+  "kn-kata-se": {
+   "bytes": 2361,
+   "bytesM4a": 8679,
+   "durationMs": 604,
+   "hash": "43faf6f54377206c"
+  },
+  "kn-kata-so": {
+   "bytes": 2557,
+   "bytesM4a": 9243,
+   "durationMs": 646,
+   "hash": "c51eb503c876001b"
+  },
+  "kn-kata-ta": {
+   "bytes": 1772,
+   "bytesM4a": 6564,
+   "durationMs": 497,
+   "hash": "e64b8aa90e5180a8"
+  },
+  "kn-kata-chi": {
+   "bytes": 2510,
+   "bytesM4a": 9524,
+   "durationMs": 657,
+   "hash": "5988f170fea09235"
+  },
+  "kn-kata-tsu": {
+   "bytes": 2153,
+   "bytesM4a": 8314,
+   "durationMs": 550,
+   "hash": "a2a4e482c299722c"
+  },
+  "kn-kata-te": {
+   "bytes": 1936,
+   "bytesM4a": 6920,
+   "durationMs": 529,
+   "hash": "66227b05ccde12f3"
+  },
+  "kn-kata-to": {
+   "bytes": 2113,
+   "bytesM4a": 7541,
+   "durationMs": 550,
+   "hash": "2cee282d9ac6a696"
+  },
+  "kn-kata-na": {
+   "bytes": 1916,
+   "bytesM4a": 7033,
+   "durationMs": 518,
+   "hash": "c815d5b6b5ba3102"
+  },
+  "kn-kata-ni": {
+   "bytes": 1965,
+   "bytesM4a": 7475,
+   "durationMs": 508,
+   "hash": "467f1f7ad7cc4f3e"
+  },
+  "kn-kata-nu": {
+   "bytes": 1815,
+   "bytesM4a": 6702,
+   "durationMs": 465,
+   "hash": "31b450b765d90071"
+  },
+  "kn-kata-ne": {
+   "bytes": 1913,
+   "bytesM4a": 7240,
+   "durationMs": 518,
+   "hash": "11e6b9cb2143a354"
+  },
+  "kn-kata-no": {
+   "bytes": 2180,
+   "bytesM4a": 8199,
+   "durationMs": 540,
+   "hash": "cb5206bf2d326f73"
+  },
+  "kn-kata-ha": {
+   "bytes": 2157,
+   "bytesM4a": 7563,
+   "durationMs": 582,
+   "hash": "6b07a59de2ee7946"
+  },
+  "kn-kata-hi": {
+   "bytes": 2759,
+   "bytesM4a": 9743,
+   "durationMs": 646,
+   "hash": "5733f1009fccdedd"
+  },
+  "kn-kata-fu": {
+   "bytes": 2074,
+   "bytesM4a": 8045,
+   "durationMs": 508,
+   "hash": "9b0c5ca021236d15"
+  },
+  "kn-kata-he": {
+   "bytes": 2330,
+   "bytesM4a": 8307,
+   "durationMs": 604,
+   "hash": "7c645fcd65375cc4"
+  },
+  "kn-kata-ho": {
+   "bytes": 2543,
+   "bytesM4a": 9048,
+   "durationMs": 625,
+   "hash": "7e59b49f326a0d77"
+  },
+  "kn-kata-ma": {
+   "bytes": 1932,
+   "bytesM4a": 7010,
+   "durationMs": 518,
+   "hash": "86aa0ed7999d8278"
+  },
+  "kn-kata-mi": {
+   "bytes": 2138,
+   "bytesM4a": 8392,
+   "durationMs": 540,
+   "hash": "d4c63566a345e2ec"
+  },
+  "kn-kata-mu": {
+   "bytes": 1916,
+   "bytesM4a": 7127,
+   "durationMs": 476,
+   "hash": "1c0309f63332ab48"
+  },
+  "kn-kata-me": {
+   "bytes": 2034,
+   "bytesM4a": 7635,
+   "durationMs": 518,
+   "hash": "6593d8bb00e3b0c5"
+  },
+  "kn-kata-mo": {
+   "bytes": 2528,
+   "bytesM4a": 8079,
+   "durationMs": 561,
+   "hash": "cbed3bc839c7176a"
+  },
+  "kn-kata-ya": {
+   "bytes": 2013,
+   "bytesM4a": 7460,
+   "durationMs": 540,
+   "hash": "99cc4ac536b1ec41"
+  },
+  "kn-kata-yu": {
+   "bytes": 1990,
+   "bytesM4a": 7662,
+   "durationMs": 518,
+   "hash": "8d99db15228c4353"
+  },
+  "kn-kata-yo": {
+   "bytes": 2276,
+   "bytesM4a": 8041,
+   "durationMs": 582,
+   "hash": "48feaa1fa4be6745"
+  },
+  "kn-kata-ra": {
+   "bytes": 1835,
+   "bytesM4a": 6300,
+   "durationMs": 486,
+   "hash": "a3631073eea3ad51"
+  },
+  "kn-kata-ri": {
+   "bytes": 1816,
+   "bytesM4a": 7315,
+   "durationMs": 465,
+   "hash": "de12fe0611aa97e1"
+  },
+  "kn-kata-ru": {
+   "bytes": 1620,
+   "bytesM4a": 6443,
+   "durationMs": 433,
+   "hash": "971ba054966e1a22"
+  },
+  "kn-kata-re": {
+   "bytes": 1817,
+   "bytesM4a": 7027,
+   "durationMs": 486,
+   "hash": "7e40a8453268f687"
+  },
+  "kn-kata-ro": {
+   "bytes": 2042,
+   "bytesM4a": 7139,
+   "durationMs": 508,
+   "hash": "cf4f462e14a9eb02"
+  },
+  "kn-kata-wa": {
+   "bytes": 1879,
+   "bytesM4a": 6971,
+   "durationMs": 518,
+   "hash": "e1a3f084c9eb0c5d"
+  },
+  "kn-kata-wo": {
+   "bytes": 2803,
+   "bytesM4a": 9339,
+   "durationMs": 646,
+   "hash": "115ebfbb9770448e"
+  },
+  "kn-kata-n": {
+   "bytes": 2120,
+   "bytesM4a": 8139,
+   "durationMs": 561,
+   "hash": "0d1e5833c87007c7"
+  }
+ }
+}
