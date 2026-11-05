@@ -92,6 +92,10 @@ function faNum(n: number): string {
 
 /** Old-paper grain: warm sand base + visible fiber/grid gradients + corner
  *  vignette (all Aizen tokens; VLM review pass 1 asked for a READABLE texture). */
+/** WP-6 (owner feedback F): invisible padding kept clear of every waypoint —
+ *  the dotted trail and its halo terminate this far BEFORE each marker. */
+const WAYPOINT_SAFE_MARGIN = 14;
+
 const PAPER_TEXTURE =
   'radial-gradient(ellipse 140% 90% at 12% -10%, rgba(23, 48, 73, 0.07), transparent 52%),' +
   'radial-gradient(ellipse 130% 80% at 90% 108%, rgba(194, 64, 28, 0.055), transparent 50%),' +
@@ -108,7 +112,6 @@ const SEIGAIHA_URL =
 
 export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
   const [state, setState] = useState(initial);
-  const [pathD, setPathD] = useState<string | null>(null);
   /** the floating re-center button shows only when the focus waypoint left the viewport */
   const [focusOffscreen, setFocusOffscreen] = useState(false);
   /** transient notice after the one-time auto-scroll (a11y-friendly confirmation) */
@@ -181,18 +184,39 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
   }, [state.nodes, state.units]);
 
   /* ------------------------------------------------ dotted trail path (SVG) */
+  /**
+   * TASK-LEARNING-08 (WP-6 — owner feedback F): the trail path is drawn through
+   * an SVG MASK that punches holes around every waypoint (marker radius + a safe
+   * margin) — the dots/halo never touch or bleed behind the icons in any state
+   * (completed/current/available/locked), while the path stays continuous
+   * BETWEEN stations. Computed from the same waypoint rects as the path itself,
+   * so sway (sm:translate-x) and resize are both covered.
+   */
+  const [pathD, setPathD] = useState<string | null>(null);
+  const [maskHoles, setMaskHoles] = useState<{ x: number; y: number; r: number }[]>([]);
+
   const drawPath = useCallback(() => {
     const trail = trailRef.current;
     if (!trail) return;
     const waypoints = Array.from(trail.querySelectorAll<HTMLElement>('[data-waypoint]'));
     if (waypoints.length < 2) {
       setPathD(null);
+      setMaskHoles([]);
       return;
     }
     const cRect = trail.getBoundingClientRect();
     const pts = waypoints.map((el) => {
       const r = el.getBoundingClientRect();
       return { x: r.left + r.width / 2 - cRect.left, y: r.top + r.height / 2 - cRect.top };
+    });
+    // mask holes: the marker box + SAFE_MARGIN on every side (owner feedback F)
+    const holes = waypoints.map((el, i) => {
+      const r = el.getBoundingClientRect();
+      return {
+        x: pts[i]!.x,
+        y: pts[i]!.y,
+        r: Math.max(r.width, r.height) / 2 + WAYPOINT_SAFE_MARGIN,
+      };
     });
     // Catmull-Rom → cubic Bézier: a smooth hand-drawn-feeling trail through the stops
     let d = `M ${pts[0]!.x.toFixed(1)} ${pts[0]!.y.toFixed(1)}`;
@@ -208,6 +232,7 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
       d += ` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
     }
     setPathD(d);
+    setMaskHoles(holes);
   }, []);
 
   useEffect(() => {
@@ -330,28 +355,42 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
         )}
 
         <ol ref={trailRef} className="relative flex list-none flex-col gap-5 p-5 sm:p-7">
-          {/* the dotted winding path (decorative — the SVG sits under the stops) */}
+          {/* the dotted winding path (decorative — the SVG sits under the stops).
+              WP-6 (owner feedback F): the trail-mask punches a hole around every
+              waypoint (icon + safe margin) so dots and halo NEVER touch the
+              markers; the path stays continuous between them. */}
           {pathD && (
             <svg aria-hidden className="pointer-events-none absolute inset-0 z-0 h-full w-full">
-              {/* soft ink halo under the dots — makes the trail read as a path from afar */}
-              <path
-                d={pathD}
-                fill="none"
-                stroke="var(--color-indigo)"
-                strokeOpacity={0.12}
-                strokeWidth={11}
-                strokeLinecap="round"
-                strokeDasharray="0.1 12"
-              />
-              <path
-                d={pathD}
-                fill="none"
-                stroke="var(--color-indigo)"
-                strokeOpacity={0.55}
-                strokeWidth={5}
-                strokeLinecap="round"
-                strokeDasharray="0.1 12"
-              />
+              <defs>
+                <mask id="hanaso-trail-mask">
+                  {/* white = visible path; black holes = hidden around waypoints */}
+                  <rect x="0" y="0" width="100%" height="100%" fill="#fff" />
+                  {maskHoles.map((h, i) => (
+                    <circle key={i} cx={h.x} cy={h.y} r={h.r} fill="#000" />
+                  ))}
+                </mask>
+              </defs>
+              <g mask="url(#hanaso-trail-mask)">
+                {/* soft ink halo under the dots — makes the trail read as a path from afar */}
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke="var(--color-indigo)"
+                  strokeOpacity={0.12}
+                  strokeWidth={11}
+                  strokeLinecap="round"
+                  strokeDasharray="0.1 12"
+                />
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke="var(--color-indigo)"
+                  strokeOpacity={0.55}
+                  strokeWidth={5}
+                  strokeLinecap="round"
+                  strokeDasharray="0.1 12"
+                />
+              </g>
             </svg>
           )}
 
