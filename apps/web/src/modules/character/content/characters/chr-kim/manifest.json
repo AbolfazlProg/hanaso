@@ -1,0 +1,28 @@
+{
+  "id": "chr-kim",
+  "version": "0.1.0",
+  "nameJa": "キム",
+  "nameFa": "کیم",
+  "role": "companion-3",
+  "colorToken": "speaker-4",
+  "voiceId": "vv-female-04-bright",
+  "states": ["idle", "listening", "speaking"],
+  "expressions": {
+    "neutral": null,
+    "happy": null,
+    "surprised": null,
+    "apologetic": null,
+    "thinking": null,
+    "sad": null,
+    "confident": null
+  },
+  "assets": {
+    "renderer": "svg-css",
+    "entry": "modules/character/renderers/svg-placeholder",
+    "layers": ["base", "eyes", "brows", "mouth"],
+    "totalBytes": 0,
+    "checksums": {}
+  },
+  "performance": { "fps60Mobile": true, "measuredBytes": 0 },
+  "_note": "TASK-LEARNING-06 (Ch02 unit 02-2): Sora's Korean classmate who enters mid-scene — the も/ではありません/からきました teaching beats ride on her entrance. PLACEHOLDER manifest — final art assets arrive from the character track (ADR-018 §۲-۴)."
+}

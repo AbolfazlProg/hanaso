@@ -12,7 +12,7 @@
  * Aizen signatures (DD-084): indigo structural frames, seigaiha wave hint on the
  * active island, the round 理解 seal on `understood`, vermilion only for the gate.
  */
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -21,6 +21,7 @@ import {
   Ear,
   FlaskConical,
   Hammer,
+  Lock,
   MessageCircle,
   Repeat2,
   Scale,
@@ -42,6 +43,14 @@ export interface JourneyNodeDto {
   href: string;
 }
 
+/** TASK-LEARNING-06 (T-79): a story-unit / kana-island group of the two-level map. */
+export interface JourneyUnitDto {
+  slug: string;
+  titleFa: string;
+  summaryFa?: string;
+  stationSlugs: string[];
+}
+
 export interface JourneyMapProps {
   chapterSlug: string;
   initial: {
@@ -50,6 +59,8 @@ export interface JourneyMapProps {
     coreTotal: number;
     chapterStatus: string | null;
     nextStationSlug: string | null;
+    /** Present only for chapters declaring units[] — the two-level map. */
+    units?: JourneyUnitDto[];
   };
 }
 
@@ -68,6 +79,7 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
             coreTotal: number;
             chapterState: { status: string } | null;
             nextStationSlug: string | null;
+            units?: JourneyUnitDto[];
           };
         };
         if (json.data) {
@@ -77,6 +89,7 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
             coreTotal: json.data.coreTotal,
             chapterStatus: json.data.chapterState?.status ?? null,
             nextStationSlug: json.data.nextStationSlug,
+            units: json.data.units,
           });
         }
       } catch {
@@ -144,93 +157,38 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
         </a>
       )}
 
-      {/* the path */}
+      {/* the path — TASK-LEARNING-06: grouped into units/islands when declared (two-level map) */}
       <ol className="relative flex flex-col gap-4 ps-6" aria-label={fa.curriculum.journeyTitle}>
         {/* the winding rail (pure decorative — Aizen indigo) */}
         <span
           aria-hidden
           className="absolute inset-y-2 start-2 w-1 rounded-full bg-[repeating-linear-gradient(180deg,var(--color-indigo-mist)_0_10px,transparent_10px_18px)]"
         />
-        {state.nodes.map((node) => {
-          const optionalDivider =
-            !node.core &&
-            !state.nodes.some(
-              (n) => !n.core && n.slug !== node.slug && state.nodes.indexOf(n) < state.nodes.indexOf(node),
-            );
-          return (
-            <li key={node.slug} className="relative">
-              {optionalDivider && (
-                <div className="mb-2 mt-4 flex items-center gap-3" aria-label="شاخه‌های اختیاری">
-                  <span className="text-caption font-bold text-ai">شاخه‌های اختیاری — مسیر اصلی را قفل نمی‌کنند</span>
-                  <span aria-hidden className="h-px flex-1 bg-ink-faint/60" />
-                </div>
-              )}
-              {/* island node */}
-              <div
-                className={[
-                  'flex items-start gap-4 rounded-md border p-4 transition-colors',
-                  node.availability === 'locked'
-                    ? 'border-ink-faint/60 bg-surface-muted/60 opacity-70'
-                    : node.availability === 'completed' || node.availability === 'skipped'
-                      ? 'border-success/60 bg-card'
-                      : node.availability === 'available'
-                        ? 'border-ai bg-card shadow-[var(--shadow-card)]'
-                        : 'border-shu bg-card shadow-[var(--shadow-raised)]',
-                ].join(' ')}
-              >
-                <span
-                  aria-hidden
-                  className={[
-                    'grid size-11 shrink-0 place-items-center rounded-full border',
-                    node.availability === 'completed' || node.availability === 'skipped'
-                      ? 'border-success bg-success/10 text-success'
-                      : node.availability === 'in_progress' || node.availability === 'needs_retry'
-                        ? 'border-shu bg-shu/10 text-shu'
-                        : node.availability === 'available'
-                          ? 'border-ai bg-indigo-wash text-ai'
-                          : 'border-ink-faint bg-surface-sunken text-ink-faint',
-                  ].join(' ')}
-                >
-                  <StationIcon type={node.type} />
-                </span>
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-body font-bold">{node.titleFa}</h3>
-                    {!node.core && (
-                      <span className="rounded-full border border-ai px-2 py-0.5 text-caption text-ai">
-                        {fa.curriculum.stationOptional}
-                      </span>
-                    )}
+        {(state.units && state.units.length > 0
+          ? state.units.flatMap((unit) => {
+              const unitNodes = state.nodes.filter((n) => unit.stationSlugs.includes(n.slug));
+              if (unitNodes.length === 0) return [];
+              const unitCore = unitNodes.filter((n) => n.core);
+              const unitDone = unitCore.filter(
+                (n) => n.availability === 'completed' || n.availability === 'skipped' || n.availability === 'needs_retry',
+              ).length;
+              return [
+                <li key={`unit-${unit.slug}`} className="relative" aria-label={unit.titleFa}>
+                  <div className="mb-1 mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-indigo-mist bg-indigo-wash/50 px-3 py-2">
+                    <span className="text-caption font-black text-indigo">{unit.titleFa}</span>
+                    {unit.summaryFa ? <span className="text-micro text-ink-soft">{unit.summaryFa}</span> : null}
+                    <span className="ms-auto text-micro text-ink-soft" aria-live="polite">
+                      {faNum(unitDone)} / {faNum(unitCore.length)}
+                    </span>
                   </div>
-                  <p className="text-small text-ink-soft">{node.objectiveFa}</p>
-                  <p className="text-caption text-ink-faint">
-                    {availabilityLabel(node.availability)} · {faNum(node.estMinutes)} {fa.curriculum.minutes}
-                  </p>
-                </div>
-                {node.availability !== 'locked' ? (
-                  <Link
-                    href={node.href}
-                    className="grid size-11 shrink-0 place-items-center self-center rounded-md border border-ai text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-                    aria-label={`${node.titleFa} — ${availabilityLabel(node.availability)}`}
-                  >
-                    {node.availability === 'completed' || node.availability === 'skipped' ? (
-                      <CircleCheck aria-hidden className="size-5 text-success" />
-                    ) : (
-                      <ArrowLeft aria-hidden className="size-5" />
-                    )}
-                  </Link>
-                ) : (
-                  <span
-                    className="grid size-11 shrink-0 place-items-center self-center text-caption text-ink-faint"
-                    aria-label={fa.curriculum.stationLocked}
-                  >
-                    🔒
-                  </span>
-                )}
-              </div>
-            </li>
-          );
-        })}
+                </li>,
+                ...unitNodes.map((node) => renderNode(node, state.nodes)),
+              ];
+            })
+          : state.nodes.map((node) => renderNode(node, state.nodes))
+        ).map((element, i) => (
+          <Fragment key={i}>{element}</Fragment>
+        ))}
       </ol>
 
       {/* the gate CTA */}
@@ -292,6 +250,89 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * TASK-LEARNING-06: one island node (extracted so the two-level map can render
+ * the same node inside its unit/island group). Emoji-free locked state (#108).
+ */
+function renderNode(node: JourneyNodeDto, allNodes: JourneyNodeDto[]) {
+  const optionalDivider =
+    !node.core &&
+    !allNodes.some((n) => !n.core && n.slug !== node.slug && allNodes.indexOf(n) < allNodes.indexOf(node));
+  return (
+    <li key={node.slug} className="relative">
+      {optionalDivider && (
+        <div className="mb-2 mt-4 flex items-center gap-3" aria-label="شاخه‌های اختیاری">
+          <span className="text-caption font-bold text-ai">شاخه‌های اختیاری — مسیر اصلی را قفل نمی‌کنند</span>
+          <span aria-hidden className="h-px flex-1 bg-ink-faint/60" />
+        </div>
+      )}
+      {/* island node */}
+      <div
+        className={[
+          'flex items-start gap-4 rounded-md border p-4 transition-colors',
+          node.availability === 'locked'
+            ? 'border-ink-faint/60 bg-surface-muted/60 opacity-70'
+            : node.availability === 'completed' || node.availability === 'skipped'
+              ? 'border-success/60 bg-card'
+              : node.availability === 'available'
+                ? 'border-ai bg-card shadow-[var(--shadow-card)]'
+                : 'border-shu bg-card shadow-[var(--shadow-raised)]',
+        ].join(' ')}
+      >
+        <span
+          aria-hidden
+          className={[
+            'grid size-11 shrink-0 place-items-center rounded-full border',
+            node.availability === 'completed' || node.availability === 'skipped'
+              ? 'border-success bg-success/10 text-success'
+              : node.availability === 'in_progress' || node.availability === 'needs_retry'
+                ? 'border-shu bg-shu/10 text-shu'
+                : node.availability === 'available'
+                  ? 'border-ai bg-indigo-wash text-ai'
+                  : 'border-ink-faint bg-surface-sunken text-ink-faint',
+          ].join(' ')}
+        >
+          <StationIcon type={node.type} />
+        </span>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-body font-bold">{node.titleFa}</h3>
+            {!node.core && (
+              <span className="rounded-full border border-ai px-2 py-0.5 text-caption text-ai">
+                {fa.curriculum.stationOptional}
+              </span>
+            )}
+          </div>
+          <p className="text-small text-ink-soft">{node.objectiveFa}</p>
+          <p className="text-caption text-ink-faint">
+            {availabilityLabel(node.availability)} · {faNum(node.estMinutes)} {fa.curriculum.minutes}
+          </p>
+        </div>
+        {node.availability !== 'locked' ? (
+          <Link
+            href={node.href}
+            className="grid size-11 shrink-0 place-items-center self-center rounded-md border border-ai text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            aria-label={`${node.titleFa} — ${availabilityLabel(node.availability)}`}
+          >
+            {node.availability === 'completed' || node.availability === 'skipped' ? (
+              <CircleCheck aria-hidden className="size-5 text-success" />
+            ) : (
+              <ArrowLeft aria-hidden className="size-5" />
+            )}
+          </Link>
+        ) : (
+          <span
+            className="grid size-11 shrink-0 place-items-center self-center text-ink-faint"
+            aria-label={fa.curriculum.stationLocked}
+          >
+            <Lock aria-hidden className="size-5" />
+          </span>
+        )}
+      </div>
+    </li>
   );
 }
 

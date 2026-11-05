@@ -32,6 +32,7 @@ import {
   findingKey,
 } from '@/modules/curriculum/eqa';
 import type { Chapter } from '@/modules/curriculum/types';
+import type { EqaWaiver } from '@/modules/curriculum/eqa/waivers';
 import { toClientExercise, gradeMasterySubmission, servedCorrectPosition } from '@/modules/curriculum/grading';
 import { computeMastery } from '@/modules/mastery';
 
@@ -78,16 +79,13 @@ describe('EQA gates over the REAL bundled chapters (the CI gate)', () => {
     }
   });
 
-  it('flags the unregistered listening sub-skill references as EQA-9 review items (warnings, not errors)', () => {
+  it('reports zero unregistered concept references (listening sub-skills are declared via teachesConcepts — TASK-LEARNING-06)', () => {
     const review = result.chapters.flatMap((c) => c.review.map((r) => r));
     const unregistered = review.filter((r) => r.messageFa.includes('ثبت نشده'));
-    // g2-04, l-02, l-03, l-05 reference 「listen-final-intonation」 which no station declares yet.
-    expect(unregistered.map((r) => r.subject).sort()).toEqual([
-      'ex-fm01-g2-04',
-      'ex-fm01-l-02',
-      'ex-fm01-l-03',
-      'ex-fm01-l-05',
-    ]);
+    // The 05B rebuild registers the listening sub-skills (listen-final-intonation on
+    // the rebuilt GRAMMAR-2/LISTEN-1, listen-nasal-mora on LISTEN-2) via
+    // teachesConcepts — the old #96-class EQA-9 review items are gone by design.
+    expect(unregistered).toEqual([]);
   });
 });
 
@@ -97,37 +95,37 @@ describe('EQA-1 (prerequisite) — mutations MUST be rejected', () => {
   it('rejects a target concept taught AFTER the host station (assessed ⊄ taught)', () => {
     const ch = cloneChapter();
     // v1-03 lives in the vocab station (order 2); ですか is taught at order 5.
-    ch.exercises['ex-fm01-v1-03']!.targetConcept = 'gr-desu-qa';
+    ch.exercises['ex-fm01-v1-p2-txt-1']!.targetConcept = 'gr-desu-qa';
     const findings = gateEqa1(ch);
-    expect(findings.some((f) => f.subject === 'ex-fm01-v1-03' && f.severity === 'error')).toBe(true);
+    expect(findings.some((f) => f.subject === 'ex-fm01-v1-p2-txt-1' && f.severity === 'error')).toBe(true);
   });
 
   it('rejects a declared assessesConcepts entry that is taught later (the の-class layer)', () => {
     const ch = cloneChapter();
-    ch.exercises['ex-fm01-v1-03']!.assessesConcepts = ['gr-desu-identity'];
+    ch.exercises['ex-fm01-v1-p2-txt-1']!.assessesConcepts = ['gr-desu-identity'];
     const findings = gateEqa1(ch);
     expect(
       findings.some(
-        (f) => f.subject === 'ex-fm01-v1-03' && f.severity === 'error' && f.messageFa.includes('gr-desu-identity'),
+        (f) => f.subject === 'ex-fm01-v1-p2-txt-1' && f.severity === 'error' && f.messageFa.includes('gr-desu-identity'),
       ),
     ).toBe(true);
   });
 
   it('rejects a concept that is never taught anywhere in the chapter', () => {
     const ch = cloneChapter();
-    ch.exercises['ex-fm01-v1-03']!.targetConcept = 'voc-daigaku';
-    delete ch.exercises['ex-fm01-v1-04']; // keep the bank consistent for this mutation
+    ch.exercises['ex-fm01-v1-p2-txt-1']!.targetConcept = 'voc-daigaku';
+    // (bank consistency: the mutated item keeps its block reference)
     // remove the teaching: drop the vocab card + the word is now untaught
     for (const s of ch.stations)
       s.blocks = s.blocks.filter((b) => !(b.kind === 'vocab-card' && b.wordId === 'voc-daigaku'));
     const findings = gateEqa1(ch);
-    expect(findings.some((f) => f.subject === 'ex-fm01-v1-03' && f.rule === 'assessed-not-taught')).toBe(true);
+    expect(findings.some((f) => f.subject === 'ex-fm01-v1-p2-txt-1' && f.rule === 'assessed-not-taught')).toBe(true);
   });
 
   it('warns (not errors) on an unregistered concept reference — human EQA-9 review', () => {
     const ch = cloneChapter();
-    ch.exercises['ex-fm01-v1-03']!.targetConcept = 'listen-something-new';
-    const findings = gateEqa1(ch).filter((f) => f.subject === 'ex-fm01-v1-03');
+    ch.exercises['ex-fm01-v1-p2-txt-1']!.targetConcept = 'listen-something-new';
+    const findings = gateEqa1(ch).filter((f) => f.subject === 'ex-fm01-v1-p2-txt-1');
     expect(findings).toHaveLength(1);
     expect(findings[0]!.severity).toBe('warning');
   });
@@ -187,8 +185,8 @@ describe('EQA-2 (interaction/packet rules) — mutations MUST be rejected', () =
 describe('EQA-3 (recall-first composition) — mutations MUST be rejected', () => {
   it('rejects a practice pool that drops below the 60% recall-first share', () => {
     const ch = cloneChapter();
-    // Convert four recall items to the weakest recognition type.
-    for (const id of ['ex-fm01-r-01', 'ex-fm01-r-02', 'ex-fm01-p-04', 'ex-fm01-p-05']) {
+    // Convert five recall items to the weakest recognition type (TASK-LEARNING-06 ids).
+    for (const id of ['ex-fm01-g1-order-1', 'ex-fm01-g1-cloze-1', 'ex-fm01-p1-c2-prod-1', 'ex-fm01-p1-c3-decode-1', 'ex-fm01-e2-order-1']) {
       const ex = ch.exercises[id]!;
       ex.type = 'meaning-select';
       ex.options = [
@@ -205,17 +203,26 @@ describe('EQA-3 (recall-first composition) — mutations MUST be rejected', () =
   it('rejects a meaning-select share above the 30% MCQ cap', () => {
     const ch = cloneChapter();
     for (const id of [
-      'ex-fm01-v1-01',
-      'ex-fm01-v1-02',
-      'ex-fm01-l-02',
-      'ex-fm01-l-03',
-      'ex-fm01-l-04',
-      'ex-fm01-l-05',
-      'ex-fm01-p-01',
-      'ex-fm01-p-03',
-      'ex-fm01-e-01',
-      'ex-fm01-e-03',
-      'ex-fm01-p-09',
+      'ex-fm01-v1-p1-aud-1',
+      'ex-fm01-v1-p1-aud-2',
+      'ex-fm01-l1-gist-1',
+      'ex-fm01-l2-gist-1',
+      'ex-fm01-p1-c2-gist-1',
+      'ex-fm01-p2-c1-decode-1',
+      'ex-fm01-p2-c1-decode-2',
+      'ex-fm01-e1-resp-1',
+      'ex-fm01-e2-resp-1',
+      'ex-fm01-v2-aud-1',
+      'ex-fm01-g1-order-1',
+      'ex-fm01-g1-cloze-1',
+      'ex-fm01-g1-prod-1',
+      'ex-fm01-g3-cloze-1',
+      'ex-fm01-g3-prod-1',
+      'ex-fm01-g4-cloze-1',
+      'ex-fm01-g5-order-1',
+      'ex-fm01-p2-c3-cloze-1',
+      'ex-fm01-p2-c3-order-1',
+      'ex-fm01-e2-prod-1',
     ]) {
       const ex = ch.exercises[id]!;
       if (ex.type !== 'meaning-select') {
@@ -248,7 +255,7 @@ describe('EQA-4 (served position balance) — mutations MUST be rejected', () =>
     const ch = cloneChapter();
     // Duplicate one exercise many times: identical id → identical deterministic
     // shuffle → every served position is the same → gross-bias rule fires.
-    const seed = ch.exercises['ex-fm01-v1-03']!;
+    const seed = ch.exercises['ex-fm01-v1-p2-txt-1']!;
     const bank: Chapter['exercises'] = {};
     for (let i = 0; i < 24; i++) bank[seed.id] = seed; // same key on purpose
     ch.exercises = bank;
@@ -284,8 +291,11 @@ describe('EQA-5 (objective coverage) — mutations MUST be rejected', () => {
 
   it('rejects an objective with no mastery-path measure at all', () => {
     const ch = cloneChapter();
-    // sov-bridge-persian: remove its gate item AND its task-based assessment.
-    delete ch.exercises['ex-fm01-m5-b'];
+    // sov-bridge-persian: remove its gate item (gate-m3-3) AND its practice evidence.
+    delete ch.exercises['ex-fm01-gate-m3-3'];
+    ch.stations.find((s) => s.slug === 'stn-fm01-04-structure')!.blocks = ch
+      .stations.find((s) => s.slug === 'stn-fm01-04-structure')!
+      .blocks.filter((b) => !(b.kind === 'exercise'));
     ch.stations.find((s) => s.slug === 'stn-fm01-04-structure')!.completion = { kind: 'viewed' };
     const findings = gateEqa5(ch).filter((f) => f.subject === 'sov-bridge-persian');
     expect(findings.some((f) => f.rule === 'no-mastery-measure' && f.severity === 'error')).toBe(true);
@@ -379,8 +389,20 @@ describe('waiver hygiene — the waiver list cannot rot', () => {
   });
 
   it('FAILS the run when the same waiver key is registered twice', () => {
-    const dup = [...EQA_WAIVERS, EQA_WAIVERS[0]!];
-    const result = runEqa(listChapters(), LEVELS_BY_CODE, LEVEL_POLICIES, dup);
+    // TASK-LEARNING-06: zero waivers ship — create a REAL finding via mutation, then
+    // register two waivers for it: the second must be flagged as duplicate.
+    const ch = cloneChapter();
+    delete (ch.words.find((w) => w.id === 'voc-san') as { noteFa?: string }).noteFa;
+    const key = 'EQA-6:voc-san:slot-missing';
+    const mk = (): EqaWaiver => ({
+      key,
+      issue: 104,
+      reason: 'test',
+      resolvedBy: 'test',
+      registeredAt: '2026-11-05',
+      chapter: 'first-meeting-01',
+    });
+    const result = runEqa([ch], LEVELS_BY_CODE, LEVEL_POLICIES, [mk(), mk()]);
     expect(result.pass).toBe(false);
     expect(result.duplicateWaivers.length).toBe(1);
   });
@@ -396,10 +418,17 @@ describe('waiver hygiene — the waiver list cannot rot', () => {
 
   it('a waiver for a FIXED violation becomes stale and fails — forces waiver cleanup', () => {
     const ch = cloneChapter();
-    // "Fix" the watashi card: the EQA-6 waiver for it must now be removed too.
-    (ch.words.find((w) => w.id === 'voc-watashi') as { noteFa?: string }).noteFa =
-      'دربارهٔ خودِ گوینده — مؤدبانه‌ترین واژهٔ «من» در این فصل.';
-    const result = runEqa([ch], LEVELS_BY_CODE, LEVEL_POLICIES, EQA_WAIVERS);
+    // TASK-LEARNING-06: the 05B rebuild filled every §۲-۲ slot (watashi carries a
+    // note) — a synthetic waiver claiming that finding still exists must rot.
+    const synthetic: EqaWaiver = {
+      key: 'EQA-6:voc-watashi:slot-missing',
+      issue: 104,
+      reason: 'یافته‌ای که با بازسازی 05B رفع شده',
+      resolvedBy: 'TASK-LEARNING-06',
+      registeredAt: '2026-11-05',
+      chapter: 'first-meeting-01',
+    };
+    const result = runEqa([ch], LEVELS_BY_CODE, LEVEL_POLICIES, [synthetic]);
     expect(result.pass).toBe(false);
     expect(result.staleWaivers.some((w) => w.key === 'EQA-6:voc-watashi:slot-missing')).toBe(true);
   });
@@ -410,23 +439,22 @@ describe('waiver hygiene — the waiver list cannot rot', () => {
 describe('EQA report output is actionable', () => {
   const result = runOnRealChapters();
 
-  it('console report names the lesson, the rule and the fix mission — never a bare gate id', () => {
+  it('console report is honest: clean pass with zero waivers + the remaining review items', () => {
+    // TASK-LEARNING-06: the 05A/05B rebuild closed all seven waivers — the report
+    // shows a clean pass (any NEW violation still fails, the mutation tests prove it).
     const text = renderConsole(result);
     expect(text).toContain('PASS');
-    expect(text).toContain('stn-fm01-02-vocab');
-    expect(text).toContain('ex-fm01-v1-01');
-    expect(text).toContain('#95');
-    expect(text).toContain('#96');
-    expect(text).toContain('TASK-LEARNING-05');
-    expect(text).toContain('EQA-1');
-    expect(text).toContain('EQA-7');
+    expect(text).toContain('معاف‌شده: 0');
+    expect(text).toContain('EQA'); // the registry is still rendered for reviewers
   });
 
-  it('markdown report renders the per-chapter violation table with issue links', () => {
-    const md = renderMarkdown(result, { commit: 'test', date: '2026-11-04' });
-    expect(md).toContain('| کلید | گیت | Issue | دلیل | رفع در |');
-    expect(md).toContain('EQA-1:ex-fm01-v1-01:line-grammar-not-taught');
-    expect(md).toContain('#104');
+  it('markdown report renders the honest clean state (all seven 05A/05B-era waivers closed)', () => {
+    const md = renderMarkdown(result, { commit: 'test', date: '2026-11-05' });
+    expect(md).toContain('EQA_RUN_REPORT');
+    // TASK-LEARNING-06: zero active waivers — none of the old waived keys may return.
+    expect(md).not.toContain('line-grammar-not-taught');
+    expect(md).not.toContain('slot-missing');
+    expect(md).not.toContain('recall-first-share');
   });
 });
 

@@ -6,6 +6,7 @@ import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import { applyChapterEvent, gradeMasterySubmission, type ExerciseAnswerPayload } from '@/modules/curriculum';
 import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
+import { recordLearningEvent } from '@/modules/curriculum/events';
 
 /**
  * POST /api/curriculum/mastery — the chapter gate (stage D — TASK-LEARNING-01).
@@ -144,6 +145,33 @@ export async function POST(req: Request) {
     LEVELS_BY_CODE[chapter.levelCode]?.caps.maxRemediationLoops ?? 3,
   );
   const chapterState = next ? await chapterStore.upsert(userId, chapterSlug, next, attempt.id) : current!;
+
+  // TASK-LEARNING-06: analytics contract — per-measure gate outcomes (threshold
+  // calibration input — OQ-052/056), remediation triggers and the chapter verdict.
+  const attemptLoop = chapterState.remediationCount;
+  for (const [measure, score] of Object.entries(graded.scores)) {
+    if (score === null) continue;
+    recordLearningEvent('gate_measure_completed', {
+      chapter_id: chapterSlug,
+      measure,
+      score,
+      attempt_loop: attemptLoop,
+    }, userId);
+  }
+  if (graded.outcome === 'remediate') {
+    for (const stationSlug of graded.remediationStations) {
+      recordLearningEvent('remediation_triggered', {
+        chapter_id: chapterSlug,
+        measure: '',
+        target_station_id: stationSlug,
+      }, userId);
+    }
+  }
+  recordLearningEvent('chapter_completed', {
+    chapter_id: chapterSlug,
+    outcome: graded.outcome === 'passed' ? 'understood' : 'remediate',
+    attempt_loop: attemptLoop,
+  }, userId);
 
   return NextResponse.json(
     ok({

@@ -1,1107 +1,1796 @@
 /**
- * HANASO — Chapter 1 exercise bank (TASK-LEARNING-01) — ORIGINAL HANASO content.
+ * HANASO — Chapter 1 (first conversation) exercise bank — TASK-LEARNING-06 05B rebuild.
  *
- * Two NON-OVERLAPPING pools (QUESTION_ARCH §۵-۱): `practice` items render inside
- * stations; `mastery_M*` items render ONLY in the chapter gate — answers never leak
- * between pools. Every item: 3-option MCQ (§۲-۳), documented distractors (§۲-۲),
- * feedback ladder copy F1..F3 (§۴), single target concept (§۲-۱), line anchor where
- * applicable (CONTENT-085).
+ * PROVENANCE: exercises are HANASO-original compositions (OQ-029/030/033 — no Attain
+ * exercise prose is reproduced; the source PDF exercise sections were empty anyway).
+ * Station mapping + item mix per KB section 19 LESSON_ACTIVITY_MAP §۲/§۳ (19-station
+ * two-unit map) + LEARNING_SEQUENCE_POLICY (recall-first ≥60%, Q1 ≤30%, packets with
+ * in-flow retrieval). Non-overlapping mastery pool (QUESTION §۵-۱): the gate items
+ * (M1..M5) are NEVER referenced by station blocks.
+ *
+ * Feedback ladder: F1 statement → F2 hint (+ server-side option elimination — #106)
+ * → F3 explanation + reveal; referenceBlockId powers the F4 return link (#106).
  */
 import type { Exercise } from '../types';
 
 const L = (n: number) => `s-first-meeting-01-l${n}`;
 
-/** Distractor rationales are the documented-confusion kind (Persian-learner errors). */
+/** helper: 3 options with the correct one placed by index (varied per item — EQA-4). */
+const o3 = (
+  id: string,
+  correct: string,
+  wrong1: string,
+  wrong2: string,
+  correctAt: 0 | 1 | 2,
+): { options: { id: string; label: string }[]; correctOptionId: string } => {
+  const labels = [wrong1, wrong2];
+  labels.splice(correctAt, 0, correct);
+  const ids = ['a', 'b', 'c'];
+  const correctId = ids[correctAt]!;
+  return {
+    options: labels.map((label, i) => ({ id: ids[i]!, label })),
+    correctOptionId: correctId,
+  };
+};
+
 export const FM01_EXERCISES: Exercise[] = [
-  /* ---------------- VOCAB-1 (4 diagnostic items — station-design §۱) ---------------- */
+  /* ════════════════════════ UNIT 02-1 · VOCAB-1 (stn-fm01-02-vocab) ════════════════════════ */
+  // packet 1 retrieval (watashi / san / nihonjin)
   {
-    id: 'ex-fm01-v1-01',
+    id: 'ex-fm01-v1-p1-aud-1',
     type: 'audio-meaning',
     targetSkill: 'vocab',
-    targetConcept: 'voc-sensee',
-    lineRef: L(8),
-    audioLineRef: L(8),
+    targetConcept: 'voc-watashi',
+    audioLineRef: L(3),
     difficulty: 1,
-    promptFa: 'گوش کن: در این جمله دربارهٔ شغلِ علی چه می‌گویند؟',
-    options: [
-      { id: 'a', label: 'استاد دانشگاه' },
-      { id: 'b', label: 'دانشجوی دانشگاه' },
-      { id: 'c', label: 'صاحب کافه' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'دانشجو がくせい است — در این جمله نیست؛ せんせい یعنی استاد.',
-      c: 'صاحب کافه خودِ یامادا است، نه علی.',
-    },
+    promptFa: 'به صدا گوش بده — این واژه چه معنایی دارد؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'من', 'شما / تو', 'آن شخص', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'به آخر جمله دقت کن: だいがくの せんせい — «استادِ دانشگاه». せんせい = استاد.',
-      f2HintFa: 'واژهٔ せんせい را در کارت واژه دیدیم؛ استاد/معلم.',
-      f3ExplainFa: 'だいがくの せんせい = استاد دانشگاه. の دو اسم را به هم می‌چسباند: «استادِِ دانشگاه».',
+      f1Fa: 'این واژه «من» است — به کارت واژه برگرد و دوباره گوش بده.',
+      f2HintFa: 'اولین واژهٔ خط ۳؛ دربارهٔ خودِ گوینده.',
+      f3ExplainFa: 'わたし = من (ضمیر اول شخص).',
     },
     assessmentRole: 'practice',
+    referenceBlockId: 'blk-v1-card-watashi',
   },
   {
-    id: 'ex-fm01-v1-02',
+    id: 'ex-fm01-v1-p1-aud-2',
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-nihonjin',
-    lineRef: L(3),
     audioLineRef: L(3),
     difficulty: 1,
-    promptFa: 'گوش کن: یامادا ملیت خودش را چه می‌گوید؟',
-    options: [
-      { id: 'a', label: 'چینی' },
-      { id: 'b', label: 'ژاپنی' },
-      { id: 'c', label: 'ایرانی' },
-    ],
-    correctOptionId: 'b',
-    distractorRationaleFa: {
-      a: 'ちゅうごくじん مربوط به سوراست (L5) — اینجا にほんじん است.',
-      c: 'イランじん دربارهٔ علی است (L8).',
-    },
+    promptFa: 'به صدا گوش بده — کدام ملیت را شنیدی؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'ژاپنی', 'چینی', 'کره‌ای', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'واژه‌ای که شنیدی にほんじん است — にほん (ژاپن) + じん (اهلِ).',
-      f2HintFa: 'جمله با わたしは شروع شد و بعد nationality آمد؛ به صدای «نیهون» دقت کن.',
-      f3ExplainFa: 'にほんじん = ژاپنی. わたしは にほんじんです = من ژاپنی‌ام.',
+      f1Fa: 'ملیتی که شنیدی «ژاپنی» بود — にほん را با ちゅうごک قاطی نکن.',
+      f2HintFa: 'ni-ho-n-ji-n؛ در خط ۳ یامادا دربارهٔ خودش می‌گوید.',
+      f3ExplainFa: 'にほんじん = ژاپنی (اهل ژاپن).',
     },
     assessmentRole: 'practice',
+    referenceBlockId: 'blk-v1-card-nihonjin',
+  },
+  // packet 2 retrieval (chuugokujin / daigaku / sensee)
+  {
+    id: 'ex-fm01-v1-p2-aud-1',
+    type: 'audio-meaning',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-chuugokujin',
+    audioLineRef: L(5),
+    difficulty: 2,
+    promptFa: 'به صدا گوش بده — کدام ملیت؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'چینی', 'ژاپنی', 'ایرانی', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: '«چینی» بود — دقت کن: chuugoku دو واکهٔ کشیده دارد.',
+      f2HintFa: 'ملیتی که سورا دربارهٔ خودش تأیید می‌کند (خط ۶).',
+      f3ExplainFa: 'ちゅうごくじん = چینی (اهل چین).',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-v1-card-chuugokujin',
   },
   {
-    id: 'ex-fm01-v1-03',
+    id: 'ex-fm01-v1-p2-txt-1',
     type: 'meaning-select',
     targetSkill: 'vocab',
-    targetConcept: 'voc-watashi',
-    lineRef: L(3),
+    targetConcept: 'voc-daigaku',
+    lineRef: L(8),
     difficulty: 1,
-    promptJa: 'わたし',
-    promptJaReading: 'わたし',
-    promptFa: 'این واژه چه معنی دارد؟',
-    options: [
-      { id: 'a', label: 'تو' },
-      { id: 'b', label: 'من' },
-      { id: 'c', label: 'او' },
-    ],
-    correctOptionId: 'b',
+    promptFa: 'この言葉（ことば）は何（なに）？ — だいがく',
+    promptJa: 'だいがく',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'دانشگاه', 'مدرسه', 'معلم', 0);
+      return { options, correctOptionId };
+    })(),
     distractorRationaleFa: {
-      a: '«تو» در ژاپنی あなた است — اما در مکالمهٔ طبیعی ژاپنی معمولاً حذف می‌شود یا با نام می‌آید.',
-      c: 'اشاره به شخص سوم با あのかた است.',
+      b: 'مدرسه = がっこう — در این فصل نیست؛ جفت اشتباه‌پذیر آینده.',
+      c: 'معلم = せんせい — ربط کار/مکان را قاطی نکن.',
     },
     feedback: {
-      f1Fa: 'わたش(ی) = گوینده دربارهٔ خودش حرف می‌زند.',
-      f2HintFa: 'در L3 یامادا دربارهٔ خودش معرفی کرد: わたしは にほんじんです — من ژاپنی‌ام.',
-      f3ExplainFa: 'わたし = من. وقتی گوینده خودش را معرفی می‌کند، موضوعِ جمله わたし است.',
+      f1Fa: '「だいがく» یعنی دانشگاه.',
+      f2HintFa: 'محل کارِ علیِ استاد — だいがくの せんせい.',
+      f3ExplainFa: 'だいがく = دانشگاه (الگو: だい=بزرگ + がく=مکتب/علم).',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-v1-card-daigaku',
+  },
+  // packet 3 retrieval (anokata / iranjin)
+  {
+    id: 'ex-fm01-v1-p3-match-1',
+    type: 'match-in-line',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-iranjin',
+    lineRef: L(8),
+    difficulty: 1,
+    promptFa: 'کدام واژه در نوبت ۸ آمده است؟',
+    promptJa: 'イランじん',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'イランじん', 'かんこくじん', 'ちゅうごくじん', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'かんこくじん در خط ۱۱ می‌آید — بعداً می‌آموزیم.',
+      c: 'ちゅうごくじん در خط ۵ و ۶ است، نه ۸.',
+    },
+    feedback: {
+      f1Fa: 'درست! نوبت ۸ دربارهٔ علی است: イランじんです.',
+      f2HintFa: 'یامادا سه جمله دربارهٔ علی می‌گوید؛ ملیت او کدام است؟',
+      f3ExplainFa: 'خط ۸: アリさん です。イランじん です。だいがくの せんせい です。',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-v1-card-iranjin',
+  },
+  // base diagnostic (station-end mix)
+
+  /* ════════════════════════ GRAMMAR-1 (stn-fm01-03-grammar-desu) ════════════════════════ */
+  {
+    id: 'ex-fm01-g1-order-1',
+    type: 'word-order',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-desu-identity',
+    lineRef: L(6),
+    difficulty: 1,
+    promptFa: 'کلمات را بچین: «من چینی‌ام»',
+    chunks: [
+      { id: 'c1', ja: 'わたしは' },
+      { id: 'c2', ja: 'ちゅうごくじん' },
+      { id: 'c3', ja: 'です' },
+    ],
+    correctOrder: ['c1', 'c2', 'c3'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'ترتیب درست: موضوع → هویت → です.',
+      f2HintFa: '«من» اول می‌آید و は آخرش؛ です همیشه پایان.',
+      f3ExplainFa: 'わたしは ちゅうごくじんです = من چینی‌ام (AはBです).',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g1-rule',
+  },
+  {
+    id: 'ex-fm01-g1-cloze-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-desu-identity',
+    lineRef: L(8),
+    difficulty: 1,
+    promptFa: 'جای خالی را پر کن: «آلی استاد دانشگاه است»',
+    promptJa: 'アリさんは だいがくの せんせい ___。',
+    clozeTokens: ['アリさんは', 'だいがくの', 'せんせい', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'です', 'ですか', 'ですね', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'ですか = پرسش — این جمله خبری است.',
+      c: 'ですね = تأیید شنیده‌ها — این‌جا معرفی است نه تأیید.',
+    },
+    feedback: {
+      f1Fa: 'جملهٔ خبری مؤدبانه با です تمام می‌شود.',
+      f2HintFa: 'پرسش نیست، تأیید هم نیست — معرفی ساده.',
+      f3ExplainFa: 'AはBです — جملهٔ خبری: アリさんは だいがくの せんせいです。',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g1-rule',
+  },
+  {
+    id: 'ex-fm01-g1-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-desu-identity',
+    lineRef: L(3),
+    difficulty: 2,
+    promptFa: 'بساز: «من ایرانی‌ام»',
+    chips: [
+      { id: 'p1', ja: 'わたしは' },
+      { id: 'p2', ja: 'イランじん' },
+      { id: 'p3', ja: 'です' },
+    ],
+    acceptedChipOrder: ['p1', 'p2', 'p3'],
+    feedback: {
+      f1Fa: 'یک چیپ اضافه داری — این جمله خبری است.',
+      f2HintFa: 'سه چیپ کافی است: موضوع + هویت + پایان‌بندی.',
+      f3ExplainFa: 'わたしは イランじんです — همان الگوی خط ۳.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g1-rule',
+  },
+  {
+    id: 'ex-fm01-g1-prod-2',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-desu-identity',
+    lineRef: L(8),
+    difficulty: 2,
+    promptFa: 'بساز: «[نام تو] دانشجو است» — جای نام، چیپ نام را بگذار',
+    chips: [
+      { id: 'n1', ja: 'NAME' },
+      { id: 'n2', ja: 'は' },
+      { id: 'n3', ja: 'がくせい' },
+      { id: 'n4', ja: 'です' },
+    ],
+    acceptedChipOrder: ['n1', 'n2', 'n3', 'n4'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'ترتیب: نام + は + هویت + です.',
+      f2HintFa: 'がくせい (دانشجو) واژهٔ شناخته‌شدهٔ این فصل است — با همین الگو.',
+      f3ExplainFa: '[نام]さんは がくせいです — معرفی کامل خودت!',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g1-rule',
+  },
+
+  /* ════════════════════════ STRUCTURE (stn-fm01-04-structure) ════════════════════════ */
+  {
+    id: 'ex-fm01-st-order-1',
+    type: 'word-order',
+    targetSkill: 'structure',
+    targetConcept: 'sov-bridge-persian',
+    lineRef: L(3),
+    difficulty: 1,
+    promptFa: 'کلمات جملهٔ «یامادا ژاپنی است» را به ترتیب ژاپنی بچین',
+    chunks: [
+      { id: 's1', ja: 'やまだは' },
+      { id: 's2', ja: 'にほんじん' },
+      { id: 's3', ja: 'です' },
+    ],
+    correctOrder: ['s1', 's2', 's3'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'ترتیب فارسی و ژاپنی این‌جا یکی است: موضوع اول، فعل آخر.',
+      f2HintFa: 'فعل/هویت‌ساز (です) همیشه آخر می‌نشیند.',
+      f3ExplainFa: 'やまだは にほんじんです — مثل فارسی: «یامادا ژاپنی است».',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-st-rule',
+  },
+
+  /* ════════════════════════ GRAMMAR-2 (stn-fm01-05-grammar-qa) ════════════════════════ */
+  {
+    id: 'ex-fm01-g2-cloze-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-desu-qa',
+    lineRef: L(5),
+    difficulty: 2,
+    promptFa: 'جای خالی: «پس سورا هستید. چینی هستید؟»',
+    promptJa: 'ソラさん___。ちゅうごくじん___か。',
+    clozeTokens: ['ソラさん', null, '。', 'ちゅうごくじん', null, 'か', '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'です', 'ですか', 'ですね', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'دو جای خالی داری — اولی تأیید (ですね)، دومی پرسش (です).',
+    },
+    feedback: {
+      f1Fa: 'خالی اول تأیید است: ですね؛ خالی دوم گزارهٔ پرسش: です.',
+      f2HintFa: 'خط ۵ هر دو را یکجا دارد — به آن نگاه کن.',
+      f3ExplainFa: 'ソラさんですね (تأیید) + ちゅうごくじんですか (پرسش).',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g2-rule',
+  },
+  {
+    id: 'ex-fm01-g2-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-desu-qa',
+    lineRef: L(7),
+    difficulty: 2,
+    promptFa: 'بساز: «[او] استاد است؟» — پرسش مؤدبانه',
+    chips: [
+      { id: 'q1', ja: 'せんせい' },
+      { id: 'q2', ja: 'です' },
+      { id: 'q3', ja: 'か' },
+    ],
+    acceptedChipOrder: ['q1', 'q2', 'q3'],
+    feedback: {
+      f1Fa: 'پرسش با か است، نه ね.',
+      f2HintFa: 'هویت + です + か.',
+      f3ExplainFa: 'せんせいですか = استاد است؟ (آهنگ پایانی بالا).',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g2-rule',
+  },
+  {
+    id: 'ex-fm01-g2-prod-2',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-desu-qa',
+    lineRef: L(5),
+    difficulty: 2,
+    promptFa: 'بساز: «خانم کیم هم چینی است؟» (پرسش دربارهٔ کیم — با も)',
+    chips: [
+      { id: 'm1', ja: 'キムさんも' },
+      { id: 'm2', ja: 'ちゅうごくじん' },
+      { id: 'm3', ja: 'です' },
+      { id: 'm4', ja: 'か' },
+    ],
+    acceptedChipOrder: ['m1', 'm2', 'm3', 'm4'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'ترتیب: موضوع+も → هویت → です → か.',
+      f2HintFa: 'همان پرسش خط ۵، فقط は به も تبدیل شده.',
+      f3ExplainFa: 'キムさんも ちゅうごくじんですか — پرسشِ خط ۱۰!',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g2-rule',
+  },
+  {
+    id: 'ex-fm01-g2-aud-1',
+    type: 'audio-meaning',
+    targetSkill: 'listening',
+    targetConcept: 'gr-desu-qa',
+    assessesConcepts: ['gr-desu-qa', 'listen-final-intonation'],
+    audioLineRef: L(7),
+    lineRef: L(7),
+    difficulty: 2,
+    promptFa: 'گوش بده: این جمله پرسش است یا تأیید؟ (خط ۷)',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'پرسش (ですか)', 'تأیید (ですね)', 'خبر (です)', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'آهنگ پایانی بالا بود → پرسش با か.',
+      f2HintFa: 'به آخر جمله گوش کن: بالا = پرسش، پایین = خبر/تأیید.',
+      f3ExplainFa: 'あのかたは どなたですか — با か و آهنگ بالاتمام می‌شود.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g2-rule',
+  },
+
+  /* ════════════════════════ EXPRESSION-1 (stn-fm01-06-expression) ════════════════════════ */
+  {
+    id: 'ex-fm01-e1-resp-1',
+    type: 'response-select',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-hajimemashite',
+    lineRef: L(3),
+    difficulty: 1,
+    promptFa: 'اولین بار کسی را می‌بینی و معرفی می‌شوید — با چه چیزی شروع می‌کنی؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'はじめまして', 'こんにちは', 'よろしく おねがいします', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'こんにちは سلامِ روزانه است — برای هر ساعتی، نه مخصوص اولین دیدار.',
+      c: 'よろしく おねがいします پایان آیین آشنایی است، نه آغاز آن.',
+    },
+    feedback: {
+      f1Fa: 'آغاز آیین آشنایی با はじめまして است.',
+      f2HintFa: 'ترتیب خط ۳ را یادت هست: اول «از آشنایی خوشبختم»، بعد معرفی، بعد یوروشیکو.',
+      f3ExplainFa: 'はじめまして = از آشنایی‌تان خوشبختم — فقط اولین ملاقات.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e1-card-hajimemashite',
+  },
+  {
+    id: 'ex-fm01-e1-resp-2',
+    type: 'response-select',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-yoroshiku',
+    lineRef: L(3),
+    difficulty: 2,
+    promptFa: 'معرفی‌ات تمام شد — با چه عبارتی می‌بندی؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'よろしく おねがいします', 'はじめまして', 'そうですか', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'はじめまして آغاز است، نه پایان.',
+      c: 'そうですか واکنش به اطلاعات تازه است — جای آیین معرفی نیست.',
+    },
+    feedback: {
+      f1Fa: 'پایان آیین آشنایی با よろしく おねがいします.',
+      f2HintFa: 'هر دو طرف در پایان با هم می‌گویندش (خط ۱۴).',
+      f3ExplainFa: 'よろしく おねがいします = از رابطه‌مان خوشحالم / بردم را بدار.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e1-card-yoroshiku',
+  },
+  {
+    id: 'ex-fm01-e1-order-1',
+    type: 'dialogue-order',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-hajimemashite',
+    lineRef: L(3),
+    difficulty: 2,
+    promptFa: 'سه گام آیین معرفی را به ترتیب بچین',
+    chunks: [
+      { id: 'd1', ja: 'はじめまして' },
+      { id: 'd2', ja: '[نام]です' },
+      { id: 'd3', ja: 'よろしく おねがいします' },
+    ],
+    correctOrder: ['d1', 'd2', 'd3'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'ترتیب آیین: خوشبختم → معرفی → یوروشیکو.',
+      f2HintFa: 'خط ۳ یامادا دقیقاً همین ترتیب را نشان می‌دهد.',
+      f3ExplainFa: 'はじめまして、やまだです。よろしく おねがいします。',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e1-card-hajimemashite',
+  },
+
+  /* ════════════════════════ LISTEN-1 (stn-fm01-07-listen) ════════════════════════ */
+  {
+    id: 'ex-fm01-l1-gist-1',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'identity-vocab-core',
+    assessesConcepts: ['gr-desu-identity', 'voc-nihonjin', 'voc-chuugokujin'],
+    audioLineRef: L(3),
+    lineRef: L(3),
+    difficulty: 2,
+    promptFa: 'گوش بده (خط ۳): یامادا چه می‌کند؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'خودش را معرفی می‌کند', 'سفارش قهوه می‌دهد', 'از میکی دربارهٔ علی می‌پرسد', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'کل خط ۳ یک معرفی کامل است: نام + ملیت + یوروشیکو.',
+      f2HintFa: 'کلمهٔ はじめまて را که شنیدی، یعنی آغاز آشنایی.',
+      f3ExplainFa: 'خط ۳ = معرفی کامل یامادا (はじめまして、やまだです…).',
     },
     assessmentRole: 'practice',
   },
   {
-    id: 'ex-fm01-v1-04',
-    type: 'match-in-line',
+    id: 'ex-fm01-l1-who-1',
+    type: 'speaker-identify',
+    targetSkill: 'listening',
+    targetConcept: 'identity-vocab-core',
+    assessesConcepts: ['voc-chuugokujin'],
+    audioLineRef: L(6),
+    lineRef: L(6),
+    difficulty: 1,
+    promptFa: 'این جمله («بله، من چینی‌ام») را چه کسی می‌گوید؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'سورا', 'یامادا', 'میکی', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'جمله دربارهٔ خودِ گوینده است — کسی که چینی است.',
+      f2HintFa: 'یامادا ژاپنی است؛ پس «من چینی‌ام» از او نیست.',
+      f3ExplainFa: 'سورا (خط ۶): はい、わたしは ちゅうごくじんです.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-l1-mp-1',
+    type: 'listen-minimal-pair',
+    targetSkill: 'listening',
+    targetConcept: 'voc-sensee',
+    assessesConcepts: ['listen-vowel-length'],
+    audioLineRef: L(8),
+    lineRef: L(8),
+    difficulty: 3,
+    promptFa: 'گوش بده: کدام را شنیدی؟ (تفاوت طول واکه)',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'せんせい (استاد)', 'せんせ (؟)', 'せんせえ (؟)', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'واکهٔ پایانی در ژاپنی کشیده است: sen-see.',
+      f2HintFa: 'دو مورا: せ+んせ+い — آخرین واکه کامل شنیده می‌شود.',
+      f3ExplainFa: 'せんせい = sensee — کوتاه‌کردن واکه یعنی واژهٔ دیگری/بی‌معنا.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-l1-mp-2',
+    type: 'listen-minimal-pair',
+    targetSkill: 'listening',
+    targetConcept: 'voc-chuugokujin',
+    assessesConcepts: ['listen-vowel-length'],
+    audioLineRef: L(5),
+    lineRef: L(5),
+    difficulty: 3,
+    promptFa: 'گوش بده: کدام ملیت؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'ちゅうごく (چین)', 'ちゅごく (؟)', 'ちゅうご (؟)', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'uu کشیده است: chuu-goku.',
+      f2HintFa: 'دو مورا در میانه: ちゅ+う — «اوی» بلند.',
+      f3ExplainFa: 'ちゅうごく = chuugoku — طول واکه معنا را عوض می‌کند.',
+    },
+    assessmentRole: 'practice',
+  },
+
+  /* ════════════════════════ PRACTICE-1 (stn-fm01-08-practice) ════════════════════════ */
+  // C1 — warm-up recycling (2)
+  {
+    id: 'ex-fm01-p1-c1-aud-1',
+    type: 'audio-meaning',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-watashi',
+    audioLineRef: L(6),
+    difficulty: 1,
+    promptFa: 'گرم‌کردن: این واژه چه بود؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'من', 'شما / تو', 'دوست', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'この واژه یعنی «من».',
+      f2HintFa: 'خط ۶: わたしは ちゅうごくじんです.',
+      f3ExplainFa: 'わたし یعنی «من» — خط ۶: わたしは ちゅうごくじんです.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p1-c1-aud-2',
+    type: 'audio-meaning',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-iranjin',
+    audioLineRef: L(8),
+    difficulty: 1,
+    promptFa: 'گرم‌کردن: این ملیت چه بود؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'ایرانی', 'چینی', 'ژاپنی', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'イランじん = ایرانی.',
+      f2HintFa: 'خط ۸ — دربارهٔ علی.',
+      f3ExplainFa: 'イランじん = ایرانی (الگوی 〜じん).',
+    },
+    assessmentRole: 'practice',
+  },
+  // C2 — mixed consolidation (5)
+  {
+    id: 'ex-fm01-p1-c2-order-1',
+    type: 'word-order',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-desu-identity',
+    lineRef: L(3),
+    difficulty: 2,
+    promptFa: 'بچین: «یامادا ژاپنی است»',
+    chunks: [
+      { id: 'w1', ja: 'やまだは' },
+      { id: 'w2', ja: 'にほんじん' },
+      { id: 'w3', ja: 'です' },
+    ],
+    correctOrder: ['w1', 'w2', 'w3'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'موضوع → هویت → です.',
+      f2HintFa: 'خط ۳ را به یاد بیاور.',
+      f3ExplainFa: 'やまだは にほんじんです.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p1-c2-cloze-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-desu-qa',
+    lineRef: L(7),
+    difficulty: 2,
+    promptFa: 'پرسش مؤدبانه بساز: «آن شخص کیست؟»',
+    promptJa: 'あのかたは どなた___。',
+    clozeTokens: ['あのかたは', 'どなた', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'ですか', 'です', 'ですね', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'با です خبری می‌شود نه پرسش.',
+      c: 'ですね تأکید/تأیید است.',
+    },
+    feedback: {
+      f1Fa: 'پرسش با ですか ساخته می‌شود.',
+      f2HintFa: 'آهنگ پایانی بالا — か.',
+      f3ExplainFa: 'あのかたは どなたですか (خط ۷).',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p1-c2-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-desu-identity',
+    lineRef: L(6),
+    difficulty: 2,
+    promptFa: 'بساز: «من چینی‌ام»',
+    chips: [
+      { id: 'r1', ja: 'わたしは' },
+      { id: 'r2', ja: 'ちゅうごくじん' },
+      { id: 'r3', ja: 'です' },
+    ],
+    acceptedChipOrder: ['r1', 'r2', 'r3'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'سه تکه: موضوع + هویت + です.',
+      f2HintFa: 'خط ۶ سورا همین را می‌گوید.',
+      f3ExplainFa: 'わたしは ちゅうごくじんです.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p1-c2-gist-1',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'identity-vocab-core',
+    assessesConcepts: ['gr-desu-identity', 'voc-daigaku', 'voc-sensee'],
+    audioLineRef: L(8),
+    lineRef: L(8),
+    difficulty: 2,
+    promptFa: 'گوش بده (خط ۸): یامادا چه چیزهایی دربارهٔ علی می‌گوید؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'نام + ملیت + شغل', 'فقط نام', 'نام + سن', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'سه جملهٔ پشت‌سرهم: نام، ملیت، شغل.',
+      f2HintFa: 'アリさん です。イランじん です。だいがくの せんせい です。',
+      f3ExplainFa: 'خط ۸ = معرفی سه‌بخشی علی.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p1-c2-mp-1',
+    type: 'listen-minimal-pair',
+    targetSkill: 'listening',
+    targetConcept: 'voc-sensee',
+    assessesConcepts: ['listen-vowel-length'],
+    audioLineRef: L(8),
+    lineRef: L(8),
+    difficulty: 3,
+    promptFa: 'کدام را شنیدی؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'せんせい', 'せんせ', 'せいせん', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'sensee — واکهٔ آخر کشیده.',
+      f2HintFa: 'せ+ん+せ+い: چهار مورا.',
+      f3ExplainFa: 'せんせい (sensee) = استاد.',
+    },
+    assessmentRole: 'practice',
+  },
+  // C3 — kana × chapter-word mix (2) — the Ch01 bridge (05B PRACTICE-1 C3)
+  {
+    id: 'ex-fm01-p1-c3-decode-1',
+    type: 'kana-decode',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-sensee',
+    assessesConcepts: ['voc-sensee'],
+    difficulty: 2,
+    promptFa: 'با کاناهایی که در فصل ۰۱ آموختی بخوان: این واژهٔ همین فصل چیست؟',
+    promptJa: 'せんせい',
+    promptJaReading: 'sensee',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'sensee', 'sensei', 'sensen', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'i کوتاه — استاندارد HANASO دوبل‌واکه است.', c: 'آخرین واکه n نیست.' },
+    feedback: {
+      f1Fa: 'واکهٔ پایانی بلند است — دوبل بنویس.',
+      f2HintFa: 'せ+ん+せ+い.',
+      f3ExplainFa: 'せんせい = sensee = استاد.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p1-c3-decode-2',
+    type: 'kana-decode',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-chuugokujin',
+    assessesConcepts: ['voc-chuugokujin'],
+    difficulty: 2,
+    promptFa: 'این واژه را کانا‌به‌کانا بخوان:',
+    promptJa: 'ちゅうごくじん',
+    promptJaReading: 'chuugokujin',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'chuugokujin', 'chugokujin', 'chuugokujin؟', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'uu را نیفکن — دو موراست.', c: 'پرسشی نیست!' },
+    feedback: {
+      f1Fa: 'uu و oo کشیده‌اند.',
+      f2HintFa: 'ちょ+う+ご+く+じ+ん.',
+      f3ExplainFa: 'ちゅうごくじん = chuugokujin = چینی.',
+    },
+    assessmentRole: 'practice',
+  },
+
+  /* ════════════════════════ UNIT 02-2 · VOCAB-2 (stn-fm01-11-vocab2) ════════════════════════ */
+  // recycling via READING (the Ch01 bridge — 05B C1 spirit; FSRS queue = not integrated)
+  {
+    id: 'ex-fm01-v2-dec-1',
+    type: 'kana-decode',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-chuugokujin',
+    assessesConcepts: ['voc-chuugokujin'],
+    difficulty: 1,
+    promptFa: 'بازیافت با خواندن: این واژهٔ واحد قبل؟',
+    promptJa: 'ちゅうごくじん',
+    promptJaReading: 'chuugokujin',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'chuugokujin', 'chugokujin', 'chuugokujin؟', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'uu را نیفکن — دو موراست.', c: 'پرسشی نیست!' },
+    feedback: {
+      f1Fa: 'uu و oo کشیده‌اند.',
+      f2HintFa: 'ちょ+う+ご+く+じ+ん.',
+      f3ExplainFa: 'ちゅうごくじん = chuugokujin = چینی.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-v2-dec-2',
+    type: 'kana-decode',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-nihonjin',
+    assessesConcepts: ['voc-nihonjin'],
+    difficulty: 1,
+    promptFa: 'بازیافت با خواندن:',
+    promptJa: 'にほんじん',
+    promptJaReading: 'nihonjin',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'nihonjin', 'nihonjen', 'ninhonjin', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'واکهٔ آخر e نیست.', c: 'ん این‌جا خیشومیِ سبک است — nihon.' },
+    feedback: {
+      f1Fa: 'ni-ho-n-ji-n.',
+      f2HintFa: 'に+ほ+ん+じ+ん.',
+      f3ExplainFa: 'にほんじん = nihonjin = ژاپنی.',
+    },
+    assessmentRole: 'practice',
+  },
+  // new words (3)
+  {
+    id: 'ex-fm01-v2-aud-1',
+    type: 'audio-meaning',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-kankokujin',
+    audioLineRef: L(11),
+    difficulty: 2,
+    promptFa: 'به صدا گوش بده — کدام ملیت؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'کره‌ای', 'چینی', 'ژاپنی', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'かんこくじん = کره‌ای — ん خیشومی را کامل بگو.',
+      f2HintFa: 'ka-n-ko-ku-ji-n.',
+      f3ExplainFa: 'かんこくじん = کره‌ای (اهل کره).',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-v2-card-kankokujin',
+  },
+  {
+    id: 'ex-fm01-v2-aud-2',
+    type: 'audio-meaning',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-kara',
+    audioLineRef: L(13),
+    difficulty: 1,
+    promptFa: 'به صدا گوش بده — から چه کار می‌کند؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', '«از» — نشانهٔ خاستگاه', '«به» — جهت', '«در» — مکان', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'から = از (خاستگاه).',
+      f2HintFa: 'かんこくから = از کره.',
+      f3ExplainFa: '〜から きました = از … آمدم.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-v2-card-kara',
+  },
+  {
+    id: 'ex-fm01-v2-txt-1',
+    type: 'meaning-select',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-kimashita',
+    lineRef: L(13),
+    difficulty: 2,
+    promptFa: 'きました یعنی چه؟',
+    promptJa: 'きました',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'آمد (گذشتهٔ مؤدبانه)', 'می‌آید (اکنون)', 'خواهد آمد', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'حال استعلایی است — شکل きます؛ این گذشته است.',
+      c: 'آینده در این سطح نیست.',
+    },
+    feedback: {
+      f1Fa: 'きました = آمد (مؤدبانه، گذشته).',
+      f2HintFa: 'خط ۱۳: کیم می‌گوید از کره …',
+      f3ExplainFa: 'かんこくから きました = از کره آمدم.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-v2-card-kimashita',
+  },
+
+  /* ════════════════════════ GRAMMAR-3 も (stn-fm01-12-grammar-mo) ════════════════════════ */
+  {
+    id: 'ex-fm01-g3-cloze-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-mo',
+    lineRef: L(10),
+    difficulty: 2,
+    promptFa: 'جای خالی: «کیم هم چینی است؟»',
+    promptJa: 'キムさん___ ちゅうごくじんですか。',
+    clozeTokens: ['キムさん', null, 'ちゅうごくじんですか', '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'も', 'は', 'か', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'は = «دربارهٔ» — معنی «هم» نمی‌دهد.',
+      c: 'か فقط پایان پرسش است؛ این‌جا داخل جمله است.',
+    },
+    feedback: {
+      f1Fa: '«هم» با も است.',
+      f2HintFa: 'یامادا فکر می‌کند کیم مثل سورا چینی است.',
+      f3ExplainFa: 'キムさんも ちゅうごくじんですか = کیم هم چینی است؟',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g3-rule',
+  },
+  {
+    id: 'ex-fm01-g3-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-mo',
+    lineRef: L(10),
+    difficulty: 2,
+    promptFa: 'بساز: «من هم دانشجوام» (がくせい = دانشجو)',
+    chips: [
+      { id: 'g1', ja: 'わたしも' },
+      { id: 'g2', ja: 'がくせい' },
+      { id: 'g3', ja: 'です' },
+    ],
+    acceptedChipOrder: ['g1', 'g2', 'g3'],
+    feedback: {
+      f1Fa: 'も جای は را می‌گیرد — با هم نمی‌آیند.',
+      f2HintFa: 'موضوع+も → هویت → です.',
+      f3ExplainFa: 'わたしも がくせいです = من هم دانشجوام.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g3-rule',
+  },
+
+  /* ════════════════════════ GRAMMAR-4 ではありません (stn-fm01-13-grammar-dewa) ════════════════════════ */
+  {
+    id: 'ex-fm01-g4-cloze-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-dewa-arimasen',
+    lineRef: L(11),
+    difficulty: 2,
+    promptFa: 'جای خالی: «کیم چینی نیست. کره‌ای است.»',
+    promptJa: 'キムさんは ちゅうごくじん___。かんこくじんです。',
+    clozeTokens: ['キムさんは', 'ちゅうごくじん', null, '。', 'かんこくじんです', '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'では ありません', 'です', 'でした', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'です یعنی «است» — این‌جا نفی لازم است.',
+      c: 'でした گذشته است — در این مکالمه نیست.',
+    },
+    feedback: {
+      f1Fa: 'نفی مؤدبانه: では ありません.',
+      f2HintFa: 'سورا فرض یامادا را رد می‌کند — نه + درست.',
+      f3ExplainFa: 'ちゅうごくじんでは ありません = چینی نیست.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g4-rule',
+  },
+  {
+    id: 'ex-fm01-g4-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-dewa-arimasen',
+    lineRef: L(11),
+    difficulty: 3,
+    promptFa: 'بساز: «او معلم نیست. دانشجو است.»',
+    chips: [
+      { id: 'n1', ja: 'せんせい' },
+      { id: 'n2', ja: 'では' },
+      { id: 'n3', ja: 'ありません' },
+      { id: 'n4', ja: 'がくせいです' },
+    ],
+    acceptedChipOrder: ['n1', 'n2', 'n3', 'n4'],
+    feedback: {
+      f1Fa: 'دو جمله داری: نفی + درست — هرکدام یک پایان‌بندی.',
+      f2HintFa: '…では ありません。…です。',
+      f3ExplainFa: 'せんせいでは ありません。がくせいです.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g4-rule',
+  },
+
+  /* ════════════════════════ EXPRESSION-2 (stn-fm01-14-expression) ════════════════════════ */
+  {
+    id: 'ex-fm01-e2-resp-1',
+    type: 'response-select',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-iie',
+    lineRef: L(11),
+    difficulty: 2,
+    promptFa: 'کسی ملیتت را اشتباه حدس زد — با چه شروع می‌کنی؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'いいえ', 'はい', 'そうですか', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'はی یعنی تأیید حدسِ غلط!',
+      c: 'そうですか برای اطلاعات تازه است — این‌جا باید اصلاح کنی.',
+    },
+    feedback: {
+      f1Fa: 'اول いいえ، بعد جملهٔ درست.',
+      f2HintFa: 'خط ۱۱ سورا: いいえ、キムさんは…',
+      f3ExplainFa: 'いいえ + نفی + هویتِ درست = ردّ مؤدبانهٔ کامل.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e2-card-iie',
+  },
+  {
+    id: 'ex-fm01-e2-resp-2',
+    type: 'response-select',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-soodesuka',
+    lineRef: L(12),
+    difficulty: 2,
+    promptFa: 'دوستت خبر تازه‌ای گفت («او کره‌ای است») — واکنش مناسب؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'そうですか', 'はじめまして', 'よろしく おねがいします', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'اولین دیدار نیست.',
+      c: 'پایان آیین معرفی است، نه واکنش به خبر.',
+    },
+    feedback: {
+      f1Fa: 'そうですか = آه، می‌فهمم — واکنش به اطلاعات نو.',
+      f2HintFa: 'با آهنگ نزولی.',
+      f3ExplainFa: 'そうですか (نزولی) = جالب بود/می‌فهمم.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e2-card-soodesuka',
+  },
+  {
+    id: 'ex-fm01-e2-order-1',
+    type: 'dialogue-order',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-wakarimashita',
+    lineRef: L(12),
+    difficulty: 2,
+    promptFa: 'واکنش یامادا به اصلاح سورا را کامل بچین (خط ۱۲)',
+    chunks: [
+      { id: 'z1', ja: 'そうですか。' },
+      { id: 'z2', ja: 'わかりました。' },
+    ],
+    correctOrder: ['z1', 'z2'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'اول واکنش به خبر (そうですか)، بعد دریافت (わかりました).',
+      f2HintFa: 'دو جملهٔ پشت‌سرهم در خط ۱۲.',
+      f3ExplainFa: 'そうですか。わかりました。',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e2-card-soodesuka',
+  },
+
+  {
+    id: 'ex-fm01-e2-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'chrk-iie',
+    lineRef: L(11),
+    difficulty: 3,
+    promptFa: 'بساز: ردّ کاملِ فرضِ غلط — «نه، [او] چینی نیست. کره‌ای است.»',
+    chips: [
+      { id: 'ii1', ja: 'いいえ、' },
+      { id: 'ii2', ja: 'キムさんは' },
+      { id: 'ii3', ja: 'ちゅうごくじんでは' },
+      { id: 'ii4', ja: 'ありません。' },
+      { id: 'ii5', ja: 'かんこくじんです。' },
+    ],
+    acceptedChipOrder: ['ii1', 'ii2', 'ii3', 'ii4', 'ii5'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'رد مؤدب = نه + نفی + هویت درست.',
+      f2HintFa: 'خط ۱۱ را مرحله‌به‌مرحله بساز.',
+      f3ExplainFa: 'いいえ、キムさんは ちゅうごくじんでは ありません。かんこくじんです。',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e2-card-iie',
+  },
+
+  /* ════════════════════════ LISTEN-2 (stn-fm01-15-listen) ════════════════════════ */
+  {
+    id: 'ex-fm01-l2-gist-1',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'identity-vocab-core',
+    assessesConcepts: ['gr-kara-kimashita', 'chrk-hajimemashite'],
+    audioLineRef: L(13),
+    lineRef: L(13),
+    difficulty: 2,
+    promptFa: 'گوش بده (خط ۱۳): کیم چه کرد؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'خودش را کامل معرفی کرد و گفت از کره آمده', 'سفارش نوشیدنی داد', 'از یامادا دربارهٔ علی پرسید', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'خط ۱۳ معرفی کامل است: نام + خاستگاه + یوروشیکو.',
+      f2HintFa: 'はじめまて را که شنیدی، معرفی است.',
+      f3ExplainFa: 'はじめまして、キムです。かんこくから きました。',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-l2-mp-1',
+    type: 'listen-minimal-pair',
+    targetSkill: 'listening',
+    targetConcept: 'voc-kankokujin',
+    assessesConcepts: ['listen-nasal-mora'],
+    audioLineRef: L(11),
+    lineRef: L(11),
+    difficulty: 3,
+    promptFa: 'گوش بده: کدام را شنیدی؟ (تفاوت ん خیشومی)',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'かんこく (کره)', 'かこく (؟)', 'かここ (؟)', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'ん کامل ادا می‌شود: ka-n-ko-ku.',
+      f2HintFa: 'یک مورای خیشومی در میانه هست.',
+      f3ExplainFa: 'かんこく = kankoku — بدون ん واژهٔ دیگری می‌شود.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-l2-who-1',
+    type: 'speaker-identify',
+    targetSkill: 'listening',
+    targetConcept: 'identity-vocab-core',
+    assessesConcepts: ['voc-kankokujin', 'gr-dewa-arimasen'],
+    audioLineRef: L(11),
+    lineRef: L(11),
+    difficulty: 2,
+    promptFa: 'این جمله («نه، کیم چینی نیست. کره‌ای است») را چه کسی می‌گوید؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'سورا', 'یامادا', 'کیم', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'کسی که همکلاسی‌اش را معرفی می‌کند.',
+      f2HintFa: 'کیم خودش این‌جا تازه رسیده و در خط ۱۳ حرف می‌زند.',
+      f3ExplainFa: 'سورا (خط ۱۱) فرض یامادا را اصلاح می‌کند.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-l2-aud-1',
+    type: 'audio-meaning',
+    targetSkill: 'listening',
+    targetConcept: 'gr-dewa-arimasen',
+    assessesConcepts: ['gr-dewa-arimasen', 'listen-final-intonation'],
+    audioLineRef: L(10),
+    lineRef: L(10),
+    difficulty: 2,
+    promptFa: 'گوش بده (خط ۱۰): یامادا چه نوع جمله‌ای گفت؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'پرسش با も', 'خبر ساده', 'نفی', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'آهنگ پایانی بالا + ですか = پرسش.',
+      f2HintFa: 'دربارهٔ کیم و شبیه‌بودن به سورا.',
+      f3ExplainFa: 'キムさんも ちゅうごくじんですか = پرسش با も.',
+    },
+    assessmentRole: 'practice',
+  },
+
+  /* ════════════════════════ GRAMMAR-5 〜から きました (stn-fm01-16-grammar-kara) ════════════════════════ */
+  {
+    id: 'ex-fm01-g5-order-1',
+    type: 'word-order',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-kara-kimashita',
+    lineRef: L(13),
+    difficulty: 2,
+    promptFa: 'بچین: «از کره آمدم»',
+    chunks: [
+      { id: 'k1', ja: 'かんこくから' },
+      { id: 'k2', ja: 'きました' },
+    ],
+    correctOrder: ['k1', 'k2'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'مکان + から، بعد فعل.',
+      f2HintFa: 'برعکس فارسی: «از کره» اولِ ژاپنی می‌آید… یعنی かんこくから اول است و فعل آخر.',
+      f3ExplainFa: 'かんこくから きました = از کره آمدم.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g5-rule',
+  },
+  {
+    id: 'ex-fm01-g5-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-kara-kimashita',
+    lineRef: L(13),
+    difficulty: 2,
+    promptFa: 'بساز: «از ایران آمده‌ام»',
+    chips: [
+      { id: 'i1', ja: 'イランから' },
+      { id: 'i2', ja: 'きました' },
+    ],
+    acceptedChipOrder: ['i1', 'i2'],
+    feedback: {
+      f1Fa: 'دو تکه کافی است.',
+      f2HintFa: 'مکان+から → きました.',
+      f3ExplainFa: 'イランから きました = از ایران آمدم — جملهٔ خودت!',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g5-rule',
+  },
+
+  /* ════════════════════════ PRACTICE-2 (stn-fm01-17-practice) ════════════════════════ */
+  // C2 mixed (3)
+  {
+    id: 'ex-fm01-p2-c2-cloze-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-mo',
+    lineRef: L(10),
+    difficulty: 2,
+    promptFa: '«من هم ایرانی‌ام» — جای خالی؟',
+    promptJa: 'わたし___ イランじんです。',
+    clozeTokens: ['わたし', null, 'イランじんです', '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'も', 'は', 'ね', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'は معنی «هم» ندارد.', c: 'ね تأکید است، جای موضوع نیست.' },
+    feedback: {
+      f1Fa: 'معنی «هم» با も ساخته می‌شود.',
+      f2HintFa: 'مثل کیم/سورا — به همان گروه اضافه شدن.',
+      f3ExplainFa: 'わたしも イランじんです = من هم ایرانی‌ام.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p2-c2-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'gr-dewa-arimasen',
+    lineRef: L(11),
+    difficulty: 3,
+    promptFa: 'بساز: «[من] دانشجو نیستم. دانش‌آموز هستم.» (がくせい=دانشجو · がくせい‌های مدرسه را با خودت عوض نکن — همین الگو را بساز)',
+    chips: [
+      { id: 'x1', ja: 'がくせいでは' },
+      { id: 'x2', ja: 'ありません' },
+      { id: 'x3', ja: 'がくせいです' },
+    ],
+    acceptedChipOrder: ['x1', 'x2', 'x3'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'نفی کامل + خبر درست.',
+      f2HintFa: '…では ありません。…です。',
+      f3ExplainFa: 'الگوی نفی: AはBでは ありません.',
+    },
+    assessmentRole: 'practice',
+  },
+  // C2 mixed (4)
+  {
+    id: 'ex-fm01-p2-c2-prod-2',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'self-intro-production',
+    assessesConcepts: ['gr-desu-identity', 'gr-kara-kimashita'],
+    lineRef: L(13),
+    difficulty: 3,
+    promptFa: 'معرفی کامل خودت را بساز: «[من] ایرانی‌ام. از ایران آمده‌ام.»',
+    chips: [
+      { id: 'si1', ja: 'わたしは' },
+      { id: 'si2', ja: 'イランじんです。' },
+      { id: 'si3', ja: 'イランから' },
+      { id: 'si4', ja: 'きました。' },
+    ],
+    acceptedChipOrder: ['si1', 'si2', 'si3', 'si4'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'دو جمله: هویت + خاستگاه.',
+      f2HintFa: 'اول です، بعد きました.',
+      f3ExplainFa: 'わたしは イランじんです。イランから きました。',
+    },
+    assessmentRole: 'practice',
+  },
+  // C1 — warm-up recycling via reading (2)
+  {
+    id: 'ex-fm01-p2-c1-decode-1',
+    type: 'kana-decode',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-daigaku',
+    assessesConcepts: ['voc-daigaku'],
+    difficulty: 1,
+    promptFa: 'گرم‌کردن — بخوان:',
+    promptJa: 'だいがく',
+    promptJaReading: 'daigaku',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'daigaku', 'daigaki', 'digaku', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'ک پایانی k نیست — く.', c: 'موراها را کامل بگو: da-i-ga-ku.' },
+    feedback: {
+      f1Fa: 'da-i-ga-ku.',
+      f2HintFa: 'だ+い+が+く.',
+      f3ExplainFa: 'だいがく = daigaku = دانشگاه.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p2-c1-decode-2',
+    type: 'kana-decode',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-kankokujin',
+    assessesConcepts: ['voc-kankokujin'],
+    difficulty: 2,
+    promptFa: 'گرم‌کردن — بخوان:',
+    promptJa: 'かんこくじん',
+    promptJaReading: 'kankokujin',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'kankokujin', 'kakokujin', 'kankojin', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'ん را نیفکن!', c: 'く را رها نکن.' },
+    feedback: {
+      f1Fa: 'ka-n-ko-ku-ji-n.',
+      f2HintFa: 'か+ん+こ+く+じ+ん.',
+      f3ExplainFa: 'かんこくじん = kankokujin = کره‌ای.',
+    },
+    assessmentRole: 'practice',
+  },
+  // C3 — real interleaving of both units (3)
+  {
+    id: 'ex-fm01-p2-c3-cloze-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-desu-qa',
+    assessesConcepts: ['gr-desu-qa', 'gr-mo'],
+    lineRef: L(10),
+    difficulty: 3,
+    promptFa: 'میان は と も و پرسش: «آیا یامادا هم استاد است؟»',
+    promptJa: 'やまださん___ だいがくの せんせい___。',
+    clozeTokens: ['やまださん', null, 'だいがくの', 'せんせい', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'も + ですか', 'は + です', 'も + ですね', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: '«هم» لازم است + پرسش لازم است.', c: 'ね تأیید است.' },
+    feedback: {
+      f1Fa: 'دو تصمیم: افزوده (も) + نوع جمله (پرسش).',
+      f2HintFa: '«هم» + آهنگ بالا.',
+      f3ExplainFa: 'やまださんも だいがくの せんせいですか.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p2-c3-cloze-2',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-dewa-arimasen',
+    assessesConcepts: ['gr-desu-identity', 'gr-dewa-arimasen'],
+    lineRef: L(11),
+    difficulty: 3,
+    promptFa: 'تأیید یا نفی؟ «علی ایرانی است» / «علی ژاپنی نیست»',
+    promptJa: 'アリさんは イランじん___。にほんじん___。',
+    clozeTokens: ['アリさんは', 'イランじん', null, '。', 'にほんじん', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'です + では ありません', 'では ありません + です', 'です + です', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'برعکس شد!', c: 'جملهٔ دوم نفی لازم دارد.' },
+    feedback: {
+      f1Fa: 'اولی خبر مثبت، دومی نفی.',
+      f2HintFa: 'ایرانی است / ژاپنی نیست.',
+      f3ExplainFa: 'イランじんです。にほんじんでは ありません。',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-p2-c3-order-1',
+    type: 'dialogue-order',
+    targetSkill: 'expression',
+    targetConcept: 'gr-kara-kimashita',
+    assessesConcepts: ['gr-kara-kimashita', 'chrk-hajimemashite'],
+    lineRef: L(13),
+    difficulty: 3,
+    promptFa: 'معرفی کامل کیم را بچین (خط ۱۳)',
+    chunks: [
+      { id: 'y1', ja: 'はじめまして、キムです。' },
+      { id: 'y2', ja: 'かんこくから きました。' },
+      { id: 'y3', ja: 'よろしく おねがいします。' },
+    ],
+    correctOrder: ['y1', 'y2', 'y3'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'آیین معرفی: خوشبختم → خاستگاه → یوروشیکو.',
+      f2HintFa: 'خط ۱۳ را بازپخش کن.',
+      f3ExplainFa: 'はじめまして、キムです。かんこくから きました。よろしく おねがいします。',
+    },
+    assessmentRole: 'practice',
+  },
+
+  /* ════════════════════════ OPTIONAL BRANCHES ════════════════════════ */
+  // OPT-DEEPDIVE-1 «کشورها و زبان‌ها» — recognition layer (no cards — DD-093)
+  {
+    id: 'ex-fm01-od1-resp-1',
+    type: 'response-select',
+    targetSkill: 'vocab',
+    targetConcept: 'country-pattern',
+    lineRef: L(11),
+    difficulty: 1,
+    promptFa: 'با الگوی 〜じん، «آمریکایی» چطور می‌شود؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'アメリカじん', 'アメリカご', 'アメリカさん', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: '〜ご = زبان (آمریکایی انگلیسی!) — پیش‌نمایش بعدی.',
+      c: 'さん برای اسامی اشخاص است.',
+    },
+    feedback: {
+      f1Fa: 'الگو: نام کشور + じん.',
+      f2HintFa: 'にほん + じん = にほんじん — همان الگو.',
+      f3ExplainFa: 'アメリカじん = آمریکایی.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-od1-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'country-pattern',
+    lineRef: L(8),
+    difficulty: 2,
+    promptFa: 'ملیت خودت را بساز: «من ایرانی‌ام»',
+    chips: [
+      { id: 'cp1', ja: 'わたしは' },
+      { id: 'cp2', ja: 'イランじん' },
+      { id: 'cp3', ja: 'です' },
+    ],
+    acceptedChipOrder: ['cp1', 'cp2', 'cp3'],
+    feedback: {
+      f1Fa: 'سه چیپ کافی است.',
+      f2HintFa: 'AはBです.',
+      f3ExplainFa: 'わたしは イランじんです.',
+    },
+    assessmentRole: 'practice',
+  },
+  // OPT-DEEPDIVE-2 «شغل‌ها» — supplementary words (opt-in only — DD-093)
+  {
+    id: 'ex-fm01-od2-resp-1',
+    type: 'response-select',
+    targetSkill: 'vocab',
+    targetConcept: 'jobs-recognition',
+    lineRef: L(8),
+    difficulty: 1,
+    promptFa: '「エンジニア» یعنی چه؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'مهندس', 'پزشک', 'کارمند شرکت', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'پزشک = いしゃ.', c: 'کارمند شرکت = かいしゃいん.' },
+    feedback: {
+      f1Fa: 'エンジニア = مهندس (واژهٔ خارجی با کاتاکانا).',
+      f2HintFa: 'صدای «انجینیر» انگلیسی.',
+      f3ExplainFa: 'エンジニア = مهندس.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-od2-prod-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'jobs-recognition',
+    lineRef: L(8),
+    difficulty: 2,
+    promptFa: 'شغل خودت را بگو: «من مهندسم»',
+    chips: [
+      { id: 'jb1', ja: 'わたしは' },
+      { id: 'jb2', ja: 'エンジニア' },
+      { id: 'jb3', ja: 'です' },
+    ],
+    acceptedChipOrder: ['jb1', 'jb2', 'jb3'],
+    feedback: {
+      f1Fa: 'الگوی گزاره: AはBです.',
+      f2HintFa: 'الگوی خط ۳ و ۸.',
+      f3ExplainFa: 'わたしは エンジニアです.',
+    },
+    assessmentRole: 'practice',
+  },
+  // OPT-REVIEW-2 «دریل تمایزی»
+  {
+    id: 'ex-fm01-or2-mp-1',
+    type: 'listen-minimal-pair',
+    targetSkill: 'listening',
+    targetConcept: 'voc-sensee',
+    assessesConcepts: ['listen-vowel-length'],
+    audioLineRef: L(8),
+    lineRef: L(8),
+    difficulty: 3,
+    promptFa: 'دریل تمایزی: کدام؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'せんせい', 'せんせ', 'せんせえ', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'واکهٔ پایانی بلند است: sen-see.',
+      f2HintFa: 'せ+ん+せ+い — چهار مورا.',
+      f3ExplainFa: 'せんせい = sensee = استاد.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-or2-cloze-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-desu-qa',
+    assessesConcepts: ['gr-desu-qa', 'gr-desu-identity'],
+    lineRef: L(5),
+    difficulty: 2,
+    promptFa: 'تمایز: تأیید (خط ۵، جملهٔ اول) با چه چیزی تمام می‌شود؟',
+    promptJa: 'ソラさん___。',
+    clozeTokens: ['ソラさん', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'ですね', 'ですか', 'です', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'پرسش است.', c: 'خبر ساده است — یامادا شنیده‌اش را تأیید می‌کند.' },
+    feedback: {
+      f1Fa: 'یامادا چیزی را که می‌داند تأیید می‌کند: ね.',
+      f2HintFa: '«پس سورا هستید…»',
+      f3ExplainFa: 'ソラさんですね (خط ۵).',
+    },
+    assessmentRole: 'practice',
+  },
+
+  /* ════════════════════════ MASTERY GATE BANK (M1..M5 — non-overlapping pool) ════════════════════════ */
+  // M1 — معنای کلیدی مکالمه (30%)
+  {
+    id: 'ex-fm01-gate-m1-1',
+    type: 'meaning-select',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-mo',
+    lineRef: L(10),
+    difficulty: 2,
+    promptFa: 'در نوبت ۱۰، も چه کاری می‌کند؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'کیم را به همان گروهِ سورا اضافه می‌کند', 'پرسش را مؤدبانه می‌کند', 'جمله را منفی می‌کند', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'آن کار か است.', c: 'آن کار ではありません است.' },
+    feedback: {
+      f1Fa: 'も = هم/نیز.',
+      f2HintFa: '«کیم هم چینی است؟»',
+      f3ExplainFa: 'キムさんも = کیم هم.',
+    },
+    assessmentRole: 'mastery_M1',
+  },
+  {
+    id: 'ex-fm01-gate-m1-2',
+    type: 'dialogue-order',
+    targetSkill: 'listening',
+    targetConcept: 'greet-first-meeting',
+    assessesConcepts: ['chrk-hajimemashite', 'gr-desu-identity'],
+    lineRef: L(3),
+    difficulty: 2,
+    promptFa: 'رویدادهای مکالمه را به ترتیب بچین',
+    chunks: [
+      { id: 'e1', ja: 'سلام و احوال‌پرسی' },
+      { id: 'e2', ja: 'معرفی خود (نام و ملیت)' },
+      { id: 'e3', ja: 'پرسش دربارهٔ شخص سوم' },
+      { id: 'e4', ja: 'اصلاح فرض غلط دربارهٔ کیم' },
+      { id: 'e5', ja: 'ورود و معرفی کیم' },
+    ],
+    correctOrder: ['e1', 'e2', 'e3', 'e4', 'e5'],
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'مسیر داستان: سلام → معرفی → پرسش → اصلاح → ورود کیم.',
+      f2HintFa: 'به شمارهٔ نوبت‌ها فکر کن.',
+      f3ExplainFa: 'L1-L2 → L3-L4 → L5-L8 → L10-L11 → L13.',
+    },
+    assessmentRole: 'mastery_M1',
+  },
+  {
+    id: 'ex-fm01-gate-m1-3',
+    type: 'meaning-select',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-kara-kimashita',
+    lineRef: L(13),
+    difficulty: 2,
+    promptFa: 'چرا گفت‌وگو با تعارف دوطرفه (よろしく) تمام شد؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'آیین ژاپنی پایان آشنایی است', 'چون معرفی ناقص ماند', 'چون کسی عصبانی شد', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'همه کامل معرفی شدند.', c: 'هیچ تنش‌ای نیست!' },
+    feedback: {
+      f1Fa: 'よろしく おねがいします فرمول بستن آشنایی است.',
+      f2HintFa: 'هر دو طرف با هم می‌گویند.',
+      f3ExplainFa: 'پایان آیین معرفی = تعارف دوطرفه.',
+    },
+    assessmentRole: 'mastery_M1',
+  },
+  // M2 — واژگان کلیدی در جملهٔ نو (20%)
+  {
+    id: 'ex-fm01-gate-m2-1',
+    type: 'meaning-select',
     targetSkill: 'vocab',
     targetConcept: 'voc-daigaku',
     lineRef: L(8),
     difficulty: 2,
-    promptJa: 'アリさんです。イランじんです。だいがくの せんせいです。',
-    promptJaReading: 'アリさんです。イランじんです。だいがくの せんせいです。',
-    promptFa: 'کدام واژه در این جمله هست؟',
-    options: [
-      { id: 'a', label: 'ともだち (دوست)' },
-      { id: 'b', label: 'だいがく (دانشگاه)' },
-      { id: 'c', label: 'コーヒー (قهوه)' },
-    ],
-    correctOptionId: 'b',
-    distractorRationaleFa: {
-      a: 'ともだچی در این فصل نیست — واژهٔ مرحلهٔ بعد است.',
-      c: 'コーヒー واژهٔ موقعیت سفارش است و در مکالمهٔ امروز نیامده.',
-    },
+    promptFa: 'در جملهٔ ミキさんは だいがくの せんせいです، واژهٔ だいがく یعنی چه؟',
+    promptJa: 'ミキさんは だいがくの せんせいです',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'دانشگاه', 'کلاس', 'کتاب', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'کلاس = クラス.', c: 'کتاب = ほん.' },
     feedback: {
-      f1Fa: 'جمله را خط به خط برو: だいがくの せんせい — «استادِ دانشگاه».',
-      f2HintFa: 'دنبال چهار هجای «دای-گا-کو» بگرد.',
-      f3ExplainFa: 'だいがく = دانشگاه و در بخش だいがくの せんせい همین جمله حضور دارد.',
+      f1Fa: 'だいがく = دانشگاه.',
+      f2HintFa: 'だいがくの せんせい = استاد دانشگاه.',
+      f3ExplainFa: 'だいがく = دانشگاه.',
     },
-    assessmentRole: 'practice',
+    assessmentRole: 'mastery_M2',
   },
-
-  /* ---------------- GRAMMAR-1 (structured input handled in-block; 3 items) ---------------- */
   {
-    id: 'ex-fm01-g1-01',
-    type: 'word-order',
+    id: 'ex-fm01-gate-m2-2',
+    type: 'audio-meaning',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-kankokujin',
+    audioLineRef: L(11),
+    lineRef: L(11),
+    difficulty: 2,
+    promptFa: 'گوش بده (خط ۱۱): کیم چه ملیتی است؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'کره‌ای', 'چینی', 'ژاپنی', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'ملیتِ کیم: かんこくじんです.',
+      f2HintFa: 'سورا فرض یامادا را اصلاح می‌کند.',
+      f3ExplainFa: 'کیم کره‌ای است.',
+    },
+    assessmentRole: 'mastery_M2',
+  },
+  // M3 — ساختارها (20%)
+  {
+    id: 'ex-fm01-gate-m3-1',
+    type: 'cloze',
     targetSkill: 'grammar',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(6),
+    targetConcept: 'gr-desu-qa',
+    lineRef: L(5),
     difficulty: 2,
-    promptFa: 'قطعه‌ها را به ترتیب درست بچین: «سورا چینی است.»',
-    chunks: [
-      { id: 'c1', ja: 'ソラさんは' },
-      { id: 'c2', ja: 'ちゅうごくじん' },
-      { id: 'c3', ja: 'です' },
-    ],
-    correctOrder: ['c1', 'c2', 'c3'],
+    promptFa: 'در نوبت ۵، ね چه می‌کند؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'شنیده‌شده را تأیید می‌کند', 'پرسش می‌سازد', '«هم» می‌دهد', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'آن کار か است.', c: 'آن کار も است.' },
     feedback: {
-      f1Fa: 'ترتیب ژاپنی: [موضوع]は → [هویت] → です. فعل/هویت‌ساز همیشه آخر است.',
-      f2HintFa: 'اول ذرهٔ は بعد از سورا؛ です آخر جمله.',
-      f3ExplainFa: 'ソラさんは ちゅうごくじんです — [موضوع]は + [هویت] + です؛ دقیقاً مثل L6.',
+      f1Fa: 'ね = تأیید شنیده‌ها.',
+      f2HintFa: '«پس سورا هستید…»',
+      f3ExplainFa: 'جملهٔ تأیید: ソラさんですね = پس سورا هستید.',
     },
-    assessmentRole: 'practice',
+    assessmentRole: 'mastery_M3',
   },
   {
-    id: 'ex-fm01-g1-02',
-    type: 'produce-template',
-    targetSkill: 'production',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(3),
+    id: 'ex-fm01-gate-m3-2',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-dewa-arimasen',
+    lineRef: L(11),
     difficulty: 2,
-    promptFa: 'با قطعه‌ها بساز: «یامادا ژاپنی است.» (طبق L3)',
-    chips: [
-      { id: 'c1', ja: 'やまださんは' },
-      { id: 'c2', ja: 'にほんじん' },
-      { id: 'c3', ja: 'です' },
-    ],
-    acceptedChipOrder: ['c1', 'c2', 'c3'],
+    promptFa: 'جای خالی: わたしは がくせい___。(دانشجو نیستم)',
+    promptJa: 'わたしは がくせい___。',
+    clozeTokens: ['わたしは', 'がくせい', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'では ありません', 'です', 'ですか', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'مثبت شد!', c: 'پرسش شد!' },
     feedback: {
-      f1Fa: 'موضوع (یامادا) + は، بعد هویت (にほんじん)، بعد です.',
-      f2HintFa: 'الگوی L3 یامادا را به یاد بیاور: わたしは にほんじんです — فقط موضوع عوض شد.',
-      f3ExplainFa: 'やまださんは にほんじんです — همان الگوی AはBです با موضوعِ یامادا (بر پایهٔ L3).',
+      f1Fa: 'نفی مؤدبانه.',
+      f2HintFa: '「نیستم» — خط ۱۱.',
+      f3ExplainFa: 'がくせいでは ありません = دانشجو نیستم.',
     },
-    assessmentRole: 'practice',
+    assessmentRole: 'mastery_M3',
   },
   {
-    id: 'ex-fm01-g1-03',
-    type: 'produce-template',
-    targetSkill: 'production',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(8),
-    difficulty: 2,
-    promptFa: 'با قطعه‌ها بساز: «آقای علی استاد دانشگاه است.»',
-    chips: [
-      { id: 'c1', ja: 'アリさんは' },
-      { id: 'c2', ja: 'だいがくの' },
-      { id: 'c3', ja: 'せんせい' },
-      { id: 'c4', ja: 'です' },
-    ],
-    acceptedChipOrder: ['c1', 'c2', 'c3', 'c4'],
-    feedback: {
-      f1Fa: 'ترتیب: アリさんは → だいがくの → せんせい → です.',
-      f2HintFa: 'だいがくの せんせい یک تکهٔ معنایی است: «استادِ دانشگاه» — بعدش です.',
-      f3ExplainFa: 'アリさんは だいがくの せんせいです — دقیقاً L8 مکالمهٔ امروز.',
-    },
-    assessmentRole: 'practice',
-  },
-
-  /* ---------------- STRUCTURE (1 order-matching item) ---------------- */
-  {
-    id: 'ex-fm01-st-01',
+    id: 'ex-fm01-gate-m3-3',
     type: 'word-order',
     targetSkill: 'structure',
     targetConcept: 'sov-bridge-persian',
-    lineRef: L(6),
-    difficulty: 1,
-    promptFa: 'قطعه‌ها را به ترتیب جملهٔ ژاپنی بچین — معادلِ «من | چینی | هستم»',
+    lineRef: L(13),
+    difficulty: 2,
+    promptFa: 'بچین: «از کره آمدم»',
     chunks: [
-      { id: 'c1', ja: 'わたしは' },
-      { id: 'c2', ja: 'ちゅうごくじん' },
-      { id: 'c3', ja: 'です' },
+      { id: 'go1', ja: 'かんこくから' },
+      { id: 'go2', ja: 'きました' },
     ],
-    correctOrder: ['c1', 'c2', 'c3'],
+    correctOrder: ['go1', 'go2'],
+    distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'در فارسی هم فعل آخر می‌آید: من چینی هستم ← わたしは ちゅうごくじん です.',
-      f2HintFa: 'سه تکه سه‌به‌سه با فارسی منطبق است؛ فقط جای は را بعد از «من» بگذار.',
-      f3ExplainFa: 'ترتیب ژاپنی و فارسی هر دو «موضوع → توصیف → فعل» است — ترتیب برای تو غریبه نیست.',
-    },
-    assessmentRole: 'practice',
-  },
-
-  /* ---------------- GRAMMAR-2 (4 items) ---------------- */
-  {
-    id: 'ex-fm01-g2-01',
-    type: 'cloze',
-    targetSkill: 'grammar',
-    targetConcept: 'gr-desu-qa',
-    lineRef: L(5),
-    difficulty: 2,
-    promptFa: 'جای خالی را پر کن: «سورا چینی است؟»',
-    promptJa: 'ソラさんは ちゅうごくじんです__。',
-    promptJaReading: 'ソラさんは ちゅうごくじんですか。',
-    clozeTokens: ['ソラさんは', 'ちゅうごくじん', 'です', null, '。'],
-    options: [
-      { id: 'a', label: 'か' },
-      { id: 'b', label: 'ね' },
-      { id: 'c', label: 'は' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'ね تأیید است — یعنی «پس اینطور است؟» نه پرسشِ واقعی.',
-      c: 'は موضوع را نشانه‌گذاری می‌کند و اینجا جای پرسش خالی است.',
-    },
-    feedback: {
-      f1Fa: 'برای پرسش، آخر です یک か می‌آید: ですか.',
-      f2HintFa: 'همان L5: ちゅうごくじんですか — با آهنگ پایانی بالا.',
-      f3ExplainFa: 'です + か = پرسش. です + ね = تأیید. این جمله پرسش است پس か.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-g2-02',
-    type: 'produce-template',
-    targetSkill: 'production',
-    targetConcept: 'gr-desu-qa',
-    lineRef: L(7),
-    difficulty: 2,
-    promptFa: 'از جملهٔ خبری، پرسش بساز: «やまださんは にほんじんです» → «یامادا ژاپنی است؟» (طبق L3)',
-    chips: [
-      { id: 'c1', ja: 'やまださんは' },
-      { id: 'c2', ja: 'にほんじん' },
-      { id: 'c3', ja: 'です' },
-      { id: 'c4', ja: 'か' },
-    ],
-    acceptedChipOrder: ['c1', 'c2', 'c3', 'c4'],
-    feedback: {
-      f1Fa: 'فقط یک تکه اضافه می‌شود — پرسش‌ساز か، آخر جمله.',
-      f2HintFa: 'ترتیب جملهٔ خبری دست‌نخورده می‌ماند؛ か می‌آید آخر.',
-      f3ExplainFa: 'やまださんは にほんじんですか — جملهٔ خبری + か = پرسش.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-g2-03',
-    type: 'produce-template',
-    targetSkill: 'production',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(6),
-    difficulty: 2,
-    promptFa: 'به پرسشِ «سورا چینی است؟» با «بله» جواب بده.',
-    chips: [
-      { id: 'c1', ja: 'はい、' },
-      { id: 'c2', ja: 'わたしは' },
-      { id: 'c3', ja: 'ちゅうごくじん' },
-      { id: 'c4', ja: 'です' },
-    ],
-    acceptedChipOrder: ['c1', 'c2', 'c3', 'c4'],
-    feedback: {
-      f1Fa: 'جواب مثبت با はい شروع می‌شود، بعد همان گزارهٔ کامل.',
-      f2HintFa: 'الگوی L6 را به یاد بیاور: はい、わたしは ちゅうごくじんです.',
-      f3ExplainFa: 'はい、わたしは ちゅうごくじんです — بله + گزارهٔ کامل هویت (L6).',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-g2-04',
-    type: 'listen-minimal-pair',
-    targetSkill: 'listening',
-    targetConcept: 'listen-final-intonation',
-    lineRef: L(7),
-    audioLineRef: L(7),
-    difficulty: 2,
-    promptFa: 'گوش کن: این جمله پرسش است یا تأیید؟',
-    options: [
-      { id: 'a', label: 'پرسش (ですか — آهنگ بالا)' },
-      { id: 'b', label: 'تأیید (ですね — آهنگ پایین)' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'آهنگ پایانی این جمله بالا می‌رود — نشانهٔ پرسش است.',
-    },
-    feedback: {
-      f1Fa: 'به انتهای جمله گوش کن: صد بالا رفت = پرسش.',
-      f2HintFa: 'این L7 است — میکی دربارهٔ شخص سوم می‌پرسد «او کیست؟»',
-      f3ExplainFa: 'ですか با آهنگ پایانیِ بالا = پرسش. ですね با آهنگ پایین = تأیید.',
-    },
-    assessmentRole: 'practice',
-  },
-
-  /* ---------------- EXPRESSION (3 items) ---------------- */
-  {
-    id: 'ex-fm01-e-01',
-    type: 'response-select',
-    targetSkill: 'expression',
-    targetConcept: 'chrk-hajimemashite',
-    lineRef: L(3),
-    difficulty: 1,
-    promptFa: 'کدام عبارت آغازگرِ مخصوصِ اولین دیدار است؟',
-    options: [
-      { id: 'a', label: 'こんにちは' },
-      { id: 'b', label: 'はじめまして' },
-      { id: 'c', label: 'よろしく おねがいします' },
-    ],
-    correctOptionId: 'b',
-    distractorRationaleFa: {
-      a: 'سلام روزانه است و در هر دیداری می‌آید — مخصوصِ اولین بار نیست.',
-      c: 'این یکی هم در آیین معرفی می‌آید اما بعد از معرفی، نه به‌عنوان آغازگر.',
-    },
-    feedback: {
-      f1Fa: 'آغازگرِ اولین دیدار はじめまして است.',
-      f2HintFa: 'در L3 یامادا اول はじめまして گفت، بعد خودش را معرفی کرد.',
-      f3ExplainFa: 'ترتیب آیین معرفی: はじめまして → معرفی (نام+هویت) → よろしく おねがいします.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-e-02',
-    type: 'dialogue-order',
-    targetSkill: 'expression',
-    targetConcept: 'greet-first-meeting',
-    lineRef: L(3),
-    difficulty: 2,
-    promptFa: 'آیین معرفی را به ترتیب طبیعی بچین.',
-    chunks: [
-      { id: 'c1', ja: 'こんにちは。' },
-      { id: 'c2', ja: 'はじめまして、ソラです。' },
-      { id: 'c3', ja: 'よろしく おねがいします。' },
-    ],
-    correctOrder: ['c1', 'c2', 'c3'],
-    feedback: {
-      f1Fa: 'اول سلام، بعد آغازگرِ اولین دیدار + معرفی، آخر بستن آیین.',
-      f2HintFa: 'L1 تا L4 مکالمهٔ امروز دقیقاً همین ترتیب را نشان می‌دهد.',
-      f3ExplainFa: 'こんにちは → はじめまして、[نام]です → よろしく おねがいします — مثل L1→L3/L4.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-e-03',
-    type: 'response-select',
-    targetSkill: 'expression',
-    targetConcept: 'chrk-anokata-donata',
-    lineRef: L(7),
-    difficulty: 2,
-    promptFa: 'میکی می‌پرسد: 「あのかたは どなたですか。」 — جواب مناسب کدام است؟',
-    options: [
-      { id: 'a', label: 'はじめまして。' },
-      { id: 'b', label: 'アリさんです。だいがくの せんせいです。' },
-      { id: 'c', label: 'はい、わたしは ちゅうごくじんです。' },
-    ],
-    correctOptionId: 'b',
-    distractorRationaleFa: {
-      a: 'این آغازگر معرفی است، نه جوابِ «او کیست؟».',
-      c: 'این جوابِ پرسش دربارهٔ خودِ توست؛ پرسش دربارهٔ شخص سوم بود.',
-    },
-    feedback: {
-      f1Fa: 'پرسش دربارهٔ شخص سوم است — جواب: نام او + هویتش.',
-      f2HintFa: 'الگوی L8 یامادا: アリさんです。イランじんです。',
-      f3ExplainFa: 'جواب どなたですか = [نام]さん + (اختیاری) هویت — مثل L8.',
-    },
-    assessmentRole: 'practice',
-  },
-
-  /* ---------------- LISTEN (5 items — ≥2 audio-only) ---------------- */
-  {
-    id: 'ex-fm01-l-01',
-    type: 'gist-select',
-    targetSkill: 'listening',
-    targetConcept: 'listen-vowel-length',
-    audioLineRef: L(3),
-    difficulty: 2,
-    promptFa: 'گوش کن (بدون متن): این جمله — آغازِ معرفی — چه چیزی را می‌گوید؟',
-    options: [
-      { id: 'a', label: 'آشنایی و معرفی چند نفر' },
-      { id: 'b', label: 'سفارش غذا و نوشیدنی' },
-      { id: 'c', label: 'گفتگو دربارهٔ هوا' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'هیچ واژهٔ غذا/نوشیدنی در این خط نیست — صحنهٔ کافه فقط محل ملاقات است.',
-      c: 'واژهٔ هوا (てんき) در این فصل نیست.',
-    },
-    feedback: {
-      f1Fa: 'کلمات کلیدی که شنیدی: はじめまして، です、よろしく — همه مربوط به معرفی.',
-      f2HintFa: 'به はじめまして و よろしく おねがいします دقت کن — آیین آشنایی.',
-      f3ExplainFa: 'این مکالمه آشنایی اولیه است: سلام → معرفی → پرسش هویت.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-l-02',
-    type: 'speaker-identify',
-    targetSkill: 'listening',
-    targetConcept: 'listen-final-intonation',
-    lineRef: L(3),
-    audioLineRef: L(3),
-    difficulty: 2,
-    promptFa: 'گوش کن (بدون متن): چه کسی این را گفت؟',
-    options: [
-      { id: 'a', label: 'یامادا (صاحب کافه)' },
-      { id: 'b', label: 'میکی' },
-      { id: 'c', label: 'سورا' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'صدای میکی بالاتر است و او در L1 سلام کرد — این معرفیِ کامل با ملیت، کارِ یاماداست.',
-      c: 'سورا بعداً (L4) معرفیِ کوتاه می‌کند — این یکی بلندتر و کامل‌تر است.',
-    },
-    feedback: {
-      f1Fa: 'این خطِ معرفی کامل با ملیت (L3) است — گویندهٔ آن یاماداست.',
-      f2HintFa: 'صدای بم‌تر و مؤدبانه‌تر متعلق به یاماداست.',
-      f3ExplainFa: 'L3 گفتار یاماداست: はじめまして、やまだです。わたしは にほんじんです。',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-l-03',
-    type: 'speaker-identify',
-    targetSkill: 'listening',
-    targetConcept: 'listen-final-intonation',
-    lineRef: L(7),
-    audioLineRef: L(7),
-    difficulty: 2,
-    promptFa: 'گوش کن (بدون متن): چه کسی این پرسش را پرسید؟',
-    options: [
-      { id: 'a', label: 'میکی' },
-      { id: 'b', label: 'یامادا' },
-      { id: 'c', label: 'سورا' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'یامادا جواب این پرسش را می‌دهد (L8)، خودش نمی‌پرسد.',
-      c: 'سورا در این لحظه مشغول گفت‌وگوی خودش با یاماداست.',
-    },
-    feedback: {
-      f1Fa: 'این پرسش دربارهٔ شخص سوم (L7) کارِ میکی است.',
-      f2HintFa: 'صدای زنانهٔ بالاتر که با هم دوست است — میکی.',
-      f3ExplainFa: 'L7 گفتار میکی است: あのかたは どなたですか。',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-l-04',
-    type: 'listen-minimal-pair',
-    targetSkill: 'listening',
-    targetConcept: 'listen-vowel-length',
-    lineRef: L(8),
-    audioLineRef: L(8),
-    difficulty: 2,
-    promptFa: 'به L8 گوش کن: واکهٔ پایانیِ 先生 را کشیده شنیدی یا کوتاه؟',
-    options: [
-      { id: 'a', label: 'せんせい — «اِی» پایانی کشیده' },
-      { id: 'b', label: 'せんせ — «اِ» پایانی کوتاه' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'کوتاه گفتن واکهٔ پایانی، کلمه را غلط می‌کند — در ژاپنی کشش واکه معنایی «کلمه‌ای» دارد.',
-    },
-    feedback: {
-      f1Fa: 'واکهٔ پایانی کشیده است: sen-see. در فارسی کشش «حسی» است؛ در ژاپنی «کلمه‌ای».',
-      f2HintFa: 'در だいがくの せんせい، پایان جمله را با دقت بشنو: e-e.',
-      f3ExplainFa: 'せんせい (sensee) درست است. せんせ غلط — کشش واکه کلمه را می‌سازد.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-l-05',
-    type: 'listen-minimal-pair',
-    targetSkill: 'listening',
-    targetConcept: 'listen-final-intonation',
-    lineRef: L(6),
-    audioLineRef: L(6),
-    difficulty: 2,
-    promptFa: 'گوش کن (بدون متن): این جمله خبری است یا پرسش؟',
-    options: [
-      { id: 'a', label: 'خبری (جواب/اطلاع‌رسانی)' },
-      { id: 'b', label: 'پرسش (درخواست اطلاعات)' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'پرسش با ですか و آهنگ پایانی بالا می‌آمد — این جمله با です تمام می‌شود.',
-    },
-    feedback: {
-      f1Fa: 'آهنگ پایانی پایین می‌آید و か ندارد — جملهٔ خبری است.',
-      f2HintFa: 'این L6 است: はい、わたしは ちゅうごくじんです — جوابِ سورا.',
-      f3ExplainFa: 'جملهٔ خبری با です و آهنگ پایین تمام می‌شود؛ پرسش ですか دارد.',
-    },
-    assessmentRole: 'practice',
-  },
-
-  /* ---------------- PRACTICE station C1..C3 (9 interactive + wrap-up = 10 قلم) ---------------- */
-  {
-    id: 'ex-fm01-p-01',
-    type: 'audio-meaning',
-    targetSkill: 'expression',
-    targetConcept: 'chrk-konnichiwa',
-    lineRef: L(1),
-    audioLineRef: L(1),
-    difficulty: 1,
-    promptFa: 'گرم‌کردن — گوش کن: این چه احوال‌پرسی است؟',
-    options: [
-      { id: 'a', label: 'سلام روزانه' },
-      { id: 'b', label: 'خداحافظ' },
-      { id: 'c', label: 'متشکرم' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'خداحافظ (さようなら) در این فصل نیست.',
-      c: 'متشکرم (ありがとう) هم واژهٔ فصل‌های بعد است.',
-    },
-    feedback: {
-      f1Fa: 'こんにちは سلامِ روزانه است — همان L1.',
-      f2HintFa: 'با هر دیدار (نه فقط اولین بار) می‌آید.',
-      f3ExplainFa: 'こんにちは = سلام. آغازگر سادهٔ هر ملاقات روزانه.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-p-02',
-    type: 'meaning-select',
-    targetSkill: 'expression',
-    targetConcept: 'chrk-hajimemashite',
-    lineRef: L(3),
-    difficulty: 1,
-    promptJa: 'はじめまして',
-    promptJaReading: 'はじめまして',
-    promptFa: 'این عبارت چه کار می‌کند؟',
-    options: [
-      { id: 'a', label: 'اولین دیدار را باز می‌کند' },
-      { id: 'b', label: 'سفارش می‌دهد' },
-      { id: 'c', label: 'تعجب نشان می‌دهد' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'سفارش با おねがいします در بافت رستوران است — اینجا فرمول معرفی.',
-      c: 'تعجب با واژه‌های دیگر (えっ!) است.',
-    },
-    feedback: {
-      f1Fa: 'はじめまして یعنی «از آشنایی‌تان خوشبختم» — بازکنندهٔ اولین دیدار.',
-      f2HintFa: 'در L3 و L4 دو بار آمد.',
-      f3ExplainFa: 'はじめまして = آغازگر آیین معرفی در اولین ملاقات.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-p-03',
-    type: 'audio-meaning',
-    targetSkill: 'vocab',
-    targetConcept: 'voc-chuugokujin',
-    lineRef: L(6),
-    audioLineRef: L(6),
-    difficulty: 1,
-    promptFa: 'هسته — گوش کن: واژهٔ کلیدیِ این جمله چه معنی دارد؟',
-    options: [
-      { id: 'a', label: 'چینی' },
-      { id: 'b', label: 'ژاپنی' },
-      { id: 'c', label: 'ایرانی' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'にほんじん صدای متفاوتی دارد (نیهون‌جین).',
-      c: 'イランじん (ایران‌جین) در L8 می‌آید.',
-    },
-    feedback: {
-      f1Fa: 'ちゅうごくじん = چینی — با کششِ う: chuu.',
-      f2HintFa: '«چوو-گوکو-جین» — سه بخش.',
-      f3ExplainFa: 'ちゅうごくじん (chuugokujin) = اهل چین.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-p-04',
-    type: 'word-order',
-    targetSkill: 'grammar',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(8),
-    difficulty: 2,
-    promptFa: 'قطعه‌ها را بچین: «آقای علی استاد دانشگاه است.»',
-    chunks: [
-      { id: 'c1', ja: 'アリさんは' },
-      { id: 'c2', ja: 'だいがくの' },
-      { id: 'c3', ja: 'せんせい' },
-      { id: 'c4', ja: 'です' },
-    ],
-    correctOrder: ['c1', 'c2', 'c3', 'c4'],
-    feedback: {
-      f1Fa: 'موضوع + は → هویت → です. ترتیب از L8.',
-      f2HintFa: 'だいがくの せんせい یک واحد معنایی است.',
-      f3ExplainFa: 'アリさんは だいがくの せんせいです — الگوی AはBです با の.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-p-05',
-    type: 'cloze',
-    targetSkill: 'grammar',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(6),
-    difficulty: 2,
-    promptFa: 'جای خالی را پر کن: «سورا چینی است.»',
-    promptJa: 'ソラさん__ ちゅうごくじんです。',
-    promptJaReading: 'ソラさんは ちゅうごくじんです。',
-    clozeTokens: ['ソラさん', null, 'ちゅうごくじん', 'です', '。'],
-    options: [
-      { id: 'a', label: 'は' },
-      { id: 'b', label: 'を' },
-      { id: 'c', label: 'に' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'を مفعول می‌گیرد — اینجا مفعولی در کار نیست.',
-      c: 'に جهت/مکان نشان می‌دهد — جای موضوع نیست.',
-    },
-    feedback: {
-      f1Fa: 'بعد از موضوع، ذرهٔ は می‌آید و آن را علامت می‌زند.',
-      f2HintFa: 'سورا موضوعِ جمله است — چه چیزی موضوع را نشانه می‌زند؟',
-      f3ExplainFa: 'は (با تلفظ wa) موضوع را نشانه‌گذاری می‌کند: ソラさんは …',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-p-06',
-    type: 'listen-minimal-pair',
-    targetSkill: 'grammar',
-    targetConcept: 'gr-desu-qa',
-    lineRef: L(7),
-    audioLineRef: L(7),
-    difficulty: 2,
-    promptFa: 'درهم‌آمیزی — گوش کن: کدام است؟',
-    options: [
-      { id: 'a', label: 'پرسش با ですか' },
-      { id: 'b', label: 'تأیید با ですね' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'آهنگ پایانی بالا رفت — ですね با آهنگ پایین می‌آید.',
-    },
-    feedback: {
-      f1Fa: 'か پایانی + آهنگ بالا = پرسش.',
-      f2HintFa: 'L7 را به خاطر بیاور — میکی می‌پرسد.',
-      f3ExplainFa: 'どなたですか با か و آهنگ بالا = پرسش. (تأیید با ですね می‌آید — مثل سطر اول L5.)',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-p-07',
-    type: 'produce-template',
-    targetSkill: 'production',
-    targetConcept: 'voc-iranjin',
-    lineRef: L(8),
-    difficulty: 2,
-    promptFa: 'تولید — دربارهٔ خودت بگو: «من ایرانی‌ام.»',
-    chips: [
-      { id: 'c1', ja: 'わたしは' },
-      { id: 'c2', ja: 'イランじん' },
-      { id: 'c3', ja: 'です' },
-    ],
-    acceptedChipOrder: ['c1', 'c2', 'c3'],
-    feedback: {
-      f1Fa: 'همان الگوی AはBです — این بار با تو به‌عنوان موضوع!',
-      f2HintFa: 'わたしは اول، بعد イランじん، آخر です.',
-      f3ExplainFa: 'わたしは イランじんです — اولین جملهٔ ژاپنی دربارهٔ خودِ تو.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-p-08',
-    type: 'dialogue-order',
-    targetSkill: 'expression',
-    targetConcept: 'greet-first-meeting',
-    lineRef: L(3),
-    difficulty: 2,
-    promptFa: 'درهم‌آمیزی — آغاز گفت‌وگوی امروز را بازسازی کن.',
-    chunks: [
-      { id: 'c1', ja: 'こんにちは、やまださん。' },
-      { id: 'c2', ja: 'こんにちは、ミキさん。' },
-      { id: 'c3', ja: 'はじめまして、やまだです。' },
-    ],
-    correctOrder: ['c1', 'c2', 'c3'],
-    feedback: {
-      f1Fa: 'اول سلامِ میکی (L1)، بعد جواب یامادا (L2)، بعد معرفیِ او به سورا (L3).',
-      f2HintFa: 'مکالمهٔ امروز با سلام میکی شروع شد.',
-      f3ExplainFa: 'L1 → L2 → L3: سلام متقابل، بعد はじめまして.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-p-09',
-    type: 'response-select',
-    targetSkill: 'expression',
-    targetConcept: 'gr-desu-qa',
-    lineRef: L(6),
-    difficulty: 2,
-    promptFa: 'یامادا می‌پرسد: 「ソラさんですね。ちゅうごくじんですか。」 — جواب سورا کدام است؟',
-    options: [
-      { id: 'a', label: 'はい、わたしは ちゅうごくじんです。' },
-      { id: 'b', label: 'はじめまして、ソラです。' },
-      { id: 'c', label: 'アリさんです。' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'معرفی از اول تکرار نمی‌شود — الان وقت جواب به پرسش است.',
-      c: 'این جوابِ «او کیست؟» است نه جوابِ «شما چینی هستید؟».',
-    },
-    feedback: {
-      f1Fa: 'پرسشِ «چینی هستید؟» با はい + گزارهٔ کامل جواب می‌گیرد.',
-      f2HintFa: 'L6 خودِ مکالمه این جواب را نشان می‌دهد.',
-      f3ExplainFa: 'はい、わたしは ちゅうごくじんです — بله + تأیید هویت (L6).',
-    },
-    assessmentRole: 'practice',
-  },
-
-  /* ---------------- OPT-REVIEW (2 faded items — off-path) ---------------- */
-  {
-    id: 'ex-fm01-r-01',
-    type: 'cloze',
-    targetSkill: 'grammar',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(3),
-    difficulty: 2,
-    promptFa: 'مثال محوشونده — جای خالی را پر کن: «من ژاپنی‌ام.»',
-    promptJa: 'わたしは ＿＿＿です。',
-    promptJaReading: 'わたしは にほんじんです。',
-    clozeTokens: ['わたしは', null, 'です', '。'],
-    options: [
-      { id: 'a', label: 'にほんじん' },
-      { id: 'b', label: 'だいがく' },
-      { id: 'c', label: 'こんにちは' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'だいがく اسم مکان است، هویتِ «ژاپنی» نمی‌سازد.',
-      c: 'こんにちは احوال‌پرسی است، جای هویت در جمله نمی‌نشیند.',
-    },
-    feedback: {
-      f1Fa: 'جای خالی، هویتِ گوینده است — «ژاپنی».',
-      f2HintFa: 'L3 یامادا همین جمله را گفت.',
-      f3ExplainFa: 'わたしは にほんじんです — من ژاپنی‌ام (L3).',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-r-02',
-    type: 'cloze',
-    targetSkill: 'grammar',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(8),
-    difficulty: 3,
-    promptFa: 'مثال محوشونده — جای خالی را پر کن: «آن شخص ایرانی است.»',
-    promptJa: 'あのかたは ＿＿＿です。',
-    promptJaReading: 'あのかたは イランじんです。',
-    clozeTokens: ['あのかたは', null, 'です', '。'],
-    options: [
-      { id: 'a', label: 'イランじん' },
-      { id: 'b', label: 'どなた' },
-      { id: 'c', label: 'せんせい' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'どなた یعنی «کی» — در جملهٔ خبری جواب نمی‌دهد.',
-      c: 'せんせい درست است اما معنی جمله «استاد» می‌شود، نه «ایرانی».',
-    },
-    feedback: {
-      f1Fa: 'هویتِ «ایرانی» — همان الگوی L8 دربارهٔ علی.',
-      f2HintFa: 'イラン + じん.',
-      f3ExplainFa: 'あのかたは イランじんです — الگوی AはBです با موضوعِ مؤدبانه.',
-    },
-    assessmentRole: 'practice',
-  },
-
-  /* ---------------- OPT-DEEPDIVE (2 items — countries/languages preview) ---------------- */
-  {
-    id: 'ex-fm01-d-01',
-    type: 'meaning-select',
-    targetSkill: 'vocab',
-    targetConcept: 'identity-vocab-core',
-    lineRef: L(3),
-    difficulty: 2,
-    promptJa: 'にほんご',
-    promptJaReading: 'にほんご',
-    promptFa: 'جدول کشور/ملیت/زبان — にほんご یعنی چه؟',
-    options: [
-      { id: 'a', label: 'زبان ژاپنی' },
-      { id: 'b', label: 'ژاپنی (اهل ژاپن)' },
-      { id: 'c', label: 'ژاپن (کشور)' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'اهل ژاپن にほんじん است — پسوند じん.',
-      c: 'کشورِ ژاپن فقط にほن است.',
-    },
-    feedback: {
-      f1Fa: 'پسوند ご یعنی «زبانِ» — にほんご = زبان ژاپنی.',
-      f2HintFa: '〜じん = اهلِ · 〜ご = زبانِ.',
-      f3ExplainFa: 'にほん (کشور) + じん (اهل) / ご (زبان): にほんじん ژاپنی، にほんご زبان ژاپنی.',
-    },
-    assessmentRole: 'practice',
-  },
-  {
-    id: 'ex-fm01-d-02',
-    type: 'meaning-select',
-    targetSkill: 'vocab',
-    targetConcept: 'identity-vocab-core',
-    lineRef: L(8),
-    difficulty: 2,
-    promptJa: 'ペルシアご',
-    promptJaReading: 'ペルシアご',
-    promptFa: 'زبان فارسی به ژاپنی چه می‌شود؟',
-    options: [
-      { id: 'a', label: 'イランご' },
-      { id: 'b', label: 'ペルシアご' },
-      { id: 'c', label: 'イランじん' },
-    ],
-    correctOptionId: 'b',
-    distractorRationaleFa: {
-      a: 'ایران‌گو در ژاپنی رایج نیست — نام رایجِ زبان فارسی ペルシアご است.',
-      c: 'ایران‌جین یعنی «ایرانی» (اهل ایران) — زبان نیست.',
-    },
-    feedback: {
-      f1Fa: 'زبان فارسی ペルシアご (perushago) نامیده می‌شود.',
-      f2HintFa: 'همان الگوی 〜ご — اما نام تاریخیِ زبان.',
-      f3ExplainFa: 'ペルシアご = زبان فارسی. تو می‌توانی بگویی: わたしは ペルシアごを … (فصل‌های بعد!).',
-    },
-    assessmentRole: 'practice',
-  },
-
-  /* ================= MASTERY BANK (non-overlapping pool — 2 switches per measure) ================= */
-  {
-    id: 'ex-fm01-m1-a',
-    type: 'gist-select',
-    targetSkill: 'listening',
-    targetConcept: 'identity-statement',
-    difficulty: 2,
-    promptFa: 'هدف اصلی این گفت‌وگو چیست؟',
-    options: [
-      { id: 'a', label: 'آشنایی و معرفی چند نفر به هم' },
-      { id: 'b', label: 'سفارش نوشیدنی در کافه' },
-      { id: 'c', label: 'توافق برای قرار دیگری' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'هیچ سفارشی ثبت نشد — کافه فقط محل ملاقات است.',
-      c: 'هیچ قرار یا وعده‌ای در مکالمه نیست — گفت‌وگو با よろしく بسته می‌شود.',
-    },
-    feedback: {
-      f1Fa: 'مکالمه با سلام و معرفی شروع می‌شود و با よろしく بسته می‌شود.',
-      f2HintFa: 'はじめまして چند بار تکرار شد؟',
-      f3ExplainFa: 'هدف: آیین آشنایی — سلام، معرفی، پرسش هویت، بستن.',
-    },
-    assessmentRole: 'mastery_M1',
-  },
-  {
-    id: 'ex-fm01-m1-b',
-    type: 'gist-select',
-    targetSkill: 'listening',
-    targetConcept: 'identity-statement',
-    difficulty: 2,
-    promptFa: 'یامادا در L8 علی را چگونه معرفی می‌کند؟',
-    options: [
-      { id: 'a', label: 'نام + ملیت + شغل' },
-      { id: 'b', label: 'فقط نام' },
-      { id: 'c', label: 'فقط شغل' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'نام تنها نبود — دو جملهٔ بعد هم آمد.',
-      c: 'شغل تنها نبود — اول نام و ملیت آمد.',
-    },
-    feedback: {
-      f1Fa: 'سه جملهٔ کوتاه پشت هم: アリさんです。イランじんです。だいがくの せんせいです。',
-      f2HintFa: 'سه بار です تکرار شد.',
-      f3ExplainFa: 'الگوی معرفیِ شخص سوم: نام → ملیت → شغل.',
-    },
-    assessmentRole: 'mastery_M1',
-  },
-  {
-    id: 'ex-fm01-m2-a',
-    type: 'meaning-select',
-    targetSkill: 'vocab',
-    targetConcept: 'voc-sensee',
-    lineRef: L(8),
-    difficulty: 2,
-    promptJa: 'だいがくの せんせい',
-    promptJaReading: 'だいがくの せんせい',
-    promptFa: 'در L8 این عبارت یعنی چه؟',
-    options: [
-      { id: 'a', label: 'استاد دانشگاه' },
-      { id: 'b', label: 'دانشجوی دانشگاه' },
-      { id: 'c', label: 'دانشگاه توکیو' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'دانشجو がくせい است — اینجا せんせい آمده.',
-      c: 'نامِ خاصی از دانشگاه نیامده.',
-    },
-    feedback: {
-      f1Fa: 'だいがく (دانشگاه) + の + せんせい (استاد).',
-      f2HintFa: 'せんせい با واکهٔ کشیده.',
-      f3ExplainFa: 'だいがくの せんせい = استادِ دانشگاه.',
-    },
-    assessmentRole: 'mastery_M2',
-  },
-  {
-    id: 'ex-fm01-m2-b',
-    type: 'meaning-select',
-    targetSkill: 'vocab',
-    targetConcept: 'voc-anokata',
-    lineRef: L(7),
-    difficulty: 2,
-    promptJa: 'あのかた',
-    promptJaReading: 'あのかた',
-    promptFa: 'あのかた یعنی چه؟',
-    options: [
-      { id: 'a', label: 'آن شخص (مؤدبانه)' },
-      { id: 'b', label: 'اینجا' },
-      { id: 'c', label: 'دوستِ من' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: '«اینجا» ここ است.',
-      c: '«دوست» ともだち است — در این فصل نیست.',
-    },
-    feedback: {
-      f1Fa: 'あのかた اشارهٔ مؤدبانه به نفر سوم است.',
-      f2HintFa: 'میکی داشت به میز پنجره اشاره می‌کرد.',
-      f3ExplainFa: 'あのかた = آن شخص — مؤدبانه‌تر از اشارهٔ مستقیم.',
-    },
-    assessmentRole: 'mastery_M2',
-  },
-  {
-    id: 'ex-fm01-m3-a',
-    type: 'meaning-select',
-    targetSkill: 'grammar',
-    targetConcept: 'gr-desu-identity',
-    lineRef: L(3),
-    difficulty: 2,
-    promptJa: 'わたしは にほんじんです',
-    promptJaReading: 'わたしは にほんじんです',
-    promptFa: 'در این جمله ذرهٔ は چه می‌کند؟',
-    options: [
-      { id: 'a', label: 'موضوع جمله را نشانه‌گذاری می‌کند' },
-      { id: 'b', label: 'مفعول را می‌گیرد' },
-      { id: 'c', label: 'معنی «و» دارد' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'مفعول را を می‌گیرد.',
-      c: '«و» به ژاپنی と است.',
-    },
-    feedback: {
-      f1Fa: 'は بعد از موضوع می‌آید: わたし + は.',
-      f2HintFa: '«من» موضوع جمله است — چه چیزی بعدش آمد؟',
-      f3ExplainFa: 'は (تلفظ wa) موضوع جمله را علامت می‌زند.',
+      f1Fa: 'خاستگاه + から + فعل.',
+      f2HintFa: 'خط ۱۳.',
+      f3ExplainFa: 'かんこくから きました.',
     },
     assessmentRole: 'mastery_M3',
   },
+  // M4 — شنیداری (20%)
   {
-    id: 'ex-fm01-m3-b',
-    type: 'meaning-select',
-    targetSkill: 'grammar',
-    targetConcept: 'gr-desu-qa',
-    lineRef: L(5),
-    difficulty: 2,
-    promptFa: 'کدام خط پرسش است؟',
-    options: [
-      { id: 'a', label: 'ソラさんですね。ちゅうごくじんですか。' },
-      { id: 'b', label: 'はい、わたしは ちゅうごくじんです。' },
-      { id: 'c', label: 'はじめまして、ソラです。' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'این جواب است — با です تمام می‌شود.',
-      c: 'این معرفی است، نه پرسش.',
-    },
-    feedback: {
-      f1Fa: 'پرسش با ですか و آهنگ پایانی بالا شناخته می‌شود.',
-      f2HintFa: 'به آخر جمله‌ها دقت کن: یکی か دارد، بقیه ندارند.',
-      f3ExplainFa: 'ちゅうごくじんですか پرسش است؛ ですね تأیید و です خبری.',
-    },
-    assessmentRole: 'mastery_M3',
-  },
-  {
-    id: 'ex-fm01-m4-a',
-    type: 'speaker-identify',
+    id: 'ex-fm01-gate-m4-1',
+    type: 'gist-select',
     targetSkill: 'listening',
-    targetConcept: 'listen-vowel-length',
-    lineRef: L(7),
+    targetConcept: 'identity-vocab-core',
+    assessesConcepts: ['gr-desu-qa', 'voc-anokata'],
     audioLineRef: L(7),
-    difficulty: 3,
-    promptFa: 'فقط گوش کن: دربارهٔ چه کسی پرسیده شد؟',
-    options: [
-      { id: 'a', label: 'آقای علی' },
-      { id: 'b', label: 'خانم میکی' },
-      { id: 'c', label: 'صاحب کافه' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'میکی خودش پرسید — دربارهٔ خودش نمی‌پرسد.',
-      c: 'یامادا جواب می‌دهد، موضوعِ پرسش نیست.',
-    },
+    lineRef: L(7),
+    difficulty: 2,
+    promptFa: 'گوش بده (خط ۷، بدون متن): دربارهٔ چه کسی پرسید؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'شخص سومی که کنار پنجره است', 'خودِ گوینده', 'صاحب کافه', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'پرسش دربارهٔ شخص سومِ کنار پنجره بود — علی.',
-      f2HintFa: 'بعد از این پرسش، یامادا «アリさんです» گفت.',
-      f3ExplainFa: 'L7 دربارهٔ علی پرسید و L8 جواب داد.',
+      f1Fa: 'あのかた = شخص سوم.',
+      f2HintFa: 'پرسش دربارهٔ حاضرِ گفت‌وگو نیست.',
+      f3ExplainFa: 'دربارهٔ علی پرسید.',
     },
     assessmentRole: 'mastery_M4',
   },
   {
-    id: 'ex-fm01-m4-b',
+    id: 'ex-fm01-gate-m4-2',
     type: 'listen-who-asked',
     targetSkill: 'listening',
-    targetConcept: 'identity-question',
-    lineRef: L(5),
-    audioLineRef: L(5),
+    targetConcept: 'listen-vowel-length',
+    assessesConcepts: ['gr-mo', 'voc-kankokujin'],
+    audioLineRef: L(10),
+    lineRef: L(10),
     difficulty: 3,
-    promptFa: 'فقط گوش کن: یامادا در این خط از سورا چه پرسید؟',
-    options: [
-      { id: 'a', label: 'ملیتش را' },
-      { id: 'b', label: 'شغلش را' },
-      { id: 'c', label: 'اسمش را' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'هیچ واژهٔ شغلی (せんせい/がくせい) در این خط نیست — شغل فقط در L8 دربارهٔ علی آمد.',
-      c: 'نامِ سورا را قبل‌تر می‌دانست — همین خط با ソラさんですね (تأییدِ نام) شروع شد، پرسشِ نام نبود.',
-    },
+    promptFa: 'گوش بده (خط ۱۰): چه پرسشی پرسیده شد؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'آیا کیم هم چینی است؟', 'آیا کیم معلم است؟', 'کیم از کجا آمد؟', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'شغل در خط ۸ دربارهٔ علی بود.', c: 'خاستگاه در خط ۱۳ خود کیم می‌گوید.' },
     feedback: {
-      f1Fa: 'پرسش با ですか تمام شد و دربارهٔ ملیت بود.',
-      f2HintFa: 'ちゅうごくじんですか — «چینی هستید؟».',
-      f3ExplainFa: 'یامادا پرسید: ちゅうごくじんですか — پرسشِ ملیت (L5، نیمهٔ دوم خط).',
+      f1Fa: 'پرسش دربارهٔ ملیتِ کیم با も.',
+      f2HintFa: 'キムさんも…',
+      f3ExplainFa: 'キムさんも ちゅうごくじんですか (خط ۱۰).',
     },
     assessmentRole: 'mastery_M4',
   },
+  // M5 — گوینده و نیت (10%)
   {
-    id: 'ex-fm01-m5-a',
-    type: 'meaning-select',
-    targetSkill: 'expression',
-    targetConcept: 'chrk-anokata-donata',
-    lineRef: L(7),
-    difficulty: 3,
-    promptFa: 'چرا میکی گفت あのかたは どなたですか (نه صورتِ بی‌احترامی‌تر)؟',
-    options: [
-      { id: 'a', label: 'چون اشارهٔ مؤدبانه به شخص سوم می‌خواست' },
-      { id: 'b', label: 'چون علی را نمی‌شناخت و عصبانی بود' },
-      { id: 'c', label: 'چون از یامادا شکایت داشت' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'هیچ نشانه‌ای از عصبانیت در مکالمه نیست.',
-      c: 'مکالمه کاملاً دوستانه است.',
-    },
+    id: 'ex-fm01-gate-m5-1',
+    type: 'speaker-identify',
+    targetSkill: 'listening',
+    targetConcept: 'identity-vocab-core',
+    assessesConcepts: ['chrk-iie', 'gr-dewa-arimasen'],
+    audioLineRef: L(11),
+    lineRef: L(11),
+    difficulty: 2,
+    promptFa: 'چه کسی با いいえ شروع کرد و چرا؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'سورا — فرض غلط را مؤدبانه رد کرد', 'یامادا — از خبر ناراحت شد', 'کیم — خودش را معرفی کرد', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'ناراحتی در کار نیست — اصلاح اطلاعات است.', c: 'کیم در خط ۱۳ حرف می‌زند.' },
     feedback: {
-      f1Fa: 'あのかた + どなた هر دو مؤدبانه‌اند — برای غریبه‌های محترم.',
-      f2HintFa: 'سورا مهمانِ جدید است و میکی می‌خواهد مؤدبانه دربارهٔ دیگران بپرسد.',
-      f3ExplainFa: 'برای پرسیدن دربارهٔ دیگران، شکل مؤدبانه درستِ همان موقعیت است.',
+      f1Fa: 'いいえ ردِّ اطلاعاتِ غلط است، نه شخص.',
+      f2HintFa: 'خط ۱۱.',
+      f3ExplainFa: 'سورا: いいえ、キムさんは ちゅうごくじんでは ありません。',
     },
     assessmentRole: 'mastery_M5',
   },
   {
-    id: 'ex-fm01-m5-b',
-    type: 'meaning-select',
-    targetSkill: 'structure',
-    targetConcept: 'sov-bridge-persian',
-    lineRef: L(4),
-    difficulty: 3,
-    promptFa: 'چرا سورا در L4 نگفت わたしは؟',
-    options: [
-      { id: 'a', label: 'چون موضوع معلوم بود و حذفش طبیعی است' },
-      { id: 'b', label: 'چون わたし ممنوع است' },
-      { id: 'c', label: 'چون جمله‌اش ناقص بود' },
-    ],
-    correctOptionId: 'a',
-    distractorRationaleFa: {
-      b: 'わたし هیچ‌جا ممنوع نیست — فقط لازم نیست.',
-      c: 'جمله کاملاً کامل و طبیعی است.',
-    },
+    id: 'ex-fm01-gate-m5-2',
+    type: 'response-select',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-wakarimashita',
+    lineRef: L(12),
+    difficulty: 2,
+    promptFa: 'یامادا اطلاعات تازه‌ای دربارهٔ کیم گرفت — واکنش او چه بود؟ (خط ۱۲)',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'そうですか。わかりました。', 'はじめまして。キムです。', 'わたしは にほんじんです。', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'این معرفیِ خودِ کیم است (خط ۱۳).', c: 'این معرفی یامادا در خط ۳ است.' },
     feedback: {
-      f1Fa: 'واضح بود که دربارهٔ خودش حرف می‌زند — مثل فارسی.',
-      f2HintFa: 'در فارسی هم «من» را هر بار تکرار نمی‌کنیم.',
-      f3ExplainFa: 'حذفِ اطلاعاتِ معلوم در ژاپنی طبیعی است — L3↔L4 همین را نشان می‌دهد.',
+      f1Fa: 'واکنش = دریافت اطلاعات.',
+      f2HintFa: 'دو جملهٔ پشت‌سرهم.',
+      f3ExplainFa: 'そうですか。わかりました。',
     },
     assessmentRole: 'mastery_M5',
+  },
+  /* ════════════════════════ OPT-REVIEW-2 «دریل تمایزی» (2nd item) ════════════════════════ */
+  {
+    id: 'ex-fm01-or2-cloze-2',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-mo',
+    assessesConcepts: ['gr-mo', 'gr-desu-identity'],
+    lineRef: L(10),
+    difficulty: 2,
+    promptFa: 'تمایز は/も: «کیم هم (مثل سورا) چینی است؟»',
+    promptJa: 'キムさん___ ちゅうごくじんですか。',
+    clozeTokens: ['キムさん', null, 'ちゅうごくじんですか', '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'も', 'は', 'ね', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: { b: 'は فقط موضوع را علامت می‌زند — «هم» نمی‌دهد.', c: 'ね تأکید است.' },
+    feedback: {
+      f1Fa: 'معنی «هم» با も ساخته می‌شود.',
+      f2HintFa: 'مثل سورا بودن → も.',
+      f3ExplainFa: 'キムさんも ちゅうごくじんですか.',
+    },
+    assessmentRole: 'practice',
   },
 ];
-
-/** Practice-pool ids keyed for station block wiring. */
-export const FM01_EXERCISES_BY_ID: Record<string, Exercise> = Object.fromEntries(FM01_EXERCISES.map((e) => [e.id, e]));

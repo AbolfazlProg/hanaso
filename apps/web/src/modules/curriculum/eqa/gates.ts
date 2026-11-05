@@ -114,8 +114,14 @@ export function gateEqa1(chapter: Chapter): EqaFinding[] {
       }
     }
 
-    /* Layer 2 — line-comprehension types: the source line is part of the assessment */
-    if (LINE_COMPREHENSION_TYPES.has(ex.type)) {
+    /* Layer 2 — line-comprehension types: the source line is part of the assessment.
+     * TASK-LEARNING-06 (بستن #96 — بازنویسی تمرین‌های واژگان به سطح واژه): a Q2
+     * audio item whose targetConcept is a WORD id is a WORD-LEVEL drill (شنیدنِ خودِ
+     * واژه → معنی — 13-06 §۱ قدم ۴: recognition، نه درک خط): the line only CARRIES
+     * the word's audio; its grammar is not being assessed. Exempt from layer 2. */
+    const isWordLevelAudioDrill =
+      ex.type === 'audio-meaning' && chapter.words.some((w) => w.id === ex.targetConcept);
+    if (LINE_COMPREHENSION_TYPES.has(ex.type) && !isWordLevelAudioDrill) {
       const line = ex.audioLineRef ?? ex.lineRef;
       if (line) {
         for (const clusterId of clustersAnchoredToLine(chapter, line)) {

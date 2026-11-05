@@ -95,18 +95,23 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
     expect(violations).toEqual([]);
   });
 
-  it('carries the blueprint numbers: 10 core stations + 2 optional, 8 words, 2 grammar clusters, 9 lines', () => {
-    expect(chapter.stations.filter((s) => s.core)).toHaveLength(10);
-    expect(chapter.stations.filter((s) => !s.core)).toHaveLength(2);
-    expect(chapter.words).toHaveLength(8);
-    expect(chapter.grammar).toHaveLength(2);
-    expect(dialogue.lines).toHaveLength(9);
-    expect(chapter.expressions).toHaveLength(4);
+  it('carries the 05B blueprint numbers: 18 core stations + 4 optional, 11 words, 5 clusters, 14 lines, 8 expressions', () => {
+    // TASK-LEARNING-06 (05B — KB section 19): two story units · one 14-turn anchor ·
+    // gate = the assessment page (never a walk station).
+    expect(chapter.stations.filter((s) => s.core)).toHaveLength(18);
+    expect(chapter.stations.filter((s) => !s.core)).toHaveLength(4);
+    expect(chapter.words).toHaveLength(11);
+    expect(chapter.grammar).toHaveLength(5);
+    expect(dialogue.lines).toHaveLength(14);
+    expect(chapter.expressions).toHaveLength(8);
+    expect(chapter.units?.length).toBe(2);
+    expect(chapter.prerequisiteChapterSlug).toBe('kana-foundation-01');
   });
 
   it('walks stations in the authored topological order (never hardcoded in UI)', () => {
     const ordered = orderedStations(chapter).map((s) => s.slug);
     expect(ordered).toEqual([
+      // unit 02-1 «最初のあいさつ»
       'stn-fm01-01-anchor',
       'stn-fm01-02-vocab',
       'stn-fm01-03-grammar-desu',
@@ -116,9 +121,21 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
       'stn-fm01-07-listen',
       'stn-fm01-08-practice',
       'stn-fm01-09-integrate',
-      'stn-fm01-10-mastery',
-      'stn-fm01-o1-review',
-      'stn-fm01-o2-deepdive',
+      // unit 02-2 «キムさんの紹介»
+      'stn-fm01-10-reconnect',
+      'stn-fm01-11-vocab2',
+      'stn-fm01-12-grammar-mo',
+      'stn-fm01-13-grammar-dewa',
+      'stn-fm01-14-expression',
+      'stn-fm01-15-listen',
+      'stn-fm01-16-grammar-kara',
+      'stn-fm01-17-practice',
+      'stn-fm01-18-integrate',
+      // optional branches (never prerequisites)
+      'stn-fm01-opt-countries',
+      'stn-fm01-opt-review-desu',
+      'stn-fm01-opt-jobs',
+      'stn-fm01-opt-drill',
     ]);
     // prerequisites always precede
     const byslug = new Map(chapter.stations.map((s) => [s.slug, s]));
@@ -130,12 +147,21 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
   });
 
   it('separates the confusable pair じん/ご into the optional deepdive (O3)', () => {
-    const deepdive = chapter.stations.find((s) => s.slug === 'stn-fm01-o2-deepdive')!;
-    const deepdiveIds = deepdive.blocks.flatMap((b) => (b.kind === 'exercise' ? b.exerciseIds : []));
-    expect(deepdiveIds).toContain('ex-fm01-d-01'); // 〜ご preview lives ONLY off-path
+    // TASK-LEARNING-06: 〜ご preview (od1-ex-4) lives ONLY in the optional countries branch.
+    const deepdive = chapter.stations.find((s) => s.slug === 'stn-fm01-opt-countries')!;
+    const deepdiveExamples = deepdive.blocks.flatMap((b) =>
+      b.kind === 'example-set' ? b.examples.map((e) => e.ja) : [],
+    );
+    expect(deepdiveExamples).toContain('にほんご');
     for (const station of chapter.stations.filter((s) => s.core)) {
-      const ids = station.blocks.flatMap((b) => (b.kind === 'exercise' ? b.exerciseIds : []));
-      for (const id of ids) expect(id).not.toContain('-d-0'); // deepdive items never on the main path
+      const examples = station.blocks.flatMap((b) =>
+        b.kind === 'example-set' ? b.examples.map((e) => e.ja) : [],
+      );
+      for (const ja of examples) {
+        // 〜ご (language suffix) never on the main path — NB: ちゅうごく contains ご
+        // as a syllable; the O3 rule targets the language-suffix pattern (〜ご endings).
+        expect(ja.endsWith('ご')).toBe(false);
+      }
     }
   });
 
@@ -149,7 +175,7 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
       }
     }
     const masteryCount = Object.values(chapter.exercises).filter((e) => e.assessmentRole.startsWith('mastery_')).length;
-    expect(masteryCount).toBe(10); // 2 switches × 5 measures
+    expect(masteryCount).toBe(12); // 05B gate: ≥2 switches × 5 measures (12 items)
   });
 });
 
@@ -160,7 +186,7 @@ describe('journey resolution', () => {
   it('starts with only the anchor available (everything else locked)', () => {
     const journey = resolveJourney(chapter, level, [], null);
     expect(journey.coreCompleted).toBe(0);
-    expect(journey.coreTotal).toBe(10);
+    expect(journey.coreTotal).toBe(18);
     const availabilities = journey.nodes.map((n) => `${n.station.slug}:${n.availability}`);
     expect(availabilities[0]).toBe('stn-fm01-01-anchor:available');
     expect(availabilities.filter((a) => a.endsWith(':available'))).toHaveLength(1);
@@ -182,8 +208,8 @@ describe('journey resolution', () => {
     });
     expect(journey.coreCompleted).toBe(3);
     expect(nextStation(journey)?.slug).toBe('stn-fm01-04-structure');
-    // optional review (off grammar-1) is available too but never blocks
-    const review = journey.nodes.find((n) => n.station.slug === 'stn-fm01-o1-review')!;
+    // optional countries branch (off vocab-1) is available too but never blocks
+    const review = journey.nodes.find((n) => n.station.slug === 'stn-fm01-opt-countries')!;
     expect(review.availability).toBe('available');
   });
 
@@ -198,8 +224,9 @@ describe('journey resolution', () => {
       attemptCount: 3,
     }));
     const journey = resolveJourney(chapter, level, done, null);
-    expect(journey.coreCompleted).toBe(10);
-    expect(masteryStation(chapter)?.slug).toBe('stn-fm01-10-mastery');
+    expect(journey.coreCompleted).toBe(18);
+    // TASK-LEARNING-06 (05B): the gate is the ASSESSMENT PAGE — no mastery walk station.
+    expect(masteryStation(chapter)).toBeNull();
   });
 
   it('treats needs_retry as walked (no dead ends) and skips never gate core', () => {
@@ -213,7 +240,7 @@ describe('journey resolution', () => {
         attemptCount: 6,
       }));
     const journey = resolveJourney(chapter, level, done, null);
-    expect(journey.coreCompleted).toBe(10);
+    expect(journey.coreCompleted).toBe(18);
   });
 });
 
@@ -233,21 +260,28 @@ describe('grading (server-side answer key)', () => {
   });
 
   it('grades all three interaction shapes + ladder levels', () => {
-    const select = chapter.exercises['ex-fm01-v1-03']!;
-    expect(gradeExerciseAnswer(select, { kind: 'option', optionId: 'b' }).correct).toBe(true);
-    const wrong1 = gradeExerciseAnswer(select, { kind: 'option', optionId: 'a' }, 1);
+    const select = chapter.exercises['ex-fm01-v1-p2-txt-1']!;
+    expect(gradeExerciseAnswer(select, { kind: 'option', optionId: select.correctOptionId! }).correct).toBe(true);
+    const wrongId = select.options!.find((o) => o.id !== select.correctOptionId)!.id;
+    const wrong1 = gradeExerciseAnswer(select, { kind: 'option', optionId: wrongId }, 1);
     expect(wrong1).toMatchObject({ correct: false, level: 1 });
     expect(wrong1.reveal).toBeUndefined();
-    const wrong3 = gradeExerciseAnswer(select, { kind: 'option', optionId: 'a' }, 3);
+    const wrong3 = gradeExerciseAnswer(select, { kind: 'option', optionId: wrongId }, 3);
     expect(wrong3.level).toBe(3);
     expect(wrong3.reveal).toBeTruthy();
 
-    const order = chapter.exercises['ex-fm01-g1-01']!;
+    const order = chapter.exercises['ex-fm01-g1-order-1']!;
     expect(gradeExerciseAnswer(order, { kind: 'order', orderedIds: ['c1', 'c2', 'c3'] }).correct).toBe(true);
     expect(gradeExerciseAnswer(order, { kind: 'order', orderedIds: ['c2', 'c1', 'c3'] }).correct).toBe(false);
 
-    const build = chapter.exercises['ex-fm01-g1-03']!;
-    expect(gradeExerciseAnswer(build, { kind: 'build', chipOrder: ['c1', 'c2', 'c3', 'c4'] }).correct).toBe(true);
+    const build = chapter.exercises['ex-fm01-g1-prod-1']!;
+    expect(gradeExerciseAnswer(build, { kind: 'build', chipOrder: ['p1', 'p2', 'p3'] }).correct).toBe(true);
+
+    // TASK-LEARNING-06 (#106): the F2 ladder eliminates one wrong option (never the key)
+    const wrong2 = gradeExerciseAnswer(select, { kind: 'option', optionId: wrongId }, 2);
+    expect(wrong2.level).toBe(2);
+    expect(wrong2.eliminateOptionIds).toBeDefined();
+    expect(wrong2.eliminateOptionIds).not.toContain(select.correctOptionId);
   });
 
   it('grades a perfect mastery submission as passed', () => {
@@ -323,6 +357,10 @@ describe('TASK-LEARNING-02 — owner-notes fidelity gates', () => {
       'voc-sensee': { term: '先生', reading: 'せんせい' },
       'voc-anokata': { term: 'あの方', reading: 'あのかた' },
       'voc-iranjin': { term: 'イラン人', reading: 'イランじん' }, // HANASO addition (marked on card)
+      // TASK-LEARNING-06 (05B VOCAB-2): かんこくじん + から + きました
+      'voc-kankokujin': { term: '韓国人', reading: 'かんこくじん' },
+      'voc-kara': { term: '〜から', reading: '〜から' },
+      'voc-kimashita': { term: '来ました', reading: 'きました' },
     };
     for (const w of chapter.words) {
       const exp = expected[w.id];
@@ -347,17 +385,15 @@ describe('TASK-LEARNING-02 — owner-notes fidelity gates', () => {
     expect(assets, 'public/audio/dialogues/manifest.json present').not.toBeNull();
     for (const ch of listChapters()) {
       const dlg = loadDialogue(ch.dialogueSlug);
-      const hasReal = dlg.lines.some((l) => assets!.entries[l.id] !== undefined);
-      if (!hasReal) {
-        // Honest placeholder state: zero manifest entries for this dialogue.
-        for (const line of dlg.lines) {
-          expect(assets!.entries[line.id], `${line.id} must NOT fake a real-audio entry`).toBeUndefined();
-        }
-        continue;
-      }
       for (const line of dlg.lines) {
         const entry = assets!.entries[line.id];
-        expect(entry, `real audio manifest entry for ${line.id}`).toBeDefined();
+        if (!entry) {
+          // TASK-LEARNING-06: lines without a manifest entry (new dialogue turns —
+          // e.g. fm01 L9..L13 / kana-welcome) are in the honest placeholder state:
+          // the manifest must NOT fake an entry for them.
+          expect(assets!.entries[line.id], `${line.id} must NOT fake a real-audio entry`).toBeUndefined();
+          continue;
+        }
         for (const ext of ['opus', 'm4a'] as const) {
           const p = join(process.cwd(), 'public', 'audio', 'dialogues', `${line.id}.${ext}`);
           expect(existsSync(p), `committed asset ${line.id}.${ext}`).toBe(true);
@@ -365,10 +401,10 @@ describe('TASK-LEARNING-02 — owner-notes fidelity gates', () => {
         }
         // byte-exactness (Reviewer-C S3): committed files must match the manifest.
         const opus = join(process.cwd(), 'public', 'audio', 'dialogues', `${line.id}.opus`);
-        expect(statSync(opus).size, `${line.id}.opus bytes === manifest`).toBe(entry!.bytes);
+        expect(statSync(opus).size, `${line.id}.opus bytes === manifest`).toBe(entry.bytes);
         // content-hash binding (Reviewer-C S2): the asset was generated from THIS text —
         // a dialogue edit without re-generation fails here (stale audio).
-        expect(entry!.hash, `${line.id} manifest hash present`).toBeDefined();
+        expect(entry.hash, `${line.id} manifest hash present`).toBeDefined();
       }
     }
   });

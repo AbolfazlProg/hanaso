@@ -44,13 +44,20 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
     canDoFa: 'خودش را معرفی می‌کند، احوال‌پرسی می‌کند، هویت می‌پرسد و تأیید می‌کند — در مکالمهٔ ۶–۹ خطی مؤدبانه.',
     orderInCourse: 2,
     caps: {
-      vocabCore: [4, 8],
-      grammarClusters: [1, 2],
-      stationsCore: [8, 10],
-      chapterMinutes: [15, 25],
-      dialogueLines: [6, 9],
+      // TASK-LEARNING-06 (05B — KB section 19): the first conversation chapter is the
+      // registered TWO-UNIT chapter (unit 02-1 «最初のあいさつ» + 02-2 «キムさんの紹介»,
+      // DD-123) — one anchor dialogue of 14 lines, 18 core walk stations + gate, 11 core
+      // words (8+3 spread across the units — the 05B risk-table exception) and 5 grammar
+      // clusters (2+3). Numbers are owner-tunable DATA per DD-091/OQ-035.
+      vocabCore: [4, 11],
+      grammarClusters: [1, 5],
+      stationsCore: [8, 20],
+      chapterMinutes: [35, 55],
+      dialogueLines: [6, 14],
       listeningSpeed: 0.9,
       furigana: 'all',
+      // Ch02 gate (DD-126 / OQ-056 — PROPOSED 05B values): weighted ≥70%, no measure <50%
+      // (L2 conversation errors are context-compensable — unlike kana, DD-120).
       gate: { weighted: 0.7, minMeasure: 0.5 },
       maxRemediationLoops: 3,
     },

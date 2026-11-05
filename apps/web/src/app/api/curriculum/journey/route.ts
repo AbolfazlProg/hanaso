@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { fail, ok } from '@/modules/shared';
 import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
 import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
-import { loadChapterBundle, LEVELS_BY_CODE } from '@/modules/curriculum/server';
+import { loadChapterBundle, LEVELS_BY_CODE, chapterAccessStatus } from '@/modules/curriculum/server';
 import { resolveJourney, nextStation, type JourneyNode } from '@/modules/curriculum';
 
 /**
@@ -39,6 +39,7 @@ export async function GET(req: Request) {
 
   const journey = resolveJourney(chapter, level, states, chapterState);
   const next = nextStation(journey);
+  const access = await chapterAccessStatus(chapter, POC_DEFAULT_USER_ID);
 
   const nodes: (JourneyNode & { href: string })[] = journey.nodes.map((n) => ({
     ...n,
@@ -52,6 +53,20 @@ export async function GET(req: Request) {
       coreTotal: journey.coreTotal,
       chapterState: journey.chapterState,
       nextStationSlug: next?.slug ?? null,
+      // TASK-LEARNING-06: chapter-level soft lock (kana gate G1 unlocks Ch02) +
+      // the two-level map grouping (T-79 units[] — islands / story units).
+      chapterLocked: access.locked,
+      prerequisite: access.prerequisiteSlug
+        ? { slug: access.prerequisiteSlug, titleFa: access.prerequisiteTitleFa }
+        : null,
+      units: journey.unitGroups?.map((g) => ({
+        slug: g.unit.slug,
+        titleFa: g.unit.titleFa,
+        summaryFa: g.unit.summaryFa,
+        stationSlugs: g.unit.stationSlugs,
+        coreCompleted: g.coreCompleted,
+        coreTotal: g.coreTotal,
+      })),
       nodes: nodes.map((n) => ({
         slug: n.station.slug,
         type: n.station.type,
