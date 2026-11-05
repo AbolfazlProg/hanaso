@@ -509,6 +509,43 @@ export interface KanaItem {
   introducedInUnit: string;
 }
 
+/**
+ * TASK-LEARNING-08 (WP-2/WP-3 — owner feedback A+B): the per-glyph TEACHING layer
+ * joined to KanaItem by kanaId (content/kana-teaching.ts). Separately editable per
+ * character (mission §4.2); the base registry stays the structural truth (DD-122).
+ */
+export interface KanaTeaching {
+  /** Registry key — joins KanaItem.kanaId 1:1. */
+  kanaId: string;
+  /** Content id for the pre-generated audio pair public/audio/kana/<ref>.{opus,m4a}. */
+  audioRef: string;
+  /** Persian approximation of the sound (the card TEACHES the sound — owner feedback A). */
+  pronunciationFa: string;
+  /** Persian-speaker pitfall/simile (unrounded u, flap r, wo→o, …). */
+  pronunciationNoteFa?: string;
+  /** One-line writing hint where stroke order/direction genuinely matters. */
+  strokeHintFa?: string;
+  /** Rewritten mnemonic (owner quality standard — mission §4.1). */
+  mnemonic: {
+    /** The shape/sound hook in a few words. */
+    coreImageFa: string;
+    /** The memory story / shape rule (≤ ~220 chars). */
+    storyFa: string;
+    /** story = mental image; pattern = shape-recognition rule (beats a weak story). */
+    style: 'story' | 'pattern';
+    /** Honest label rendered with the story (never presented as fact). */
+    honestLabelFa: string;
+    /** Glyph(s) this story explicitly contrasts with (discrimination aid). */
+    pairGlyphs?: string[];
+    /** HOW to tell the pair apart (the concrete cue — owner feedback A). */
+    pairHintFa?: string;
+    /** Katakana mirror: the hiragana glyph this katakana card transfers from. */
+    mirrorOf?: string;
+    /** Review status (OQ-051): draft = human review PENDING (honest badge in UI). */
+    status: 'draft' | 'approved';
+  };
+}
+
 /* ------------------------------------------------------------------ journey (runtime view) */
 
 /** Derived (never stored) availability — island architecture §۹. */

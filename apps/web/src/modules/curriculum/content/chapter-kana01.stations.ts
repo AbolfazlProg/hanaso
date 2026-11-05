@@ -101,6 +101,15 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h1-rec-hira-e', 'ex-kana-h1-rec-hira-o'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h1-writing',
+        characters: ['あ', 'い', 'う', 'え', 'お'],
+        initialMode: 'guided',
+        focusPairs: [['あ', 'お']],
+        instructionsFa:
+          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-h1-recall',
         exerciseIds: [
@@ -110,15 +119,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h1-rcl-hira-e',
           'ex-kana-h1-rcl-hira-o',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-h1-writing',
-        characters: ['あ', 'い', 'う', 'え', 'お'],
-        initialMode: 'guided',
-        focusPairs: [['あ', 'お']],
-        instructionsFa:
-          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -175,7 +175,7 @@ export const KANA_STATIONS: Station[] = [
           '7 واژهٔ واقعی تازه خواندنی شد — مجموع 7 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-hira-a', 'kn-rec-hira-i', 'kn-rec-hira-u', 'kn-rec-hira-e', 'kn-rec-hira-o'],
   },
@@ -227,6 +227,15 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h2-rec-hira-ke', 'ex-kana-h2-rec-hira-ko'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h2-writing',
+        characters: ['か', 'き', 'く', 'け', 'こ'],
+        initialMode: 'guided',
+        focusPairs: [['け', 'き']],
+        instructionsFa:
+          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-h2-recall',
         exerciseIds: [
@@ -236,15 +245,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h2-rcl-hira-ke',
           'ex-kana-h2-rcl-hira-ko',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-h2-writing',
-        characters: ['か', 'き', 'く', 'け', 'こ'],
-        initialMode: 'guided',
-        focusPairs: [['け', 'き']],
-        instructionsFa:
-          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -301,7 +301,7 @@ export const KANA_STATIONS: Station[] = [
           '16 واژهٔ واقعی تازه خواندنی شد — مجموع 23 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-hira-ka', 'kn-rec-hira-ki', 'kn-rec-hira-ku', 'kn-rec-hira-ke', 'kn-rec-hira-ko'],
   },
@@ -353,6 +353,15 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h3-rec-hira-se', 'ex-kana-h3-rec-hira-so'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h3-writing',
+        characters: ['さ', 'し', 'す', 'せ', 'そ'],
+        initialMode: 'guided',
+        focusPairs: [['さ', 'き']],
+        instructionsFa:
+          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-h3-recall',
         exerciseIds: [
@@ -362,15 +371,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h3-rcl-hira-se',
           'ex-kana-h3-rcl-hira-so',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-h3-writing',
-        characters: ['さ', 'し', 'す', 'せ', 'そ'],
-        initialMode: 'guided',
-        focusPairs: [['さ', 'き']],
-        instructionsFa:
-          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -427,7 +427,7 @@ export const KANA_STATIONS: Station[] = [
           '23 واژهٔ واقعی تازه خواندنی شد — مجموع 46 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: [
       'kn-rec-hira-sa',
@@ -789,6 +789,13 @@ export const KANA_STATIONS: Station[] = [
     mastery: { threshold: 0.7 },
     blocks: [
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h7-writing',
+        characters: ['ん'],
+        initialMode: 'guided',
+        instructionsFa: 'این نویسهٔ ویژهٔ پایان هیراگانا فقط یک ضربه دارد — از حافظه هم بنویسش.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-h7-warmup',
         exerciseIds: ['ex-kana-h7-warm-1', 'ex-kana-h7-warm-2', 'ex-kana-h7-warm-3'],
@@ -796,13 +803,6 @@ export const KANA_STATIONS: Station[] = [
       { kind: 'kana-card', id: 'blk-stn-kana-h7-card-hira-n', kanaId: 'hira-n', showRomaji: false },
       { kind: 'exercise', id: 'blk-stn-kana-h7-retrieval-1', exerciseIds: ['ex-kana-h7-rec-hira-n'] },
       { kind: 'exercise', id: 'blk-stn-kana-h7-recall', exerciseIds: ['ex-kana-h7-rcl-hira-n'] },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-h7-writing',
-        characters: ['ん'],
-        initialMode: 'guided',
-        instructionsFa: 'این نویسهٔ ویژهٔ پایان هیراگانا فقط یک ضربه دارد — از حافظه هم بنویسش.',
-      },
       {
         kind: 'example-set',
         id: 'blk-stn-kana-h7-reading',
@@ -850,7 +850,7 @@ export const KANA_STATIONS: Station[] = [
           '33 واژهٔ واقعی تازه خواندنی شد — مجموع 125 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-hira-n'],
   },
@@ -898,6 +898,14 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h8-rec-hira-ne', 'ex-kana-h8-rec-hira-no'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h8-writing',
+        characters: ['な', 'に', 'ぬ', 'ね', 'の'],
+        initialMode: 'guided',
+        instructionsFa:
+          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-h8-recall',
         exerciseIds: [
@@ -907,14 +915,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h8-rcl-hira-ne',
           'ex-kana-h8-rcl-hira-no',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-h8-writing',
-        characters: ['な', 'に', 'ぬ', 'ね', 'の'],
-        initialMode: 'guided',
-        instructionsFa:
-          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -971,7 +971,7 @@ export const KANA_STATIONS: Station[] = [
           '38 واژهٔ واقعی تازه خواندنی شد — مجموع 163 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-hira-na', 'kn-rec-hira-ni', 'kn-rec-hira-nu', 'kn-rec-hira-ne', 'kn-rec-hira-no'],
   },
@@ -1023,6 +1023,15 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h9-rec-hira-te', 'ex-kana-h9-rec-hira-to'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h9-writing',
+        characters: ['た', 'ち', 'つ', 'て', 'と'],
+        initialMode: 'guided',
+        focusPairs: [['つ', 'し']],
+        instructionsFa:
+          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-h9-recall',
         exerciseIds: [
@@ -1032,15 +1041,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h9-rcl-hira-te',
           'ex-kana-h9-rcl-hira-to',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-h9-writing',
-        characters: ['た', 'ち', 'つ', 'て', 'と'],
-        initialMode: 'guided',
-        focusPairs: [['つ', 'し']],
-        instructionsFa:
-          'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -1089,7 +1089,7 @@ export const KANA_STATIONS: Station[] = [
           '104 واژهٔ واقعی تازه خواندنی شد — مجموع 267 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: [
       'kn-rec-hira-ta',
@@ -1143,17 +1143,6 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h10-rec-hira-me', 'ex-kana-h10-rec-hira-mo'],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h10-recall',
-        exerciseIds: [
-          'ex-kana-h10-rcl-hira-ma',
-          'ex-kana-h10-rcl-hira-mi',
-          'ex-kana-h10-rcl-hira-mu',
-          'ex-kana-h10-rcl-hira-me',
-          'ex-kana-h10-rcl-hira-mo',
-        ],
-      },
-      {
         kind: 'writing-practice',
         id: 'blk-stn-kana-h10-writing',
         characters: ['ま', 'み', 'む', 'め', 'も'],
@@ -1164,6 +1153,17 @@ export const KANA_STATIONS: Station[] = [
         ],
         instructionsFa:
           'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h10-recall',
+        exerciseIds: [
+          'ex-kana-h10-rcl-hira-ma',
+          'ex-kana-h10-rcl-hira-mi',
+          'ex-kana-h10-rcl-hira-mu',
+          'ex-kana-h10-rcl-hira-me',
+          'ex-kana-h10-rcl-hira-mo',
+        ],
       },
       {
         kind: 'example-set',
@@ -1212,7 +1212,7 @@ export const KANA_STATIONS: Station[] = [
           '66 واژهٔ واقعی تازه خواندنی شد — مجموع 333 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: [
       'kn-rec-hira-ma',
@@ -1289,17 +1289,6 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h11-rec-hira-re', 'ex-kana-h11-rec-hira-ro'],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h11-recall',
-        exerciseIds: [
-          'ex-kana-h11-rcl-hira-ra',
-          'ex-kana-h11-rcl-hira-ri',
-          'ex-kana-h11-rcl-hira-ru',
-          'ex-kana-h11-rcl-hira-re',
-          'ex-kana-h11-rcl-hira-ro',
-        ],
-      },
-      {
         kind: 'writing-practice',
         id: 'blk-stn-kana-h11-writing',
         characters: ['ら', 'り', 'る', 'れ', 'ろ'],
@@ -1310,6 +1299,17 @@ export const KANA_STATIONS: Station[] = [
         ],
         instructionsFa:
           'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h11-recall',
+        exerciseIds: [
+          'ex-kana-h11-rcl-hira-ra',
+          'ex-kana-h11-rcl-hira-ri',
+          'ex-kana-h11-rcl-hira-ru',
+          'ex-kana-h11-rcl-hira-re',
+          'ex-kana-h11-rcl-hira-ro',
+        ],
       },
       {
         kind: 'example-set',
@@ -1366,7 +1366,7 @@ export const KANA_STATIONS: Station[] = [
           '103 واژهٔ واقعی تازه خواندنی شد — مجموع 436 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: [
       'kn-rec-hira-ra',
@@ -1433,17 +1433,6 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h12-rec-hira-he', 'ex-kana-h12-rec-hira-ho'],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h12-recall',
-        exerciseIds: [
-          'ex-kana-h12-rcl-hira-ha',
-          'ex-kana-h12-rcl-hira-hi',
-          'ex-kana-h12-rcl-hira-fu',
-          'ex-kana-h12-rcl-hira-he',
-          'ex-kana-h12-rcl-hira-ho',
-        ],
-      },
-      {
         kind: 'writing-practice',
         id: 'blk-stn-kana-h12-writing',
         characters: ['は', 'ひ', 'ふ', 'へ', 'ほ'],
@@ -1454,6 +1443,17 @@ export const KANA_STATIONS: Station[] = [
         ],
         instructionsFa:
           'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h12-recall',
+        exerciseIds: [
+          'ex-kana-h12-rcl-hira-ha',
+          'ex-kana-h12-rcl-hira-hi',
+          'ex-kana-h12-rcl-hira-fu',
+          'ex-kana-h12-rcl-hira-he',
+          'ex-kana-h12-rcl-hira-ho',
+        ],
       },
       {
         kind: 'example-set',
@@ -1510,7 +1510,7 @@ export const KANA_STATIONS: Station[] = [
           '102 واژهٔ واقعی تازه خواندنی شد — مجموع 538 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: [
       'kn-rec-hira-ha',
@@ -1664,16 +1664,16 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h14-rec-hira-ya', 'ex-kana-h14-rec-hira-yu', 'ex-kana-h14-rec-hira-yo'],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h14-recall',
-        exerciseIds: ['ex-kana-h14-rcl-hira-ya', 'ex-kana-h14-rcl-hira-yu', 'ex-kana-h14-rcl-hira-yo'],
-      },
-      {
         kind: 'writing-practice',
         id: 'blk-stn-kana-h14-writing',
         characters: ['や', 'ゆ', 'よ'],
         initialMode: 'guided',
         instructionsFa: 'این سه نویسهٔ ساده را از حافظه بنویس — شکل‌شان را قبلاً در کارت‌ها دیدی.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h14-recall',
+        exerciseIds: ['ex-kana-h14-rcl-hira-ya', 'ex-kana-h14-rcl-hira-yu', 'ex-kana-h14-rcl-hira-yo'],
       },
       {
         kind: 'example-set',
@@ -1722,7 +1722,7 @@ export const KANA_STATIONS: Station[] = [
           '51 واژهٔ واقعی تازه خواندنی شد — مجموع 606 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-hira-ya', 'kn-rec-hira-yu', 'kn-rec-hira-yo'],
   },
@@ -1760,11 +1760,6 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h15-rec-hira-wa', 'ex-kana-h15-rec-hira-wo'],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h15-recall',
-        exerciseIds: ['ex-kana-h15-rcl-hira-wa', 'ex-kana-h15-rcl-hira-wo'],
-      },
-      {
         kind: 'writing-practice',
         id: 'blk-stn-kana-h15-writing',
         characters: ['わ', 'を'],
@@ -1772,6 +1767,11 @@ export const KANA_STATIONS: Station[] = [
         focusPairs: [['わ', 'れ']],
         instructionsFa:
           'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h15-recall',
+        exerciseIds: ['ex-kana-h15-rcl-hira-wa', 'ex-kana-h15-rcl-hira-wo'],
       },
       {
         kind: 'example-set',
@@ -1821,7 +1821,7 @@ export const KANA_STATIONS: Station[] = [
           '29 واژهٔ واقعی تازه خواندنی شد — مجموع 635 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-hira-wa', 'kn-rec-hira-wo', 'kn-disc-hira-ne-re-wa'],
   },
@@ -1864,6 +1864,14 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k1-rec-kata-e', 'ex-kana-k1-rec-kata-o'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k1-writing',
+        characters: ['ア', 'イ', 'ウ', 'エ', 'オ'],
+        initialMode: 'guided',
+        instructionsFa:
+          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-k1-recall',
         exerciseIds: [
@@ -1875,14 +1883,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-k1-writing',
-        characters: ['ア', 'イ', 'ウ', 'エ', 'オ'],
-        initialMode: 'guided',
-        instructionsFa:
-          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
-      },
-      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-k1-wrapup',
         titleFa: 'ردیف ア + طرحوارهٔ قرینه‌گری — جمع‌بندی',
@@ -1890,7 +1890,7 @@ export const KANA_STATIONS: Station[] = [
           '5 کانای جدید: ア(a)، イ(i)، ウ(u)، エ(e)، オ(o)',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-kata-a', 'kn-rec-kata-i', 'kn-rec-kata-u', 'kn-rec-kata-e', 'kn-rec-kata-o'],
   },
@@ -1942,6 +1942,14 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k2-rec-kata-te', 'ex-kana-k2-rec-kata-to'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k2-writing',
+        characters: ['タ', 'チ', 'ツ', 'テ', 'ト'],
+        initialMode: 'guided',
+        instructionsFa:
+          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-k2-recall',
         exerciseIds: [
@@ -1951,14 +1959,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k2-rcl-kata-te',
           'ex-kana-k2-rcl-kata-to',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-k2-writing',
-        characters: ['タ', 'チ', 'ツ', 'テ', 'ト'],
-        initialMode: 'guided',
-        instructionsFa:
-          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -1999,7 +1999,7 @@ export const KANA_STATIONS: Station[] = [
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 638 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-kata-ta', 'kn-rec-kata-chi', 'kn-rec-kata-tsu', 'kn-rec-kata-te', 'kn-rec-kata-to'],
   },
@@ -2039,6 +2039,14 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k3-rec-kata-re', 'ex-kana-k3-rec-kata-ro'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k3-writing',
+        characters: ['ラ', 'リ', 'ル', 'レ', 'ロ'],
+        initialMode: 'guided',
+        instructionsFa:
+          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-k3-recall',
         exerciseIds: [
@@ -2048,14 +2056,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k3-rcl-kata-re',
           'ex-kana-k3-rcl-kata-ro',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-k3-writing',
-        characters: ['ラ', 'リ', 'ル', 'レ', 'ロ'],
-        initialMode: 'guided',
-        instructionsFa:
-          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2096,7 +2096,7 @@ export const KANA_STATIONS: Station[] = [
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 641 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-kata-ra', 'kn-rec-kata-ri', 'kn-rec-kata-ru', 'kn-rec-kata-re', 'kn-rec-kata-ro'],
   },
@@ -2148,6 +2148,15 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k4-rec-kata-se', 'ex-kana-k4-rec-kata-so'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k4-writing',
+        characters: ['サ', 'シ', 'ス', 'セ', 'ソ'],
+        initialMode: 'guided',
+        focusPairs: [['シ', 'ツ']],
+        instructionsFa:
+          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-k4-recall',
         exerciseIds: [
@@ -2157,15 +2166,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k4-rcl-kata-se',
           'ex-kana-k4-rcl-kata-so',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-k4-writing',
-        characters: ['サ', 'シ', 'ス', 'セ', 'ソ'],
-        initialMode: 'guided',
-        focusPairs: [['シ', 'ツ']],
-        instructionsFa:
-          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2214,7 +2214,7 @@ export const KANA_STATIONS: Station[] = [
           '4 واژهٔ واقعی تازه خواندنی شد — مجموع 645 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: [
       'kn-rec-kata-sa',
@@ -2267,6 +2267,14 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k5-rec-kata-he', 'ex-kana-k5-rec-kata-ho'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k5-writing',
+        characters: ['ハ', 'ヒ', 'フ', 'ヘ', 'ホ'],
+        initialMode: 'guided',
+        instructionsFa:
+          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-k5-recall',
         exerciseIds: [
@@ -2276,14 +2284,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k5-rcl-kata-he',
           'ex-kana-k5-rcl-kata-ho',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-k5-writing',
-        characters: ['ハ', 'ヒ', 'フ', 'ヘ', 'ホ'],
-        initialMode: 'guided',
-        instructionsFa:
-          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2340,7 +2340,7 @@ export const KANA_STATIONS: Station[] = [
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 650 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-kata-ha', 'kn-rec-kata-hi', 'kn-rec-kata-fu', 'kn-rec-kata-he', 'kn-rec-kata-ho'],
   },
@@ -2365,6 +2365,14 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k6-warm-1', 'ex-kana-k6-warm-2', 'ex-kana-k6-warm-3'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k6-writing',
+        characters: ['ン'],
+        initialMode: 'guided',
+        focusPairs: [['ソ', 'ン']],
+        instructionsFa: '«ン» را از حافظه بنویس و با «ソ» که پیش‌تر دیدی مقایسه کن — تفاوت در جهت ضربه است.',
+      },
+      {
         kind: 'kana-card',
         id: 'blk-stn-kana-k6-card-kata-n',
         kanaId: 'kata-n',
@@ -2373,14 +2381,6 @@ export const KANA_STATIONS: Station[] = [
       },
       { kind: 'exercise', id: 'blk-stn-kana-k6-retrieval-1', exerciseIds: ['ex-kana-k6-rec-kata-n'] },
       { kind: 'exercise', id: 'blk-stn-kana-k6-recall', exerciseIds: ['ex-kana-k6-rcl-kata-n'] },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-k6-writing',
-        characters: ['ン'],
-        initialMode: 'guided',
-        focusPairs: [['ソ', 'ン']],
-        instructionsFa: '«ン» را از حافظه بنویس و با «ソ» که پیش‌تر دیدی مقایسه کن — تفاوت در جهت ضربه است.',
-      },
       {
         kind: 'example-set',
         id: 'blk-stn-kana-k6-reading',
@@ -2428,7 +2428,7 @@ export const KANA_STATIONS: Station[] = [
           '11 واژهٔ واقعی تازه خواندنی شد — مجموع 661 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-kata-n', 'kn-disc-kata-so-n'],
   },
@@ -2476,6 +2476,15 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k7-rec-kata-ke', 'ex-kana-k7-rec-kata-ko'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k7-writing',
+        characters: ['カ', 'キ', 'ク', 'ケ', 'コ'],
+        initialMode: 'guided',
+        focusPairs: [['ケ', 'ク']],
+        instructionsFa:
+          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-k7-recall',
         exerciseIds: [
@@ -2485,15 +2494,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k7-rcl-kata-ke',
           'ex-kana-k7-rcl-kata-ko',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-k7-writing',
-        characters: ['カ', 'キ', 'ク', 'ケ', 'コ'],
-        initialMode: 'guided',
-        focusPairs: [['ケ', 'ク']],
-        instructionsFa:
-          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2542,7 +2542,7 @@ export const KANA_STATIONS: Station[] = [
           '9 واژهٔ واقعی تازه خواندنی شد — مجموع 670 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: [
       'kn-rec-kata-ka',
@@ -2708,6 +2708,14 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k9-rec-kata-me', 'ex-kana-k9-rec-kata-mo'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k9-writing',
+        characters: ['マ', 'ミ', 'ム', 'メ', 'モ'],
+        initialMode: 'guided',
+        instructionsFa:
+          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-k9-recall',
         exerciseIds: [
@@ -2717,14 +2725,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k9-rcl-kata-me',
           'ex-kana-k9-rcl-kata-mo',
         ],
-      },
-      {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-k9-writing',
-        characters: ['マ', 'ミ', 'ム', 'メ', 'モ'],
-        initialMode: 'guided',
-        instructionsFa:
-          'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2773,7 +2773,7 @@ export const KANA_STATIONS: Station[] = [
           '9 واژهٔ واقعی تازه خواندنی شد — مجموع 706 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-kata-ma', 'kn-rec-kata-mi', 'kn-rec-kata-mu', 'kn-rec-kata-me', 'kn-rec-kata-mo'],
   },
@@ -2812,11 +2812,6 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k10-rec-kata-ya', 'ex-kana-k10-rec-kata-yu', 'ex-kana-k10-rec-kata-yo'],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k10-recall',
-        exerciseIds: ['ex-kana-k10-rcl-kata-ya', 'ex-kana-k10-rcl-kata-yu', 'ex-kana-k10-rcl-kata-yo'],
-      },
-      {
         kind: 'writing-practice',
         id: 'blk-stn-kana-k10-writing',
         characters: ['ヤ', 'ユ', 'ヨ'],
@@ -2824,6 +2819,11 @@ export const KANA_STATIONS: Station[] = [
         focusPairs: [['ヨ', 'フ']],
         instructionsFa:
           'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-k10-recall',
+        exerciseIds: ['ex-kana-k10-rcl-kata-ya', 'ex-kana-k10-rcl-kata-yu', 'ex-kana-k10-rcl-kata-yo'],
       },
       {
         kind: 'example-set',
@@ -2848,7 +2848,7 @@ export const KANA_STATIONS: Station[] = [
           '1 واژهٔ واقعی تازه خواندنی شد — مجموع 707 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-kata-ya', 'kn-rec-kata-yu', 'kn-rec-kata-yo', 'kn-disc-kata-yu-e'],
   },
@@ -2900,17 +2900,6 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k11-rec-kata-ne', 'ex-kana-k11-rec-kata-no'],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k11-recall',
-        exerciseIds: [
-          'ex-kana-k11-rcl-kata-na',
-          'ex-kana-k11-rcl-kata-ni',
-          'ex-kana-k11-rcl-kata-nu',
-          'ex-kana-k11-rcl-kata-ne',
-          'ex-kana-k11-rcl-kata-no',
-        ],
-      },
-      {
         kind: 'writing-practice',
         id: 'blk-stn-kana-k11-writing',
         characters: ['ナ', 'ニ', 'ヌ', 'ネ', 'ノ'],
@@ -2921,6 +2910,17 @@ export const KANA_STATIONS: Station[] = [
         ],
         instructionsFa:
           'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-k11-recall',
+        exerciseIds: [
+          'ex-kana-k11-rcl-kata-na',
+          'ex-kana-k11-rcl-kata-ni',
+          'ex-kana-k11-rcl-kata-nu',
+          'ex-kana-k11-rcl-kata-ne',
+          'ex-kana-k11-rcl-kata-no',
+        ],
       },
       {
         kind: 'example-set',
@@ -2969,7 +2969,7 @@ export const KANA_STATIONS: Station[] = [
           '9 واژهٔ واقعی تازه خواندنی شد — مجموع 716 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: [
       'kn-rec-kata-na',
@@ -3015,11 +3015,6 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k12-rec-kata-wa', 'ex-kana-k12-rec-kata-wo'],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k12-recall',
-        exerciseIds: ['ex-kana-k12-rcl-kata-wa', 'ex-kana-k12-rcl-kata-wo'],
-      },
-      {
         kind: 'writing-practice',
         id: 'blk-stn-kana-k12-writing',
         characters: ['ワ', 'ヲ'],
@@ -3027,6 +3022,11 @@ export const KANA_STATIONS: Station[] = [
         focusPairs: [['ヲ', 'ソ']],
         instructionsFa:
           'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-k12-recall',
+        exerciseIds: ['ex-kana-k12-rcl-kata-wa', 'ex-kana-k12-rcl-kata-wo'],
       },
       {
         kind: 'example-set',
@@ -3068,7 +3068,7 @@ export const KANA_STATIONS: Station[] = [
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 721 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      },
+      }
     ],
     fsrsItems: ['kn-rec-kata-wa', 'kn-rec-kata-wo', 'kn-disc-kata-wa-fu'],
   },
@@ -3197,6 +3197,19 @@ export const KANA_STATIONS: Station[] = [
     mastery: { threshold: 0.7 },
     blocks: [
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-opt-drill-writing',
+        characters: ['さ', 'き', 'シ', 'ツ', 'ソ', 'ン', 'め', 'ぬ'],
+        initialMode: 'free',
+        focusPairs: [
+          ['さ', 'き'],
+          ['シ', 'ツ'],
+          ['ソ', 'ン'],
+          ['め', 'ぬ'],
+        ],
+        instructionsFa: 'جفت‌های شبیهٔ کانا را بدون دیدن الگو از حافظه بنویس — تمرینِ تشخیص دقیق جزئیات است.',
+      },
+      {
         kind: 'exercise',
         id: 'blk-stn-kana-opt-drill-drill',
         exerciseIds: [
@@ -3213,24 +3226,11 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'writing-practice',
-        id: 'blk-stn-kana-opt-drill-writing',
-        characters: ['さ', 'き', 'シ', 'ツ', 'ソ', 'ン', 'め', 'ぬ'],
-        initialMode: 'free',
-        focusPairs: [
-          ['さ', 'き'],
-          ['シ', 'ツ'],
-          ['ソ', 'ン'],
-          ['め', 'ぬ'],
-        ],
-        instructionsFa: 'جفت‌های شبیهٔ کانا را بدون دیدن الگو از حافظه بنویس — تمرینِ تشخیص دقیق جزئیات است.',
-      },
-      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-opt-drill-wrapup',
         titleFa: 'دریل آزاد کانا (اختیاری) — جمع‌بندی',
         itemsFa: ['کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.'],
-      },
+      }
     ],
     fsrsItems: [],
   },

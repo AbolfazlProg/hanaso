@@ -48,6 +48,7 @@ import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { WritingPractice } from '@/components/writing/writing-practice';
+import { KanaCard } from './kana-card';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
@@ -78,6 +79,12 @@ export interface StationRunnerProps {
    * to the source-line audio on the vocab card.
    */
   wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /**
+   * TASK-LEARNING-08 (WP-2/WP-3): kanaId → resolved PRE-GENERATED audio pair
+   * (public/audio/kana registry — DD-081). Null = no committed asset yet; the
+   * card hides the sound affordance honestly (owner feedback A).
+   */
+  kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
 }
 
 /** Grading round-trip for one block interaction. */
@@ -188,6 +195,7 @@ export function StationRunner(props: StationRunnerProps) {
     audioFallbackByLine,
     audioAvailable,
     wordAudioByWord,
+    kanaAudioByKanaId,
     chapterSlug,
   } = props;
   const router = useRouter();
@@ -401,6 +409,7 @@ export function StationRunner(props: StationRunnerProps) {
           audioFallbackByLine={audioFallbackByLine}
           audioAvailable={audioAvailable}
           wordAudioByWord={wordAudioByWord}
+          kanaAudioByKanaId={kanaAudioByKanaId}
           isLastBlock={step === blocks.length - 1}
           exerciseScore={block.kind === 'exercise' ? blockResult(blockResults, block.id) : null}
           exerciseInitialProgress={block.kind === 'exercise' ? exerciseProgress[block.id] : undefined}
@@ -600,6 +609,7 @@ function BlockView({
   audioFallbackByLine,
   audioAvailable,
   wordAudioByWord,
+  kanaAudioByKanaId,
   isLastBlock,
   exerciseScore,
   exerciseInitialProgress,
@@ -619,6 +629,8 @@ function BlockView({
   audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
   wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /** WP-2/WP-3: resolved kana audio pairs (kanaId → opus+m4a | null). */
+  kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
   /** True on the last authored block (drives the skip-panel CTA label). */
   isLastBlock: boolean;
   /**
@@ -726,10 +738,12 @@ function BlockView({
     }
 
     case 'kana-card': {
-      // TASK-LEARNING-06 (DD-122 / TB-KanaCard — Issue #94): glyph card from the
-      // KanaItem registry. Romaji follows the unit-level fading policy (block data);
-      // mnemonics carry their HONEST review status (pilot_draft = human review
-      // pending — OQ-051) and are never presented as final content.
+      /*
+       * TASK-LEARNING-08 (WP-2 — owner feedback A+C): the glyph card is now a
+       * REAL TEACHING moment (KanaCard v2 — DD-121): sound-first + Persian
+       * pronunciation + pair comparison + the writing engine INSIDE the card
+       * (Observe → Trace → Free recall). Structure stays data-driven (DD-122).
+       */
       const kana = KANA_ITEMS_BY_ID[block.kanaId];
       if (!kana) {
         return (
@@ -739,55 +753,28 @@ function BlockView({
         );
       }
       return (
-        <section className="rounded-md border border-ink-faint bg-card p-5" aria-label={kana.romaji}>
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <JaBlock className="font-jp text-[clamp(3.5rem,12vw,6rem)] font-bold leading-none text-ink">
-              {kana.glyph}
-            </JaBlock>
-            <div className="min-w-[8rem] flex-1 space-y-2 text-left" dir="ltr">
-              {block.showRomaji ? (
-                <p className="font-mono text-h3 font-bold text-indigo">{kana.romaji}</p>
-              ) : (
-                <p className="text-small text-ink-faint">{fa.curriculum.kanaRomajiHidden}</p>
-              )}
-              {kana.romajiNoteFa ? <p className="text-small text-ink-faint">{kana.romajiNoteFa}</p> : null}
-              {kana.hostWord ? (
-                <p className="text-body text-ink">
-                  <JaBlock className="font-jp">{kana.hostWord.word}</JaBlock>
-                  <span className="mx-1 text-ink-faint">—</span>
-                  {kana.hostWord.meaningFa}
-                </p>
-              ) : null}
-            </div>
-          </div>
-          {kana.mnemonic ? (
-            <div className="mt-4 rounded-md bg-surface-2 p-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-small font-bold text-ink">{kana.mnemonic.coreImageFa}</span>
-                <span className="rounded-full bg-ink-faint/30 px-2 py-0.5 text-micro text-ink-faint">
-                  {kana.mnemonic.honestLabelFa}
-                </span>
-                {kana.mnemonic.status === 'draft' ? (
-                  <span className="rounded-full border border-amber-600/50 px-2 py-0.5 text-micro text-amber-700">
-                    {fa.curriculum.kanaMnemonicDraft}
-                  </span>
-                ) : null}
-              </div>
-              <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink">
-                <MixedFaJaText text={kana.mnemonic.storyFa} />
-              </p>
-              {kana.mnemonic.pairGlyphs && kana.mnemonic.pairGlyphs.length > 0 ? (
-                <p className="mt-2 flex flex-wrap items-center gap-1 text-small text-ink-faint">
-                  {fa.curriculum.kanaConfusablePre}
-                  <JaBlock className="font-jp text-h3 font-bold text-ink">
-                    {kana.mnemonic.pairGlyphs.join('، ')}
-                  </JaBlock>
-                </p>
-              ) : null}
-            </div>
-          ) : null}
-          {block.confusableNoteFa ? <p className="mt-3 text-small text-ink-faint">{block.confusableNoteFa}</p> : null}
-        </section>
+        <KanaCard
+          kana={kana}
+          showRomaji={block.showRomaji}
+          confusableNoteFa={block.confusableNoteFa}
+          audioUrls={kanaAudioByKanaId?.[kana.kanaId] ?? null}
+          onWritingAttempt={(summary) => {
+            void recordWritingPractice({
+              chapterSlug,
+              stationSlug,
+              blockId: block.id,
+              character: summary.character,
+              mode: summary.mode,
+              verdict: summary.verdict,
+              strokesTotal: summary.strokesTotal,
+              strokesFirstTry: summary.strokesFirstTry,
+              totalMistakes: summary.totalMistakes,
+              hintsShown: summary.hintsShown,
+              completed: summary.completed,
+              durationMs: summary.durationMs,
+            });
+          }}
+        />
       );
     }
 

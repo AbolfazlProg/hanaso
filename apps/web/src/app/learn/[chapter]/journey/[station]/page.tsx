@@ -5,7 +5,7 @@ import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/ser
 import { resolveLearnerId } from '@/lib/learner/server';
 import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
-import { wordAudioUrls } from '@/modules/audio/server';
+import { wordAudioUrls, kanaAudioUrls } from '@/modules/audio/server';
 import { StationRunner } from '@/components/curriculum/station-runner';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 import { fa } from '@/messages/fa';
@@ -78,6 +78,13 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
   for (const w of chapter.words) {
     wordAudioByWord[w.id] = w.wordAudio ? wordAudioUrls(w.wordAudio) : null;
   }
+  // TASK-LEARNING-08 (WP-2/WP-3 — owner feedback A): per-glyph kana audio resolved
+  // server-side from the PRE-GENERATED registry (public/audio/kana — DD-081).
+  // Null = no committed asset yet; the card degrades honestly.
+  const kanaAudioByKanaId: Record<string, { opus: string; m4a: string } | null> = {};
+  for (const block of station.blocks) {
+    if (block.kind === 'kana-card') kanaAudioByKanaId[block.kanaId] = kanaAudioUrls(`kn-${block.kanaId}`);
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-6">
@@ -126,6 +133,7 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
           audioFallbackByLine={audioFallbackByLine}
           audioAvailable={bundle!.bundle.audio.available}
           wordAudioByWord={wordAudioByWord}
+          kanaAudioByKanaId={kanaAudioByKanaId}
         />
       </div>
     </main>

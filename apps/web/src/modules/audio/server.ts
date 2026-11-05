@@ -20,3 +20,6 @@ export {
 // server-side only (node:fs) — RSC pages import it through this public entry.
 export { wordAudioAvailable, wordAudioUrls } from './word-audio';
 export type { WordAudioAssets } from './word-audio';
+// TASK-LEARNING-08 (WP-3): the kana-audio registry (DD-081/DD-121) — same rule.
+export { kanaAudioUrls } from './kana-audio';
+export type { KanaAudioAssets } from './kana-audio';
