@@ -55,7 +55,9 @@ export function gradeExerciseAnswer(ex: Exercise, answer: ExerciseAnswerPayload,
   let eliminateOptionIds: string[] | undefined;
   if (level === 2 && ex.options && ex.correctOptionId) {
     const shuffled = shuffleSeeded(ex.options, ex.id);
-    const victim = shuffled.find((o) => o.id !== ex.correctOptionId && o.id !== (answer.kind === 'option' ? answer.optionId : ''));
+    const victim = shuffled.find(
+      (o) => o.id !== ex.correctOptionId && o.id !== (answer.kind === 'option' ? answer.optionId : ''),
+    );
     if (victim) eliminateOptionIds = [victim.id];
   }
   // F4 (#106): return-to-teaching pointer once the ladder is exhausted.

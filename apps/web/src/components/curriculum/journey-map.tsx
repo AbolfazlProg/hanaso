@@ -108,7 +108,7 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
       {/* progress header */}
       <div className="flex flex-col gap-3 rounded-md border border-ink-faint bg-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-body font-bold">{fa.curriculum.coreProgress} (مسیر اصلی)</p>
+          <p className="text-body font-bold">{fa.curriculum.coreProgress}</p>
           <p className="text-small text-ink-soft" aria-live="polite">
             {faNum(state.coreCompleted)} / {faNum(state.coreTotal)}
           </p>
@@ -170,7 +170,8 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
               if (unitNodes.length === 0) return [];
               const unitCore = unitNodes.filter((n) => n.core);
               const unitDone = unitCore.filter(
-                (n) => n.availability === 'completed' || n.availability === 'skipped' || n.availability === 'needs_retry',
+                (n) =>
+                  n.availability === 'completed' || n.availability === 'skipped' || n.availability === 'needs_retry',
               ).length;
               return [
                 <li key={`unit-${unit.slug}`} className="relative" aria-label={unit.titleFa}>

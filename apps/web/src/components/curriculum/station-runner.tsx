@@ -362,16 +362,16 @@ function BlockView({
                 <MixedFaJaText text={kana.mnemonic.storyFa} />
               </p>
               {kana.mnemonic.pairGlyphs && kana.mnemonic.pairGlyphs.length > 0 ? (
-                <p className="mt-2 text-small text-ink-faint">
+                <p className="mt-2 flex flex-wrap items-center gap-1 text-small text-ink-faint">
                   {fa.curriculum.kanaConfusablePre}
-                  <JaBlock className="font-jp">{kana.mnemonic.pairGlyphs.join('، ')}</JaBlock>
+                  <JaBlock className="font-jp text-h3 font-bold text-ink">
+                    {kana.mnemonic.pairGlyphs.join('، ')}
+                  </JaBlock>
                 </p>
               ) : null}
             </div>
           ) : null}
-          {block.confusableNoteFa ? (
-            <p className="mt-3 text-small text-ink-faint">{block.confusableNoteFa}</p>
-          ) : null}
+          {block.confusableNoteFa ? <p className="mt-3 text-small text-ink-faint">{block.confusableNoteFa}</p> : null}
         </section>
       );
     }

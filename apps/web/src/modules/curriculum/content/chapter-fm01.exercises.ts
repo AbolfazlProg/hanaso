@@ -456,7 +456,13 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'گوش بده (خط ۳): یامادا چه می‌کند؟',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'خودش را معرفی می‌کند', 'سفارش قهوه می‌دهد', 'از میکی دربارهٔ علی می‌پرسد', 0);
+      const { options, correctOptionId } = o3(
+        'x',
+        'خودش را معرفی می‌کند',
+        'سفارش قهوه می‌دهد',
+        'از میکی دربارهٔ علی می‌پرسد',
+        0,
+      );
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {},
@@ -1062,7 +1068,13 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'گوش بده (خط ۱۳): کیم چه کرد؟',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'خودش را کامل معرفی کرد و گفت از کره آمده', 'سفارش نوشیدنی داد', 'از یامادا دربارهٔ علی پرسید', 1);
+      const { options, correctOptionId } = o3(
+        'x',
+        'خودش را کامل معرفی کرد و گفت از کره آمده',
+        'سفارش نوشیدنی داد',
+        'از یامادا دربارهٔ علی پرسید',
+        1,
+      );
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {},
@@ -1216,7 +1228,8 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-dewa-arimasen',
     lineRef: L(11),
     difficulty: 3,
-    promptFa: 'بساز: «[من] دانشجو نیستم. دانش‌آموز هستم.» (がくせい=دانشجو · がくせい‌های مدرسه را با خودت عوض نکن — همین الگو را بساز)',
+    promptFa:
+      'بساز: «[من] دانشجو نیستم. دانش‌آموز هستم.» (がくせい=دانشجو · がくせい‌های مدرسه را با خودت عوض نکن — همین الگو را بساز)',
     chips: [
       { id: 'x1', ja: 'がくせいでは' },
       { id: 'x2', ja: 'ありません' },
@@ -1337,7 +1350,13 @@ export const FM01_EXERCISES: Exercise[] = [
     promptJa: 'アリさんは イランじん___。にほんじん___。',
     clozeTokens: ['アリさんは', 'イランじん', null, '。', 'にほんじん', null, '。'],
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'です + では ありません', 'では ありません + です', 'です + です', 2);
+      const { options, correctOptionId } = o3(
+        'x',
+        'です + では ありません',
+        'では ありません + です',
+        'です + です',
+        2,
+      );
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: { b: 'برعکس شد!', c: 'جملهٔ دوم نفی لازم دارد.' },
@@ -1518,7 +1537,13 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'در نوبت ۱۰، も چه کاری می‌کند؟',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'کیم را به همان گروهِ سورا اضافه می‌کند', 'پرسش را مؤدبانه می‌کند', 'جمله را منفی می‌کند', 0);
+      const { options, correctOptionId } = o3(
+        'x',
+        'کیم را به همان گروهِ سورا اضافه می‌کند',
+        'پرسش را مؤدبانه می‌کند',
+        'جمله را منفی می‌کند',
+        0,
+      );
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: { b: 'آن کار か است.', c: 'آن کار ではありません است.' },
@@ -1563,7 +1588,13 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'چرا گفت‌وگو با تعارف دوطرفه (よろしく) تمام شد؟',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'آیین ژاپنی پایان آشنایی است', 'چون معرفی ناقص ماند', 'چون کسی عصبانی شد', 1);
+      const { options, correctOptionId } = o3(
+        'x',
+        'آیین ژاپنی پایان آشنایی است',
+        'چون معرفی ناقص ماند',
+        'چون کسی عصبانی شد',
+        1,
+      );
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: { b: 'همه کامل معرفی شدند.', c: 'هیچ تنش‌ای نیست!' },
@@ -1738,7 +1769,13 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'چه کسی با いいえ شروع کرد و چرا؟',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'سورا — فرض غلط را مؤدبانه رد کرد', 'یامادا — از خبر ناراحت شد', 'کیم — خودش را معرفی کرد', 0);
+      const { options, correctOptionId } = o3(
+        'x',
+        'سورا — فرض غلط را مؤدبانه رد کرد',
+        'یامادا — از خبر ناراحت شد',
+        'کیم — خودش را معرفی کرد',
+        0,
+      );
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: { b: 'ناراحتی در کار نیست — اصلاح اطلاعات است.', c: 'کیم در خط ۱۳ حرف می‌زند.' },
@@ -1758,7 +1795,13 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'یامادا اطلاعات تازه‌ای دربارهٔ کیم گرفت — واکنش او چه بود؟ (خط ۱۲)',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'そうですか。わかりました。', 'はじめまして。キムです。', 'わたしは にほんじんです。', 1);
+      const { options, correctOptionId } = o3(
+        'x',
+        'そうですか。わかりました。',
+        'はじめまして。キムです。',
+        'わたしは にほんじんです。',
+        1,
+      );
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: { b: 'این معرفیِ خودِ کیم است (خط ۱۳).', c: 'این معرفی یامادا در خط ۳ است.' },

@@ -119,8 +119,7 @@ export function gateEqa1(chapter: Chapter): EqaFinding[] {
      * audio item whose targetConcept is a WORD id is a WORD-LEVEL drill (شنیدنِ خودِ
      * واژه → معنی — 13-06 §۱ قدم ۴: recognition، نه درک خط): the line only CARRIES
      * the word's audio; its grammar is not being assessed. Exempt from layer 2. */
-    const isWordLevelAudioDrill =
-      ex.type === 'audio-meaning' && chapter.words.some((w) => w.id === ex.targetConcept);
+    const isWordLevelAudioDrill = ex.type === 'audio-meaning' && chapter.words.some((w) => w.id === ex.targetConcept);
     if (LINE_COMPREHENSION_TYPES.has(ex.type) && !isWordLevelAudioDrill) {
       const line = ex.audioLineRef ?? ex.lineRef;
       if (line) {

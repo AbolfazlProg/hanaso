@@ -154,9 +154,7 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
     );
     expect(deepdiveExamples).toContain('にほんご');
     for (const station of chapter.stations.filter((s) => s.core)) {
-      const examples = station.blocks.flatMap((b) =>
-        b.kind === 'example-set' ? b.examples.map((e) => e.ja) : [],
-      );
+      const examples = station.blocks.flatMap((b) => (b.kind === 'example-set' ? b.examples.map((e) => e.ja) : []));
       for (const ja of examples) {
         // 〜ご (language suffix) never on the main path — NB: ちゅうごく contains ご
         // as a syllable; the O3 rule targets the language-suffix pattern (〜ご endings).

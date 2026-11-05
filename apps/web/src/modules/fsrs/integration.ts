@@ -112,14 +112,42 @@ export function listChapterCards(chapter: Chapter): FsrsCardDescriptor[] {
   };
 
   for (const w of chapter.words) {
-    cards.push({ itemId: w.fsrs.w, kind: 'w', wave: 1, enrollStationSlug: enrollStationFor(w.fsrs.w), contentRef: w.id, sourceDialogueLineId: w.lineRef });
-    cards.push({ itemId: w.fsrs.s, kind: 's', wave: 1, enrollStationSlug: enrollStationFor(w.fsrs.s), contentRef: w.id, sourceDialogueLineId: w.lineRef });
+    cards.push({
+      itemId: w.fsrs.w,
+      kind: 'w',
+      wave: 1,
+      enrollStationSlug: enrollStationFor(w.fsrs.w),
+      contentRef: w.id,
+      sourceDialogueLineId: w.lineRef,
+    });
+    cards.push({
+      itemId: w.fsrs.s,
+      kind: 's',
+      wave: 1,
+      enrollStationSlug: enrollStationFor(w.fsrs.s),
+      contentRef: w.id,
+      sourceDialogueLineId: w.lineRef,
+    });
   }
   for (const g of chapter.grammar) {
-    cards.push({ itemId: g.fsrs.gr, kind: 'gr', wave: 1, enrollStationSlug: enrollStationFor(g.fsrs.gr), contentRef: g.id, sourceDialogueLineId: g.lineRefs[0] });
+    cards.push({
+      itemId: g.fsrs.gr,
+      kind: 'gr',
+      wave: 1,
+      enrollStationSlug: enrollStationFor(g.fsrs.gr),
+      contentRef: g.id,
+      sourceDialogueLineId: g.lineRefs[0],
+    });
   }
   for (const e of chapter.expressions) {
-    cards.push({ itemId: e.fsrs.chrk, kind: 'chrk', wave: 1, enrollStationSlug: enrollStationFor(e.fsrs.chrk), contentRef: e.id, sourceDialogueLineId: e.lineRef });
+    cards.push({
+      itemId: e.fsrs.chrk,
+      kind: 'chrk',
+      wave: 1,
+      enrollStationSlug: enrollStationFor(e.fsrs.chrk),
+      contentRef: e.id,
+      sourceDialogueLineId: e.lineRef,
+    });
   }
   // Station-declared items not already covered (s-line cards, kn cards, extras).
   const known = new Set(cards.map((c) => c.itemId));

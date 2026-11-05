@@ -151,27 +151,39 @@ export async function POST(req: Request) {
   const attemptLoop = chapterState.remediationCount;
   for (const [measure, score] of Object.entries(graded.scores)) {
     if (score === null) continue;
-    recordLearningEvent('gate_measure_completed', {
-      chapter_id: chapterSlug,
-      measure,
-      score,
-      attempt_loop: attemptLoop,
-    }, userId);
+    recordLearningEvent(
+      'gate_measure_completed',
+      {
+        chapter_id: chapterSlug,
+        measure,
+        score,
+        attempt_loop: attemptLoop,
+      },
+      userId,
+    );
   }
   if (graded.outcome === 'remediate') {
     for (const stationSlug of graded.remediationStations) {
-      recordLearningEvent('remediation_triggered', {
-        chapter_id: chapterSlug,
-        measure: '',
-        target_station_id: stationSlug,
-      }, userId);
+      recordLearningEvent(
+        'remediation_triggered',
+        {
+          chapter_id: chapterSlug,
+          measure: '',
+          target_station_id: stationSlug,
+        },
+        userId,
+      );
     }
   }
-  recordLearningEvent('chapter_completed', {
-    chapter_id: chapterSlug,
-    outcome: graded.outcome === 'passed' ? 'understood' : 'remediate',
-    attempt_loop: attemptLoop,
-  }, userId);
+  recordLearningEvent(
+    'chapter_completed',
+    {
+      chapter_id: chapterSlug,
+      outcome: graded.outcome === 'passed' ? 'understood' : 'remediate',
+      attempt_loop: attemptLoop,
+    },
+    userId,
+  );
 
   return NextResponse.json(
     ok({

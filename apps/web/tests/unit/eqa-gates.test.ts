@@ -106,7 +106,8 @@ describe('EQA-1 (prerequisite) — mutations MUST be rejected', () => {
     const findings = gateEqa1(ch);
     expect(
       findings.some(
-        (f) => f.subject === 'ex-fm01-v1-p2-txt-1' && f.severity === 'error' && f.messageFa.includes('gr-desu-identity'),
+        (f) =>
+          f.subject === 'ex-fm01-v1-p2-txt-1' && f.severity === 'error' && f.messageFa.includes('gr-desu-identity'),
       ),
     ).toBe(true);
   });
@@ -186,7 +187,13 @@ describe('EQA-3 (recall-first composition) — mutations MUST be rejected', () =
   it('rejects a practice pool that drops below the 60% recall-first share', () => {
     const ch = cloneChapter();
     // Convert five recall items to the weakest recognition type (TASK-LEARNING-06 ids).
-    for (const id of ['ex-fm01-g1-order-1', 'ex-fm01-g1-cloze-1', 'ex-fm01-p1-c2-prod-1', 'ex-fm01-p1-c3-decode-1', 'ex-fm01-e2-order-1']) {
+    for (const id of [
+      'ex-fm01-g1-order-1',
+      'ex-fm01-g1-cloze-1',
+      'ex-fm01-p1-c2-prod-1',
+      'ex-fm01-p1-c3-decode-1',
+      'ex-fm01-e2-order-1',
+    ]) {
       const ex = ch.exercises[id]!;
       ex.type = 'meaning-select';
       ex.options = [
@@ -293,8 +300,8 @@ describe('EQA-5 (objective coverage) — mutations MUST be rejected', () => {
     const ch = cloneChapter();
     // sov-bridge-persian: remove its gate item (gate-m3-3) AND its practice evidence.
     delete ch.exercises['ex-fm01-gate-m3-3'];
-    ch.stations.find((s) => s.slug === 'stn-fm01-04-structure')!.blocks = ch
-      .stations.find((s) => s.slug === 'stn-fm01-04-structure')!
+    ch.stations.find((s) => s.slug === 'stn-fm01-04-structure')!.blocks = ch.stations
+      .find((s) => s.slug === 'stn-fm01-04-structure')!
       .blocks.filter((b) => !(b.kind === 'exercise'));
     ch.stations.find((s) => s.slug === 'stn-fm01-04-structure')!.completion = { kind: 'viewed' };
     const findings = gateEqa5(ch).filter((f) => f.subject === 'sov-bridge-persian');

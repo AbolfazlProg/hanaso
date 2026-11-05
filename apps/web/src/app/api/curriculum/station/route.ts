@@ -110,11 +110,15 @@ export async function POST(req: Request) {
     const current = await store.get(userId, station.slug);
     const next = applyStationEvent(current ?? undefined, { type: 'station_entered', stationSlug: station.slug });
     const state = next ? await store.upsert(userId, station.slug, next) : current;
-    recordLearningEvent('station_entered', {
-      chapter_id: payload.chapterSlug,
-      station_id: station.slug,
-      ...(station.core ? {} : { source: 'curious' as const }),
-    }, userId);
+    recordLearningEvent(
+      'station_entered',
+      {
+        chapter_id: payload.chapterSlug,
+        station_id: station.slug,
+        ...(station.core ? {} : { source: 'curious' as const }),
+      },
+      userId,
+    );
     return NextResponse.json(ok({ stationSlug: station.slug, state }), { headers: { 'cache-control': 'no-store' } });
   }
 
@@ -130,18 +134,26 @@ export async function POST(req: Request) {
     await store.incrementAttempts(userId, station.slug);
     // TASK-LEARNING-06: analytics contract (in-memory store — pipeline = M6) +
     // weak-point signal when the F-ladder is exhausted (#106/F4).
-    recordLearningEvent('exercise_answered', {
-      exercise_id: exercise.id,
-      type: exercise.type,
-      correct: outcome.correct,
-      attempt_no: payload.attemptNo,
-    }, userId);
-    if (!outcome.correct && outcome.level >= 3) {
-      recordLearningEvent('exercise_weak_point', {
+    recordLearningEvent(
+      'exercise_answered',
+      {
         exercise_id: exercise.id,
-        station_id: station.slug,
-        ...(exercise.referenceBlockId ? { reference_block_id: exercise.referenceBlockId } : {}),
-      }, userId);
+        type: exercise.type,
+        correct: outcome.correct,
+        attempt_no: payload.attemptNo,
+      },
+      userId,
+    );
+    if (!outcome.correct && outcome.level >= 3) {
+      recordLearningEvent(
+        'exercise_weak_point',
+        {
+          exercise_id: exercise.id,
+          station_id: station.slug,
+          ...(exercise.referenceBlockId ? { reference_block_id: exercise.referenceBlockId } : {}),
+        },
+        userId,
+      );
     }
     return NextResponse.json(ok({ outcome }), { headers: { 'cache-control': 'no-store' } });
   }
@@ -226,29 +238,41 @@ export async function POST(req: Request) {
 
   // TASK-LEARNING-06: analytics contract — completion + FSRS enrollment data
   // (engine honestly marked not-integrated; the future engine replays these).
-  recordLearningEvent('station_completed', {
-    chapter_id: payload.chapterSlug,
-    station_id: station.slug,
-    score,
-  }, userId);
-  if (station.fsrsItems.length > 0) {
-    recordLearningEvent('fsrs_cards_enrolled', {
+  recordLearningEvent(
+    'station_completed',
+    {
       chapter_id: payload.chapterSlug,
       station_id: station.slug,
-      items: station.fsrsItems,
-      engine: 'not-integrated',
-    }, userId);
+      score,
+    },
+    userId,
+  );
+  if (station.fsrsItems.length > 0) {
+    recordLearningEvent(
+      'fsrs_cards_enrolled',
+      {
+        chapter_id: payload.chapterSlug,
+        station_id: station.slug,
+        items: station.fsrsItems,
+        engine: 'not-integrated',
+      },
+      userId,
+    );
   }
   // Per-unit checkpoint event (T-79 grouping — the Ch02 unit / kana island moment).
   const unit = bundle.chapter.units?.find((u) => u.stationSlugs.includes(station.slug));
   if (unit) {
     const unitStates = await store.listForUnit(userId, unit.stationSlugs);
     const done = unitStates.filter((s) => s.status !== 'in_progress').length;
-    recordLearningEvent('unit_checkpoint_completed', {
-      chapter_id: payload.chapterSlug,
-      unit_id: unit.slug,
-      stations_completed: done,
-    }, userId);
+    recordLearningEvent(
+      'unit_checkpoint_completed',
+      {
+        chapter_id: payload.chapterSlug,
+        unit_id: unit.slug,
+        stations_completed: done,
+      },
+      userId,
+    );
   }
 
   // chapter aggregate: all core stations terminal → stations_complete

@@ -36,7 +36,7 @@ export default async function LearnPage() {
         <p className="text-lead text-ink-soft">{fa.curriculum.learnIndexLead}</p>
       </header>
 
-      {cards.map(({ chapter, access, state }) => (
+      {cards.map(({ chapter, access, state }, index) => (
         <article
           key={chapter.slug}
           className="relative overflow-hidden rounded-md border-2 border-indigo bg-card p-6 shadow-[var(--shadow-card)]"
@@ -45,7 +45,7 @@ export default async function LearnPage() {
             aria-hidden
             className="pointer-events-none absolute -top-4 -end-4 grid size-24 place-items-center rounded-full bg-indigo text-2xl font-black text-indigo-mist"
           >
-            {new Intl.NumberFormat('fa-IR').format(chapter.orderInLevel)}
+            {new Intl.NumberFormat('fa-IR').format(index + 1)}
           </span>
           <p className="text-caption text-ink-soft">
             {fa.curriculum.chapterBadge} · {fa.curriculum.levelLabel} {chapter.levelCode}

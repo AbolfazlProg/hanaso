@@ -105,7 +105,7 @@ export const fa = {
     prerequisitesNote: 'پیش‌نیاز: الفبای کانا (مرحلهٔ ۱) — بدون آن هم می‌توانی شروع کنی.',
     /* island journey */
     journeyTitle: 'مسیر جزیره‌ای فصل',
-    journeyLead: 'هر ایستگاه یک مهنگ است؛ مسیر اصلی را دنبال کن، شاخه‌های اختیاری برای کنجکاوها.',
+    journeyLead: 'هر ایستگاه یک لنگرگاه است؛ مسیر اصلی را دنبال کن، شاخه‌های اختیاری برای کنجکاوها.',
     stationLocked: 'قفل',
     stationAvailable: 'آماده',
     stationInProgress: 'در جریان',
