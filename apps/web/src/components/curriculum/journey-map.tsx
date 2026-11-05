@@ -90,12 +90,14 @@ function faNum(n: number): string {
   return new Intl.NumberFormat('fa-IR').format(n);
 }
 
-/** Old-paper grain: warm sand base + faint fiber/grid gradients (all Aizen tokens). */
+/** Old-paper grain: warm sand base + visible fiber/grid gradients + corner
+ *  vignette (all Aizen tokens; VLM review pass 1 asked for a READABLE texture). */
 const PAPER_TEXTURE =
-  'radial-gradient(ellipse 120% 60% at 18% 0%, rgba(23, 48, 73, 0.045), transparent 55%),' +
-  'radial-gradient(ellipse 120% 50% at 85% 100%, rgba(194, 64, 28, 0.035), transparent 55%),' +
-  'repeating-linear-gradient(93deg, rgba(43, 42, 40, 0.022) 0 2px, transparent 2px 7px),' +
-  'repeating-linear-gradient(2deg, rgba(43, 42, 40, 0.014) 0 1px, transparent 1px 5px),' +
+  'radial-gradient(ellipse 140% 90% at 12% -10%, rgba(23, 48, 73, 0.07), transparent 52%),' +
+  'radial-gradient(ellipse 130% 80% at 90% 108%, rgba(194, 64, 28, 0.055), transparent 50%),' +
+  'repeating-linear-gradient(93deg, rgba(43, 42, 40, 0.05) 0 2px, transparent 2px 8px),' +
+  'repeating-linear-gradient(2deg, rgba(43, 42, 40, 0.032) 0 1px, transparent 1px 6px),' +
+  'radial-gradient(ellipse 90% 90% at 50% 50%, transparent 55%, rgba(43, 42, 40, 0.05) 100%),' +
   'var(--color-surface-warm)';
 
 /** Seigaiha wave motif (DD-084 signature) as a subtle SVG overlay for island plaques. */
@@ -332,23 +334,24 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
           {/* the dotted winding path (decorative — the SVG sits under the stops) */}
           {pathD && (
             <svg aria-hidden className="pointer-events-none absolute inset-0 z-0 h-full w-full">
+              {/* soft ink halo under the dots — makes the trail read as a path from afar */}
               <path
                 d={pathD}
                 fill="none"
                 stroke="var(--color-indigo)"
-                strokeOpacity={0.34}
-                strokeWidth={3.5}
+                strokeOpacity={0.12}
+                strokeWidth={11}
                 strokeLinecap="round"
-                strokeDasharray="0.1 13"
+                strokeDasharray="0.1 12"
               />
               <path
                 d={pathD}
                 fill="none"
                 stroke="var(--color-indigo)"
-                strokeOpacity={0.1}
-                strokeWidth={9}
+                strokeOpacity={0.55}
+                strokeWidth={5}
                 strokeLinecap="round"
-                strokeDasharray="0.1 13"
+                strokeDasharray="0.1 12"
               />
             </svg>
           )}
@@ -500,60 +503,45 @@ function UnitPlaque({ unit, done, total }: { unit: JourneyUnitDto; done: number;
 }
 
 /**
- * One station waypoint on the trail. Marker SHAPE carries the state
- * (filled+check · double-ring+pulse · open ring · dashed square), the optional
- * branch adds a diamond badge; the card stays a calm readable list row.
+ * One station waypoint on the trail: the MARKER sits on the dotted rail (its
+ * own column — the path threads through the markers, never under the cards),
+ * the readable card rides beside it. Marker SHAPE carries the state
+ * (filled+check · double-ring+pulse · open ring · dashed square · diamond for
+ * optional); on ≥sm screens the markers sway off the rail so the path visibly
+ * winds (VLM review pass 1: the trail must read as a trail, not a list).
  */
 function TrailNode({ node, index, isFocus }: { node: JourneyNodeDto; index: number; isFocus: boolean }) {
   const done = isDone(node.availability);
   const current = isCurrent(node.availability) || isFocus;
   const locked = node.availability === 'locked';
-  // gentle serpentine on ≥sm screens: the marker column sways, the path follows
-  const sway = ['sm:ms-0', 'sm:ms-10', 'sm:ms-20', 'sm:ms-10'][index % 4] ?? 'sm:ms-0';
+  // gentle serpentine on ≥sm screens: the MARKER sways on the rail, cards stay aligned
+  const sway = ['', 'sm:translate-x-4', 'sm:translate-x-8', 'sm:translate-x-4'][index % 4] ?? '';
 
   return (
     <li
-      className={`relative z-10 ${sway} transition-[margin]`}
+      className="relative z-10"
       data-trail-focus={isFocus ? 'true' : undefined}
       aria-current={isFocus ? 'step' : undefined}
     >
-      <div
-        className={[
-          'flex items-start gap-4 rounded-md border p-4 backdrop-blur-[1px] transition-colors',
-          locked
-            ? 'border-ink-faint/60 bg-surface-muted/70 opacity-80'
-            : done
-              ? 'border-success/60 bg-card'
-              : current
-                ? 'border-shu bg-card shadow-[var(--shadow-raised)]'
-                : 'border-ai bg-card shadow-[var(--shadow-card)]',
-        ].join(' ')}
-      >
-        {/* the WAYPOINT marker — shape+marker encode the state (mission §5) */}
-        <span aria-hidden className="relative shrink-0 py-0.5">
+      <div className="flex items-start gap-3 sm:gap-4">
+        {/* the rail column — the WAYPOINT marker (shape+marker encode the state, mission §5) */}
+        <span aria-hidden className={`relative flex w-12 shrink-0 justify-center sm:w-14 ${sway}`}>
           <span
             data-waypoint=""
             className={[
-              'relative grid size-12 place-items-center',
+              'relative grid size-11 place-items-center bg-card sm:size-12',
               // shape families: circle (core) · dashed square (locked) · diamond (optional)
               locked
-                ? 'rounded-[6px] border-2 border-dashed border-ink-faint bg-surface-sunken text-ink-faint'
+                ? 'rounded-[6px] border-[3px] border-dashed border-ink-faint bg-surface-sunken text-ink-faint'
                 : node.core
-                  ? 'rounded-full'
-                  : 'rotate-45 rounded-[6px] border-2',
-              !locked && node.core
-                ? done
-                  ? 'border-2 border-success bg-success/15 text-success'
-                  : current
-                    ? 'border-2 border-shu bg-shu/10 text-shu'
-                    : 'border-2 border-ai bg-indigo-wash/60 text-ai'
-                : '',
-              !locked && !node.core
+                  ? 'rounded-full border-[3px]'
+                  : 'rotate-45 rounded-[6px] border-[3px]',
+              !locked
                 ? done
                   ? 'border-success bg-success/15 text-success'
                   : current
                     ? 'border-shu bg-shu/10 text-shu'
-                    : 'border-ai bg-indigo-wash/60 text-ai'
+                    : 'border-ai bg-indigo-wash/70 text-ai'
                 : '',
             ].join(' ')}
           >
@@ -570,50 +558,66 @@ function TrailNode({ node, index, isFocus }: { node: JourneyNodeDto; index: numb
           </span>
           {/* current-stop pulse ring — motion-safe only (prefers-reduced-motion respected) */}
           {current && !done && (
-            <span className="absolute inset-0 -z-10 animate-[pulse-ring_2.2s_ease-out_infinite] rounded-full border-2 border-shu/50 motion-reduce:animate-none" />
+            <span className="absolute top-0 grid size-11 place-items-center sm:size-12">
+              <span className="absolute inset-0 animate-[pulse-ring_2.2s_ease-out_infinite] rounded-full border-2 border-shu/50 motion-reduce:animate-none" />
+            </span>
           )}
         </span>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-body font-bold">{node.titleFa}</h3>
-            {!node.core && (
-              <span className="rounded-full border border-ai px-2 py-0.5 text-caption text-ai">
-                {fa.curriculum.stationOptional}
-              </span>
-            )}
-            {isFocus && !done && (
-              <span className="rounded-full bg-shu px-2 py-0.5 text-caption font-bold text-paper">
-                {fa.curriculum.trailLegendCurrent}
-              </span>
-            )}
+        {/* the station card — a calm readable row beside its waypoint */}
+        <div
+          className={[
+            'flex min-w-0 flex-1 items-start gap-3 rounded-md border bg-card p-4 transition-colors',
+            locked
+              ? 'border-ink-faint/60 bg-surface-muted/70 opacity-80'
+              : done
+                ? 'border-success/60'
+                : current
+                  ? 'border-shu shadow-[var(--shadow-raised)]'
+                  : 'border-ai shadow-[var(--shadow-card)]',
+          ].join(' ')}
+        >
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-body font-bold">{node.titleFa}</h3>
+              {!node.core && (
+                <span className="rounded-full border border-ai px-2 py-0.5 text-caption text-ai">
+                  {fa.curriculum.stationOptional}
+                </span>
+              )}
+              {isFocus && !done && (
+                <span className="rounded-full bg-shu px-2 py-0.5 text-caption font-bold text-paper">
+                  {fa.curriculum.trailLegendCurrent}
+                </span>
+              )}
+            </div>
+            <p className="text-small text-ink-soft">{node.objectiveFa}</p>
+            <p className="text-caption text-ink-faint">
+              {availabilityLabel(node.availability)} · {faNum(node.estMinutes)} {fa.curriculum.minutes}
+            </p>
           </div>
-          <p className="text-small text-ink-soft">{node.objectiveFa}</p>
-          <p className="text-caption text-ink-faint">
-            {availabilityLabel(node.availability)} · {faNum(node.estMinutes)} {fa.curriculum.minutes}
-          </p>
-        </div>
 
-        {node.availability !== 'locked' ? (
-          <Link
-            href={node.href}
-            className="grid size-11 shrink-0 place-items-center self-center rounded-md border border-ai text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-            aria-label={`${node.titleFa} — ${availabilityLabel(node.availability)}`}
-          >
-            {done ? (
-              <CircleCheck aria-hidden className="size-5 text-success" />
-            ) : (
-              <ArrowLeft aria-hidden className="size-5" />
-            )}
-          </Link>
-        ) : (
-          <span
-            className="grid size-11 shrink-0 place-items-center self-center text-ink-faint"
-            aria-label={fa.curriculum.stationLocked}
-          >
-            <Lock aria-hidden className="size-5" />
-          </span>
-        )}
+          {node.availability !== 'locked' ? (
+            <Link
+              href={node.href}
+              className="grid size-11 shrink-0 place-items-center self-center rounded-md border border-ai text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+              aria-label={`${node.titleFa} — ${availabilityLabel(node.availability)}`}
+            >
+              {done ? (
+                <CircleCheck aria-hidden className="size-5 text-success" />
+              ) : (
+                <ArrowLeft aria-hidden className="size-5" />
+              )}
+            </Link>
+          ) : (
+            <span
+              className="grid size-11 shrink-0 place-items-center self-center text-ink-faint"
+              aria-label={fa.curriculum.stationLocked}
+            >
+              <Lock aria-hidden className="size-5" />
+            </span>
+          )}
+        </div>
       </div>
     </li>
   );
