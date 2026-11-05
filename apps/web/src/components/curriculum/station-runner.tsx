@@ -21,6 +21,7 @@ import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
+import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
@@ -305,6 +306,72 @@ function BlockView({
               <p className="mt-2 text-small text-ink-soft">{line.fa}</p>
             </div>
           )}
+        </section>
+      );
+    }
+
+    case 'kana-card': {
+      // TASK-LEARNING-06 (DD-122 / TB-KanaCard — Issue #94): glyph card from the
+      // KanaItem registry. Romaji follows the unit-level fading policy (block data);
+      // mnemonics carry their HONEST review status (pilot_draft = human review
+      // pending — OQ-051) and are never presented as final content.
+      const kana = KANA_ITEMS_BY_ID[block.kanaId];
+      if (!kana) {
+        return (
+          <section className="rounded-md border border-danger/40 bg-card p-5">
+            <p className="text-body text-ink">{fa.curriculum.kanaCardMissing(block.kanaId)}</p>
+          </section>
+        );
+      }
+      return (
+        <section className="rounded-md border border-ink-faint bg-card p-5" aria-label={kana.romaji}>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <JaBlock className="font-jp text-[clamp(3.5rem,12vw,6rem)] font-bold leading-none text-ink">
+              {kana.glyph}
+            </JaBlock>
+            <div className="min-w-[8rem] flex-1 space-y-2 text-left" dir="ltr">
+              {block.showRomaji ? (
+                <p className="font-mono text-h3 font-bold text-indigo">{kana.romaji}</p>
+              ) : (
+                <p className="text-small text-ink-faint">{fa.curriculum.kanaRomajiHidden}</p>
+              )}
+              {kana.romajiNoteFa ? <p className="text-small text-ink-faint">{kana.romajiNoteFa}</p> : null}
+              {kana.hostWord ? (
+                <p className="text-body text-ink">
+                  <JaBlock className="font-jp">{kana.hostWord.word}</JaBlock>
+                  <span className="mx-1 text-ink-faint">—</span>
+                  {kana.hostWord.meaningFa}
+                </p>
+              ) : null}
+            </div>
+          </div>
+          {kana.mnemonic ? (
+            <div className="mt-4 rounded-md bg-surface-2 p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-small font-bold text-ink">{kana.mnemonic.coreImageFa}</span>
+                <span className="rounded-full bg-ink-faint/30 px-2 py-0.5 text-micro text-ink-faint">
+                  {kana.mnemonic.honestLabelFa}
+                </span>
+                {kana.mnemonic.status === 'draft' ? (
+                  <span className="rounded-full border border-amber-600/50 px-2 py-0.5 text-micro text-amber-700">
+                    {fa.curriculum.kanaMnemonicDraft}
+                  </span>
+                ) : null}
+              </div>
+              <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink">
+                <MixedFaJaText text={kana.mnemonic.storyFa} />
+              </p>
+              {kana.mnemonic.pairGlyphs && kana.mnemonic.pairGlyphs.length > 0 ? (
+                <p className="mt-2 text-small text-ink-faint">
+                  {fa.curriculum.kanaConfusablePre}
+                  <JaBlock className="font-jp">{kana.mnemonic.pairGlyphs.join('، ')}</JaBlock>
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+          {block.confusableNoteFa ? (
+            <p className="mt-3 text-small text-ink-faint">{block.confusableNoteFa}</p>
+          ) : null}
         </section>
       );
     }
@@ -839,6 +906,10 @@ function roleLabel(role: string): string {
       return 'بافت جدید';
     case 'faded':
       return 'جای‌خالی';
+    case 'reading':
+      // TASK-LEARNING-06: reading-moment item (05A §۴) — a real word the learner
+      // can now decode; label communicates the «حالا می‌توانی بخوانی» moment.
+      return 'حالا می‌توانی بخوانی';
     default:
       return role;
   }

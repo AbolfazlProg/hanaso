@@ -25,6 +25,19 @@ export interface GradeOutcome {
   feedbackFa: string;
   /** Set only at level 3 (reveal). */
   reveal?: string;
+  /**
+   * TASK-LEARNING-06 (Issue #106 — ladder step F2): on a WRONG 2nd attempt the
+   * server deterministically eliminates one wrong option (never the key) so the
+   * client can grey it out. Absent for non-option exercises / when no wrong
+   * option is eliminable.
+   */
+  eliminateOptionIds?: string[];
+  /**
+   * TASK-LEARNING-06 (Issue #106 — ladder step F4): the authored teaching block
+   * this exercise returns to when the ladder is exhausted (wrong at F3). The
+   * client renders «بازگشت به آموزش» and a weak-point event is recorded.
+   */
+  referenceBlockId?: string;
 }
 
 /** Grade one answer at a given attempt number (1-based) against the ladder. */
@@ -36,7 +49,18 @@ export function gradeExerciseAnswer(ex: Exercise, answer: ExerciseAnswerPayload,
   const level = attemptNo <= 1 ? 1 : attemptNo === 2 ? 2 : 3;
   const feedbackFa = level === 1 ? ex.feedback.f1Fa : level === 2 ? ex.feedback.f2HintFa : ex.feedback.f3ExplainFa;
   const reveal = level >= 3 ? revealText(ex) : undefined;
-  return { correct: false, level, feedbackFa, reveal };
+  // F2 (#106): eliminate exactly one wrong option — first authored wrong option
+  // after the deterministic shuffle (stable, never the key, never the learner's
+  // own wrong pick when avoidable).
+  let eliminateOptionIds: string[] | undefined;
+  if (level === 2 && ex.options && ex.correctOptionId) {
+    const shuffled = shuffleSeeded(ex.options, ex.id);
+    const victim = shuffled.find((o) => o.id !== ex.correctOptionId && o.id !== (answer.kind === 'option' ? answer.optionId : ''));
+    if (victim) eliminateOptionIds = [victim.id];
+  }
+  // F4 (#106): return-to-teaching pointer once the ladder is exhausted.
+  const referenceBlockId = level >= 3 ? ex.referenceBlockId : undefined;
+  return { correct: false, level, feedbackFa, reveal, eliminateOptionIds, referenceBlockId };
 }
 
 function isCorrect(ex: Exercise, answer: ExerciseAnswerPayload): boolean {
@@ -50,6 +74,10 @@ function isCorrect(ex: Exercise, answer: ExerciseAnswerPayload): boolean {
     case 'speaker-identify':
     case 'listen-minimal-pair':
     case 'listen-who-asked':
+    // TASK-LEARNING-06: kana shapes are option-based (glyph→romaji / romaji→glyph / word→romaji).
+    case 'kana-recognition':
+    case 'kana-recall':
+    case 'kana-decode':
       return answer.kind === 'option' && answer.optionId === ex.correctOptionId;
     case 'word-order':
     case 'dialogue-order':

@@ -165,7 +165,11 @@ export function gateEqa2(chapter: Chapter): EqaFinding[] {
     if (RECEIPT_STATION_TYPES.has(station.type)) continue; // anchor/mastery: stage A/D by design
 
     const explanationRun = longestRun(station.blocks.map((b) => ({ predicate: blockIsExplanation(b) })));
-    const vocabRun = longestRun(station.blocks.map((b) => ({ predicate: b.kind === 'vocab-card' })));
+    // TASK-LEARNING-06: kana-card packets follow the SAME packet rule as vocab cards
+    // (05A experience spec §۲ — 2–3 cards then retrieval; DD-94 §۳-۱ vocab row).
+    const vocabRun = longestRun(
+      station.blocks.map((b) => ({ predicate: b.kind === 'vocab-card' || b.kind === 'kana-card' })),
+    );
     const receptiveStretch = longestRun(station.blocks.map((b) => ({ predicate: blockIsReceptive(b) })));
 
     const alternation: string[] = [];

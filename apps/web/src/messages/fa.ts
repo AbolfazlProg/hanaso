@@ -118,6 +118,20 @@ export const fa = {
     understoodBadge: 'این مکالمه را فهمیدی',
     goToGate: 'آزمون فهم مکالمه',
     nextUp: 'ایستگاه بعدی',
+    /* TASK-LEARNING-06 — kana cards + two-level map + chapter prereq */
+    kanaCardMissing: (glyph: string) => `کارت کانا «${glyph}» در رجیستری پیدا نشد — محتوای ایستگاه ناقص است.`,
+    kanaRomajiHidden: 'روماجی در این مرحله نمایش داده نمی‌شود — از صدای کانا در تمرین بعدی حدس بزن.',
+    kanaMnemonicDraft: 'پیش‌نویس — در بازبینی انسانی',
+    kanaConfusablePre: 'جفت اشتباه‌پذیر: ',
+    unitProgress: 'بخش',
+    islandMap: 'جزایر فصل',
+    chapterLockedTitle: 'این فصل قفل است',
+    chapterLockedBody: 'برای ورود به این فصل، ابتدا گیت فهم فصل قبل را بگذران.',
+    goPrerequisite: 'رفتن به فصل پیش‌نیاز',
+    prevStation: 'ایستگاه قبلی',
+    /* feedback ladder F2/F4 (Issue #106) */
+    eliminatedOption: 'این گزینه حذف شد',
+    returnToTeaching: 'بازگشت به آموزش',
     /* station runner */
     continueBlock: 'ادامه',
     checkAnswer: 'بررسی پاسخ',

@@ -8,6 +8,8 @@
  * Concept universe of a chapter:
  *  - word ids (voc-*) — taught by vocab-card blocks
  *  - expression ids (chrk-*) — taught by expression-card blocks
+ *  - kana item ids (hira-* / kata-* — TASK-LEARNING-06) — taught by kana-card blocks
+ *    (the registry id IS the concept id for kana exercises — CONTENT-106)
  *  - grammar cluster ids (gr-*) — taught by the grammar station anchoring the
  *    cluster's lines (cluster.lineRefs ⊆ station.lineRefs, station type grammar;
  *    ambiguous anchoring is reported by the model, never guessed)
@@ -69,6 +71,8 @@ export function buildTaughtModel(chapter: Chapter): TaughtModel {
     for (const block of station.blocks) {
       if (block.kind === 'vocab-card') concepts.add(block.wordId);
       if (block.kind === 'expression-card') concepts.add(block.expressionId);
+      // TASK-LEARNING-06 (DD-122): the kana-card block teaches its registry concept.
+      if (block.kind === 'kana-card') concepts.add(block.kanaId);
     }
     // grammar clusters anchored to this station
     for (const [clusterId, hosts] of clusterHosts) {

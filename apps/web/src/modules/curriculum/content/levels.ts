@@ -18,14 +18,21 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
     canDoFa: 'هر دو خط کانا را روان می‌خواند؛ اولین کلمه‌ها را با صدا می‌شناسد.',
     orderInCourse: 1,
     caps: {
+      // TASK-LEARNING-06 (DD-090/120 — the kana chapter is L1's registered independent
+      // exception): L1 IS the kana band — one 31-station chapter across 4 islands.
+      // Caps reflect that single chapter (the [target, hardMax] S3 window covers the
+      // 32-unit scope of section 18; minutes = whole-stage budget).
       vocabCore: [0, 0],
       grammarClusters: [0, 0],
-      stationsCore: [4, 6],
-      chapterMinutes: [10, 20],
+      stationsCore: [24, 32],
+      chapterMinutes: [280, 420],
       dialogueLines: [2, 4],
       listeningSpeed: 0.8,
       furigana: 'all',
-      gate: { weighted: 0.7, minMeasure: 0.5 },
+      // Kana gate G1 (DD-120 / OQ-052 — PROPOSED 05A values, owner-tunable data):
+      // weighted ≥90% AND no measure <80% — the strictest gate of the journey
+      // (kana errors compound in all future reading).
+      gate: { weighted: 0.9, minMeasure: 0.8 },
       maxRemediationLoops: 3,
     },
   },

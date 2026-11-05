@@ -9,6 +9,7 @@ import type { Chapter } from '../types';
 import { FM01_EXPRESSIONS, FM01_GRAMMAR, FM01_WORDS } from './chapter-fm01.items';
 import { FM01_EXERCISES } from './chapter-fm01.exercises';
 import { FM01_STATIONS } from './chapter-fm01.stations';
+import { CHAPTER_KANA_FOUNDATION } from './chapter-kana01';
 
 /** Chapter 1 — «اولین دیدار» (unit-first-meeting-01) — ORIGINAL HANASO content. */
 export const CHAPTER_FIRST_MEETING: Chapter = {
@@ -43,7 +44,7 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
 };
 
 /** All bundled chapters, ordered by level/position. */
-export const CHAPTERS: Chapter[] = [CHAPTER_FIRST_MEETING];
+export const CHAPTERS: Chapter[] = [CHAPTER_KANA_FOUNDATION, CHAPTER_FIRST_MEETING];
 
 const CHAPTERS_BY_SLUG: Record<string, Chapter> = Object.fromEntries(CHAPTERS.map((c) => [c.slug, c]));
 

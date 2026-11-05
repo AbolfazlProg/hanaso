@@ -24,6 +24,14 @@ export type ClientTeachingBlock =
   | { kind: 'vocab-card'; id: string; wordId: string }
   | { kind: 'expression-card'; id: string; expressionId: string }
   | {
+      /** TASK-LEARNING-06 (DD-122): kana glyph card — purely receptive (no answer material). */
+      kind: 'kana-card';
+      id: string;
+      kanaId: string;
+      showRomaji: boolean;
+      confusableNoteFa?: string;
+    }
+  | {
       kind: 'guided-discovery';
       id: string;
       displayLineRef: string;
@@ -49,7 +57,7 @@ export type ClientTeachingBlock =
         ? never
         : {
             id: string;
-            role: 'anchor' | 'near' | 'varied' | 'faded';
+            role: 'anchor' | 'near' | 'varied' | 'faded' | 'reading';
             ja: string;
             reading: string;
             fa: string;
