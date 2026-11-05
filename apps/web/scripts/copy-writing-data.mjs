@@ -42,7 +42,9 @@ const { glyphs, confusables } = requiredChars();
 const allChars = [...new Set([...glyphs, ...confusables])].sort();
 
 const missing = [];
-const index = { generatedAt: new Date().toISOString(), chars: {} };
+// NOTE: no timestamp in the manifest — the committed asset must stay
+// byte-stable across rebuilds (a churny diff would dirty every build).
+const index = { chars: {} };
 for (const ch of allChars) {
   const src = path.join(dataPkgDir, `${ch}.json`);
   if (!existsSync(src)) {

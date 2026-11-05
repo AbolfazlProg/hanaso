@@ -171,6 +171,15 @@ export const fa = {
     writingPickChar: 'نویسهٔ تمرین:',
     writingPairFocusTitle: 'جفت‌های شبیه — دقیق نگاه کن',
     writingPairNote: 'این دو نویسه فقط در جزئیات فرق دارند؛ هر دو را چند بار بکش و تفاوت را حس کن.',
+    /* vertical trail map (TASK-LEARNING-07 · #107) */
+    trailLegendTitle: 'راهنمای نشانه‌های مسیر',
+    trailLegendCompleted: 'انجام‌شده',
+    trailLegendCurrent: 'نقطهٔ ادامه',
+    trailLegendAvailable: 'آماده',
+    trailLegendLocked: 'قفل',
+    trailLegendOptional: 'اختیاری',
+    trailBackToFocus: 'بازگشت به نقطهٔ ادامه',
+    trailScrolledNotice: 'مسیر روی نقطهٔ ادامهٔ تو تنظیم شد',
     yourTurn: 'نوبت تو',
     typeYourName: 'نامت را بنویس',
     /* mastery gate */

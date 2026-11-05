@@ -92,6 +92,11 @@ export function WritingPractice({
   const [verdict, setVerdict] = useState<WritingVerdict | null>(null);
   const [feedbackFa, setFeedbackFa] = useState<string | null>(null);
   const [engineError, setEngineError] = useState<string | null>(null);
+  /** Bumped when the async Hanzi Writer instance is mounted — the mode effect
+   *  depends on it, otherwise quiz()/animate() would run BEFORE the writer
+   *  exists and the canvas would never accept input (found in the W4 browser
+   *  walkthrough — the quiz silently never started). */
+  const [writerReady, setWriterReady] = useState(0);
 
   const targetRef = useRef<HTMLDivElement | null>(null);
   const writerRef = useRef<InstanceType<typeof HanziWriterClass> | null>(null);
@@ -167,9 +172,7 @@ export function WritingPractice({
           charDataLoader: (ch: string) => loadWritingCharData(ch),
         });
         writerRef.current = writer;
-        if (mode === 'guided') {
-          void writer.animateCharacter({});
-        }
+        setWriterReady((n) => n + 1);
       } catch (err: unknown) {
         if (!disposed) setEngineError((err as Error).message ?? 'نمایشگر نوشتار بارگذاری نشد');
       }
@@ -178,6 +181,7 @@ export function WritingPractice({
     return () => {
       disposed = true;
       writerRef.current = null;
+      setWriterReady(0);
     };
     // mode intentionally NOT a dep: the writer instance is per-character; mode
     // changes re-run quiz/animate on the SAME writer (see effect below).
@@ -244,7 +248,7 @@ export function WritingPractice({
 
   useEffect(() => {
     const writer = writerRef.current;
-    if (!writer || availability !== 'available') return;
+    if (!writer || availability !== 'available' || writerReady === 0) return;
     resetAttempt();
     if (mode === 'guided') {
       writer.showCharacter();
@@ -280,7 +284,7 @@ export function WritingPractice({
         },
       });
     }
-  }, [mode, availability, resetAttempt, analyzeCurrentStroke, leniency]);
+  }, [mode, availability, writerReady, resetAttempt, analyzeCurrentStroke, leniency]);
 
   // ---------------------------------------------------------------- verdict + summary
   useEffect(() => {
