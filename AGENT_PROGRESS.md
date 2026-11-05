@@ -75,3 +75,8 @@
 - **W5 (commits 57f9872+667ebf1):** نقشهٔ مسیر عمودی (بافت کاغذ، مسیر نقطه‌چین SVG، نشانگر شکل‌محور) + auto-scroll هوشمند + ۲ دور بازبینی VLM (verdict: PASS) — شواهد: agent-ctx/tl07-shots/.
 - **W7 (استقرار):** بیلد image روی VPS از git-bundle (11MB) → migrate/seed → تعویض staged → health/ready/smoke ALL GREEN → رسم واقعی کانا روی learn.kotodama.ir تأیید شد → KOTODAMA دست‌نخورده (کاتینرها Up 8-50 روز، kotodama.ir 200 قبل/بعد) → rollback آماده (.env.pre-tl07-backup + imageهای قدیمی).
 - نسخهٔ زنده: `https://learn.kotodama.ir` — commit `667ebf1` (شاخهٔ feat/learning-06-lesson-system، PR #115).
+
+## ۲۰۲۶-۱۱-۰۶ — TASK-LEARNING-08 (Z.ai — deep learning experience reconstruction)
+
+- **شروع:** Issue #116 ثبت شد. WP-1 بازیابی: PR #115 @ b21512a، ۳۰۴ تست سبز، هر ۶ بازخورد مالک (A–F) با شواهد واقعی بازتولید شد (`agent-ctx/tl08-shots/` + تحلیل VLM نقشهٔ production). Checkpoints: `ops/checkpoints/TASK-LEARNING-08/`.
+- **فایل‌های هم‌نقطهٔ اعلامی (تغییر ترتیبی، تک-Agent):** `src/messages/fa.ts`، `src/modules/curriculum/content/{kana-items,chapter-kana01.stations}.ts`، `src/components/curriculum/{station-runner,exercise-session,journey-map}.tsx`، ایستگاه/نقشه/API صفحات learn — این اجرا تنها Agent فعال روی این شاخه است.
