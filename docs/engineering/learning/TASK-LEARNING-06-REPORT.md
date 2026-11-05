@@ -1,0 +1,117 @@
+# TASK-LEARNING-06 — گزارش پیاده‌سازی: سیستم درس‌خواندن HANASO (فصل ۰۱ کانا + فصل ۰۲ مکالمه)
+
+> **تاریخ:** ۲۰۲۶-۱۱-۰۵ · **شاخه:** `feat/learning-06-lesson-system` · **وضعیت:** پیاده‌سازی + اعتبارسنجی کامل — آماده بازبینی PR
+> **مبنای طراحی:** KB بخش ۱۸ (TASK-LEARNING-05A — DD-117..122) + بخش ۱۹ (TASK-LEARNING-05B — DD-123..126) + LEARNING_SEQUENCE_POLICY + HANASO_INSTRUCTIONAL_DESIGN_CONTRACT
+
+---
+
+## ۱. خلاصهٔ یک‌نگاهی
+
+این تسک «تجربهٔ درس‌خواندن» محصول را ساخت: مسیر کامل کانا (فصل ۰۱ با ۳۱ ایستگاه در ۴ جزیره) + بازسازی آموزشی فصل مکالمه (فصل ۰۲ با ۱۸ ایستگاه اصلی در ۲ واحد داستانی) روی **همان Lesson Engine مشترک** (صفر سیستم موازی — DD-117)، به‌همراه قراردادهای یکپارچه‌سازی FSRS / صدا / Analytics با وضعیت صادقانه.
+
+## ۲. چه چیزی واقعاً پیاده‌سازی شد
+
+### 2.1 توسعهٔ فقط-افزودنی Lesson Engine (WP-1)
+
+| تغییر | فایل | وضعیت |
+|---|---|---|
+| نوع ایستگاه `kana` + بلوک `kana-card` (TB-KanaCard — DD-122) | `curriculum/types.ts`, `client-transport.ts`, `station-runner.tsx` | ✅ کامل |
+| رجیستری KanaItem (۹۲ گلیف + یادسپارها با وضعیت بازبینی) | `content/kana-items.ts` | ✅ کامل |
+| ۳ نوع تمرین کانا (بازشناسی/فراخوانی/رمزگشایی — option-based) | `types.ts`, `grading.ts` | ✅ کامل |
+| `units[]` روی فصل (T-79 — گروه‌بندی جزیره/داستان) + نقشهٔ دوسطحی | `types.ts`, `journey.ts`, `journey-map.tsx`, API | ✅ کامل |
+| پیش‌نیاز فصلی نرم (گیت کانا → باز شدن فصل ۰۲) | `server.ts` (`chapterAccessStatus`), صفحات learn/journey | ✅ کامل |
+| نردبان بازخورد کامل: **F2 = حذف یک گزینهٔ غلط سمت سرور** + **F4 = لینک بازگشت به بلوک آموزش** (#106) | `grading.ts`, `events.ts` | ✅ کامل |
+| قرارداد FSRS (DD-119/125): inventory از داده + `FsrsReviewPort` با وضعیت **not-integrated** (رفتار: throw — هرگز موفقیت جعلی نمی‌سازد) | `fsrs/integration.ts` | ✅ قرارداد |
+| قرارداد صدای مستقل واژه (DD-119): رجیستری content-id-keyed + fallback صادقانه به صدای خط | `audio/word-audio.ts` + فیلد `wordAudio` روی ۱۱ واژه | ✅ قرارداد |
+| قرارداد Analytics: رجیستری رویداد ثابت + payload های تایپ‌شده + ثبت سمت سرور (store موجود in-memory — ADR-016) | `curriculum/events.ts` + سیم‌کشی سه مسیر API | ✅ فعال روی store موجود |
+| قواعد CONTENT-103/105/106 ماشینی (رجیستری/رمزگشایی/پکت) | `validation.ts` | ✅ کامل |
+| قاعدهٔ EQA-1 word-drill (بستن کلاس #96 — تمرین Q2 سطح‌واژه از لایهٔ درک‌خط معاف) | `eqa/gates.ts` | ✅ کامل |
+
+### 2.2 فصل ۰۱ — مبانی نوشتار (WP-2)
+
+- **۳۱ ایستگاه** از بستهٔ اعتبارسنجی‌شدهٔ WP-0 (H0..H15 · K1..K13 + ۲ شاخهٔ اختیاری) در **۴ جزیره** — داده از `units.json` بدون بازتولید
+- **۳۲۰ تمرین** تولیدشده با منطق قطعی: distractor = جفت اشتباه‌پذیر مستند اول (CONTENT-104)، موقعیت گزینهٔ درست seed شده (EQA-4)
+- **لحظه‌های خواندن**: واژه‌های واقعیِ همان واحد با معنی فارسی (نقش `reading` روی example-set)
+- **گرم‌کردن بازیافتی**: بازیابی واژه‌های واحد قبل (ساختاری، غیر FSRS — صادقانه)
+- یادسپارها با برچسب صداقت «داستانِ یادسپار» + نشان کهربایی «پیش‌نویس — در بازبینی انسانی» (OQ-051 — وضعیت pilot_draft در داده حفظ شده)
+- **گیت G1** (M-K1..K5 روی موتور Scoring مشترک): ۱۳ قلم، آستانهٔ **۰٫۹۰/۰٫۸۰ از L1 policy** (DD-120) — هرگز hardcode
+- میکرو-دیالوگ لنگر `kana-welcome-01` (۲-۳ خطی تمام‌کانا — الگوی چک‌لیست 05A §۱)
+- L1 policy = باند کانا با استثنای ثبت‌شدهٔ DD-090 (سقف‌ها/دقیقه‌ها = داده)
+
+### 2.3 فصل ۰۲ — اولین مکالمه (WP-3 — بازسازی 05B)
+
+- دیالوگ `first-meeting-01` از ۹ به **۱۴ نوبت** گسترش یافت: ورود کیم (شخصیت چهارم) — پرسش も → ردّ مؤدبانهٔ いいえ + ではありません + かんこくじん → واکنش‌ها そうですか/わかりました → معرفی کیم かんこくから きました → بستن مشترک
+- **صدای واقعی حفظ شد**: فایل‌های l9 → l14 تغییر نام (`git mv` + manifest) — hash بر {text, voiceId} است پس VOICEVOX واقعی معتبر ماند؛ خطوط جدید = placeholder صادقانه
+- `chr-kim` + صدای چهارم (春日部つむぎ) با جفت‌های تمایز ماتریس
+- **۱۸ ایستگاه اصلی + ۴ اختیاری** در ۲ واحد داستانی (最初のあいさつ / キムさんの紹介) طبق نقشهٔ ۱۹-ایستگاهی 05B (گیت = صفحهٔ assessment — هرگز ایستگاه)
+- ۱۱ واژه + ۵ خوشهٔ گرامر + ۸ عبارت + **~۶۰ تمرین** + بانک گیت ۱۲-قلمی M1..M5 (۰٫۷۰/۰٫۵۰ از L2 policy — DD-126)
+- واژگان با `wordAudio` (قرارداد DD-119) + یادسپارها/پیوندهای فارسی اصیل HANASO
+
+### 2.4 بسته‌شدن هر ۷ معافیت EQA
+
+`eqa-waivers.ts` **خالی** می‌شود — با رکورد بسته‌شدن مستند:
+
+| معافیت | بسته شد با |
+|---|---|
+| #96 EQA-1 ×2 (line-grammar) | تمرین‌های واژگان سطح‌واژه شدند + قاعدهٔ word-drill |
+| #95 EQA-2 ×2 (پکت‌بندی) | ایستگاه‌های بازسازی‌شده: پکت ۳کارتی + بازیابی درون‌جریان / تناوب کارت-تمرین |
+| #106 EQA-3 (recall-first) | استخر تمرین ≥۶۰٪ recall-first (بازیافت kana-decode + cloze/produce/ترتیب) |
+| #104 EQA-6 ×2 (اسلات‌های واژه) | noteFa برای watashi + daigaku |
+
+## ۳. نتایج واقعی گیت‌ها (خروجی اجرا — SKL-010)
+
+| گیت | نتیجه |
+|---|---|
+| `tsc --noEmit` | ✅ ۰ خطا |
+| `eslint . --max-warnings 0` | ✅ ۰ خطا |
+| `vitest run tests/unit` | ✅ **۲۱۴ passed / 0 failed** (۲۲ فایل — شامل ۳۷ تست EQA) |
+| `pnpm eqa` | ✅ **PASS — خطای فعال: 0 · معاف‌شده: 0 · نیازمند بازبینی: 0** |
+| `next build` | ✅ Compiled — همهٔ مسیرها |
+| `scripts/verify-foundation.sh` (۹ گیت: lint/typecheck/test/build/smoke/secret-scan) | ✅ **ALL GATES GREEN** |
+| پیمایش کاربر (اسکریپت HTTP روی سرور واقعی) | ✅ **ALL PASS**: ۲۹ ایستگاه کانا → گیت G1 → understood → باز شدن قفل فصل ۰۲ → نمره‌گذاری F1/F2(حذف گزینه)/F3(reveal)/F4(لینک بازگشت) → رویدادها (station_completed / fsrs_cards_enrolled / gate_measure_completed / chapter_completed) |
+| ممیزی بصری (VLM سه‌مرحله‌ای، موبایل ۳۹۰px + دسکتاپ ۱۲۸۰px) | ✅ PASS — شش اسکرین‌شات در `docs/engineering/audit/screenshots/learning-06/`؛ RTL/bidi سالم، صفر emoji، بدون overflow |
+
+**BLOCKER-005 (بیلینگ GitHub Actions):** CI آنلاین در این محیط قابل اجرا نبود — همهٔ گیت‌ها به‌صورت محلی اجرا و خروجی واقعی‌شان بالا ثبت شد (طبق دستور مأموریت).
+
+## ۴. صادقانه: چه چیزی «قرارداد است» و چه چیزی «واقعاً کار می‌کند»
+
+| قابلیت | وضعیت |
+|---|---|
+| اجرای کامل فصل کانا + فصل ۰۲ (ایستگاه‌ها، نمره‌گذاری، پیشرفت، گیت‌ها) | ✅ **واقعی و تست‌شده** |
+| نقشهٔ دوسطحی جزیره‌ای + قفل نرم فصل | ✅ واقعی |
+| FSRS: زمان‌بندی/صف مرور | ❌ **not integrated** (M2) — قرارداد + inventory داده + رویداد ثبت‌شدنی |
+| صدای مستقل واژه/کانا | ❌ فایل‌ها تولید نشده (تسک صوت) — قرارداد + fallback صادقانه به صدای خط |
+| صدای خطوط جدید دیالوگ (L9..L13 + خوش‌آمد کانا) | placeholder WAV (ابزار موجود) — صدای واقعی VOICEVOX برای l1-l8 و l14 حفظ شد |
+| Analytics: تجمیع/پنل مالک | ❌ M6 — رویدادها در store موجود ثبت می‌شوند (قرارداد فعال) |
+| IME سبک برای سنجهٔ تایپ کانا (M-K5) | ❌ OQ-007 باز — M5 فعلاً recall سخت‌تر با برچسب صادقانه |
+| یادسپارهای کانا | pilot_draft با نشان بازبینی — بازبینی انسانی (OQ-051) باقی است |
+| Auth (کاربر واقعی) | خارج از دامنه — `poc-user` (M1) |
+
+## ۵. Skills Used
+
+| Skill | کاربرد واقعی |
+|---|---|
+| SKL-010 (quality-gates) | اجرای pnpm verify/eqa/test با خروجی واقعی ضمیمهٔ §۳ |
+| SKL-013 (security) | حفظ قاعدهٔ کلید-پاسخ-فقط-سرور در هر سه نوع تمرین جدید + گیت‌های تست عدم-نشت موجود |
+| SKL-006 (expand-contract) | تمام تغییرات only-additive: صفر DROP در شِما/داده؛ گیت‌های سوییچ exhaustive با TS |
+| webapp-testing (EXT) | پیمایش API + اسکرین‌شات‌های موبایل/دسکتاپ با مرورگر headless |
+
+## ۶. Source Documents Reviewed
+
+- KB بخش ۱۸ (05A): README · SCOPE_AND_SEQUENCE · INSTRUCTIONAL_DESIGN · EXPERIENCE_SPEC · READINESS_CHECKLIST · EVIDENCE_REGISTER · VISUAL_REFERENCES · OWNER-REPORT
+- KB بخش ۱۹ (05B): LEARNING_BLUEPRINT · SOURCE_CONTENT_TRACEABILITY · VOCABULARY_SEQUENCE · GRAMMAR_AND_EXPRESSIONS · LESSON_ACTIVITY_MAP · FSRS_INTEGRATION_CONTRACT · MASTERY_AND_ASSESSMENT · EQA_ACCEPTANCE_PLAN · OWNER-REPORT
+- ریپوی محصول: AGENTS.md · AGENT_READINESS_PROTOCOL · LEARNING_SEQUENCE_POLICY · HANASO_INSTRUCTIONAL_DESIGN_CONTRACT · EQA_GATE_REGISTRY · TASK_LEARNING_ROADMAP · LEARNING_ENGINE_IMPLEMENTATION · چیدمان کامل ماژول‌های curriculum/dialogue/mastery/progress/audio/fsrs/character + مسیرهای API + شِمای DB
+- داده‌های WP-0: units.json · kana_items.json · fsrs_cards.json · mnemonics.json · thresholds.json · validation_report.json
+- تصمیم‌ها: DD-090..096 · DD-110/113/115/116 · DD-117..126 · OQ-049..056
+
+## ۷. کارهای باقی‌مانده (تسک‌های آینده — خارج از دامنهٔ این مأموریت)
+
+1. **VOICEVOX**: تولید صدای واقعی ۵ خط جدید دیالوگ + صدای مستقل واژه‌ها/کاناها (قرارداد آماده است — فقط مولد وصل شود)
+2. **FSRS M2**: پیاده‌سازی موتور زمان‌بندی روی `FsrsReviewPort` (اینترفیس آماده — جایگزینی پیاده‌سازی بدون تغییر محتوا)
+3. **بازبینی انسانی یادسپارها** (OQ-051) + تصمیمات باز مالک: OQ-049..056
+4. **Analytics M6**: pipeline تجمیعی روی رویدادهای ثبت‌شده
+5. تصمیم مالک دربارهٔ سرنوشت بلندمدت فصل کافه (first-meeting قبلی) — اکنون بعد از فصل ۰۲ می‌آید و محتوایش هم‌پوشان است (بازیافت طبیعی در بافت تازه)
+
+---
+
+*Checkpoints: `ops/checkpoints/TASK-LEARNING-06/` در KB · شاخهٔ محصول: `feat/learning-06-lesson-system` (۳ کامیت) · اسکریپت پیمایش: `scripts/wp4_walkthrough.py` (سمت Agent، خارج از ریپوها)*
