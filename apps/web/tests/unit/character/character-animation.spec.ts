@@ -137,6 +137,57 @@ describe('AnimationController — scene state machine (ADR-018 §۲-۱ج)', () =
     }
   });
 
+  it('Issue #99: paused → mouths stop immediately; characters stay in-scene (listening)', () => {
+    const controller = new AnimationController();
+    const renderers = threeCharacterScene(controller);
+    controller.handleLineStart({ lineId: 'l-a', speakerId: 'chr-miki', emotionTag: 'happy', atMs: 1 });
+    expect(renderers['chr-miki']!.lastState?.mouthActive).toBe(true); // was speaking
+
+    controller.handlePlaybackStateChange('paused');
+    for (const r of Object.values(renderers)) {
+      expect(r.lastState?.mouthActive).toBe(false); // audio stopped → mouth closed
+      expect(r.lastState?.state).toBe('listening'); // scene suspended, not over
+      expect(r.lastState?.gazeTargetId).toBeNull();
+    }
+    const snap = controller.snapshot();
+    expect(snap['chr-miki']!.state).toBe('listening');
+    expect(snap['chr-miki']!.mouthActive).toBe(false);
+  });
+
+  it('Issue #99: error → mouths stop too (the banner owns the scene, not the lips)', () => {
+    const controller = new AnimationController();
+    const renderers = threeCharacterScene(controller);
+    controller.handleLineStart({ lineId: 'l-a', speakerId: 'chr-sora', emotionTag: 'neutral', atMs: 1 });
+    controller.handlePlaybackStateChange('error');
+    for (const r of Object.values(renderers)) {
+      expect(r.lastState?.mouthActive).toBe(false);
+      expect(r.lastState?.state).toBe('listening');
+    }
+  });
+
+  it('TASK-LEARNING-07: joint line → BOTH speakers speaking with active mouths', () => {
+    const controller = new AnimationController();
+    const renderers = threeCharacterScene(controller);
+    controller.handleLineStart({
+      lineId: 's-first-meeting-01-l13',
+      speakerId: 'chr-sora',
+      coSpeakerId: 'chr-yamada',
+      emotionTag: 'happy',
+      atMs: 1,
+    });
+    // both joint speakers: speaking + mouth
+    expect(renderers['chr-sora']!.lastState).toMatchObject({ state: 'speaking', mouthActive: true, gazeTargetId: null });
+    expect(renderers['chr-yamada']!.lastState).toMatchObject({ state: 'speaking', mouthActive: true, gazeTargetId: null });
+    // the third character listens and gazes at the primary speaker
+    expect(renderers['chr-miki']!.lastState).toMatchObject({ state: 'listening', gazeTargetId: 'chr-sora', mouthActive: false });
+    // mouthActive appears ONLY in speaking states across the whole timeline
+    for (const r of Object.values(renderers)) {
+      for (const s of r.states) {
+        expect(s.mouthActive).toBe(s.state === 'speaking');
+      }
+    }
+  });
+
   it('blinks randomly every 2–6s in all states, driven through the renderer', () => {
     const controller = new AnimationController({ random: () => 0.5 }); // deterministic mid-point
     const renderers = threeCharacterScene(controller);

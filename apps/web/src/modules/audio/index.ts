@@ -4,3 +4,6 @@
  * `@/modules/audio/server`.
  */
 export { BrowserAudioBackend } from './browser-audio-backend';
+// TASK-LEARNING-07 Wave 2: joint-turn composition at the backend edge (pure — no DOM).
+export { JointTurnBackend, createJointHandle } from './composite-handle';
+export type { JointTurnBackendOptions } from './composite-handle';

@@ -10,7 +10,7 @@
  */
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CircleCheck, RotateCcw } from 'lucide-react';
+import { ArrowLeft, CircleCheck, Ear, RotateCcw } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { JaBlock } from '@/components/patterns/ja-block';
@@ -223,7 +223,10 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
               audioAvailable={audioAvailable}
               rate={0.9}
             />
-            <span className="text-small text-ink-soft">🎧 فقط گوش کن</span>
+            <span className="flex items-center gap-1.5 text-small text-ink-soft">
+              <Ear aria-hidden className="size-4 shrink-0" />
+              فقط گوش کن
+            </span>
           </div>
         )}
 

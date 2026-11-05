@@ -9,6 +9,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Play } from 'lucide-react';
 import { checkAnswers, isAnswerCorrect } from '@/modules/practice';
 import type { Exercise, ExerciseAnswer, PracticeCheckResult } from '@/modules/practice';
 import { logEvent, postProgressEvent } from '@/lib/poc/client';
@@ -193,7 +194,7 @@ export function PracticeRunner({
           <p className="text-caption text-ink-soft">
             {answers[exercise.id]
               ? isAnswerCorrect(exercise, answers[exercise.id])
-                ? '✓ درست است — می‌توانی بروی بعدی'
+                ? 'درست است — می‌توانی بروی بعدی'
                 : 'پاسخ ثبت شد؛ بازخورد کامل بعد از ثبت نهایی'
               : 'برای رفتن به بعدی، این تمرین را پاسخ بده'}
           </p>
@@ -237,9 +238,10 @@ function ExerciseBody({
           type="button"
           onClick={() => onPlay(item.lineId)}
           disabled={!audioAvailable}
-          className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
+          className="flex items-center gap-1.5 self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
         >
-          ▶ پخش جمله{' '}
+          <Play aria-hidden className="size-4" />
+          پخش جمله{' '}
           {audioAvailable && (
             <span className="rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft">صوت آزمایشی</span>
           )}
@@ -347,7 +349,7 @@ function ExerciseBody({
         <ol className="flex flex-wrap gap-1 text-caption">
           {picked.map((lineId, i) => (
             <li key={lineId} className="rounded-sm bg-surface-muted px-1.5 py-0.5">
-              {i + 1}◦ خط {lineId.replace('s-cafe-morning-01-l', '')}
+              {i + 1} · خط {lineId.replace('s-cafe-morning-01-l', '')}
             </li>
           ))}
           {picked.length === 0 && <li className="text-ink-soft">—</li>}
@@ -384,14 +386,14 @@ function ResultPanel({
         }`}
       >
         <h3 className={`text-h3 font-bold ${perfect ? 'text-success' : 'text-ai'}`}>
-          {perfect ? 'همه را درست جواب دادی ✓' : `${result.correctCount} از ${result.total} درست`}
+          {perfect ? 'همه را درست جواب دادی' : `${result.correctCount} از ${result.total} درست`}
         </h3>
         <p className="text-small text-ink-soft">
           تمرین‌ها همه از خودِ همین مکالمه ساخته شده‌اند؛ اشتباه‌ها نقاط تمرکز مرحلهٔ D تو مشخص می‌کنند.
         </p>
         {result.weakPoints.length > 0 ? (
           <div className="flex flex-col gap-1">
-            <p className="text-body font-bold">نقاط ضعف (خط ↔ هدف):</p>
+            <p className="text-body font-bold">نقاط ضعف (خط و هدف):</p>
             <ul className="flex flex-col gap-1 text-small">
               {result.weakPoints.map((wp, i) => (
                 <li key={`${wp.lineId}-${wp.objective}-${i}`} className="flex flex-wrap items-center gap-2">
@@ -399,10 +401,10 @@ function ResultPanel({
                   <span>خط {wp.lineId.replace('s-cafe-morning-01-l', '')}</span>
                   <span className="text-ink-soft">شدت: {wp.severity}</span>
                   <a className="text-ai underline" href={`/poc/dialogue?line=${wp.lineId}`}>
-                    در مکالمه ببین ↗
+                    در مکالمه ببین
                   </a>
                   <a className="text-ai underline" href={`/poc/lesson#item-${wp.objective}`}>
-                    کارت مرتبط ↗
+                    کارت مرتبط
                   </a>
                 </li>
               ))}
@@ -425,7 +427,7 @@ function ResultPanel({
           onClick={onGoAssess}
           className="rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep"
         >
-          برای ارزیابی نهایی آماده‌ام ← مرحلهٔ D
+          برای ارزیابی نهایی آماده‌ام — مرحلهٔ D
         </button>
         <button type="button" onClick={onRetry} className="rounded-md border border-ink-faint px-4 py-2 text-small">
           تمرین دوباره

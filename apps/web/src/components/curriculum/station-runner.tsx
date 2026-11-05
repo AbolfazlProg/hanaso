@@ -11,11 +11,28 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, BookOpenText, CheckCircle2, Ear, MessageCircleQuestion, PlayCircle, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpenText,
+  CheckCircle2,
+  Ear,
+  MessageCircleQuestion,
+  PlayCircle,
+  Sparkles,
+} from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import type { ClientStation, ClientTeachingBlock } from '@/modules/curriculum/client-transport';
 import type { Chapter, Station } from '@/modules/curriculum/types';
+import {
+  blockResult,
+  prevStep,
+  stationFinishScore,
+  stepOfBlock,
+  withBlockResult,
+  type BlockResults,
+} from '@/modules/curriculum/station-walk';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
@@ -45,6 +62,12 @@ export interface StationRunnerProps {
   audioByLine: Record<string, string>;
   audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
+  /**
+   * Issue #103 (TASK-LEARNING-07): wordId → resolved INDEPENDENT word-audio URL pair
+   * (wordAudio registry — DD-119, resolved server-side). Null/absent = honest fallback
+   * to the source-line audio on the vocab card.
+   */
+  wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
 }
 
 /** Grading round-trip for one block interaction. */
@@ -69,13 +92,19 @@ async function gradeBlock(payload: {
 }
 
 export function StationRunner(props: StationRunnerProps) {
-  const { station, chapter, clientExercises, dialogue, audioByLine, audioFallbackByLine, audioAvailable, chapterSlug } =
+  const { station, chapter, clientExercises, dialogue, audioByLine, audioFallbackByLine, audioAvailable, wordAudioByWord, chapterSlug } =
     props;
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [sessionScore, setSessionScore] = useState<number | null>(null);
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(false);
+  /**
+   * Issue #102: earned exercise results per block id — they live OUTSIDE the
+   * current step, so stepping back (and forward again) never loses them. A
+   * block with a recorded result renders the skip panel instead of re-grading.
+   */
+  const [blockResults, setBlockResults] = useState<BlockResults>({});
 
   const blocks = station.blocks;
   const block = blocks[step];
@@ -115,9 +144,32 @@ export function StationRunner(props: StationRunnerProps) {
     } else if (station.completion.kind === 'task_completed') {
       void finishSession(null, true);
     } else {
-      void finishSession(sessionScore ?? 0);
+      // Issue #102: the LAST authored exercise block's earned result finishes the
+      // station (a re-visited earlier block's skip must not overwrite it).
+      void finishSession(stationFinishScore(blocks, blockResults, sessionScore) ?? 0);
     }
-  }, [blocks.length, finishSession, sessionScore, station.completion.kind, step]);
+  }, [blockResults, blocks, finishSession, sessionScore, station.completion.kind, step]);
+
+  /**
+   * Issue #102 «مرحلهٔ قبل»: one block back — earned exercise results survive by
+   * design (they live in blockResults, not in the rendered block component).
+   */
+  const prev = useCallback(() => {
+    setStep((s) => prevStep(s));
+  }, []);
+
+  /**
+   * Issue #106 (F4): jump the walk back to the authored teaching block the
+   * feedback ladder named (blocks render one-at-a-time, so "returning" = moving
+   * the step pointer; an unresolvable id keeps the learner where they are).
+   */
+  const returnToBlock = useCallback(
+    (blockId: string) => {
+      const target = stepOfBlock(station.blocks, blockId);
+      if (target !== null) setStep(target);
+    },
+    [station.blocks],
+  );
 
   const doneHref = `/learn/${chapterSlug}/journey`;
 
@@ -153,7 +205,14 @@ export function StationRunner(props: StationRunnerProps) {
           audioByLine={audioByLine}
           audioFallbackByLine={audioFallbackByLine}
           audioAvailable={audioAvailable}
+          wordAudioByWord={wordAudioByWord}
+          isLastBlock={step === blocks.length - 1}
+          exerciseScore={block.kind === 'exercise' ? blockResult(blockResults, block.id) : null}
+          onReturnToBlock={returnToBlock}
           onExerciseDone={(score) => {
+            if (block.kind === 'exercise') {
+              setBlockResults((r) => withBlockResult(r, block.id, score));
+            }
             setSessionScore(score);
             if (step < blocks.length - 1) setStep((s) => s + 1);
             else void finishSession(score);
@@ -166,17 +225,34 @@ export function StationRunner(props: StationRunnerProps) {
         />
       )}
 
-      {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && (
+      {/*
+       * Action row (Issue #102): «مرحلهٔ قبل» appears from the 2nd block onward for
+       * EVERY block kind; the forward button keeps its exercise/scene exceptions
+       * (those blocks own their completion CTA inside BlockView).
+       */}
+      {(step > 0 || (block && block.kind !== 'exercise' && block.kind !== 'character-scene')) && (
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={next}
-            disabled={completing}
-            className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
-          >
-            {step === blocks.length - 1 ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
-            <ArrowLeft aria-hidden className="size-4" />
-          </button>
+          {step > 0 && (
+            <button
+              type="button"
+              onClick={prev}
+              className="flex h-11 items-center gap-2 rounded-md border border-ink-faint bg-card px-5 text-body font-bold text-ink transition-colors hover:bg-surface-warm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            >
+              <ArrowRight aria-hidden className="size-4" />
+              {fa.curriculum.prevBlock}
+            </button>
+          )}
+          {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && (
+            <button
+              type="button"
+              onClick={next}
+              disabled={completing}
+              className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
+            >
+              {step === blocks.length - 1 ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
+              <ArrowLeft aria-hidden className="size-4" />
+            </button>
+          )}
         </div>
       )}
 
@@ -218,6 +294,10 @@ function BlockView({
   audioByLine,
   audioFallbackByLine,
   audioAvailable,
+  wordAudioByWord,
+  isLastBlock,
+  exerciseScore,
+  onReturnToBlock,
   onExerciseDone,
   onSceneDone,
 }: {
@@ -231,6 +311,16 @@ function BlockView({
   audioByLine: Record<string, string>;
   audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
+  wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /** True on the last authored block (drives the skip-panel CTA label). */
+  isLastBlock: boolean;
+  /**
+   * Issue #102: the block's already-earned exercise score (null = not completed
+   * yet — render the live ExerciseSession). Only meaningful for exercise blocks.
+   */
+  exerciseScore: number | null;
+  /** Issue #106 (F4): host-owned «بازگشت به آموزش» jump handler. */
+  onReturnToBlock?: (blockId: string) => void;
   onExerciseDone: (score: number) => void;
   onSceneDone: () => void;
 }) {
@@ -251,32 +341,46 @@ function BlockView({
     case 'vocab-card': {
       const word = chapter.words.find((w) => w.id === block.wordId)!;
       const line = lineById.get(word.lineRef);
+      // Issue #103: prefer the word's INDEPENDENT audio when the registry has a
+      // committed asset; honest fallback to the source-line audio otherwise.
+      const wordAudio = wordAudioByWord?.[word.id] ?? null;
+      const useWordAudio = wordAudio !== null;
+      const audioLineId = useWordAudio ? word.id : line?.id;
+      const audioUrl = useWordAudio ? wordAudio!.opus : (line ? (audioByLine[line.id] ?? '') : '');
+      const audioFallback = useWordAudio ? wordAudio!.m4a : (line ? audioFallbackByLine?.[line.id] : undefined);
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              {/*
+               * Issue #105 (meaning-first): absolute beginners read Persian before
+               * Japanese — the MEANING leads with the strongest type weight, the
+               * term follows second with furigana (never hidden, just re-weighted).
+               */}
+              <p className="text-h2 font-black leading-tight text-ink">{word.meaningFa}</p>
               {word.termFurigana ? (
-                <JaBlock className="text-h2 font-bold">
+                <JaBlock className="mt-2 text-lead font-bold">
                   <FuriganaText>{word.termFurigana}</FuriganaText>
                 </JaBlock>
               ) : (
-                <JaBlock className="text-h2 font-bold">{word.term}</JaBlock>
+                <JaBlock className="mt-2 text-lead font-bold">{word.term}</JaBlock>
               )}
               <p className="mt-1 text-small text-ink-soft" dir="ltr" lang="ja">
                 {word.readingKana} · {word.romaji}
               </p>
             </div>
-            {line && (
+            {(useWordAudio || line) && (
               <LineAudioButton
-                lineId={line.id}
-                audioUrl={audioByLine[line.id] ?? ''}
-                audioUrlFallback={audioFallbackByLine?.[line.id]}
-                audioAvailable={audioAvailable}
-                label={fa.curriculum.playLine}
+                lineId={audioLineId!}
+                audioUrl={audioUrl}
+                audioUrlFallback={audioFallback}
+                /* a resolved word asset is playable even when the dialogue-level
+                   audio is still pending generation (bytes live in the registry) */
+                audioAvailable={useWordAudio || audioAvailable}
+                label={useWordAudio ? 'پخش تلفظ واژه' : fa.curriculum.playLine}
               />
             )}
           </div>
-          <p className="mt-3 text-lead font-bold text-ai">{word.meaningFa}</p>
           {word.noteFa && (
             <p className="mt-2 flex items-start gap-2 text-small text-ink-soft">
               <BookOpenText aria-hidden className="mt-0.5 size-4 shrink-0" />
@@ -479,8 +583,9 @@ function BlockView({
             </div>
           )}
           {block.persianBridgeFa && (
-            <p className="mt-4 rounded-md border-s-2 border-s-ai bg-surface-warm p-3 text-body">
-              <MixedFaJaText text={`🌉 ${block.persianBridgeFa}`} />
+            <p className="mt-4 flex items-start gap-2 rounded-md border-s-2 border-s-ai bg-surface-warm p-3 text-body">
+              <Sparkles aria-hidden className="mt-0.5 size-4 shrink-0 text-ai" />
+              <MixedFaJaText text={block.persianBridgeFa} />
             </p>
           )}
           {block.honestyLabelFa && <p className="mt-2 text-caption text-ink-faint">{block.honestyLabelFa}</p>}
@@ -508,8 +613,9 @@ function BlockView({
                 <MixedFaJaText text={example.whyFa} />
               </p>
               {example.selfExplainFa && (
-                <p className="mt-3 rounded-md bg-surface-warm p-3 text-small">
-                  <MixedFaJaText text={`💭 ${example.selfExplainFa}`} />
+                <p className="mt-3 flex items-start gap-2 rounded-md bg-surface-warm p-3 text-small">
+                  <MessageCircleQuestion aria-hidden className="mt-0.5 size-4 shrink-0 text-ink-soft" />
+                  <MixedFaJaText text={example.selfExplainFa} />
                 </p>
               )}
             </article>
@@ -522,6 +628,30 @@ function BlockView({
         .map((id) => clientExercises[id])
         .filter((e): e is ClientExercise => e !== undefined);
       if (items.length === 0) return null;
+      /*
+       * Issue #102: a previously completed exercise block stays completed — the
+       * earned result (exerciseScore) is offered as a skip panel, so walking back
+       * and forward again never re-grades or re-requires the session.
+       */
+      if (exerciseScore != null) {
+        return (
+          <section className="flex flex-col gap-4 rounded-md border border-ink-faint bg-card p-5">
+            <h3 className="flex items-center gap-2 text-h3 font-bold text-success">
+              <CheckCircle2 aria-hidden className="size-5" />
+              {fa.curriculum.exerciseAlreadyDoneTitle}
+            </h3>
+            <p className="text-body leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.exerciseAlreadyDoneBody}</p>
+            <button
+              type="button"
+              onClick={() => onExerciseDone(exerciseScore)}
+              className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            >
+              {isLastBlock ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
+              <ArrowLeft aria-hidden className="size-4" />
+            </button>
+          </section>
+        );
+      }
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <ExerciseSession
@@ -532,6 +662,7 @@ function BlockView({
             audioFallbackByLine={audioFallbackByLine}
             audioAvailable={audioAvailable}
             onSessionDone={(score) => onExerciseDone(score)}
+            onReturnToBlock={onReturnToBlock}
           />
         </section>
       );
@@ -866,8 +997,9 @@ function CharacterSceneBlock({
               </div>
             )}
             {answered && (
-              <p role="status" aria-live="polite" className="mt-3 text-body text-success">
-                ✓ {fa.curriculum.correct}
+              <p role="status" aria-live="polite" className="mt-3 flex items-center gap-1.5 text-body text-success">
+                <CheckCircle2 aria-hidden className="size-4" />
+                {fa.curriculum.correct}
               </p>
             )}
           </article>

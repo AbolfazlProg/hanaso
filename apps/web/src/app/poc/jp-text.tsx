@@ -72,4 +72,19 @@ export const POC_SCENE_CSS = `
   text-underline-offset: 0.3em;
   cursor: pointer;
 }
+/* TASK-LEARNING-07 / Issue #98 — fixed stage + transport: the transcript is its own
+   inner scroll region so the page never grows and the scene controls stay put.
+   38vh mobile → 48vh from 48rem up; overscroll containment prevents scroll chaining
+   to the page (the active line is scrolled into view programmatically — see the scene). */
+.poc-scene-transcript {
+  max-height: 38vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+@media (min-width: 48rem) {
+  .poc-scene-transcript {
+    max-height: 48vh;
+  }
+}
 `;

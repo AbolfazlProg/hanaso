@@ -522,7 +522,7 @@ export const KANA_ITEMS: KanaItem[] = [
     confusableWith: ['は'],
     mnemonic: {
       coreImageFa: 'は + یک خط = هُ',
-      storyFa: 'همان は است که یک خط روی سرش اضافه خورده — و صدا هم کشیده‌تر شده: ها → «هُ».',
+      storyFa: 'همان は است که یک خط روی سرش اضافه خورده — و صدا هم کشیده‌تر شده: ها می‌شود «هُ».',
       honestLabelFa: 'داستانِ یادسپار',
       pairGlyphs: ['は'],
       status: 'draft',

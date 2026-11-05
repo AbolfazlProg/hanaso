@@ -4,7 +4,7 @@
  * The 19-station two-unit map of KB section 19 LESSON_ACTIVITY_MAP §۱/§۲/§۳:
  *   unit 02-1 «最初のあいさつ» (L1..L8): ANCHOR → VOCAB-1 → GRAMMAR-1 → STRUCTURE →
  *     GRAMMAR-2 → EXPRESSION-1 → LISTEN-1 → PRACTICE-1 → INTEGRATE-1
- *   unit 02-2 «キムさんの紹介» (L9..L14): RECONNECT → VOCAB-2 → GRAMMAR-3(も) →
+ *   unit 02-2 «キムさんの紹介» (L9..L13): RECONNECT → VOCAB-2 → GRAMMAR-3(も) →
  *     GRAMMAR-4(ではありません) → EXPRESSION-2 → LISTEN-2 → GRAMMAR-5(〜からきました) →
  *     PRACTICE-2 → INTEGRATE-2
  * The chapter gate (M1..M5) is the ASSESSMENT PAGE bank — never a walk station
@@ -31,7 +31,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 1,
     prerequisites: [],
-    lineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(10), L(11), L(12), L(13), L(14)],
+    lineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(9), L(10), L(11), L(12)],
     objectiveCode: 'greet-first-meeting',
     estMinutes: 3,
     estLoad: 'light',
@@ -47,7 +47,7 @@ export const FM01_STATIONS: Station[] = [
       {
         kind: 'dialogue-player',
         id: 'blk-a1-dialogue',
-        focusLineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(10), L(11), L(12), L(13), L(14)],
+        focusLineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(9), L(10), L(11), L(12)],
         prediction: {
           questionFa: 'به پاسخ سورا به پرسشِ ملیت دقت کن — فکر می‌کنی چه چیزی می‌گوید؟',
           options: [
@@ -363,7 +363,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 6,
     prerequisites: ['stn-fm01-02-vocab'],
-    lineRefs: [L(1), L(3), L(7), L(14)],
+    lineRefs: [L(1), L(3), L(7), L(13)],
     objectiveCode: 'greet-first-meeting',
     estMinutes: 3,
     estLoad: 'light',
@@ -511,7 +511,7 @@ export const FM01_STATIONS: Station[] = [
     fsrsItems: [],
   },
 
-  /* ═════════════════ UNIT 02-2 «キムさんの紹介» — turns L9..L14 ═════════════════ */
+  /* ═════════════════ UNIT 02-2 «キムさんの紹介» — turns L9..L13 ═════════════════ */
   {
     slug: 'stn-fm01-10-reconnect',
     type: 'anchor',
@@ -520,7 +520,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 10,
     prerequisites: ['stn-fm01-09-integrate'],
-    lineRefs: [L(9), L(10), L(11), L(12), L(13), L(14)],
+    lineRefs: [L(9), L(9), L(10), L(11), L(12)],
     objectiveCode: 'greet-first-meeting',
     estMinutes: 2,
     estLoad: 'light',
@@ -536,7 +536,7 @@ export const FM01_STATIONS: Station[] = [
       {
         kind: 'dialogue-player',
         id: 'blk-a2-dialogue',
-        focusLineRefs: [L(9), L(10), L(11), L(12), L(13), L(14)],
+        focusLineRefs: [L(9), L(9), L(10), L(11), L(12)],
         prediction: {
           questionFa: 'حدس بزن: کیم از کجا آمده است؟',
           options: [
@@ -560,7 +560,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 11,
     prerequisites: ['stn-fm01-10-reconnect'],
-    lineRefs: [L(10), L(11), L(13)],
+    lineRefs: [L(9), L(10), L(12)],
     objectiveCode: 'identity-vocab-core',
     estMinutes: 3,
     estLoad: 'light',
@@ -595,17 +595,17 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 12,
     prerequisites: ['stn-fm01-11-vocab2'],
-    lineRefs: [L(6), L(10)],
+    lineRefs: [L(6), L(9)],
     objectiveCode: 'identity-question',
     estMinutes: 3,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
     blocks: [
-      { kind: 'dialogue-player', id: 'blk-g3-dialogue', focusLineRefs: [L(10)] },
+      { kind: 'dialogue-player', id: 'blk-g3-dialogue', focusLineRefs: [L(9)] },
       {
         kind: 'guided-discovery',
         id: 'blk-g3-discovery',
-        displayLineRef: L(10),
+        displayLineRef: L(9),
         highlightSurfaces: ['キムさんも'],
         compareLineRef: L(6),
         questionFa: 'جملهٔ نوبت ۶ را با نوبت ۱۰ مقایسه کن — も چه چیزی را عوض کرد؟',
@@ -645,7 +645,7 @@ export const FM01_STATIONS: Station[] = [
             reading: 'kim-san mo chuugokujin desu ka.',
             fa: 'کیم هم چینی است؟',
             whyFa: 'از مکالمه (خط ۱۰) — یامادا کیم را به گروهِ سورا اضافه می‌کند.',
-            lineRef: L(10),
+            lineRef: L(9),
           },
           {
             id: 'g3-ex-2',
@@ -677,18 +677,18 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 13,
     prerequisites: ['stn-fm01-12-grammar-mo'],
-    // NB: only L11 — keeping L10 here would double-anchor gr-mo (EQA-1 cluster warning).
-    lineRefs: [L(11)],
+    // NB: only L10 — keeping L9 here would double-anchor gr-mo (EQA-1 cluster warning).
+    lineRefs: [L(10)],
     objectiveCode: 'identity-statement',
     estMinutes: 4,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
     blocks: [
-      { kind: 'dialogue-player', id: 'blk-g4-dialogue', focusLineRefs: [L(11)] },
+      { kind: 'dialogue-player', id: 'blk-g4-dialogue', focusLineRefs: [L(10)] },
       {
         kind: 'guided-discovery',
         id: 'blk-g4-discovery',
-        displayLineRef: L(11),
+        displayLineRef: L(10),
         highlightSurfaces: ['では', 'ありません'],
         questionFa: 'سورا فرض یامادا را چطور رد کرد؟',
         options: [
@@ -727,7 +727,7 @@ export const FM01_STATIONS: Station[] = [
             reading: 'kim-san wa chuugokujin dewa arimasen. kankokujin desu.',
             fa: 'کیم چینی نیست. کره‌ای است.',
             whyFa: 'از مکالمه (خط ۱۱) — اوج اصلاح اطلاعات.',
-            lineRef: L(11),
+            lineRef: L(10),
           },
           {
             id: 'g4-ex-2',
@@ -750,7 +750,7 @@ export const FM01_STATIONS: Station[] = [
       },
       ex('blk-g4-drill', ['ex-fm01-g4-cloze-1', 'ex-fm01-g4-prod-1']),
     ],
-    fsrsItems: ['gr-fm01-dewa-arimasen', 's-line-fm01-l11'],
+    fsrsItems: ['gr-fm01-dewa-arimasen', 's-line-fm01-l10'],
   },
   {
     slug: 'stn-fm01-14-expression',
@@ -760,7 +760,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 14,
     prerequisites: ['stn-fm01-13-grammar-dewa'],
-    lineRefs: [L(11), L(12)],
+    lineRefs: [L(10), L(11)],
     objectiveCode: 'react-new-info',
     estMinutes: 3,
     estLoad: 'light',
@@ -783,7 +783,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 15,
     prerequisites: ['stn-fm01-11-vocab2', 'stn-fm01-14-expression'],
-    lineRefs: [L(10), L(11), L(12), L(13)],
+    lineRefs: [L(9), L(10), L(11), L(12)],
     objectiveCode: 'listen-vowel-length',
     teachesConcepts: ['listen-nasal-mora', 'listen-final-intonation'],
     estMinutes: 3,
@@ -804,7 +804,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 16,
     prerequisites: ['stn-fm01-11-vocab2'],
-    lineRefs: [L(13)],
+    lineRefs: [L(12)],
     objectiveCode: 'origin-statement',
     estMinutes: 3,
     estLoad: 'medium',
@@ -813,12 +813,12 @@ export const FM01_STATIONS: Station[] = [
       {
         kind: 'dialogue-player',
         id: 'blk-g5-dialogue',
-        focusLineRefs: [L(13)],
+        focusLineRefs: [L(12)],
       },
       {
         kind: 'guided-discovery',
         id: 'blk-g5-discovery',
-        displayLineRef: L(13),
+        displayLineRef: L(12),
         highlightSurfaces: ['かんこくから', 'きました'],
         questionFa: 'در «از کره آمدم»، جای から کجاست؟',
         options: [
@@ -855,7 +855,7 @@ export const FM01_STATIONS: Station[] = [
             reading: 'kankoku kara kimashita.',
             fa: 'از کره آمده‌ام.',
             whyFa: 'از مکالمه (خط ۱۳) — جملهٔ ورود کیم.',
-            lineRef: L(13),
+            lineRef: L(12),
           },
           {
             id: 'g5-ex-2',
@@ -887,7 +887,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 17,
     prerequisites: ['stn-fm01-16-grammar-kara', 'stn-fm01-15-listen'],
-    lineRefs: [L(10), L(11), L(13)],
+    lineRefs: [L(9), L(10), L(12)],
     objectiveCode: 'identity-vocab-core',
     estMinutes: 4,
     estLoad: 'medium',
@@ -978,7 +978,7 @@ export const FM01_STATIONS: Station[] = [
     core: false,
     order: 19,
     prerequisites: ['stn-fm01-02-vocab'],
-    lineRefs: [L(11), L(13)],
+    lineRefs: [L(10), L(12)],
     objectiveCode: 'country-pattern',
     estMinutes: 3,
     estLoad: 'light',
@@ -1004,7 +1004,7 @@ export const FM01_STATIONS: Station[] = [
             reading: 'kankokujin',
             fa: 'کره‌ای — かんこく + じん',
             whyFa: 'جدول کشور: نام کشور + じん.',
-            lineRef: L(11),
+            lineRef: L(10),
           },
           {
             id: 'od1-ex-3',
@@ -1169,7 +1169,7 @@ export const FM01_STATIONS: Station[] = [
     core: false,
     order: 22,
     prerequisites: ['stn-fm01-17-practice'],
-    lineRefs: [L(5), L(8), L(10)],
+    lineRefs: [L(5), L(8), L(9)],
     objectiveCode: 'identity-question',
     estMinutes: 3,
     estLoad: 'light',

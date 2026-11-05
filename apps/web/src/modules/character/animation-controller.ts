@@ -114,8 +114,12 @@ export class AnimationController implements AnimationControllerContract {
 
   handleLineStart(ev: ControllerLineStartInput): void {
     const { expression, warning } = this.mapEmotionTag(ev.emotionTag);
+    // TASK-LEARNING-07 joint turns (05B §6): a line with a co-speaker puts BOTH
+    // speakers in the speaking state (both mouths animate, both face the learner).
+    const coSpeakerId = ev.coSpeakerId ?? null;
     for (const [id, rt] of this.characters) {
-      if (id === ev.speakerId) {
+      const speaking = id === ev.speakerId || (coSpeakerId !== null && id === coSpeakerId);
+      if (speaking) {
         rt.state.state = 'speaking';
         rt.state.expression = expression;
         rt.state.gazeTargetId = null; // speaking character faces the learner/camera
@@ -164,6 +168,18 @@ export class AnimationController implements AnimationControllerContract {
   }
 
   handlePlaybackStateChange(status: ControllerPlaybackStatus): void {
+    if (status === 'paused' || status === 'error') {
+      // Issue #99: audio stopped (user pause / typed audio error) — mouths must
+      // stop IMMEDIATELY. Characters stay in the scene (listening, no gaze
+      // target): the conversation is suspended, not over.
+      for (const [id, rt] of this.characters) {
+        rt.state.state = 'listening';
+        rt.state.gazeTargetId = null;
+        rt.state.mouthActive = false;
+        this.push(id, { characterId: id, state: 'listening', atMs: this.now(), gazeTargetId: null, mouthActive: false });
+      }
+      return;
+    }
     if (status === 'idle' || status === 'ended') {
       for (const [id, rt] of this.characters) {
         rt.state.state = 'idle';

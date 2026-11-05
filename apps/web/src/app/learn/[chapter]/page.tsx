@@ -47,7 +47,13 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
           {fa.curriculum.canDoTitle}
         </h2>
         <p className="mt-3 text-lead leading-[var(--leading-fa)]">{chapter.canDoFa}</p>
-        <p className="mt-4 text-caption text-indigo-mist">{fa.curriculum.prerequisitesNote}</p>
+        {/*
+         * #94 (Wave 3): the prerequisite note renders ONLY on chapters that declare
+         * one — the copy now states the soft lock honestly (no «شروع بدون آن»).
+         */}
+        {chapter.prerequisiteChapterSlug && (
+          <p className="mt-4 text-caption text-indigo-mist">{fa.curriculum.prerequisitesNote}</p>
+        )}
       </section>
 
       {/* scene card */}

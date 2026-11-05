@@ -1,9 +1,7 @@
-import { loadDialogue } from '@/modules/dialogue/server';
 import { listChapters } from '@/modules/curriculum/content';
 import { chapterAccessStatus } from '@/modules/curriculum/server';
 import { getChapterProgressStore } from '@/lib/poc/stores';
 import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
-import { LearnCard } from './learn-card';
 import { fa } from '@/messages/fa';
 
 /**
@@ -12,12 +10,15 @@ import { fa } from '@/messages/fa';
  * The chapter path: Ch01 kana foundation (L1) → the conversation chapter (L2) →
  * … A chapter declaring a prerequisite shows its soft-lock state honestly
  * (locked ≠ hidden: the goal stays visible — DD-114 honest representation).
+ *
+ * TASK-LEARNING-07 / Issue #101: the PoC unit card (LearnCard → /poc/dialogue) was
+ * REMOVED — product pages must never link into the dev-only /poc/* routes; the
+ * /poc routes themselves stay alive for engineering.
  */
 /** Progress-aware (station/chapter stores) — dynamic render. */
 export const dynamic = 'force-dynamic';
 
 export default async function LearnPage() {
-  const dialogue = loadDialogue('cafe-morning-01');
   const chapters = listChapters();
   const chapterStore = getChapterProgressStore();
   const cards = await Promise.all(
@@ -49,7 +50,7 @@ export default async function LearnPage() {
           </span>
           <p className="text-caption text-ink-soft">
             {fa.curriculum.chapterBadge} · {fa.curriculum.levelLabel} {chapter.levelCode}
-            {state?.status === 'understood' ? ' · مکالمهٔ فهمیده‌شده ✓' : ''}
+            {state?.status === 'understood' ? ' · مکالمهٔ فهمیده‌شده' : ''}
           </p>
           <h2 className="mt-1 text-h2 font-black text-indigo">{chapter.titleFa}</h2>
           <p className="mt-2 text-body text-ink-soft">{chapter.summaryFa}</p>
@@ -71,11 +72,6 @@ export default async function LearnPage() {
           </a>
         </article>
       ))}
-
-      <section className="flex flex-col gap-3 border-t border-ink-faint pt-6">
-        <p className="text-caption text-ink-soft">{fa.curriculum.poUnitLabel}</p>
-        <LearnCard dialogueId={dialogue.id} titleFa="کافه — صبح" sceneFa={dialogue.scene} jlpt="Pre-N5" />
-      </section>
 
       <footer className="mt-auto border-t border-ink-faint pt-4 text-caption text-ink-soft">
         <p>

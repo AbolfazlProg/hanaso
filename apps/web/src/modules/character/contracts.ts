@@ -81,6 +81,12 @@ export interface BlinkCapableRenderer extends CharacterRenderer {
 export interface ControllerLineStartInput {
   lineId: string;
   speakerId: string;
+  /**
+   * TASK-LEARNING-07 joint turns (05B §6): the co-speaker of a joint line.
+   * When present, BOTH speakers enter the speaking state for this line (both
+   * mouths animate; optional + additive — older callers are unaffected).
+   */
+  coSpeakerId?: string;
   /** Raw emotion_tag from dialogue content — mapped to ExpressionTag, unknown → neutral + warning. */
   emotionTag?: string;
   atMs: number;

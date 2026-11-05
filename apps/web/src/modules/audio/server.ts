@@ -16,3 +16,7 @@ export {
   manifestForDialogue,
   placeholderUrls,
 } from './audio-manifest';
+// TASK-LEARNING-07 Wave 2 (Issue #103): the word-audio registry (DD-119) resolves
+// server-side only (node:fs) — RSC pages import it through this public entry.
+export { wordAudioAvailable, wordAudioUrls } from './word-audio';
+export type { WordAudioAssets } from './word-audio';

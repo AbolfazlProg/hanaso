@@ -18,6 +18,9 @@ export interface DialogueToken {
 export interface DialogueLine {
   id: string;
   speaker: string; // character id (chr-*)
+  /** TASK-LEARNING-07: joint turn co-speaker (05B §6 — both speakers shown in
+   * the subtitle; the co-speaker audio asset `${lineId}-co` plays simultaneously). */
+  coSpeaker?: string;
   frame?: string; // 'wide' | 'speaker-a' | 'speaker-b' | 'close'
   tokens: DialogueToken[];
   fa: string;

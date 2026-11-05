@@ -1,40 +1,40 @@
-# HANASO — Dialogue content: first-meeting-01 (TASK-LEARNING-01/02).
-# Chapter 1 anchor dialogue — Level L2 «اولین دیدار» (unit-first-meeting-01).
+# HANASO — Dialogue content: first-meeting-01 (TASK-LEARNING-01/02, restructured 07).
+# Chapter 02 anchor dialogue — Level L2 «اولین مکالمه» (first-meeting-01).
 #
-# PROVENANCE (TASK-LEARNING-02, per owner's notes HANASO-OWNER-EDUCATIONAL-NOTES-COMPLETE.fa.md):
-# The dialogue's STRUCTURE and didactic beats trace to the owner's notes Lesson 1
-# conversation «わたしは学生です» (Ando/Wang/Kim — Attain N5 course; KB 13-09 §2
-# adapted it to 9 lines): greeting → full self-intro (AはBです + nationality) →
-# short intro (subject omission, L3↔L4 pair) → confirmation + nationality question
-# (ですか/ですね on one line) → polite third-person question (あのかた どなた) →
-# identity statement → mutual yoroshiku close.
-# SURFACE: HANASO-original EXCEPT the fixed ritual formula lines (はじめまして… ·
-# あのかたは どなたですか · よろしく おねがいします · はい、わたしは …です —
-# conventional expressions that ARE the teaching object, kept verbatim like the
-# expression cards — Check-2 Reviewer-A S1-1) and proper-noun substitutions
-# (あんどう→やまだ · ワン→ソラ). The narrative frame (cafe scene, Sora/Ali, the L8
-# three-statement introduction), all examples and all exercises are HANASO-authored —
-# no Attain prose is reproduced (KB audit §۲-۲; OQ-029/030/033).
-# Deviations from the notes' conversation, all documented in
-# DIALOGUE_TO_LEARNING_TRACEABILITY.md: (1) L8 adds イランじんです (HANASO
-# personalization — vocab home for イランじん), (2) the negative beat
-# (〜ではありません / いいえ / そうですか) — previously deferred — RETURNS as the
-# TASK-LEARNING-06 Ch02 unit 02-2 extension (lines L9..L14: Sora's classmate
-# KIM enters — も question → polite negation + かんこくじん correction →
-# reactions → Kim's entrance かんこくから きました → mutual close), (3) the joint
-# final よろしく (L14, renamed from L9 — audio assets renamed with it; the hash
-# covers {text, voiceId} so real audio is preserved) is voiced by Sora alone
-# (schema = one speaker per line; the fa gloss notes «همه با هم»). Kim's lines
-# have NO real audio yet — they degrade honestly to placeholders until the
-# audio task (out of TASK-LEARNING-06 scope).
+# PROVENANCE — 13-TURN SOURCE-FAITHFUL STRUCTURE (TASK-LEARNING-07 audit fix):
+# The owner's source conversation (Attain N5 lesson 1 «わたしは学生です» —
+# 12 single-speaker turns + 1 JOINT final turn = 13) is the chapter's single
+# comprehension anchor (KB 19 / 05B: DD-090, LO-6, BLUEPRINT §6). This file now
+# matches that structure exactly, 1:1 by turn:
+#   T1/T2 greetings · T3/T4 self-intros (は+です) · T5/T6 ですか confirmation ·
+#   T7 polite third-person question (あのかた どなた) · T8 third-person intro ·
+#   T9 も-question · T10 polite negation (ではありません + かんこくじん) ·
+#   T11 reactions (そうですか/わかりました) · T12 Kim's self-intro (から きました) ·
+#   T13 JOINT よろしく おねがいします (both hosts together, DR-01d).
+# CAST ADAPTATION (documented, owner-reviewed through TASK-LEARNING-01/02):
+# the source names あんどう/ワン map to the HANASO cast やまだ/そら (proper-noun
+# substitution only); T8's third-person intro is ALI (Iranian lecturer — DD-087
+# personalization, real VOICEVOX audio, vocab home for イランじん) instead of the
+# source's Kim; Kim is therefore present in the scene from the start (background,
+# formally introduced in unit 02-2 — 05B BLUEPRINT §5 scene card) and speaks only
+# T12. The TASK-LEARNING-06 interim 14-line graft (Sora's invented «あ、キムさん!»
+# entry line) is REMOVED by this restructure — no content item was lost (74/74
+# source items keep their teaching slots; だいがく/せんせい stay anchored at T8).
+# T13 is a genuine joint turn: speaker chr-sora + co_speaker chr-yamada — the
+# player shows both speakers and plays both audio files simultaneously (05B §6
+# option «دو فایل مجزا هم‌زمان»); the co-speaker asset generates with the audio
+# task (honest placeholder skip until then).
 #
 # Scene: a small cafe near the university, afternoon. Miki brings her friend
-# Sora (Chinese student) to Yamada's cafe for the first time. By the window,
-# a new customer — Ali, an Iranian university lecturer — reads a Japanese book.
+# Sora (Chinese student) to Yamada's cafe for the first time; Sora's classmate
+# Kim (Korean) joins them at the next table. By the window, Ali — an Iranian
+# university lecturer — reads a Japanese book.
 #
 # AUDIO (TASK-LEARNING-02): pre-generated VOICEVOX (0.15.7, build-time) dual
 # opus+m4a assets committed under public/audio/dialogues/ — see the sidecar
-# manifest there. Characters' voices: miki=四国めたん, yamada=玄野武宏, sora=九州そら.
+# manifest there. Voices: miki=四国めたん, yamada=玄野武宏, sora=九州そら.
+# l9..l12 (Kim arc) + l13 co-speaker have NO real audio yet — honest
+# placeholders until the audio task (per TASK-LEARNING-07 scope §12).
 meta:
   id: dlg-first-meeting-01
   format: 2
@@ -46,7 +46,7 @@ meta:
     at: 2026-11-04
 
 dialogue_ref: dlg-first-meeting-01
-scene: کافه‌ای کوچک نزدیک دانشگاه در توکیو، بعدازظهر — میکی دوستش سورا را برای اولین بار به کافهٔ یامادا می‌آورد
+scene: کافه‌ای کوچک نزدیک دانشگاه در توکیو، بعدازظهر — میکی دوستش سورا را برای اولین بار به کافهٔ یامادا می‌آورد؛ کیم، همکلاسی کره‌ای سورا، به میز کناری می‌رود و کنار پنجره علی — استاد ایرانی — کتاب ژاپنی می‌خواند
 characters: [chr-miki, chr-yamada, chr-sora, chr-kim]
 turn_gap_default_ms: 550
 
@@ -182,19 +182,6 @@ lines:
     gap_after_ms: 600
 
   - id: s-first-meeting-01-l9
-    speaker: chr-sora
-    frame: wide
-    tokens:
-      - { surface: あ, reading: あ, pos: interjection }
-      - { surface: 、, reading: 、, pos: punctuation }
-      - { surface: キムさん, reading: キムさん, pos: proper-noun }
-      - { surface: ！, reading: ！, pos: punctuation }
-    fa: اه، خانم کیم!
-    teaches: [voc-kankokujin]
-    emotion_tag: surprised
-    gap_after_ms: 500
-
-  - id: s-first-meeting-01-l10
     speaker: chr-yamada
     frame: speaker-a
     tokens:
@@ -209,7 +196,7 @@ lines:
     emotion_tag: thinking
     gap_after_ms: 550
 
-  - id: s-first-meeting-01-l11
+  - id: s-first-meeting-01-l10
     speaker: chr-sora
     frame: speaker-b
     tokens:
@@ -229,7 +216,7 @@ lines:
     emotion_tag: neutral
     gap_after_ms: 600
 
-  - id: s-first-meeting-01-l12
+  - id: s-first-meeting-01-l11
     speaker: chr-yamada
     frame: speaker-a
     tokens:
@@ -242,7 +229,7 @@ lines:
     emotion_tag: neutral
     gap_after_ms: 650
 
-  - id: s-first-meeting-01-l13
+  - id: s-first-meeting-01-l12
     speaker: chr-kim
     frame: close
     tokens:
@@ -263,14 +250,15 @@ lines:
     emotion_tag: happy
     gap_after_ms: 600
 
-  - id: s-first-meeting-01-l14
+  - id: s-first-meeting-01-l13
     speaker: chr-sora
+    co_speaker: chr-yamada
     frame: wide
     tokens:
       - { surface: よろしく, reading: よろしく, pos: adverb, chunk: chrk-yoroshiku }
       - { surface: おねがい, reading: おねがい, pos: noun, chunk: chrk-yoroshiku }
       - { surface: します, reading: します, pos: verb-polite, chunk: chrk-yoroshiku }
-    fa: یوروشیکو اونِگای‌شیماس. (همه با هم)
+    fa: یوروشیکو اونِگای‌شیماس. (یامادا و سورا با هم)
     teaches: [chrk-yoroshiku]
     emotion_tag: happy
     gap_after_ms: 450

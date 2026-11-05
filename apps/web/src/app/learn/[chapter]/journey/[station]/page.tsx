@@ -1,10 +1,13 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { loadChapterBundle } from '@/modules/curriculum/server';
+import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
+import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
 import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
+import { wordAudioUrls } from '@/modules/audio/server';
 import { StationRunner } from '@/components/curriculum/station-runner';
+import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
@@ -14,7 +17,13 @@ import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
  * (lesson engine) page. One renderer for EVERY station type — the content drives
  * what renders (blocks in authored order); this page never special-cases types.
  * Answer keys are stripped server-side (SKL-013); grading round-trips the API.
+ *
+ * Issue #94 (Wave 3): deep links respect the chapter soft lock — a locked chapter
+ * renders the SAME notice as the journey page (chapterAccessStatus, DD-117/120).
  */
+/** Progress-aware (chapter access store) — dynamic render. */
+export const dynamic = 'force-dynamic';
+
 export default async function StationPage({ params }: { params: Promise<{ chapter: string; station: string }> }) {
   const { chapter: chapterSlug, station: stationSlug } = await params;
   let bundle;
@@ -24,6 +33,19 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
     notFound();
   }
   const chapter = bundle!.chapter;
+
+  // #94: the station walk is gated exactly like the journey map.
+  const access = await chapterAccessStatus(chapter, POC_DEFAULT_USER_ID);
+  if (access.locked) {
+    return (
+      <ChapterLockedNotice
+        chapterTitleFa={chapter.titleFa}
+        prerequisiteSlug={access.prerequisiteSlug}
+        prerequisiteTitleFa={access.prerequisiteTitleFa}
+      />
+    );
+  }
+
   const station = chapter.stations.find((s) => s.slug === stationSlug);
   if (!station) notFound();
 
@@ -46,6 +68,14 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
   for (const entry of bundle!.bundle.audio.entries) {
     audioByLine[entry.lineId] = entry.files.opus;
     audioFallbackByLine[entry.lineId] = entry.files.m4a;
+  }
+  // Issue #103 (TASK-LEARNING-07): vocab cards prefer the word's INDEPENDENT audio
+  // (wordAudio registry — DD-119) when a committed asset exists; resolution is
+  // server-side (node:fs) and only the resolved URL pair crosses the RSC boundary.
+  // Null = honest fallback to the source-line audio in the runner.
+  const wordAudioByWord: Record<string, { opus: string; m4a: string } | null> = {};
+  for (const w of chapter.words) {
+    wordAudioByWord[w.id] = w.wordAudio ? wordAudioUrls(w.wordAudio) : null;
   }
 
   return (
@@ -94,6 +124,7 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
           audioByLine={audioByLine}
           audioFallbackByLine={audioFallbackByLine}
           audioAvailable={bundle!.bundle.audio.available}
+          wordAudioByWord={wordAudioByWord}
         />
       </div>
     </main>

@@ -69,9 +69,9 @@ export const fa = {
     /* امضاهای Aizen — TASK-DSGN-01 (DD-084) */
     aizenSection: 'امضاهای Aizen — نیلیِ ساختاری و شنگرف',
     aizenIntro:
-      'عناصر هویتی جهت هنری منتخب (DD-084): مُهر دایره‌ای فهم، نوار فاز A→D پستی، پیشرفت راه‌راه مورب و کارت نیلی مکالمه.',
+      'عناصر هویتی جهت هنری منتخب (DD-084): مُهر دایره‌ای فهم، نوار فاز A تا D پستی، پیشرفت راه‌راه مورب و کارت نیلی مکالمه.',
     aizenSealLabel: 'مُهر فهم — پایان مرحلهٔ D',
-    aizenRulerLabel: 'نوار فاز A→D (نمونه: مرحلهٔ C فعال)',
+    aizenRulerLabel: 'نوار فاز A تا D (نمونه: مرحلهٔ C فعال)',
     aizenRulerDone: 'A مکالمه',
     aizenRulerDone2: 'B درس',
     aizenRulerNow: 'C تمرین',
@@ -102,7 +102,12 @@ export const fa = {
     canDoTitle: 'در پایان این فصل می‌توانی…',
     sceneTitle: 'صحنه',
     levelLabel: 'سطح',
-    prerequisitesNote: 'پیش‌نیاز: الفبای کانا (مرحلهٔ ۱) — بدون آن هم می‌توانی شروع کنی.',
+    /*
+     * Issue #94 (Wave 3): honest copy — the chapter soft lock (DD-117/120) means
+     * the prerequisite gate REALLY gates entry; the old «بدون آن هم می‌توانی شروع
+     * کنی» contradicted it. Rendered ONLY on chapters that declare a prerequisite.
+     */
+    prerequisitesNote: 'برای باز شدن این فصل، باید ابتدا گیت فهم فصل پیش‌نیاز (فصل کانا) را بگذرانی.',
     /* island journey */
     journeyTitle: 'مسیر جزیره‌ای فصل',
     journeyLead: 'هر ایستگاه یک لنگرگاه است؛ مسیر اصلی را دنبال کن، شاخه‌های اختیاری برای کنجکاوها.',
@@ -130,8 +135,13 @@ export const fa = {
     goPrerequisite: 'رفتن به فصل پیش‌نیاز',
     prevStation: 'ایستگاه قبلی',
     /* feedback ladder F2/F4 (Issue #106) */
-    eliminatedOption: 'این گزینه حذف شد',
+    eliminatedOption: 'یک گزینهٔ نادرست حذف شد',
     returnToTeaching: 'بازگشت به آموزش',
+    /* block navigation + revisit (Issue #102) */
+    prevBlock: 'مرحلهٔ قبل',
+    exerciseAlreadyDoneTitle: 'این تمرین را کامل کرده‌ای',
+    exerciseAlreadyDoneBody:
+      'نتیجه‌اش ثبت شده و با رفت‌وآمد بین مراحل از بین نمی‌رود؛ بدون تکرار می‌توانی ادامه بدهی.',
     /* station runner */
     continueBlock: 'ادامه',
     checkAnswer: 'بررسی پاسخ',

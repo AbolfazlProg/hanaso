@@ -8,13 +8,21 @@
  * /api/curriculum/station (answer key never in the client — SKL-013); the
  * F-ladder (F1 statement → F2 hint → F3 reveal) comes back from the server.
  *
+ * TASK-LEARNING-07 Wave 3 (Issue #106 — feedback ladder client wiring):
+ * - F2 elimination: on a wrong 2nd attempt the server eliminates one wrong
+ *   option (`eliminateOptionIds`) — the row greys it out and NEVER re-sends it.
+ * - F4 return-to-teaching: when the ladder is exhausted the server points at
+ *   the authored teaching block (`referenceBlockId`) — «بازگشت به آموزش» hands
+ *   the jump to the host runner (it owns the block order).
+ *
  * A11y: feedback panel is in-place (not a modal) with role=status + aria-live
  * (SKL-002 §۳-۶); options are uniform (no color-only distinction — SKL-004 §۶).
  */
 import { useCallback, useMemo, useState } from 'react';
-import { CheckCircle2, CircleAlert, Lightbulb } from 'lucide-react';
+import { ArrowRight, CheckCircle2, CircleAlert, Ear, Lightbulb } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
+import { mergeEliminated } from '@/modules/curriculum/station-walk';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { LineAudioButton } from './line-audio-button';
 
@@ -28,10 +36,25 @@ export interface ExerciseSessionProps {
   audioAvailable: boolean;
   /** Fires after the whole set finishes with the first-try score (0..1). */
   onSessionDone?: (score: number, graded: number) => void;
+  /**
+   * Issue #106 (F4): the host runner's «بازگشت به آموزش» handler — jumps the
+   * walk back to the authored teaching block the server named. Absent = the
+   * button stays hidden (e.g. hosts without a block order).
+   */
+  onReturnToBlock?: (blockId: string) => void;
 }
 
 interface GradeResponse {
-  outcome: { correct: boolean; level: 0 | 1 | 2 | 3; feedbackFa: string; reveal?: string };
+  outcome: {
+    correct: boolean;
+    level: 0 | 1 | 2 | 3;
+    feedbackFa: string;
+    reveal?: string;
+    /** #106 F2: wrong-option ids to grey out (wrong 2nd attempt). */
+    eliminateOptionIds?: string[];
+    /** #106 F4: teaching block to return to (ladder exhausted at F3). */
+    referenceBlockId?: string;
+  };
 }
 
 export function ExerciseSession({
@@ -42,6 +65,7 @@ export function ExerciseSession({
   audioFallbackByLine,
   audioAvailable,
   onSessionDone,
+  onReturnToBlock,
 }: ExerciseSessionProps) {
   const [index, setIndex] = useState(0);
   const [attemptNo, setAttemptNo] = useState(1);
@@ -53,6 +77,8 @@ export function ExerciseSession({
   const [busy, setBusy] = useState(false);
   const [firstTryCorrect, setFirstTryCorrect] = useState(0);
   const [hintRevealed, setHintRevealed] = useState(false);
+  /** #106 F2: option ids the server eliminated — they stay dead for every later attempt. */
+  const [eliminated, setEliminated] = useState<string[]>([]);
 
   const ex = exercises[index];
   const total = exercises.length;
@@ -65,6 +91,7 @@ export function ExerciseSession({
     setFeedback(null);
     setAttemptNo(1);
     setHintRevealed(false);
+    setEliminated([]); // eliminations live inside ONE exercise, never across them
   }, []);
 
   const grade = useCallback(
@@ -88,6 +115,13 @@ export function ExerciseSession({
         if (!outcome) throw new Error('grade failed');
         setFeedback(outcome);
         if (outcome.correct && attemptNo === 1) setFirstTryCorrect((n) => n + 1);
+        // #106 F2: fold the server's elimination into the persistent set and never
+        // keep an eliminated option selected (the next attempt must not re-send it).
+        if (outcome.eliminateOptionIds && outcome.eliminateOptionIds.length > 0) {
+          const ids = outcome.eliminateOptionIds;
+          setEliminated((cur) => mergeEliminated(cur, ids));
+          setSelected((sel) => (sel !== null && ids.includes(sel) ? null : sel));
+        }
         return outcome;
       } catch {
         // Reviewer-B S1: never fail silently — a dead «بررسی پاسخ» button reads as broken.
@@ -120,10 +154,15 @@ export function ExerciseSession({
       // keep built chips for the template (only reorder allowed), keep the name
       setBuilt([]);
     } else {
-      reset();
+      setSelected(null);
+      setOrdered([]);
+      setBuilt([]);
     }
     setFeedback(null);
-  }, [ex, reset]);
+    // `eliminated` intentionally SURVIVES the retry — an eliminated option stays
+    // eliminated for every later attempt of the SAME exercise (#106 F2); only
+    // reset() (advancing to the next exercise) clears it.
+  }, [ex]);
 
   const advance = useCallback(() => {
     if (isLast) {
@@ -170,7 +209,10 @@ export function ExerciseSession({
             audioAvailable={audioAvailable}
             rate={0.9}
           />
-          <span className="text-small text-ink-soft">🎧 فقط گوش کن</span>
+          <span className="flex items-center gap-1.5 text-small text-ink-soft">
+            <Ear aria-hidden className="size-4 shrink-0" />
+            فقط گوش کن
+          </span>
         </div>
       )}
 
@@ -201,27 +243,13 @@ export function ExerciseSession({
 
       {/* ---- select ---- */}
       {ex.options && (
-        <div role="radiogroup" className="flex flex-col gap-2">
-          {ex.options.map((opt) => (
-            <button
-              key={opt.id}
-              type="button"
-              role="radio"
-              aria-checked={selected === opt.id}
-              disabled={feedback?.correct === true}
-              onClick={() => setSelected(opt.id)}
-              className={[
-                'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
-                selected === opt.id
-                  ? 'border-ai bg-indigo-wash text-ink'
-                  : 'border-ink-faint bg-card text-ink hover:border-ai',
-                feedback?.correct === true && feedback ? '' : '',
-              ].join(' ')}
-            >
-              <span dir="auto">{opt.label}</span>
-            </button>
-          ))}
-        </div>
+        <OptionRow
+          options={ex.options}
+          selected={selected}
+          eliminated={eliminated}
+          locked={feedback?.correct === true}
+          onSelect={setSelected}
+        />
       )}
 
       {/* ---- order (click-to-order) ---- */}
@@ -346,8 +374,12 @@ export function ExerciseSession({
           <p className="text-body">{feedback.feedbackFa}</p>
           {feedback.reveal && (
             <p className="text-body text-ink-soft" dir="auto">
-              ✓ {feedback.reveal}
+              {feedback.reveal}
             </p>
+          )}
+          {/* #106 F4: the ladder is exhausted — offer the authored teaching block. */}
+          {!feedback.correct && feedback.referenceBlockId && onReturnToBlock && (
+            <ReturnToTeachingButton blockId={feedback.referenceBlockId} onReturn={onReturnToBlock} />
           )}
           {!feedback.correct && !feedback.reveal && feedback.level > 0 && attemptNo < 3 && (
             <button
@@ -400,6 +432,81 @@ export function ExerciseSession({
 
 function labelFor(ex: ClientExercise, optionId: string): string {
   return ex.options?.find((o) => o.id === optionId)?.label ?? '';
+}
+
+/** Props of the select row (exported for markup tests — tests/unit/ui). */
+export interface OptionRowProps {
+  options: { id: string; label: string }[];
+  selected: string | null;
+  /** #106 F2: server-eliminated option ids — visually AND logically off. */
+  eliminated: readonly string[];
+  /** True once the answer was correct (the whole row locks). */
+  locked: boolean;
+  onSelect: (optionId: string) => void;
+}
+
+/** The select row — uniform radios (SKL-004 §۶) with #106 F2 elimination states. */
+export function OptionRow({ options, selected, eliminated, locked, onSelect }: OptionRowProps) {
+  return (
+    <div role="radiogroup" className="flex flex-col gap-2">
+      {options.map((opt) => {
+        const isEliminated = eliminated.includes(opt.id);
+        return (
+          <button
+            key={opt.id}
+            type="button"
+            role="radio"
+            aria-checked={selected === opt.id}
+            aria-disabled={isEliminated || undefined}
+            disabled={locked || isEliminated}
+            onClick={() => {
+              if (isEliminated) return; // never re-send an eliminated option (#106)
+              onSelect(opt.id);
+            }}
+            className={[
+              'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
+              isEliminated
+                ? 'cursor-not-allowed border-ink-faint bg-surface-sunken text-ink-faint opacity-60'
+                : selected === opt.id
+                  ? 'border-ai bg-indigo-wash text-ink'
+                  : 'border-ink-faint bg-card text-ink hover:border-ai',
+            ].join(' ')}
+          >
+            <span dir="auto" className={isEliminated ? 'line-through' : undefined}>
+              {opt.label}
+            </span>
+            {isEliminated && (
+              <span className="mt-1 block text-caption text-ink-faint">{fa.curriculum.eliminatedOption}</span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Issue #106 (F4): «بازگشت به آموزش» — rendered when the server says the ladder
+ * is exhausted and points at an authored teaching block. The HOST (StationRunner)
+ * owns what returning means (jumping to that block's step in the walk).
+ */
+export function ReturnToTeachingButton({
+  blockId,
+  onReturn,
+}: {
+  blockId: string;
+  onReturn: (blockId: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onReturn(blockId)}
+      className="flex h-11 w-fit items-center gap-2 rounded-md border border-ai px-5 text-small font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+    >
+      <ArrowRight aria-hidden className="size-4" />
+      {fa.curriculum.returnToTeaching}
+    </button>
+  );
 }
 
 function skillLabel(skill: ClientExercise['targetSkill']): string {

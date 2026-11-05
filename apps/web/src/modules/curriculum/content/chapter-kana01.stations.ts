@@ -416,7 +416,7 @@ export const KANA_STATIONS: Station[] = [
     slug: 'stn-kana-h4',
     type: 'kana',
     titleFa: 'قاعدهٔ طول مصوت',
-    objectiveFa: 'شامل جفت کمینه‌ای شنیداری せんせい/せんせ✗ (13-09 §4-7)',
+    objectiveFa: 'شامل جفت کمینه‌ای شنیداری せんせい (درست) و せんせ نادرست (13-09 §4-7)',
     core: true,
     order: 5,
     prerequisites: ['stn-kana-h3'],
@@ -545,7 +545,7 @@ export const KANA_STATIONS: Station[] = [
         patternJa: '゛゜',
         titleFa: 'قاعدهٔ داکوتن ゛',
         bodyFa:
-          'با دو خط کوچک ゛ روی برخی کاناها، صدا بی‌واک می‌شود: か(ka)→が(ga)، さ(sa)→ざ(za)، た(ta)→だ(da)، は(ha)→ば(ba).',
+          'با دو خط کوچک ゛ روی برخی کاناها، صدا بی‌واک می‌شود: か(ka) می‌شود が(ga)، さ(sa) می‌شود ざ(za)، た(ta) می‌شود だ(da)، は(ha) می‌شود ば(ba).',
       },
       {
         kind: 'example-set',
@@ -2877,7 +2877,7 @@ export const KANA_STATIONS: Station[] = [
     slug: 'stn-kana-k13',
     type: 'integrate',
     titleFa: 'آشتی دو خط + نامِ خودت',
-    objectiveFa: 'تمرین تمایز هیراگانا↔کاتاکانا + نوشتن نام خود به کاتاکانا',
+    objectiveFa: 'تمرین تمایز هیراگانا و کاتاکانا + نوشتن نام خود به کاتاکانا',
     core: true,
     order: 29,
     prerequisites: ['stn-kana-k12'],

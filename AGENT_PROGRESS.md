@@ -49,3 +49,22 @@
 - **شاخه:** `feat/learning-01-island-chapter` → PR #86 — نخستین فصل کامل جزیره‌ای (بازتعریف M0-11).
 - **فایل‌های مشترک تغییرکرده (ترتیبی، طبق قاعده):** `docs/engineering/roadmap/NEXT_EXECUTION_TASK.md` (بازنویسی — هدف M0-11 بازتعریف شد) · `MASTER_ROADMAP.md` (ردیف M0 + حوزه‌های D..H) · `docs/owner/OWNER_BRIEFING.fa.md` · `docs/owner/HANASO_PROJECT_GUIDE.fa.md` (فصل ۷/۱۲).
 - **هم‌نقطه با دیگر Agentها:** هیچ (Agent هنری/تحقیق در این بازه فعال نبودند).
+
+## ۲۰۲۶-۱۱-۰۴ — TASK-LEARNING-07 Wave 2 — اعلام هماهنگی (Z.ai — dialogue player overhaul)
+
+- **شاخه:** `feat/learning-06-lesson-system` (کار روی working tree موجود؛ بدون commit).
+- **اعلام قبلی فایل‌های هم‌نقطه (تغییر ترتیبی، تک-Agent):** `apps/web/src/modules/audio/index.ts` (افزودن خروجی عمومی `composite-handle` — TASK-LEARNING-07)، `apps/web/src/modules/audio/server.ts` (بازصادرات word-audio برای RSC)، `apps/web/src/modules/character/contracts.ts` (فیلد اختیاری `coSpeakerId` روی `ControllerLineStartInput` — افزودنی/نابشکننده). این اجرا تنها Agent فعال روی این شاخه است.
+
+## ۲۰۲۶-۱۱-۰۴ — TASK-LEARNING-07 Wave 3 — اعلام هماهنگی (Z.ai — feedback ladder + walk nav + emoji sweep)
+
+- **شاخه:** `feat/learning-06-lesson-system` (کار روی working tree موجود؛ بدون commit — ادامهٔ Wave 2).
+- **اعلام قبلی فایل‌های هم‌نقطه (تغییر ترتیبی، تک-Agent):** `apps/web/src/messages/fa.ts`
+  (Issue #94: بازنویسی `prerequisitesNote` + کلید‌های تازهٔ `prevBlock` / `exerciseAlreadyDoneTitle` /
+  `exerciseAlreadyDoneBody` + اصلاح متن `eliminatedOption` + حذف فلش‌های → در دو رشتهٔ uiKit) —
+  این اجرا تنها Agent فعال روی این شاخه است. `apps/web/tests/unit/curriculum-content.test.ts` هم
+  (افزودن دو تست قرارداد F4 — ترتیبی، بدون تعارض).
+- **انجام (Issues #106/#102/#105/#108/#94):** سیم‌کشی F2 (حذف گزینه) + F4 (بازگشت به آموزش) در
+  exercise-session؛ ناوبری «مرحلهٔ قبل» با حفظ نتایج (station-walk.ts خالص + پنل رد شدن از تمرین
+  انجام‌شده)؛ سلسله‌مراتب کارت واژه به «معنی-محور»؛ جاروی ایموجی باقیمانده (poc ها + صفحهٔ خانه +
+  محتوای kana + حذف learn-card.tsx مرده) + گارد تست no-emoji؛ گیت فصل روی دیپ‌لینک ایستگاه/مکالمه.
+  دروازه‌ها: typecheck + lint + vitest (28 فایل/273 تست) + eqa (37) سبز — رکورد: `agent-ctx/TASK-LEARNING-07-W3-zai.md`.

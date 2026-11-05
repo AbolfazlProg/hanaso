@@ -7,6 +7,7 @@
  * with real voices — with placeholder sines this form only exercises the procedure).
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Play } from 'lucide-react';
 import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 
 interface BundleResponse {
@@ -149,9 +150,10 @@ export function T2EvalForm() {
           <button
             type="button"
             onClick={playCurrent}
-            className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper"
+            className="flex items-center gap-1.5 self-start rounded-md bg-ai px-4 py-2 text-small text-paper"
           >
-            ▶ پخش جمله
+            <Play aria-hidden className="size-4" />
+            پخش جمله
           </button>
           <div className="flex flex-wrap gap-2">
             {bundle.characters.map((c, ci) => (
@@ -181,7 +183,7 @@ export function T2EvalForm() {
           <ol className="flex flex-col gap-1 text-small">
             {answers.map((a, i) => (
               <li key={`${a.lineId}-${i}`} className={a.ok ? 'text-success' : 'text-error'}>
-                {a.ok ? '✓' : '✗'} — گفته‌شده توسط{' '}
+                {a.ok ? 'درست' : 'نادرست'} — گفته‌شده توسط{' '}
                 {bundle.characters.find((c) => c.id === a.correct)?.nameFa ?? a.correct}
                 {a.ok ? '' : `، شما گفتید ${bundle.characters.find((c) => c.id === a.picked)?.nameFa ?? a.picked}`}
               </li>

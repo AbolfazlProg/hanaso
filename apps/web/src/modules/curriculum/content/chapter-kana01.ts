@@ -99,8 +99,8 @@ export const CHAPTER_KANA_FOUNDATION: Chapter = {
     // fixes kana measure weights — flagged for owner calibration via OQ-052).
     weights: { M1: 0.3, M2: 0.25, M3: 0.2, M4: 0.15, M5: 0.1 },
     measureLabelsFa: {
-      M1: 'بازشناسی (شکل → صدا)',
-      M2: 'فراخوانی (صدا → شکل)',
+      M1: 'بازشناسی (از شکل به صدا)',
+      M2: 'فراخوانی (از صدا به شکل)',
       M3: 'رمزگشایی واژهٔ تازه',
       M4: 'تمایز جفت‌های شبیه',
       M5: 'تولید نوشتاری (تا فعال‌سازی IME سبک — OQ-007 — به‌صورت انتخابی)',

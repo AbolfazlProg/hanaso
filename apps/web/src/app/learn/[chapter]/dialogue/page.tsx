@@ -1,8 +1,10 @@
 import { notFound } from 'next/navigation';
-import { loadChapterBundle } from '@/modules/curriculum/server';
+import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
 import { getChapter } from '@/modules/curriculum/content';
+import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
 import { stripStationAnswerMaterial } from '@/modules/curriculum/client-transport';
 import { AnchorDialogueExperience } from '@/components/curriculum/anchor-dialogue-experience';
+import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 import { fa } from '@/messages/fa';
 
 /**
@@ -12,7 +14,13 @@ import { fa } from '@/messages/fa';
  * TASK-LEARNING-02 (Reviewer-C S1): the station crosses the RSC boundary with all
  * answer material stripped (prediction correctOptionId/revealFa) — grading goes
  * through /api/curriculum/station `grade-block` like every other block.
+ *
+ * Issue #94 (Wave 3): the anchor station is a deep link too — it renders the SAME
+ * chapter soft-lock notice as the journey map (chapterAccessStatus, DD-117/120).
  */
+/** Progress-aware (chapter access store) — dynamic render. */
+export const dynamic = 'force-dynamic';
+
 export default async function AnchorDialoguePage({ params }: { params: Promise<{ chapter: string }> }) {
   const { chapter: slug } = await params;
   let bundle;
@@ -22,6 +30,19 @@ export default async function AnchorDialoguePage({ params }: { params: Promise<{
     notFound();
   }
   const chapter = getChapter(slug)!;
+
+  // #94: entering the chapter (stage A) is gated exactly like the journey map.
+  const access = await chapterAccessStatus(chapter, POC_DEFAULT_USER_ID);
+  if (access.locked) {
+    return (
+      <ChapterLockedNotice
+        chapterTitleFa={chapter.titleFa}
+        prerequisiteSlug={access.prerequisiteSlug}
+        prerequisiteTitleFa={access.prerequisiteTitleFa}
+      />
+    );
+  }
+
   const anchorRaw = chapter.stations.find((s) => s.type === 'anchor');
   if (!anchorRaw) notFound();
   const anchor = stripStationAnswerMaterial(anchorRaw);
@@ -44,7 +65,13 @@ export default async function AnchorDialoguePage({ params }: { params: Promise<{
           audio: bundle!.bundle.audio,
         }}
       />
-      <footer className="mt-auto pt-6 text-caption text-ink-faint">{fa.curriculum.prerequisitesNote}</footer>
+      {/*
+       * #94: the prerequisite note only exists on chapters that actually declare
+       * one (locked ≠ hidden — the goal itself needs no gate note on Ch01).
+       */}
+      {chapter.prerequisiteChapterSlug && (
+        <footer className="mt-auto pt-6 text-caption text-ink-faint">{fa.curriculum.prerequisitesNote}</footer>
+      )}
     </main>
   );
 }

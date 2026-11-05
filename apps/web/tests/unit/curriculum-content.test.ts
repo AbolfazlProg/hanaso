@@ -95,14 +95,15 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
     expect(violations).toEqual([]);
   });
 
-  it('carries the 05B blueprint numbers: 18 core stations + 4 optional, 11 words, 5 clusters, 14 lines, 8 expressions', () => {
-    // TASK-LEARNING-06 (05B — KB section 19): two story units · one 14-turn anchor ·
-    // gate = the assessment page (never a walk station).
+  it('carries the 05B blueprint numbers: 18 core stations + 4 optional, 11 words, 5 clusters, 13 lines, 8 expressions', () => {
+    // TASK-LEARNING-06 (05B — KB section 19): two story units · the 13-turn
+    // source-faithful anchor (TASK-LEARNING-07 audit fix: 12 single-speaker turns +
+    // 1 JOINT final turn) · gate = the assessment page (never a walk station).
     expect(chapter.stations.filter((s) => s.core)).toHaveLength(18);
     expect(chapter.stations.filter((s) => !s.core)).toHaveLength(4);
     expect(chapter.words).toHaveLength(11);
     expect(chapter.grammar).toHaveLength(5);
-    expect(dialogue.lines).toHaveLength(14);
+    expect(dialogue.lines).toHaveLength(13);
     expect(chapter.expressions).toHaveLength(8);
     expect(chapter.units?.length).toBe(2);
     expect(chapter.prerequisiteChapterSlug).toBe('kana-foundation-01');
@@ -437,5 +438,50 @@ describe('TASK-LEARNING-02 — owner-notes fidelity gates', () => {
       expect(v!.engine).toBe('voicevox');
       expect(v!.credit.startsWith('VOICEVOX:')).toBe(true);
     }
+  });
+});
+
+describe('F4 return-to-teaching contract (TASK-LEARNING-07 Wave 3 — Issue #106)', () => {
+  it('every practice exercise referenceBlockId resolves to a block in its OWN station', () => {
+    // The runner implements «بازگشت به آموزش» as a step jump INSIDE the current
+    // station's block order (station-walk stepOfBlock). A referenceBlockId pointing
+    // outside its own station would render a dead button — content must keep the
+    // F4 pointer local (validated for every bundled chapter).
+    const offenders: string[] = [];
+    for (const chapter of listChapters()) {
+      for (const station of chapter.stations) {
+        const blockIds = new Set(station.blocks.map((b) => b.id));
+        for (const block of station.blocks) {
+          if (block.kind !== 'exercise') continue;
+          for (const exerciseId of block.exerciseIds) {
+            const ex = chapter.exercises[exerciseId];
+            if (!ex?.referenceBlockId) continue;
+            if (!blockIds.has(ex.referenceBlockId)) {
+              offenders.push(`${station.slug} → ${ex.id} → ${ex.referenceBlockId}`);
+            }
+          }
+        }
+      }
+    }
+    expect(offenders, `non-local referenceBlockId → ${offenders.join(' | ')}`).toEqual([]);
+  });
+
+  it('grades carry the F2 elimination and F4 pointer through the practice ladder', () => {
+    // Contract spot-check over real bundled content (the client wiring depends on
+    // gradeExerciseAnswer emitting eliminateOptionIds at F2 and referenceBlockId at F3).
+    let sawElimination = false;
+    let sawReference = false;
+    for (const chapter of listChapters()) {
+      for (const ex of Object.values(chapter.exercises)) {
+        if (ex.assessmentRole !== 'practice' || !ex.options || !ex.correctOptionId) continue;
+        const wrong = ex.options.find((o) => o.id !== ex.correctOptionId)!;
+        const f2 = gradeExerciseAnswer(ex, { kind: 'option', optionId: wrong.id }, 2);
+        if (f2.eliminateOptionIds?.length) sawElimination = true;
+        const f3 = gradeExerciseAnswer(ex, { kind: 'option', optionId: wrong.id }, 3);
+        if (f3.referenceBlockId) sawReference = true;
+      }
+    }
+    expect(sawElimination, 'at least one exercise eliminates a wrong option at F2').toBe(true);
+    expect(sawReference, 'at least one exercise returns to teaching at F3').toBe(true);
   });
 });

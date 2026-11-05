@@ -11,7 +11,7 @@
  *
  * TASK-LEARNING-06 (05B — KB section 19, DD-123..126): the chapter is now the two-unit
  * «اولین مکالمه» rebuild — unit 02-1 «最初のあいさつ» (turns L1..L8) + unit 02-2
- * «キムさんの紹介» (turns L9..L14: Kim enters — も / ではありません / かんこくじん /
+ * «キムさんの紹介» (turns L9..L13: Kim — present from the scene start — も / ではありません / かんこくじん /
  * から きました / reactions). Word count 11 = the 05B-registered two-unit exception
  * (L2 cap raised to 11 in levels.ts with provenance); VOCAB-2 = かんこくじん・から・きました.
  * wordAudio ids = the DD-119 independent-audio contract (assets pending the audio task —
@@ -134,7 +134,7 @@ export const FM01_WORDS: VocabItem[] = [
     romaji: 'kankokujin',
     meaningFa: 'کره‌ای (اهل کره)',
     noteFa: 'صدای ん اینجا «ن» خیشومی است: ka-n-ko-ku — اگر ん را نیفکنی «かこく» می‌شود.',
-    lineRef: L(11),
+    lineRef: L(10),
     fsrs: { w: 'w-fm01-kankokujin', s: 's-fm01-kankokujin' },
     surfaceInLine: 'かんこくじん',
     wordAudio: 'wa-fm01-kankokujin',
@@ -146,7 +146,7 @@ export const FM01_WORDS: VocabItem[] = [
     romaji: 'kara',
     meaningFa: 'از (نشانهٔ خاستگاه)',
     noteFa: 'برعکس فارسی: بعد از مکان می‌نشیند — かんこくから = «از کره».',
-    lineRef: L(13),
+    lineRef: L(12),
     fsrs: { w: 'w-fm01-kara', s: 's-fm01-kara' },
     surfaceInLine: 'かんこくから',
     wordAudio: 'wa-fm01-kara',
@@ -159,7 +159,7 @@ export const FM01_WORDS: VocabItem[] = [
     romaji: 'kimashita',
     meaningFa: 'آمد (شکل مؤدبانهٔ گذشتهٔ «آمدن»)',
     noteFa: 'در این فصل فقط در قالب 〜から きました استفاده می‌شود؛ فعل مجرد بعداً می‌آید.',
-    lineRef: L(13),
+    lineRef: L(12),
     fsrs: { w: 'w-fm01-kimashita', s: 's-fm01-kimashita' },
     surfaceInLine: 'きました',
     wordAudio: 'wa-fm01-kimashita',
@@ -186,21 +186,21 @@ export const FM01_GRAMMAR: GrammarCluster[] = [
     id: 'gr-mo',
     pattern: 'AもBです',
     titleFa: '「هم» — افزودن به همان گروه',
-    lineRefs: [L(10)],
+    lineRefs: [L(9)],
     fsrs: { gr: 'gr-fm01-mo' },
   },
   {
     id: 'gr-dewa-arimasen',
     pattern: 'AはBでは ありません',
     titleFa: 'نفی مؤدبانهٔ هویت — «نیست»',
-    lineRefs: [L(11)],
+    lineRefs: [L(10)],
     fsrs: { gr: 'gr-fm01-dewa-arimasen' },
   },
   {
     id: 'gr-kara-kimashita',
     pattern: '〜から きました',
     titleFa: 'خاستگاه — «از … آمده‌ام»',
-    lineRefs: [L(13)],
+    lineRefs: [L(12)],
     fsrs: { gr: 'gr-fm01-kara-kimashita' },
   },
 ];
@@ -267,8 +267,8 @@ export const FM01_EXPRESSIONS: ExpressionItem[] = [
     functionFa: '«نه» — ردّ مؤدبانهٔ فرضِ غلط',
     formalityFa: 'مؤدب',
     replyFa: 'اصلاح اطلاعات + جملهٔ درست: かんこくじんです',
-    taarofNoteFa: 'ردِ اطلاعات است نه شخص — بعدش حتماً جملهٔ درست را بگو (مثل L11).',
-    lineRef: L(11),
+    taarofNoteFa: 'ردِ اطلاعات است نه شخص — بعدش حتماً جملهٔ درست را بگو (مثل L10).',
+    lineRef: L(10),
     fsrs: { chrk: 'chrk-fm01-iie' },
   },
   {
@@ -279,7 +279,7 @@ export const FM01_EXPRESSIONS: ExpressionItem[] = [
     formalityFa: 'خنثی',
     replyFa: 'ادامهٔ گفت‌وگو',
     taarofNoteFa: 'با آهنگ نزولی = «جالب بود»؛ そうですね (توافق) در این فصل نیست — با هم قاطی نکن.',
-    lineRef: L(12),
+    lineRef: L(11),
     fsrs: { chrk: 'chrk-fm01-soodesuka' },
   },
   {
@@ -289,7 +289,7 @@ export const FM01_EXPRESSIONS: ExpressionItem[] = [
     functionFa: '«فهمیدم / باشه» — دریافت اطلاعات',
     formalityFa: 'مؤدب-خنثی',
     replyFa: 'ادامهٔ گفت‌وگو یا شروع موضوع تازه',
-    lineRef: L(12),
+    lineRef: L(11),
     fsrs: { chrk: 'chrk-fm01-wakarimashita' },
   },
 ];
