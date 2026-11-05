@@ -1,43 +1,33 @@
 # CURRENT_STATE — TASK-LEARNING-08
 
-> آخرین به‌روزرسانی: 2026-11-06 (WP-1 تکمیل — شروع WP-5)
+> آخرین به‌روزرسانی: 2026-11-06 (WP-1..WP-6 کد کامل — در انتظار CI + استقرار)
 > شاخه: `feat/learning-06-lesson-system` · PR #115 · Issue ردیابی: #116
 
-## وضعیت بازیابی (WP-1)
+## کامیت‌های مأموریت (همه push شده تا a42fc08)
 
-| مورد | وضعیت | شاهد |
+| SHA | WP | محتوا |
 |---|---|---|
-| PR #115 (feat/learning-06-lesson-system) | open، mergeable clean، ۱۱ کامیت (@ b21512a) | GitHub API |
-| TASK-LEARNING-07 W1–W7 | همه کامیت‌شده و مستقر (learn.kotodama.ir @ 667ebf1) | AGENT_PROGRESS.md + ce9ce2a |
-| Working tree | تمیز در b21512a | git status |
-| تست پایه | ۳۰ فایل / ۳۰۴ تست سبز | vitest run |
-| dev server | پورت 3111، in-memory stores (بدون DATABASE_URL) | curl 200 |
+| 749e4cc | WP-1 | بازیابی + بازتولید بازخوردهای A–F + Issue #116 + checkpoints |
+| bed7cdd | WP-5 | هویت زبان‌آموز per-browser (#109) + پایداری walk + Auto-next + globalThis stores |
+| 212a39c | WP-2/3a | KanaCard v2 + لایهٔ آموزشی ۹۲ کانا + بازنویسی یادسپارها + جابه‌جایی بلوک نوشتن |
+| cf74437 | WP-3b | ۹۲ فایل صوتی کانا + ۳ خط دیالوگ خوش‌آمد (VOICEVOX از پیش تولیدشده) |
+| a42fc08 | WP-6 | ماسک SVG مسیر نقشه + شواهد E2E سناریوهای شش‌گانه |
 
-## بازتولید بازخوردهای مالک (evidence)
+## وضعیتWP ها
 
-| # | بازخورد | تأیید | شاهد |
-|---|---|---|---|
-| A | آموزش کاراکتر ضعیف | ✅ | `03-kana-card-a.png` — کارت あ: ۰ دکمه، بدون صدا/تلفظ/ترتیب ضربه؛ بلافاصله exercise |
-| B | یادسپار بی‌کیفیت | ✅ | kana-items.ts — ۹۲ رکورد status:'draft'، کیفیت ناهمگون |
-| C | موتور رسم حاشیه‌ای | ✅ | writing-practice فقط بلوک آخر ایستگاه (بعد از recall)، قابل رد با «ادامه» |
-| D | کلیک اضافی بعد از پاسخ صحیح | ✅ | `04-correct-answer-extra-click.png` — دکمه «ادامه» پس از feedback صحیح |
-| E | از دست رفتن پیشرفت | ✅ | Refresh وسط ایستگاه → بازگشت به بلوک ۱ (step در useState، بدون ذخیره)؛ 'enter' هرگز از کلاینت fire نمی‌شود؛ همهٔ صفحات با POC_DEFAULT_USER_ID مشترک (#109) |
-| F | خط نقطه‌چین پشت آیکون‌ها | ✅ | تحلیل VLM دسکتاپ تولیدی: نقطه‌ها لبهٔ مارکرها را لمس/clip می‌کنند، هاله داخل حلقه‌ها می‌پاشد، بدون حاشیهٔ امن |
+- **WP-1 بازیابی/بازتولید:** ✅ — هر ۶ بازخورد مالک با شاهد (tl08-shots/01..14)
+- **WP-2 آموزش:** ✅ — کارت v2 (صدا-اول ۰٫۸× + تلفظ فارسی + جفت‌مقایسه + نوشتن درون‌کارت: Observe→Trace→Free)؛ بلوک writing در ۲۳ ایستگاه به قبل از recall منتقل شد
+- **WP-3 یادسپار+صوت:** ✅ — ۹۲ یادسپار بازنویسی (story/pattern + pairHint)؛ ۹۲ صوت کانا (۴۳۳–۶۶۸ms، تک‌مورا) + ۳ خط خوش‌آمد با hash binding گیت fidelity
+- **WP-4 نوشتن:** ✅ — اولین مواجهه (درون کارت) + ایستگاه (قبل از recall) + دریل آزاد؛ canvas موبایل ۳۲۰px بدون overflow
+- **WP-5 جریان/پایداری:** ✅ — Auto-next (۱۵۰۰/۲۲۰۰ms متمرکز، race-safe)؛ snapshot محلی per station + لنگر سروری currentBlock؛ ۶ سناریو E2E همه PASS
+- **WP-6 نقشه/اعتبارسنجی:** کد ✅ — ماسک سوراخ‌دار (radius+14px) با تأیید VLM دسکتاپ/موبایل/سبز؛ گیت‌ها: vitest 324 ✓ · eqa 37 ✓ · tsc ✓ · eslint ✓ · build ✓
 
-## تصمیم‌های پیاده‌سازی
+## محدودیت‌های صادقانه
 
-- **هویت (WP-5):** learner id پایدار per-browser (localStorage + کوکی `hanaso_lid`) — سرور در نبودِ auth از آن به‌جای poc-user مشترک استفاده می‌کند (#109)؛ مسیر مهاجرت به better-auth (M1) حفظ می‌شود.
-- **Resume (WP-5):** ذخیرهٔ محلی granular (per station: stepIndex/blockResults/exerciseIndex) در هر رویداد معنادار + لنگر سروری currentBlock از طریق action موجود enter.
-- **Auto-next (WP-5):** تأخیر متمرکز در config، حفاظت double-submit، احترام به prefers-reduced-motion، دکمهٔ manual حفظ می‌شود.
-- **آموزش (WP-2):** TB-KanaCard v2 طبق DD-121 — صدا-اول + تلفظ فارسی + پیش‌نمایش ترتیب ضربه + Tracing درون‌کارت؛ بلوک writing به قبل از recall exercise منتقل می‌شود (چرخه: معرفی→نوشتن→بازیابی→کاربرد).
-- **یادسپار (WP-3):** بازنویسی ۹۲ یادسپار با استاندارد کیفیت مأموریت + برچسب صادق حفظ؛ الگوی مقایسه‌ای جای داستان ضعیف.
-- **صوت (WP-3):** VOICEVOX از پیش تولیدشده روی VPS (خط تولید TASK-LEARNING-02) — ۹۲ کانا + ۳ خط دیالوگ خوش‌آمد؛ ممنوعیت TTS زنده حفظ.
-- **نقشه (WP-6):** ماسک SVG با سوراخ‌های دایره‌ای (آیکون + حاشیهٔ امن) روی هر دو لایهٔ مسیر.
-
-## فایل‌های هم‌نقطهٔ هماهنگی (تغییر ترتیبی، تک-Agent)
-
-`src/messages/fa.ts` · `src/modules/curriculum/content/kana-items.ts` · `chapter-kana01.stations.ts` · `station-runner.tsx` · `exercise-session.tsx` · `journey-map.tsx` — این اجرا تنها Agent فعال روی شاخه است.
+- تست integration-pg (PostgreSQL واقعی) در sandbox اجرا نمی‌شود (نبود سرور PG محلی) — مسیر واقعی DB در smoke بعد از استقرار روی VPS راستی‌آزمایی می‌شود (الگوی تسک‌های قبلی).
+- یادسپارها status='draft' می‌مانند تا بازبینی انسانی مالک (OQ-051) — برچسب صادق در UI.
+- word-audio (واژگان فصل ۰۲) همچنان بدون دارایی است (تمرین واژگان L2 — خارج از دامنهٔ فصل کانا؛ UI صادقانه fallback می‌کند).
 
 ## قدم بعدی
 
-WP-5 — هویت زبان‌آموز + پایداری پیشرفت + Auto-next.
+CI #77 (a42fc08) سبز شود → deploy.sh روی VPS (pull image → migrate → staged swap → health/ready/smoke) → KOTODAMA دست‌نخورده → گزارش نهایی.
