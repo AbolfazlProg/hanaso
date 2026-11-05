@@ -153,9 +153,7 @@ export async function POST(req: Request) {
     // part of the stored state, not just the client's memory.
     const anchorBlockId = 'currentBlockId' in payload ? payload.currentBlockId : undefined;
     const anchorValid =
-      anchorBlockId !== undefined && station.blocks.some((b) => b.id === anchorBlockId)
-        ? anchorBlockId
-        : undefined;
+      anchorBlockId !== undefined && station.blocks.some((b) => b.id === anchorBlockId) ? anchorBlockId : undefined;
     const base = next ?? current;
     const state = await store.upsert(userId, station.slug, {
       stationSlug: station.slug,

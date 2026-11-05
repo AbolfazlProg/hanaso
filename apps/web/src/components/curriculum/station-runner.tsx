@@ -115,10 +115,7 @@ async function gradeBlock(payload: {
  * (Postgres), unlike an RSC prop (RSC and route handlers may read different
  * module instances in dev).
  */
-async function fetchServerResumeAnchor(
-  chapterSlug: string,
-  stationSlug: string,
-): Promise<string | null> {
+async function fetchServerResumeAnchor(chapterSlug: string, stationSlug: string): Promise<string | null> {
   try {
     const res = await fetch(
       `/api/curriculum/station?chapter=${encodeURIComponent(chapterSlug)}&station=${encodeURIComponent(stationSlug)}`,

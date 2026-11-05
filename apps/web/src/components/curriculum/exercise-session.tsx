@@ -169,13 +169,14 @@ export function ExerciseSession({
   const scheduleAutoNext = useCallback(
     (wasFirstTry: boolean) => {
       if (autoNextTimerRef.current !== null) clearTimeout(autoNextTimerRef.current);
-      const delay = wasFirstTry
-        ? EXPERIENCE.autoNextDelayMsCorrect
-        : EXPERIENCE.autoNextDelayMsCorrectAfterRetry;
-      autoNextTimerRef.current = setTimeout(() => {
-        autoNextTimerRef.current = null;
-        advance();
-      }, Math.min(delay, EXPERIENCE.autoNextMaxDelayMs));
+      const delay = wasFirstTry ? EXPERIENCE.autoNextDelayMsCorrect : EXPERIENCE.autoNextDelayMsCorrectAfterRetry;
+      autoNextTimerRef.current = setTimeout(
+        () => {
+          autoNextTimerRef.current = null;
+          advance();
+        },
+        Math.min(delay, EXPERIENCE.autoNextMaxDelayMs),
+      );
     },
     [advance],
   );
@@ -252,7 +253,6 @@ export function ExerciseSession({
     // eliminated for every later attempt of the SAME exercise (#106 F2); only
     // reset() (advancing to the next exercise) clears it.
   }, [ex]);
-
 
   const remainingChunks = useMemo(() => ex?.chunks?.filter((c) => !ordered.includes(c.id)) ?? [], [ex, ordered]);
   const remainingChips = useMemo(() => ex?.chips?.filter((c) => !built.includes(c.id)) ?? [], [ex, built]);

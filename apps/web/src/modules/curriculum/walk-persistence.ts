@@ -52,7 +52,9 @@ function storageKey(learnerId: string, chapterSlug: string, stationSlug: string)
 }
 
 /** Serialize + persist one snapshot (best-effort; storage failures are swallowed). */
-export function saveWalkSnapshot(snapshot: Omit<StationWalkSnapshot, 'v' | 'updatedAt'> & { updatedAt?: number }): void {
+export function saveWalkSnapshot(
+  snapshot: Omit<StationWalkSnapshot, 'v' | 'updatedAt'> & { updatedAt?: number },
+): void {
   if (typeof window === 'undefined') return;
   const learnerId = getOrCreateLearnerId();
   if (!learnerId) return;

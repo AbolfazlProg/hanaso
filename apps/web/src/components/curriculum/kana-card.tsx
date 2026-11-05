@@ -182,9 +182,7 @@ export function KanaCard({ kana, showRomaji, confusableNoteFa, audioUrls, onWrit
           ) : null}
         </div>
       )}
-      {!mn?.pairGlyphs && confusableNoteFa ? (
-        <p className="text-small text-ink-faint">{confusableNoteFa}</p>
-      ) : null}
+      {!mn?.pairGlyphs && confusableNoteFa ? <p className="text-small text-ink-faint">{confusableNoteFa}</p> : null}
 
       {/* ---- writing: Observe → Trace → Free recall, INSIDE the teaching card ---- */}
       <div className="rounded-md border border-ai/40 bg-indigo-wash/30 p-4">
@@ -209,12 +207,7 @@ export function KanaCard({ kana, showRomaji, confusableNoteFa, audioUrls, onWrit
         ) : null}
         {writingOpen ? (
           <div className="mt-3">
-            <WritingPractice
-              character={kana.glyph}
-              variant="card"
-              initialMode="guided"
-              onAttempt={onWritingAttempt}
-            />
+            <WritingPractice character={kana.glyph} variant="card" initialMode="guided" onAttempt={onWritingAttempt} />
           </div>
         ) : (
           <p className="mt-2 text-caption text-ink-faint">{fa.curriculum.kanaWritingCollapsedNote}</p>

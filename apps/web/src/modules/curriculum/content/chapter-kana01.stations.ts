@@ -175,7 +175,7 @@ export const KANA_STATIONS: Station[] = [
           '7 واژهٔ واقعی تازه خواندنی شد — مجموع 7 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-hira-a', 'kn-rec-hira-i', 'kn-rec-hira-u', 'kn-rec-hira-e', 'kn-rec-hira-o'],
   },
@@ -301,7 +301,7 @@ export const KANA_STATIONS: Station[] = [
           '16 واژهٔ واقعی تازه خواندنی شد — مجموع 23 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-hira-ka', 'kn-rec-hira-ki', 'kn-rec-hira-ku', 'kn-rec-hira-ke', 'kn-rec-hira-ko'],
   },
@@ -427,7 +427,7 @@ export const KANA_STATIONS: Station[] = [
           '23 واژهٔ واقعی تازه خواندنی شد — مجموع 46 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: [
       'kn-rec-hira-sa',
@@ -850,7 +850,7 @@ export const KANA_STATIONS: Station[] = [
           '33 واژهٔ واقعی تازه خواندنی شد — مجموع 125 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-hira-n'],
   },
@@ -971,7 +971,7 @@ export const KANA_STATIONS: Station[] = [
           '38 واژهٔ واقعی تازه خواندنی شد — مجموع 163 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-hira-na', 'kn-rec-hira-ni', 'kn-rec-hira-nu', 'kn-rec-hira-ne', 'kn-rec-hira-no'],
   },
@@ -1089,7 +1089,7 @@ export const KANA_STATIONS: Station[] = [
           '104 واژهٔ واقعی تازه خواندنی شد — مجموع 267 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: [
       'kn-rec-hira-ta',
@@ -1212,7 +1212,7 @@ export const KANA_STATIONS: Station[] = [
           '66 واژهٔ واقعی تازه خواندنی شد — مجموع 333 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: [
       'kn-rec-hira-ma',
@@ -1366,7 +1366,7 @@ export const KANA_STATIONS: Station[] = [
           '103 واژهٔ واقعی تازه خواندنی شد — مجموع 436 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: [
       'kn-rec-hira-ra',
@@ -1510,7 +1510,7 @@ export const KANA_STATIONS: Station[] = [
           '102 واژهٔ واقعی تازه خواندنی شد — مجموع 538 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: [
       'kn-rec-hira-ha',
@@ -1722,7 +1722,7 @@ export const KANA_STATIONS: Station[] = [
           '51 واژهٔ واقعی تازه خواندنی شد — مجموع 606 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-hira-ya', 'kn-rec-hira-yu', 'kn-rec-hira-yo'],
   },
@@ -1821,7 +1821,7 @@ export const KANA_STATIONS: Station[] = [
           '29 واژهٔ واقعی تازه خواندنی شد — مجموع 635 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-hira-wa', 'kn-rec-hira-wo', 'kn-disc-hira-ne-re-wa'],
   },
@@ -1890,7 +1890,7 @@ export const KANA_STATIONS: Station[] = [
           '5 کانای جدید: ア(a)، イ(i)، ウ(u)، エ(e)، オ(o)',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-kata-a', 'kn-rec-kata-i', 'kn-rec-kata-u', 'kn-rec-kata-e', 'kn-rec-kata-o'],
   },
@@ -1999,7 +1999,7 @@ export const KANA_STATIONS: Station[] = [
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 638 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-kata-ta', 'kn-rec-kata-chi', 'kn-rec-kata-tsu', 'kn-rec-kata-te', 'kn-rec-kata-to'],
   },
@@ -2096,7 +2096,7 @@ export const KANA_STATIONS: Station[] = [
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 641 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-kata-ra', 'kn-rec-kata-ri', 'kn-rec-kata-ru', 'kn-rec-kata-re', 'kn-rec-kata-ro'],
   },
@@ -2214,7 +2214,7 @@ export const KANA_STATIONS: Station[] = [
           '4 واژهٔ واقعی تازه خواندنی شد — مجموع 645 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: [
       'kn-rec-kata-sa',
@@ -2340,7 +2340,7 @@ export const KANA_STATIONS: Station[] = [
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 650 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-kata-ha', 'kn-rec-kata-hi', 'kn-rec-kata-fu', 'kn-rec-kata-he', 'kn-rec-kata-ho'],
   },
@@ -2428,7 +2428,7 @@ export const KANA_STATIONS: Station[] = [
           '11 واژهٔ واقعی تازه خواندنی شد — مجموع 661 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-kata-n', 'kn-disc-kata-so-n'],
   },
@@ -2542,7 +2542,7 @@ export const KANA_STATIONS: Station[] = [
           '9 واژهٔ واقعی تازه خواندنی شد — مجموع 670 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: [
       'kn-rec-kata-ka',
@@ -2773,7 +2773,7 @@ export const KANA_STATIONS: Station[] = [
           '9 واژهٔ واقعی تازه خواندنی شد — مجموع 706 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-kata-ma', 'kn-rec-kata-mi', 'kn-rec-kata-mu', 'kn-rec-kata-me', 'kn-rec-kata-mo'],
   },
@@ -2848,7 +2848,7 @@ export const KANA_STATIONS: Station[] = [
           '1 واژهٔ واقعی تازه خواندنی شد — مجموع 707 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-kata-ya', 'kn-rec-kata-yu', 'kn-rec-kata-yo', 'kn-disc-kata-yu-e'],
   },
@@ -2969,7 +2969,7 @@ export const KANA_STATIONS: Station[] = [
           '9 واژهٔ واقعی تازه خواندنی شد — مجموع 716 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: [
       'kn-rec-kata-na',
@@ -3068,7 +3068,7 @@ export const KANA_STATIONS: Station[] = [
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 721 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
-      }
+      },
     ],
     fsrsItems: ['kn-rec-kata-wa', 'kn-rec-kata-wo', 'kn-disc-kata-wa-fu'],
   },
@@ -3230,7 +3230,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-opt-drill-wrapup',
         titleFa: 'دریل آزاد کانا (اختیاری) — جمع‌بندی',
         itemsFa: ['کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.'],
-      }
+      },
     ],
     fsrsItems: [],
   },

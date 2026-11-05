@@ -26,7 +26,14 @@ describe('isLearnerId', () => {
   });
 
   it('rejects everything else — shared-store collapse is the bug being fixed', () => {
-    for (const bad of ['', 'poc-user', 'x'.repeat(40), '11111111-2222-3333-4444', '../../etc/passwd', '11111111_2222_3333_4444_555555555555']) {
+    for (const bad of [
+      '',
+      'poc-user',
+      'x'.repeat(40),
+      '11111111-2222-3333-4444',
+      '../../etc/passwd',
+      '11111111_2222_3333_4444_555555555555',
+    ]) {
       expect(isLearnerId(bad)).toBe(false);
     }
   });
@@ -39,7 +46,9 @@ describe('resolveLearnerIdFromRequest', () => {
   });
 
   it('parses among other cookies and tolerates URI encoding', () => {
-    const id = resolveLearnerIdFromRequest(reqWithCookie(`a=1; ${LEARNER_COOKIE_NAME}=${encodeURIComponent(VALID)}; b=2`));
+    const id = resolveLearnerIdFromRequest(
+      reqWithCookie(`a=1; ${LEARNER_COOKIE_NAME}=${encodeURIComponent(VALID)}; b=2`),
+    );
     expect(id).toBe(VALID);
   });
 

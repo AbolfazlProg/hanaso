@@ -70,10 +70,7 @@ export function getOrCreateLearnerId(): string | null {
     if (readCookieId() !== existing) writeCookieId(existing);
     return existing;
   }
-  const id =
-    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-      ? crypto.randomUUID()
-      : null;
+  const id = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : null;
   if (!id) return null;
   writeStoredId(id);
   writeCookieId(id);

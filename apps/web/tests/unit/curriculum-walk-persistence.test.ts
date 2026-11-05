@@ -104,10 +104,7 @@ describe('walk snapshot round-trip', () => {
   });
 
   it('corrupt JSON degrades to null (no wrong-position resume)', () => {
-    g.window!.localStorage.setItem(
-      `${'hanaso.walk.v1'}.${LEARNER}.c.s`,
-      '{not json',
-    );
+    g.window!.localStorage.setItem(`${'hanaso.walk.v1'}.${LEARNER}.c.s`, '{not json');
     expect(loadWalkSnapshot('c', 's')).toBeNull();
   });
 

@@ -58,7 +58,13 @@ async function stateOf(res: Response): Promise<StateShape> {
 describe('POST /api/curriculum/station — walk position actions (WP-5)', () => {
   it('enter marks in_progress AND stores the resume anchor block', async () => {
     const res = await postStation(
-      post({ action: 'enter', chapterSlug: CH, stationSlug: STN, currentBlockId: 'blk-stn-kana-h1-card-hira-a', stepIndex: 0 }),
+      post({
+        action: 'enter',
+        chapterSlug: CH,
+        stationSlug: STN,
+        currentBlockId: 'blk-stn-kana-h1-card-hira-a',
+        stepIndex: 0,
+      }),
     );
     expect(res.status).toBe(200);
     const state = await stateOf(res);
@@ -68,10 +74,22 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
 
   it('progress moves the anchor without touching status or score', async () => {
     await postStation(
-      post({ action: 'enter', chapterSlug: CH, stationSlug: STN, currentBlockId: 'blk-stn-kana-h1-card-hira-a', stepIndex: 0 }),
+      post({
+        action: 'enter',
+        chapterSlug: CH,
+        stationSlug: STN,
+        currentBlockId: 'blk-stn-kana-h1-card-hira-a',
+        stepIndex: 0,
+      }),
     );
     const res = await postStation(
-      post({ action: 'progress', chapterSlug: CH, stationSlug: STN, currentBlockId: 'blk-stn-kana-h1-retrieval-1', stepIndex: 3 }),
+      post({
+        action: 'progress',
+        chapterSlug: CH,
+        stationSlug: STN,
+        currentBlockId: 'blk-stn-kana-h1-retrieval-1',
+        stepIndex: 3,
+      }),
     );
     expect(res.status).toBe(200);
     const state = await stateOf(res);
@@ -83,7 +101,13 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
   it('an unknown anchor block id is never stored (honest anchor)', async () => {
     await postStation(post({ action: 'enter', chapterSlug: CH, stationSlug: STN, stepIndex: 0 }));
     const res = await postStation(
-      post({ action: 'progress', chapterSlug: CH, stationSlug: STN, currentBlockId: 'blk-does-not-exist', stepIndex: 2 }),
+      post({
+        action: 'progress',
+        chapterSlug: CH,
+        stationSlug: STN,
+        currentBlockId: 'blk-does-not-exist',
+        stepIndex: 2,
+      }),
     );
     expect(res.status).toBe(200);
     const state = await stateOf(res);
@@ -92,11 +116,29 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
 
   it('learner cookies isolate progress stores (#109 — no shared poc-user)', async () => {
     await postStation(
-      post({ action: 'enter', chapterSlug: CH, stationSlug: STN, currentBlockId: 'blk-stn-kana-h1-card-hira-a', stepIndex: 0 }, L1),
+      post(
+        {
+          action: 'enter',
+          chapterSlug: CH,
+          stationSlug: STN,
+          currentBlockId: 'blk-stn-kana-h1-card-hira-a',
+          stepIndex: 0,
+        },
+        L1,
+      ),
     );
     // learner 2 walks a DIFFERENT station — learner 1's state must not appear
     await postStation(
-      post({ action: 'enter', chapterSlug: CH, stationSlug: 'stn-kana-h2', currentBlockId: 'blk-stn-kana-h2-card-hira-ka', stepIndex: 0 }, L2),
+      post(
+        {
+          action: 'enter',
+          chapterSlug: CH,
+          stationSlug: 'stn-kana-h2',
+          currentBlockId: 'blk-stn-kana-h2-card-hira-ka',
+          stepIndex: 0,
+        },
+        L2,
+      ),
     );
     const s1 = await stateOf(await getStation(get(STN, L1)));
     const s2 = await stateOf(await getStation(get(STN, L2)));
@@ -113,7 +155,13 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
     // prerequisites: walk H0 (viewed completion) then H1 with a passing score
     await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }));
     await postStation(
-      post({ action: 'progress', chapterSlug: CH, stationSlug: STN, currentBlockId: 'blk-stn-kana-h1-card-hira-a', stepIndex: 0 }),
+      post({
+        action: 'progress',
+        chapterSlug: CH,
+        stationSlug: STN,
+        currentBlockId: 'blk-stn-kana-h1-card-hira-a',
+        stepIndex: 0,
+      }),
     );
     const res = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: STN, score: 1 }));
     expect(res.status).toBe(200);
@@ -128,7 +176,13 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
   it('re-entering a completed station keeps it completed (revisit is a review)', async () => {
     await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }));
     const res = await postStation(
-      post({ action: 'enter', chapterSlug: CH, stationSlug: 'stn-kana-h0', currentBlockId: 'blk-stn-kana-h0-scene', stepIndex: 0 }),
+      post({
+        action: 'enter',
+        chapterSlug: CH,
+        stationSlug: 'stn-kana-h0',
+        currentBlockId: 'blk-stn-kana-h0-scene',
+        stepIndex: 0,
+      }),
     );
     const state = await stateOf(res);
     expect(state.status).toBe('completed');
@@ -138,7 +192,13 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
 describe('station store state after walk actions (WP-5)', () => {
   it('the in-memory store reflects the anchor for resume reads', async () => {
     await postStation(
-      post({ action: 'enter', chapterSlug: CH, stationSlug: 'stn-kana-h2', currentBlockId: 'blk-stn-kana-h2-card-hira-ka', stepIndex: 0 }),
+      post({
+        action: 'enter',
+        chapterSlug: CH,
+        stationSlug: 'stn-kana-h2',
+        currentBlockId: 'blk-stn-kana-h2-card-hira-ka',
+        stepIndex: 0,
+      }),
     );
     const stored = await getStationProgressStore().get(L1, 'stn-kana-h2');
     expect(stored?.status).toBe('in_progress');
