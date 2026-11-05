@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fail, ok } from '@/modules/shared';
 import { getChapterProgressStore, getAttemptStore, getStationProgressStore } from '@/lib/poc/stores';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import { applyChapterEvent, gradeMasterySubmission, type ExerciseAnswerPayload } from '@/modules/curriculum';
 import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     });
   }
   const { chapterSlug, answers } = parsed.data;
-  const userId = POC_DEFAULT_USER_ID;
+  const userId = resolveLearnerIdFromRequest(req);
 
   let bundle;
   try {

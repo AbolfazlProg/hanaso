@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fail, ok } from '@/modules/shared';
 import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import {
   applyStationEvent,
@@ -25,7 +25,9 @@ import type { StationState } from '@/modules/curriculum/types';
  * - `complete`: mark the station completed — the SERVER re-checks the criterion
  *   (viewed / task / threshold) before flipping, then folds the chapter aggregate.
  *
- * DEV-ONLY auth note: userId defaults to 'poc-user' until better-auth (M1).
+ * DEV-ONLY auth note: userId resolves to the per-browser learner id
+ * (hanaso_lid cookie — TASK-LEARNING-08/#109); poc-user remains only as the
+ * no-cookie fallback until better-auth (M1).
  */
 export const dynamic = 'force-dynamic';
 
@@ -62,6 +64,22 @@ const bodySchema = z.discriminatedUnion('action', [
     action: z.literal('enter'),
     chapterSlug: z.string().min(1),
     stationSlug: z.string().min(1),
+    /** TASK-LEARNING-08 (WP-5): the block the walk is on (server resume anchor). */
+    currentBlockId: z.string().min(1).optional(),
+    stepIndex: z.number().int().min(0).optional(),
+  }),
+  z.object({
+    /**
+     * TASK-LEARNING-08 (WP-5 — owner feedback E): mid-walk position sync. Fired
+     * on every block transition (NOT every answer — bounded write rate). Keeps
+     * StationState.currentBlock fresh so a resume works even after a localStorage
+     * clear on the same browser.
+     */
+    action: z.literal('progress'),
+    chapterSlug: z.string().min(1),
+    stationSlug: z.string().min(1),
+    currentBlockId: z.string().min(1),
+    stepIndex: z.number().int().min(0),
   }),
   z.object({
     action: z.literal('complete'),
@@ -108,7 +126,7 @@ export async function POST(req: Request) {
     });
   }
   const payload = parsed.data;
-  const userId = POC_DEFAULT_USER_ID;
+  const userId = resolveLearnerIdFromRequest(req);
 
   let bundle;
   try {
@@ -128,19 +146,35 @@ export async function POST(req: Request) {
 
   const store = getStationProgressStore();
 
-  if (payload.action === 'enter') {
+  if (payload.action === 'enter' || payload.action === 'progress') {
     const current = await store.get(userId, station.slug);
     const next = applyStationEvent(current ?? undefined, { type: 'station_entered', stationSlug: station.slug });
-    const state = next ? await store.upsert(userId, station.slug, next) : current;
-    recordLearningEvent(
-      'station_entered',
-      {
-        chapter_id: payload.chapterSlug,
-        station_id: station.slug,
-        ...(station.core ? {} : { source: 'curious' as const }),
-      },
-      userId,
-    );
+    // WP-5: keep the resume anchor (currentBlock) fresh — the walk position is
+    // part of the stored state, not just the client's memory.
+    const anchorBlockId = 'currentBlockId' in payload ? payload.currentBlockId : undefined;
+    const anchorValid =
+      anchorBlockId !== undefined && station.blocks.some((b) => b.id === anchorBlockId)
+        ? anchorBlockId
+        : undefined;
+    const base = next ?? current;
+    const state = await store.upsert(userId, station.slug, {
+      stationSlug: station.slug,
+      status: base?.status ?? 'in_progress',
+      bestScore: base?.bestScore ?? null,
+      attemptCount: base?.attemptCount ?? 0,
+      ...(base?.status === 'in_progress' && anchorValid ? { currentBlock: anchorValid } : {}),
+    });
+    if (payload.action === 'enter') {
+      recordLearningEvent(
+        'station_entered',
+        {
+          chapter_id: payload.chapterSlug,
+          station_id: station.slug,
+          ...(station.core ? {} : { source: 'curious' as const }),
+        },
+        userId,
+      );
+    }
     return NextResponse.json(ok({ stationSlug: station.slug, state }), { headers: { 'cache-control': 'no-store' } });
   }
 
@@ -304,6 +338,7 @@ export async function POST(req: Request) {
     status: 'completed',
     bestScore: score,
     attemptCount: current?.attemptCount ?? 0,
+    currentBlock: undefined, // walk finished — no stale resume anchor
   });
 
   // TASK-LEARNING-06: analytics contract — completion + FSRS enrollment data
@@ -376,6 +411,7 @@ export async function GET(req: Request) {
       status: 400,
     });
   }
-  const state: StationState | null = await getStationProgressStore().get(POC_DEFAULT_USER_ID, stationSlug);
+  const userId = resolveLearnerIdFromRequest(req);
+  const state: StationState | null = await getStationProgressStore().get(userId, stationSlug);
   return NextResponse.json(ok({ stationSlug, state }), { headers: { 'cache-control': 'no-store' } });
 }

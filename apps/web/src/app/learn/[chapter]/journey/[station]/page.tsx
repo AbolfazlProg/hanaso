@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { resolveLearnerId } from '@/lib/learner/server';
 import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
 import { wordAudioUrls } from '@/modules/audio/server';
@@ -35,7 +35,8 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
   const chapter = bundle!.chapter;
 
   // #94: the station walk is gated exactly like the journey map.
-  const access = await chapterAccessStatus(chapter, POC_DEFAULT_USER_ID);
+  const learnerId = await resolveLearnerId();
+  const access = await chapterAccessStatus(chapter, learnerId);
   if (access.locked) {
     return (
       <ChapterLockedNotice

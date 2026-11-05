@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { fail, ok } from '@/modules/shared';
 import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle, LEVELS_BY_CODE, chapterAccessStatus } from '@/modules/curriculum/server';
 import { resolveJourney, nextStation, type JourneyNode } from '@/modules/curriculum';
 
@@ -28,18 +28,19 @@ export async function GET(req: Request) {
   }
   const chapter = bundle.chapter;
   const level = LEVELS_BY_CODE[chapter.levelCode]!;
+  const userId = resolveLearnerIdFromRequest(req);
 
   const stationStore = getStationProgressStore();
   const chapterStore = getChapterProgressStore();
   const states = await stationStore.listForUnit(
-    POC_DEFAULT_USER_ID,
+    userId,
     chapter.stations.map((s) => s.slug),
   );
-  const chapterState = await chapterStore.get(POC_DEFAULT_USER_ID, chapter.slug);
+  const chapterState = await chapterStore.get(userId, chapter.slug);
 
   const journey = resolveJourney(chapter, level, states, chapterState);
   const next = nextStation(journey);
-  const access = await chapterAccessStatus(chapter, POC_DEFAULT_USER_ID);
+  const access = await chapterAccessStatus(chapter, userId);
 
   const nodes: (JourneyNode & { href: string })[] = journey.nodes.map((n) => ({
     ...n,

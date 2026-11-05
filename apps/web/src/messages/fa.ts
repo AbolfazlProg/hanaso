@@ -143,6 +143,11 @@ export const fa = {
     exerciseAlreadyDoneBody: 'نتیجه‌اش ثبت شده و با رفت‌وآمد بین مراحل از بین نمی‌رود؛ بدون تکرار می‌توانی ادامه بدهی.',
     /* station runner */
     continueBlock: 'ادامه',
+    /* TASK-LEARNING-08 WP-5: auto-next after a correct answer (owner feedback D) */
+    autoNextHint: 'به سؤال بعد می‌رویم…',
+    /* TASK-LEARNING-08 WP-5: walk resume notice (owner feedback E) */
+    walkResumedTitle: 'از همان‌جا ادامه دادی',
+    walkResumedBody: 'موقعیت قبلی‌ات در همین ایستگاه ذخیره شده بود و بازگردانده شد.',
     checkAnswer: 'بررسی پاسخ',
     tryAgain: 'دوباره تلاش کن',
     correct: 'درست!',

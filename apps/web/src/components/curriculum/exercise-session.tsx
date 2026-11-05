@@ -15,11 +15,22 @@
  *   the authored teaching block (`referenceBlockId`) — «بازگشت به آموزش» hands
  *   the jump to the host runner (it owns the block order).
  *
+ * TASK-LEARNING-08 (WP-5 — owner feedback D + E):
+ * - AUTO-NEXT: a CORRECT answer advances automatically after a short,
+ *   centrally-configured delay (src/config/experience.ts). Wrong answers NEVER
+ *   auto-advance (retry/return-to-teaching stays the learner's choice). The
+ *   manual «ادامه» button stays and clicking it during the delay advances
+ *   immediately (timer cancelled — no double advance).
+ * - WALK PROGRESS: every question transition reports {index, firstTryCorrect}
+ *   to the host (StationRunner) which persists the walk snapshot — refresh /
+ *   back / close-and-return resume at the same question.
+ *
  * A11y: feedback panel is in-place (not a modal) with role=status + aria-live
  * (SKL-002 §۳-۶); options are uniform (no color-only distinction — SKL-004 §۶).
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2, CircleAlert, Ear, Lightbulb } from 'lucide-react';
+import { EXPERIENCE } from '@/config/experience';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { mergeEliminated } from '@/modules/curriculum/station-walk';
@@ -42,6 +53,16 @@ export interface ExerciseSessionProps {
    * button stays hidden (e.g. hosts without a block order).
    */
   onReturnToBlock?: (blockId: string) => void;
+  /**
+   * TASK-LEARNING-08 (WP-5 — owner feedback E): restore the in-flight question
+   * position for THIS exercise block (from the persisted walk snapshot).
+   */
+  initialProgress?: { index: number; firstTryCorrect: number };
+  /**
+   * TASK-LEARNING-08 (WP-5): fired on every question transition so the host can
+   * persist the walk snapshot (never only at station end).
+   */
+  onProgress?: (progress: { index: number; firstTryCorrect: number }) => void;
 }
 
 interface GradeResponse {
@@ -66,8 +87,12 @@ export function ExerciseSession({
   audioAvailable,
   onSessionDone,
   onReturnToBlock,
+  initialProgress,
+  onProgress,
 }: ExerciseSessionProps) {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() =>
+    initialProgress ? Math.min(Math.max(0, initialProgress.index), Math.max(0, exercises.length - 1)) : 0,
+  );
   const [attemptNo, setAttemptNo] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
   const [ordered, setOrdered] = useState<string[]>([]);
@@ -75,10 +100,33 @@ export function ExerciseSession({
   const [nameValue, setNameValue] = useState('');
   const [feedback, setFeedback] = useState<GradeResponse['outcome'] | null>(null);
   const [busy, setBusy] = useState(false);
-  const [firstTryCorrect, setFirstTryCorrect] = useState(0);
+  const [firstTryCorrect, setFirstTryCorrect] = useState(() =>
+    initialProgress ? Math.max(0, Math.min(initialProgress.firstTryCorrect, exercises.length)) : 0,
+  );
   const [hintRevealed, setHintRevealed] = useState(false);
   /** #106 F2: option ids the server eliminated — they stay dead for every later attempt. */
   const [eliminated, setEliminated] = useState<string[]>([]);
+
+  /**
+   * WP-5 auto-next: the pending advance timer + a fired-once latch. The manual
+   * «ادامه» button and the timer both funnel through advance() — whoever fires
+   * FIRST wins; the latch makes the loser a no-op (no double advance, no race).
+   */
+  const autoNextTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const advancedRef = useRef(false);
+
+  // report the in-flight position to the host on every question transition
+  useEffect(() => {
+    onProgress?.({ index, firstTryCorrect });
+  }, [index, firstTryCorrect, onProgress]);
+
+  // drop any pending auto-next timer when the block unmounts (back-nav, F4 return)
+  useEffect(
+    () => () => {
+      if (autoNextTimerRef.current !== null) clearTimeout(autoNextTimerRef.current);
+    },
+    [],
+  );
 
   const ex = exercises[index];
   const total = exercises.length;
@@ -93,6 +141,44 @@ export function ExerciseSession({
     setHintRevealed(false);
     setEliminated([]); // eliminations live inside ONE exercise, never across them
   }, []);
+
+  const advance = useCallback(() => {
+    // WP-5: manual + auto advance share this single gate — the second caller is a no-op.
+    if (advancedRef.current) return;
+    advancedRef.current = true;
+    if (autoNextTimerRef.current !== null) {
+      clearTimeout(autoNextTimerRef.current);
+      autoNextTimerRef.current = null;
+    }
+    if (isLast) {
+      onSessionDone?.(firstTryCorrect / total, total);
+      return; // stays latched — this block is done (host unmounts/replaces it)
+    }
+    setIndex((i) => i + 1);
+    reset();
+    // re-arm happens in the [index] effect — never synchronously here, so a
+    // rapid double fire (timer + click in the same tick) cannot double-advance.
+  }, [firstTryCorrect, isLast, onSessionDone, reset, total]);
+
+  /**
+   * WP-5 (owner feedback D): schedule the automatic advance after a CORRECT
+   * answer. Delay comes from ONE config spot; a later-attempt correct answer
+   * waits a touch longer (its feedback usually explains something). Wrong
+   * answers NEVER auto-advance — retry and return-to-teaching are choices.
+   */
+  const scheduleAutoNext = useCallback(
+    (wasFirstTry: boolean) => {
+      if (autoNextTimerRef.current !== null) clearTimeout(autoNextTimerRef.current);
+      const delay = wasFirstTry
+        ? EXPERIENCE.autoNextDelayMsCorrect
+        : EXPERIENCE.autoNextDelayMsCorrectAfterRetry;
+      autoNextTimerRef.current = setTimeout(() => {
+        autoNextTimerRef.current = null;
+        advance();
+      }, Math.min(delay, EXPERIENCE.autoNextMaxDelayMs));
+    },
+    [advance],
+  );
 
   const grade = useCallback(
     async (payload: Record<string, unknown>) => {
@@ -122,6 +208,9 @@ export function ExerciseSession({
           setEliminated((cur) => mergeEliminated(cur, ids));
           setSelected((sel) => (sel !== null && ids.includes(sel) ? null : sel));
         }
+        // WP-5 (owner feedback D): correct → auto-advance after the configured
+        // delay; wrong → stays put (retry / return-to-teaching are the choices).
+        if (outcome.correct) scheduleAutoNext(attemptNo === 1);
         return outcome;
       } catch {
         // Reviewer-B S1: never fail silently — a dead «بررسی پاسخ» button reads as broken.
@@ -131,7 +220,7 @@ export function ExerciseSession({
         setBusy(false);
       }
     },
-    [attemptNo, chapterSlug, ex, stationSlug],
+    [attemptNo, chapterSlug, ex, scheduleAutoNext, stationSlug],
   );
 
   const check = useCallback(async () => {
@@ -164,17 +253,15 @@ export function ExerciseSession({
     // reset() (advancing to the next exercise) clears it.
   }, [ex]);
 
-  const advance = useCallback(() => {
-    if (isLast) {
-      onSessionDone?.(firstTryCorrect / total, total);
-      return;
-    }
-    setIndex((i) => i + 1);
-    reset();
-  }, [firstTryCorrect, isLast, onSessionDone, reset, total]);
 
   const remainingChunks = useMemo(() => ex?.chunks?.filter((c) => !ordered.includes(c.id)) ?? [], [ex, ordered]);
   const remainingChips = useMemo(() => ex?.chips?.filter((c) => !built.includes(c.id)) ?? [], [ex, built]);
+
+  // WP-5: arm the advance gate for the CURRENT question (runs after the index
+  // actually changed — the latch stays closed between the change and this effect).
+  useEffect(() => {
+    advancedRef.current = false;
+  }, [index]);
 
   if (!ex) return null;
 
@@ -416,13 +503,24 @@ export function ExerciseSession({
           </button>
         )}
         {feedback && (feedback.correct || attemptNo >= 3) && (
-          <button
-            type="button"
-            onClick={advance}
-            className="h-11 min-w-28 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-          >
-            {isLast ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
-          </button>
+          <>
+            {/* WP-5: correct answers auto-advance — this button is the manual
+                override (accessibility, slow readers); clicking it during the
+                delay cancels the timer and advances immediately. */}
+            {feedback.correct && !isLast && (
+              <span aria-hidden className="self-center text-caption text-ink-faint" data-autonext-hint>
+                {fa.curriculum.autoNextHint}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={advance}
+              data-autonext={feedback.correct ? 'armed' : undefined}
+              className="h-11 min-w-28 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            >
+              {isLast ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
+            </button>
+          </>
         )}
       </div>
       {hintRevealed && !feedback && <p className="text-small text-ink-soft">{fa.curriculum.showHint}…</p>}

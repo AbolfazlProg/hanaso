@@ -1,7 +1,7 @@
 import { listChapters } from '@/modules/curriculum/content';
 import { chapterAccessStatus } from '@/modules/curriculum/server';
 import { getChapterProgressStore } from '@/lib/poc/stores';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { resolveLearnerId } from '@/lib/learner/server';
 import { fa } from '@/messages/fa';
 
 /**
@@ -19,13 +19,14 @@ import { fa } from '@/messages/fa';
 export const dynamic = 'force-dynamic';
 
 export default async function LearnPage() {
+  const learnerId = await resolveLearnerId();
   const chapters = listChapters();
   const chapterStore = getChapterProgressStore();
   const cards = await Promise.all(
     chapters.map(async (chapter) => ({
       chapter,
-      access: await chapterAccessStatus(chapter, POC_DEFAULT_USER_ID),
-      state: await chapterStore.get(POC_DEFAULT_USER_ID, chapter.slug),
+      access: await chapterAccessStatus(chapter, learnerId),
+      state: await chapterStore.get(learnerId, chapter.slug),
     })),
   );
 

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
 import { getChapter } from '@/modules/curriculum/content';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { resolveLearnerId } from '@/lib/learner/server';
 import { stripStationAnswerMaterial } from '@/modules/curriculum/client-transport';
 import { AnchorDialogueExperience } from '@/components/curriculum/anchor-dialogue-experience';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
@@ -32,7 +32,8 @@ export default async function AnchorDialoguePage({ params }: { params: Promise<{
   const chapter = getChapter(slug)!;
 
   // #94: entering the chapter (stage A) is gated exactly like the journey map.
-  const access = await chapterAccessStatus(chapter, POC_DEFAULT_USER_ID);
+  const learnerId = await resolveLearnerId();
+  const access = await chapterAccessStatus(chapter, learnerId);
   if (access.locked) {
     return (
       <ChapterLockedNotice

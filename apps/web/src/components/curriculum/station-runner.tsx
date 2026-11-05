@@ -8,7 +8,7 @@
  * grades through /api/curriculum/station (bank exercises AND block interactions:
  * discovery / prediction / integrate replies — SKL-013).
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -19,6 +19,7 @@ import {
   Ear,
   MessageCircleQuestion,
   PlayCircle,
+  RotateCcw,
   Sparkles,
 } from 'lucide-react';
 import { fa } from '@/messages/fa';
@@ -33,6 +34,14 @@ import {
   withBlockResult,
   type BlockResults,
 } from '@/modules/curriculum/station-walk';
+import {
+  clampStepIndex,
+  clearWalkSnapshot,
+  loadWalkSnapshot,
+  saveWalkSnapshot,
+  type ExerciseBlockProgress,
+  type StationWalkSnapshot,
+} from '@/modules/curriculum/walk-persistence';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
@@ -93,6 +102,53 @@ async function gradeBlock(payload: {
 }
 
 /**
+ * TASK-LEARNING-08 (WP-5): fetch the server-side resume anchor (the in_progress
+ * station's last synced block). Read from the SAME API the walk writes to — the
+ * client fetch works identically in dev (route-handler store) and production
+ * (Postgres), unlike an RSC prop (RSC and route handlers may read different
+ * module instances in dev).
+ */
+async function fetchServerResumeAnchor(
+  chapterSlug: string,
+  stationSlug: string,
+): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `/api/curriculum/station?chapter=${encodeURIComponent(chapterSlug)}&station=${encodeURIComponent(stationSlug)}`,
+      { cache: 'no-store' },
+    );
+    const json = (await res.json()) as { data?: { state?: { status?: string; currentBlock?: string | null } | null } };
+    const state = json.data?.state;
+    if (state && state.status === 'in_progress' && state.currentBlock) return state.currentBlock;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * TASK-LEARNING-08 (WP-5 — owner feedback E): fire-and-forget walk position sync
+ * (station `enter`/`progress` actions). Keeps the SERVER-side resume anchor
+ * (StationState.currentBlock) fresh on every block transition; never blocks the
+ * walk on network state and never double-fires for the same step.
+ */
+async function syncWalkPosition(
+  action: 'enter' | 'progress',
+  payload: { chapterSlug: string; stationSlug: string; currentBlockId: string; stepIndex: number },
+): Promise<void> {
+  try {
+    await fetch('/api/curriculum/station', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action, ...payload }),
+      keepalive: action === 'progress', // survives a tab close mid-flight
+    });
+  } catch {
+    /* offline: the LOCAL snapshot still carries the walk (mission §8.5) */
+  }
+}
+
+/**
  * TASK-LEARNING-07 (DD-105/DD-111): record a handwriting practice summary.
  * Structured summary only — raw pen paths never leave the browser. Best-effort:
  * analytics must never break the practice flow.
@@ -135,7 +191,16 @@ export function StationRunner(props: StationRunnerProps) {
     chapterSlug,
   } = props;
   const router = useRouter();
+  /*
+   * WP-5 (owner feedback E): the walk starts at step 0 for SSR/hydration, then a
+   * mount effect restores the persisted snapshot (localStorage first — it also
+   * carries earned results + in-flight exercise positions; server anchor only as
+   * a fallback). `restoreChecked` gates the first paint so the learner never sees
+   * block 1 flash before jumping to the real position.
+   */
   const [step, setStep] = useState(0);
+  const [restoreChecked, setRestoreChecked] = useState(false);
+  const [resumedNotice, setResumedNotice] = useState(false);
   const [sessionScore, setSessionScore] = useState<number | null>(null);
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -145,10 +210,71 @@ export function StationRunner(props: StationRunnerProps) {
    * block with a recorded result renders the skip panel instead of re-grading.
    */
   const [blockResults, setBlockResults] = useState<BlockResults>({});
+  /** WP-5: in-flight exercise positions per block id (survives refresh). */
+  const [exerciseProgress, setExerciseProgress] = useState<Record<string, ExerciseBlockProgress>>({});
 
   const blocks = station.blocks;
   const block = blocks[step];
   const lineById = useMemo(() => new Map(dialogue.lines.map((l) => [l.id, l])), [dialogue.lines]);
+
+  /* ---------------- WP-5: restore the persisted walk (once, after mount) ---- */
+  useEffect(() => {
+    if (restoreChecked) return;
+    setRestoreChecked(true);
+    const snapshot = loadWalkSnapshot(chapterSlug, station.slug);
+    if (snapshot) {
+      const restored = clampStepIndex(snapshot.stepIndex, blocks.length);
+      setStep(restored);
+      setBlockResults(snapshot.blockResults ?? {});
+      setExerciseProgress(snapshot.exerciseProgress ?? {});
+      if (typeof snapshot.sessionScore === 'number') setSessionScore(snapshot.sessionScore);
+      if (snapshot.stepIndex > 0 || Object.keys(snapshot.blockResults ?? {}).length > 0) {
+        setResumedNotice(true);
+        window.setTimeout(() => setResumedNotice(false), 4000);
+      }
+      return;
+    }
+    // no local snapshot — the server anchor is the honest fallback (cleared
+    // localStorage on the same browser; a different browser has a different
+    // learner id and thus no claim on this walk).
+    void fetchServerResumeAnchor(chapterSlug, station.slug).then((anchor) => {
+      if (!anchor) return;
+      const target = stepOfBlock(blocks, anchor);
+      if (target !== null && target > 0) {
+        setStep(target);
+        setResumedNotice(true);
+        window.setTimeout(() => setResumedNotice(false), 4000);
+      }
+    });
+    // restore + fallback run exactly once per mount (deps limited on purpose)
+  }, []);
+
+  /* ---------------- WP-5: persist + sync on every meaningful transition ------ */
+  const persistedRef = useRef<StationWalkSnapshot | null>(null);
+  const syncStepRef = useRef(-1);
+  useEffect(() => {
+    if (!restoreChecked) return;
+    if (completed || !block) return;
+    const snapshot = {
+      chapterSlug,
+      stationSlug: station.slug,
+      stepIndex: step,
+      blockResults,
+      exerciseProgress,
+      sessionScore,
+    };
+    persistedRef.current = snapshot as StationWalkSnapshot;
+    saveWalkSnapshot(snapshot);
+    if (syncStepRef.current !== step) {
+      syncStepRef.current = step;
+      void syncWalkPosition(step === 0 ? 'enter' : 'progress', {
+        chapterSlug,
+        stationSlug: station.slug,
+        currentBlockId: block.id,
+        stepIndex: step,
+      });
+    }
+  }, [restoreChecked, step, blockResults, exerciseProgress, sessionScore]);
 
   const finishSession = useCallback(
     async (score: number | null, taskCompleted = false) => {
@@ -167,6 +293,7 @@ export function StationRunner(props: StationRunnerProps) {
           }),
         });
         setCompleted(res.ok);
+        if (res.ok) clearWalkSnapshot(chapterSlug, station.slug); // walk done — no stale resume
       } finally {
         setCompleting(false);
       }
@@ -213,8 +340,36 @@ export function StationRunner(props: StationRunnerProps) {
 
   const doneHref = `/learn/${chapterSlug}/journey`;
 
+  /*
+   * WP-5: the restore check runs on mount; until it settles, a one-line placeholder
+   * prevents block 1 from flashing before the jump to the real position (also
+   * keeps SSR markup and client hydration identical).
+   */
+  if (!restoreChecked) {
+    return (
+      <p className="text-small text-ink-soft" role="status">
+        {fa.common.loading}
+      </p>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
+      {/* WP-5 (owner feedback E): honest resume notice — the walk came back. */}
+      {resumedNotice && (
+        <p
+          role="status"
+          className="flex items-center gap-2 rounded-md border border-ai/40 bg-indigo-wash/60 px-4 py-2 text-small text-ink"
+          data-walk-resumed
+        >
+          <RotateCcw aria-hidden className="size-4 text-ai" />
+          <span>
+            <b>{fa.curriculum.walkResumedTitle}. </b>
+            {fa.curriculum.walkResumedBody}
+          </span>
+        </p>
+      )}
+
       {/* progress rail + step counter */}
       <div className="flex items-center gap-3">
         <div className="flex flex-1 items-center gap-1" aria-hidden>
@@ -248,10 +403,28 @@ export function StationRunner(props: StationRunnerProps) {
           wordAudioByWord={wordAudioByWord}
           isLastBlock={step === blocks.length - 1}
           exerciseScore={block.kind === 'exercise' ? blockResult(blockResults, block.id) : null}
+          exerciseInitialProgress={block.kind === 'exercise' ? exerciseProgress[block.id] : undefined}
+          onExerciseProgress={(progress) => {
+            if (block.kind !== 'exercise') return;
+            setExerciseProgress((prev) => {
+              const cur = prev[block.id];
+              if (cur && cur.index === progress.index && cur.firstTryCorrect === progress.firstTryCorrect) {
+                return prev;
+              }
+              return { ...prev, [block.id]: progress };
+            });
+          }}
           onReturnToBlock={returnToBlock}
           onExerciseDone={(score) => {
             if (block.kind === 'exercise') {
               setBlockResults((r) => withBlockResult(r, block.id, score));
+              // the block is done — its in-flight position is no longer needed
+              setExerciseProgress((prev) => {
+                if (!(block.id in prev)) return prev;
+                const next = { ...prev };
+                delete next[block.id];
+                return next;
+              });
             }
             setSessionScore(score);
             if (step < blocks.length - 1) setStep((s) => s + 1);
@@ -429,6 +602,8 @@ function BlockView({
   wordAudioByWord,
   isLastBlock,
   exerciseScore,
+  exerciseInitialProgress,
+  onExerciseProgress,
   onReturnToBlock,
   onExerciseDone,
   onSceneDone,
@@ -451,6 +626,10 @@ function BlockView({
    * yet — render the live ExerciseSession). Only meaningful for exercise blocks.
    */
   exerciseScore: number | null;
+  /** WP-5 (owner feedback E): persisted in-flight position for this block. */
+  exerciseInitialProgress?: { index: number; firstTryCorrect: number };
+  /** WP-5: question-transition reporter → the host persists the walk snapshot. */
+  onExerciseProgress?: (progress: { index: number; firstTryCorrect: number }) => void;
   /** Issue #106 (F4): host-owned «بازگشت به آموزش» jump handler. */
   onReturnToBlock?: (blockId: string) => void;
   onExerciseDone: (score: number) => void;
@@ -802,6 +981,8 @@ function BlockView({
             audioAvailable={audioAvailable}
             onSessionDone={(score) => onExerciseDone(score)}
             onReturnToBlock={onReturnToBlock}
+            initialProgress={exerciseInitialProgress}
+            onProgress={onExerciseProgress}
           />
         </section>
       );
