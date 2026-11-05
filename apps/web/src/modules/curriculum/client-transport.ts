@@ -75,6 +75,15 @@ export type ClientTeachingBlock =
     }
   | { kind: 'exercise'; id: string; exerciseIds: string[] }
   | {
+      /** TASK-LEARNING-07 (DD-111): handwriting practice — no answer material to strip. */
+      kind: 'writing-practice';
+      id: string;
+      characters: string[];
+      initialMode: 'guided' | 'trace' | 'free';
+      focusPairs?: [string, string][];
+      instructionsFa?: string;
+    }
+  | {
       kind: 'character-scene';
       id: string;
       steps: {
@@ -101,6 +110,16 @@ export interface ClientStation {
 /** Strip one block's answer material (pure). */
 function stripBlock(block: TeachingBlock): ClientTeachingBlock {
   switch (block.kind) {
+    case 'writing-practice':
+      // practice-layer block — carries no answer material (never a gate, DD-106)
+      return {
+        kind: 'writing-practice',
+        id: block.id,
+        characters: block.characters,
+        initialMode: block.initialMode,
+        ...(block.focusPairs ? { focusPairs: block.focusPairs } : {}),
+        ...(block.instructionsFa ? { instructionsFa: block.instructionsFa } : {}),
+      };
     case 'guided-discovery':
       return {
         kind: 'guided-discovery',

@@ -295,6 +295,26 @@ export type TeachingBlock =
     }
   | { kind: 'exercise'; id: string; exerciseIds: string[] }
   | {
+      /**
+       * TASK-LEARNING-07 (DD-111 / TB-WriteCanvas — owner-ordered capability):
+       * handwriting practice block — REAL drawing with correctness evaluation
+       * (modes: guided stroke animation / trace over the guide / free recall).
+       * Practice-layer only: NEVER a mastery gate (DD-106 «هرگز گیت پیشرفت»).
+       * Char-agnostic: kana glyphs today, kanji for future chapters — the engine
+       * reports `data_missing` honestly when a character has no stroke data.
+       */
+      kind: 'writing-practice';
+      id: string;
+      /** Characters to practice, in order (curated per station — small sets). */
+      characters: string[];
+      /** First mode the panel opens in (guided for new glyphs, free for review). */
+      initialMode: 'guided' | 'trace' | 'free';
+      /** Similar-pair discrimination focus (e.g. さ/き, シ/ツ) — rendered as a compare panel. */
+      focusPairs?: [string, string][];
+      /** Persian instructions shown above the canvas. */
+      instructionsFa?: string;
+    }
+  | {
       /** Character scene — INTEGRATE communicative task (C5) and light reactions (C6). */
       kind: 'character-scene';
       id: string;

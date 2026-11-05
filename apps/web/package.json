@@ -5,7 +5,7 @@
   "description": "HANASO web app — single deployable (Next.js 16 App Router, modular monolith per KB ADR-001)",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/bundle-tools.mjs",
+    "build": "node scripts/copy-writing-data.mjs && next build && node scripts/bundle-tools.mjs",
     "build:next": "next build",
     "start": "next start",
     "lint": "eslint .",

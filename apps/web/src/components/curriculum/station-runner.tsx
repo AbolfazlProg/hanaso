@@ -38,6 +38,7 @@ import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
+import { WritingPractice } from '@/components/writing/writing-practice';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
@@ -88,6 +89,36 @@ async function gradeBlock(payload: {
     return json.data?.outcome ?? null;
   } catch {
     return null;
+  }
+}
+
+/**
+ * TASK-LEARNING-07 (DD-105/DD-111): record a handwriting practice summary.
+ * Structured summary only — raw pen paths never leave the browser. Best-effort:
+ * analytics must never break the practice flow.
+ */
+async function recordWritingPractice(payload: {
+  chapterSlug: string;
+  stationSlug: string;
+  blockId?: string;
+  character: string;
+  mode: 'guided' | 'trace' | 'free';
+  verdict: string;
+  strokesTotal: number;
+  strokesFirstTry: number;
+  totalMistakes: number;
+  hintsShown: number;
+  completed: boolean;
+  durationMs: number;
+}): Promise<void> {
+  try {
+    await fetch('/api/curriculum/station', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'writing-practice', ...payload }),
+    });
+  } catch {
+    /* honest best-effort — the practice verdict is already shown to the user */
   }
 }
 
@@ -282,6 +313,98 @@ export function StationRunner(props: StationRunnerProps) {
 }
 
 /* ------------------------------------------------------------------ block renderers */
+
+/**
+ * TASK-LEARNING-07 (DD-105/DD-111): writing-practice block — the owner-ordered
+ * handwriting capability as a TEACHING-layer station block. One canvas with a
+ * switchable target picker (small station sets) + optional confusable-pair
+ * focus chips. Practice-layer only (never a mastery gate — DD-106): summaries
+ * are recorded best-effort via the station API and raw pen paths never leave
+ * the browser.
+ */
+function WritingPracticeBlock({
+  block,
+  chapterSlug,
+  stationSlug,
+}: {
+  block: Extract<ClientTeachingBlock, { kind: 'writing-practice' }>;
+  chapterSlug: string;
+  stationSlug: string;
+}) {
+  const [activeChar, setActiveChar] = useState(block.characters[0] ?? '');
+  if (!activeChar) return null;
+  const pairChars = (block.focusPairs ?? []).flatMap(([a, b]) => [a, b]);
+  return (
+    <section className="flex flex-col gap-4" aria-label={fa.curriculum.writingBlockTitle}>
+      <h3 className="text-h3 font-bold">{fa.curriculum.writingBlockTitle}</h3>
+      {block.instructionsFa ? (
+        <p className="text-body leading-[var(--leading-fa)] text-ink-soft">{block.instructionsFa}</p>
+      ) : null}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-small text-ink-faint">{fa.curriculum.writingPickChar}</span>
+        {block.characters.map((ch) => (
+          <button
+            key={ch}
+            type="button"
+            onClick={() => setActiveChar(ch)}
+            aria-pressed={activeChar === ch}
+            className={`min-h-11 min-w-11 rounded-md border-2 px-3 font-jp text-h3 font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai ${
+              activeChar === ch
+                ? 'border-indigo bg-indigo text-paper'
+                : 'border-ink-faint bg-card text-ink hover:bg-surface-warm'
+            }`}
+          >
+            {ch}
+          </button>
+        ))}
+      </div>
+      <WritingPractice
+        key={activeChar}
+        character={activeChar}
+        initialMode={block.initialMode}
+        onAttempt={(summary) => {
+          void recordWritingPractice({
+            chapterSlug,
+            stationSlug,
+            blockId: block.id,
+            character: summary.character,
+            mode: summary.mode,
+            verdict: summary.verdict,
+            strokesTotal: summary.strokesTotal,
+            strokesFirstTry: summary.strokesFirstTry,
+            totalMistakes: summary.totalMistakes,
+            hintsShown: summary.hintsShown,
+            completed: summary.completed,
+            durationMs: summary.durationMs,
+          });
+        }}
+      />
+      {block.focusPairs && block.focusPairs.length > 0 ? (
+        <div className="rounded-md border border-shu/40 bg-surface-warm p-4">
+          <p className="text-small font-bold text-ink">{fa.curriculum.writingPairFocusTitle}</p>
+          <p className="mt-1 text-small text-ink-soft">{fa.curriculum.writingPairNote}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {pairChars.map((ch) => (
+              <button
+                key={ch}
+                type="button"
+                onClick={() => setActiveChar(ch)}
+                aria-pressed={activeChar === ch}
+                className={`min-h-11 min-w-11 rounded-md border-2 px-3 font-jp text-h3 font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai ${
+                  activeChar === ch
+                    ? 'border-shu bg-shu text-paper'
+                    : 'border-ink-faint bg-card text-ink hover:bg-surface-warm'
+                }`}
+              >
+                {ch}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
 
 function BlockView({
   block,
@@ -621,6 +744,13 @@ function BlockView({
             </article>
           ))}
         </section>
+      );
+
+    case 'writing-practice':
+      /* TASK-LEARNING-07 (DD-105/DD-111): practice-layer block — the forward
+       * button stays available; summaries are recorded best-effort (never a gate). */
+      return (
+        <WritingPracticeBlock block={block} chapterSlug={chapterSlug} stationSlug={stationSlug} />
       );
 
     case 'exercise': {

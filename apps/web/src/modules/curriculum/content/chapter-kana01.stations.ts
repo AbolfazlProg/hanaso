@@ -112,6 +112,14 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h1-writing',
+        characters: ['あ', 'い', 'う', 'え', 'お'],
+        initialMode: 'guided',
+        focusPairs: [['あ', 'お']],
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-h1-reading',
         examples: [
@@ -229,6 +237,14 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h2-writing',
+        characters: ['か', 'き', 'く', 'け', 'こ'],
+        initialMode: 'guided',
+        focusPairs: [['け', 'き']],
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-h2-reading',
         examples: [
@@ -344,6 +360,14 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h3-rcl-hira-se',
           'ex-kana-h3-rcl-hira-so',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h3-writing',
+        characters: ['さ', 'し', 'す', 'せ', 'そ'],
+        initialMode: 'guided',
+        focusPairs: [['さ', 'き']],
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -770,6 +794,13 @@ export const KANA_STATIONS: Station[] = [
       { kind: 'exercise', id: 'blk-stn-kana-h7-retrieval-1', exerciseIds: ['ex-kana-h7-rec-hira-n'] },
       { kind: 'exercise', id: 'blk-stn-kana-h7-recall', exerciseIds: ['ex-kana-h7-rcl-hira-n'] },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h7-writing',
+        characters: ['ん'],
+        initialMode: 'guided',
+        instructionsFa: 'این نویسهٔ ویژهٔ پایان هیراگانا فقط یک ضربه دارد — از حافظه هم بنویسش.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-h7-reading',
         examples: [
@@ -873,6 +904,13 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h8-rcl-hira-ne',
           'ex-kana-h8-rcl-hira-no',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h8-writing',
+        characters: ['な', 'に', 'ぬ', 'ね', 'の'],
+        initialMode: 'guided',
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -992,6 +1030,14 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h9-writing',
+        characters: ['た', 'ち', 'つ', 'て', 'と'],
+        initialMode: 'guided',
+        focusPairs: [['つ', 'し']],
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-h9-reading',
         examples: [
@@ -1101,6 +1147,14 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h10-rcl-hira-me',
           'ex-kana-h10-rcl-hira-mo',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h10-writing',
+        characters: ['ま', 'み', 'む', 'め', 'も'],
+        initialMode: 'guided',
+        focusPairs: [['め', 'ぬ'], ['ま', 'ぬ']],
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -1237,6 +1291,14 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h11-writing',
+        characters: ['ら', 'り', 'る', 'れ', 'ろ'],
+        initialMode: 'guided',
+        focusPairs: [['る', 'ろ'], ['り', 'い']],
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-h11-reading',
         examples: [
@@ -1367,6 +1429,14 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h12-rcl-hira-he',
           'ex-kana-h12-rcl-hira-ho',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h12-writing',
+        characters: ['は', 'ひ', 'ふ', 'へ', 'ほ'],
+        initialMode: 'guided',
+        focusPairs: [['は', 'ほ'], ['へ', 'く']],
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -1582,6 +1652,13 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h14-rcl-hira-ya', 'ex-kana-h14-rcl-hira-yu', 'ex-kana-h14-rcl-hira-yo'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h14-writing',
+        characters: ['や', 'ゆ', 'よ'],
+        initialMode: 'guided',
+        instructionsFa: 'این سه نویسهٔ ساده را از حافظه بنویس — شکل‌شان را قبلاً در کارت‌ها دیدی.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-h14-reading',
         examples: [
@@ -1669,6 +1746,14 @@ export const KANA_STATIONS: Station[] = [
         kind: 'exercise',
         id: 'blk-stn-kana-h15-recall',
         exerciseIds: ['ex-kana-h15-rcl-hira-wa', 'ex-kana-h15-rcl-hira-wo'],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-h15-writing',
+        characters: ['わ', 'を'],
+        initialMode: 'guided',
+        focusPairs: [['わ', 'れ']],
+        instructionsFa: 'کاناهای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -1772,6 +1857,13 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k1-writing',
+        characters: ['ア', 'イ', 'ウ', 'エ', 'オ'],
+        initialMode: 'guided',
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-k1-wrapup',
         titleFa: 'ردیف ア + طرحوارهٔ قرینه‌گری — جمع‌بندی',
@@ -1840,6 +1932,13 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k2-rcl-kata-te',
           'ex-kana-k2-rcl-kata-to',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k2-writing',
+        characters: ['タ', 'チ', 'ツ', 'テ', 'ト'],
+        initialMode: 'guided',
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -1929,6 +2028,13 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k3-rcl-kata-re',
           'ex-kana-k3-rcl-kata-ro',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k3-writing',
+        characters: ['ラ', 'リ', 'ル', 'レ', 'ロ'],
+        initialMode: 'guided',
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2030,6 +2136,14 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k4-rcl-kata-se',
           'ex-kana-k4-rcl-kata-so',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k4-writing',
+        characters: ['サ', 'シ', 'ス', 'セ', 'ソ'],
+        initialMode: 'guided',
+        focusPairs: [['シ', 'ツ']],
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2142,6 +2256,13 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k5-writing',
+        characters: ['ハ', 'ヒ', 'フ', 'ヘ', 'ホ'],
+        initialMode: 'guided',
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-k5-reading',
         examples: [
@@ -2229,6 +2350,14 @@ export const KANA_STATIONS: Station[] = [
       },
       { kind: 'exercise', id: 'blk-stn-kana-k6-retrieval-1', exerciseIds: ['ex-kana-k6-rec-kata-n'] },
       { kind: 'exercise', id: 'blk-stn-kana-k6-recall', exerciseIds: ['ex-kana-k6-rcl-kata-n'] },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k6-writing',
+        characters: ['ン'],
+        initialMode: 'guided',
+        focusPairs: [['ソ', 'ン']],
+        instructionsFa: '«ン» را از حافظه بنویس و با «ソ» که پیش‌تر دیدی مقایسه کن — تفاوت در جهت ضربه است.',
+      },
       {
         kind: 'example-set',
         id: 'blk-stn-kana-k6-reading',
@@ -2333,6 +2462,14 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k7-rcl-kata-ke',
           'ex-kana-k7-rcl-kata-ko',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k7-writing',
+        characters: ['カ', 'キ', 'ク', 'ケ', 'コ'],
+        initialMode: 'guided',
+        focusPairs: [['ケ', 'ク']],
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2558,6 +2695,13 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k9-writing',
+        characters: ['マ', 'ミ', 'ム', 'メ', 'モ'],
+        initialMode: 'guided',
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-k9-reading',
         examples: [
@@ -2648,6 +2792,14 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k10-rcl-kata-ya', 'ex-kana-k10-rcl-kata-yu', 'ex-kana-k10-rcl-kata-yo'],
       },
       {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k10-writing',
+        characters: ['ヤ', 'ユ', 'ヨ'],
+        initialMode: 'guided',
+        focusPairs: [['ヨ', 'フ']],
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-k10-reading',
         examples: [
@@ -2731,6 +2883,14 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k11-rcl-kata-ne',
           'ex-kana-k11-rcl-kata-no',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k11-writing',
+        characters: ['ナ', 'ニ', 'ヌ', 'ネ', 'ノ'],
+        initialMode: 'guided',
+        focusPairs: [['ニ', 'メ'], ['ヌ', 'ヘ']],
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -2828,6 +2988,14 @@ export const KANA_STATIONS: Station[] = [
         kind: 'exercise',
         id: 'blk-stn-kana-k12-recall',
         exerciseIds: ['ex-kana-k12-rcl-kata-wa', 'ex-kana-k12-rcl-kata-wo'],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-k12-writing',
+        characters: ['ワ', 'ヲ'],
+        initialMode: 'guided',
+        focusPairs: [['ヲ', 'ソ']],
+        instructionsFa: 'شکل کاتاکانای این ردیف را با دست بنویس: اول «نمایش ترتیب» را ببین، بعد در «روی الگو» بکش و در پایان با «از حافظه» امتحانش کن.',
       },
       {
         kind: 'example-set',
@@ -3012,6 +3180,14 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-optdrill-rec-9',
           'ex-kana-optdrill-rec-10',
         ],
+      },
+      {
+        kind: 'writing-practice',
+        id: 'blk-stn-kana-opt-drill-writing',
+        characters: ['さ', 'き', 'シ', 'ツ', 'ソ', 'ン', 'め', 'ぬ'],
+        initialMode: 'free',
+        focusPairs: [['さ', 'き'], ['シ', 'ツ'], ['ソ', 'ン'], ['め', 'ぬ']],
+        instructionsFa: 'جفت‌های شبیهٔ کانا را بدون دیدن الگو از حافظه بنویس — تمرینِ تشخیص دقیق جزئیات است.',
       },
       {
         kind: 'wrap-up',

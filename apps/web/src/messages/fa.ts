@@ -166,6 +166,11 @@ export const fa = {
     masteryStationNote: 'آزمون فهم (دروازهٔ D) در صفحهٔ جدا اجرا می‌شود.',
     prevQuestion: 'قبلی',
     examplesTitle: 'مثال‌ها',
+    /* writing practice (TASK-LEARNING-07 / DD-105/DD-111) */
+    writingBlockTitle: 'نوشتن با دست',
+    writingPickChar: 'نویسهٔ تمرین:',
+    writingPairFocusTitle: 'جفت‌های شبیه — دقیق نگاه کن',
+    writingPairNote: 'این دو نویسه فقط در جزئیات فرق دارند؛ هر دو را چند بار بکش و تفاوت را حس کن.',
     yourTurn: 'نوبت تو',
     typeYourName: 'نامت را بنویس',
     /* mastery gate */

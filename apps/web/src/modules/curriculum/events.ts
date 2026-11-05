@@ -46,6 +46,8 @@ export const LEARNING_EVENTS = [
   'kana_gate_measure_completed',
   'reading_word_played',
   'mnemonic_revealed',
+  // handwriting practice (TASK-LEARNING-07 / DD-105/DD-111 — practice layer, never a gate)
+  'writing_practice_completed',
 ] as const;
 
 export type LearningEventName = (typeof LEARNING_EVENTS)[number];
@@ -72,6 +74,20 @@ export interface LearningEventPayloads {
   kana_gate_measure_completed: { measure: string; score: number; attempt_loop: number };
   reading_word_played: { word: string };
   mnemonic_revealed: { kana_id: string };
+  /** Writing practice — structured summary only (DD-111: raw pen paths never leave the browser). */
+  writing_practice_completed: {
+    chapter_id: string;
+    station_id: string;
+    character: string;
+    mode: 'guided' | 'trace' | 'free';
+    verdict: string;
+    strokes_total: number;
+    strokes_first_try: number;
+    total_mistakes: number;
+    hints_shown: number;
+    completed: boolean;
+    duration_ms: number;
+  };
 }
 
 /**

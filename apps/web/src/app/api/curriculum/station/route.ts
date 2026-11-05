@@ -11,6 +11,7 @@ import {
   findBlockAnswer,
   type ExerciseAnswerPayload,
 } from '@/modules/curriculum';
+import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
 import { recordLearningEvent } from '@/modules/curriculum/events';
 import type { StationState } from '@/modules/curriculum/types';
 
@@ -69,6 +70,27 @@ const bodySchema = z.discriminatedUnion('action', [
     /** Client-tracked session score (server-graded answers only) — clamped. */
     score: z.number().min(0).max(1).nullable().optional(),
     taskCompleted: z.boolean().optional(),
+  }),
+  z.object({
+    /**
+     * TASK-LEARNING-07 (DD-105/DD-111): handwriting practice record. The client
+     * sends ONLY the structured summary (raw pen paths never leave the browser);
+     * the character must belong to this station's writing content — a summary for
+     * an arbitrary character is rejected (no fabricated practice records).
+     */
+    action: z.literal('writing-practice'),
+    chapterSlug: z.string().min(1),
+    stationSlug: z.string().min(1),
+    blockId: z.string().min(1).optional(),
+    character: z.string().min(1),
+    mode: z.enum(['guided', 'trace', 'free']),
+    verdict: z.string().min(1).max(40),
+    strokesTotal: z.number().int().min(0).max(64),
+    strokesFirstTry: z.number().int().min(0).max(64),
+    totalMistakes: z.number().int().min(0).max(999),
+    hintsShown: z.number().int().min(0).max(999),
+    completed: z.boolean(),
+    durationMs: z.number().int().min(0).max(3_600_000),
   }),
 ]);
 
@@ -196,6 +218,54 @@ export async function POST(req: Request) {
     return NextResponse.json(ok({ outcome: { correct, level: 0 as const, feedbackFa: explainFa } }), {
       headers: { 'cache-control': 'no-store' },
     });
+  }
+
+  if (payload.action === 'writing-practice') {
+    // Validate the practiced character belongs to THIS station's writing content:
+    // a writing-practice block's characters / focus pairs, or a kana-card glyph
+    // (registry id → glyph). Summaries for arbitrary characters are rejected —
+    // no fabricated practice records.
+    const stationGlyphs = new Set<string>();
+    for (const b of station.blocks) {
+      if (b.kind === 'writing-practice') {
+        for (const ch of b.characters) stationGlyphs.add(ch);
+        for (const pair of b.focusPairs ?? []) {
+          stationGlyphs.add(pair[0]);
+          stationGlyphs.add(pair[1]);
+        }
+      }
+      if (b.kind === 'kana-card') {
+        const item = KANA_ITEMS.find((k) => k.kanaId === b.kanaId);
+        if (item) stationGlyphs.add(item.glyph);
+      }
+    }
+    if (!stationGlyphs.has(payload.character)) {
+      return NextResponse.json(
+        fail({
+          code: 'station/writing_char_not_in_station',
+          message: `character "${payload.character}" is not part of this station's writing content`,
+        }),
+        { status: 422 },
+      );
+    }
+    recordLearningEvent(
+      'writing_practice_completed',
+      {
+        chapter_id: payload.chapterSlug,
+        station_id: station.slug,
+        character: payload.character,
+        mode: payload.mode,
+        verdict: payload.verdict,
+        strokes_total: payload.strokesTotal,
+        strokes_first_try: payload.strokesFirstTry,
+        total_mistakes: payload.totalMistakes,
+        hints_shown: payload.hintsShown,
+        completed: payload.completed,
+        duration_ms: payload.durationMs,
+      },
+      userId,
+    );
+    return NextResponse.json(ok({ recorded: true }), { headers: { 'cache-control': 'no-store' } });
   }
 
   // complete — the SERVER enforces the walk order (prerequisites), not just the UI
