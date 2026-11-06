@@ -51,5 +51,31 @@ export function listChapterSummaries(): { slug: string; titleFa: string; levelCo
   return listChapters().map((c) => ({ slug: c.slug, titleFa: c.titleFa, levelCode: c.levelCode }));
 }
 
+/**
+ * TASK-LEARNING-06 (DD-117/120 — OQ-053): chapter-level soft prerequisite.
+ * A chapter declaring `prerequisiteChapterSlug` stays LOCKED (journey/entry
+ * gated at the page/API layer) until the prerequisite chapter reaches
+ * `understood` (its gate passed). Soft lock: never destroys stored progress —
+ * a locked chapter simply is not enterable through the UI.
+ */
+export async function chapterAccessStatus(
+  chapter: Chapter,
+  userId: string,
+): Promise<{ locked: boolean; prerequisiteSlug: string | null; prerequisiteTitleFa: string | null }> {
+  if (!chapter.prerequisiteChapterSlug) {
+    return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
+  }
+  const prereq = getChapter(chapter.prerequisiteChapterSlug);
+  if (!prereq) {
+    return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
+  }
+  const state = await (await import('@/lib/poc/stores')).getChapterProgressStore().get(userId, prereq.slug);
+  return {
+    locked: state?.status !== 'understood',
+    prerequisiteSlug: prereq.slug,
+    prerequisiteTitleFa: prereq.titleFa,
+  };
+}
+
 export { getChapter, getChapterByDialogueSlug, listChapters, LEVELS_BY_CODE };
 export { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';

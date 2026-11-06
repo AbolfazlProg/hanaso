@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
-import { loadChapterBundle, LEVELS_BY_CODE } from '@/modules/curriculum/server';
+import Link from 'next/link';
+import { loadChapterBundle, LEVELS_BY_CODE, chapterAccessStatus } from '@/modules/curriculum/server';
 import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { resolveLearnerId } from '@/lib/learner/server';
 import { resolveJourney, nextStation } from '@/modules/curriculum';
 import { JourneyMap } from '@/components/curriculum/journey-map';
 import { fa } from '@/messages/fa';
@@ -23,13 +24,38 @@ export default async function JourneyPage({ params }: { params: Promise<{ chapte
   const chapter = bundle!.chapter;
   const level = LEVELS_BY_CODE[chapter.levelCode]!;
 
+  const learnerId = await resolveLearnerId();
   const stationStates = await getStationProgressStore().listForUnit(
-    POC_DEFAULT_USER_ID,
+    learnerId,
     chapter.stations.map((s) => s.slug),
   );
-  const chapterState = await getChapterProgressStore().get(POC_DEFAULT_USER_ID, chapter.slug);
+  const chapterState = await getChapterProgressStore().get(learnerId, chapter.slug);
   const journey = resolveJourney(chapter, level, stationStates, chapterState);
   const next = nextStation(journey);
+  // TASK-LEARNING-06: chapter-level soft lock (e.g. Ch02 needs the kana gate G1).
+  const access = await chapterAccessStatus(chapter, learnerId);
+
+  if (access.locked) {
+    return (
+      <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-4 py-12">
+        <header className="flex flex-col gap-2">
+          <p className="text-caption text-ink-soft">{chapter.titleFa}</p>
+          <h1 className="text-h1 font-black text-indigo">{fa.curriculum.chapterLockedTitle}</h1>
+        </header>
+        <section className="rounded-md border border-ink-faint bg-card p-6">
+          <p className="text-body leading-[var(--leading-fa)] text-ink">{fa.curriculum.chapterLockedBody}</p>
+          {access.prerequisiteSlug ? (
+            <Link
+              href={`/learn/${access.prerequisiteSlug}`}
+              className="mt-4 inline-flex items-center gap-2 rounded-md border border-ai px-4 py-2 text-body font-bold text-ai"
+            >
+              {fa.curriculum.goPrerequisite} — {access.prerequisiteTitleFa}
+            </Link>
+          ) : null}
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-4 py-12">
@@ -57,6 +83,12 @@ export default async function JourneyPage({ params }: { params: Promise<{ chapte
           coreTotal: journey.coreTotal,
           chapterStatus: chapterState?.status ?? null,
           nextStationSlug: next?.slug ?? null,
+          units: journey.unitGroups?.map((g) => ({
+            slug: g.unit.slug,
+            titleFa: g.unit.titleFa,
+            summaryFa: g.unit.summaryFa,
+            stationSlugs: g.unit.stationSlugs,
+          })),
         }}
       />
     </main>

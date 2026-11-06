@@ -149,7 +149,7 @@ function Card({
             href={`/poc/dialogue?line=${lineId}`}
             className="rounded-md bg-ai px-3 py-1.5 text-small text-paper"
           >
-            در مکالمه ببین ↗
+            در مکالمه ببین
           </Link>
         ))}
       </div>

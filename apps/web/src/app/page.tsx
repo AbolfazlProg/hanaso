@@ -102,7 +102,7 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-4xl flex-col gap-1 text-caption text-ink-soft">
           <p>مشخصات و پژوهش: مرکز دانش japanese-learning-kb · نقشهٔ پروژه: PROJECT_STATUS.md</p>
           <p>
-            اولین مسیر واقعی یادگیری (چرخهٔ مکالمه ← درس ← تمرین ← فهم) در{' '}
+            اولین مسیر واقعی یادگیری (چرخهٔ مکالمه، درس، تمرین و فهم) در{' '}
             <a className="text-ai underline" href="/learn">
               /learn
             </a>{' '}

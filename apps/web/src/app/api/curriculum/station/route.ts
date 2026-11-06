@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fail, ok } from '@/modules/shared';
 import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import {
   applyStationEvent,
@@ -11,6 +11,8 @@ import {
   findBlockAnswer,
   type ExerciseAnswerPayload,
 } from '@/modules/curriculum';
+import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
+import { recordLearningEvent } from '@/modules/curriculum/events';
 import type { StationState } from '@/modules/curriculum/types';
 
 /**
@@ -23,7 +25,9 @@ import type { StationState } from '@/modules/curriculum/types';
  * - `complete`: mark the station completed — the SERVER re-checks the criterion
  *   (viewed / task / threshold) before flipping, then folds the chapter aggregate.
  *
- * DEV-ONLY auth note: userId defaults to 'poc-user' until better-auth (M1).
+ * DEV-ONLY auth note: userId resolves to the per-browser learner id
+ * (hanaso_lid cookie — TASK-LEARNING-08/#109); poc-user remains only as the
+ * no-cookie fallback until better-auth (M1).
  */
 export const dynamic = 'force-dynamic';
 
@@ -60,6 +64,22 @@ const bodySchema = z.discriminatedUnion('action', [
     action: z.literal('enter'),
     chapterSlug: z.string().min(1),
     stationSlug: z.string().min(1),
+    /** TASK-LEARNING-08 (WP-5): the block the walk is on (server resume anchor). */
+    currentBlockId: z.string().min(1).optional(),
+    stepIndex: z.number().int().min(0).optional(),
+  }),
+  z.object({
+    /**
+     * TASK-LEARNING-08 (WP-5 — owner feedback E): mid-walk position sync. Fired
+     * on every block transition (NOT every answer — bounded write rate). Keeps
+     * StationState.currentBlock fresh so a resume works even after a localStorage
+     * clear on the same browser.
+     */
+    action: z.literal('progress'),
+    chapterSlug: z.string().min(1),
+    stationSlug: z.string().min(1),
+    currentBlockId: z.string().min(1),
+    stepIndex: z.number().int().min(0),
   }),
   z.object({
     action: z.literal('complete'),
@@ -68,6 +88,27 @@ const bodySchema = z.discriminatedUnion('action', [
     /** Client-tracked session score (server-graded answers only) — clamped. */
     score: z.number().min(0).max(1).nullable().optional(),
     taskCompleted: z.boolean().optional(),
+  }),
+  z.object({
+    /**
+     * TASK-LEARNING-07 (DD-105/DD-111): handwriting practice record. The client
+     * sends ONLY the structured summary (raw pen paths never leave the browser);
+     * the character must belong to this station's writing content — a summary for
+     * an arbitrary character is rejected (no fabricated practice records).
+     */
+    action: z.literal('writing-practice'),
+    chapterSlug: z.string().min(1),
+    stationSlug: z.string().min(1),
+    blockId: z.string().min(1).optional(),
+    character: z.string().min(1),
+    mode: z.enum(['guided', 'trace', 'free']),
+    verdict: z.string().min(1).max(40),
+    strokesTotal: z.number().int().min(0).max(64),
+    strokesFirstTry: z.number().int().min(0).max(64),
+    totalMistakes: z.number().int().min(0).max(999),
+    hintsShown: z.number().int().min(0).max(999),
+    completed: z.boolean(),
+    durationMs: z.number().int().min(0).max(3_600_000),
   }),
 ]);
 
@@ -85,7 +126,7 @@ export async function POST(req: Request) {
     });
   }
   const payload = parsed.data;
-  const userId = POC_DEFAULT_USER_ID;
+  const userId = resolveLearnerIdFromRequest(req);
 
   let bundle;
   try {
@@ -105,10 +146,33 @@ export async function POST(req: Request) {
 
   const store = getStationProgressStore();
 
-  if (payload.action === 'enter') {
+  if (payload.action === 'enter' || payload.action === 'progress') {
     const current = await store.get(userId, station.slug);
     const next = applyStationEvent(current ?? undefined, { type: 'station_entered', stationSlug: station.slug });
-    const state = next ? await store.upsert(userId, station.slug, next) : current;
+    // WP-5: keep the resume anchor (currentBlock) fresh — the walk position is
+    // part of the stored state, not just the client's memory.
+    const anchorBlockId = 'currentBlockId' in payload ? payload.currentBlockId : undefined;
+    const anchorValid =
+      anchorBlockId !== undefined && station.blocks.some((b) => b.id === anchorBlockId) ? anchorBlockId : undefined;
+    const base = next ?? current;
+    const state = await store.upsert(userId, station.slug, {
+      stationSlug: station.slug,
+      status: base?.status ?? 'in_progress',
+      bestScore: base?.bestScore ?? null,
+      attemptCount: base?.attemptCount ?? 0,
+      ...(base?.status === 'in_progress' && anchorValid ? { currentBlock: anchorValid } : {}),
+    });
+    if (payload.action === 'enter') {
+      recordLearningEvent(
+        'station_entered',
+        {
+          chapter_id: payload.chapterSlug,
+          station_id: station.slug,
+          ...(station.core ? {} : { source: 'curious' as const }),
+        },
+        userId,
+      );
+    }
     return NextResponse.json(ok({ stationSlug: station.slug, state }), { headers: { 'cache-control': 'no-store' } });
   }
 
@@ -122,6 +186,29 @@ export async function POST(req: Request) {
     }
     const outcome = gradeExerciseAnswer(exercise, payload.answer as ExerciseAnswerPayload, payload.attemptNo);
     await store.incrementAttempts(userId, station.slug);
+    // TASK-LEARNING-06: analytics contract (in-memory store — pipeline = M6) +
+    // weak-point signal when the F-ladder is exhausted (#106/F4).
+    recordLearningEvent(
+      'exercise_answered',
+      {
+        exercise_id: exercise.id,
+        type: exercise.type,
+        correct: outcome.correct,
+        attempt_no: payload.attemptNo,
+      },
+      userId,
+    );
+    if (!outcome.correct && outcome.level >= 3) {
+      recordLearningEvent(
+        'exercise_weak_point',
+        {
+          exercise_id: exercise.id,
+          station_id: station.slug,
+          ...(exercise.referenceBlockId ? { reference_block_id: exercise.referenceBlockId } : {}),
+        },
+        userId,
+      );
+    }
     return NextResponse.json(ok({ outcome }), { headers: { 'cache-control': 'no-store' } });
   }
 
@@ -165,6 +252,54 @@ export async function POST(req: Request) {
     });
   }
 
+  if (payload.action === 'writing-practice') {
+    // Validate the practiced character belongs to THIS station's writing content:
+    // a writing-practice block's characters / focus pairs, or a kana-card glyph
+    // (registry id → glyph). Summaries for arbitrary characters are rejected —
+    // no fabricated practice records.
+    const stationGlyphs = new Set<string>();
+    for (const b of station.blocks) {
+      if (b.kind === 'writing-practice') {
+        for (const ch of b.characters) stationGlyphs.add(ch);
+        for (const pair of b.focusPairs ?? []) {
+          stationGlyphs.add(pair[0]);
+          stationGlyphs.add(pair[1]);
+        }
+      }
+      if (b.kind === 'kana-card') {
+        const item = KANA_ITEMS.find((k) => k.kanaId === b.kanaId);
+        if (item) stationGlyphs.add(item.glyph);
+      }
+    }
+    if (!stationGlyphs.has(payload.character)) {
+      return NextResponse.json(
+        fail({
+          code: 'station/writing_char_not_in_station',
+          message: `character "${payload.character}" is not part of this station's writing content`,
+        }),
+        { status: 422 },
+      );
+    }
+    recordLearningEvent(
+      'writing_practice_completed',
+      {
+        chapter_id: payload.chapterSlug,
+        station_id: station.slug,
+        character: payload.character,
+        mode: payload.mode,
+        verdict: payload.verdict,
+        strokes_total: payload.strokesTotal,
+        strokes_first_try: payload.strokesFirstTry,
+        total_mistakes: payload.totalMistakes,
+        hints_shown: payload.hintsShown,
+        completed: payload.completed,
+        duration_ms: payload.durationMs,
+      },
+      userId,
+    );
+    return NextResponse.json(ok({ recorded: true }), { headers: { 'cache-control': 'no-store' } });
+  }
+
   // complete — the SERVER enforces the walk order (prerequisites), not just the UI
   const score = payload.score == null ? null : Math.max(0, Math.min(1, payload.score));
   const current = await store.get(userId, station.slug);
@@ -201,7 +336,47 @@ export async function POST(req: Request) {
     status: 'completed',
     bestScore: score,
     attemptCount: current?.attemptCount ?? 0,
+    currentBlock: undefined, // walk finished — no stale resume anchor
   });
+
+  // TASK-LEARNING-06: analytics contract — completion + FSRS enrollment data
+  // (engine honestly marked not-integrated; the future engine replays these).
+  recordLearningEvent(
+    'station_completed',
+    {
+      chapter_id: payload.chapterSlug,
+      station_id: station.slug,
+      score,
+    },
+    userId,
+  );
+  if (station.fsrsItems.length > 0) {
+    recordLearningEvent(
+      'fsrs_cards_enrolled',
+      {
+        chapter_id: payload.chapterSlug,
+        station_id: station.slug,
+        items: station.fsrsItems,
+        engine: 'not-integrated',
+      },
+      userId,
+    );
+  }
+  // Per-unit checkpoint event (T-79 grouping — the Ch02 unit / kana island moment).
+  const unit = bundle.chapter.units?.find((u) => u.stationSlugs.includes(station.slug));
+  if (unit) {
+    const unitStates = await store.listForUnit(userId, unit.stationSlugs);
+    const done = unitStates.filter((s) => s.status !== 'in_progress').length;
+    recordLearningEvent(
+      'unit_checkpoint_completed',
+      {
+        chapter_id: payload.chapterSlug,
+        unit_id: unit.slug,
+        stations_completed: done,
+      },
+      userId,
+    );
+  }
 
   // chapter aggregate: all core stations terminal → stations_complete
   const chapterStore = getChapterProgressStore();
@@ -234,6 +409,7 @@ export async function GET(req: Request) {
       status: 400,
     });
   }
-  const state: StationState | null = await getStationProgressStore().get(POC_DEFAULT_USER_ID, stationSlug);
+  const userId = resolveLearnerIdFromRequest(req);
+  const state: StationState | null = await getStationProgressStore().get(userId, stationSlug);
   return NextResponse.json(ok({ stationSlug, state }), { headers: { 'cache-control': 'no-store' } });
 }

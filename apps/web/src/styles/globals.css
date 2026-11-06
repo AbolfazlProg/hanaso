@@ -173,3 +173,71 @@ body {
   outline: var(--focus-ring);
   outline-offset: 2px;
 }
+
+/* TASK-LEARNING-07 (#107): حلقهٔ نبض نقطهٔ ادامه روی نقشهٔ مسیر — فقط motion-safe */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1.28);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.28);
+    opacity: 0;
+  }
+}
+
+/* TASK-LEARNING-08 phase 2 (#117 §6): ورود تدریجی محتوای آموزشی با حس جوهر —
+   فقط محو+خیزِ نرم و یک مهِ کوتاه؛ بدون افکت دیجیتال/تایپ ماشینی.
+   ترتیب پله‌ای با تأخیرهای kana-reveal-2..5 (پس از عنصر اول). */
+@keyframes kana-ink-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(1.5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+.kana-reveal {
+  animation: kana-ink-in 480ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+.kana-reveal-2 {
+  animation: kana-ink-in 480ms cubic-bezier(0.2, 0.6, 0.2, 1) 240ms both;
+}
+.kana-reveal-3 {
+  animation: kana-ink-in 480ms cubic-bezier(0.2, 0.6, 0.2, 1) 500ms both;
+}
+.kana-reveal-4 {
+  animation: kana-ink-in 480ms cubic-bezier(0.2, 0.6, 0.2, 1) 760ms both;
+}
+.kana-reveal-5 {
+  animation: kana-ink-in 480ms cubic-bezier(0.2, 0.6, 0.2, 1) 1020ms both;
+}
+
+/* TASK-LEARNING-08 v4 (owner §3 مرحلهٔ چهارم): واژهٔ نمونه حرف‌به‌حرف و به
+   ترتیب صحیح خواندن ژاپنی ظاهر می‌شود — هر کاراکتر با تأخیر پله‌ای خودش
+   (استایل درون‌خطی)، معنی پس از آخرین حرف. حس جوهر، نه تایپ ماشینی. */
+.word-char-in {
+  animation: kana-ink-in 420ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+.word-meaning-in {
+  animation: kana-ink-in 520ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kana-reveal,
+  .kana-reveal-2,
+  .kana-reveal-3,
+  .kana-reveal-4,
+  .kana-reveal-5,
+  .word-char-in,
+  .word-meaning-in {
+    animation: none;
+  }
+}

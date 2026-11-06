@@ -30,7 +30,7 @@ export function LessonPracticeButton({ dialogueId }: { dialogueId: string }) {
         disabled={busy}
         className="rounded-md bg-ai px-4 py-2 text-small text-paper disabled:opacity-40"
       >
-        {busy ? 'در حال ثبت…' : 'تمرین‌ها (مرحلهٔ C) ←'}
+        {busy ? 'در حال ثبت…' : 'تمرین‌ها (مرحلهٔ C)'}
       </button>
       {warning && (
         <p role="alert" className="text-caption text-warning">

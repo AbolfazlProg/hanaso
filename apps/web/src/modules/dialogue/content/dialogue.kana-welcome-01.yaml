@@ -1,0 +1,57 @@
+# HANASO — Dialogue content: kana-welcome-01 (TASK-LEARNING-06 / WP-2).
+# Chapter 01 (kana foundation) anchor micro-dialogue — the H0 welcome hook.
+#
+# PROVENANCE: HANASO-original composition (DD-011/DD-R05). Per the 05A readiness
+# checklist §۱ («میکرو-دیالوگ قلاب: دیالوگ ۲–۳ خطی تمام‌کانا در قالب dialogue v2
+# موجود»), the kana chapter keeps the 1:1 chapter↔dialogue model intact — this is
+# a RECEPTIVE hook (the learner is not expected to read it yet; Persian glosses +
+# sound carry the meaning). All lines are pure kana.
+#
+# AUDIO: no pre-generated VOICEVOX assets yet (audio pipeline = separate task,
+# out of scope per TASK-LEARNING-06) — the manifest degrades honestly to the
+# placeholder path until `pnpm gen:audio` assets land.
+meta:
+  id: dlg-kana-welcome-01
+  format: 2
+  stage: 1
+  jlpt: Pre-N5
+  review: true
+  generated:
+    tool: curriculum-authoring@0.1.0
+    at: 2026-11-05
+
+dialogue_ref: dlg-kana-welcome-01
+scene: هنگام ورود به فصل کانا — میکی و سورا خوش‌آمد می‌گویند و سه خط ژاپنی را نشان می‌دهند
+characters: [chr-miki, chr-sora]
+turn_gap_default_ms: 650
+
+lines:
+  - id: s-kana-welcome-01-l1
+    speaker: chr-miki
+    frame: speaker-b
+    tokens:
+      - { surface: こんにちは, reading: こんにちは, pos: interjection, chunk: chrk-konnichiwa }
+    fa: سلام!
+    emotion_tag: happy
+    gap_after_ms: 700
+
+  - id: s-kana-welcome-01-l2
+    speaker: chr-sora
+    frame: speaker-a
+    tokens:
+      - { surface: ひらがな, reading: ひらがな, pos: noun }
+      - { surface: カタカナ, reading: カタカナ, pos: noun, katakana: true }
+      - { surface: かんじ, reading: かんじ, pos: noun }
+    fa: هیراگانا؟ کاتاکانا؟ کانجی؟
+    emotion_tag: thinking
+    gap_after_ms: 700
+
+  - id: s-kana-welcome-01-l3
+    speaker: chr-miki
+    frame: speaker-b
+    tokens:
+      - { surface: だいじょうぶ, reading: だいじょうぶ, pos: adjectival-noun }
+      - { surface: いっしょに, reading: いっしょに, pos: adverb }
+    fa: نگران نباش — با هم قدم‌به‌قدم جلو می‌رویم!
+    emotion_tag: happy
+    gap_after_ms: 500

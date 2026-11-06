@@ -59,9 +59,11 @@
   --color-speaker-1: #2e5f7a;
   --color-speaker-2: #7a4e26;
   --color-speaker-3: #5a6b3a;
+  --color-speaker-4: #6b4a7a; /* TASK-LEARNING-06 — chr-kim (violet-blue) */
   --color-speaker-1-l: #8fc3e8; /* light — on indigo scenes */
   --color-speaker-2-l: #e5b483;
   --color-speaker-3-l: #b7cc93;
+  --color-speaker-4-l: #c9aede;
 
   /* طیف تحلیلی ai — نمودارهای admin (متن فقط پله‌های ۱–۳) */
   --color-chart-1: #16324a;
@@ -150,9 +152,11 @@
   --color-speaker-1: #2e5f7a;
   --color-speaker-2: #7a4e26;
   --color-speaker-3: #5a6b3a;
+  --color-speaker-4: #6b4a7a; /* TASK-LEARNING-06 — chr-kim (violet-blue) */
   --color-speaker-1-l: #8fc3e8;
   --color-speaker-2-l: #e5b483;
   --color-speaker-3-l: #b7cc93;
+  --color-speaker-4-l: #c9aede;
   --color-ai-deep: #16324a;
   --color-shu: #c2401c;
   --color-shu-deep: #a33317;

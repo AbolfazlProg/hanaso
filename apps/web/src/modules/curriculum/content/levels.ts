@@ -18,14 +18,21 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
     canDoFa: 'هر دو خط کانا را روان می‌خواند؛ اولین کلمه‌ها را با صدا می‌شناسد.',
     orderInCourse: 1,
     caps: {
+      // TASK-LEARNING-06 (DD-090/120 — the kana chapter is L1's registered independent
+      // exception): L1 IS the kana band — one 31-station chapter across 4 islands.
+      // Caps reflect that single chapter (the [target, hardMax] S3 window covers the
+      // 32-unit scope of section 18; minutes = whole-stage budget).
       vocabCore: [0, 0],
       grammarClusters: [0, 0],
-      stationsCore: [4, 6],
-      chapterMinutes: [10, 20],
+      stationsCore: [24, 32],
+      chapterMinutes: [280, 420],
       dialogueLines: [2, 4],
       listeningSpeed: 0.8,
       furigana: 'all',
-      gate: { weighted: 0.7, minMeasure: 0.5 },
+      // Kana gate G1 (DD-120 / OQ-052 — PROPOSED 05A values, owner-tunable data):
+      // weighted ≥90% AND no measure <80% — the strictest gate of the journey
+      // (kana errors compound in all future reading).
+      gate: { weighted: 0.9, minMeasure: 0.8 },
       maxRemediationLoops: 3,
     },
   },
@@ -37,13 +44,20 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
     canDoFa: 'خودش را معرفی می‌کند، احوال‌پرسی می‌کند، هویت می‌پرسد و تأیید می‌کند — در مکالمهٔ ۶–۹ خطی مؤدبانه.',
     orderInCourse: 2,
     caps: {
-      vocabCore: [4, 8],
-      grammarClusters: [1, 2],
-      stationsCore: [8, 10],
-      chapterMinutes: [15, 25],
-      dialogueLines: [6, 9],
+      // TASK-LEARNING-06 (05B — KB section 19): the first conversation chapter is the
+      // registered TWO-UNIT chapter (unit 02-1 «最初のあいさつ» + 02-2 «キムさんの紹介»,
+      // DD-123) — one anchor dialogue of 14 lines, 18 core walk stations + gate, 11 core
+      // words (8+3 spread across the units — the 05B risk-table exception) and 5 grammar
+      // clusters (2+3). Numbers are owner-tunable DATA per DD-091/OQ-035.
+      vocabCore: [4, 11],
+      grammarClusters: [1, 5],
+      stationsCore: [8, 20],
+      chapterMinutes: [35, 55],
+      dialogueLines: [6, 14],
       listeningSpeed: 0.9,
       furigana: 'all',
+      // Ch02 gate (DD-126 / OQ-056 — PROPOSED 05B values): weighted ≥70%, no measure <50%
+      // (L2 conversation errors are context-compensable — unlike kana, DD-120).
       gate: { weighted: 0.7, minMeasure: 0.5 },
       maxRemediationLoops: 3,
     },

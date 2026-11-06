@@ -69,9 +69,9 @@ export const fa = {
     /* امضاهای Aizen — TASK-DSGN-01 (DD-084) */
     aizenSection: 'امضاهای Aizen — نیلیِ ساختاری و شنگرف',
     aizenIntro:
-      'عناصر هویتی جهت هنری منتخب (DD-084): مُهر دایره‌ای فهم، نوار فاز A→D پستی، پیشرفت راه‌راه مورب و کارت نیلی مکالمه.',
+      'عناصر هویتی جهت هنری منتخب (DD-084): مُهر دایره‌ای فهم، نوار فاز A تا D پستی، پیشرفت راه‌راه مورب و کارت نیلی مکالمه.',
     aizenSealLabel: 'مُهر فهم — پایان مرحلهٔ D',
-    aizenRulerLabel: 'نوار فاز A→D (نمونه: مرحلهٔ C فعال)',
+    aizenRulerLabel: 'نوار فاز A تا D (نمونه: مرحلهٔ C فعال)',
     aizenRulerDone: 'A مکالمه',
     aizenRulerDone2: 'B درس',
     aizenRulerNow: 'C تمرین',
@@ -102,10 +102,15 @@ export const fa = {
     canDoTitle: 'در پایان این فصل می‌توانی…',
     sceneTitle: 'صحنه',
     levelLabel: 'سطح',
-    prerequisitesNote: 'پیش‌نیاز: الفبای کانا (مرحلهٔ ۱) — بدون آن هم می‌توانی شروع کنی.',
+    /*
+     * Issue #94 (Wave 3): honest copy — the chapter soft lock (DD-117/120) means
+     * the prerequisite gate REALLY gates entry; the old «بدون آن هم می‌توانی شروع
+     * کنی» contradicted it. Rendered ONLY on chapters that declare a prerequisite.
+     */
+    prerequisitesNote: 'برای باز شدن این فصل، باید ابتدا گیت فهم فصل پیش‌نیاز (فصل کانا) را بگذرانی.',
     /* island journey */
     journeyTitle: 'مسیر جزیره‌ای فصل',
-    journeyLead: 'هر ایستگاه یک مهنگ است؛ مسیر اصلی را دنبال کن، شاخه‌های اختیاری برای کنجکاوها.',
+    journeyLead: 'هر ایستگاه یک لنگرگاه است؛ مسیر اصلی را دنبال کن، شاخه‌های اختیاری برای کنجکاوها.',
     stationLocked: 'قفل',
     stationAvailable: 'آماده',
     stationInProgress: 'در جریان',
@@ -118,8 +123,69 @@ export const fa = {
     understoodBadge: 'این مکالمه را فهمیدی',
     goToGate: 'آزمون فهم مکالمه',
     nextUp: 'ایستگاه بعدی',
+    /* TASK-LEARNING-06 — kana cards + two-level map + chapter prereq */
+    kanaCardMissing: (glyph: string) => `کارت کانا «${glyph}» در رجیستری پیدا نشد — محتوای ایستگاه ناقص است.`,
+    kanaRomajiHidden: 'روماجی در این مرحله نمایش داده نمی‌شود — از صدای کانا در تمرین بعدی حدس بزن.',
+    kanaMnemonicDraft: 'پیش‌نویس — در بازبینی انسانی',
+    /* TASK-LEARNING-08 WP-2 (KanaCard v2 — owner feedback A+C): the card TEACHES */
+    kanaSoundLabel: (glyph: string) => `پخش صدای ${glyph}`,
+    kanaSoundReplay: 'پخش مجدد',
+    kanaHostWordPrefix: 'واژهٔ قابل‌خواندن',
+    kanaPairCompareTitle: 'جفت اشتباه‌پذیر — با هم ببین',
+    kanaPairOther: 'جفتش',
+    kanaWritingTitle: (glyph: string) => `نوشتن ${glyph} — ترتیب ضربه‌ها را ببین و خودت بنویس`,
+    kanaWritingHide: 'بستن تمرین نوشتن',
+    kanaWritingShow: 'نمایش تمرین نوشتن',
+    kanaWritingCollapsedNote: 'تمرین نوشتن همین‌جاست — هر وقت خواستی بازش کن.',
+    kanaAudioPending: 'صدای این نویسه هنوز تولید نشده؛ به‌محض آماده‌شدن همین‌جا اضافه می‌شود.',
+    kanaConfusablePre: 'جفت اشتباه‌پذیر: ',
+    /* TASK-LEARNING-08 v4 (owner final correction) — KanaCard v4: ONE unified
+       environment, auto-flowing timeline, NO stage CTAs (بند ۱ و ۱۰ مالک) */
+    kanaStageIntroTitle: 'آشنایی با این نویسه',
+    kanaStageIntroHint: 'صدایش را می‌شنوی و شکلش را همان‌جا در دفتر می‌بینی.',
+    kanaStageDemoTitle: 'نحوهٔ نوشتن را ببین',
+    kanaStageDemoReplay: 'نمایش دوباره',
+    kanaStageDemoDone: 'نمایش تمام شد — با هم مرورش کنیم',
+    kanaStageExplainTitle: 'خوانش و شکل نویسه',
+    kanaStageGuidedTitle: 'تمرین با راهنما',
+    kanaStageGuidedDone: 'همهٔ ضربه‌ها درست شد — حالا بدون راهنما',
+    kanaStageFreeTitle: 'نوشتن از حافظه',
+    kanaStageFreeDone: 'تمرین نوشتن کامل شد',
+    kanaStageWriteAgain: 'یک بار دیگر بنویس',
+    kanaStageHelpBtn: 'راهنما',
+    kanaStageBackToGuided: 'با راهنما تمرین می‌کنم',
+    kanaStageDoneTitle: (glyph: string) => `نوشتن ${glyph} یاد گرفته شد`,
+    kanaStagePracticeAgain: 'تمرین مجدد',
+    kanaStageStrokeProgress: 'پیشرفت ضربه‌ها',
+    kanaStageAudioOnce: 'هر وقت خواستی دوباره پخش کن.',
+    kanaReplayTeaching: 'تکرار آموزش',
+    kanaStageChipIntro: 'آشنایی',
+    kanaStageChipDemo: 'نمایش نوشتن',
+    kanaStageChipExplain: 'توضیح',
+    kanaStageChipGuided: 'تمرین با راهنما',
+    kanaStageChipFree: 'نوشتن از حافظه',
+    kanaStageChipDone: 'کامل شد',
+    kanaStrokesWord: 'ضربه',
+    unitProgress: 'بخش',
+    islandMap: 'جزایر فصل',
+    chapterLockedTitle: 'این فصل قفل است',
+    chapterLockedBody: 'برای ورود به این فصل، ابتدا گیت فهم فصل قبل را بگذران.',
+    goPrerequisite: 'رفتن به فصل پیش‌نیاز',
+    prevStation: 'ایستگاه قبلی',
+    /* feedback ladder F2/F4 (Issue #106) */
+    eliminatedOption: 'یک گزینهٔ نادرست حذف شد',
+    returnToTeaching: 'بازگشت به آموزش',
+    /* block navigation + revisit (Issue #102) */
+    prevBlock: 'مرحلهٔ قبل',
+    exerciseAlreadyDoneTitle: 'این تمرین را کامل کرده‌ای',
+    exerciseAlreadyDoneBody: 'نتیجه‌اش ثبت شده و با رفت‌وآمد بین مراحل از بین نمی‌رود؛ بدون تکرار می‌توانی ادامه بدهی.',
     /* station runner */
     continueBlock: 'ادامه',
+    /* TASK-LEARNING-08 WP-5: auto-next after a correct answer (owner feedback D) */
+    autoNextHint: 'به سؤال بعد می‌رویم…',
+    /* TASK-LEARNING-08 WP-5: walk resume notice (owner feedback E) */
+    walkResumedTitle: 'از همان‌جا ادامه دادی',
+    walkResumedBody: 'موقعیت قبلی‌ات در همین ایستگاه ذخیره شده بود و بازگردانده شد.',
     checkAnswer: 'بررسی پاسخ',
     tryAgain: 'دوباره تلاش کن',
     correct: 'درست!',
@@ -142,6 +208,20 @@ export const fa = {
     masteryStationNote: 'آزمون فهم (دروازهٔ D) در صفحهٔ جدا اجرا می‌شود.',
     prevQuestion: 'قبلی',
     examplesTitle: 'مثال‌ها',
+    /* writing practice (TASK-LEARNING-07 / DD-105/DD-111) */
+    writingBlockTitle: 'نوشتن با دست',
+    writingPickChar: 'نویسهٔ تمرین:',
+    writingPairFocusTitle: 'جفت‌های شبیه — دقیق نگاه کن',
+    writingPairNote: 'این دو نویسه فقط در جزئیات فرق دارند؛ هر دو را چند بار بکش و تفاوت را حس کن.',
+    /* vertical trail map (TASK-LEARNING-07 · #107) */
+    trailLegendTitle: 'راهنمای نشانه‌های مسیر',
+    trailLegendCompleted: 'انجام‌شده',
+    trailLegendCurrent: 'نقطهٔ ادامه',
+    trailLegendAvailable: 'آماده',
+    trailLegendLocked: 'قفل',
+    trailLegendOptional: 'اختیاری',
+    trailBackToFocus: 'بازگشت به نقطهٔ ادامه',
+    trailScrolledNotice: 'مسیر روی نقطهٔ ادامهٔ تو تنظیم شد',
     yourTurn: 'نوبت تو',
     typeYourName: 'نامت را بنویس',
     /* mastery gate */

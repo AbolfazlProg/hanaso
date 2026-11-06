@@ -6,8 +6,12 @@
  * - the curriculum seed lands levels/units/stations with FK-correct ids
  *   (station_progress FK → content.lessons);
  * - the station/chapter repositories round-trip through the Pg stores;
- * - the full walk (10 stations → stations_complete) + a passed gate →
+ * - the full walk (18 core stations → stations_complete) + a passed gate →
  *   `understood` — the DD-048 invariant against the real database.
+ *
+ * TASK-LEARNING-06/07: Ch02 was rebuilt to the 05B map (18 core + 4 optional
+ * stations, unit est 45min, no in-walk mastery station — the gate is the
+ * assessment PAGE per G1); these expectations track the CURRENT content.
  */
 import { randomUUID } from 'node:crypto';
 import { Pool } from 'pg';
@@ -35,7 +39,7 @@ afterAll(async () => {
 });
 
 describe('curriculum seed (content rows)', () => {
-  it('seeds L2 + the chapter unit + all 12 station lesson rows idempotently', async () => {
+  it('seeds L2 + the chapter unit + all 22 station lesson rows idempotently', async () => {
     const { rows: levelRows } = await pool!.query("select code from content.levels where code = 'L2'");
     expect(levelRows).toHaveLength(1);
 
@@ -46,16 +50,18 @@ describe('curriculum seed (content rows)', () => {
     expect(unitRows).toHaveLength(1);
     const unit = unitRows[0]!;
     expect(unit.id).toBe(unitContentId('first-meeting-01'));
-    expect(unit.est_minutes).toBe(25);
+    expect(unit.est_minutes).toBe(45);
 
     const { rows: stationRows } = await pool!.query(
       'select slug, type, core, "order" from content.lessons where unit_id = $1 order by "order"',
       [unit.id],
     );
-    expect(stationRows).toHaveLength(12);
-    expect(stationRows.filter((r: { core: boolean }) => r.core)).toHaveLength(10);
+    // 05B map (TASK-LEARNING-06 W2): 18 core + 4 optional; the mastery GATE is
+    // the chapter assessment page, not a station — so no mastery row exists.
+    expect(stationRows).toHaveLength(22);
+    expect(stationRows.filter((r: { core: boolean }) => r.core)).toHaveLength(18);
     expect(stationRows[0]).toMatchObject({ slug: 'stn-fm01-01-anchor', type: 'anchor' });
-    expect(stationRows[9]).toMatchObject({ slug: 'stn-fm01-10-mastery', type: 'mastery' });
+    expect(stationRows[9]).toMatchObject({ slug: 'stn-fm01-10-reconnect', type: 'anchor' });
   });
 
   it('deterministic station ids match the repository resolver (FK target)', async () => {
@@ -91,7 +97,7 @@ describe('island walk through the Postgres stores', () => {
       POC_DEFAULT_USER_ID,
       chapter.stations.map((s) => s.slug),
     );
-    expect(states).toHaveLength(10);
+    expect(states).toHaveLength(18);
     expect(states.every((s) => s.status === 'completed')).toBe(true);
 
     const journey = resolveJourney(
@@ -100,7 +106,7 @@ describe('island walk through the Postgres stores', () => {
       states,
       (await chapterStore.get(POC_DEFAULT_USER_ID, chapter.slug)) ?? null,
     );
-    expect(journey.coreCompleted).toBe(10);
+    expect(journey.coreCompleted).toBe(18);
     expect(nextStation(journey)).toBeNull(); // nothing left to unlock
 
     // the station route's aggregate logic: all core done → stations_complete
@@ -144,6 +150,6 @@ describe('island walk through the Postgres stores', () => {
       POC_DEFAULT_USER_ID,
       getChapter('first-meeting-01')!.stations.map((s) => s.slug),
     );
-    expect(before.filter((s) => s.status === 'completed')).toHaveLength(10);
+    expect(before.filter((s) => s.status === 'completed')).toHaveLength(18);
   });
 });

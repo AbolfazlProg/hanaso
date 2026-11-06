@@ -32,6 +32,9 @@ export function loadDialogueBundle(slug: string): DialogueBundle {
     lines: dialogue.lines.map((l) => ({
       id: l.id,
       speaker: l.speaker,
+      // TASK-LEARNING-07 joint turns (05B §6): pass the co-speaker through so
+      // buildAudioManifest emits the `${lineId}-co` asset entry next to the primary.
+      coSpeaker: l.coSpeaker,
       voiceOverride: l.voiceOverride,
       text: lineText(l),
     })),

@@ -91,6 +91,7 @@ export const RECEIPT_STATION_TYPES: ReadonlySet<StationType> = new Set(['anchor'
 const RECEPTIVE_KINDS: ReadonlySet<string> = new Set([
   'scene',
   'vocab-card',
+  'kana-card',
   'expression-card',
   'rule-card',
   'example-set',
@@ -160,6 +161,10 @@ export const RECALL_FIRST_TYPES: ReadonlySet<ExerciseType> = new Set([
   'dialogue-order',
   'gist-select',
   'listen-who-asked',
+  // TASK-LEARNING-06: kana recall/decoding = retrieval from memory (S-K2/S-K5 —
+  // romaji→glyph and word→romaji both make the learner PRODUCE, not recognise).
+  'kana-recall',
+  'kana-decode',
 ] as const);
 
 /**

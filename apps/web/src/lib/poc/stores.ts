@@ -22,11 +22,32 @@ import type { PocEvent } from './event-store';
 import { InMemoryEventStore } from './event-store';
 import { databaseConfigured, getDbClient } from '@/db/client';
 
-let attemptStore: AttemptRepository | null = null;
-let eventStore: InMemoryEventStore | null = null;
-let progressStore: ProgressRepository | null = null;
-let stationProgressStore: StationProgressRepository | null = null;
-let chapterProgressStore: ChapterProgressRepository | null = null;
+/*
+ * TASK-LEARNING-08 (WP-5): the singletons live on globalThis — Next dev
+ * (turbopack) can instantiate this module SEPARATELY for RSC pages and route
+ * handlers, and HMR re-evaluates modules on edits; a module-level `let` gave
+ * each instance its own store (a mid-walk `enter` from the runner was invisible
+ * to the station page's resume read — reproduced while fixing owner feedback E).
+ * One process = one store set (the Prisma-client pattern). Postgres mode is
+ * unaffected beyond pooling (both instances already targeted the same DB).
+ */
+const storeCache = globalThis as typeof globalThis & {
+  __hanasoStores?: {
+    attemptStore: AttemptRepository | null;
+    eventStore: InMemoryEventStore | null;
+    progressStore: ProgressRepository | null;
+    stationProgressStore: StationProgressRepository | null;
+    chapterProgressStore: ChapterProgressRepository | null;
+  };
+};
+storeCache.__hanasoStores ??= {
+  attemptStore: null,
+  eventStore: null,
+  progressStore: null,
+  stationProgressStore: null,
+  chapterProgressStore: null,
+};
+const singletons = storeCache.__hanasoStores;
 
 /** True when the Postgres-backed repositories are active. */
 export function usingPostgresStores(): boolean {
@@ -34,43 +55,47 @@ export function usingPostgresStores(): boolean {
 }
 
 export function getAttemptStore(): AttemptRepository {
-  attemptStore ??= usingPostgresStores() ? new PgAttemptRepository(getDbClient()) : new InMemoryAttemptRepository();
-  return attemptStore;
+  singletons.attemptStore ??= usingPostgresStores()
+    ? new PgAttemptRepository(getDbClient())
+    : new InMemoryAttemptRepository();
+  return singletons.attemptStore;
 }
 
 export function getEventStore(): InMemoryEventStore {
-  eventStore ??= new InMemoryEventStore();
-  return eventStore;
+  singletons.eventStore ??= new InMemoryEventStore();
+  return singletons.eventStore;
 }
 
 export function getProgressStore(): ProgressRepository {
-  progressStore ??= usingPostgresStores() ? new PgProgressRepository(getDbClient()) : new InMemoryProgressRepository();
-  return progressStore;
+  singletons.progressStore ??= usingPostgresStores()
+    ? new PgProgressRepository(getDbClient())
+    : new InMemoryProgressRepository();
+  return singletons.progressStore;
 }
 
 /** Island walk progress (TASK-LEARNING-01) — station states. */
 export function getStationProgressStore(): StationProgressRepository {
-  stationProgressStore ??= usingPostgresStores()
+  singletons.stationProgressStore ??= usingPostgresStores()
     ? new PgStationProgressRepository(getDbClient())
     : new InMemoryStationProgressRepository();
-  return stationProgressStore;
+  return singletons.stationProgressStore;
 }
 
 /** Island walk progress (TASK-LEARNING-01) — chapter A→D aggregate. */
 export function getChapterProgressStore(): ChapterProgressRepository {
-  chapterProgressStore ??= usingPostgresStores()
+  singletons.chapterProgressStore ??= usingPostgresStores()
     ? new PgChapterProgressRepository(getDbClient())
     : new InMemoryChapterProgressRepository();
-  return chapterProgressStore;
+  return singletons.chapterProgressStore;
 }
 
 /** TEST-ONLY: drop cached singletons (switch env between unit/integration runs). */
 export function resetStoresForTests(): void {
-  attemptStore = null;
-  progressStore = null;
-  eventStore = null;
-  stationProgressStore = null;
-  chapterProgressStore = null;
+  singletons.attemptStore = null;
+  singletons.progressStore = null;
+  singletons.eventStore = null;
+  singletons.stationProgressStore = null;
+  singletons.chapterProgressStore = null;
 }
 
 export type { PocEvent };

@@ -114,8 +114,13 @@ export function gateEqa1(chapter: Chapter): EqaFinding[] {
       }
     }
 
-    /* Layer 2 — line-comprehension types: the source line is part of the assessment */
-    if (LINE_COMPREHENSION_TYPES.has(ex.type)) {
+    /* Layer 2 — line-comprehension types: the source line is part of the assessment.
+     * TASK-LEARNING-06 (بستن #96 — بازنویسی تمرین‌های واژگان به سطح واژه): a Q2
+     * audio item whose targetConcept is a WORD id is a WORD-LEVEL drill (شنیدنِ خودِ
+     * واژه → معنی — 13-06 §۱ قدم ۴: recognition، نه درک خط): the line only CARRIES
+     * the word's audio; its grammar is not being assessed. Exempt from layer 2. */
+    const isWordLevelAudioDrill = ex.type === 'audio-meaning' && chapter.words.some((w) => w.id === ex.targetConcept);
+    if (LINE_COMPREHENSION_TYPES.has(ex.type) && !isWordLevelAudioDrill) {
       const line = ex.audioLineRef ?? ex.lineRef;
       if (line) {
         for (const clusterId of clustersAnchoredToLine(chapter, line)) {
@@ -165,7 +170,11 @@ export function gateEqa2(chapter: Chapter): EqaFinding[] {
     if (RECEIPT_STATION_TYPES.has(station.type)) continue; // anchor/mastery: stage A/D by design
 
     const explanationRun = longestRun(station.blocks.map((b) => ({ predicate: blockIsExplanation(b) })));
-    const vocabRun = longestRun(station.blocks.map((b) => ({ predicate: b.kind === 'vocab-card' })));
+    // TASK-LEARNING-06: kana-card packets follow the SAME packet rule as vocab cards
+    // (05A experience spec §۲ — 2–3 cards then retrieval; DD-94 §۳-۱ vocab row).
+    const vocabRun = longestRun(
+      station.blocks.map((b) => ({ predicate: b.kind === 'vocab-card' || b.kind === 'kana-card' })),
+    );
     const receptiveStretch = longestRun(station.blocks.map((b) => ({ predicate: blockIsReceptive(b) })));
 
     const alternation: string[] = [];

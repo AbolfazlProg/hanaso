@@ -8,6 +8,7 @@ import { z } from 'zod';
 import mikiManifest from './content/characters/chr-miki/manifest.json';
 import soraManifest from './content/characters/chr-sora/manifest.json';
 import yamadaManifest from './content/characters/chr-yamada/manifest.json';
+import kimManifest from './content/characters/chr-kim/manifest.json';
 import type { CharacterAssetManifest, ExpressionTag } from './contracts';
 
 const EXPRESSION_TAGS: [ExpressionTag, ...ExpressionTag[]] = [
@@ -28,7 +29,7 @@ export const characterManifestSchema = z.object({
   version: z.string().regex(/^\d+\.\d+\.\d+$/, 'art semver'),
   nameJa: z.string().min(1),
   nameFa: z.string().min(1),
-  role: z.enum(['central', 'companion-1', 'companion-2']),
+  role: z.enum(['central', 'companion-1', 'companion-2', 'companion-3']),
   colorToken: z.string().regex(/^speaker-\d$/, 'locked DD-067 speaker tokens'),
   voiceId: z.string().min(1),
   states: z.array(z.enum(['idle', 'listening', 'speaking'])).min(1),
@@ -43,7 +44,7 @@ export const characterManifestSchema = z.object({
   performance: z.object({ fps60Mobile: z.boolean(), measuredBytes: z.number().int().min(0) }),
 });
 
-const RAW_MANIFESTS: unknown[] = [mikiManifest, yamadaManifest, soraManifest];
+const RAW_MANIFESTS: unknown[] = [mikiManifest, yamadaManifest, soraManifest, kimManifest];
 
 function loadRegistry(): Map<string, CharacterAssetManifest> {
   const map = new Map<string, CharacterAssetManifest>();

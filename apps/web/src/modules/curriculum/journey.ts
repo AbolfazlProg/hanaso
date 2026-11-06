@@ -17,6 +17,7 @@ import type {
   Chapter,
   Journey,
   JourneyNode,
+  JourneyUnitGroup,
   LevelPolicy,
   Station,
   StationState,
@@ -94,6 +95,40 @@ export function resolveJourney(
     return st !== undefined && PREREQ_OK.has(st.status);
   }).length;
 
+  // TASK-LEARNING-06 (T-79): group the same nodes by the chapter's declared units[]
+  // (story units / islands) — pure presentation grouping; walk order and prereqs are
+  // untouched. Stations not listed in any unit (should not happen — validated) are
+  // appended to a trailing implicit group so no node is lost.
+  let unitGroups: JourneyUnitGroup[] | undefined;
+  if (chapter.units && chapter.units.length > 0) {
+    const nodeBySlug = new Map(nodes.map((n) => [n.station.slug, n]));
+    const seen = new Set<string>();
+    unitGroups = chapter.units.map((unit) => {
+      const groupNodes = unit.stationSlugs
+        .map((slug) => nodeBySlug.get(slug))
+        .filter((n): n is JourneyNode => n !== undefined);
+      unit.stationSlugs.forEach((slug) => seen.add(slug));
+      const groupCore = groupNodes.filter((n) => n.station.core);
+      const doneCore = groupCore.filter((n) => PREREQ_OK.has(n.availability as StationState['status']));
+      return {
+        unit,
+        nodes: groupNodes,
+        coreCompleted: doneCore.length,
+        coreTotal: groupCore.length,
+      };
+    });
+    const leftovers = nodes.filter((n) => !seen.has(n.station.slug));
+    if (leftovers.length > 0) {
+      const groupCore = leftovers.filter((n) => n.station.core);
+      unitGroups.push({
+        unit: { slug: '__rest__', titleFa: 'سایر ایستگاه‌ها', stationSlugs: leftovers.map((n) => n.station.slug) },
+        nodes: leftovers,
+        coreCompleted: groupCore.filter((n) => PREREQ_OK.has(n.availability as StationState['status'])).length,
+        coreTotal: groupCore.length,
+      });
+    }
+  }
+
   return {
     chapter,
     level,
@@ -101,6 +136,7 @@ export function resolveJourney(
     coreCompleted,
     coreTotal: core.length,
     chapterState,
+    unitGroups,
   };
 }
 
