@@ -143,6 +143,12 @@ export const fa = {
        environment, auto-flowing timeline, NO stage CTAs (بند ۱ و ۱۰ مالک) */
     kanaStageIntroTitle: 'آشنایی با این نویسه',
     kanaStageIntroHint: 'صدایش را می‌شنوی و شکلش را همان‌جا در دفتر می‌بینی.',
+    /* TASK-LEARNING-08 Addendum-2 §4: the ONE interactive stop — after the calm
+       introduction, the user confirms readiness; everything after is automatic. */
+    kanaStageReadyTitle: 'آماده‌ای؟',
+    kanaStageReadyChip: 'تأیید آمادگی',
+    kanaStageReadyHint: 'نویسه را نگاه کن، صدایش را بشنو و توضیحش را بخوان — وقتی آماده بودی شروع کن.',
+    kanaStageReadyCta: 'فهمیدم، شروع کنیم',
     kanaStageDemoTitle: 'نحوهٔ نوشتن را ببین',
     kanaStageDemoReplay: 'نمایش دوباره',
     kanaStageDemoDone: 'نمایش تمام شد — با هم مرورش کنیم',
@@ -182,7 +188,10 @@ export const fa = {
     /* station runner */
     continueBlock: 'ادامه',
     /* TASK-LEARNING-08 WP-5: auto-next after a correct answer (owner feedback D) */
-    autoNextHint: 'به سؤال بعد می‌رویم…',
+    autoNextHint: 'درست بود — به سؤال بعد می‌رویم…',
+    /* TASK-LEARNING-08 Addendum-2 §1: the accepted ink is replaced by the clean
+       standard sample for a short review beat. */
+    kanaReviewSampleNote: 'نمونهٔ استاندارد — نتیجهٔ تمیز نوشتنت را ببین.',
     /* TASK-LEARNING-08 WP-5: walk resume notice (owner feedback E) */
     walkResumedTitle: 'از همان‌جا ادامه دادی',
     walkResumedBody: 'موقعیت قبلی‌ات در همین ایستگاه ذخیره شده بود و بازگردانده شد.',

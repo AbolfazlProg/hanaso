@@ -231,6 +231,14 @@ const KANA_A: KanaItem = {
   hostWord: { word: 'あい', meaningFa: 'عشق' },
 } as unknown as KanaItem;
 
+/** Addendum-2 §3: う is the owner's exact example — it must read «او», not "u". */
+const KANA_U: KanaItem = {
+  kanaId: 'hira-u',
+  glyph: 'う',
+  romaji: 'u',
+  hostWord: { word: 'うえ', meaningFa: 'بالا / رو' },
+} as unknown as KanaItem;
+
 describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correction)', () => {
   it('starts at intro with the CANVAS as the centerpiece — no CTA button anywhere', async () => {
     const { container, findByRole } = render(
@@ -248,7 +256,7 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
     await expect(findByRole('button', { name: /پخش صدای あ/ })).resolves.toBeTruthy();
   });
 
-  it('AUTO-walks intro → demo → explain → guided with ZERO clicks, canvas never unmounts', async () => {
+  it('auto-flows intro → ready, HOLDS for the user, then demo → explain → guided after ONE confirmation (Addendum-2 §4)', async () => {
     // fake timers BEFORE render — the auto timeline starts at mount; switching
     // timers mid-flight would strand the in-flight intro loop.
     vi.useFakeTimers();
@@ -256,9 +264,25 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
     const { container } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={null} onProgress={(p) => seen.push(p.stage)} />,
     );
-    // intro → demo → explain → guided is ~20-25s of virtual time. One big
-    // advance strands the async chain (canvas remounts mid-window), so the
-    // walk advances in beats like a real clock ticking.
+    // the intro (glyph inks itself in) runs on its own and lands on the READY
+    // beat — the ONE interactive stop of the whole card (owner Addendum-2 §4).
+    for (let k = 0; k < 30; k += 1) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+      if (container.querySelector('[data-kana-stage="ready"]')) break;
+    }
+    expect(container.querySelector('[data-kana-stage="ready"]'), 'intro auto-flowed to ready').toBeTruthy();
+    // the ready beat HOLDS — it never auto-advances without the user
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(15000);
+    });
+    expect(container.querySelector('[data-kana-stage="ready"]'), 'ready waits for the user (§4)').toBeTruthy();
+    expect(container.querySelector('[data-ready-cta]'), 'the «فهمیدم، شروع کنیم» CTA is there').toBeTruthy();
+    // ONE click — everything after it is fully automatic, same environment
+    await act(async () => {
+      fireEvent.click(container.querySelector('[data-ready-cta]')!);
+    });
     for (let k = 0; k < 30; k += 1) {
       await act(async () => {
         await vi.advanceTimersByTimeAsync(2000);
@@ -267,10 +291,10 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
     }
     expect(
       container.querySelector('[data-kana-stage="guided"]'),
-      'auto-flow reached guided with no clicks',
+      'after the single confirmation the flow is fully automatic',
     ).toBeTruthy();
-    // the timeline passed through every display stage — no click ever happened
-    expect(seen).toEqual(expect.arrayContaining(['intro', 'demo', 'explain', 'guided']));
+    // the timeline passed through every display stage in order
+    expect(seen).toEqual(expect.arrayContaining(['intro', 'ready', 'demo', 'explain', 'guided']));
     expect(seen[0]).toBe('intro');
     // the canvas stayed mounted through every stage (one environment — owner §1)
     expect(container.querySelector('svg[role="img"]')).not.toBeNull();
@@ -320,7 +344,7 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
     drawStroke(svg, A_DATA.medians[0]!);
     drawStroke(svg, A_DATA.medians[1]!);
     drawStroke(svg, A_DATA.medians[2]!);
-    // guided done → auto-advance to free after ~1.5s
+    // guided done → the review beat (configurable ~1.1s, Addendum-2 §2) → free
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1700));
     });
@@ -335,9 +359,14 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
     drawStroke(svg2, A_DATA.medians[0]!);
     drawStroke(svg2, A_DATA.medians[1]!);
     drawStroke(svg2, A_DATA.medians[2]!);
-    await waitFor(() => {
-      expect(container.querySelector('[data-kana-stage="done"]')).toBeTruthy();
-    });
+    // Addendum-2 §2: the free completion holds the review beat (~1.1s) BEFORE
+    // done + the walk gate — waitFor's default 1s window is too tight.
+    await waitFor(
+      () => {
+        expect(container.querySelector('[data-kana-stage="done"]')).toBeTruthy();
+      },
+      { timeout: 4000 },
+    );
     expect(onWritingDone).toHaveBeenCalledTimes(1);
     expect(onWritingAttempt).toHaveBeenCalledTimes(2); // guided + free
     // the canvas is STILL there at done — same environment, no page switch
@@ -385,7 +414,17 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
   it('reports every stage transition through onProgress', async () => {
     vi.useFakeTimers();
     const onProgress = vi.fn();
-    render(<KanaCard kana={KANA_A} showRomaji audioUrls={null} onProgress={onProgress} />);
+    const { container } = render(<KanaCard kana={KANA_A} showRomaji audioUrls={null} onProgress={onProgress} />);
+    // intro auto-flows to the ready beat, then the ONE confirmation (Addendum-2 §4)
+    for (let k = 0; k < 30; k += 1) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+      if (container.querySelector('[data-kana-stage="ready"]')) break;
+    }
+    await act(async () => {
+      fireEvent.click(container.querySelector('[data-ready-cta]')!);
+    });
     for (let k = 0; k < 30; k += 1) {
       await act(async () => {
         await vi.advanceTimersByTimeAsync(2000);
@@ -393,6 +432,7 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
       if (onProgress.mock.calls.some((c) => c[0]?.stage === 'guided')) break;
     }
     expect(onProgress).toHaveBeenCalledWith({ stage: 'intro' });
+    expect(onProgress).toHaveBeenCalledWith({ stage: 'ready' });
     expect(onProgress).toHaveBeenCalledWith({ stage: 'demo' });
     expect(onProgress).toHaveBeenCalledWith({ stage: 'explain' });
     expect(onProgress).toHaveBeenCalledWith({ stage: 'guided' });
@@ -418,6 +458,99 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
 });
 
 // ---------------------------------------------------------------- KanaCard v4: audio coordination
+
+// ------------------------------------------------- Addendum-2 §1/§2/§3: success sample + review beat + Persian-first
+
+describe('KanaCard v4 — Addendum-2 final correction (§1 success sample · §2 review beat · §3 Persian-first)', () => {
+  it('§1: after ALL strokes are accepted the raw hand-ink fades and the STANDARD SAMPLE re-inks in its place', async () => {
+    const { container } = render(
+      <KanaCard kana={KANA_A} showRomaji audioUrls={null} initialProgress={{ stage: 'guided' }} />,
+    );
+    const svg = await waitFor(() => getCanvasSvg(container));
+    // while practicing: the accepted strokes rest at full ink — NO sample yet
+    drawStroke(svg, A_DATA.medians[0]!);
+    drawStroke(svg, A_DATA.medians[1]!);
+    expect(container.querySelectorAll('path[opacity="0.95"]')).toHaveLength(0);
+    // the LAST accepted stroke completes the attempt → the standard sample
+    // (charData.strokes, the SYSTEM's own clean glyph) replaces the raw ink
+    drawStroke(svg, A_DATA.medians[2]!);
+    const samplePaths = container.querySelectorAll('path[opacity="0.95"]');
+    expect(samplePaths.length).toBe(A_DATA.strokes.length);
+    // the sample paths ARE the reference strokes (same d as the data)
+    const firstD = samplePaths[0]!.getAttribute('d');
+    expect(firstD).toBe(A_DATA.strokes[0]);
+    // and the accepted raw paths now carry the fade-out transition (opacity 0)
+    const faded = Array.from(container.querySelectorAll('path')).filter(
+      (p) => p.getAttribute('style')?.includes('opacity') && p.getAttribute('style')?.includes('transition'),
+    );
+    expect(faded.length).toBeGreaterThanOrEqual(A_DATA.strokes.length);
+  });
+
+  it('§1 (guard): the standard sample NEVER shows while strokes are still pending', async () => {
+    const { container } = render(
+      <KanaCard kana={KANA_A} showRomaji audioUrls={null} initialProgress={{ stage: 'free' }} />,
+    );
+    const svg = await waitFor(() => getCanvasSvg(container));
+    drawStroke(svg, A_DATA.medians[0]!);
+    drawStroke(svg, A_DATA.medians[1]!);
+    // attempt not complete — no replacement may happen before validation
+    expect(container.querySelectorAll('path[opacity="0.95"]')).toHaveLength(0);
+  });
+
+  it('§2: the review beat is the configured pause — the walk gate fires AFTER it, not instantly', async () => {
+    vi.useFakeTimers();
+    const onWritingDone = vi.fn();
+    const { container } = render(
+      <KanaCard
+        kana={KANA_A}
+        showRomaji
+        audioUrls={null}
+        initialProgress={{ stage: 'free' }}
+        onWritingDone={onWritingDone}
+      />,
+    );
+    // let the async data fetch resolve (microtasks — no waitFor under fake timers)
+    for (let k = 0; k < 20 && !container.querySelector('svg[role="img"]'); k += 1) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(100);
+      });
+    }
+    const svg = getCanvasSvg(container);
+    drawStroke(svg, A_DATA.medians[0]!);
+    drawStroke(svg, A_DATA.medians[1]!);
+    drawStroke(svg, A_DATA.medians[2]!);
+    // the review beat (EXPERIENCE.kanaReviewPauseMs = 1100) holds the gate
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(900);
+    });
+    expect(onWritingDone).not.toHaveBeenCalled();
+    expect(container.querySelector('[data-kana-stage="free"]')).toBeTruthy();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(400);
+    });
+    expect(onWritingDone).toHaveBeenCalledTimes(1);
+    expect(container.querySelector('[data-kana-stage="done"]')).toBeTruthy();
+    vi.useRealTimers();
+  });
+
+  it('§3: the reading display is PERSIAN-FIRST — う reads «او» big, no Latin romaji chip leads', async () => {
+    const { container } = render(<KanaCard kana={KANA_U} showRomaji audioUrls={null} />);
+    const section = container.querySelector('[data-kana-stage]');
+    expect(section).not.toBeNull();
+    // the aria label speaks Persian — «او» leads, never the Latin 'u'
+    expect(section!.getAttribute('aria-label')).toContain('او');
+    expect(section!.getAttribute('aria-label')).not.toMatch(/^[a-z]/);
+    // the reading chip: the BIG element is the Persian pronunciation
+    const chip = container.querySelector('.kana-reveal');
+    expect(chip?.textContent).toContain('«او»');
+    // no big font-mono Latin romaji span in the teaching column
+    const mono = container.querySelector('span.font-mono.text-h3');
+    expect(mono).toBeNull();
+    // the technical romaji only survives in the collapsed details
+    const details = container.querySelector('details');
+    expect(details?.textContent).toContain('romaji: u');
+  });
+});
 
 describe('KanaCard v4 — audio coordination (owner §5: one element, 1.0×, no overlap)', () => {
   class FakeAudio {

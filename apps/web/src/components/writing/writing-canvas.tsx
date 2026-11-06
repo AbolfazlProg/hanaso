@@ -32,7 +32,10 @@ import {
 } from '@/modules/writing/engine';
 import {
   DEMO_INTER_STROKE_MS,
+  INK_FADE_MS,
   INTRO_INTER_STROKE_MS,
+  SAMPLE_STROKE_MS,
+  SAMPLE_STROKE_STAGGER_MS,
   STROKE_WIDTH,
   directionArrow,
   livePathD,
@@ -111,6 +114,46 @@ function DemoStrokePath({ d, ms }: { d: string; ms: number }) {
 /** Persian digits for the on-canvas stroke badge. */
 function faNum(n: number): string {
   return String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]!);
+}
+
+/**
+ * TASK-LEARNING-08 Addendum-2 §1: the STANDARD SAMPLE that replaces the
+ * learner's accepted raw ink. Each stroke flows in fast (ink re-write) with a
+ * short stagger — the clean, correct form re-inks itself exactly where the
+ * hand just was. Mounts hidden then animates (double-rAF) so the transition
+ * always plays, and a remount (attempt restart) replays it cleanly.
+ */
+function SuccessSamplePath({ d, index }: { d: string; index: number }) {
+  const [offset, setOffset] = useState(1);
+  useEffect(() => {
+    setOffset(1);
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setOffset(0));
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [d]);
+  return (
+    <path
+      d={d}
+      fill="none"
+      stroke="currentColor"
+      className="text-ink"
+      strokeWidth={STROKE_WIDTH}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      pathLength={1}
+      strokeDasharray={1}
+      strokeDashoffset={offset}
+      opacity={0.95}
+      style={{
+        transition: `stroke-dashoffset ${SAMPLE_STROKE_MS}ms cubic-bezier(.4,0,.2,1) ${index * SAMPLE_STROKE_STAGGER_MS}ms`,
+      }}
+    />
+  );
 }
 
 export function WritingCanvas({
@@ -348,6 +391,10 @@ export function WritingCanvas({
   const arrow = guideMedian.length >= 2 ? directionArrow(guideMedian) : null;
   const guided = mode === 'guided' && !attemptDone;
   const freeReveal = mode === 'free' && attemptDone && revealOnDone;
+  /* Addendum-2 §1: once ALL strokes are accepted the raw hand-ink fades out
+   * and the STANDARD SAMPLE re-inks itself in its place — never during the
+   * drawing and never before validation accepted it. */
+  const successSample = (mode === 'guided' || mode === 'free') && attemptDone;
 
   // demo decorations (owner §2): badge number + start dot + direction arrow of
   // the stroke currently being drawn — the canvas itself carries the teaching.
@@ -407,7 +454,9 @@ export function WritingCanvas({
           />
         ))}
 
-      {/* completed strokes (show: revealed so far · practice: accepted) */}
+      {/* completed strokes (show: revealed so far · practice: accepted —
+          Addendum-2 §1: after the attempt is DONE they fade out so only the
+          standard sample stays on the paper) */}
       {isShow
         ? demo.shown.map((i) => (
             <path
@@ -432,9 +481,14 @@ export function WritingCanvas({
               strokeWidth={STROKE_WIDTH}
               strokeLinecap="round"
               strokeLinejoin="round"
-              opacity={0.92}
+              style={successSample ? { transition: `opacity ${INK_FADE_MS}ms ease-out`, opacity: 0 } : undefined}
+              opacity={successSample ? undefined : 0.92}
             />
           ))}
+
+      {/* Addendum-2 §1: the standard sample replaces the accepted raw ink —
+          the clean correct glyph re-inks itself for the review beat. */}
+      {successSample && charData.strokes.map((d, i) => <SuccessSamplePath key={`sample-${i}`} d={d} index={i} />)}
 
       {/* show: the stroke currently flowing in */}
       {isShow && demo.stroke >= 0 && (
@@ -495,8 +549,10 @@ export function WritingCanvas({
         </g>
       )}
 
-      {/* free-mode reveal after completion: the reference under the user's ink */}
+      {/* free-mode reveal after completion (drill contexts without the
+          success transition — the reference under the user's ink) */}
       {freeReveal &&
+        !successSample &&
         charData.strokes.map((d, i) => (
           <path
             key={`reveal-${i}`}

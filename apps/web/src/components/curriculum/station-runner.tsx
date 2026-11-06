@@ -1024,7 +1024,9 @@ function BlockView({
                 {example.lineRef && <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>}
               </div>
               <JaBlock className="mt-3 text-lead font-bold">{example.ja}</JaBlock>
-              <p className="mt-1 text-caption text-ink-soft" dir="ltr" lang="ja">
+              {/* Addendum-2 §3: the reading caption is Persian now — dir=auto keeps
+                  Japanese readings (if any are authored later) correct too. */}
+              <p className="mt-1 text-caption text-ink-soft" dir="auto">
                 {example.reading}
               </p>
               <p className="mt-2 text-body">{example.fa}</p>

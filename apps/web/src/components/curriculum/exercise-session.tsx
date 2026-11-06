@@ -502,25 +502,27 @@ export function ExerciseSession({
             {fa.curriculum.tryAgain}
           </button>
         )}
-        {feedback && (feedback.correct || attemptNo >= 3) && (
-          <>
-            {/* WP-5: correct answers auto-advance — this button is the manual
-                override (accessibility, slow readers); clicking it during the
-                delay cancels the timer and advances immediately. */}
-            {feedback.correct && !isLast && (
-              <span aria-hidden className="self-center text-caption text-ink-faint" data-autonext-hint>
-                {fa.curriculum.autoNextHint}
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={advance}
-              data-autonext={feedback.correct ? 'armed' : undefined}
-              className="h-11 min-w-28 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-            >
-              {isLast ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
-            </button>
-          </>
+        {/*
+         * TASK-LEARNING-08 Addendum-2 §7: after a CORRECT answer there is NO
+         * «ادامه» button anymore — the system itself advances after the short
+         * review beat (scheduleAutoNext). A visible manual-override button next
+         * to an automatic advance read as duplication/confusion. The button
+         * survives ONLY on the wrong-answer path when the ladder is exhausted
+         * (attempt 3, reveal shown) — there advancing is the learner's choice.
+         */}
+        {feedback && !feedback.correct && attemptNo >= 3 && (
+          <button
+            type="button"
+            onClick={advance}
+            className="h-11 min-w-28 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+          >
+            {isLast ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
+          </button>
+        )}
+        {feedback?.correct && !isLast && (
+          <span aria-hidden className="self-center text-caption text-ink-faint" data-autonext-hint>
+            {fa.curriculum.autoNextHint}
+          </span>
         )}
       </div>
       {hintRevealed && !feedback && <p className="text-small text-ink-soft">{fa.curriculum.showHint}…</p>}

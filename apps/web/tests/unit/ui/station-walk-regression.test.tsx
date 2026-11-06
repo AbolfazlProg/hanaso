@@ -126,8 +126,19 @@ describe('StationRunner — consecutive kana cards are FRESH instances (walk reg
     vi.useFakeTimers();
     const { container } = renderStation();
 
-    // --- あ card: the timeline auto-flows intro → demo → explain → guided
-    //     with ZERO clicks (no stage CTAs exist anywhere in v4)
+    // --- あ card: the intro auto-flows to the READY beat (Addendum-2 §4 — the
+    //     ONE interactive stop), then the confirmation runs the teaching
+    //     demo → explain → guided automatically.
+    for (let k = 0; k < 16; k += 1) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(5000);
+      });
+      if (container.querySelector('[data-kana-stage="ready"]')) break;
+    }
+    expect(container.querySelector('[data-kana-stage="ready"]'), 'intro auto-flowed to the ready beat').toBeTruthy();
+    await act(async () => {
+      fireEvent.click(container.querySelector('[data-ready-cta]')!);
+    });
     for (let k = 0; k < 16; k += 1) {
       await act(async () => {
         await vi.advanceTimersByTimeAsync(5000);
@@ -136,7 +147,7 @@ describe('StationRunner — consecutive kana cards are FRESH instances (walk reg
     }
     expect(
       container.querySelector('[data-kana-stage="guided"]'),
-      'auto-flow reached guided with no clicks',
+      'after the single confirmation the flow is automatic',
     ).toBeTruthy();
 
     // --- guided: draw all three strokes of あ (synchronous pointer events)
@@ -167,7 +178,13 @@ describe('StationRunner — consecutive kana cards are FRESH instances (walk reg
       await vi.advanceTimersByTimeAsync(3000);
     });
     const nextStage = container.querySelector('[data-kana-stage]')?.getAttribute('data-kana-stage');
-    expect(nextStage, 'the next card starts at intro — never the leaked done state').toBe('intro');
+    // Addendum-2 §4: a fresh card auto-flows intro → ready on its own — BOTH
+    // are fresh states; the regression this guards against is the leaked
+    // 'done'/'free' state of the PREVIOUS card.
+    expect(
+      ['intro', 'ready'].includes(nextStage ?? ''),
+      'the next card starts fresh (intro/ready) — never the leaked done state',
+    ).toBe(true);
     // and its glyph is い — in v4 the glyph lives INSIDE the canvas (aria-label)
     expect(container.querySelector('svg[aria-label*="い"]'), 'the い canvas is active').not.toBeNull();
     // no «نوشتن い یاد گرفته شد» without teaching
@@ -180,6 +197,10 @@ describe('StationRunner — consecutive kana cards are FRESH instances (walk reg
     };
     const stages = Object.values(snapshot.kanaCardStages);
     expect(stages).not.toContain('done'); // あ's own persist stopped at 'free'
-    expect(stages).toContain('intro'); // い's fresh persist
+    // い's fresh persist (intro, or already auto-flowed to the ready beat)
+    expect(
+      stages.some((s) => s === 'intro' || s === 'ready'),
+      'い persisted a FRESH stage — never done',
+    ).toBe(true);
   });
 });

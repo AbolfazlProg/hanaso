@@ -12,8 +12,24 @@ import { positionHintFa } from './engine';
 import { dist, type Point } from './analysis';
 import type { WritingCharData } from './types';
 
-/** Render width of a brush stroke in the 1024² space (calligraphy feel). */
-export const STROKE_WIDTH = 74;
+/**
+ * Render width of a brush stroke in the 1024² space (calligraphy feel).
+ * TASK-LEARNING-08 Addendum-2 §6: 74 was TOO THICK — it blurred the fine
+ * shape details and muddied stroke intersections. 46 keeps the brush feel
+ * while the form, the joins and the stroke differences stay clearly visible.
+ */
+export const STROKE_WIDTH = 46;
+
+/**
+ * Addendum-2 §2: the standard sample that replaces the accepted raw ink
+ * re-inks itself fast (each stroke flows in) — a clean re-write, not a wait.
+ * ~340ms per stroke + 110ms stagger keeps a 3-stroke glyph under ~1.3s.
+ */
+export const SAMPLE_STROKE_MS = 340;
+export const SAMPLE_STROKE_STAGGER_MS = 110;
+
+/** Addendum-2 §1: how fast the accepted raw ink fades out (ms). */
+export const INK_FADE_MS = 520;
 
 /** Build a smooth SVG path from raw pointer points (quadratic smoothing). */
 export function livePathD(points: Point[]): string {
