@@ -179,7 +179,7 @@
 **همهٔ ۱۳ آیتم Verified هستند.**
 
 1. **استقرار زنده:** learn.kotodama.ir @ image `e473d50244d0f94b8a0ac82a2203fa61e399c543` (شاخهٔ `tl08-addendum3`)؛ health ok/production؛ postgres/pgbouncer دست‌نخورده؛ KOTODAMA 200.
-2. **شاخه‌ها:** `tl08-addendum3` (کامل: 56cbfc4 چک‌لیست → cf3eb36 پیاده‌سازی → e473d50 اصلاح تست) مبتنی بر لاینِ production قبلی (d337366 = Addendum-2). **توجه:** شاخهٔ `feat/learning-06-lesson-system` روی گیت‌هاب (a5a6148) فاقد Addendum-2/3 است — پیش از ادغام PR #115 باید reconcile شود (بهترین مسیر: مالک `tl08-addendum3` را merge کند؛ تاریخچة فاز ۳ در هر دو لاین حفظ می‌شود).
+2. **شاخه‌ها و PR:** PR **#120** (tl08-addendum3 → feat/learning-06-lesson-system) باز است و شاخه با لاینِ docs فاز ۳ reconcile شد (merge 1ceafb9 — هر دو تاریخچهٔ CP حفظ شدند). شاخه شامل کل Addendum-2 (dc4256f) + اصلاحیهٔ ۳ است — ادغام از همین PR انجام شود.
 3. **گیت‌های محلی:** vitest **۵۶۲** (بود ۴۷۰؛ +۹۲ تست جدید) · eqa ۳۷ · tsc · eslint 0 · prettier · build (شامل گیت type در Docker) ✓.
 4. **شواهدها:** `download/TL08-A3-verification/` — ۷ شاهد production + ۶ شاهد local (اسکرین‌شات‌های DOM-تأییدشده + لاگ گذار ۴۹۹ نمونه‌ای).
 5. **صوت واژه‌ها:** ۷۸ فایل مستقل در `public/audio/hostwords/` + manifest — تولیدشده با همان VOICEVOX 春日部つむぎ و مسترینگ صداهای کانا (اسکریپت: `scripts/tl08_a3/gen_word_audio.py` سند تولید است؛ خروجی commit شده).
