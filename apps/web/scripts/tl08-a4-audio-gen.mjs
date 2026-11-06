@@ -36,7 +36,7 @@ const HOST_DIR = path.join(WEB, 'public', 'audio', 'hostwords');
 const GENERATED_BY =
   `voicevox:latest (VPS engine, 2026-10 image) — TASK-LEARNING-08 Addendum-4 §6: speaker 14 (${CREDIT} ノーマル), speedScale 1.0, offline pre-generation. ` +
   `A/B evidence: ops/checkpoints/TASK-LEARNING-08/OWNER_FEEDBACK_CHECKLIST.md §A4-6. ` +
-  `Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + peak-norm −1.5dBFS; opus 64k / m4a 128k. Credit: ${CREDIT} (VOICEVOX character terms)`;
+  `Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + loudness-match (RMS→−17dBFS, peak≤−1.5dBFS); opus 64k / m4a 128k. Credit: ${CREDIT} (VOICEVOX character terms)`;
 
 // ---------------------------------------------------------------- content texts
 function kanaEntries() {
@@ -92,23 +92,35 @@ function master(wav) {
   return ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-af', 'highpass=f=70,treble=g=2.5:f=2500,agate=threshold=0.01:ratio=2', '-f', 'wav', 'pipe:1'], wav);
 }
 
-function peakDbfs(wav) {
+function statsDbfs(wav) {
   const r = spawnSync(
     'ffmpeg',
     ['-hide_banner', '-loglevel', 'info', '-f', 'wav', '-i', 'pipe:0', '-af', 'astats=metadata=1', '-f', 'null', '-'],
     { input: wav, maxBuffer: 1 << 26 },
   );
   const out = (r.stdout?.toString() ?? '') + (r.stderr?.toString() ?? '');
-  const m = out.match(/Peak level dB:\s*(-?[\d.]+)/g);
-  if (!m) throw new Error('astats failed');
-  const peaks = m.map((x) => parseFloat(x.split(':')[1]));
-  return Math.max(...peaks);
+  const grab = (re) => {
+    const all = out.match(re) ?? [];
+    return all.length ? Math.max(...all.map((x) => parseFloat(x.split(':')[1]))) : NaN;
+  };
+  const peak = grab(/Peak level dB:\s*(-?[\d.]+)/g);
+  const rms = grab(/RMS level dB:\s*(-?[\d.]+)/g);
+  if (!Number.isFinite(peak) || !Number.isFinite(rms)) throw new Error('astats failed');
+  return { peak, rms };
 }
 
-function normTo(wav, targetDb = -1.5) {
-  const p = peakDbfs(wav);
-  const gain = (targetDb - p).toFixed(2);
-  return ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-af', `volume=${gain}dB`, '-f', 'wav', 'pipe:1'], wav);
+/**
+ * Addendum-4 §6 («قدرت شنیده شدن» across every kana): match perceived loudness,
+ * not just peaks — every sample lands at −17 dBFS RMS (a natural single-mora
+ * level), while the peak never exceeds −1.5 dBFS (whichever constraint binds
+ * first). This kills the 5dB soft-mora spread of pure peak-normalization.
+ */
+const TARGET_RMS_DB = -17;
+const CEILING_PEAK_DB = -1.5;
+function normTo(wav) {
+  const { peak, rms } = statsDbfs(wav);
+  const gain = Math.min(TARGET_RMS_DB - rms, CEILING_PEAK_DB - peak);
+  return ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-af', `volume=${gain.toFixed(2)}dB`, '-f', 'wav', 'pipe:1'], wav);
 }
 
 function encode(masterWav, base) {

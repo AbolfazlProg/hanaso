@@ -323,7 +323,7 @@ export function ExerciseSession({
                (was text-lead/18px — far too small for the subject of the
                question). */
             <span className="flex justify-center py-2" lang="ja" dir="ltr">
-              <JaBlock className="font-jp text-[clamp(3.25rem,14vw,5rem)] font-bold leading-[1.15] text-ink">
+              <JaBlock className="text-[clamp(3.25rem,14vw,5rem)] font-bold leading-[1.15] text-ink">
                 {ex.promptJa}
               </JaBlock>
             </span>
@@ -591,17 +591,22 @@ export function OptionRow({ options, selected, eliminated, locked, onSelect }: O
                   : 'border-ink-faint bg-card text-ink hover:border-ai',
             ].join(' ')}
           >
-            <span
-              dir="auto"
-              className={[
-                isEliminated ? 'line-through' : undefined,
-                isKanaGlyphOption(opt.label) ? 'font-jp text-h2 font-bold' : undefined,
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              {opt.label}
-            </span>
+            {isKanaGlyphOption(opt.label) ? (
+              /* Addendum-4 §4 — a kana-shape option renders as a real JP glyph
+                 (ja-block stack — `font-jp` alone is a no-op utility), big and
+                 bold; the plain span stays for words/sentences/Persian labels. */
+              <JaBlock
+                className={
+                  'text-h2 font-bold' + (isEliminated ? ' line-through' : '')
+                }
+              >
+                {opt.label}
+              </JaBlock>
+            ) : (
+              <span dir="auto" className={isEliminated ? 'line-through' : undefined}>
+                {opt.label}
+              </span>
+            )}
             {isEliminated && (
               <span className="mt-1 block text-caption text-ink-faint">{fa.curriculum.eliminatedOption}</span>
             )}
