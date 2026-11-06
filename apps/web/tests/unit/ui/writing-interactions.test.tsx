@@ -62,19 +62,19 @@ afterEach(() => {
 });
 
 /** Draw one stroke along a median with the given pointer type. */
-function drawStroke(
-  svg: Element,
-  median: number[][],
-  pointerType = 'mouse',
-  opts: { scale?: number } = {},
-) {
+function drawStroke(svg: Element, median: number[][], pointerType = 'mouse', opts: { scale?: number } = {}) {
   const { scale = 1 } = opts;
   const pts = median.map(([x, y]) => ({ x: 512 + ((x ?? 0) - 512) * scale, y: 512 + ((y ?? 0) - 512) * scale }));
   fireEvent.pointerDown(svg, { pointerId: 1, pointerType, clientX: cx(pts[0]!.x), clientY: cy(pts[0]!.y) });
   for (const p of pts.slice(1)) {
     fireEvent.pointerMove(svg, { pointerId: 1, pointerType, clientX: cx(p.x), clientY: cy(p.y) });
   }
-  fireEvent.pointerUp(svg, { pointerId: 1, pointerType, clientX: cx(pts[pts.length - 1]!.x), clientY: cy(pts[pts.length - 1]!.y) });
+  fireEvent.pointerUp(svg, {
+    pointerId: 1,
+    pointerType,
+    clientX: cx(pts[pts.length - 1]!.x),
+    clientY: cy(pts[pts.length - 1]!.y),
+  });
 }
 
 function getCanvasSvg(container: HTMLElement): SVGSVGElement {
@@ -139,9 +139,7 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
 
   it('completes the whole あ attempt and fires onAttemptComplete (guided, all 3 strokes)', async () => {
     const onAttemptComplete = vi.fn();
-    const { container } = render(
-      <WritingCanvas character="あ" mode="guided" onAttemptComplete={onAttemptComplete} />,
-    );
+    const { container } = render(<WritingCanvas character="あ" mode="guided" onAttemptComplete={onAttemptComplete} />);
     const svg = await waitFor(() => getCanvasSvg(container));
     drawStroke(svg, A_DATA.medians[0]!);
     drawStroke(svg, A_DATA.medians[1]!);
@@ -154,9 +152,7 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
 
   it('never accepts input after the attempt completed (no ghost strokes)', async () => {
     const onJudgement = vi.fn();
-    const { container } = render(
-      <WritingCanvas character="あ" mode="guided" onJudgement={onJudgement} />,
-    );
+    const { container } = render(<WritingCanvas character="あ" mode="guided" onJudgement={onJudgement} />);
     const svg = await waitFor(() => getCanvasSvg(container));
     drawStroke(svg, A_DATA.medians[0]!);
     drawStroke(svg, A_DATA.medians[1]!);
@@ -212,9 +208,7 @@ describe('WritingCanvas — repeatability (rapid interactions never kill the sur
   });
 
   it('a hint flash shows the dashed guide in FREE mode, then clears', async () => {
-    const { container, rerender } = render(
-      <WritingCanvas character="あ" mode="free" hintSignal={0} />,
-    );
+    const { container, rerender } = render(<WritingCanvas character="あ" mode="free" hintSignal={0} />);
     const svg = await waitFor(() => getCanvasSvg(container));
     expect(svg.querySelector('path[stroke-dasharray="0.055 0.045"]')).toBeNull();
     rerender(<WritingCanvas character="あ" mode="free" hintSignal={1} />);
@@ -319,12 +313,7 @@ describe('KanaCard v3 — the staged experience end-to-end', () => {
 
   it('restores the persisted stage (refresh resume — #117 §10)', async () => {
     const { container } = render(
-      <KanaCard
-        kana={KANA_A}
-        showRomaji
-        audioUrls={null}
-        initialProgress={{ stage: 'guided' }}
-      />,
+      <KanaCard kana={KANA_A} showRomaji audioUrls={null} initialProgress={{ stage: 'guided' }} />,
     );
     // straight into guided — no encounter flash
     expect(container.querySelector('[data-kana-stage="guided"]')).toBeTruthy();
@@ -333,9 +322,7 @@ describe('KanaCard v3 — the staged experience end-to-end', () => {
 
   it('reports every stage transition through onProgress', async () => {
     const onProgress = vi.fn();
-    const { findByRole } = render(
-      <KanaCard kana={KANA_A} showRomaji audioUrls={null} onProgress={onProgress} />,
-    );
+    const { findByRole } = render(<KanaCard kana={KANA_A} showRomaji audioUrls={null} onProgress={onProgress} />);
     const cta = await findByRole('button', { name: /بگذار یاد بگیرمش/ });
     fireEvent.click(cta);
     await waitFor(() => {
@@ -397,9 +384,7 @@ describe('KanaCard v3 — audio coordination (#117 §5: one element, 1.0×, no o
     // encounter moment fired once
     expect(FakeAudio.instances.filter((a) => !a.paused)).toHaveLength(1);
     // re-render does NOT replay the encounter moment (the latch)
-    rerender(
-      <KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/a.opus', m4a: '/a.m4a' }} />,
-    );
+    rerender(<KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/a.opus', m4a: '/a.m4a' }} />);
     expect(FakeAudio.instances).toHaveLength(1);
   });
 
@@ -412,9 +397,7 @@ describe('KanaCard v3 — audio coordination (#117 §5: one element, 1.0×, no o
   });
 
   it('stops the previous element before playing again (no overlap)', async () => {
-    const { findByRole } = render(
-      <KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/a.opus', m4a: '/a.m4a' }} />,
-    );
+    const { findByRole } = render(<KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/a.opus', m4a: '/a.m4a' }} />);
     const replay = await findByRole('button', { name: /پخش صدای あ/ });
     fireEvent.click(replay);
     const instances = FakeAudio.instances;

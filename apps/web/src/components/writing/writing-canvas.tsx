@@ -33,19 +33,8 @@ import {
   type StrokeJudgement,
   type WritingAttemptState,
 } from '@/modules/writing/engine';
-import {
-  DEMO_INTER_STROKE_MS,
-  STROKE_WIDTH,
-  directionArrow,
-  livePathD,
-  strokeDemoMs,
-} from '@/modules/writing/render';
-import {
-  loadWritingCharData,
-  writingAvailability,
-  type Point,
-  type WritingCharData,
-} from '@/modules/writing';
+import { DEMO_INTER_STROKE_MS, STROKE_WIDTH, directionArrow, livePathD, strokeDemoMs } from '@/modules/writing/render';
+import { loadWritingCharData, writingAvailability, type Point, type WritingCharData } from '@/modules/writing';
 
 export interface WritingCanvasProps {
   character: string;
@@ -356,8 +345,26 @@ export function WritingCanvas({
       style={{ width: '100%', maxWidth: '26rem', aspectRatio: '1 / 1' }}
     >
       {/* faint character frame guides (paper feel) */}
-      <line x1="512" y1="24" x2="512" y2="1000" stroke="currentColor" className="text-ink" opacity={0.06} strokeWidth={2} />
-      <line x1="24" y1="512" x2="1000" y2="512" stroke="currentColor" className="text-ink" opacity={0.06} strokeWidth={2} />
+      <line
+        x1="512"
+        y1="24"
+        x2="512"
+        y2="1000"
+        stroke="currentColor"
+        className="text-ink"
+        opacity={0.06}
+        strokeWidth={2}
+      />
+      <line
+        x1="24"
+        y1="512"
+        x2="1000"
+        y2="512"
+        stroke="currentColor"
+        className="text-ink"
+        opacity={0.06}
+        strokeWidth={2}
+      />
 
       {/* completed strokes (demo: revealed so far · practice: accepted) */}
       {mode === 'demo'
@@ -390,7 +397,11 @@ export function WritingCanvas({
 
       {/* demo: the stroke currently flowing in */}
       {mode === 'demo' && demo.stroke >= 0 && (
-        <DemoStrokePath key={`demo-live-${demo.stroke}`} d={charData.strokes[demo.stroke]!} ms={strokeDemoMs(medians[demo.stroke] ?? [])} />
+        <DemoStrokePath
+          key={`demo-live-${demo.stroke}`}
+          d={charData.strokes[demo.stroke]!}
+          ms={strokeDemoMs(medians[demo.stroke] ?? [])}
+        />
       )}
 
       {/* free-mode reveal after completion: the reference under the user's ink */}
@@ -424,7 +435,14 @@ export function WritingCanvas({
             pathLength={1}
             strokeDasharray="0.055 0.045"
           />
-          <circle cx={guideMedian[0]!.x} cy={guideMedian[0]!.y} r={30} fill="currentColor" className="text-shu" opacity={0.92}>
+          <circle
+            cx={guideMedian[0]!.x}
+            cy={guideMedian[0]!.y}
+            r={30}
+            fill="currentColor"
+            className="text-shu"
+            opacity={0.92}
+          >
             <animate attributeName="r" values="26;34;26" dur="1.6s" repeatCount="indefinite" />
           </circle>
           {arrow && (

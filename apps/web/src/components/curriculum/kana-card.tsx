@@ -176,27 +176,21 @@ export function KanaCard({
     setStage('explain');
   }, [playOnce]);
 
-  const handleJudgement = useCallback(
-    (j: StrokeJudgement, state: WritingAttemptState) => {
-      setAttempt(state);
-      setFeedback(j.feedbackFa);
-      // help escalation (#117 §7): the second miss on a stroke flashes the guide
-      if (j.judge === 'rejected' || j.judge === 'uncertain_retry') {
-        if (state.missesOnStroke >= 2) setHintSignal((n) => n + 1);
-      }
-    },
-    [],
-  );
+  const handleJudgement = useCallback((j: StrokeJudgement, state: WritingAttemptState) => {
+    setAttempt(state);
+    setFeedback(j.feedbackFa);
+    // help escalation (#117 §7): the second miss on a stroke flashes the guide
+    if (j.judge === 'rejected' || j.judge === 'uncertain_retry') {
+      if (state.missesOnStroke >= 2) setHintSignal((n) => n + 1);
+    }
+  }, []);
 
-  const startAttempt = useCallback(
-    (mode: 'guided' | 'free') => {
-      attemptStartRef.current = Date.now();
-      setFeedback(null);
-      setStage(mode);
-      setRestartSignal((n) => n + 1);
-    },
-    [],
-  );
+  const startAttempt = useCallback((mode: 'guided' | 'free') => {
+    attemptStartRef.current = Date.now();
+    setFeedback(null);
+    setStage(mode);
+    setRestartSignal((n) => n + 1);
+  }, []);
 
   const reportAttempt = useCallback(
     (mode: 'guided' | 'free') => {
@@ -233,7 +227,12 @@ export function KanaCard({
   }, [onWritingDone, reportAttempt]);
 
   // -------------------------------------------------- derived panel data
-  const currentStrokeIndex = stage === 'demo' ? Math.max(demoStroke, 0) : attempt ? Math.min(attempt.expectedIndex, (charData?.medians.length ?? 1) - 1) : 0;
+  const currentStrokeIndex =
+    stage === 'demo'
+      ? Math.max(demoStroke, 0)
+      : attempt
+        ? Math.min(attempt.expectedIndex, (charData?.medians.length ?? 1) - 1)
+        : 0;
   const strokeInfo: StrokeInfoFa | null = useMemo(
     () => (charData ? strokeInfoFa(charData, currentStrokeIndex) : null),
     [charData, currentStrokeIndex],
@@ -351,14 +350,12 @@ export function KanaCard({
             />
             {/* stroke progress dots — status feedback the owner asked to keep */}
             {totalStrokes > 0 ? (
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-2" aria-label={fa.curriculum.kanaStageStrokeProgress}>
+              <div
+                className="mt-3 flex flex-wrap items-center justify-center gap-2"
+                aria-label={fa.curriculum.kanaStageStrokeProgress}
+              >
                 {Array.from({ length: totalStrokes }, (_, i) => {
-                  const done =
-                    stage === 'demo'
-                      ? i < demoStroke
-                      : attempt
-                        ? attempt.completed.includes(i)
-                        : false;
+                  const done = stage === 'demo' ? i < demoStroke : attempt ? attempt.completed.includes(i) : false;
                   const current = stage === 'demo' ? i === demoStroke : attempt ? attempt.expectedIndex === i : false;
                   return (
                     <span
@@ -453,7 +450,9 @@ export function KanaCard({
             <div className="kana-reveal kana-reveal-2 rounded-md bg-surface-2 p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-small font-bold text-ink">{mn.coreImageFa}</span>
-                <span className="rounded-full bg-ink-faint/30 px-2 py-0.5 text-micro text-ink-faint">{mn.honestLabelFa}</span>
+                <span className="rounded-full bg-ink-faint/30 px-2 py-0.5 text-micro text-ink-faint">
+                  {mn.honestLabelFa}
+                </span>
                 <span className="rounded-full border border-amber-600/50 px-2 py-0.5 text-micro text-amber-700">
                   {fa.curriculum.kanaMnemonicDraft}
                 </span>
@@ -506,7 +505,9 @@ export function KanaCard({
               ) : null}
             </div>
           )}
-          {!mn?.pairGlyphs && confusableNoteFa ? <p className="kana-reveal kana-reveal-4 text-small text-ink-faint">{confusableNoteFa}</p> : null}
+          {!mn?.pairGlyphs && confusableNoteFa ? (
+            <p className="kana-reveal kana-reveal-4 text-small text-ink-faint">{confusableNoteFa}</p>
+          ) : null}
 
           <button
             type="button"
@@ -544,7 +545,12 @@ export function KanaCard({
         <summary className="cursor-pointer select-none">دربارهٔ ابزار رسم و منابع</summary>
         <p className="mt-1 leading-[var(--leading-fa)]">
           دادهٔ ترتیب ضربه‌ها: KanjiVG (CC BY-SA 3.0) —{' '}
-          <a href="/writing-data/licenses/README-KanjiVG.md" className="text-ai underline" target="_blank" rel="noreferrer">
+          <a
+            href="/writing-data/licenses/README-KanjiVG.md"
+            className="text-ai underline"
+            target="_blank"
+            rel="noreferrer"
+          >
             مجوزها
           </a>
           . ارزیابی و رسم کاملاً در مرورگر شما انجام می‌شود؛ مسیر قلم شما هرگز ارسال نمی‌شود.

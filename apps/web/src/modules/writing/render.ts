@@ -89,9 +89,7 @@ export function movementHintFa(median: Point[]): string {
   const ratio = chord / (len || 1);
   // looped: the path travels much farther than the endpoints' distance AND
   // doubles back near its own start (e.g. the あ loop stroke)
-  const nearStart = median.some(
-    (p, i) => i > 1 && i < median.length - 1 && dist(p, median[0]!) < len * 0.12,
-  );
+  const nearStart = median.some((p, i) => i > 1 && i < median.length - 1 && dist(p, median[0]!) < len * 0.12);
   if (nearStart && ratio < 0.72) return 'این ضربه یک پیچِ کامل می‌خورد — قلم را از دست نده.';
   if (ratio < 0.55) return 'مسیر خمیده است — با یک حرکت نرم بکش.';
   if (ratio < 0.85) return 'کمی انحنا دارد؛ نرم و یک‌دست بکش.';

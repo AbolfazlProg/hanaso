@@ -40,7 +40,10 @@ function rand(): number {
 }
 
 /** Draw along a reference median with per-point noise (a human hand). */
-function drawAlong(median: Point[], opts: { noise?: number; scale?: number; offset?: Point; reverse?: boolean; trim?: number } = {}): Point[] {
+function drawAlong(
+  median: Point[],
+  opts: { noise?: number; scale?: number; offset?: Point; reverse?: boolean; trim?: number } = {},
+): Point[] {
   const { noise = 12, scale = 1, offset = { x: 0, y: 0 }, reverse = false, trim = 0 } = opts;
   const src = reverse ? [...median].reverse() : median;
   const pts = src.slice(0, Math.max(2, Math.floor(src.length * (1 - trim))));
@@ -112,7 +115,10 @@ describe('engine v2 — precision: genuinely wrong must fail with the RIGHT reas
   });
 
   it('rejects a DOT/tap as incomplete', () => {
-    const j = judge([{ x: 300, y: 310 }, { x: 305, y: 312 }]);
+    const j = judge([
+      { x: 300, y: 310 },
+      { x: 305, y: 312 },
+    ]);
     expect(j.judge).toBe('rejected');
     expect(j.reason).toBe('incomplete_short');
   });
@@ -187,7 +193,10 @@ describe('engine v2 — assist ladder (no infinite failure loop)', () => {
   });
 
   it('does NOT assist-pass a totally unrelated scribble (ladder forgives imperfection, not disengagement)', () => {
-    const dot = [{ x: 100, y: 100 }, { x: 108, y: 104 }];
+    const dot = [
+      { x: 100, y: 100 },
+      { x: 108, y: 104 },
+    ];
     const j = judge(dot, { attemptsOnStroke: MAX_ATTEMPTS_ON_STROKE - 1 });
     expect(j.judge).toBe('rejected');
     expect(j.reason).toBe('incomplete_short');
@@ -199,7 +208,9 @@ describe('engine v2 — golden path: EVERY stroke of ALL 92 shipped kana accepts
   const kata = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
   for (const ch of hira + kata) {
     it(`${ch}: every stroke drawn faithfully (wobble) is accepted`, () => {
-      const data = JSON.parse(readFileSync(join(webRoot, 'public', 'writing-data', `${ch}.json`), 'utf8')) as WritingCharData;
+      const data = JSON.parse(
+        readFileSync(join(webRoot, 'public', 'writing-data', `${ch}.json`), 'utf8'),
+      ) as WritingCharData;
       for (let i = 0; i < data.medians.length; i += 1) {
         const median = data.medians[i]!.map((p) => ({ x: p[0]!, y: p[1]! }));
         const j = judgeStroke({
@@ -238,7 +249,10 @@ describe('engine v2 — attempt state machine', () => {
 
   it('a miss stays on the same stroke and counts', () => {
     let state = createAttemptState('あ');
-    const bad = judge([{ x: 100, y: 100 }, { x: 110, y: 105 }]);
+    const bad = judge([
+      { x: 100, y: 100 },
+      { x: 110, y: 105 },
+    ]);
     state = applyJudgement(state, bad, 3).state;
     expect(state.expectedIndex).toBe(0);
     expect(state.missesOnStroke).toBe(1);
@@ -254,7 +268,10 @@ describe('engine v2 — Persian feedback precision', () => {
 
   it('every rejection carries non-empty Persian feedback', () => {
     const cases: Point[][] = [
-      [{ x: 100, y: 100 }, { x: 110, y: 105 }], // dot
+      [
+        { x: 100, y: 100 },
+        { x: 110, y: 105 },
+      ], // dot
       drawAlong(medians[0]!, { reverse: true, noise: 6 }), // reversed
       drawAlong(medians[2]!, { noise: 6 }), // wrong stroke
     ];

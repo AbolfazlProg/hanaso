@@ -31,13 +31,7 @@
  * the browser (DD-111): only structured summaries leave this module.
  */
 
-import {
-  CHAR_SPACE,
-  centroid,
-  dist,
-  resample,
-  type Point,
-} from './analysis';
+import { CHAR_SPACE, centroid, dist, resample, type Point } from './analysis';
 import type { StrokeMetrics, WritingCharData } from './types';
 
 // ---------------------------------------------------------------- types
@@ -46,7 +40,16 @@ import type { StrokeMetrics, WritingCharData } from './types';
 export type StrokeJudge = 'accepted' | 'accepted_with_hint' | 'uncertain_retry' | 'rejected';
 
 /** Why a stroke was rejected — drives the precise Persian feedback. */
-export type StrokeRejectReason = 'order_ahead' | 'order_behind' | 'order_redraw' | 'incomplete_short' | 'incomplete_long' | 'start' | 'direction' | 'form' | 'position';
+export type StrokeRejectReason =
+  | 'order_ahead'
+  | 'order_behind'
+  | 'order_redraw'
+  | 'incomplete_short'
+  | 'incomplete_long'
+  | 'start'
+  | 'direction'
+  | 'form'
+  | 'position';
 
 /** Extended per-stroke metrics (v2 adds start-point accuracy + length ratio). */
 export interface StrokeMetricsV2 extends StrokeMetrics {
@@ -95,10 +98,50 @@ interface Thresholds {
 }
 
 const THRESHOLDS: Record<AssistLevel, Thresholds> = {
-  0: { accept: 0.44, band: 0.07, directionFloor: 0.55, shapeFloor: 0.50, positionFloor: 0.40, startFloor: 0.30, lengthMin: 0.55, lengthMax: 2.0, orderMargin: 0.14 },
-  1: { accept: 0.36, band: 0.08, directionFloor: 0.48, shapeFloor: 0.42, positionFloor: 0.32, startFloor: 0.22, lengthMin: 0.45, lengthMax: 2.4, orderMargin: 0.20 },
-  2: { accept: 0.28, band: 0.10, directionFloor: 0.40, shapeFloor: 0.34, positionFloor: 0.24, startFloor: 0.14, lengthMin: 0.35, lengthMax: 3.0, orderMargin: 0.26 },
-  3: { accept: 0.20, band: 0.12, directionFloor: 0.34, shapeFloor: 0.26, positionFloor: 0.18, startFloor: 0.08, lengthMin: 0.25, lengthMax: 4.0, orderMargin: 0.34 },
+  0: {
+    accept: 0.44,
+    band: 0.07,
+    directionFloor: 0.55,
+    shapeFloor: 0.5,
+    positionFloor: 0.4,
+    startFloor: 0.3,
+    lengthMin: 0.55,
+    lengthMax: 2.0,
+    orderMargin: 0.14,
+  },
+  1: {
+    accept: 0.36,
+    band: 0.08,
+    directionFloor: 0.48,
+    shapeFloor: 0.42,
+    positionFloor: 0.32,
+    startFloor: 0.22,
+    lengthMin: 0.45,
+    lengthMax: 2.4,
+    orderMargin: 0.2,
+  },
+  2: {
+    accept: 0.28,
+    band: 0.1,
+    directionFloor: 0.4,
+    shapeFloor: 0.34,
+    positionFloor: 0.24,
+    startFloor: 0.14,
+    lengthMin: 0.35,
+    lengthMax: 3.0,
+    orderMargin: 0.26,
+  },
+  3: {
+    accept: 0.2,
+    band: 0.12,
+    directionFloor: 0.34,
+    shapeFloor: 0.26,
+    positionFloor: 0.18,
+    startFloor: 0.08,
+    lengthMin: 0.25,
+    lengthMax: 4.0,
+    orderMargin: 0.34,
+  },
 };
 
 // ---------------------------------------------------------------- geometry helpers
@@ -207,7 +250,10 @@ export interface JudgeInput {
   attemptsOnStroke: number;
 }
 
-const FA_FEEDBACK: Record<StrokeRejectReason, (ctx: { expectedNo: number; startHint: string; endHint: string; posHint: string }) => string> = {
+const FA_FEEDBACK: Record<
+  StrokeRejectReason,
+  (ctx: { expectedNo: number; startHint: string; endHint: string; posHint: string }) => string
+> = {
   order_ahead: ({ expectedNo }) => `این ضربه، ضربهٔ بعدی است — فعلاً ضربهٔ ${expectedNo} را بنویس.`,
   order_behind: ({ expectedNo }) => `جلو زدی — اول ضربهٔ ${expectedNo} را تمام کن.`,
   order_redraw: ({ expectedNo }) => `این ضربه را قبلاً نوشتی؛ حالا نوبت ضربهٔ ${expectedNo} است.`,
@@ -249,8 +295,20 @@ export function judgeStroke(input: JudgeInput): StrokeJudgement {
       judge: 'rejected',
       reason: 'incomplete_short',
       matchedStrokeIndex: expectedIndex,
-      metrics: { overall: 0, direction: 0.5, shape: 0.5, position: 0.5, start: startSimilarity(cleaned.length ? cleaned : [userPath[0]!], expected), lengthRatio: 0 },
-      feedbackFa: FA_FEEDBACK.incomplete_short({ expectedNo: expectedIndex + 1, startHint: '', endHint: '', posHint: '' }),
+      metrics: {
+        overall: 0,
+        direction: 0.5,
+        shape: 0.5,
+        position: 0.5,
+        start: startSimilarity(cleaned.length ? cleaned : [userPath[0]!], expected),
+        lengthRatio: 0,
+      },
+      feedbackFa: FA_FEEDBACK.incomplete_short({
+        expectedNo: expectedIndex + 1,
+        startHint: '',
+        endHint: '',
+        posHint: '',
+      }),
       assisted: false,
     };
   }
@@ -339,14 +397,35 @@ export function judgeStroke(input: JudgeInput): StrokeJudgement {
 
   // -- 4. confidence bands on the overall score
   if (metrics.overall >= th.accept + th.band) {
-    return { judge: 'accepted', reason: null, matchedStrokeIndex: expectedIndex, metrics, feedbackFa: null, assisted: false };
+    return {
+      judge: 'accepted',
+      reason: null,
+      matchedStrokeIndex: expectedIndex,
+      metrics,
+      feedbackFa: null,
+      assisted: false,
+    };
   }
   if (metrics.overall >= th.accept) {
-    return { judge: 'accepted_with_hint', reason: null, matchedStrokeIndex: expectedIndex, metrics, feedbackFa: HINT_FA, assisted: false };
+    return {
+      judge: 'accepted_with_hint',
+      reason: null,
+      matchedStrokeIndex: expectedIndex,
+      metrics,
+      feedbackFa: HINT_FA,
+      assisted: false,
+    };
   }
   if (metrics.overall >= th.accept - th.band) {
     // close enough to be inconclusive — never a definitive wrong
-    return { judge: 'uncertain_retry', reason: null, matchedStrokeIndex: expectedIndex, metrics, feedbackFa: UNCERTAIN_FA, assisted: false };
+    return {
+      judge: 'uncertain_retry',
+      reason: null,
+      matchedStrokeIndex: expectedIndex,
+      metrics,
+      feedbackFa: UNCERTAIN_FA,
+      assisted: false,
+    };
   }
 
   // -- clearly below: weakest axis relative to its floor names the reason

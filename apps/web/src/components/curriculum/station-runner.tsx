@@ -433,7 +433,9 @@ export function StationRunner(props: StationRunnerProps) {
           kanaCardStage={block.kind === 'kana-card' ? (kanaCardStages[block.id] ?? 'encounter') : undefined}
           onKanaProgress={(progress: { stage: string }) => {
             if (block.kind !== 'kana-card') return;
-            setKanaCardStages((prev) => (prev[block.id] === progress.stage ? prev : { ...prev, [block.id]: progress.stage }));
+            setKanaCardStages((prev) =>
+              prev[block.id] === progress.stage ? prev : { ...prev, [block.id]: progress.stage },
+            );
           }}
           onKanaWritingDone={() => {
             // #117 §8: the writing stage completed — the walk continues.
@@ -470,7 +472,8 @@ export function StationRunner(props: StationRunnerProps) {
        * button until its free-writing stage completes; the card owns its CTA
        * and auto-advances via onKanaWritingDone).
        */}
-      {(step > 0 || (block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card')) && (
+      {(step > 0 ||
+        (block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card')) && (
         <div className="flex items-center gap-3">
           {step > 0 && (
             <button
@@ -610,7 +613,11 @@ function WritingPracticeBlock({
               character: activeChar,
               mode: 'free',
               verdict:
-                state.totalMisses === 0 ? 'correct' : state.assistedCount > 0 ? 'correct_with_hints' : 'accepted_with_review',
+                state.totalMisses === 0
+                  ? 'correct'
+                  : state.assistedCount > 0
+                    ? 'correct_with_hints'
+                    : 'accepted_with_review',
               strokesTotal: state.history.length,
               strokesFirstTry: state.firstTry,
               totalMistakes: state.totalMisses,
@@ -659,7 +666,11 @@ function WritingPracticeBlock({
             ) : null}
           </div>
           {feedback ? (
-            <p role="status" aria-live="polite" className="rounded-md border border-shu/40 bg-surface-warm px-3 py-2 text-small leading-[var(--leading-fa)] text-ink">
+            <p
+              role="status"
+              aria-live="polite"
+              className="rounded-md border border-shu/40 bg-surface-warm px-3 py-2 text-small leading-[var(--leading-fa)] text-ink"
+            >
               {feedback}
             </p>
           ) : (
