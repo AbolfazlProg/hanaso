@@ -1331,6 +1331,9 @@ export const KANA_ITEMS: KanaItem[] = [
 
 export const KANA_ITEMS_BY_ID: Record<string, KanaItem> = Object.fromEntries(KANA_ITEMS.map((k) => [k.kanaId, k]));
 
+/** Glyph → item (Addendum-3 §8: Latin complement beside every Persian reading). */
+export const KANA_ITEMS_BY_GLYPH: Record<string, KanaItem> = Object.fromEntries(KANA_ITEMS.map((k) => [k.glyph, k]));
+
 /** All kana ids introduced by the END of each unit (cumulative — decodability data, CONTENT-105). */
 export const KANA_TAUGHT_BY_UNIT: Record<string, string[]> = {
   H0: [],

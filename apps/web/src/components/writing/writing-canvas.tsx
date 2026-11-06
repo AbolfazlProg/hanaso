@@ -1,25 +1,32 @@
 'use client';
 /**
- * HANASO — WritingCanvas v4 (TASK-LEARNING-08 v4 — owner final correction).
+ * HANASO — WritingCanvas v5 (TASK-LEARNING-08 Addendum-3).
  *
  * ONE canvas is the heart of the whole lesson — the character LIVES here from
- * the first second (owner §1: one page, one environment, no stage-switching):
+ * the first second to the last (owner §1: one page, one environment):
  *
- *   intro     — the glyph writes itself in one flowing ink motion (first
- *               encounter; the sound plays over it). No numbers yet — a clean
- *               first impression of the character as a whole.
- *   demo      — the teaching pass: each stroke drawn slowly with its Persian
- *               NUMBER badge on the canvas, the pulsing start dot and the
- *               direction arrow (owner §2: شماره، نقطهٔ شروع و جهت روی کادر).
- *   reference — the finished glyph rests in soft ink while the explanations
- *               unfold around the canvas (explain stage — the canvas never
- *               disappears).
- *   guided    — trace the dashed guide; the v2 engine judges fairly.
+ *   intro     — the TEACHING pass runs HERE as the FIRST content the learner
+ *               sees (Addendum-3 §5): each stroke flows in slowly with its
+ *               Persian NUMBER badge, the pulsing start dot and the direction
+ *               arrow — not a faint static template.
+ *   reference — the finished glyph rests in soft ink (the ready beat after
+ *               the teaching pass; the canvas never disappears).
+ *   guided    — trace the dashed guide; the v2.1 engine judges fairly.
  *   free      — write from memory; the reference reveals under the ink.
  *
- * Repeatability contract (#117 §2/§10 + owner §4): demo/intro restarts, rapid
- * mode switches and mid-draw exits are cancelled by generation token — no
- * promise survives its mode, no button ever dies.
+ * Addendum-3 §13 — PER-STROKE replacement: the moment a stroke is ACCEPTED,
+ * its raw hand path cross-fades into the PRECISE standard stroke (same ink
+ * width) right where the hand just was — stroke by stroke, NOT once at the
+ * end of the whole character. A mistake never wipes previously accepted
+ * standard strokes, and the accepted set survives «تکرار آموزش» replays.
+ *
+ * Addendum-3 §2 — «تکرار آموزش»: `replaySignal` re-runs the numbered teaching
+ * animation IN PLACE (audio + narration synced by the parent) for ANY stage —
+ * no page reset, no lesson reset, no state loss; rapid clicks are absorbed.
+ *
+ * Repeatability contract (#117 §2/§10): restarts, rapid mode switches and
+ * mid-draw exits are cancelled by generation token — no promise survives its
+ * mode, no button ever dies.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -31,17 +38,16 @@ import {
   type WritingAttemptState,
 } from '@/modules/writing/engine';
 import {
+  CLEAR_FADE_MS,
   DEMO_INTER_STROKE_MS,
+  GUIDE_WIDTH,
   INK_FADE_MS,
-  INTRO_INTER_STROKE_MS,
   SAMPLE_STROKE_MS,
-  SAMPLE_STROKE_STAGGER_MS,
   STROKE_WIDTH,
   directionArrow,
   livePathD,
   pointAt,
   strokeDemoMs,
-  strokeIntroMs,
 } from '@/modules/writing/render';
 import { loadWritingCharData, writingAvailability, type Point, type WritingCharData } from '@/modules/writing';
 
@@ -54,13 +60,20 @@ export interface WritingCanvasProps {
   onJudgement?: (judgement: StrokeJudgement, state: WritingAttemptState) => void;
   /** Fired once when ALL strokes of the practice attempt are accepted. */
   onAttemptComplete?: (state: WritingAttemptState) => void;
-  /** Fired once when the demo finishes all strokes. */
-  onDemoDone?: () => void;
-  /** Fired once when the intro (first-encounter ink-in) finishes. */
+  /** Fired once when the intro (teaching pass) finishes all strokes. */
   onIntroDone?: () => void;
-  /** Fired when a demo stroke begins — syncs the parent's narration panel. */
+  /** Fired once when a 'demo'-mode teaching pass finishes (drill contexts). */
+  onDemoDone?: () => void;
+  /** Fired when a teaching stroke begins — syncs the parent's narration panel. */
   onDemoStrokeStart?: (strokeIndex: number) => void;
-  /** Bump to restart: demo/intro from stroke 0, practice as a fresh attempt. */
+  /**
+   * Addendum-3 §2 — bump to replay the numbered teaching animation from the
+   * first stroke, IN PLACE (any stage). The attempt state is NOT reset.
+   */
+  replaySignal?: number;
+  /** Fires when a §2 replay finishes (the parent re-enables the button). */
+  onReplayDone?: () => void;
+  /** Bump to restart: intro from stroke 0, practice as a fresh attempt. */
   restartSignal?: number;
   /** Bump to flash the current stroke's guide once (help escalation). */
   hintSignal?: number;
@@ -117,13 +130,11 @@ function faNum(n: number): string {
 }
 
 /**
- * TASK-LEARNING-08 Addendum-2 §1: the STANDARD SAMPLE that replaces the
- * learner's accepted raw ink. Each stroke flows in fast (ink re-write) with a
- * short stagger — the clean, correct form re-inks itself exactly where the
- * hand just was. Mounts hidden then animates (double-rAF) so the transition
- * always plays, and a remount (attempt restart) replays it cleanly.
+ * Addendum-3 §13: the STANDARD stroke that replaces the learner's accepted raw
+ * ink — per stroke, immediately on acceptance. Mounts hidden then flows in
+ * fast (double-rAF) so the swap is a clean re-ink, never a jump.
  */
-function SuccessSamplePath({ d, index }: { d: string; index: number }) {
+function StandardStrokePath({ d, index }: { d: string; index: number }) {
   const [offset, setOffset] = useState(1);
   useEffect(() => {
     setOffset(1);
@@ -149,10 +160,30 @@ function SuccessSamplePath({ d, index }: { d: string; index: number }) {
       strokeDasharray={1}
       strokeDashoffset={offset}
       opacity={0.95}
-      style={{
-        transition: `stroke-dashoffset ${SAMPLE_STROKE_MS}ms cubic-bezier(.4,0,.2,1) ${index * SAMPLE_STROKE_STAGGER_MS}ms`,
-      }}
+      data-std-stroke={index}
+      style={{ transition: `stroke-dashoffset ${SAMPLE_STROKE_MS}ms cubic-bezier(.4,0,.2,1)` }}
     />
+  );
+}
+
+/** A finished glyph resting while the stage holds (reference ink). */
+function ReferenceGlyph({ charData, opacity = 0.3 }: { charData: WritingCharData; opacity?: number }) {
+  return (
+    <>
+      {charData.strokes.map((d, i) => (
+        <path
+          key={`ref-${i}`}
+          d={d}
+          fill="none"
+          stroke="currentColor"
+          className="text-ink"
+          strokeWidth={STROKE_WIDTH}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity={opacity}
+        />
+      ))}
+    </>
   );
 }
 
@@ -161,9 +192,11 @@ export function WritingCanvas({
   mode,
   onJudgement,
   onAttemptComplete,
-  onDemoDone,
   onIntroDone,
+  onDemoDone,
   onDemoStrokeStart,
+  replaySignal = 0,
+  onReplayDone,
   restartSignal = 0,
   hintSignal = 0,
   revealOnDone = true,
@@ -174,9 +207,17 @@ export function WritingCanvas({
   const [attempt, setAttempt] = useState<WritingAttemptState>(() => createAttemptState(character));
   const [attemptDone, setAttemptDone] = useState(false);
   const [live, setLive] = useState<Point[]>([]);
-  const [acceptedPaths, setAcceptedPaths] = useState<string[]>([]);
+  /** Indices of ACCEPTED strokes — always rendered as the STANDARD form (§13). */
+  const [acceptedStandard, setAcceptedStandard] = useState<number[]>([]);
+  /** Raw hand ink cross-fading OUT into the standard form (§13 swap). */
+  const [replacing, setReplacing] = useState<Array<{ d: string; key: number }>>([]);
+  /** Accepted standard strokes fading OUT when a new attempt clears the paper (§3). */
+  const [clearing, setClearing] = useState<Array<{ d: string; key: number }>>([]);
+  /** Rejected strokes fading away. */
   const [fading, setFading] = useState<Array<{ d: string; key: number }>>([]);
   const [demo, setDemo] = useState<DemoProgress>({ stroke: -1, shown: [] });
+  /** §2 — a numbered teaching replay is running (any stage). */
+  const [replaying, setReplaying] = useState(false);
   const [hintFlash, setHintFlash] = useState(0);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -184,6 +225,19 @@ export function WritingCanvas({
   const drawingRef = useRef(false);
   const attemptRef = useRef(attempt);
   const fadeKeyRef = useRef(0);
+  const replayBusyRef = useRef(false);
+  const replayStopRef = useRef<(() => void) | null>(null);
+  /** Mirror of acceptedStandard for the soft-clear in the reset effect (§3). */
+  const acceptedRef = useRef<number[]>([]);
+  /** Latest callbacks (refs) so the teaching loop never restarts on identity changes. */
+  const introDoneRef = useRef(onIntroDone);
+  const demoDoneRef = useRef(onDemoDone);
+  const replayDoneRef = useRef(onReplayDone);
+  const demoStrokeStartRef = useRef(onDemoStrokeStart);
+  introDoneRef.current = onIntroDone;
+  demoDoneRef.current = onDemoDone;
+  replayDoneRef.current = onReplayDone;
+  demoStrokeStartRef.current = onDemoStrokeStart;
 
   attemptRef.current = attempt;
   const medians = useMemo(
@@ -219,54 +273,110 @@ export function WritingCanvas({
     };
   }, [character]);
 
-  // fresh attempt whenever the character, mode (practice kind) or restart changes
+  // fresh attempt whenever the character, mode (practice kind) or restart changes.
+  // Addendum-3 §3: previously-accepted standard strokes don't VANISH — they
+  // cross-fade out softly (paper-stay transition), never a hard flash.
   useEffect(() => {
     if (availability !== 'available') return;
+    const prev = acceptedRef.current;
+    if (prev.length > 0 && charData) {
+      prev.forEach((i) => {
+        fadeKeyRef.current += 1;
+        const key = fadeKeyRef.current;
+        const d = charData.strokes[i]!;
+        setClearing((c) => [...c, { d, key }]);
+        setTimeout(() => setClearing((c) => c.filter((x) => x.key !== key)), CLEAR_FADE_MS + 120);
+      });
+    }
+    acceptedRef.current = [];
     setAttempt(createAttemptState(character));
     setAttemptDone(false);
-    setAcceptedPaths([]);
     setLive([]);
     liveRef.current = [];
     drawingRef.current = false;
-    setFading([]);
     setDemo({ stroke: -1, shown: [] });
+    setAcceptedStandard([]);
+    setReplacing([]);
+    // charData intentionally not a dep — only read for the soft clear above
   }, [availability, character, mode, restartSignal]);
 
-  // ------------------------------------------------- intro / demo show loop
-  useEffect(() => {
-    if ((mode !== 'demo' && mode !== 'intro') || !charData || availability !== 'available') return;
-    let cancelled = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const sleep = (ms: number) =>
-      new Promise<void>((resolve) => {
-        timers.push(setTimeout(resolve, ms));
-      });
-    const isIntro = mode === 'intro';
-    void (async () => {
+  // ------------------------------------------------- the numbered teaching loop
+  // (intro mode — Addendum-3 §5: this IS the first content the learner sees,
+  //  and the §2 «تکرار آموزش» replay runs the very same pass in place)
+  const runTeachingLoop = useCallback(
+    (opts: { isReplay: boolean; kind: 'intro' | 'demo' }) => {
+      const { isReplay, kind } = opts;
       setDemo({ stroke: -1, shown: [] });
-      await sleep(isIntro ? 420 : 350);
-      for (let i = 0; i < charData.strokes.length && !cancelled; i += 1) {
-        if (!isIntro) onDemoStrokeStart?.(i);
-        setDemo({ stroke: i, shown: [...Array.from({ length: i }, (_, k) => k)] });
-        const median = medians[i] ?? [];
-        await sleep(isIntro ? strokeIntroMs(median) : strokeDemoMs(median));
-        if (cancelled) return;
-        await sleep(isIntro ? INTRO_INTER_STROKE_MS : DEMO_INTER_STROKE_MS);
-      }
-      if (!cancelled) {
-        setDemo({ stroke: -2, shown: Array.from({ length: charData.strokes.length }, (_, k) => k) });
-        if (isIntro) onIntroDone?.();
-        else onDemoDone?.();
-      }
-    })();
-    return () => {
-      cancelled = true;
-      for (const t of timers) clearTimeout(t);
-    };
-    // deps limited on purpose: the show loop restarts on signal/mode/data
-    // changes; narration callbacks are stable-ish and re-running on them
-    // would restart the animation mid-stroke.
-  }, [mode, charData, availability, restartSignal]);
+      const timers: ReturnType<typeof setTimeout>[] = [];
+      let cancelled = false;
+      const sleep = (ms: number) =>
+        new Promise<void>((resolve) => {
+          timers.push(setTimeout(resolve, ms));
+        });
+      void (async () => {
+        await sleep(350);
+        for (let i = 0; i < charData!.strokes.length && !cancelled; i += 1) {
+          demoStrokeStartRef.current?.(i);
+          setDemo({ stroke: i, shown: [...Array.from({ length: i }, (_, k) => k)] });
+          const median = medians[i] ?? [];
+          await sleep(strokeDemoMs(median));
+          if (cancelled) return;
+          await sleep(DEMO_INTER_STROKE_MS);
+        }
+        if (!cancelled) {
+          setDemo({ stroke: -2, shown: Array.from({ length: charData!.strokes.length }, (_, k) => k) });
+          if (isReplay) {
+            setReplaying(false);
+            replayBusyRef.current = false;
+            replayDoneRef.current?.();
+          } else if (kind === 'demo') {
+            demoDoneRef.current?.();
+          } else {
+            introDoneRef.current?.();
+          }
+        }
+      })();
+      return () => {
+        cancelled = true;
+        for (const t of timers) clearTimeout(t);
+      };
+    },
+    // callbacks are deliberately NOT deps (they live in refs) — re-running the
+    // loop on their identity changes would restart the animation mid-stroke
+    [charData, medians],
+  );
+
+  useEffect(() => {
+    if ((mode !== 'intro' && mode !== 'demo') || !charData || availability !== 'available') return;
+    return runTeachingLoop({ isReplay: false, kind: mode });
+  }, [mode, charData, availability, restartSignal, runTeachingLoop]);
+
+  // ------------------------------------------------- §2 — «تکرار آموزش» replay
+  useEffect(() => {
+    if (replaySignal === 0) return;
+    if (!charData || availability !== 'available') return;
+    // The intro/demo stages restart their own loop via restartSignal — a §2
+    // replay is only for the LATER stages (ready/guided/free/done).
+    if (mode === 'intro' || mode === 'demo') return;
+    // Rapid-click guard (§2): a signal bump while a replay is running is
+    // absorbed — the running animation is NEVER cancelled, no double run.
+    if (replayBusyRef.current) return;
+    replayBusyRef.current = true;
+    setReplaying(true);
+    replayStopRef.current = runTeachingLoop({ isReplay: true, kind: 'demo' });
+    // No cleanup-on-rerun: a later signal must not kill the in-flight replay.
+  }, [replaySignal]);
+
+  // unmount / character switch: halt any running replay
+  useEffect(
+    () => () => {
+      replayStopRef.current?.();
+      replayStopRef.current = null;
+      replayBusyRef.current = false;
+    },
+    // unmount-only cleanup (also fires on a character switch)
+    [character],
+  );
 
   // ---------------------------------------------------------------- hint flash
   useEffect(() => {
@@ -292,7 +402,7 @@ export function WritingCanvas({
     const pts = liveRef.current;
     liveRef.current = [];
     setLive([]);
-    if (pts.length < 1 || !charData || attemptDone) return;
+    if (pts.length < 1 || !charData || attemptDone || replaying) return;
     const state = attemptRef.current;
     const judgement = judgeStroke({
       userPath: pts,
@@ -306,7 +416,16 @@ export function WritingCanvas({
     attemptRef.current = next;
     setAttempt(next);
     if (judgement.judge === 'accepted' || judgement.judge === 'accepted_with_hint') {
-      setAcceptedPaths((p) => [...p, livePathD(pts)]);
+      // Addendum-3 §13 — per-stroke replacement: the raw hand ink cross-fades
+      // OUT while the PRECISE standard stroke re-inks in its place, right now
+      // (not at the end of the character).
+      const acceptedIndex = Math.min(state.expectedIndex, totalStrokes - 1);
+      fadeKeyRef.current += 1;
+      const key = fadeKeyRef.current;
+      setReplacing((r) => [...r, { d: livePathD(pts), key }]);
+      setTimeout(() => setReplacing((r) => r.filter((x) => x.key !== key)), INK_FADE_MS + 120);
+      acceptedRef.current = [...acceptedRef.current, acceptedIndex];
+      setAcceptedStandard((a) => [...a, acceptedIndex]);
     } else {
       fadeKeyRef.current += 1;
       const key = fadeKeyRef.current;
@@ -316,12 +435,12 @@ export function WritingCanvas({
     if (done) setAttemptDone(true);
     onJudgement?.(judgement, next);
     if (done) onAttemptComplete?.(next);
-  }, [attemptDone, charData, onAttemptComplete, onJudgement, totalStrokes]);
+  }, [attemptDone, charData, onAttemptComplete, onJudgement, replaying, totalStrokes]);
 
   const onPointerDown = useCallback(
     (ev: React.PointerEvent<SVGSVGElement>) => {
       if (mode !== 'guided' && mode !== 'free') return;
-      if (attemptDone || !charData) return;
+      if (attemptDone || !charData || replaying) return;
       try {
         ev.currentTarget.setPointerCapture(ev.pointerId);
       } catch {
@@ -333,7 +452,7 @@ export function WritingCanvas({
       liveRef.current = [p];
       setLive([p]);
     },
-    [attemptDone, charData, mode, toCharSpace],
+    [attemptDone, charData, mode, replaying, toCharSpace],
   );
 
   const onPointerMove = useCallback(
@@ -367,9 +486,21 @@ export function WritingCanvas({
 
   // ---------------------------------------------------------------- render
   if (availability === 'loading') {
+    // Addendum-3 §3 — a paper-stay skeleton: SAME frame, SAME square, a soft
+    // ink shimmer — never a text box that reflows the layout or old content
+    // that flashes. (With the §10 prefetch the real data is usually already
+    // cached and this frame is never seen at all.)
     return (
-      <div className="rounded-md border border-ink-faint bg-card p-4 text-small text-ink-faint" dir="rtl">
-        در حال بارگذاری دادهٔ نوشتار…
+      <div
+        className={`frame-ink relative overflow-hidden rounded-lg bg-paper shadow-card ${className ?? ''}`}
+        style={{ width: '100%', maxWidth: '26rem', aspectRatio: '1 / 1' }}
+        role="img"
+        aria-label="در حال آماده‌سازی دفتر نوشتن"
+        data-canvas-skeleton
+      >
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="size-24 rounded-full border-2 border-dashed border-ink-faint/60 ink-shimmer" />
+        </div>
       </div>
     );
   }
@@ -385,20 +516,17 @@ export function WritingCanvas({
   }
   if (!charData) return null;
 
-  const isShow = mode === 'demo' || mode === 'intro';
+  const isTeaching = replaying || mode === 'intro' || mode === 'demo';
+  const practiceMode = replaying ? 'none' : mode;
   const expected = Math.min(attempt.expectedIndex, totalStrokes - 1);
   const guideMedian = medians[expected] ?? [];
   const arrow = guideMedian.length >= 2 ? directionArrow(guideMedian) : null;
-  const guided = mode === 'guided' && !attemptDone;
-  const freeReveal = mode === 'free' && attemptDone && revealOnDone;
-  /* Addendum-2 §1: once ALL strokes are accepted the raw hand-ink fades out
-   * and the STANDARD SAMPLE re-inks itself in its place — never during the
-   * drawing and never before validation accepted it. */
-  const successSample = (mode === 'guided' || mode === 'free') && attemptDone;
+  const guided = practiceMode === 'guided' && !attemptDone;
+  const freeReveal = practiceMode === 'free' && attemptDone && revealOnDone;
 
-  // demo decorations (owner §2): badge number + start dot + direction arrow of
-  // the stroke currently being drawn — the canvas itself carries the teaching.
-  const demoMedian = isShow && demo.stroke >= 0 ? (medians[demo.stroke] ?? []) : [];
+  // teaching decorations (owner §2): badge number + start dot + direction
+  // arrow of the stroke currently being drawn — on the canvas itself.
+  const demoMedian = isTeaching && demo.stroke >= 0 ? (medians[demo.stroke] ?? []) : [];
   const demoArrow = demoMedian.length >= 2 ? directionArrow(demoMedian) : null;
   const demoBadgeAt = demoMedian.length >= 2 ? pointAt(demoMedian, 0.62) : null;
 
@@ -414,6 +542,7 @@ export function WritingCanvas({
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       style={{ width: '100%', maxWidth: '26rem', aspectRatio: '1 / 1' }}
+      data-replaying={replaying ? 'true' : undefined}
     >
       {/* faint character frame guides (paper feel) */}
       <line
@@ -437,71 +566,34 @@ export function WritingCanvas({
         strokeWidth={2}
       />
 
-      {/* reference mode: the finished glyph rests in soft ink while the
-          explanations unfold — the canvas never disappears (owner §1) */}
-      {mode === 'reference' &&
-        charData.strokes.map((d, i) => (
+      {/* reference: the finished glyph rests in soft ink (ready beat / done) */}
+      {practiceMode === 'reference' && <ReferenceGlyph charData={charData} opacity={0.3} />}
+
+      {/* teaching pass: strokes revealed so far + the one flowing in now */}
+      {isTeaching &&
+        demo.shown.map((i) => (
           <path
-            key={`ref-${i}`}
-            d={d}
+            key={`demo-${i}`}
+            d={charData.strokes[i]!}
             fill="none"
             stroke="currentColor"
             className="text-ink"
             strokeWidth={STROKE_WIDTH}
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={0.3}
+            opacity={0.9}
           />
         ))}
-
-      {/* completed strokes (show: revealed so far · practice: accepted —
-          Addendum-2 §1: after the attempt is DONE they fade out so only the
-          standard sample stays on the paper) */}
-      {isShow
-        ? demo.shown.map((i) => (
-            <path
-              key={`demo-${i}`}
-              d={charData.strokes[i]!}
-              fill="none"
-              stroke="currentColor"
-              className="text-ink"
-              strokeWidth={STROKE_WIDTH}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              opacity={0.9}
-            />
-          ))
-        : acceptedPaths.map((d, i) => (
-            <path
-              key={`done-${i}`}
-              d={d}
-              fill="none"
-              stroke="currentColor"
-              className="text-ink"
-              strokeWidth={STROKE_WIDTH}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={successSample ? { transition: `opacity ${INK_FADE_MS}ms ease-out`, opacity: 0 } : undefined}
-              opacity={successSample ? undefined : 0.92}
-            />
-          ))}
-
-      {/* Addendum-2 §1: the standard sample replaces the accepted raw ink —
-          the clean correct glyph re-inks itself for the review beat. */}
-      {successSample && charData.strokes.map((d, i) => <SuccessSamplePath key={`sample-${i}`} d={d} index={i} />)}
-
-      {/* show: the stroke currently flowing in */}
-      {isShow && demo.stroke >= 0 && (
+      {isTeaching && demo.stroke >= 0 && (
         <DemoStrokePath
           key={`demo-live-${demo.stroke}`}
           d={charData.strokes[demo.stroke]!}
-          ms={mode === 'intro' ? strokeIntroMs(medians[demo.stroke] ?? []) : strokeDemoMs(medians[demo.stroke] ?? [])}
+          ms={strokeDemoMs(medians[demo.stroke] ?? [])}
         />
       )}
 
-      {/* demo teaching decorations: number badge + start dot + direction arrow.
-          intro stays clean — the first impression is the whole character. */}
-      {mode === 'demo' && demo.stroke >= 0 && demoBadgeAt && (
+      {/* teaching decorations: Persian number badge + start dot + direction arrow */}
+      {isTeaching && demo.stroke >= 0 && demoBadgeAt && (
         <g>
           <circle
             cx={demoBadgeAt.x}
@@ -526,7 +618,7 @@ export function WritingCanvas({
           </text>
         </g>
       )}
-      {mode === 'demo' && demo.stroke >= 0 && demoMedian.length >= 2 && (
+      {isTeaching && demo.stroke >= 0 && demoMedian.length >= 2 && (
         <g>
           <circle
             cx={demoMedian[0]!.x}
@@ -549,36 +641,75 @@ export function WritingCanvas({
         </g>
       )}
 
-      {/* free-mode reveal after completion (drill contexts without the
-          success transition — the reference under the user's ink) */}
-      {freeReveal &&
-        !successSample &&
-        charData.strokes.map((d, i) => (
-          <path
-            key={`reveal-${i}`}
-            d={d}
-            fill="none"
-            stroke="currentColor"
-            className="text-ai"
-            strokeWidth={STROKE_WIDTH * 0.72}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity={0.28}
-          />
-        ))}
+      {/* practice: the accepted strokes — ALWAYS the precise standard form
+          (Addendum-3 §13 — per-stroke replacement, never the raw hand path) */}
+      {!isTeaching &&
+        acceptedStandard.map((i) => <StandardStrokePath key={`std-${i}`} d={charData.strokes[i]!} index={i} />)}
+
+      {/* §13: the raw hand ink cross-fading OUT into the standard form */}
+      {replacing.map((r) => (
+        <path
+          key={`swap-${r.key}`}
+          d={r.d}
+          fill="none"
+          stroke="currentColor"
+          className="text-ink"
+          strokeWidth={STROKE_WIDTH}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          data-raw-fading
+          style={{ transition: `opacity ${INK_FADE_MS}ms ease-out`, opacity: 0 }}
+        />
+      ))}
+
+      {/* §3: accepted strokes softly fading when a new attempt clears the paper */}
+      {clearing.map((c) => (
+        <path
+          key={`clear-${c.key}`}
+          d={c.d}
+          fill="none"
+          stroke="currentColor"
+          className="text-ink"
+          strokeWidth={STROKE_WIDTH}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          data-ink-clearing
+          opacity={0.85}
+          style={{ transition: `opacity ${CLEAR_FADE_MS}ms ease-out`, opacity: 0 }}
+        />
+      ))}
+
+      {/* free-mode reveal after completion (drill contexts — the reference
+          under the user's ink) */}
+      {freeReveal && (
+        <g opacity={0.28}>
+          {charData.strokes.map((d, i) => (
+            <path
+              key={`reveal-${i}`}
+              d={d}
+              fill="none"
+              stroke="currentColor"
+              className="text-ai"
+              strokeWidth={STROKE_WIDTH * 0.72}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          ))}
+        </g>
+      )}
 
       {/* guided: dashed guide for the expected stroke + start marker + arrow */}
-      {(guided || (mode === 'free' && hintFlash > 0 && !attemptDone)) && guideMedian.length >= 2 && (
+      {(guided || (practiceMode === 'free' && hintFlash > 0 && !attemptDone)) && guideMedian.length >= 2 && (
         <>
           <path
             d={charData.strokes[expected]!}
             fill="none"
             stroke="currentColor"
             className="text-ai"
-            strokeWidth={STROKE_WIDTH * 0.66}
+            strokeWidth={GUIDE_WIDTH}
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={mode === 'free' ? 0.5 : 0.55}
+            opacity={practiceMode === 'free' ? 0.5 : 0.55}
             pathLength={1}
             strokeDasharray="0.042 0.065"
           />

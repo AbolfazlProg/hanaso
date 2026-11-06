@@ -14,22 +14,31 @@ import type { WritingCharData } from './types';
 
 /**
  * Render width of a brush stroke in the 1024² space (calligraphy feel).
- * TASK-LEARNING-08 Addendum-2 §6: 74 was TOO THICK — it blurred the fine
- * shape details and muddied stroke intersections. 46 keeps the brush feel
- * while the form, the joins and the stroke differences stay clearly visible.
+ * TASK-LEARNING-08 Addendum-2 §6: 74 was TOO THICK. Addendum-3 §7: 46 was
+ * still a touch heavy — on the ~26rem canvas fine multi-stroke glyphs (き、さ、
+ * み…) lost detail at the joins. 38 keeps a natural pen weight while the
+ * standard sample and the learner's pen share ONE width, so the per-stroke
+ * replacement (Addendum-3 §13) is pixel-consistent: what the learner drew is
+ * swapped for the standard form at the SAME weight.
  */
-export const STROKE_WIDTH = 46;
+export const STROKE_WIDTH = 38;
+/** The dashed guide under the learner's pen (a shade lighter than the ink). */
+export const GUIDE_WIDTH = 25;
 
 /**
- * Addendum-2 §2: the standard sample that replaces the accepted raw ink
- * re-inks itself fast (each stroke flows in) — a clean re-write, not a wait.
- * ~340ms per stroke + 110ms stagger keeps a 3-stroke glyph under ~1.3s.
+ * Addendum-3 §13: the per-stroke replacement — the moment a stroke is
+ * ACCEPTED the raw hand path is swapped for the STANDARD stroke, which re-inks
+ * itself quickly in place (a short flow, not a wait). Mounts hidden then
+ * animates (double-rAF) so the transition always plays.
  */
-export const SAMPLE_STROKE_MS = 340;
-export const SAMPLE_STROKE_STAGGER_MS = 110;
+export const SAMPLE_STROKE_MS = 260;
+export const SAMPLE_STROKE_STAGGER_MS = 90;
 
-/** Addendum-2 §1: how fast the accepted raw ink fades out (ms). */
-export const INK_FADE_MS = 520;
+/** Addendum-3 §13: how fast the raw hand ink cross-fades into the standard form. */
+export const INK_FADE_MS = 340;
+/** Addendum-3 §3: the paper-soft fade when a completed glyph clears for the
+ * free (from-memory) attempt — a deliberate calm transition, never a flash. */
+export const CLEAR_FADE_MS = 420;
 
 /** Build a smooth SVG path from raw pointer points (quadratic smoothing). */
 export function livePathD(points: Point[]): string {

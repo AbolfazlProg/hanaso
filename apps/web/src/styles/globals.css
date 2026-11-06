@@ -249,3 +249,29 @@ body {
     animation: none;
   }
 }
+
+/* TASK-LEARNING-08 Addendum-3 §3: اسکلتون کاغذیِ بوم نوشتن — همان قاب، همان
+   مربع، یک نبضِ جوهریِ ملایم؛ نه جعبهٔ متنی که Layout را بلرزد و نه محتوای
+   قدیمی که چشمک بزند. (با prefetch §10 معمولاً هرگز دیده نمی‌شود.) */
+@keyframes ink-shimmer-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.04);
+  }
+}
+.ink-shimmer {
+  animation: ink-shimmer-pulse 1.4s ease-in-out infinite;
+}
+
+/* respects the reduced-motion preference for the calm skeleton pulse */
+@media (prefers-reduced-motion: reduce) {
+  .ink-shimmer {
+    animation: none;
+    opacity: 0.4;
+  }
+}

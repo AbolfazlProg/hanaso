@@ -184,30 +184,60 @@ function directionSimilarityV2(user: Point[], median: Point[]): number {
 }
 
 /**
- * Shape agreement, v2: centroid-aligned AND scale-normalized — a stroke drawn
- * 30% larger or shifted within the box is still the right shape. Size and
- * placement are judged separately (position axis), so shape stays orthogonal.
+ * Shape agreement, v2.1 (Addendum-3 §6): centroid-aligned AND scale-normalized
+ * — a stroke drawn 30% larger or shifted within the box is still the right
+ * shape. Size and placement are judged separately (position axis), so shape
+ * stays orthogonal. Two Addendum-3 §6 additions keep it FAIR both ways:
+ *  - a small-rotation search (±8°) absorbs natural hand tilt (a correct stroke
+ *    drawn with the wrist rotated a few degrees is not penalized);
+ *  - an END-SEGMENT term (last 30% of the stroke) — measured on the whole 92-
+ *    kana corpus, natural hands score ≥0.81 there while confusable-pair
+ *    endings (れ loop vs わ flick, ぬ vs め tails…) score 0.0–0.45. Blending
+ *    65% full-shape + 35% end-shape rejects the neighbor character's stroke
+ *    (0.519 blended → below the accept floor) without touching faithful hands
+ *    (≥0.8 blended). Raising REAL accuracy, not just lowering thresholds.
  */
+function normalizedMeanDistance(a: Point[], b: Point[]): number {
+  const ac = centroid(a);
+  const bc = centroid(b);
+  const spread = (pts: Point[], c: Point) =>
+    Math.sqrt(pts.reduce((s, p) => s + (p.x - c.x) ** 2 + (p.y - c.y) ** 2, 0) / pts.length) || 1;
+  const as = spread(a, ac);
+  const bs = spread(b, bc);
+  let sum = 0;
+  for (let i = 0; i < a.length; i += 1) {
+    sum += Math.hypot((a[i]!.x - ac.x) / as - (b[i]!.x - bc.x) / bs, (a[i]!.y - ac.y) / as - (b[i]!.y - bc.y) / bs);
+  }
+  return sum / a.length; // in RMS units (scale-free)
+}
+
+const SHAPE_ROTATION_DEGREES = [-8, -4, 0, 4, 8] as const;
+
+/** Best shape score over a small rotation search (natural wrist tilt). */
+function shapeScoreRot(user: Point[], median: Point[]): number {
+  let best = 0;
+  for (const deg of SHAPE_ROTATION_DEGREES) {
+    const rad = (deg * Math.PI) / 180;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+    const rotated = user.map((p) => ({ x: p.x * cos - p.y * sin, y: p.x * sin + p.y * cos }));
+    const meanDist = normalizedMeanDistance(rotated, median);
+    const score = Math.max(0, Math.min(1, 1 - meanDist / 1.1));
+    if (score > best) best = score;
+  }
+  return best;
+}
+
 function shapeSimilarityV2(user: Point[], median: Point[]): number {
   const n = 16;
   const u = resample(user, n);
   const m = resample(median, n);
-  const uc = centroid(u);
-  const mc = centroid(m);
-  const spread = (pts: Point[], c: Point) =>
-    Math.sqrt(pts.reduce((s, p) => s + (p.x - c.x) ** 2 + (p.y - c.y) ** 2, 0) / pts.length) || 1;
-  const us = spread(u, uc);
-  const ms = spread(m, mc);
-  let sum = 0;
-  for (let i = 0; i < n; i += 1) {
-    const ux = (u[i]!.x - uc.x) / us;
-    const uy = (u[i]!.y - uc.y) / us;
-    const mx = (m[i]!.x - mc.x) / ms;
-    const my = (m[i]!.y - mc.y) / ms;
-    sum += Math.hypot(ux - mx, uy - my);
-  }
-  const meanDist = sum / n; // in RMS units (scale-free)
-  return Math.max(0, Math.min(1, 1 - meanDist / 1.1));
+  const full = shapeScoreRot(u, m);
+  // end segment: last 30% of the resampled stroke (the hook / flick / loop —
+  // where confusable neighbors actually differ)
+  const k = Math.floor(n * 0.7);
+  const end = shapeScoreRot(u.slice(k), m.slice(k));
+  return full * 0.6 + end * 0.4;
 }
 
 /** Placement agreement: centroid distance with a generous tolerance. */
@@ -233,6 +263,33 @@ export function positionHintFa(p: Point): string {
   return `${v}-${h}`;
 }
 
+/**
+ * Persian MOTION phrase for a stroke's overall direction (Addendum-3 §6): the
+ * reversed-direction feedback used to join the start and END position words,
+ * which for looped strokes (start and end in the same zone) produced the
+ * contradictory «از بالا شروع کن و به سمت بالا بکش». This phrase describes
+ * the direction of travel itself («به سمت پایین و چپ») — always meaningful,
+ * even for closed loops.
+ */
+export function motionHintFa(median: Point[]): string {
+  const start = median[0]!;
+  const end = median[median.length - 1]!;
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const horiz = Math.abs(dx) < 40 ? '' : dx > 0 ? 'راست' : 'چپ';
+  const vert = Math.abs(dy) < 40 ? '' : dy > 0 ? 'پایین' : 'بالا';
+  if (horiz && vert) return `${vert}-${horiz}`;
+  if (horiz || vert) return horiz || vert;
+  // a closed loop: describe it by its dominant curvature side instead
+  let minX = median[0]!.x;
+  let maxX = minX;
+  for (const p of median) {
+    minX = Math.min(minX, p.x);
+    maxX = Math.max(maxX, p.x);
+  }
+  return minX < CHAR_SPACE / 2 && maxX > CHAR_SPACE / 2 ? 'یک دورِ کامل (حلقه)' : 'یک مسیر بسته';
+}
+
 // ---------------------------------------------------------------- core judge
 
 export interface JudgeInput {
@@ -252,7 +309,7 @@ export interface JudgeInput {
 
 const FA_FEEDBACK: Record<
   StrokeRejectReason,
-  (ctx: { expectedNo: number; startHint: string; endHint: string; posHint: string }) => string
+  (ctx: { expectedNo: number; startHint: string; endHint: string; posHint: string; motionHint: string }) => string
 > = {
   order_ahead: ({ expectedNo }) => `این ضربه، ضربهٔ بعدی است — فعلاً ضربهٔ ${expectedNo} را بنویس.`,
   order_behind: ({ expectedNo }) => `جلو زدی — اول ضربهٔ ${expectedNo} را تمام کن.`,
@@ -260,7 +317,8 @@ const FA_FEEDBACK: Record<
   incomplete_short: () => 'این ضربه ناقص ماند — مسیر را کامل‌تر و کمی بلندتر بکش.',
   incomplete_long: () => 'ضربه بیش از حد بلند شد — کوتاه‌تر و تمیزتر بکش.',
   start: ({ startHint }) => `از نقطهٔ شروع درست بردار — این ضربه از ${startHint} شروع می‌شود.`,
-  direction: ({ startHint, endHint }) => `جهت این ضربه برعکس است — از ${startHint} شروع کن و به سمت ${endHint} بکش.`,
+  direction: ({ startHint, motionHint }) =>
+    `جهت این ضربه برعکس است — از ${startHint} شروع کن و مسیر را به سمت ${motionHint} بکش.`,
   form: () => 'فرم این ضربه با الگو نمی‌خواند — یک بار نمایش را دوباره ببین و مسیرش را دنبال کن.',
   position: ({ posHint }) => `این ضربه را ${posHint} بنویس — جای فعلی‌اش کمی بیرون از الگو است.`,
 };
@@ -308,6 +366,7 @@ export function judgeStroke(input: JudgeInput): StrokeJudgement {
         startHint: '',
         endHint: '',
         posHint: '',
+        motionHint: '',
       }),
       assisted: false,
     };
@@ -348,6 +407,7 @@ export function judgeStroke(input: JudgeInput): StrokeJudgement {
     startHint: positionHintFa(expected[0]!),
     endHint: positionHintFa(expected[expected.length - 1]!),
     posHint: positionHintFa(centroid(expected)),
+    motionHint: motionHintFa(expected),
   };
 
   const reject = (reason: StrokeRejectReason): StrokeJudgement => ({

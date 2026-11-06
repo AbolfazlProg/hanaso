@@ -5,7 +5,8 @@ import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/ser
 import { resolveLearnerId } from '@/lib/learner/server';
 import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
-import { wordAudioUrls, kanaAudioUrls } from '@/modules/audio/server';
+import { wordAudioUrls, kanaAudioUrls, hostWordAudioUrls } from '@/modules/audio/server';
+import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 import { StationRunner } from '@/components/curriculum/station-runner';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 import { fa } from '@/messages/fa';
@@ -82,8 +83,15 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
   // server-side from the PRE-GENERATED registry (public/audio/kana — DD-081).
   // Null = no committed asset yet; the card degrades honestly.
   const kanaAudioByKanaId: Record<string, { opus: string; m4a: string } | null> = {};
+  const hostWordAudioByKanaId: Record<string, { opus: string; m4a: string } | null> = {};
   for (const block of station.blocks) {
-    if (block.kind === 'kana-card') kanaAudioByKanaId[block.kanaId] = kanaAudioUrls(`kn-${block.kanaId}`);
+    if (block.kind === 'kana-card') {
+      kanaAudioByKanaId[block.kanaId] = kanaAudioUrls(`kn-${block.kanaId}`);
+      // Addendum-3 §9: the readable host word gets its OWN independent audio
+      // (never the character's sound reused) — resolved from the hostwords registry.
+      const hostWord = KANA_ITEMS_BY_ID[block.kanaId]?.hostWord;
+      hostWordAudioByKanaId[block.kanaId] = hostWord ? hostWordAudioUrls(hostWord.word) : null;
+    }
   }
 
   return (
@@ -134,6 +142,7 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
           audioAvailable={bundle!.bundle.audio.available}
           wordAudioByWord={wordAudioByWord}
           kanaAudioByKanaId={kanaAudioByKanaId}
+          hostWordAudioByKanaId={hostWordAudioByKanaId}
         />
       </div>
     </main>

@@ -1,0 +1,474 @@
+{
+  "generatedBy": "voicevox:latest (VPS engine) — TASK-LEARNING-08 Addendum-3 §9: speaker 8 (VOICEVOX:春日部つむぎ ノーマル), speedScale 1.0, offline pre-generation. Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + peak-norm −1.5dBFS; opus 64k / m4a 128k. Credit: VOICEVOX:春日部つむぎ (VOICEVOX character terms)",
+  "format": "voicevox-opus-m4a",
+  "entries": {
+    "あう": {
+      "bytes": 4156,
+      "bytesM4a": 6518,
+      "durationMs": 486,
+      "hash": "9cb49302ae314ee5"
+    },
+    "あおい": {
+      "bytes": 6135,
+      "bytesM4a": 9550,
+      "durationMs": 710,
+      "hash": "29358f2a750dec8a"
+    },
+    "あつい": {
+      "bytes": 5365,
+      "bytesM4a": 9031,
+      "durationMs": 636,
+      "hash": "d431162e3df39b14"
+    },
+    "あなた": {
+      "bytes": 5913,
+      "bytesM4a": 9725,
+      "durationMs": 657,
+      "hash": "459ce9bbe3bc5a4d"
+    },
+    "いえ": {
+      "bytes": 4618,
+      "bytesM4a": 7604,
+      "durationMs": 508,
+      "hash": "f02238c494527feb"
+    },
+    "いく": {
+      "bytes": 4860,
+      "bytesM4a": 8085,
+      "durationMs": 540,
+      "hash": "b0068d7739a83bf1"
+    },
+    "いす": {
+      "bytes": 4967,
+      "bytesM4a": 7813,
+      "durationMs": 561,
+      "hash": "b2a670341ab15557"
+    },
+    "いぬ": {
+      "bytes": 4367,
+      "bytesM4a": 7070,
+      "durationMs": 497,
+      "hash": "a11b2366bc9fcf93"
+    },
+    "うえ": {
+      "bytes": 4234,
+      "bytesM4a": 7244,
+      "durationMs": 465,
+      "hash": "0bf8ae1d7f193f42"
+    },
+    "うしろ": {
+      "bytes": 5675,
+      "bytesM4a": 9658,
+      "durationMs": 657,
+      "hash": "3ad089db02f180df"
+    },
+    "え": {
+      "bytes": 4317,
+      "bytesM4a": 6072,
+      "durationMs": 444,
+      "hash": "5bd915d5dc7355e0"
+    },
+    "えき": {
+      "bytes": 5423,
+      "bytesM4a": 8349,
+      "durationMs": 625,
+      "hash": "04561557c8f01e80"
+    },
+    "おなじ": {
+      "bytes": 6289,
+      "bytesM4a": 10013,
+      "durationMs": 732,
+      "hash": "d64bcb96a525046a"
+    },
+    "かさ": {
+      "bytes": 5129,
+      "bytesM4a": 7880,
+      "durationMs": 593,
+      "hash": "446745b27bd3eab5"
+    },
+    "から": {
+      "bytes": 4448,
+      "bytesM4a": 7566,
+      "durationMs": 518,
+      "hash": "bcce735d350095b5"
+    },
+    "くに": {
+      "bytes": 5143,
+      "bytesM4a": 7569,
+      "durationMs": 614,
+      "hash": "233d76dd5a73c34a"
+    },
+    "くる": {
+      "bytes": 4474,
+      "bytesM4a": 6607,
+      "durationMs": 529,
+      "hash": "7ab219614f7a1687"
+    },
+    "けさ": {
+      "bytes": 4869,
+      "bytesM4a": 8009,
+      "durationMs": 572,
+      "hash": "f8e175ab89410485"
+    },
+    "ここ": {
+      "bytes": 5202,
+      "bytesM4a": 7577,
+      "durationMs": 593,
+      "hash": "b9ff86a0abdfb643"
+    },
+    "これ": {
+      "bytes": 4792,
+      "bytesM4a": 7435,
+      "durationMs": 529,
+      "hash": "79734a540cf74197"
+    },
+    "さとう": {
+      "bytes": 5912,
+      "bytesM4a": 8888,
+      "durationMs": 710,
+      "hash": "80d9621b5d44aa13"
+    },
+    "さむい": {
+      "bytes": 6528,
+      "bytesM4a": 9673,
+      "durationMs": 721,
+      "hash": "8f2709bd506bd6c3"
+    },
+    "さん": {
+      "bytes": 4972,
+      "bytesM4a": 7449,
+      "durationMs": 593,
+      "hash": "82e80f3116d65d7d"
+    },
+    "しりょう": {
+      "bytes": 5744,
+      "bytesM4a": 8873,
+      "durationMs": 678,
+      "hash": "cd2e5206ae05d0e8"
+    },
+    "すし": {
+      "bytes": 6133,
+      "bytesM4a": 8834,
+      "durationMs": 721,
+      "hash": "aeb3aa7a5cd93ecb"
+    },
+    "せき": {
+      "bytes": 6149,
+      "bytesM4a": 9249,
+      "durationMs": 678,
+      "hash": "fab1a06290aab2bf"
+    },
+    "そこ": {
+      "bytes": 5442,
+      "bytesM4a": 8372,
+      "durationMs": 636,
+      "hash": "505b1381f859362f"
+    },
+    "たいへん": {
+      "bytes": 6096,
+      "bytesM4a": 9385,
+      "durationMs": 710,
+      "hash": "e9b4092f21fe3e74"
+    },
+    "ちゅうごく": {
+      "bytes": 7262,
+      "bytesM4a": 11219,
+      "durationMs": 796,
+      "hash": "8a6b6fbf9d6e9fb5"
+    },
+    "てちょう": {
+      "bytes": 5514,
+      "bytesM4a": 8257,
+      "durationMs": 636,
+      "hash": "18bf58629bd2bc62"
+    },
+    "ともだち": {
+      "bytes": 6229,
+      "bytesM4a": 11204,
+      "durationMs": 849,
+      "hash": "409288a6966a9d74"
+    },
+    "なまえ": {
+      "bytes": 6028,
+      "bytesM4a": 9399,
+      "durationMs": 668,
+      "hash": "bb3ddab7e67e55c8"
+    },
+    "にほん": {
+      "bytes": 5541,
+      "bytesM4a": 8283,
+      "durationMs": 646,
+      "hash": "0796c92f18d00471"
+    },
+    "ねこ": {
+      "bytes": 5592,
+      "bytesM4a": 8911,
+      "durationMs": 636,
+      "hash": "ea793d4ac62d452f"
+    },
+    "の": {
+      "bytes": 3618,
+      "bytesM4a": 4875,
+      "durationMs": 422,
+      "hash": "4b2783a7b5be5d69"
+    },
+    "はいる": {
+      "bytes": 6020,
+      "bytesM4a": 9276,
+      "durationMs": 657,
+      "hash": "b61928b7f7c886ec"
+    },
+    "ひと": {
+      "bytes": 4917,
+      "bytesM4a": 7629,
+      "durationMs": 550,
+      "hash": "9f4ab8095a9dd4d5"
+    },
+    "ふたり": {
+      "bytes": 5331,
+      "bytesM4a": 8031,
+      "durationMs": 625,
+      "hash": "11f18d430b0b64a4"
+    },
+    "みず": {
+      "bytes": 5135,
+      "bytesM4a": 8640,
+      "durationMs": 572,
+      "hash": "b02ef155a86e9c05"
+    },
+    "めいし": {
+      "bytes": 6447,
+      "bytesM4a": 9728,
+      "durationMs": 742,
+      "hash": "faa802c49a8ffb34"
+    },
+    "やまだ": {
+      "bytes": 6142,
+      "bytesM4a": 9852,
+      "durationMs": 668,
+      "hash": "b3b160f218094dd2"
+    },
+    "ゆうびんきょく": {
+      "bytes": 10052,
+      "bytesM4a": 15639,
+      "durationMs": 1009,
+      "hash": "5fea8f0e5340f46d"
+    },
+    "よる": {
+      "bytes": 4523,
+      "bytesM4a": 7063,
+      "durationMs": 518,
+      "hash": "e0529a746e44c13c"
+    },
+    "わたし": {
+      "bytes": 5887,
+      "bytesM4a": 9206,
+      "durationMs": 678,
+      "hash": "de9be6b0b027763e"
+    },
+    "アメリカ": {
+      "bytes": 7091,
+      "bytesM4a": 12407,
+      "durationMs": 774,
+      "hash": "2647c4b8979916c9"
+    },
+    "イタリア": {
+      "bytes": 6796,
+      "bytesM4a": 11814,
+      "durationMs": 732,
+      "hash": "c33d56b2765f6a79"
+    },
+    "インド": {
+      "bytes": 5708,
+      "bytesM4a": 9564,
+      "durationMs": 657,
+      "hash": "c5ac64a5449ef608"
+    },
+    "インドネシア": {
+      "bytes": 8814,
+      "bytesM4a": 15454,
+      "durationMs": 977,
+      "hash": "f2883157f9d62b6e"
+    },
+    "ウェイトレス": {
+      "bytes": 7380,
+      "bytesM4a": 12404,
+      "durationMs": 860,
+      "hash": "50c2decace8c8605"
+    },
+    "エアコン": {
+      "bytes": 6829,
+      "bytesM4a": 10597,
+      "durationMs": 764,
+      "hash": "3d58a678863b88ae"
+    },
+    "エンジニア": {
+      "bytes": 7761,
+      "bytesM4a": 13192,
+      "durationMs": 817,
+      "hash": "8415b4e7f708cbc4"
+    },
+    "カラオケ": {
+      "bytes": 7211,
+      "bytesM4a": 12106,
+      "durationMs": 828,
+      "hash": "22a905fb8070c76d"
+    },
+    "グローバル": {
+      "bytes": 7298,
+      "bytesM4a": 11278,
+      "durationMs": 785,
+      "hash": "b6569c289017b996"
+    },
+    "コーヒー": {
+      "bytes": 6558,
+      "bytesM4a": 9594,
+      "durationMs": 753,
+      "hash": "91af7c53cf2abd47"
+    },
+    "サイズ": {
+      "bytes": 6711,
+      "bytesM4a": 10553,
+      "durationMs": 753,
+      "hash": "a889191e1e8a4e72"
+    },
+    "サラリーマン": {
+      "bytes": 8542,
+      "bytesM4a": 13823,
+      "durationMs": 966,
+      "hash": "48a00182d3e926fe"
+    },
+    "サンドイッチ": {
+      "bytes": 10011,
+      "bytesM4a": 15388,
+      "durationMs": 1137,
+      "hash": "7b3069c2c5273fa4"
+    },
+    "シャワー": {
+      "bytes": 5985,
+      "bytesM4a": 9186,
+      "durationMs": 710,
+      "hash": "c9303e8056aba58c"
+    },
+    "スキー": {
+      "bytes": 6422,
+      "bytesM4a": 9893,
+      "durationMs": 657,
+      "hash": "0e0c1d179f410fd0"
+    },
+    "センチ": {
+      "bytes": 7725,
+      "bytesM4a": 11529,
+      "durationMs": 849,
+      "hash": "17528e4522f0d11f"
+    },
+    "タイ": {
+      "bytes": 4471,
+      "bytesM4a": 6419,
+      "durationMs": 508,
+      "hash": "5349a079e7c2d482"
+    },
+    "テスト": {
+      "bytes": 5861,
+      "bytesM4a": 9114,
+      "durationMs": 668,
+      "hash": "491f3e780cd37471"
+    },
+    "デザイナー": {
+      "bytes": 7154,
+      "bytesM4a": 10905,
+      "durationMs": 828,
+      "hash": "7a7cd1bac7fdfa10"
+    },
+    "トイレ": {
+      "bytes": 5743,
+      "bytesM4a": 9122,
+      "durationMs": 678,
+      "hash": "d4e68ebad0be1a6b"
+    },
+    "ドア": {
+      "bytes": 4402,
+      "bytesM4a": 6316,
+      "durationMs": 550,
+      "hash": "a0ab437312980b19"
+    },
+    "ドイツ": {
+      "bytes": 5686,
+      "bytesM4a": 9360,
+      "durationMs": 700,
+      "hash": "ffb2036e61f99a84"
+    },
+    "ドル": {
+      "bytes": 4206,
+      "bytesM4a": 6571,
+      "durationMs": 508,
+      "hash": "7ef8eb26a69129ce"
+    },
+    "ノート": {
+      "bytes": 6264,
+      "bytesM4a": 9157,
+      "durationMs": 700,
+      "hash": "489fa1aabac8a822"
+    },
+    "ハンカチ": {
+      "bytes": 7359,
+      "bytesM4a": 12025,
+      "durationMs": 870,
+      "hash": "a716267e5bb3537a"
+    },
+    "パソコン": {
+      "bytes": 6915,
+      "bytesM4a": 10334,
+      "durationMs": 796,
+      "hash": "a52dc950788a6779"
+    },
+    "ピンク": {
+      "bytes": 5903,
+      "bytesM4a": 9719,
+      "durationMs": 700,
+      "hash": "d53faa04ec147b85"
+    },
+    "フランス": {
+      "bytes": 7042,
+      "bytesM4a": 11484,
+      "durationMs": 796,
+      "hash": "e0932c73b6273ad6"
+    },
+    "ホテル": {
+      "bytes": 5557,
+      "bytesM4a": 8806,
+      "durationMs": 593,
+      "hash": "a32c8691c97dd892"
+    },
+    "ミス": {
+      "bytes": 4964,
+      "bytesM4a": 8090,
+      "durationMs": 582,
+      "hash": "c2267089f6403858"
+    },
+    "ヨーロッパ": {
+      "bytes": 7719,
+      "bytesM4a": 12795,
+      "durationMs": 860,
+      "hash": "c477b6d171c1c63e"
+    },
+    "ラジオ": {
+      "bytes": 6509,
+      "bytesM4a": 10162,
+      "durationMs": 721,
+      "hash": "7ef5a2e57a1f2b47"
+    },
+    "レンタルショップ": {
+      "bytes": 10122,
+      "bytesM4a": 16533,
+      "durationMs": 1105,
+      "hash": "62762aaa25bc0d1a"
+    },
+    "～かい": {
+      "bytes": 4393,
+      "bytesM4a": 7065,
+      "durationMs": 518,
+      "hash": "92271f552f9cbda1"
+    }
+  }
+}
