@@ -21,11 +21,21 @@ class FakeAudio {
   currentTime = 0;
   preload = '';
   onerror: (() => void) | null = null;
+  /** registered media-event listeners (mirrors the real element API). */
+  private listeners = new Map<string, Array<() => void>>();
   constructor(src: string) {
     this.src = src;
     FakeAudio.instances.push(this);
   }
-  addEventListener() {}
+  addEventListener(kind: string, cb: () => void) {
+    const arr = this.listeners.get(kind) ?? [];
+    arr.push(cb);
+    this.listeners.set(kind, arr);
+  }
+  /** test hook — fire the listeners of one media event. */
+  emit(kind: string) {
+    for (const cb of this.listeners.get(kind) ?? []) cb();
+  }
   load() {}
   play() {
     this.paused = false;
@@ -70,8 +80,9 @@ describe('audio client cache — Addendum-3 §10', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     // jsdom FakeAudio: force the error-listener path via a broken constructor
     class BrokenAudio extends FakeAudio {
-      override addEventListener(kind: string, cb?: () => void) {
-        if (kind === 'error') cb?.();
+      override addEventListener(kind: string, cb: () => void) {
+        super.addEventListener(kind, cb);
+        if (kind === 'error') cb(); // the asset fails to load immediately
       }
     }
     vi.stubGlobal('Audio', BrokenAudio);
