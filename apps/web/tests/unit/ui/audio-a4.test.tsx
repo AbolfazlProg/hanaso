@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 /**
  * HANASO — Addendum-4 unit tests (TASK-LEARNING-08 #117 addendum 4).
  *

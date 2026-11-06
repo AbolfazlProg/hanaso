@@ -679,7 +679,7 @@ describe('KanaCard v4 — Addendum-2 final correction (§1 success sample · §2
     // the two REQUIRED credits stay (license obligations — never removed)
     expect(text).toContain('KanjiVG');
     expect(text).toContain('CC BY-SA 3.0');
-    expect(text).toContain('VOICEVOX:春日部つむぎ');
+    expect(text).toContain('VOICEVOX:冥鳴ひまり');
     expect(details!.querySelector('a[href="/writing-data/licenses/README-KanjiVG.md"]')).not.toBeNull();
     // the privacy sentence and the technical romaji line moved out (A3 §12)
     expect(text).not.toContain('مسیر قلم شما هرگز');
