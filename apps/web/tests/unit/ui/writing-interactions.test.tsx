@@ -233,7 +233,7 @@ const KANA_A: KanaItem = {
 
 describe('KanaCard v3 — the staged experience end-to-end', () => {
   it('starts at encounter with the glyph ALONE, its sound button and the CTA', async () => {
-    const { container, findByRole } = render(
+    const { container } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/audio/kana/kn-hira-a.opus', m4a: '/x.m4a' }} />,
     );
     expect(await findByRole('button', { name: /بگذار یاد بگیرمش/ })).toBeTruthy();
@@ -331,7 +331,7 @@ describe('KanaCard v3 — the staged experience end-to-end', () => {
   });
 
   it('shows precise Persian feedback on a wrong stroke (not a vague «اشتباه»)', async () => {
-    const { container, findByRole } = render(
+    const { container } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={null} initialProgress={{ stage: 'guided' }} />,
     );
     const svg = await waitFor(() => {

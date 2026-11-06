@@ -26,7 +26,7 @@
  *
  * Run: node scripts/build-kana-writing-data.mjs   (chained into `pnpm build`)
  */
-import { mkdirSync, readFileSync, readdirSync, writeFileSync, rmSync, copyFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, rmSync, copyFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
