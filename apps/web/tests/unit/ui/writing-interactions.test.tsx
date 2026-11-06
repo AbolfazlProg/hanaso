@@ -233,7 +233,7 @@ const KANA_A: KanaItem = {
 
 describe('KanaCard v3 — the staged experience end-to-end', () => {
   it('starts at encounter with the glyph ALONE, its sound button and the CTA', async () => {
-    const { container } = render(
+    const { container, findByRole } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/audio/kana/kn-hira-a.opus', m4a: '/x.m4a' }} />,
     );
     expect(await findByRole('button', { name: /بگذار یاد بگیرمش/ })).toBeTruthy();
