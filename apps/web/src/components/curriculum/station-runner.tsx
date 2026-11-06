@@ -871,6 +871,7 @@ function BlockView({
       }
       return (
         <KanaCard
+          key={block.id}
           kana={kana}
           showRomaji={block.showRomaji}
           confusableNoteFa={block.confusableNoteFa}
@@ -1080,6 +1081,7 @@ function BlockView({
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <ExerciseSession
+            key={block.id}
             chapterSlug={chapterSlug}
             stationSlug={stationSlug}
             exercises={items}
