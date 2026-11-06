@@ -24,20 +24,20 @@
 
 ## ۳. فایل‌ها و بخش‌های کد تغییرکرده (کل مأموریت)
 
-| فایل | تغییر |
-| --- | --- |
-| `apps/web/src/modules/curriculum/content/kana-teaching.ts` | جدید — لایهٔ آموزشی ۹۲ کانا (audioRef + تلفظ فارسی + نکته + strokeHint + یادسپار story/pattern + pairHint) |
-| `apps/web/src/components/curriculum/kana-card.tsx` | بازنویسی — کارت v2 صدا-اول + LineAudioButton + جفت side-by-side + نوشتن درون‌کارت |
-| `apps/web/src/modules/curriculum/content/chapter-kana01.stations.ts` | codemod — بلوک writing در ۲۳ ایستگاه به قبل از آخرین exercise |
-| `apps/web/src/components/curriculum/station-runner.tsx` | Auto-next متمرکز/race-safe + restore gate + fire «enter» در mount |
-| `apps/web/src/components/curriculum/exercise-session.tsx` | جریان پاسخ + «مرحلهٔ قبل» + پنل تمرین انجام‌شده |
-| `apps/web/src/components/curriculum/journey-map.tsx` | ماسک SVG مسیر (سوراخ دایره‌ای radius+14px per waypoint) |
-| `apps/web/src/lib/learner/identity.ts` | هویت زبان‌آموز per-browser (localStorage + کوکی `hanaso_lid`) |
-| `apps/web/src/modules/curriculum/walk-persistence.ts` | snapshot محلی per (learner, chapter, station) + لنگر سروری currentBlock |
-| `apps/web/src/app/api/curriculum/station/route.ts` | resolveLearnerId/FromRequest (پایان poc-user مشترک به‌عنوان مسیر پیش‌فرض) |
-| `apps/web/public/audio/kana/*` + `audio/dialogues/*` | ۹۲ صوت کانا + ۳ خط خوش‌آمد (opus+m4a، VOICEVOX از پیش تولیدشده) |
-| `apps/web/tests/*` | +۲۰ تست (learner-identity · walk-persistence · API · integration walk-position) |
-| `agent-ctx/tl08-shots/` + `tl08-shots-prod/` | شواهد بازتولید محلی + شواهد production |
+| فایل                                                                 | تغییر                                                                                                      |
+| -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `apps/web/src/modules/curriculum/content/kana-teaching.ts`           | جدید — لایهٔ آموزشی ۹۲ کانا (audioRef + تلفظ فارسی + نکته + strokeHint + یادسپار story/pattern + pairHint) |
+| `apps/web/src/components/curriculum/kana-card.tsx`                   | بازنویسی — کارت v2 صدا-اول + LineAudioButton + جفت side-by-side + نوشتن درون‌کارت                          |
+| `apps/web/src/modules/curriculum/content/chapter-kana01.stations.ts` | codemod — بلوک writing در ۲۳ ایستگاه به قبل از آخرین exercise                                              |
+| `apps/web/src/components/curriculum/station-runner.tsx`              | Auto-next متمرکز/race-safe + restore gate + fire «enter» در mount                                          |
+| `apps/web/src/components/curriculum/exercise-session.tsx`            | جریان پاسخ + «مرحلهٔ قبل» + پنل تمرین انجام‌شده                                                            |
+| `apps/web/src/components/curriculum/journey-map.tsx`                 | ماسک SVG مسیر (سوراخ دایره‌ای radius+14px per waypoint)                                                    |
+| `apps/web/src/lib/learner/identity.ts`                               | هویت زبان‌آموز per-browser (localStorage + کوکی `hanaso_lid`)                                              |
+| `apps/web/src/modules/curriculum/walk-persistence.ts`                | snapshot محلی per (learner, chapter, station) + لنگر سروری currentBlock                                    |
+| `apps/web/src/app/api/curriculum/station/route.ts`                   | resolveLearnerId/FromRequest (پایان poc-user مشترک به‌عنوان مسیر پیش‌فرض)                                  |
+| `apps/web/public/audio/kana/*` + `audio/dialogues/*`                 | ۹۲ صوت کانا + ۳ خط خوش‌آمد (opus+m4a، VOICEVOX از پیش تولیدشده)                                            |
+| `apps/web/tests/*`                                                   | +۲۰ تست (learner-identity · walk-persistence · API · integration walk-position)                            |
+| `agent-ctx/tl08-shots/` + `tl08-shots-prod/`                         | شواهد بازتولید محلی + شواهد production                                                                     |
 
 ## ۴. وضعیت کیفیت آموزش کاراکترها (WP-2)
 
@@ -45,7 +45,7 @@
 
 ## ۵. وضعیت یادسپارها و صوت (WP-3)
 
-- **یادسپارها:** ۹۲ رکورد بازنویسی (style=story/pattern + pairHint) — مثال زندهٔ あ: «حرف A لاتین است که یک قلاب از وسطش آویزان‌انداده‌اند…». برچسب صادق «پیش‌نویس — در بازبینی انسانی» در UI (گیت OQ-051). 
+- **یادسپارها:** ۹۲ رکورد بازنویسی (style=story/pattern + pairHint) — مثال زندهٔ あ: «حرف A لاتین است که یک قلاب از وسطش آویزان‌انداده‌اند…». برچسب صادق «پیش‌نویس — در بازبینی انسانی» در UI (گیت OQ-051).
 - **صوت:** ۹۲ فایل کانا (تک‌مورا، ۴۳۳–۶۶۸ms) + ۳ خط خوش‌آمد — همگی **از پیش تولیدشده** (VOICEVOX روی VPS، بدون TTS زنده) با hash binding گیت fidelity. **پخش از production راستی‌آزمایی شد** (۲۰۰/۲۰۶ استریم).
 
 ## ۶. وضعیت استفاده از Drawing در آموزش (WP-4)
@@ -59,12 +59,12 @@
 
 ## ۸. نتیجهٔ تست‌های ذخیره و بازیابی پیشرفت (WP-5)
 
-| سناریو | نتیجه |
-| --- | --- |
-| Refresh وسط ایستگاه | ✅ بنر «از همان‌جا ادامه دادی» + بازگشت به همان پرسش (۴/۱۱، う) — production |
-| Back مرورگر → نقشه → ورود مجدد | ✅ ایستگاه «در جریان» روی نقشه + resume دقیق همان موقعیت — production |
-| بسته/بازکردن، خروج، آفلاین+بازگشت، مرور درس قبلی | ✅ ۶ سناریو E2E محلی (CP-02) |
-| هویت زبان‌آموز | ✅ per-browser (`hanaso.learnerId.v1` + کوکی) — production؛ ‏#109 به راه‌حل نهایی Auth (M1) منتقل شد |
+| سناریو                                           | نتیجه                                                                                                |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Refresh وسط ایستگاه                              | ✅ بنر «از همان‌جا ادامه دادی» + بازگشت به همان پرسش (۴/۱۱، う) — production                         |
+| Back مرورگر → نقشه → ورود مجدد                   | ✅ ایستگاه «در جریان» روی نقشه + resume دقیق همان موقعیت — production                                |
+| بسته/بازکردن، خروج، آفلاین+بازگشت، مرور درس قبلی | ✅ ۶ سناریو E2E محلی (CP-02)                                                                         |
+| هویت زبان‌آموز                                   | ✅ per-browser (`hanaso.learnerId.v1` + کوکی) — production؛ ‏#109 به راه‌حل نهایی Auth (M1) منتقل شد |
 
 ## ۹. نتیجهٔ تست اصلاح نقشه (WP-6)
 
@@ -84,13 +84,13 @@ vitest ۳۲۴ ✓ · eqa ۳۷ ✓ · tsc ✓ · eslint ۰ ✓ · build ✓ · **
 
 ## ۱۳. مشکلات حل‌نشده و کارهای باقی‌مانده
 
-| قلم | وضعیت | اقدام بعدی |
-| --- | --- | --- |
-| بازبینی انسانی یادسپارها | ۹۲ رکورد pilot/draft (برچسب صادق در UI) | مالک — OQ-051 |
-| ادغام PR #115 | باز و clean | مالک — بازبینی + merge |
-| word-audio فصل ۰۲ | بدون دارایی (خارج از دامنهٔ کانا) | مأموریت صدای واژگان L2 |
-| #109 احراز هویت واقعی | کاهش‌یافته با هویت per-browser | راه‌حل Auth در M1 |
-| یادسپار ۸ گلیف بدون واژهٔ میزبان جزوه (T-76) | ثبت‌شده در KB | تکمیل واژهٔ میزبان با بازبینی انسانی |
+| قلم                                          | وضعیت                                   | اقدام بعدی                           |
+| -------------------------------------------- | --------------------------------------- | ------------------------------------ |
+| بازبینی انسانی یادسپارها                     | ۹۲ رکورد pilot/draft (برچسب صادق در UI) | مالک — OQ-051                        |
+| ادغام PR #115                                | باز و clean                             | مالک — بازبینی + merge               |
+| word-audio فصل ۰۲                            | بدون دارایی (خارج از دامنهٔ کانا)       | مأموریت صدای واژگان L2               |
+| #109 احراز هویت واقعی                        | کاهش‌یافته با هویت per-browser          | راه‌حل Auth در M1                    |
+| یادسپار ۸ گلیف بدون واژهٔ میزبان جزوه (T-76) | ثبت‌شده در KB                           | تکمیل واژهٔ میزبان با بازبینی انسانی |
 
 ## ۱۴. مسیر آخرین Checkpoint و دستور ادامه برای Agent بعدی
 
