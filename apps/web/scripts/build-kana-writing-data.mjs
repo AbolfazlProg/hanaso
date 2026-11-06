@@ -230,7 +230,10 @@ for (const ch of [...chars].sort()) {
 writeFileSync(path.join(outDir, 'index.json'), `${JSON.stringify(index, null, 2)}\n`);
 
 // license obligations travel with the derived data (CC BY-SA 3.0 ShareAlike)
-copyFileSync(path.join(vendorDir, 'LICENSE-CC-BY-SA-3.0.txt'), path.join(outDir, 'licenses', 'LICENSE-CC-BY-SA-3.0.txt'));
+copyFileSync(
+  path.join(vendorDir, 'LICENSE-CC-BY-SA-3.0.txt'),
+  path.join(outDir, 'licenses', 'LICENSE-CC-BY-SA-3.0.txt'),
+);
 copyFileSync(path.join(vendorDir, 'README.md'), path.join(outDir, 'licenses', 'README-KanjiVG.md'));
 
 console.log(`writing-data: ${Object.keys(index.chars).length} chars rebuilt from KanjiVG (centerline-v2)`);
