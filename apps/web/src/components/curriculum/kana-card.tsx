@@ -46,6 +46,7 @@ import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { loadWritingCharData, writingAvailability, type WritingCharData } from '@/modules/writing';
 import { strokeInfoFa, type StrokeInfoFa } from '@/modules/writing/render';
 import type { StrokeJudgement, WritingAttemptState } from '@/modules/writing/engine';
+import { createAttemptState } from '@/modules/writing/engine';
 import { useAudioToggle } from '@/modules/audio/toggle-playback';
 import { EXPERIENCE } from '@/config/experience';
 
@@ -198,31 +199,45 @@ export function KanaCard({
     setStage('ready');
   }, [playOnce]);
 
+  /**
+   * Addendum-4 §3/§5 — ONE helper for EVERY practice (re)start: bumps the
+   * canvas restart, hands the PARENT a fresh attempt too (the old attempt used
+   * to leak the PREVIOUS practice's last stroke into the new stage's panel and
+   * progress dots), clears the feedback, then switches the stage. No stage
+   * transition ever re-runs the teaching animation.
+   */
+  const beginPractice = useCallback(
+    (next: 'guided' | 'free') => {
+      attemptStartRef.current = Date.now();
+      setFeedback(null);
+      setRestartSignal((n) => n + 1);
+      setAttempt(createAttemptState(kana.glyph)); // fresh — no stale stroke info
+      setStage(next);
+    },
+    [kana.glyph],
+  );
+
   /** «فهمیدم، شروع کنیم» → guided practice in the SAME canvas. */
-  const startPractice = useCallback(() => {
-    attemptStartRef.current = Date.now();
-    setFeedback(null);
-    setRestartSignal((n) => n + 1);
-    setStage('guided');
-  }, []);
+  const startPractice = useCallback(() => beginPractice('guided'), [beginPractice]);
 
   /**
    * Addendum-3 §2 — «تکرار آموزش»: replay the numbered animation from the
    * first stroke IN PLACE. NEVER resets the page, the lesson or the attempt —
    * in the intro stage it simply restarts the intro pass; later stages run a
    * canvas replay. Rapid clicks are absorbed (disabled while running).
+   * Addendum-4 §2/§6: the replay's audio is an AUTOMATIC moment — normal
+   * speed, never consuming the learner's click cycle.
    */
   const replayTeaching = useCallback(() => {
     if (replayRunning) return; // §2 rapid-click guard
     setDemoStroke(-1);
+    sound.playNormal();
     if (stage === 'intro') {
       setRestartSignal((n) => n + 1);
-      sound.toggle(); // the sound replays with the teaching order (§2)
       return;
     }
     setReplayRunning(true);
     setReplaySignal((n) => n + 1);
-    sound.toggle();
   }, [replayRunning, sound, stage]);
 
   const onReplayDone = useCallback(() => {
@@ -264,13 +279,8 @@ export function KanaCard({
     // Addendum-2 §2 (kept): the review beat — the completed standard glyph
     // rests (§13 already replaced every stroke with its precise form), then
     // the free attempt starts on its own.
-    beat(() => {
-      attemptStartRef.current = Date.now();
-      setFeedback(null);
-      setRestartSignal((n) => n + 1);
-      setStage('free');
-    }, EXPERIENCE.kanaReviewPauseMs);
-  }, [beat, reportAttempt]);
+    beat(() => beginPractice('free'), EXPERIENCE.kanaReviewPauseMs);
+  }, [beat, beginPractice, reportAttempt]);
 
   const onFreeComplete = useCallback(() => {
     reportAttempt('free');
@@ -428,25 +438,50 @@ export function KanaCard({
               </span>
             </div>
           ) : null}
-          {stage === 'intro' ? (
-            <p className="mt-2 text-center text-caption text-ink-faint">{fa.curriculum.kanaStageIntroHint}</p>
-          ) : null}
-          {/* Addendum-2 §4 (kept): the ONE interactive stop — after the
-              teaching pass, the user confirms readiness; everything after
-              this click is automatic. */}
-          {stage === 'ready' ? (
-            <div className="mt-2 flex flex-col items-center gap-2">
-              <p className="text-center text-caption text-ink-soft">{fa.curriculum.kanaStageReadyHint}</p>
-              <button
-                type="button"
-                onClick={startPractice}
-                className="min-h-11 rounded-md bg-ai px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-                data-ready-cta
-              >
-                {fa.curriculum.kanaStageReadyCta}
-              </button>
-            </div>
-          ) : null}
+          {/* Addendum-4 §3 — THE action slot: ONE fixed-height area under the
+              canvas. Only its CONTENT swaps with the stage (hint → CTA →
+              practice hints → done) — the layout never jumps, the canvas never
+              moves, and the CTA is a REAL button. */}
+          <div
+            className="mt-2 flex min-h-[6.5rem] w-full flex-col items-center justify-start gap-2 text-center"
+            data-stage-action={stage}
+          >
+            {stage === 'intro' ? (
+              <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-faint">
+                {fa.curriculum.kanaStageIntroHint}
+              </p>
+            ) : null}
+            {stage === 'ready' ? (
+              <>
+                <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
+                  {fa.curriculum.kanaStageReadyHint}
+                </p>
+                {/* Addendum-2 §4 (kept): the ONE interactive stop. Addendum-4 §3:
+                    it must LOOK and FEEL like a real primary button. */}
+                <button
+                  type="button"
+                  onClick={startPractice}
+                  className="min-h-12 cursor-pointer rounded-md bg-ai px-8 text-lead font-bold text-paper shadow-card transition-all hover:bg-indigo-deep hover:shadow-card active:translate-y-0.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+                  data-ready-cta
+                >
+                  {fa.curriculum.kanaStageReadyCta}
+                </button>
+              </>
+            ) : null}
+            {stage === 'guided' ? (
+              <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
+                {fa.curriculum.kanaStageGuidedHint}
+              </p>
+            ) : null}
+            {stage === 'free' ? (
+              <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
+                {fa.curriculum.kanaStageFreeHint}
+              </p>
+            ) : null}
+            {stage === 'done' ? (
+              <p className="max-w-xl text-caption font-bold text-success">{fa.curriculum.kanaStageDoneHint}</p>
+            ) : null}
+          </div>
 
           {/* §8 — the reading: Persian LEADS (big, bold), Latin is the small
               complement right beside it — for EVERY kana, uniformly. */}
@@ -525,35 +560,120 @@ export function KanaCard({
           ) : null}
         </div>
 
-        {/* teaching column — what the teacher says AROUND the notebook (§4) */}
+        {/* teaching column — Addendum-4 §3: every slot is ALWAYS present in the
+            SAME order for every kana; only the CONTENT follows the stage. No
+            box ever appears from nowhere or disappears mid-flow. */}
         <div className="w-full max-w-[24rem] space-y-3 lg:max-w-[22rem]" dir="rtl">
-          {/* live stroke narration — during the teaching pass AND practice */}
-          {showingTeaching || inPractice ? (
-            strokeInfo ? (
-              <div
-                className="rounded-md border border-ai/40 bg-indigo-wash/40 p-4 transition-colors"
-                data-stroke-info={strokeInfo.label}
-              >
-                <p className="text-body font-bold text-ink">{strokeInfo.label}</p>
-                <p className="mt-2 text-small text-ink">{strokeInfo.startFa}</p>
-                <p className="mt-1 text-small text-ink">{strokeInfo.directionFa}</p>
-                <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-soft">{strokeInfo.movementFa}</p>
-              </div>
-            ) : (
-              <p className="text-small text-ink-faint">{fa.common.loading}</p>
-            )
-          ) : null}
-
-          {/* live feedback (owner §6: precise, never vague) */}
-          {feedback && inPractice ? (
-            <p
-              role="status"
-              aria-live="polite"
-              className="rounded-md border border-shu/40 bg-surface-warm px-3 py-2 text-small leading-[var(--leading-fa)] text-ink"
-              data-writing-feedback
+          {/* ---- slot 1 — the stage panel ---- */}
+          {/* intro: the live stroke narration follows the teaching pass */}
+          {stage === 'intro' && strokeInfo ? (
+            <div
+              className="rounded-md border border-ai/40 bg-indigo-wash/40 p-4 transition-colors"
+              data-stroke-info={strokeInfo.label}
             >
-              {feedback}
-            </p>
+              <p className="text-body font-bold text-ink">{strokeInfo.label}</p>
+              <p className="mt-2 text-small text-ink">{strokeInfo.startFa}</p>
+              <p className="mt-1 text-small text-ink">{strokeInfo.directionFa}</p>
+              <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-soft">{strokeInfo.movementFa}</p>
+            </div>
+          ) : null}
+          {/* Addendum-4 §2/§3 — ready: the FULL stroke-order overview. This panel
+              is completely INDEPENDENT of «تکرار آموزش» — a replay re-runs the
+              animation inside the canvas only; nothing around it moves. */}
+          {stage === 'ready' && charData ? (
+            <div className="rounded-md border border-ai/40 bg-indigo-wash/40 p-4" data-stage-panel="order">
+              <p className="text-body font-bold text-ink">{fa.curriculum.kanaStageOrderTitle}</p>
+              <ol className="mt-2 space-y-1.5">
+                {charData.medians.map((_, i) => {
+                  const info = strokeInfoFa(charData, i);
+                  return (
+                    <li key={i} className="flex items-baseline gap-2 text-small leading-[var(--leading-fa)] text-ink">
+                      <span className="inline-grid size-6 shrink-0 place-items-center rounded-full border border-shu/60 bg-card text-caption font-bold text-shu-deep">
+                        {faNum(i + 1)}
+                      </span>
+                      <span>
+                        {info.startFa.replace(' شروع کن', '')} — {info.directionFa.replace(' بکش', '')}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+              <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-soft">
+                {fa.curriculum.kanaStageOrderRest}
+              </p>
+            </div>
+          ) : null}
+          {/* guided: the current stroke narration + live feedback INSIDE the same
+              panel (no separate box appearing on mistakes). */}
+          {stage === 'guided' && strokeInfo ? (
+            <div
+              className="rounded-md border border-ai/40 bg-indigo-wash/40 p-4 transition-colors"
+              data-stroke-info={strokeInfo.label}
+            >
+              <p className="text-body font-bold text-ink">{strokeInfo.label}</p>
+              <p className="mt-2 text-small text-ink">{strokeInfo.startFa}</p>
+              <p className="mt-1 text-small text-ink">{strokeInfo.directionFa}</p>
+              <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-soft">{strokeInfo.movementFa}</p>
+              {feedback ? (
+                <p
+                  role="status"
+                  aria-live="polite"
+                  className="mt-3 rounded-md border border-shu/40 bg-card px-3 py-2 text-small leading-[var(--leading-fa)] text-ink"
+                  data-writing-feedback
+                >
+                  {feedback}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+          {/* Addendum-4 §5 — free: a NEUTRAL panel. It never reveals the start
+              point, the direction or the movement — the learner decides alone;
+              guidance only on request (the help button) or after repeated
+              misses. */}
+          {stage === 'free' ? (
+            <div className="rounded-md border border-shu/40 bg-surface-warm p-4" data-stage-panel="memory">
+              <p className="text-body font-bold text-ink">{fa.curriculum.kanaStageFreeTitle}</p>
+              <p className="mt-2 text-small leading-[var(--leading-fa)] text-ink">{fa.curriculum.kanaStageMemoryHint}</p>
+              <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-faint">
+                {fa.curriculum.kanaStageMemoryHelp}
+              </p>
+              {feedback ? (
+                <p
+                  role="status"
+                  aria-live="polite"
+                  className="mt-3 rounded-md border border-shu/40 bg-card px-3 py-2 text-small leading-[var(--leading-fa)] text-ink"
+                  data-writing-feedback
+                >
+                  {feedback}
+                </p>
+              ) : null}
+              {/* free: the way back to guided practice (owner §6) — kept, inside
+                  the same panel so nothing new appears below. */}
+              <button
+                type="button"
+                onClick={() => beginPractice('guided')}
+                className="mt-3 min-h-10 w-fit cursor-pointer rounded-md border border-ink-faint bg-card px-4 text-caption font-bold text-ink transition-colors hover:bg-surface-warm"
+              >
+                {fa.curriculum.kanaStageBackToGuided}
+              </button>
+            </div>
+          ) : null}
+          {/* done — compact completion inside the same environment. */}
+          {stage === 'done' ? (
+            <div
+              role="status"
+              className="kana-reveal flex flex-col gap-3 rounded-md border border-success/50 bg-success/10 p-4"
+              data-stage-panel="done"
+            >
+              <p className="text-body font-bold text-success">{fa.curriculum.kanaStageFreeDone}</p>
+              <button
+                type="button"
+                onClick={() => beginPractice('free')}
+                className="min-h-10 w-fit cursor-pointer rounded-md border border-ink-faint bg-card px-4 text-caption font-bold text-ink transition-colors hover:bg-surface-warm"
+              >
+                {fa.curriculum.kanaStagePracticeAgain}
+              </button>
+            </div>
           ) : null}
 
           {/* §4 — the per-character writing tips (fine points of THIS glyph) */}
@@ -623,44 +743,6 @@ export function KanaCard({
           {!mn?.pairGlyphs && confusableNoteFa ? (
             <p className="kana-reveal kana-reveal-4 text-small text-ink-faint">{confusableNoteFa}</p>
           ) : null}
-
-          {/* free stage: the way back to guided practice (owner §6) */}
-          {stage === 'free' ? (
-            <button
-              type="button"
-              onClick={() => {
-                attemptStartRef.current = Date.now();
-                setFeedback(null);
-                setRestartSignal((n) => n + 1);
-                setStage('guided');
-              }}
-              className="min-h-10 rounded-md border border-ink-faint bg-card px-4 text-caption font-bold text-ink transition-colors hover:bg-surface-warm"
-            >
-              {fa.curriculum.kanaStageBackToGuided}
-            </button>
-          ) : null}
-
-          {/* done — compact completion inside the same environment */}
-          {stage === 'done' ? (
-            <div
-              role="status"
-              className="kana-reveal flex flex-col gap-3 rounded-md border border-success/50 bg-success/10 p-4"
-            >
-              <p className="text-body font-bold text-success">{fa.curriculum.kanaStageFreeDone}</p>
-              <button
-                type="button"
-                onClick={() => {
-                  attemptStartRef.current = Date.now();
-                  setFeedback(null);
-                  setRestartSignal((n) => n + 1);
-                  setStage('free');
-                }}
-                className="min-h-10 w-fit rounded-md border border-ink-faint bg-card px-4 text-caption font-bold text-ink transition-colors hover:bg-surface-warm"
-              >
-                {fa.curriculum.kanaStagePracticeAgain}
-              </button>
-            </div>
-          ) : null}
         </div>
       </div>
 
@@ -680,7 +762,7 @@ export function KanaCard({
           >
             مجوز
           </a>
-          {' · '}صدا: VOICEVOX:春日部つむぎ
+          {' · '}صدا: VOICEVOX:冥鳴ひまり
         </p>
       </details>
     </section>

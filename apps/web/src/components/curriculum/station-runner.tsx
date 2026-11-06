@@ -50,6 +50,7 @@ import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { KanaCard, normalizeKanaStage, type KanaCardProgress } from './kana-card';
+import { ExampleAudioButton } from './example-audio-button';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 import { loadWritingCharData, writingAvailability } from '@/modules/writing';
 import { preloadAudio } from '@/modules/audio/client-cache';
@@ -94,6 +95,14 @@ export interface StationRunnerProps {
    * hides its play control honestly.
    */
   hostWordAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
+  /**
+   * TASK-LEARNING-08 Addendum-4 §7: example word → its OWN audio pair from the
+   * SAME per-word registry (one asset per unique word — an example and a host
+   * word that are the same word share the word's asset, never another word's).
+   * Null = no committed asset; the example card hides its play control honestly
+   * (never a dead button, never a neighboring character/word sound).
+   */
+  exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
 }
 
 /** Grading round-trip for one block interaction. */
@@ -203,6 +212,7 @@ export function StationRunner(props: StationRunnerProps) {
     wordAudioByWord,
     kanaAudioByKanaId,
     hostWordAudioByKanaId,
+    exampleAudioByWord,
     chapterSlug,
   } = props;
   const router = useRouter();
@@ -448,6 +458,7 @@ export function StationRunner(props: StationRunnerProps) {
           wordAudioByWord={wordAudioByWord}
           kanaAudioByKanaId={kanaAudioByKanaId}
           hostWordAudioByKanaId={hostWordAudioByKanaId}
+          exampleAudioByWord={exampleAudioByWord}
           isLastBlock={step === blocks.length - 1}
           exerciseScore={block.kind === 'exercise' ? blockResult(blockResults, block.id) : null}
           exerciseInitialProgress={block.kind === 'exercise' ? exerciseProgress[block.id] : undefined}
@@ -751,6 +762,7 @@ function BlockView({
   wordAudioByWord,
   kanaAudioByKanaId,
   hostWordAudioByKanaId,
+  exampleAudioByWord,
   isLastBlock,
   exerciseScore,
   exerciseInitialProgress,
@@ -777,6 +789,8 @@ function BlockView({
   kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
   /** Addendum-3 §9: the host word's own audio pair (kanaId → opus+m4a | null). */
   hostWordAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
+  /** Addendum-4 §7: example word → its own audio pair (word → opus+m4a | null). */
+  exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
   /** True on the last authored block (drives the skip-panel CTA label). */
   isLastBlock: boolean;
   /**
@@ -1058,6 +1072,11 @@ function BlockView({
                   {roleLabel(example.role)}
                 </span>
                 {example.lineRef && <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>}
+                {/* Addendum-4 §7 — every example word gets its OWN playable
+                    audio (independent asset bound to THIS word; normal ⇄ slow
+                    cycle like every other teaching sound). No asset → no
+                    button (never dead, never misbound). */}
+                <ExampleAudioButton word={example.ja} urls={exampleAudioByWord?.[example.ja] ?? null} />
               </div>
               <JaBlock className="mt-3 text-lead font-bold">{example.ja}</JaBlock>
               {/* Addendum-2 §3: the reading caption is Persian now — dir=auto keeps

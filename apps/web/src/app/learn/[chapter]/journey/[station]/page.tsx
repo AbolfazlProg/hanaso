@@ -93,6 +93,17 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
       hostWordAudioByKanaId[block.kanaId] = hostWord ? hostWordAudioUrls(hostWord.word) : null;
     }
   }
+  // TASK-LEARNING-08 Addendum-4 §7: EVERY example word in this station's
+  // example-set blocks gets its OWN playable audio from the SAME per-word
+  // registry (one asset per unique word, bound by the word itself). Null = no
+  // committed asset → the example card renders NO play control (honest — never
+  // a dead button and never another character/word's sound).
+  const exampleAudioByWord: Record<string, { opus: string; m4a: string } | null> = {};
+  for (const block of station.blocks) {
+    if (block.kind === 'example-set') {
+      for (const ex of block.examples) exampleAudioByWord[ex.ja] = hostWordAudioUrls(ex.ja);
+    }
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-6">
@@ -143,6 +154,7 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
           wordAudioByWord={wordAudioByWord}
           kanaAudioByKanaId={kanaAudioByKanaId}
           hostWordAudioByKanaId={hostWordAudioByKanaId}
+          exampleAudioByWord={exampleAudioByWord}
         />
       </div>
     </main>

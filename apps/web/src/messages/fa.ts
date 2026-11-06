@@ -166,6 +166,17 @@ export const fa = {
     kanaStageStrokeProgress: 'پیشرفت ضربه‌ها',
     kanaStageAudioOnce: 'هر وقت خواستی دوباره پخش کن.',
     kanaReplayTeaching: 'تکرار آموزش',
+    /* TASK-LEARNING-08 Addendum-4 — §3 stable action slot + §5 neutral free panel */
+    kanaStageGuidedHint:
+      'ضربه‌ها را روی راهنمای نقطه‌چین بکش — بعد از هر ضربهٔ درست، همان ضربه با شکل استانداردش جوهری می‌شود.',
+    kanaStageFreeHint: 'حالا از حافظه بنویس — اگر جایی گیر کردی، دکمهٔ «راهنما» همین‌جا بالای صفحه است.',
+    kanaStageDoneHint: 'تمرین کامل شد — فرم استاندارد و شمارهٔ ضربه‌ها بالاست؛ مسیر خودش ادامه می‌یابد.',
+    kanaStageOrderTitle: 'ترتیب ضربه‌ها',
+    kanaStageOrderRest:
+      'فرم کامل و شمارهٔ هر ضربه بالاست — با «تکرار آموزش» می‌توانی دوباره تماشایش کنی.',
+    kanaStageMemoryHint: 'از خودت تصمیم بگیر از کجا و چطور شروع کنی؛ سیستم چیزی را لو نمی‌دهد.',
+    kanaStageMemoryHelp:
+      'راهنما خواستی؟ دکمهٔ «راهنما» را بزن — بعد از چند اشتباه هم خودش کمکت می‌کند.',
     kanaStageChipIntro: 'آموزش',
     kanaStageChipDemo: 'نمایش نوشتن',
     kanaStageChipExplain: 'توضیح',
@@ -180,6 +191,9 @@ export const fa = {
     kanaSpeedLabel: 'سرعت پخش',
     kanaWordAudioLabel: (word: string) => `پخش صدای واژهٔ ${word}`,
     kanaWordAudioPending: 'صدای این واژه هنوز تولید نشده.',
+    /* TASK-LEARNING-08 Addendum-4 §7 — example-word audio (example-set blocks) */
+    kanaExampleAudioLabel: (word: string) => `پخش صدای مثالِ ${word}`,
+    kanaExampleAudioNone: 'صدای این مثال هنوز تولید نشده.',
     kanaWritingTipTitle: 'نکات نوشتن',
     unitProgress: 'بخش',
     islandMap: 'جزایر فصل',

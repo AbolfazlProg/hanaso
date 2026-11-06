@@ -317,6 +317,16 @@ export function ExerciseSession({
                 ),
               )}
             </JaBlock>
+          ) : ex.type === 'kana-recognition' ? (
+            /* Addendum-4 §4 — a reading-recognition question: the kana glyph IS
+               the question — the focal point, big and readable on mobile too
+               (was text-lead/18px — far too small for the subject of the
+               question). */
+            <span className="flex justify-center py-2" lang="ja" dir="ltr">
+              <JaBlock className="font-jp text-[clamp(3.25rem,14vw,5rem)] font-bold leading-[1.15] text-ink">
+                {ex.promptJa}
+              </JaBlock>
+            </span>
           ) : (
             <JaBlock className="text-lead">{ex.promptJa}</JaBlock>
           )}
@@ -545,6 +555,15 @@ export interface OptionRowProps {
   onSelect: (optionId: string) => void;
 }
 
+/**
+ * Addendum-4 §4 — an option that is nothing but a short kana string is a
+ * SHAPE the learner must recognize (kana-recall «کانای «آ» کدام است؟») — render
+ * it as a glyph (font-jp, h2, bold), never as 16px body text. Words/sentences
+ * and Persian labels keep the uniform radio look (SKL-004 §۶).
+ */
+const KANA_OPTION_RE = /^[\u3040-\u30ff\u31f0-\u31ff]+$/;
+const isKanaGlyphOption = (label: string): boolean => KANA_OPTION_RE.test(label) && label.length <= 4;
+
 /** The select row — uniform radios (SKL-004 §۶) with #106 F2 elimination states. */
 export function OptionRow({ options, selected, eliminated, locked, onSelect }: OptionRowProps) {
   return (
@@ -572,7 +591,15 @@ export function OptionRow({ options, selected, eliminated, locked, onSelect }: O
                   : 'border-ink-faint bg-card text-ink hover:border-ai',
             ].join(' ')}
           >
-            <span dir="auto" className={isEliminated ? 'line-through' : undefined}>
+            <span
+              dir="auto"
+              className={[
+                isEliminated ? 'line-through' : undefined,
+                isKanaGlyphOption(opt.label) ? 'font-jp text-h2 font-bold' : undefined,
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
               {opt.label}
             </span>
             {isEliminated && (

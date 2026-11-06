@@ -23,6 +23,8 @@
  * Addendum-3 §2 — «تکرار آموزش»: `replaySignal` re-runs the numbered teaching
  * animation IN PLACE (audio + narration synced by the parent) for ANY stage —
  * no page reset, no lesson reset, no state loss; rapid clicks are absorbed.
+ * Addendum-4 §1 — when a replay (or the first pass) finishes, the finished form
+ * rests at FULL ink strength in the same canvas: the strokes never fade away.
  *
  * Repeatability contract (#117 §2/§10): restarts, rapid mode switches and
  * mid-draw exits are cancelled by generation token — no promise survives its
@@ -166,8 +168,22 @@ function StandardStrokePath({ d, index }: { d: string; index: number }) {
   );
 }
 
-/** A finished glyph resting while the stage holds (reference ink). */
-function ReferenceGlyph({ charData, opacity = 0.3 }: { charData: WritingCharData; opacity?: number }) {
+/**
+ * Addendum-4 §1 — the finished glyph resting after the teaching pass (and after
+ * any replay): the FULL standard form stays on the paper — complete, clear,
+ * same ink width as the animation — NEVER a faint ghost that fades out. Small
+ * persistent stroke-number badges keep the stroke ORDER observable while the
+ * learner inspects the final form.
+ */
+function ReferenceGlyph({
+  charData,
+  medians,
+  opacity = 0.95,
+}: {
+  charData: WritingCharData;
+  medians: Point[][];
+  opacity?: number;
+}) {
   return (
     <>
       {charData.strokes.map((d, i) => (
@@ -181,8 +197,37 @@ function ReferenceGlyph({ charData, opacity = 0.3 }: { charData: WritingCharData
           strokeLinecap="round"
           strokeLinejoin="round"
           opacity={opacity}
+          data-ref-stroke={i}
         />
       ))}
+      {medians.map((median, i) => {
+        if (median.length < 2) return null;
+        const at = pointAt(median, 0.2);
+        return (
+          <g key={`ref-badge-${i}`} opacity={0.82} data-ref-badge={i}>
+            <circle
+              cx={at.x}
+              cy={at.y}
+              r={30}
+              fill="var(--color-paper)"
+              stroke="currentColor"
+              className="text-shu"
+              strokeWidth={4}
+            />
+            <text
+              x={at.x}
+              y={at.y + 11}
+              textAnchor="middle"
+              fontSize={34}
+              fontWeight={800}
+              fill="currentColor"
+              className="text-shu"
+            >
+              {faNum(i + 1)}
+            </text>
+          </g>
+        );
+      })}
     </>
   );
 }
@@ -566,8 +611,10 @@ export function WritingCanvas({
         strokeWidth={2}
       />
 
-      {/* reference: the finished glyph rests in soft ink (ready beat / done) */}
-      {practiceMode === 'reference' && <ReferenceGlyph charData={charData} opacity={0.3} />}
+      {/* reference: the finished glyph rests in FULL standard ink (Addendum-4
+          §1 — what the teaching pass drew STAYS: complete and clear, with the
+          small order badges; never a faint one-line ghost) */}
+      {practiceMode === 'reference' && <ReferenceGlyph charData={charData} medians={medians} />}
 
       {/* teaching pass: strokes revealed so far + the one flowing in now */}
       {isTeaching &&
