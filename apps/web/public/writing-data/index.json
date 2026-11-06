@@ -1,7 +1,9 @@
 {
+  "source": "KanjiVG r20260714 (CC BY-SA 3.0) — kanjivg.tagaini.net",
+  "format": "centerline-v2 (strokes = writing-direction centerlines in 1024×1024, y-down)",
   "chars": {
     "あ": {
-      "strokes": 4
+      "strokes": 3
     },
     "い": {
       "strokes": 2
@@ -13,7 +15,7 @@
       "strokes": 2
     },
     "お": {
-      "strokes": 4
+      "strokes": 3
     },
     "か": {
       "strokes": 3
@@ -37,7 +39,7 @@
       "strokes": 1
     },
     "す": {
-      "strokes": 3
+      "strokes": 2
     },
     "せ": {
       "strokes": 3
@@ -61,22 +63,22 @@
       "strokes": 2
     },
     "な": {
-      "strokes": 5
+      "strokes": 4
     },
     "に": {
       "strokes": 3
     },
     "ぬ": {
-      "strokes": 4
-    },
-    "ね": {
-      "strokes": 3
-    },
-    "の": {
       "strokes": 2
     },
+    "ね": {
+      "strokes": 2
+    },
+    "の": {
+      "strokes": 1
+    },
     "は": {
-      "strokes": 4
+      "strokes": 3
     },
     "ひ": {
       "strokes": 1
@@ -88,19 +90,19 @@
       "strokes": 1
     },
     "ほ": {
-      "strokes": 5
+      "strokes": 4
     },
     "ま": {
-      "strokes": 4
+      "strokes": 3
     },
     "み": {
-      "strokes": 3
+      "strokes": 2
     },
     "む": {
-      "strokes": 4
+      "strokes": 3
     },
     "め": {
-      "strokes": 3
+      "strokes": 2
     },
     "も": {
       "strokes": 3
@@ -112,7 +114,7 @@
       "strokes": 2
     },
     "よ": {
-      "strokes": 3
+      "strokes": 2
     },
     "ら": {
       "strokes": 2
@@ -121,7 +123,7 @@
       "strokes": 2
     },
     "る": {
-      "strokes": 2
+      "strokes": 1
     },
     "れ": {
       "strokes": 2

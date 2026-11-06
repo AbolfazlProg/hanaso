@@ -5,7 +5,7 @@
   "description": "HANASO web app — single deployable (Next.js 16 App Router, modular monolith per KB ADR-001)",
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/copy-writing-data.mjs && next build && node scripts/bundle-tools.mjs",
+    "build": "node scripts/build-kana-writing-data.mjs && next build && node scripts/bundle-tools.mjs",
     "build:next": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -44,7 +44,6 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@k1low/hanzi-writer-data-jp": "0.8.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "24.19.2",
     "@types/pg": "^8.15.6",
