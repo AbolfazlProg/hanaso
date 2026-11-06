@@ -1,0 +1,99 @@
+# گزارش نهایی TASK-LEARNING-08 — بازسازی تجربهٔ آموزش کانا
+
+> تاریخ: 2026-11-06 · اجرا: Z.ai (GLM) — Orchestrator + Builder
+> شاخه: `feat/learning-06-lesson-system` · PR #115 · Issue #116
+> نسخهٔ زنده: **https://learn.kotodama.ir** @ `a8654750f3e14ab014ad347b018dd89ecdfdb102`
+
+## ۱. کارهای انجام‌شده از قبل که حفظ شدند
+
+سشن قبلی (قطع‌شده در 2026-11-05 ~۲۲:۳۰ UTC) همهٔ کد مأموریت را کامل، commit و push کرده و حتی deploy کرده بود. این سشن **هیچ کدی را بازنویسی نکرد و دوباره deploy نکرد** — فقط وضعیت را از checkpoints/Git/production بازیابی و راستی‌آزمایی کرد:
+
+- WP-1 بازیابی و بازتولید (`749e4cc`) — شامل Issue #116 و شواهد tl08-shots/01..14
+- WP-5 هویت per-browser + پایداری + Auto-next (`bed7cdd`)
+- WP-2/3a کارت آموزش v2 + یادسپارها (`212a39c`)
+- WP-3b صداهای کانا (`cf74437`)
+- WP-6 ماسک نقشه (`a42fc08`) + چک‌پوینت CP-02 (`a2f7628`) + پرتیر (`a865475`)
+
+## ۲. کارهایی که پس از Resume تکمیل شدند
+
+1. **بازیابی کامل وضعیت** — از `ops/checkpoints/TASK-LEARNING-08/` + تاریخچهٔ Git/PR + وضعیت CI + health واقعی production؛ تطبیق داده شد و تناقضی یافت نشد.
+2. **تأیید CI** — رن #79 روی کامیت نهایی `a865475`: همهٔ جاب‌ها سبز، از جمله integration روی PostgreSQL 18 واقعی (۲۱ گام) و compose-smoke با دریل بکاپ — محدودیتِ «integration در sandbox ممکن نیست» (CP-02) در CI برطرف شد.
+3. **تأیید استقرار** — health واقعی: `commit: a865475…` · `env: production` · سرویس از ~۲۲:۳۲ UTC ۲۰۲۶-۱۱-۰۵ بالا (deploy در سشن قطع‌شده انجام شده بود).
+4. **راستی‌آزمایی زندهٔ A–F با مرورگر واقعی روی production** (بخش ۵) + شواهد تصویری `agent-ctx/tl08-shots-prod/`.
+5. **ثبت CP-03 + این گزارش + به‌روزرسانی AGENT_PROGRESS + رکورد اجرا در KB (RUN-20261105-06) + کامنت تکمیل روی Issue #116.**
+
+## ۳. فایل‌ها و بخش‌های کد تغییرکرده (کل مأموریت)
+
+| فایل | تغییر |
+| --- | --- |
+| `apps/web/src/modules/curriculum/content/kana-teaching.ts` | جدید — لایهٔ آموزشی ۹۲ کانا (audioRef + تلفظ فارسی + نکته + strokeHint + یادسپار story/pattern + pairHint) |
+| `apps/web/src/components/curriculum/kana-card.tsx` | بازنویسی — کارت v2 صدا-اول + LineAudioButton + جفت side-by-side + نوشتن درون‌کارت |
+| `apps/web/src/modules/curriculum/content/chapter-kana01.stations.ts` | codemod — بلوک writing در ۲۳ ایستگاه به قبل از آخرین exercise |
+| `apps/web/src/components/curriculum/station-runner.tsx` | Auto-next متمرکز/race-safe + restore gate + fire «enter» در mount |
+| `apps/web/src/components/curriculum/exercise-session.tsx` | جریان پاسخ + «مرحلهٔ قبل» + پنل تمرین انجام‌شده |
+| `apps/web/src/components/curriculum/journey-map.tsx` | ماسک SVG مسیر (سوراخ دایره‌ای radius+14px per waypoint) |
+| `apps/web/src/lib/learner/identity.ts` | هویت زبان‌آموز per-browser (localStorage + کوکی `hanaso_lid`) |
+| `apps/web/src/modules/curriculum/walk-persistence.ts` | snapshot محلی per (learner, chapter, station) + لنگر سروری currentBlock |
+| `apps/web/src/app/api/curriculum/station/route.ts` | resolveLearnerId/FromRequest (پایان poc-user مشترک به‌عنوان مسیر پیش‌فرض) |
+| `apps/web/public/audio/kana/*` + `audio/dialogues/*` | ۹۲ صوت کانا + ۳ خط خوش‌آمد (opus+m4a، VOICEVOX از پیش تولیدشده) |
+| `apps/web/tests/*` | +۲۰ تست (learner-identity · walk-persistence · API · integration walk-position) |
+| `agent-ctx/tl08-shots/` + `tl08-shots-prod/` | شواهد بازتولید محلی + شواهد production |
+
+## ۴. وضعیت کیفیت آموزش کاراکترها (WP-2)
+
+کارت v2 زنده روی production: گلیف درشت + دکمهٔ پخش صدا (سرعت ۰٫۸×) + رومی‌جی + **تلفظ فارسی** + قیاس آوایی («مثل آغازِ آب») + واژهٔ قابل‌خواندن + شکل‌یادسپار + **یادسپار داستانی** + **جفت اشتباه‌پذیر side-by-side با pairHint** + **تمرین نوشتن درون‌کارت**. پیش از آزمون، زبان‌آموز مسیر کامل معرفی/شنیدن/تشخیص/نوشتن را طی می‌کند — نه فقط «این さ است» + آزمون.
+
+## ۵. وضعیت یادسپارها و صوت (WP-3)
+
+- **یادسپارها:** ۹۲ رکورد بازنویسی (style=story/pattern + pairHint) — مثال زندهٔ あ: «حرف A لاتین است که یک قلاب از وسطش آویزان‌انداده‌اند…». برچسب صادق «پیش‌نویس — در بازبینی انسانی» در UI (گیت OQ-051). 
+- **صوت:** ۹۲ فایل کانا (تک‌مورا، ۴۳۳–۶۶۸ms) + ۳ خط خوش‌آمد — همگی **از پیش تولیدشده** (VOICEVOX روی VPS، بدون TTS زنده) با hash binding گیت fidelity. **پخش از production راستی‌آزمایی شد** (۲۰۰/۲۰۶ استریم).
+
+## ۶. وضعیت استفاده از Drawing در آموزش (WP-4)
+
+سه نقطهٔ ادغام زنده: (۱) اولین مواجهه — درون کارت آموزش (۳ حالت: نمایش ترتیب / نوشتن روی الگو / نوشتن از حافظه)؛ (۲) ایستگاه — بلوک writing قبل از recall در ۲۳ ایستگاه؛ (۳) دریل آزاد جفت‌های شبیه. معماری موتور مشترک kana/kanji حفظ شد (TL-07 W4).
+
+## ۷. رفتار Auto-next (WP-5)
+
+- پاسخ **صحیح** → بازخورد کوتاه → **پیشروی خودکار ~۲٫۲s بدون کلیک** — روی production تأیید شد (انتقال از پرسش あ به い به う بدون هیچ کلیکی).
+- پاسخ **غلط** → بازخورد + «دوباره تلاش کن» + «سرنخ» — بدون پیشروی؛ اصلاح ممکن است و پس از اصلاح، پیشروی خودکار انجام می‌شود — روی production تأیید شد.
+
+## ۸. نتیجهٔ تست‌های ذخیره و بازیابی پیشرفت (WP-5)
+
+| سناریو | نتیجه |
+| --- | --- |
+| Refresh وسط ایستگاه | ✅ بنر «از همان‌جا ادامه دادی» + بازگشت به همان پرسش (۴/۱۱، う) — production |
+| Back مرورگر → نقشه → ورود مجدد | ✅ ایستگاه «در جریان» روی نقشه + resume دقیق همان موقعیت — production |
+| بسته/بازکردن، خروج، آفلاین+بازگشت، مرور درس قبلی | ✅ ۶ سناریو E2E محلی (CP-02) |
+| هویت زبان‌آموز | ✅ per-browser (`hanaso.learnerId.v1` + کوکی) — production؛ ‏#109 به راه‌حل نهایی Auth (M1) منتقل شد |
+
+## ۹. نتیجهٔ تست اصلاح نقشه (WP-6)
+
+ماسک SVG (`hanaso-trail-mask`) با ۳۲ سوراخ دایره‌ای (radius+14px) روی گروه مسیر — **در DOM زندهٔ production تأیید شد**؛ خط نقطه‌چین در حاشیهٔ امن نشانگرها متوقف می‌شود، مسیر بین ایستگاه‌ها پیوسته، VLM دسکتاپ/موبایل/سبز PASS، بدون overflow افقی در ۳۹۰px، صفر خطای کنسول.
+
+## ۱۰. تست‌ها و EQA
+
+vitest ۳۲۴ ✓ · eqa ۳۷ ✓ · tsc ✓ · eslint ۰ ✓ · build ✓ · **CI #79: verify (۲۱ گام، شامل integration PG18 واقعی) + compose-smoke (دریل بکاپ) — همه سبز**.
+
+## ۱۱. کامیت‌ها و وضعیت Remote Push
+
+`749e4cc` → `bed7cdd` → `212a39c` → `cf74437` → `a42fc08` → `a2f7628` → `a865475` — **همه push شده** روی `origin/feat/learning-06-lesson-system`. PR #115: ‏mergeable_state=**clean** (۱۸ کامیت · ۴۳۲ فایل · +۲۶۸۰۲/−۱۹۵۵) — در انتظار بازبینی مالک. رکورد KB: ‏`RUN-20261105-06` روی `research/learning06-implementation` (push شد).
+
+## ۱۲. وضعیت Preview یا Production
+
+**زنده روی production:** https://learn.kotodama.ir @ `a865475` — health ok · چهار سناریوی کاربری A–F با مرورگر واقعی تأیید شد · KOTODAMA (kotodama.ir) دست‌نخورده (۲۰۰ قبل/بعد) · Rollback: طبق README استقرار §۵ (imageهای قبلی روی VPS محفوظ).
+
+## ۱۳. مشکلات حل‌نشده و کارهای باقی‌مانده
+
+| قلم | وضعیت | اقدام بعدی |
+| --- | --- | --- |
+| بازبینی انسانی یادسپارها | ۹۲ رکورد pilot/draft (برچسب صادق در UI) | مالک — OQ-051 |
+| ادغام PR #115 | باز و clean | مالک — بازبینی + merge |
+| word-audio فصل ۰۲ | بدون دارایی (خارج از دامنهٔ کانا) | مأموریت صدای واژگان L2 |
+| #109 احراز هویت واقعی | کاهش‌یافته با هویت per-browser | راه‌حل Auth در M1 |
+| یادسپار ۸ گلیف بدون واژهٔ میزبان جزوه (T-76) | ثبت‌شده در KB | تکمیل واژهٔ میزبان با بازبینی انسانی |
+
+## ۱۴. مسیر آخرین Checkpoint و دستور ادامه برای Agent بعدی
+
+- Checkpoint: `ops/checkpoints/TASK-LEARNING-08/` (CURRENT_STATE + CHECKPOINT_LOG + همین گزارش) — CP-03 = پایان مأموریت.
+- رکورد اجرای KB: `ops/runs/RUN-20261105-06.md` روی شاخهٔ `research/learning06-implementation`.
+- **دستور ادامه:** (۱) اگر مالک PR #115 را merge کرد → به‌روزرسانی PROJECT_STATUS (ردیف deploy) و بستن Issue #116؛ (۲) شروع مأموریت بعدی از §۱۳ یا مأموریت‌های پیشنهادی TL-07 §۹؛ (۳) در صورت Reset سشن → همین CURRENT_STATE ملاک است؛ هیچ ازسرگیری تحقیق لازم نیست.
