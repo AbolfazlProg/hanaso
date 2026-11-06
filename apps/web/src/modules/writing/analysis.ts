@@ -13,7 +13,7 @@
  *
  * Coordinate space: the Hanzi-Writer data space is 1024×1024 with y pointing
  * DOWN (SVG). Callers must map user pointer coordinates into this space before
- * calling (see WritingPractice for the mapping).
+ * calling (see WritingCanvas for the mapping).
  */
 
 import type {
@@ -60,11 +60,11 @@ export function resample(points: Point[], n: number): Point[] {
   return out;
 }
 
-function dist(a: Point, b: Point): number {
+export function dist(a: Point, b: Point): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
-function centroid(points: Point[]): Point {
+export function centroid(points: Point[]): Point {
   let x = 0;
   let y = 0;
   for (const p of points) {
@@ -236,7 +236,10 @@ function dominantError(evaluations: StrokeEvaluation[]): WritingVerdict {
   }
 }
 
-/** Map the leniency ladder to the Hanzi Writer quiz `leniency` parameter. */
+/** Map the leniency ladder to the Hanzi Writer quiz `leniency` parameter.
+ * @deprecated v2 (#117): the HANASO engine is the acceptance authority — the
+ * Hanzi Writer quiz is no longer used. Kept temporarily for the legacy panel
+ * until the v3 canvas ships everywhere. */
 export function hanziWriterLeniency(l: WritingLeniency): number {
   switch (l) {
     case 'teaching':

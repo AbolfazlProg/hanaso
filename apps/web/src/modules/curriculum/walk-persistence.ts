@@ -37,6 +37,13 @@ export interface StationWalkSnapshot {
   blockResults: BlockResults;
   /** In-flight exercise progress per exercise block id. */
   exerciseProgress: Record<string, ExerciseBlockProgress>;
+  /**
+   * TASK-LEARNING-08 phase 2 (#117 §10): kana-card v3 stage per block id —
+   * the staged writing experience resumes where it left off (encounter /
+   * demo / explain / guided / free / done). Additive field: older snapshots
+   * simply have none and the card restarts at encounter.
+   */
+  kanaCardStages?: Record<string, string>;
   /** Last fired session score (null until an exercise set finishes). */
   sessionScore?: number | null;
   /** Epoch ms of the last meaningful transition. */

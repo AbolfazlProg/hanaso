@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   Ear,
   MessageCircleQuestion,
+  Play,
   PlayCircle,
   RotateCcw,
   Sparkles,
@@ -47,8 +48,8 @@ import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
-import { WritingPractice } from '@/components/writing/writing-practice';
-import { KanaCard } from './kana-card';
+import { WritingCanvas } from '@/components/writing/writing-canvas';
+import { KanaCard, type KanaCardProgress } from './kana-card';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
@@ -217,6 +218,12 @@ export function StationRunner(props: StationRunnerProps) {
   const [blockResults, setBlockResults] = useState<BlockResults>({});
   /** WP-5: in-flight exercise positions per block id (survives refresh). */
   const [exerciseProgress, setExerciseProgress] = useState<Record<string, ExerciseBlockProgress>>({});
+  /**
+   * TASK-LEARNING-08 phase 2 (#117 §8/§10): kana-card v3 stage per block id —
+   * writing is a REQUIRED part of the walk (the block gates forward movement
+   * until its free-writing stage completes) and the stage survives refresh.
+   */
+  const [kanaCardStages, setKanaCardStages] = useState<Record<string, string>>({});
 
   const blocks = station.blocks;
   const block = blocks[step];
@@ -232,6 +239,7 @@ export function StationRunner(props: StationRunnerProps) {
       setStep(restored);
       setBlockResults(snapshot.blockResults ?? {});
       setExerciseProgress(snapshot.exerciseProgress ?? {});
+      setKanaCardStages(snapshot.kanaCardStages ?? {});
       if (typeof snapshot.sessionScore === 'number') setSessionScore(snapshot.sessionScore);
       if (snapshot.stepIndex > 0 || Object.keys(snapshot.blockResults ?? {}).length > 0) {
         setResumedNotice(true);
@@ -266,6 +274,7 @@ export function StationRunner(props: StationRunnerProps) {
       stepIndex: step,
       blockResults,
       exerciseProgress,
+      kanaCardStages,
       sessionScore,
     };
     persistedRef.current = snapshot as StationWalkSnapshot;
@@ -279,7 +288,7 @@ export function StationRunner(props: StationRunnerProps) {
         stepIndex: step,
       });
     }
-  }, [restoreChecked, step, blockResults, exerciseProgress, sessionScore]);
+  }, [restoreChecked, step, blockResults, exerciseProgress, kanaCardStages, sessionScore]);
 
   const finishSession = useCallback(
     async (score: number | null, taskCompleted = false) => {
@@ -421,6 +430,16 @@ export function StationRunner(props: StationRunnerProps) {
             });
           }}
           onReturnToBlock={returnToBlock}
+          kanaCardStage={block.kind === 'kana-card' ? (kanaCardStages[block.id] ?? 'encounter') : undefined}
+          onKanaProgress={(progress: { stage: string }) => {
+            if (block.kind !== 'kana-card') return;
+            setKanaCardStages((prev) => (prev[block.id] === progress.stage ? prev : { ...prev, [block.id]: progress.stage }));
+          }}
+          onKanaWritingDone={() => {
+            // #117 §8: the writing stage completed — the walk continues.
+            if (step < blocks.length - 1) setStep((s) => s + 1);
+            else void finishSession(null);
+          }}
           onExerciseDone={(score) => {
             if (block.kind === 'exercise') {
               setBlockResults((r) => withBlockResult(r, block.id, score));
@@ -445,11 +464,13 @@ export function StationRunner(props: StationRunnerProps) {
       )}
 
       {/*
-       * Action row (Issue #102): «مرحلهٔ قبل» appears from the 2nd block onward for
-       * EVERY block kind; the forward button keeps its exercise/scene exceptions
-       * (those blocks own their completion CTA inside BlockView).
+       * Action row (Issue #102 + #117 §8): «مرحلهٔ قبل» appears from the 2nd block
+       * onward; the forward button keeps its exercise/scene exceptions AND the
+       * kana-card gate (writing is required — no skipping past a kana card by
+       * button until its free-writing stage completes; the card owns its CTA
+       * and auto-advances via onKanaWritingDone).
        */}
-      {(step > 0 || (block && block.kind !== 'exercise' && block.kind !== 'character-scene')) && (
+      {(step > 0 || (block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card')) && (
         <div className="flex items-center gap-3">
           {step > 0 && (
             <button
@@ -461,7 +482,7 @@ export function StationRunner(props: StationRunnerProps) {
               {fa.curriculum.prevBlock}
             </button>
           )}
-          {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && (
+          {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card' && (
             <button
               type="button"
               onClick={next}
@@ -519,7 +540,21 @@ function WritingPracticeBlock({
   chapterSlug: string;
   stationSlug: string;
 }) {
+  /*
+   * TASK-LEARNING-08 phase 2 (#117 §2): the drill keeps its character picker
+   * (small station sets) but drops the mode tabs/toggles of the old panel —
+   * one canvas, free writing with per-stroke feedback, an on-demand demo and
+   * the same compact attribution. Practice-layer only (never a gate — DD-106).
+   */
   const [activeChar, setActiveChar] = useState(block.characters[0] ?? '');
+  const [demo, setDemo] = useState(false);
+  const [restartSignal, setRestartSignal] = useState(0);
+  const [hintSignal, setHintSignal] = useState(0);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState<import('@/modules/writing/engine').WritingAttemptState | null>(null);
+  const attemptStartRef = useRef<number | null>(null);
+  const attemptRef = useRef<import('@/modules/writing/engine').WritingAttemptState | null>(null);
+  attemptRef.current = attempt;
   if (!activeChar) return null;
   const pairChars = (block.focusPairs ?? []).flatMap(([a, b]) => [a, b]);
   return (
@@ -534,7 +569,12 @@ function WritingPracticeBlock({
           <button
             key={ch}
             type="button"
-            onClick={() => setActiveChar(ch)}
+            onClick={() => {
+              setActiveChar(ch);
+              setDemo(false);
+              setFeedback(null);
+              setRestartSignal((n) => n + 1);
+            }}
             aria-pressed={activeChar === ch}
             className={`min-h-11 min-w-11 rounded-md border-2 px-3 font-jp text-h3 font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai ${
               activeChar === ch
@@ -546,27 +586,87 @@ function WritingPracticeBlock({
           </button>
         ))}
       </div>
-      <WritingPractice
-        key={activeChar}
-        character={activeChar}
-        initialMode={block.initialMode}
-        onAttempt={(summary) => {
-          void recordWritingPractice({
-            chapterSlug,
-            stationSlug,
-            blockId: block.id,
-            character: summary.character,
-            mode: summary.mode,
-            verdict: summary.verdict,
-            strokesTotal: summary.strokesTotal,
-            strokesFirstTry: summary.strokesFirstTry,
-            totalMistakes: summary.totalMistakes,
-            hintsShown: summary.hintsShown,
-            completed: summary.completed,
-            durationMs: summary.durationMs,
-          });
-        }}
-      />
+      <div className="flex flex-col items-center gap-4 md:flex-row md:items-start md:justify-center">
+        <WritingCanvas
+          key={`${activeChar}-${demo}-${restartSignal}`}
+          character={activeChar}
+          mode={demo ? 'demo' : 'free'}
+          restartSignal={restartSignal}
+          hintSignal={hintSignal}
+          onDemoDone={() => setDemo(false)}
+          onJudgement={(j, state) => {
+            setAttempt(state);
+            setFeedback(j.feedbackFa);
+            if ((j.judge === 'rejected' || j.judge === 'uncertain_retry') && state.missesOnStroke >= 2) {
+              setHintSignal((n) => n + 1);
+            }
+          }}
+          onAttemptComplete={(state) => {
+            const started = attemptStartRef.current ?? Date.now();
+            void recordWritingPractice({
+              chapterSlug,
+              stationSlug,
+              blockId: block.id,
+              character: activeChar,
+              mode: 'free',
+              verdict:
+                state.totalMisses === 0 ? 'correct' : state.assistedCount > 0 ? 'correct_with_hints' : 'accepted_with_review',
+              strokesTotal: state.history.length,
+              strokesFirstTry: state.firstTry,
+              totalMistakes: state.totalMisses,
+              hintsShown: state.assistedCount,
+              completed: true,
+              durationMs: Date.now() - started,
+            });
+            setFeedback(fa.curriculum.kanaStageFreeDone);
+          }}
+        />
+        <div className="w-full max-w-[20rem] space-y-3" dir="rtl">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                attemptStartRef.current = Date.now();
+                setDemo((d) => !d);
+                setFeedback(null);
+              }}
+              className="flex min-h-10 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash"
+            >
+              <Play aria-hidden className="size-4" />
+              {fa.curriculum.kanaStageDemoReplay}
+            </button>
+            {!demo ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setHintSignal((n) => n + 1)}
+                  className="min-h-10 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash"
+                >
+                  {fa.curriculum.kanaStageHelpBtn}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    attemptStartRef.current = Date.now();
+                    setFeedback(null);
+                    setRestartSignal((n) => n + 1);
+                  }}
+                  className="min-h-10 rounded-md border border-ink-faint bg-card px-3 text-caption font-bold text-ink transition-colors hover:bg-surface-warm"
+                >
+                  {fa.curriculum.kanaStageWriteAgain}
+                </button>
+              </>
+            ) : null}
+          </div>
+          {feedback ? (
+            <p role="status" aria-live="polite" className="rounded-md border border-shu/40 bg-surface-warm px-3 py-2 text-small leading-[var(--leading-fa)] text-ink">
+              {feedback}
+            </p>
+          ) : (
+            <p className="text-small leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.writingPairNote}</p>
+          )}
+        </div>
+      </div>
       {block.focusPairs && block.focusPairs.length > 0 ? (
         <div className="rounded-md border border-shu/40 bg-surface-warm p-4">
           <p className="text-small font-bold text-ink">{fa.curriculum.writingPairFocusTitle}</p>
@@ -614,6 +714,9 @@ function BlockView({
   onReturnToBlock,
   onExerciseDone,
   onSceneDone,
+  kanaCardStage,
+  onKanaProgress,
+  onKanaWritingDone,
 }: {
   block: ClientTeachingBlock;
   stationSlug: string;
@@ -643,6 +746,12 @@ function BlockView({
   onReturnToBlock?: (blockId: string) => void;
   onExerciseDone: (score: number) => void;
   onSceneDone: () => void;
+  /** #117 §10: restored kana-card stage for this block (undefined = fresh). */
+  kanaCardStage?: string;
+  /** #117 §10: stage persistence reporter. */
+  onKanaProgress?: (progress: { stage: string }) => void;
+  /** #117 §8: the staged writing experience completed → the walk continues. */
+  onKanaWritingDone?: () => void;
 }) {
   switch (block.kind) {
     case 'scene':
@@ -755,6 +864,9 @@ function BlockView({
           showRomaji={block.showRomaji}
           confusableNoteFa={block.confusableNoteFa}
           audioUrls={kanaAudioByKanaId?.[kana.kanaId] ?? null}
+          initialProgress={kanaCardStage ? ({ stage: kanaCardStage } as KanaCardProgress) : undefined}
+          onProgress={onKanaProgress}
+          onWritingDone={onKanaWritingDone}
           onWritingAttempt={(summary) => {
             void recordWritingPractice({
               chapterSlug,

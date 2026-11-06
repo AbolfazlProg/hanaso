@@ -72,7 +72,7 @@ describe('writing-data KanjiVG rebuild (#117 WP-2)', () => {
   it('ships all 92 basic kana with the authoritative stroke counts', () => {
     expect(Object.keys(STANDARD)).toHaveLength(92);
     for (const [ch, expected] of Object.entries(STANDARD)) {
-      const entry = index.chars[ch];
+      const entry = index.chars[ch]!;
       expect(entry, `${ch} must be in the index`).toBeDefined();
       const data = charData(ch);
       expect(data.strokes.length, `${ch} stroke count`).toBe(expected);
@@ -109,11 +109,10 @@ describe('writing-data KanjiVG rebuild (#117 WP-2)', () => {
     for (const ch of Object.keys(STANDARD)) {
       const data = charData(ch);
       for (const [i, d] of data.strokes.entries()) {
-        const m = d.match(/^M(-?[\d.]+),(-?[\d.]+)/);
-        expect(m, `${ch} stroke ${i + 1} parseable start`).not.toBeNull();
+        const m = d.match(/^M(-?[\d.]+),(-?[\d.]+)/)!;
         const medianStart = data.medians[i]![0]!;
-        expect(Math.abs(Number(m![1]) - medianStart[0]), `${ch} stroke ${i + 1} median start x`).toBeLessThan(1);
-        expect(Math.abs(Number(m![2]) - medianStart[1]), `${ch} stroke ${i + 1} median start y`).toBeLessThan(1);
+        expect(Math.abs(Number(m[1]!) - medianStart[0]!), `${ch} stroke ${i + 1} median start x`).toBeLessThan(1);
+        expect(Math.abs(Number(m[2]!) - medianStart[1]!), `${ch} stroke ${i + 1} median start y`).toBeLessThan(1);
       }
     }
   });
