@@ -21,4 +21,11 @@ export const EXPERIENCE = {
    * (rapid double navigation) — anything scheduled beyond this is dropped.
    */
   autoNextMaxDelayMs: 4000,
+  /**
+   * TASK-LEARNING-08 Addendum-2 §2: the calm review beat after an ACCEPTED
+   * drawing. The learner's raw ink is replaced by the standard glyph sample
+   * and the card holds ~1s so the result can be SEEN before the flow
+   * continues on its own — a teaching pause, not a slowdown.
+   */
+  kanaReviewPauseMs: 1100,
 } as const;

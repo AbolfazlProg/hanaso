@@ -1,33 +1,44 @@
 'use client';
 /**
- * HANASO — KanaCard v4 (TASK-LEARNING-08 v4 — owner final correction).
+ * HANASO — KanaCard v5 (TASK-LEARNING-08 Addendum-3).
  *
- * ONE page, ONE environment, ZERO stage-switching (owner §1/§10): the big
- * WritingCanvas is the heart of the card from the first second to the last.
- * The character appears INSIDE the canvas (ink writing itself), the sound
- * plays, the stroke-order demonstration runs, the explanations unfold AROUND
- * the canvas, and practice (guided → free) happens in the SAME canvas — all
- * automatically. There is NO «مرحلهٔ بعد» button anywhere; the only controls
- * are «تکرار آموزش», the audio replay, and «راهنما» during practice.
+ * ONE page, ONE environment, ZERO stage-switching: the big WritingCanvas is
+ * the heart of the card from the first second to the last. Addendum-3 §5 —
+ * the NUMBERED stroke-order teaching animation is the FIRST content the
+ * learner sees, playing in the canvas itself (no faint static template),
+ * with the explanations unfolding AROUND it while it runs.
  *
- * Timeline (auto — owner §3, five stages):
- *   1 intro    the glyph writes itself in the canvas + sound once + reading
- *   2 demo     slow teaching pass: per-stroke number badge on the canvas,
- *              start dot, direction arrow + the narrated side panel
- *   3 explain  the finished glyph rests in soft ink; pronunciation note →
- *              mnemonic → the real word (char-by-char in Japanese reading
- *              order, the target kana highlighted) → confusable pair
- *   4 guided   practice on the dashed guide in the same canvas
- *   5 free     writing from memory in the same canvas
- *   done       completion — the walk continues (onWritingDone).
+ * Timeline:
+ *   1 intro    the numbered stroke-order animation in the canvas + the
+ *              sound + the reading — the explanations unfold around it
+ *   2 ready    the ONE interactive stop: «فهمیدم، شروع کنیم» (Addendum-2 §4
+ *              decision kept — the single CTA of the whole flow)
+ *   3 guided   practice on the dashed guide in the same canvas
+ *   4 free     writing from memory in the same canvas
+ *   done       completion — the walk continues (onWritingDone)
  *
- * Everything teaching-related the v3 card showed still lives here —
- * reorganized AROUND the canvas (owner §2), nothing useful deleted.
+ * Addendum-3 §2 — «تکرار آموزش» replays the numbered animation IN PLACE at
+ * any stage (canvas replaySignal); the stage/lesson/attempt state is never
+ * reset, and rapid clicks are absorbed (button disabled while replaying).
+ *
+ * Addendum-3 §4 — the page's space is filled with per-character teaching
+ * content (reading, current stroke, writing tips, the readable word with its
+ * own audio, the confusable pair) — data-driven, never a mechanical template.
+ *
+ * Addendum-3 §11 — the mnemonic (still `draft` in the data) is NOT shown as
+ * final content: only VERIFIED mnemonics render (no review badge anywhere in
+ * the learner UI; the status lives on in the data for the admin tooling).
+ *
+ * Addendum-3 §12 — attribution is one short license line (KanjiVG CC BY-SA
+ * + VOICEVOX credit — both required by their licenses); the full texts live
+ * in writing-data/licenses/ — nothing else technical in the teaching space.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Ear, Hand, RotateCcw, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
-import { KANA_TEACHING_BY_ID } from '@/modules/curriculum/content/kana-teaching';
+import { KANA_READING_FA_BY_GLYPH, KANA_TEACHING_BY_ID } from '@/modules/curriculum/content/kana-teaching';
+import { KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
+import { kanaWordRomaji } from '@/modules/curriculum/kana-romaji';
 import type { KanaItem } from '@/modules/curriculum/types';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
@@ -35,21 +46,20 @@ import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { loadWritingCharData, writingAvailability, type WritingCharData } from '@/modules/writing';
 import { strokeInfoFa, type StrokeInfoFa } from '@/modules/writing/render';
 import type { StrokeJudgement, WritingAttemptState } from '@/modules/writing/engine';
+import { useAudioToggle } from '@/modules/audio/toggle-playback';
+import { EXPERIENCE } from '@/config/experience';
 
-export type KanaStage = 'intro' | 'demo' | 'explain' | 'guided' | 'free' | 'done';
+export type KanaStage = 'intro' | 'ready' | 'guided' | 'free' | 'done';
 
-/** Old snapshots say «encounter» — v4 renamed it to «intro». */
+/**
+ * Legacy snapshot mapping (v4 had demo/explain stages; v5 merged them into
+ * intro/ready — Addendum-3 §5): someone who saved mid-«demo» simply re-watches
+ * the teaching pass; someone who saved at «explain» has already seen it.
+ */
 export function normalizeKanaStage(stage: string | undefined): KanaStage {
-  if (stage === 'encounter') return 'intro';
-  if (
-    stage === 'intro' ||
-    stage === 'demo' ||
-    stage === 'explain' ||
-    stage === 'guided' ||
-    stage === 'free' ||
-    stage === 'done'
-  )
-    return stage;
+  if (stage === 'encounter' || stage === 'demo') return 'intro';
+  if (stage === 'explain') return 'ready';
+  if (stage === 'ready' || stage === 'guided' || stage === 'free' || stage === 'done') return stage;
   return 'intro';
 }
 
@@ -59,12 +69,14 @@ export interface KanaCardProgress {
 
 export interface KanaCardProps {
   kana: KanaItem;
-  /** Romaji fading policy (unit-level block data). */
+  /** Kept for back-compat — the Latin reading is ALWAYS shown now (§8). */
   showRomaji: boolean;
   /** Optional confusable note authored on the block (kept for back-compat). */
   confusableNoteFa?: string;
   /** Server-resolved audio pair for THIS glyph (null = no committed asset). */
   audioUrls: { opus: string; m4a: string } | null;
+  /** Addendum-3 §9 — the host word's own audio pair (null = not generated). */
+  wordAudioUrls: { opus: string; m4a: string } | null;
   /** Writing-practice record callback (structured summary only — DD-111). */
   onWritingAttempt?: (summary: {
     character: string;
@@ -85,21 +97,16 @@ export interface KanaCardProps {
   onProgress?: (progress: KanaCardProgress) => void;
 }
 
-/** Beat between auto stages — long enough to feel calm, short enough to flow. */
-const STAGE_BEAT_MS = 650;
-/** The explain stage settles before practice begins (content STAYS visible). */
-const EXPLAIN_SETTLE_MS = 4200;
-
 export function KanaCard({
   kana,
-  showRomaji,
   confusableNoteFa,
   audioUrls,
+  wordAudioUrls,
   onWritingAttempt,
   onWritingDone,
   initialProgress,
   onProgress,
-}: KanaCardProps) {
+}: KanaCardProps): React.JSX.Element {
   const teaching = KANA_TEACHING_BY_ID[kana.kanaId];
   const [stage, setStage] = useState<KanaStage>(() => normalizeKanaStage(initialProgress?.stage));
   const [charData, setCharData] = useState<WritingCharData | null>(null);
@@ -108,8 +115,10 @@ export function KanaCard({
   const [feedback, setFeedback] = useState<string | null>(null);
   const [restartSignal, setRestartSignal] = useState(0);
   const [hintSignal, setHintSignal] = useState(0);
+  /** §2 — a canvas teaching replay is running (any stage). */
+  const [replayRunning, setReplayRunning] = useState(false);
+  const [replaySignal, setReplaySignal] = useState(0);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const stageEnteredRef = useRef<KanaStage | null>(null);
   const attemptStartRef = useRef<number | null>(null);
   /** Latest attempt state for the completion reporters. */
@@ -153,37 +162,25 @@ export function KanaCard({
   useEffect(
     () => () => {
       clearBeats();
-      audioRef.current?.pause();
-      audioRef.current = null;
     },
     [clearBeats],
   );
 
-  // -------------------------------------------------- audio: one element, 1.0×, no overlap
-  const playSound = useCallback(() => {
-    if (!audioUrls) return;
-    audioRef.current?.pause();
-    const el = new Audio(audioUrls.opus);
-    el.playbackRate = 1; // owner §5: normal speed is exactly 1.0
-    el.addEventListener('error', () => {
-      el.src = audioUrls.m4a; // dual-format fallback (ADR-009)
-      void Promise.resolve(el.play()).catch(() => undefined);
-    });
-    audioRef.current = el;
-    // jsdom/test DOMs return undefined from play() — guard without changing
-    // the real-browser promise semantics
-    void Promise.resolve(el.play()).catch(() => undefined);
-  }, [audioUrls]);
+  // -------------------------------------------------- audio (§9: normal ⇄ slow)
+  const sound = useAudioToggle(audioUrls, kana.kanaId);
+  const wordSound = useAudioToggle(wordAudioUrls, kana.hostWord?.word);
 
-  /** Audio moments (owner §5): intro once → demo end once → guided entry once. */
+  /** Audio moments (owner §5): entry once → teaching-done once → guided entry once. */
   const audioMomentsRef = useRef<Set<string>>(new Set());
   const playOnce = useCallback(
     (moment: string) => {
       if (audioMomentsRef.current.has(moment)) return;
       audioMomentsRef.current.add(moment);
-      playSound();
+      // automatic moments stay at normal speed and never consume the learner's
+      // click cycle (§9: the FIRST click is always normal)
+      sound.playNormal();
     },
-    [playSound],
+    [sound],
   );
 
   useEffect(() => {
@@ -192,37 +189,45 @@ export function KanaCard({
   }, [stage, playOnce]);
 
   // -------------------------------------------------- the auto timeline
-  /** intro finished (glyph fully inked) → a beat → the teaching demo. */
+  /**
+   * The numbered teaching pass finished → the ready beat (Addendum-2 §4 +
+   * Addendum-3 §5: the animation is watched FIRST, then the ONE confirm).
+   */
   const onIntroDone = useCallback(() => {
-    beat(() => setStage('demo'), STAGE_BEAT_MS);
-  }, [beat]);
-
-  /** demo finished → the character's sound once → explanations. */
-  const onDemoDone = useCallback(() => {
-    playOnce('demo-done');
-    setStage('explain');
+    playOnce('teach-done');
+    setStage('ready');
   }, [playOnce]);
 
-  /** explain content settles → practice begins in the SAME canvas. */
-  useEffect(() => {
-    if (stage !== 'explain') return;
-    beat(() => {
-      attemptStartRef.current = Date.now();
-      setFeedback(null);
-      setRestartSignal((n) => n + 1);
-      setStage('guided');
-    }, EXPLAIN_SETTLE_MS);
-  }, [stage, beat]);
-
-  /** «تکرار آموزش» — the whole teaching timeline replays from the top. */
-  const replayTeaching = useCallback(() => {
-    clearBeats();
+  /** «فهمیدم، شروع کنیم» → guided practice in the SAME canvas. */
+  const startPractice = useCallback(() => {
+    attemptStartRef.current = Date.now();
     setFeedback(null);
-    setDemoStroke(-1);
-    setHintSignal(0);
     setRestartSignal((n) => n + 1);
-    setStage('intro');
-  }, [clearBeats]);
+    setStage('guided');
+  }, []);
+
+  /**
+   * Addendum-3 §2 — «تکرار آموزش»: replay the numbered animation from the
+   * first stroke IN PLACE. NEVER resets the page, the lesson or the attempt —
+   * in the intro stage it simply restarts the intro pass; later stages run a
+   * canvas replay. Rapid clicks are absorbed (disabled while running).
+   */
+  const replayTeaching = useCallback(() => {
+    if (replayRunning) return; // §2 rapid-click guard
+    setDemoStroke(-1);
+    if (stage === 'intro') {
+      setRestartSignal((n) => n + 1);
+      sound.toggle(); // the sound replays with the teaching order (§2)
+      return;
+    }
+    setReplayRunning(true);
+    setReplaySignal((n) => n + 1);
+    sound.toggle();
+  }, [replayRunning, sound, stage]);
+
+  const onReplayDone = useCallback(() => {
+    setReplayRunning(false);
+  }, []);
 
   const handleJudgement = useCallback((j: StrokeJudgement, state: WritingAttemptState) => {
     setAttempt(state);
@@ -255,30 +260,37 @@ export function KanaCard({
 
   const onGuidedComplete = useCallback(() => {
     reportAttempt('guided');
-    playOnce('guided');
     setFeedback(fa.curriculum.kanaStageGuidedDone);
+    // Addendum-2 §2 (kept): the review beat — the completed standard glyph
+    // rests (§13 already replaced every stroke with its precise form), then
+    // the free attempt starts on its own.
     beat(() => {
       attemptStartRef.current = Date.now();
       setFeedback(null);
       setRestartSignal((n) => n + 1);
       setStage('free');
-    }, 1500);
-  }, [beat, playOnce, reportAttempt]);
+    }, EXPERIENCE.kanaReviewPauseMs);
+  }, [beat, reportAttempt]);
 
   const onFreeComplete = useCallback(() => {
     reportAttempt('free');
     setFeedback(fa.curriculum.kanaStageFreeDone);
-    setStage('done');
-    onWritingDone?.();
-  }, [onWritingDone, reportAttempt]);
+    // the same review beat at the end — the clean standard glyph is SEEN for
+    // a moment, then the walk continues automatically (no «ادامه» button).
+    beat(() => {
+      setStage('done');
+      onWritingDone?.();
+    }, EXPERIENCE.kanaReviewPauseMs);
+  }, [beat, onWritingDone, reportAttempt]);
 
   // -------------------------------------------------- derived panel data
-  const currentStrokeIndex =
-    stage === 'demo'
-      ? Math.max(demoStroke, 0)
-      : attempt
-        ? Math.min(attempt.expectedIndex, (charData?.medians.length ?? 1) - 1)
-        : 0;
+  /** The numbered teaching pass is on screen — the intro stage or a §2 replay. */
+  const showingTeaching = stage === 'intro' || replayRunning;
+  const currentStrokeIndex = showingTeaching
+    ? Math.max(demoStroke, 0)
+    : attempt
+      ? Math.min(attempt.expectedIndex, (charData?.medians.length ?? 1) - 1)
+      : 0;
   const strokeInfo: StrokeInfoFa | null = useMemo(
     () => (charData ? strokeInfoFa(charData, currentStrokeIndex) : null),
     [charData, currentStrokeIndex],
@@ -286,40 +298,43 @@ export function KanaCard({
   const totalStrokes = charData?.medians.length ?? 0;
 
   const mn = teaching?.mnemonic;
+  /** §11 — ONLY approved (human-verified) mnemonics render (no badge, never «final» for a draft). */
+  const verifiedMnemonic = mn?.status === 'approved' ? mn : null;
   const inPractice = stage === 'guided' || stage === 'free';
-  const inShow = stage === 'intro' || stage === 'demo';
+  /** Persian reading FIRST (Addendum-2 §3) — Latin is the small complement (§8). */
+  const readingFa = teaching?.pronunciationFa ?? kana.romaji;
+  const readingLatin = kana.romaji;
+  const hostWord = kana.hostWord;
 
   const stageTitle =
     stage === 'intro'
       ? fa.curriculum.kanaStageIntroTitle
-      : stage === 'demo'
-        ? fa.curriculum.kanaStageDemoTitle
-        : stage === 'explain'
-          ? fa.curriculum.kanaStageExplainTitle
-          : stage === 'guided'
-            ? fa.curriculum.kanaStageGuidedTitle
-            : stage === 'free'
-              ? fa.curriculum.kanaStageFreeTitle
-              : fa.curriculum.kanaStageDoneTitle(kana.glyph);
+      : stage === 'ready'
+        ? fa.curriculum.kanaStageReadyTitle
+        : stage === 'guided'
+          ? fa.curriculum.kanaStageGuidedTitle
+          : stage === 'free'
+            ? fa.curriculum.kanaStageFreeTitle
+            : fa.curriculum.kanaStageDoneTitle(kana.glyph);
 
   const stageChip =
     stage === 'intro'
       ? fa.curriculum.kanaStageChipIntro
-      : stage === 'demo'
-        ? fa.curriculum.kanaStageChipDemo
-        : stage === 'explain'
-          ? fa.curriculum.kanaStageChipExplain
-          : stage === 'guided'
-            ? fa.curriculum.kanaStageChipGuided
-            : stage === 'free'
-              ? fa.curriculum.kanaStageChipFree
-              : fa.curriculum.kanaStageChipDone;
+      : stage === 'ready'
+        ? fa.curriculum.kanaStageChipReady
+        : stage === 'guided'
+          ? fa.curriculum.kanaStageChipGuided
+          : stage === 'free'
+            ? fa.curriculum.kanaStageChipFree
+            : fa.curriculum.kanaStageChipDone;
+
+  const speedChip = sound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal;
 
   // -------------------------------------------------- render
   return (
     <section
       className="flex flex-col gap-4 rounded-md border border-ink-faint bg-card p-5"
-      aria-label={`${kana.romaji} — ${stageTitle}`}
+      aria-label={`${readingFa} — ${stageTitle}`}
       data-kana-stage={stage}
     >
       {/* ---- header: stage chip + title + the essential controls ---- */}
@@ -335,18 +350,25 @@ export function KanaCard({
           {audioUrls ? (
             <button
               type="button"
-              onClick={playSound}
+              onClick={sound.toggle}
               className="flex min-h-9 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-              aria-label={fa.curriculum.kanaSoundLabel(kana.glyph)}
+              aria-label={`${fa.curriculum.kanaSoundLabel(kana.glyph)} — ${fa.curriculum.kanaSpeedLabel}: ${speedChip}`}
+              data-audio-mode={sound.mode}
             >
               <Volume2 aria-hidden className="size-4" />
               {fa.curriculum.kanaSoundReplay}
+              <span className="rounded-full bg-indigo-wash px-1.5 py-0.5 text-micro font-normal" dir="rtl">
+                {speedChip}
+              </span>
             </button>
           ) : null}
           <button
             type="button"
             onClick={replayTeaching}
-            className="flex min-h-9 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            disabled={replayRunning}
+            aria-disabled={replayRunning}
+            className="flex min-h-9 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:cursor-not-allowed disabled:opacity-50"
+            data-replay-btn
           >
             <RotateCcw aria-hidden className="size-4" />
             {fa.curriculum.kanaReplayTeaching}
@@ -363,23 +385,21 @@ export function KanaCard({
         </div>
       </div>
 
-      {/* ---- THE environment: the canvas (always) + the teaching column ---- */}
+      {/* ---- THE environment: the canvas column + the teaching column ---- */}
       <div className="flex flex-col items-center gap-5 lg:flex-row lg:items-start lg:justify-center">
-        {/* canvas column — the heart of the lesson; never unmounts */}
+        {/* canvas column — the heart of the lesson; never unmounts (§3) */}
         <div className="w-full max-w-[26rem] shrink">
           <WritingCanvas
             character={kana.glyph}
-            mode={
-              stage === 'intro' ? 'intro' : stage === 'explain' ? 'reference' : stage === 'done' ? 'reference' : stage
-            }
+            mode={stage === 'intro' ? 'intro' : stage === 'ready' || stage === 'done' ? 'reference' : stage}
             restartSignal={restartSignal}
+            replaySignal={replaySignal}
+            onReplayDone={onReplayDone}
             hintSignal={hintSignal}
             onIntroDone={onIntroDone}
             onDemoStrokeStart={setDemoStroke}
-            onDemoDone={onDemoDone}
             onJudgement={handleJudgement}
             onAttemptComplete={inPractice ? (stage === 'guided' ? onGuidedComplete : onFreeComplete) : undefined}
-            key={`${stage}-${restartSignal}`}
           />
           {/* stroke progress dots — status feedback (owner §2: وضعیت پیشرفت) */}
           {totalStrokes > 0 ? (
@@ -388,8 +408,8 @@ export function KanaCard({
               aria-label={fa.curriculum.kanaStageStrokeProgress}
             >
               {Array.from({ length: totalStrokes }, (_, i) => {
-                const done = inShow ? i < demoStroke : attempt ? attempt.completed.includes(i) : false;
-                const current = inShow ? i === demoStroke : attempt ? attempt.expectedIndex === i : false;
+                const done = showingTeaching ? i < demoStroke : attempt ? attempt.completed.includes(i) : false;
+                const current = showingTeaching ? i === demoStroke : attempt ? attempt.expectedIndex === i : false;
                 return (
                   <span
                     key={i}
@@ -411,19 +431,37 @@ export function KanaCard({
           {stage === 'intro' ? (
             <p className="mt-2 text-center text-caption text-ink-faint">{fa.curriculum.kanaStageIntroHint}</p>
           ) : null}
-        </div>
+          {/* Addendum-2 §4 (kept): the ONE interactive stop — after the
+              teaching pass, the user confirms readiness; everything after
+              this click is automatic. */}
+          {stage === 'ready' ? (
+            <div className="mt-2 flex flex-col items-center gap-2">
+              <p className="text-center text-caption text-ink-soft">{fa.curriculum.kanaStageReadyHint}</p>
+              <button
+                type="button"
+                onClick={startPractice}
+                className="min-h-11 rounded-md bg-ai px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+                data-ready-cta
+              >
+                {fa.curriculum.kanaStageReadyCta}
+              </button>
+            </div>
+          ) : null}
 
-        {/* teaching column — what the teacher says AROUND the notebook */}
-        <div className="w-full max-w-[24rem] space-y-3 lg:max-w-[22rem]" dir="rtl">
-          {/* reading — from the very first second (owner §2: تلفظ) */}
-          <div className="kana-reveal rounded-md border border-ink-faint bg-surface-sunken/60 p-4">
-            <div className="flex flex-wrap items-baseline gap-3">
-              {showRomaji ? (
-                <span className="font-mono text-h3 font-bold text-indigo" dir="ltr">
-                  {kana.romaji}
-                </span>
-              ) : null}
+          {/* §8 — the reading: Persian LEADS (big, bold), Latin is the small
+              complement right beside it — for EVERY kana, uniformly. */}
+          <div
+            className="kana-reveal mt-4 rounded-md border border-ink-faint bg-surface-sunken/60 p-4"
+            data-reading-card
+          >
+            <div className="flex flex-wrap items-baseline gap-2">
               {teaching ? <span className="text-h3 font-bold text-ink">{teaching.pronunciationFa}</span> : null}
+              <span className="text-ink-faint" aria-hidden>
+                |
+              </span>
+              <span className="font-mono text-caption text-ink-soft" dir="ltr">
+                {readingLatin}
+              </span>
               {audioUrls ? (
                 <span className="text-caption text-ink-faint">{fa.curriculum.kanaStageAudioOnce}</span>
               ) : (
@@ -434,18 +472,63 @@ export function KanaCard({
               )}
             </div>
             {teaching?.pronunciationNoteFa ? (
-              <p
-                className={`mt-2 text-small leading-[var(--leading-fa)] text-ink-soft ${
-                  stage === 'intro' ? 'opacity-0' : 'kana-reveal'
-                }`}
-              >
+              <p className="kana-reveal mt-2 text-small leading-[var(--leading-fa)] text-ink-soft">
                 {teaching.pronunciationNoteFa}
               </p>
             ) : null}
           </div>
 
-          {/* live stroke narration — during the demo AND practice (owner §2) */}
-          {inShow || inPractice ? (
+          {/* §4 + §9 — the readable word: real vocabulary this kana can read,
+              with its OWN independent audio (normal ⇄ slow, §9) and the Latin
+              reading beside it (§8). */}
+          {hostWord ? (
+            <div
+              className="kana-reveal kana-reveal-2 mt-3 rounded-md border border-ai/30 bg-indigo-wash/30 p-4"
+              data-word-card
+            >
+              <p className="text-caption text-ink-faint">{fa.curriculum.kanaHostWordPrefix}</p>
+              <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+                <p className="font-jp text-h2 font-bold text-ink" lang="ja" dir="ltr">
+                  {Array.from(hostWord.word).map((ch, i) => (
+                    <span
+                      key={`${ch}-${i}`}
+                      className={`word-char-in ${ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : ''}`}
+                      style={{ animationDelay: `${300 + i * 450}ms` }}
+                    >
+                      {ch}
+                    </span>
+                  ))}
+                </p>
+                {wordAudioUrls ? (
+                  <button
+                    type="button"
+                    onClick={wordSound.toggle}
+                    className="flex min-h-9 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+                    aria-label={`${fa.curriculum.kanaWordAudioLabel(hostWord.word)} — ${fa.curriculum.kanaSpeedLabel}: ${
+                      wordSound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal
+                    }`}
+                    data-word-audio
+                    data-audio-mode={wordSound.mode}
+                  >
+                    <Volume2 aria-hidden className="size-4" />
+                    {wordSound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal}
+                  </button>
+                ) : null}
+              </div>
+              <div className="mt-1 flex flex-wrap items-baseline gap-2">
+                <span className="font-mono text-caption text-ink-soft" dir="ltr">
+                  {kanaWordRomaji(hostWord.word)}
+                </span>
+                <span className="text-body text-ink-soft">— {hostWord.meaningFa}</span>
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        {/* teaching column — what the teacher says AROUND the notebook (§4) */}
+        <div className="w-full max-w-[24rem] space-y-3 lg:max-w-[22rem]" dir="rtl">
+          {/* live stroke narration — during the teaching pass AND practice */}
+          {showingTeaching || inPractice ? (
             strokeInfo ? (
               <div
                 className="rounded-md border border-ai/40 bg-indigo-wash/40 p-4 transition-colors"
@@ -455,11 +538,6 @@ export function KanaCard({
                 <p className="mt-2 text-small text-ink">{strokeInfo.startFa}</p>
                 <p className="mt-1 text-small text-ink">{strokeInfo.directionFa}</p>
                 <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-soft">{strokeInfo.movementFa}</p>
-                {teaching?.strokeHintFa ? (
-                  <p className="mt-3 border-t border-ink-faint/50 pt-2 text-caption leading-[var(--leading-fa)] text-ink-soft">
-                    <MixedFaJaText text={teaching.strokeHintFa} />
-                  </p>
-                ) : null}
               </div>
             ) : (
               <p className="text-small text-ink-faint">{fa.common.loading}</p>
@@ -478,52 +556,35 @@ export function KanaCard({
             </p>
           ) : null}
 
-          {/* mnemonic — unfolds at the explain stage and stays (owner §3) */}
-          {mn && stage !== 'intro' && stage !== 'demo' ? (
-            <div className="kana-reveal kana-reveal-2 rounded-md bg-surface-2 p-4">
+          {/* §4 — the per-character writing tips (fine points of THIS glyph) */}
+          {teaching?.strokeHintFa ? (
+            <div className="kana-reveal kana-reveal-3 rounded-md bg-surface-2 p-4">
+              <p className="text-small font-bold text-ink">{fa.curriculum.kanaWritingTipTitle}</p>
+              <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink">
+                <MixedFaJaText text={teaching.strokeHintFa} />
+              </p>
+            </div>
+          ) : null}
+
+          {/* §11 — the mnemonic card renders ONLY when verified; a draft is
+              never shown as final content (no badge, no «review» state in the
+              learner UI — the data keeps its honest status for the tooling). */}
+          {verifiedMnemonic ? (
+            <div className="kana-reveal kana-reveal-3 rounded-md bg-surface-2 p-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-small font-bold text-ink">{mn.coreImageFa}</span>
+                <span className="text-small font-bold text-ink">{verifiedMnemonic.coreImageFa}</span>
                 <span className="rounded-full bg-ink-faint/30 px-2 py-0.5 text-micro text-ink-faint">
-                  {mn.honestLabelFa}
-                </span>
-                <span className="rounded-full border border-amber-600/50 px-2 py-0.5 text-micro text-amber-700">
-                  {fa.curriculum.kanaMnemonicDraft}
+                  {verifiedMnemonic.honestLabelFa}
                 </span>
               </div>
               <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink">
-                <MixedFaJaText text={mn.storyFa} />
+                <MixedFaJaText text={verifiedMnemonic.storyFa} />
               </p>
             </div>
           ) : null}
 
-          {/* the real word — char by char in Japanese reading order (owner §3
-              مرحلهٔ چهارم): the characters appear gradually, the target kana is
-              highlighted, the meaning follows the last character. */}
-          {kana.hostWord && stage !== 'intro' && stage !== 'demo' ? (
-            <div className="kana-reveal kana-reveal-3 rounded-md border border-ai/30 bg-indigo-wash/30 p-4">
-              <p className="text-caption text-ink-faint">{fa.curriculum.kanaHostWordPrefix}</p>
-              <p className="mt-1 font-jp text-h2 font-bold text-ink" lang="ja" dir="ltr">
-                {Array.from(kana.hostWord.word).map((ch, i) => (
-                  <span
-                    key={`${ch}-${i}`}
-                    className={`word-char-in ${ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : ''}`}
-                    style={{ animationDelay: `${300 + i * 450}ms` }}
-                  >
-                    {ch}
-                  </span>
-                ))}
-              </p>
-              <p
-                className="word-meaning-in mt-1 text-body text-ink-soft"
-                style={{ animationDelay: `${300 + Array.from(kana.hostWord.word).length * 450 + 250}ms` }}
-              >
-                — {kana.hostWord.meaningFa}
-              </p>
-            </div>
-          ) : null}
-
-          {/* confusable pair, side by side — stays after the explain stage */}
-          {mn?.pairGlyphs && mn.pairGlyphs.length > 0 && stage !== 'intro' && stage !== 'demo' ? (
+          {/* confusable pair, side by side — Persian | Latin under each glyph (§8) */}
+          {mn?.pairGlyphs && mn.pairGlyphs.length > 0 ? (
             <div className="kana-reveal kana-reveal-4 rounded-md border border-shu/40 bg-surface-warm p-4">
               <p className="text-small font-bold text-ink">{fa.curriculum.kanaPairCompareTitle}</p>
               <div className="mt-2 flex flex-wrap items-center gap-4">
@@ -531,8 +592,11 @@ export function KanaCard({
                   <JaBlock className="grid size-14 place-items-center rounded-md border-2 border-ai bg-card font-jp text-h2 font-bold text-ink">
                     {kana.glyph}
                   </JaBlock>
-                  <span className="font-mono text-caption text-ai" dir="ltr">
-                    {kana.romaji}
+                  <span className="flex items-baseline gap-1 text-caption font-bold text-ink-soft">
+                    {readingFa.replace(/[«»]/g, '').replace(' کوتاه', '').trim()}
+                    <span className="font-mono text-micro font-normal text-ink-faint" dir="ltr">
+                      {readingLatin}
+                    </span>
                   </span>
                 </span>
                 {mn.pairGlyphs.map((glyph) => (
@@ -540,7 +604,12 @@ export function KanaCard({
                     <JaBlock className="grid size-14 place-items-center rounded-md border-2 border-ink-faint bg-card font-jp text-h2 font-bold text-ink-soft">
                       {glyph}
                     </JaBlock>
-                    <span className="text-caption text-ink-faint">{fa.curriculum.kanaPairOther}</span>
+                    <span className="flex items-baseline gap-1 text-caption text-ink-faint">
+                      {KANA_READING_FA_BY_GLYPH[glyph] ?? fa.curriculum.kanaPairOther}
+                      <span className="font-mono text-micro text-ink-faint/70" dir="ltr">
+                        {KANA_ITEMS_BY_GLYPH[glyph]?.romaji ?? ''}
+                      </span>
+                    </span>
                   </span>
                 ))}
               </div>
@@ -551,7 +620,7 @@ export function KanaCard({
               ) : null}
             </div>
           ) : null}
-          {!mn?.pairGlyphs && confusableNoteFa && stage !== 'intro' && stage !== 'demo' ? (
+          {!mn?.pairGlyphs && confusableNoteFa ? (
             <p className="kana-reveal kana-reveal-4 text-small text-ink-faint">{confusableNoteFa}</p>
           ) : null}
 
@@ -595,22 +664,23 @@ export function KanaCard({
         </div>
       </div>
 
-      {/* engine + data + audio attribution — compact, out of the teaching flow
-          (owner §7). VOICEVOX:九州そら credit is a license requirement. */}
+      {/* §12 — attribution: ONE short line, only what the licenses require.
+          KanjiVG (CC BY-SA 3.0) needs name + license + link; VOICEVOX
+          character terms need the voice credit. Full texts live in
+          writing-data/licenses/ — nothing else technical in the teaching UI. */}
       <details className="border-t border-ink-faint pt-2 text-micro text-ink-faint">
-        <summary className="cursor-pointer select-none">دربارهٔ ابزار رسم و منابع</summary>
+        <summary className="cursor-pointer select-none">منابع</summary>
         <p className="mt-1 leading-[var(--leading-fa)]">
-          دادهٔ ترتیب ضربه‌ها: KanjiVG (CC BY-SA 3.0) —{' '}
+          دادهٔ ضربه‌ها: KanjiVG (CC BY-SA 3.0) —{' '}
           <a
             href="/writing-data/licenses/README-KanjiVG.md"
             className="text-ai underline"
             target="_blank"
             rel="noreferrer"
           >
-            مجوزها
+            مجوز
           </a>
-          . صداها: VOICEVOX:九州そら — از پیش تولیدشده و آفلاین. ارزیابی و رسم کاملاً در مرورگر شما انجام می‌شود؛ مسیر
-          قلم شما هرگز ارسال نمی‌شود.
+          {' · '}صدا: VOICEVOX:春日部つむぎ
         </p>
       </details>
     </section>

@@ -126,7 +126,7 @@ export const KANA_ITEMS: KanaItem[] = [
     hostWord: { word: 'えき', meaningFa: 'ایستگاه' },
     confusableWith: ['さ'],
     mnemonic: {
-      coreImageFa: 'کلید (key) آویزان از دو پله',
+      coreImageFa: 'کلیدی که از دو پله آویزان است',
       storyFa:
         'دو خط افقی مثل دو پله که از میانشان قلابی آویزان است — کلیدِ «کی» در آسانسور. با さ اشتباه نگیر: き دو خط افقی دارد، さ فقط یکی.',
       honestLabelFa: 'داستانِ یادسپار',
@@ -436,7 +436,7 @@ export const KANA_ITEMS: KanaItem[] = [
     hostWord: { word: 'の', meaningFa: '«ِ» (حرف اضافهٔ ملکی)' },
     mnemonic: {
       coreImageFa: 'پیچِ کاملِ «نه»',
-      storyFa: 'یک پیچِ کامل مثل سگکی که باز می‌شود — «نُ» یعنی no یعنی «نه»: برای گفتن نه، یک دور کامل می‌پیچد.',
+      storyFa: 'یک پیچِ کامل مثل سگکی که باز می‌شود — «نُ» یعنی «نه»: برای گفتن نه، یک دور کامل می‌پیچد.',
       honestLabelFa: 'داستانِ یادسپار',
       status: 'draft',
     },
@@ -1330,6 +1330,9 @@ export const KANA_ITEMS: KanaItem[] = [
 ];
 
 export const KANA_ITEMS_BY_ID: Record<string, KanaItem> = Object.fromEntries(KANA_ITEMS.map((k) => [k.kanaId, k]));
+
+/** Glyph → item (Addendum-3 §8: Latin complement beside every Persian reading). */
+export const KANA_ITEMS_BY_GLYPH: Record<string, KanaItem> = Object.fromEntries(KANA_ITEMS.map((k) => [k.glyph, k]));
 
 /** All kana ids introduced by the END of each unit (cumulative — decodability data, CONTENT-105). */
 export const KANA_TAUGHT_BY_UNIT: Record<string, string[]> = {

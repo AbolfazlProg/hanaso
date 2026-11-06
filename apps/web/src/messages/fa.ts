@@ -141,8 +141,15 @@ export const fa = {
     kanaConfusablePre: 'جفت اشتباه‌پذیر: ',
     /* TASK-LEARNING-08 v4 (owner final correction) — KanaCard v4: ONE unified
        environment, auto-flowing timeline, NO stage CTAs (بند ۱ و ۱۰ مالک) */
-    kanaStageIntroTitle: 'آشنایی با این نویسه',
-    kanaStageIntroHint: 'صدایش را می‌شنوی و شکلش را همان‌جا در دفتر می‌بینی.',
+    kanaStageIntroTitle: 'آموزش نوشتن این نویسه',
+    kanaStageIntroHint: 'شماره، نقطهٔ شروع و جهت هر ضربه را همان‌جا در دفتر می‌بینی — نویسه خودش را می‌نویسد.',
+    /* TASK-LEARNING-08 Addendum-2 §4: the ONE interactive stop — after the calm
+       introduction, the user confirms readiness; everything after is automatic. */
+    kanaStageReadyTitle: 'آماده‌ای؟',
+    kanaStageReadyChip: 'تأیید آمادگی',
+    kanaStageChipReady: 'آماده',
+    kanaStageReadyHint: 'نویسه را نگاه کن، صدایش را بشنو و توضیحش را بخوان — وقتی آماده بودی شروع کن.',
+    kanaStageReadyCta: 'فهمیدم، شروع کنیم',
     kanaStageDemoTitle: 'نحوهٔ نوشتن را ببین',
     kanaStageDemoReplay: 'نمایش دوباره',
     kanaStageDemoDone: 'نمایش تمام شد — با هم مرورش کنیم',
@@ -159,13 +166,21 @@ export const fa = {
     kanaStageStrokeProgress: 'پیشرفت ضربه‌ها',
     kanaStageAudioOnce: 'هر وقت خواستی دوباره پخش کن.',
     kanaReplayTeaching: 'تکرار آموزش',
-    kanaStageChipIntro: 'آشنایی',
+    kanaStageChipIntro: 'آموزش',
     kanaStageChipDemo: 'نمایش نوشتن',
     kanaStageChipExplain: 'توضیح',
     kanaStageChipGuided: 'تمرین با راهنما',
     kanaStageChipFree: 'نوشتن از حافظه',
     kanaStageChipDone: 'کامل شد',
     kanaStrokesWord: 'ضربه',
+    /* TASK-LEARNING-08 Addendum-3 — §8 Latin complement + §9 audio speed state */
+    kanaReadingLatin: (faReading: string, latin: string) => `${faReading} | ${latin}`,
+    kanaSpeedNormal: 'عادی',
+    kanaSpeedSlow: 'آهسته',
+    kanaSpeedLabel: 'سرعت پخش',
+    kanaWordAudioLabel: (word: string) => `پخش صدای واژهٔ ${word}`,
+    kanaWordAudioPending: 'صدای این واژه هنوز تولید نشده.',
+    kanaWritingTipTitle: 'نکات نوشتن',
     unitProgress: 'بخش',
     islandMap: 'جزایر فصل',
     chapterLockedTitle: 'این فصل قفل است',
@@ -182,7 +197,10 @@ export const fa = {
     /* station runner */
     continueBlock: 'ادامه',
     /* TASK-LEARNING-08 WP-5: auto-next after a correct answer (owner feedback D) */
-    autoNextHint: 'به سؤال بعد می‌رویم…',
+    autoNextHint: 'درست بود — به سؤال بعد می‌رویم…',
+    /* TASK-LEARNING-08 Addendum-2 §1: the accepted ink is replaced by the clean
+       standard sample for a short review beat. */
+    kanaReviewSampleNote: 'نمونهٔ استاندارد — نتیجهٔ تمیز نوشتنت را ببین.',
     /* TASK-LEARNING-08 WP-5: walk resume notice (owner feedback E) */
     walkResumedTitle: 'از همان‌جا ادامه دادی',
     walkResumedBody: 'موقعیت قبلی‌ات در همین ایستگاه ذخیره شده بود و بازگردانده شد.',

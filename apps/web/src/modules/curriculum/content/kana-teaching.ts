@@ -18,6 +18,7 @@
  *                        status stays draft (human review pending — OQ-051).
  */
 import type { KanaTeaching } from '../types';
+import { KANA_ITEMS } from './kana-items';
 
 export const KANA_TEACHING: KanaTeaching[] = [
   {
@@ -55,7 +56,7 @@ export const KANA_TEACHING: KanaTeaching[] = [
     kanaId: 'hira-u',
     audioRef: 'kn-hira-u',
     pronunciationFa: '«او» کوتاه',
-    pronunciationNoteFa: 'مثل «او»، اما لب‌ها را گرد نکن — ژاپنی‌ها «u» را با لبِ تقریباً صاف می‌گویند',
+    pronunciationNoteFa: 'مثل «او»، اما لب‌ها را گرد نکن — این صدا در ژاپنی با لبِ تقریباً صاف گفته می‌شود',
     mnemonic: {
       coreImageFa: 'دهانِ بازِ تعجب',
       storyFa: 'یک ابرو بالا رفته و دهان از تعجب گرد شده: «اوو»! چی دیدی که این‌قدر تعجب کردی؟',
@@ -86,7 +87,7 @@ export const KANA_TEACHING: KanaTeaching[] = [
     pronunciationNoteFa: 'مثل «اُ» در «اُمید» — بدون کشیدن',
     mnemonic: {
       coreImageFa: 'مثل あ، ولی دو گردی',
-      storyFa: 'برادرِ あ است، اما دوتا گردیِ rolike دارد: یکی بالای سر و یکی وسط؛ دو تا «اُ» گرد = حتماً «اُ».',
+      storyFa: 'برادرِ あ است، اما دوتا گردیِ چرخیده دارد: یکی بالای سر و یکی وسط؛ دو تا «اُ» گرد = حتماً «اُ».',
       style: 'story',
       honestLabelFa: 'داستانِ یادسپار',
       pairGlyphs: ['あ'],
@@ -113,7 +114,7 @@ export const KANA_TEACHING: KanaTeaching[] = [
     pronunciationNoteFa: 'کوتاه — مثل «کی» در «کیست»',
     strokeHintFa: 'چهار ضربه؛ دو خطِ افقی اول، بعد عمودی، بعد ضربهٔ خمیده — از چپ به راست، بالا به پایین.',
     mnemonic: {
-      coreImageFa: 'کلید (key)',
+      coreImageFa: 'شکلِ کلید',
       storyFa: 'یک کلید است: دو دندانه بالا و دسته پایین؛ کلید را که می‌چرخانی «کییی» صدا می‌دهد.',
       style: 'story',
       honestLabelFa: 'داستانِ یادسپار',
@@ -224,7 +225,7 @@ export const KANA_TEACHING: KanaTeaching[] = [
     pronunciationFa: '«سُ»',
     mnemonic: {
       coreImageFa: 'سوزن‌دوزی (زیگزاگ)',
-      storyFa: 'دو ضربهٔ صافِ بالا و یک زیگزاگِ پایین — رویهٔ دوخت با سوزن؛ نخ که می‌کشی: سُـو (sow = دوختن)!',
+      storyFa: 'دو ضربهٔ صافِ بالا و یک زیگزاگِ پایین — رویهٔ دوخت با سوزن؛ نخ که می‌کشی: سُـو — یعنی «دوختن»!',
       style: 'story',
       honestLabelFa: 'داستانِ یادسپار',
       status: 'draft',
@@ -346,11 +347,11 @@ export const KANA_TEACHING: KanaTeaching[] = [
     mnemonic: {
       coreImageFa: 'گربه‌ای که دمش حلقه زده',
       storyFa:
-        'یک خطِ ایستاده و دُمپیچ‌خورده — گربه‌ای که دمش را حلقه کرده و پنجه گذاشته؛ گربه در ژاپنی neko است: «نه»!',
+        'یک خطِ ایستاده و دُمپیچ‌خورده — گربه‌ای که دمش را حلقه کرده و پنجه گذاشته؛ «نِکو» در ژاپنی یعنی گربه: «نه»!',
       style: 'story',
       honestLabelFa: 'داستانِ یادسپار',
       pairGlyphs: ['れ', 'わ'],
-      pairHintFa: 'ね دُمش حلقهٔ کامل دارد (گربه neko)؛ れ دُمش آزاد می‌چرخد و わ سرِ گردِ بسته دارد.',
+      pairHintFa: 'ね دُمش حلقهٔ کامل دارد (گربهٔ «نِکو»)؛ れ دُمش آزاد می‌چرخد و わ سرِ گردِ بسته دارد.',
       status: 'draft',
     },
   },
@@ -682,7 +683,7 @@ export const KANA_TEACHING: KanaTeaching[] = [
     kanaId: 'kata-u',
     audioRef: 'kn-kata-u',
     pronunciationFa: '«او» کوتاه',
-    pronunciationNoteFa: 'مثل «او»، اما لب‌ها را گرد نکن — ژاپنی‌ها «u» را با لبِ تقریباً صاف می‌گویند',
+    pronunciationNoteFa: 'مثل «او»، اما لب‌ها را گرد نکن — این صدا در ژاپنی با لبِ تقریباً صاف گفته می‌شود',
     mnemonic: {
       coreImageFa: 'سقفِ یک‌شیب',
       storyFa: 'یک سقفِ یک‌شیب که پایینش یک تیرک دارد؛ خانهٔ «او»: «او».',
@@ -1266,4 +1267,16 @@ export const KANA_TEACHING: KanaTeaching[] = [
 /** Lookup by registry key (kanaId) — the joined view the cards use). */
 export const KANA_TEACHING_BY_ID: Record<string, KanaTeaching> = Object.fromEntries(
   KANA_TEACHING.map((t) => [t.kanaId, t]),
+);
+
+/**
+ * TASK-LEARNING-08 Addendum-2 §3: Persian reading lookup BY GLYPH — the pair
+ * compare and every "reading" surface speak Persian first. Latin romaji is no
+ * longer the primary guide anywhere in the teaching UI.
+ */
+export const KANA_READING_FA_BY_GLYPH: Record<string, string> = Object.fromEntries(
+  KANA_ITEMS.flatMap((k) => {
+    const t = KANA_TEACHING_BY_ID[k.kanaId];
+    return t ? [[k.glyph, t.pronunciationFa.replace(/[«»]/g, '').replace(' کوتاه', '').trim()] as const] : [];
+  }),
 );

@@ -51,6 +51,8 @@ import { ExerciseSession } from './exercise-session';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { KanaCard, normalizeKanaStage, type KanaCardProgress } from './kana-card';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
+import { loadWritingCharData, writingAvailability } from '@/modules/writing';
+import { preloadAudio } from '@/modules/audio/client-cache';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
@@ -86,6 +88,12 @@ export interface StationRunnerProps {
    * card hides the sound affordance honestly (owner feedback A).
    */
   kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
+  /**
+   * TASK-LEARNING-08 Addendum-3 §9: kanaId → the host word's OWN audio pair
+   * (public/audio/hostwords registry). Null = not generated; the word card
+   * hides its play control honestly.
+   */
+  hostWordAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
 }
 
 /** Grading round-trip for one block interaction. */
@@ -194,6 +202,7 @@ export function StationRunner(props: StationRunnerProps) {
     audioAvailable,
     wordAudioByWord,
     kanaAudioByKanaId,
+    hostWordAudioByKanaId,
     chapterSlug,
   } = props;
   const router = useRouter();
@@ -228,6 +237,28 @@ export function StationRunner(props: StationRunnerProps) {
   const blocks = station.blocks;
   const block = blocks[step];
   const lineById = useMemo(() => new Map(dialogue.lines.map((l) => [l.id, l])), [dialogue.lines]);
+
+  /* ------- Addendum-3 §3/§10: targeted prefetch of the NEXT kana card -------
+   * While the learner works on the current card (many seconds before the
+   * walk auto-advances), the NEXT kana's stroke data and BOTH audio assets
+   * are warmed — one element each, deduped, never a bulk preload — so the
+   * transition shows no skeleton flash and no network round-trip. */
+  const nextKanaBlock = useMemo(
+    () => station.blocks.find((b, i) => b.kind === 'kana-card' && i > step),
+    [station.blocks, step],
+  );
+  useEffect(() => {
+    if (!nextKanaBlock || nextKanaBlock.kind !== 'kana-card') return;
+    const item = KANA_ITEMS_BY_ID[nextKanaBlock.kanaId];
+    if (!item) return;
+    void writingAvailability(item.glyph).then((a) => {
+      if (a.status === 'available') loadWritingCharData(item.glyph).catch(() => undefined);
+    });
+    const pair = kanaAudioByKanaId?.[nextKanaBlock.kanaId];
+    if (pair) void preloadAudio(pair.opus);
+    const hostPair = hostWordAudioByKanaId?.[nextKanaBlock.kanaId];
+    if (hostPair) void preloadAudio(hostPair.opus);
+  }, [nextKanaBlock, kanaAudioByKanaId, hostWordAudioByKanaId]);
 
   /* ---------------- WP-5: restore the persisted walk (once, after mount) ---- */
   useEffect(() => {
@@ -416,6 +447,7 @@ export function StationRunner(props: StationRunnerProps) {
           audioAvailable={audioAvailable}
           wordAudioByWord={wordAudioByWord}
           kanaAudioByKanaId={kanaAudioByKanaId}
+          hostWordAudioByKanaId={hostWordAudioByKanaId}
           isLastBlock={step === blocks.length - 1}
           exerciseScore={block.kind === 'exercise' ? blockResult(blockResults, block.id) : null}
           exerciseInitialProgress={block.kind === 'exercise' ? exerciseProgress[block.id] : undefined}
@@ -718,6 +750,7 @@ function BlockView({
   audioAvailable,
   wordAudioByWord,
   kanaAudioByKanaId,
+  hostWordAudioByKanaId,
   isLastBlock,
   exerciseScore,
   exerciseInitialProgress,
@@ -742,6 +775,8 @@ function BlockView({
   wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
   /** WP-2/WP-3: resolved kana audio pairs (kanaId → opus+m4a | null). */
   kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
+  /** Addendum-3 §9: the host word's own audio pair (kanaId → opus+m4a | null). */
+  hostWordAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
   /** True on the last authored block (drives the skip-panel CTA label). */
   isLastBlock: boolean;
   /**
@@ -876,6 +911,7 @@ function BlockView({
           showRomaji={block.showRomaji}
           confusableNoteFa={block.confusableNoteFa}
           audioUrls={kanaAudioByKanaId?.[kana.kanaId] ?? null}
+          wordAudioUrls={hostWordAudioByKanaId?.[kana.kanaId] ?? null}
           initialProgress={kanaCardStage ? ({ stage: kanaCardStage } as KanaCardProgress) : undefined}
           onProgress={onKanaProgress}
           onWritingDone={onKanaWritingDone}
@@ -1024,7 +1060,9 @@ function BlockView({
                 {example.lineRef && <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>}
               </div>
               <JaBlock className="mt-3 text-lead font-bold">{example.ja}</JaBlock>
-              <p className="mt-1 text-caption text-ink-soft" dir="ltr" lang="ja">
+              {/* Addendum-2 §3: the reading caption is Persian now — dir=auto keeps
+                  Japanese readings (if any are authored later) correct too. */}
+              <p className="mt-1 text-caption text-ink-soft" dir="auto">
                 {example.reading}
               </p>
               <p className="mt-2 text-body">{example.fa}</p>

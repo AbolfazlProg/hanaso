@@ -1,0 +1,698 @@
+{
+ "amehare-hau": {
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -20.956572,
+    "floorDb": null,
+    "durMs": 437.333
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -24.499137,
+    "floorDb": null,
+    "durMs": 394.667
+   }
+  },
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -12.635505,
+    "floorDb": null,
+    "durMs": 394.667
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -21.337699,
+    "floorDb": null,
+    "durMs": 426.66700000000003
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -30.855422,
+    "floorDb": null,
+    "durMs": 416.0
+   }
+  },
+  "し": {
+   "text": "信",
+   "metrics": {
+    "peakDb": -19.185097,
+    "floorDb": null,
+    "durMs": 501.333
+   }
+  },
+  "ん": {
+   "text": "嗯",
+   "metrics": {
+    "peakDb": -24.305523,
+    "floorDb": null,
+    "durMs": 405.333
+   }
+  }
+ },
+ "chugoku-usagi": {
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -19.542287,
+    "floorDb": null,
+    "durMs": 437.333
+   }
+  },
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -15.787236,
+    "floorDb": null,
+    "durMs": 437.333
+   }
+  },
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -14.890221,
+    "floorDb": null,
+    "durMs": 469.333
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -35.39163,
+    "floorDb": null,
+    "durMs": 309.333
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -14.974529,
+    "floorDb": null,
+    "durMs": 405.333
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -19.065256,
+    "floorDb": null,
+    "durMs": 362.66700000000003
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -21.569587,
+    "floorDb": null,
+    "durMs": 352.0
+   }
+  }
+ },
+ "goki-human": {
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -15.522034,
+    "floorDb": null,
+    "durMs": 330.667
+   }
+  },
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -9.407753,
+    "floorDb": null,
+    "durMs": 426.66700000000003
+   }
+  },
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -17.704245,
+    "floorDb": null,
+    "durMs": 522.667
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -17.25414,
+    "floorDb": null,
+    "durMs": 448.0
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -48.4403,
+    "floorDb": null,
+    "durMs": 330.667
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -50.39603,
+    "floorDb": null,
+    "durMs": 288.0
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -15.085217,
+    "floorDb": null,
+    "durMs": 405.333
+   }
+  }
+ },
+ "kasukabe-tsumugi": {
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -15.422874,
+    "floorDb": null,
+    "durMs": 426.66700000000003
+   }
+  },
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -10.208557,
+    "floorDb": null,
+    "durMs": 405.333
+   }
+  },
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -19.221374,
+    "floorDb": null,
+    "durMs": 512.0
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -18.489669,
+    "floorDb": null,
+    "durMs": 426.66700000000003
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -18.958796,
+    "floorDb": null,
+    "durMs": 416.0
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -13.617776,
+    "floorDb": null,
+    "durMs": 394.667
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -20.631285,
+    "floorDb": null,
+    "durMs": 416.0
+   }
+  }
+ },
+ "myoujou-himari": {
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -10.790911,
+    "floorDb": null,
+    "durMs": 469.333
+   }
+  },
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -20.941787,
+    "floorDb": null,
+    "durMs": 394.667
+   }
+  },
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -13.0031,
+    "floorDb": null,
+    "durMs": 512.0
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -13.962716,
+    "floorDb": null,
+    "durMs": 480.0
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -20.645549,
+    "floorDb": null,
+    "durMs": 437.333
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -12.100515,
+    "floorDb": null,
+    "durMs": 394.667
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -17.30647,
+    "floorDb": null,
+    "durMs": 501.333
+   }
+  }
+ },
+ "namine-ritsu": {
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -19.781948,
+    "floorDb": null,
+    "durMs": 426.66700000000003
+   }
+  },
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -15.218709,
+    "floorDb": null,
+    "durMs": 522.667
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -40.651262,
+    "floorDb": null,
+    "durMs": 298.66700000000003
+   }
+  },
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -18.923597,
+    "floorDb": null,
+    "durMs": 426.66700000000003
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -17.734826,
+    "floorDb": null,
+    "durMs": 362.66700000000003
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -13.789831,
+    "floorDb": null,
+    "durMs": 405.333
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -13.267677,
+    "floorDb": null,
+    "durMs": 480.0
+   }
+  }
+ },
+ "no7-yomikikase": {
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -15.091241,
+    "floorDb": null,
+    "durMs": 416.0
+   }
+  },
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -19.797472,
+    "floorDb": null,
+    "durMs": 469.333
+   }
+  },
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -19.883356,
+    "floorDb": null,
+    "durMs": 512.0
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -20.591467,
+    "floorDb": null,
+    "durMs": 362.66700000000003
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -20.186754,
+    "floorDb": null,
+    "durMs": 512.0
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -19.487138,
+    "floorDb": null,
+    "durMs": 373.333
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -14.081256,
+    "floorDb": null,
+    "durMs": 437.333
+   }
+  }
+ },
+ "nurse-robot-t": {
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -14.087963,
+    "floorDb": null,
+    "durMs": 480.0
+   }
+  },
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -16.311979,
+    "floorDb": null,
+    "durMs": 512.0
+   }
+  },
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -22.246323,
+    "floorDb": null,
+    "durMs": 416.0
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -28.48243,
+    "floorDb": null,
+    "durMs": 362.66700000000003
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -20.301259,
+    "floorDb": null,
+    "durMs": 469.333
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -32.149763,
+    "floorDb": null,
+    "durMs": 384.0
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -14.391133,
+    "floorDb": null,
+    "durMs": 458.667
+   }
+  }
+ },
+ "sayo": {
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -15.787236,
+    "floorDb": null,
+    "durMs": 576.0
+   }
+  },
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -14.538296,
+    "floorDb": null,
+    "durMs": 405.333
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -16.725629,
+    "floorDb": null,
+    "durMs": 458.667
+   }
+  },
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -13.420433,
+    "floorDb": null,
+    "durMs": 522.667
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -23.354329,
+    "floorDb": null,
+    "durMs": 416.0
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -22.198391,
+    "floorDb": null,
+    "durMs": 341.33299999999997
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -11.320933,
+    "floorDb": null,
+    "durMs": 458.667
+   }
+  }
+ },
+ "shirakami-kotaro": {
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -17.171444,
+    "floorDb": null,
+    "durMs": 512.0
+   }
+  },
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -21.294516,
+    "floorDb": null,
+    "durMs": 394.667
+   }
+  },
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -22.332579,
+    "floorDb": null,
+    "durMs": 394.667
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -25.21294,
+    "floorDb": null,
+    "durMs": 426.66700000000003
+   }
+  },
+  "う": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -23.323183,
+    "floorDb": null,
+    "durMs": 384.0
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -31.608671,
+    "floorDb": null,
+    "durMs": 330.667
+   }
+  },
+  "ラ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -24.895157,
+    "floorDb": null,
+    "durMs": 426.66700000000003
+   }
+  }
+ },
+ "whitecul-normal": {
+  "あ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -26.530164,
+    "floorDb": null,
+    "durMs": 277.33299999999997
+   }
+  },
+  "か": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -21.117868,
+    "floorDb": null,
+    "durMs": 405.333
+   }
+  },
+  "し": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -13.690548,
+    "floorDb": null,
+    "durMs": 469.333
+   }
+  },
+  "ん": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -33.174156,
+    "floorDb": null,
+    "durMs": 277.33299999999997
+   }
+  },
+  "つ": {
+   "text": "ASR_FAIL",
+   "metrics": {
+    "peakDb": -38.138213,
+    "floorDb": null,
+    "durMs": 394.667
+   }
+  },
+  "う": {
+   "text": "#",
+   "metrics": {
+    "peakDb": -30.239523,
+    "floorDb": null,
+    "durMs": 277.33299999999997
+   }
+  },
+  "ラ": {
+   "text": "的",
+   "metrics": {
+    "peakDb": -21.47169,
+    "floorDb": null,
+    "durMs": 405.333
+   }
+  }
+ },
+ "zundamon-normal": {
+  "あ": {
+   "text": "啊？",
+   "metrics": {
+    "peakDb": -20.367375,
+    "floorDb": null,
+    "durMs": 533.333
+   }
+  },
+  "つ": {
+   "text": "#",
+   "metrics": {
+    "peakDb": -20.361846,
+    "floorDb": null,
+    "durMs": 522.667
+   }
+  },
+  "し": {
+   "text": "西",
+   "metrics": {
+    "peakDb": -17.259939,
+    "floorDb": null,
+    "durMs": 554.667
+   }
+  },
+  "ん": {
+   "text": "#",
+   "metrics": {
+    "peakDb": -30.196545,
+    "floorDb": null,
+    "durMs": 469.333
+   }
+  },
+  "か": {
+   "text": "看",
+   "metrics": {
+    "peakDb": -16.976502,
+    "floorDb": null,
+    "durMs": 544.0
+   }
+  },
+  "う": {
+   "text": "啊？",
+   "metrics": {
+    "peakDb": -23.539604,
+    "floorDb": null,
+    "durMs": 533.333
+   }
+  },
+  "ラ": {
+   "text": "那",
+   "metrics": {
+    "peakDb": -11.838672,
+    "floorDb": null,
+    "durMs": 469.333
+   }
+  }
+ }
+}
