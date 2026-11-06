@@ -220,12 +220,24 @@ body {
 .kana-reveal-5 {
   animation: kana-ink-in 480ms cubic-bezier(0.2, 0.6, 0.2, 1) 1020ms both;
 }
+
+/* TASK-LEARNING-08 v4 (owner §3 مرحلهٔ چهارم): واژهٔ نمونه حرف‌به‌حرف و به
+   ترتیب صحیح خواندن ژاپنی ظاهر می‌شود — هر کاراکتر با تأخیر پله‌ای خودش
+   (استایل درون‌خطی)، معنی پس از آخرین حرف. حس جوهر، نه تایپ ماشینی. */
+.word-char-in {
+  animation: kana-ink-in 420ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+.word-meaning-in {
+  animation: kana-ink-in 520ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
 @media (prefers-reduced-motion: reduce) {
   .kana-reveal,
   .kana-reveal-2,
   .kana-reveal-3,
   .kana-reveal-4,
-  .kana-reveal-5 {
+  .kana-reveal-5,
+  .word-char-in,
+  .word-meaning-in {
     animation: none;
   }
 }

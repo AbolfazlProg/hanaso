@@ -13,10 +13,10 @@
  * The fix: key={block.id} on KanaCard/ExerciseSession — each block is a fresh
  * instance. This test drives the REAL StationRunner (real chapter content,
  * real engine, real staged flow) through the あ card end-to-end and asserts
- * the い card starts at encounter.
+ * the い card starts fresh at intro.
  */
 import { describe, expect, it, vi, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
-import { cleanup, fireEvent, render, act, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, act } from '@testing-library/react';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import * as React from 'react';
@@ -119,59 +119,57 @@ function renderStation() {
 }
 
 describe('StationRunner — consecutive kana cards are FRESH instances (walk regression #117)', () => {
-  it('the い card starts at encounter after the あ card completes (no state leak)', { timeout: 30000 }, async () => {
-    const { container, findByRole } = renderStation();
-
-    // --- あ card: encounter → demo
-    const cta = await findByRole('button', { name: /بگذار یاد بگیرمش/ });
+  it('the い card starts fresh at intro after the あ card completes (no state leak)', { timeout: 30000 }, async () => {
+    // fake timers BEFORE render — the v4 auto timeline starts the moment the
+    // card mounts (owner final correction); switching timers mid-flight would
+    // strand the in-flight intro loop.
     vi.useFakeTimers();
-    fireEvent.click(cta);
-    for (let k = 0; k < 6; k += 1) {
+    const { container } = renderStation();
+
+    // --- あ card: the timeline auto-flows intro → demo → explain → guided
+    //     with ZERO clicks (no stage CTAs exist anywhere in v4)
+    for (let k = 0; k < 16; k += 1) {
       await act(async () => {
         await vi.advanceTimersByTimeAsync(5000);
       });
-      if (container.querySelector('[data-kana-stage="explain"]')) break;
+      if (container.querySelector('[data-kana-stage="guided"]')) break;
     }
-    expect(container.querySelector('[data-kana-stage="explain"]')).toBeTruthy();
-    expect(container.querySelector('[data-kana-stage="explain"]')).toBeTruthy();
-    vi.useRealTimers();
-    const practiceCta = await findByRole('button', { name: /بریم تمرین/ });
-    fireEvent.click(practiceCta);
+    expect(
+      container.querySelector('[data-kana-stage="guided"]'),
+      'auto-flow reached guided with no clicks',
+    ).toBeTruthy();
 
-    // --- guided: draw all three strokes of あ
-    let svg = await waitFor(() => {
-      const s = container.querySelector('svg[role="img"]');
-      expect(s).not.toBeNull();
-      return s as Element;
-    });
-    drawStroke(svg, A_DATA.medians[0]!);
-    drawStroke(svg, A_DATA.medians[1]!);
-    drawStroke(svg, A_DATA.medians[2]!);
+    // --- guided: draw all three strokes of あ (synchronous pointer events)
+    let svg = container.querySelector('svg[role="img"]');
+    expect(svg, 'canvas present in guided').not.toBeNull();
+    drawStroke(svg!, A_DATA.medians[0]!);
+    drawStroke(svg!, A_DATA.medians[1]!);
+    drawStroke(svg!, A_DATA.medians[2]!);
+    // guided done → beat(1500) → free
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 1700));
+      await vi.advanceTimersByTimeAsync(2000);
     });
     expect(container.querySelector('[data-kana-stage="free"]')).toBeTruthy();
 
-    // --- free: write あ from memory
-    svg = await waitFor(() => {
-      const s = container.querySelector('svg[role="img"]');
-      expect(s).not.toBeNull();
-      return s as Element;
+    // --- free: write あ from memory in the same canvas (remounted by key)
+    svg = container.querySelector('svg[role="img"]');
+    expect(svg, 'canvas present in free').not.toBeNull();
+    drawStroke(svg!, A_DATA.medians[0]!);
+    drawStroke(svg!, A_DATA.medians[1]!);
+    drawStroke(svg!, A_DATA.medians[2]!);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
     });
-    drawStroke(svg, A_DATA.medians[0]!);
-    drawStroke(svg, A_DATA.medians[1]!);
-    drawStroke(svg, A_DATA.medians[2]!);
 
     // --- the walk advanced to the NEXT block; the next kana card (い) must
-    //     be a FRESH instance at encounter — NOT the completed state of あ
-    await waitFor(() => {
-      const next = container.querySelector('[data-kana-stage]');
-      expect(next).not.toBeNull();
+    //     be a FRESH instance at intro — NOT the completed state of あ
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(3000);
     });
     const nextStage = container.querySelector('[data-kana-stage]')?.getAttribute('data-kana-stage');
-    expect(nextStage, 'the next card starts at encounter — never the leaked done state').toBe('encounter');
-    // and its glyph is い (the walk advanced exactly one block)
-    expect(container.textContent).toContain('い');
+    expect(nextStage, 'the next card starts at intro — never the leaked done state').toBe('intro');
+    // and its glyph is い — in v4 the glyph lives INSIDE the canvas (aria-label)
+    expect(container.querySelector('svg[aria-label*="い"]'), 'the い canvas is active').not.toBeNull();
     // no «نوشتن い یاد گرفته شد» without teaching
     expect(container.textContent).not.toContain('نوشتن い یاد گرفته شد');
 
@@ -182,6 +180,6 @@ describe('StationRunner — consecutive kana cards are FRESH instances (walk reg
     };
     const stages = Object.values(snapshot.kanaCardStages);
     expect(stages).not.toContain('done'); // あ's own persist stopped at 'free'
-    expect(stages).toContain('encounter'); // い's fresh persist
+    expect(stages).toContain('intro'); // い's fresh persist
   });
 });

@@ -210,18 +210,18 @@ describe('WritingCanvas — repeatability (rapid interactions never kill the sur
   it('a hint flash shows the dashed guide in FREE mode, then clears', async () => {
     const { container, rerender } = render(<WritingCanvas character="あ" mode="free" hintSignal={0} />);
     const svg = await waitFor(() => getCanvasSvg(container));
-    expect(svg.querySelector('path[stroke-dasharray="0.055 0.045"]')).toBeNull();
+    expect(svg.querySelector('path[stroke-dasharray="0.042 0.065"]')).toBeNull();
     rerender(<WritingCanvas character="あ" mode="free" hintSignal={1} />);
-    expect(svg.querySelector('path[stroke-dasharray="0.055 0.045"]')).not.toBeNull();
+    expect(svg.querySelector('path[stroke-dasharray="0.042 0.065"]')).not.toBeNull();
     await act(async () => {
       vi.useRealTimers();
       await new Promise((r) => setTimeout(r, 1500));
     });
-    expect(svg.querySelector('path[stroke-dasharray="0.055 0.045"]')).toBeNull();
+    expect(svg.querySelector('path[stroke-dasharray="0.042 0.065"]')).toBeNull();
   });
 });
 
-// ---------------------------------------------------------------- KanaCard v3: the staged walk
+// ---------------------------------------------------------------- KanaCard v4: the unified auto timeline
 
 const KANA_A: KanaItem = {
   kanaId: 'hira-a',
@@ -231,56 +231,87 @@ const KANA_A: KanaItem = {
   hostWord: { word: 'あい', meaningFa: 'عشق' },
 } as unknown as KanaItem;
 
-describe('KanaCard v3 — the staged experience end-to-end', () => {
-  it('starts at encounter with the glyph ALONE, its sound button and the CTA', async () => {
+describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correction)', () => {
+  it('starts at intro with the CANVAS as the centerpiece — no CTA button anywhere', async () => {
     const { container, findByRole } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/audio/kana/kn-hira-a.opus', m4a: '/x.m4a' }} />,
     );
-    expect(await findByRole('button', { name: /بگذار یاد بگیرمش/ })).toBeTruthy();
-    expect(container.querySelector('[data-kana-stage="encounter"]')).toBeTruthy();
-    // no canvas yet — stage 1 is glyph + sound, nothing else
-    expect(container.querySelector('svg[role="img"]')).toBeNull();
-    // audio affordance exists and the rate label no longer says 0.8×
-    expect(container.textContent).not.toContain('۰٫۸');
+    // the canvas is present from the FIRST second (owner §1: the character
+    // appears inside the big canvas, not as a separate giant glyph)
+    await waitFor(() => {
+      expect(container.querySelector('svg[role="img"]')).not.toBeNull();
+    });
+    expect(container.querySelector('[data-kana-stage="intro"]')).toBeTruthy();
+    // the only controls are the essential ones — no «مرحلهٔ بعد» CTAs
+    expect(container.querySelector('button[aria-label*="بگذار"]')).toBeNull();
+    await expect(findByRole('button', { name: /تکرار آموزش/ })).resolves.toBeTruthy();
+    await expect(findByRole('button', { name: /پخش صدای あ/ })).resolves.toBeTruthy();
   });
 
-  it('walks the full path: encounter → demo → explain → guided → free → done + onWritingDone', async () => {
+  it('AUTO-walks intro → demo → explain → guided with ZERO clicks, canvas never unmounts', async () => {
+    // fake timers BEFORE render — the auto timeline starts at mount; switching
+    // timers mid-flight would strand the in-flight intro loop.
+    vi.useFakeTimers();
+    const seen: string[] = [];
+    const { container } = render(
+      <KanaCard kana={KANA_A} showRomaji audioUrls={null} onProgress={(p) => seen.push(p.stage)} />,
+    );
+    // intro → demo → explain → guided is ~20-25s of virtual time. One big
+    // advance strands the async chain (canvas remounts mid-window), so the
+    // walk advances in beats like a real clock ticking.
+    for (let k = 0; k < 30; k += 1) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+      if (container.querySelector('[data-kana-stage="guided"]')) break;
+    }
+    expect(
+      container.querySelector('[data-kana-stage="guided"]'),
+      'auto-flow reached guided with no clicks',
+    ).toBeTruthy();
+    // the timeline passed through every display stage — no click ever happened
+    expect(seen).toEqual(expect.arrayContaining(['intro', 'demo', 'explain', 'guided']));
+    expect(seen[0]).toBe('intro');
+    // the canvas stayed mounted through every stage (one environment — owner §1)
+    expect(container.querySelector('svg[role="img"]')).not.toBeNull();
+    // the teaching explanations are still visible around the canvas
+    expect(container.textContent).toContain('واژهٔ قابل‌خواندن');
+    vi.useRealTimers();
+  });
+
+  it('reveals the real word char-by-char in Japanese reading order (staggered)', async () => {
+    const { container } = render(
+      <KanaCard kana={KANA_A} showRomaji audioUrls={null} initialProgress={{ stage: 'explain' }} />,
+    );
+    const word = await waitFor(() => {
+      const el = container.querySelector('.word-char-in');
+      expect(el).not.toBeNull();
+      return el!.closest('p')!;
+    });
+    const chars = word.querySelectorAll('.word-char-in');
+    expect(chars.length).toBe(2); // あ + い
+    // Japanese reading order = string order; the target kana あ is highlighted
+    expect(chars[0]!.textContent).toBe('あ');
+    expect(chars[0]!.className).toContain('text-shu');
+    // staggered delays increase along the word (owner §3 مرحلهٔ چهارم)
+    const d0 = Number((chars[0]! as HTMLElement).style.animationDelay.replace(/ms$/, ''));
+    const d1 = Number((chars[1]! as HTMLElement).style.animationDelay.replace(/ms$/, ''));
+    expect(d1).toBeGreaterThan(d0);
+  });
+
+  it('completes guided → free → done in the SAME canvas and fires the walk gate', async () => {
     const onWritingDone = vi.fn();
-    const onProgress = vi.fn();
     const onWritingAttempt = vi.fn();
-    const { container, findByRole } = render(
+    const { container } = render(
       <KanaCard
         kana={KANA_A}
         showRomaji
-        audioUrls={{ opus: '/audio/kana/kn-hira-a.opus', m4a: '/x.m4a' }}
+        audioUrls={null}
+        initialProgress={{ stage: 'guided' }}
         onWritingDone={onWritingDone}
-        onProgress={onProgress}
         onWritingAttempt={onWritingAttempt}
       />,
     );
-    const cta = await findByRole('button', { name: /بگذار یاد بگیرمش/ });
-    // fake timers ONLY for the demo sequence (RTL waits need real timers)
-    vi.useFakeTimers();
-    fireEvent.click(cta);
-    expect(container.querySelector('[data-kana-stage="demo"]')).toBeTruthy();
-    // demo runs through the three strokes (fake timers)
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(200);
-    });
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(30000);
-    });
-    // demo completed → explain stage with the gradual-reveal content
-    expect(container.querySelector('[data-kana-stage="explain"]')).toBeTruthy();
-    expect(container.textContent).toContain('واژهٔ قابل‌خواندن');
-
-    // back to real timers for the interactive part of the walk
-    vi.useRealTimers();
-    const practiceCta = await findByRole('button', { name: /بریم تمرین/ });
-    fireEvent.click(practiceCta);
-    expect(container.querySelector('[data-kana-stage="guided"]')).toBeTruthy();
-
-    // draw all three strokes faithfully (real timers for pointer flow)
     const svg = await waitFor(() => {
       const s = container.querySelector('svg[role="img"]');
       expect(s).not.toBeNull();
@@ -309,25 +340,62 @@ describe('KanaCard v3 — the staged experience end-to-end', () => {
     });
     expect(onWritingDone).toHaveBeenCalledTimes(1);
     expect(onWritingAttempt).toHaveBeenCalledTimes(2); // guided + free
+    // the canvas is STILL there at done — same environment, no page switch
+    expect(container.querySelector('svg[role="img"]')).not.toBeNull();
   });
 
-  it('restores the persisted stage (refresh resume — #117 §10)', async () => {
-    const { container } = render(
+  it('replays the whole teaching timeline repeatedly without breaking (owner §9)', async () => {
+    const { container, findByRole } = render(
+      <KanaCard kana={KANA_A} showRomaji audioUrls={null} initialProgress={{ stage: 'explain' }} />,
+    );
+    const replay = await findByRole('button', { name: /تکرار آموزش/ });
+    for (let n = 0; n < 3; n += 1) {
+      fireEvent.click(replay);
+      await waitFor(() => {
+        expect(container.querySelector('[data-kana-stage="intro"]')).toBeTruthy();
+      });
+    }
+    // after the rapid replays the surface is still alive and the controls work
+    expect(container.querySelector('svg[role="img"]')).not.toBeNull();
+    fireEvent.click(replay);
+    await waitFor(() => {
+      expect(container.querySelector('[data-kana-stage="intro"]')).toBeTruthy();
+    });
+  });
+
+  it('restores the persisted stage (refresh resume — #117 §10) and maps legacy encounter→intro', async () => {
+    const { container, rerender } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={null} initialProgress={{ stage: 'guided' }} />,
     );
-    // straight into guided — no encounter flash
+    // straight into guided — no intro flash
     expect(container.querySelector('[data-kana-stage="guided"]')).toBeTruthy();
-    expect(container.querySelector('[data-kana-stage="encounter"]')).toBeNull();
+    // legacy snapshots say «encounter» — v4 normalizes to intro
+    rerender(
+      <KanaCard
+        key="legacy"
+        kana={KANA_A}
+        showRomaji
+        audioUrls={null}
+        initialProgress={{ stage: 'encounter' as unknown as 'intro' }}
+      />,
+    );
+    expect(container.querySelector('[data-kana-stage="intro"]')).toBeTruthy();
   });
 
   it('reports every stage transition through onProgress', async () => {
+    vi.useFakeTimers();
     const onProgress = vi.fn();
-    const { findByRole } = render(<KanaCard kana={KANA_A} showRomaji audioUrls={null} onProgress={onProgress} />);
-    const cta = await findByRole('button', { name: /بگذار یاد بگیرمش/ });
-    fireEvent.click(cta);
-    await waitFor(() => {
-      expect(onProgress).toHaveBeenCalledWith({ stage: 'demo' });
-    });
+    render(<KanaCard kana={KANA_A} showRomaji audioUrls={null} onProgress={onProgress} />);
+    for (let k = 0; k < 30; k += 1) {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+      if (onProgress.mock.calls.some((c) => c[0]?.stage === 'guided')) break;
+    }
+    expect(onProgress).toHaveBeenCalledWith({ stage: 'intro' });
+    expect(onProgress).toHaveBeenCalledWith({ stage: 'demo' });
+    expect(onProgress).toHaveBeenCalledWith({ stage: 'explain' });
+    expect(onProgress).toHaveBeenCalledWith({ stage: 'guided' });
   });
 
   it('shows precise Persian feedback on a wrong stroke (not a vague «اشتباه»)', async () => {
@@ -349,9 +417,9 @@ describe('KanaCard v3 — the staged experience end-to-end', () => {
   });
 });
 
-// ---------------------------------------------------------------- KanaCard v3: audio coordination
+// ---------------------------------------------------------------- KanaCard v4: audio coordination
 
-describe('KanaCard v3 — audio coordination (#117 §5: one element, 1.0×, no overlap)', () => {
+describe('KanaCard v4 — audio coordination (owner §5: one element, 1.0×, no overlap)', () => {
   class FakeAudio {
     static instances: FakeAudio[] = [];
     src: string;
@@ -377,13 +445,11 @@ describe('KanaCard v3 — audio coordination (#117 §5: one element, 1.0×, no o
   });
 
   it('plays exactly once per defined moment and never twice for the same moment', async () => {
-    const { findByRole, rerender } = render(
-      <KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/a.opus', m4a: '/a.m4a' }} />,
-    );
-    await findByRole('button', { name: /بگذار یاد بگیرمش/ });
-    // encounter moment fired once
-    expect(FakeAudio.instances.filter((a) => !a.paused)).toHaveLength(1);
-    // re-render does NOT replay the encounter moment (the latch)
+    const { rerender } = render(<KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/a.opus', m4a: '/a.m4a' }} />);
+    await waitFor(() => {
+      expect(FakeAudio.instances.filter((a) => !a.paused)).toHaveLength(1); // intro moment
+    });
+    // re-render does NOT replay the intro moment (the latch)
     rerender(<KanaCard kana={KANA_A} showRomaji audioUrls={{ opus: '/a.opus', m4a: '/a.m4a' }} />);
     expect(FakeAudio.instances).toHaveLength(1);
   });

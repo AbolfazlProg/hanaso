@@ -1,28 +1,25 @@
 'use client';
 /**
- * HANASO — WritingCanvas v3 (TASK-LEARNING-08 phase 2 / #117).
+ * HANASO — WritingCanvas v4 (TASK-LEARNING-08 v4 — owner final correction).
  *
- * The unified drawing surface — renders the KanjiVG centerline data as
- * brush-stroke SVG and runs the HANASO judging engine v2 on the learner's
- * pointer input (mouse / touch / stylus — one pointer-events path). It
- * replaces the Hanzi Writer panel: no external quiz black box, no drifting
- * button state — one deterministic state machine per attempt.
+ * ONE canvas is the heart of the whole lesson — the character LIVES here from
+ * the first second (owner §1: one page, one environment, no stage-switching):
  *
- * Three modes (one component, one visual language):
- *   demo   — slow, ink-flow stroke-by-stroke demonstration (stroke-dash
- *            reveal on the same paths the engine judges against — what you
- *            see is what you're graded on). Fires onDemoStrokeStart per
- *            stroke so the parent's side panel narrates «ضربهٔ ۱ از ۳».
- *   guided — the current stroke shows as a dashed guide + start marker +
- *            direction arrow; the learner draws on it; every stroke is judged
- *            (fair normalization, precise Persian reasons, assist ladder).
- *   free   — no guide; write from memory; the reference reveals after the
- *            last stroke for self-comparison.
+ *   intro     — the glyph writes itself in one flowing ink motion (first
+ *               encounter; the sound plays over it). No numbers yet — a clean
+ *               first impression of the character as a whole.
+ *   demo      — the teaching pass: each stroke drawn slowly with its Persian
+ *               NUMBER badge on the canvas, the pulsing start dot and the
+ *               direction arrow (owner §2: شماره، نقطهٔ شروع و جهت روی کادر).
+ *   reference — the finished glyph rests in soft ink while the explanations
+ *               unfold around the canvas (explain stage — the canvas never
+ *               disappears).
+ *   guided    — trace the dashed guide; the v2 engine judges fairly.
+ *   free      — write from memory; the reference reveals under the ink.
  *
- * Repeatability contract (#117 §2/§10): demo restart / rapid mode switches /
- * mid-draw stage exits are all cancellable and idempotent — an async demo
- * loop is cancelled by generation token, pointer capture is released, and no
- * promise survives its mode.
+ * Repeatability contract (#117 §2/§10 + owner §4): demo/intro restarts, rapid
+ * mode switches and mid-draw exits are cancelled by generation token — no
+ * promise survives its mode, no button ever dies.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -33,21 +30,34 @@ import {
   type StrokeJudgement,
   type WritingAttemptState,
 } from '@/modules/writing/engine';
-import { DEMO_INTER_STROKE_MS, STROKE_WIDTH, directionArrow, livePathD, strokeDemoMs } from '@/modules/writing/render';
+import {
+  DEMO_INTER_STROKE_MS,
+  INTRO_INTER_STROKE_MS,
+  STROKE_WIDTH,
+  directionArrow,
+  livePathD,
+  pointAt,
+  strokeDemoMs,
+  strokeIntroMs,
+} from '@/modules/writing/render';
 import { loadWritingCharData, writingAvailability, type Point, type WritingCharData } from '@/modules/writing';
+
+export type WritingMode = 'intro' | 'demo' | 'guided' | 'free' | 'reference';
 
 export interface WritingCanvasProps {
   character: string;
-  mode: 'demo' | 'guided' | 'free';
+  mode: WritingMode;
   /** Fired for every judged stroke (accepted or not) with the live attempt state. */
   onJudgement?: (judgement: StrokeJudgement, state: WritingAttemptState) => void;
   /** Fired once when ALL strokes of the practice attempt are accepted. */
   onAttemptComplete?: (state: WritingAttemptState) => void;
   /** Fired once when the demo finishes all strokes. */
   onDemoDone?: () => void;
+  /** Fired once when the intro (first-encounter ink-in) finishes. */
+  onIntroDone?: () => void;
   /** Fired when a demo stroke begins — syncs the parent's narration panel. */
   onDemoStrokeStart?: (strokeIndex: number) => void;
-  /** Bump to restart: demo from stroke 0, practice as a fresh attempt. */
+  /** Bump to restart: demo/intro from stroke 0, practice as a fresh attempt. */
   restartSignal?: number;
   /** Bump to flash the current stroke's guide once (help escalation). */
   hintSignal?: number;
@@ -64,7 +74,7 @@ interface DemoProgress {
 }
 
 /**
- * One demo stroke: mounts hidden (dashoffset 1) and flows in (→ 0) via a
+ * One flowing stroke: mounts hidden (dashoffset 1) and flows in (→ 0) via a
  * double-rAF so the browser paints the hidden frame before transitioning —
  * the ink-flow reveal. Restart-safe: a remount (key change) replays cleanly.
  */
@@ -98,12 +108,18 @@ function DemoStrokePath({ d, ms }: { d: string; ms: number }) {
   );
 }
 
+/** Persian digits for the on-canvas stroke badge. */
+function faNum(n: number): string {
+  return String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]!);
+}
+
 export function WritingCanvas({
   character,
   mode,
   onJudgement,
   onAttemptComplete,
   onDemoDone,
+  onIntroDone,
   onDemoStrokeStart,
   restartSignal = 0,
   hintSignal = 0,
@@ -173,37 +189,40 @@ export function WritingCanvas({
     setDemo({ stroke: -1, shown: [] });
   }, [availability, character, mode, restartSignal]);
 
-  // ---------------------------------------------------------------- demo loop
+  // ------------------------------------------------- intro / demo show loop
   useEffect(() => {
-    if (mode !== 'demo' || !charData || availability !== 'available') return;
+    if ((mode !== 'demo' && mode !== 'intro') || !charData || availability !== 'available') return;
     let cancelled = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
     const sleep = (ms: number) =>
       new Promise<void>((resolve) => {
         timers.push(setTimeout(resolve, ms));
       });
+    const isIntro = mode === 'intro';
     void (async () => {
       setDemo({ stroke: -1, shown: [] });
-      await sleep(350);
+      await sleep(isIntro ? 420 : 350);
       for (let i = 0; i < charData.strokes.length && !cancelled; i += 1) {
-        onDemoStrokeStart?.(i);
+        if (!isIntro) onDemoStrokeStart?.(i);
         setDemo({ stroke: i, shown: [...Array.from({ length: i }, (_, k) => k)] });
-        await sleep(strokeDemoMs(medians[i] ?? []));
+        const median = medians[i] ?? [];
+        await sleep(isIntro ? strokeIntroMs(median) : strokeDemoMs(median));
         if (cancelled) return;
-        await sleep(DEMO_INTER_STROKE_MS);
+        await sleep(isIntro ? INTRO_INTER_STROKE_MS : DEMO_INTER_STROKE_MS);
       }
       if (!cancelled) {
         setDemo({ stroke: -2, shown: Array.from({ length: charData.strokes.length }, (_, k) => k) });
-        onDemoDone?.();
+        if (isIntro) onIntroDone?.();
+        else onDemoDone?.();
       }
     })();
     return () => {
       cancelled = true;
       for (const t of timers) clearTimeout(t);
     };
-    // deps limited on purpose: the demo restarts on signal/mode/data changes;
-    // narration + timing helpers are stable refs — re-running on them would
-    // restart the demo mid-stroke (same pattern as the walk-restore effect)
+    // deps limited on purpose: the show loop restarts on signal/mode/data
+    // changes; narration callbacks are stable-ish and re-running on them
+    // would restart the animation mid-stroke.
   }, [mode, charData, availability, restartSignal]);
 
   // ---------------------------------------------------------------- hint flash
@@ -230,9 +249,6 @@ export function WritingCanvas({
     const pts = liveRef.current;
     liveRef.current = [];
     setLive([]);
-    // a single-point tap (no move) is still an attempt — the engine's
-    // degenerate-path check judges it `incomplete_short` with feedback;
-    // only a truly empty capture is dropped silently.
     if (pts.length < 1 || !charData || attemptDone) return;
     const state = attemptRef.current;
     const judgement = judgeStroke({
@@ -261,7 +277,8 @@ export function WritingCanvas({
 
   const onPointerDown = useCallback(
     (ev: React.PointerEvent<SVGSVGElement>) => {
-      if (mode === 'demo' || attemptDone || !charData) return;
+      if (mode !== 'guided' && mode !== 'free') return;
+      if (attemptDone || !charData) return;
       try {
         ev.currentTarget.setPointerCapture(ev.pointerId);
       } catch {
@@ -325,11 +342,18 @@ export function WritingCanvas({
   }
   if (!charData) return null;
 
+  const isShow = mode === 'demo' || mode === 'intro';
   const expected = Math.min(attempt.expectedIndex, totalStrokes - 1);
   const guideMedian = medians[expected] ?? [];
   const arrow = guideMedian.length >= 2 ? directionArrow(guideMedian) : null;
   const guided = mode === 'guided' && !attemptDone;
   const freeReveal = mode === 'free' && attemptDone && revealOnDone;
+
+  // demo decorations (owner §2): badge number + start dot + direction arrow of
+  // the stroke currently being drawn — the canvas itself carries the teaching.
+  const demoMedian = isShow && demo.stroke >= 0 ? (medians[demo.stroke] ?? []) : [];
+  const demoArrow = demoMedian.length >= 2 ? directionArrow(demoMedian) : null;
+  const demoBadgeAt = demoMedian.length >= 2 ? pointAt(demoMedian, 0.62) : null;
 
   return (
     <svg
@@ -366,8 +390,25 @@ export function WritingCanvas({
         strokeWidth={2}
       />
 
-      {/* completed strokes (demo: revealed so far · practice: accepted) */}
-      {mode === 'demo'
+      {/* reference mode: the finished glyph rests in soft ink while the
+          explanations unfold — the canvas never disappears (owner §1) */}
+      {mode === 'reference' &&
+        charData.strokes.map((d, i) => (
+          <path
+            key={`ref-${i}`}
+            d={d}
+            fill="none"
+            stroke="currentColor"
+            className="text-ink"
+            strokeWidth={STROKE_WIDTH}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity={0.3}
+          />
+        ))}
+
+      {/* completed strokes (show: revealed so far · practice: accepted) */}
+      {isShow
         ? demo.shown.map((i) => (
             <path
               key={`demo-${i}`}
@@ -395,13 +436,63 @@ export function WritingCanvas({
             />
           ))}
 
-      {/* demo: the stroke currently flowing in */}
-      {mode === 'demo' && demo.stroke >= 0 && (
+      {/* show: the stroke currently flowing in */}
+      {isShow && demo.stroke >= 0 && (
         <DemoStrokePath
           key={`demo-live-${demo.stroke}`}
           d={charData.strokes[demo.stroke]!}
-          ms={strokeDemoMs(medians[demo.stroke] ?? [])}
+          ms={mode === 'intro' ? strokeIntroMs(medians[demo.stroke] ?? []) : strokeDemoMs(medians[demo.stroke] ?? [])}
         />
+      )}
+
+      {/* demo teaching decorations: number badge + start dot + direction arrow.
+          intro stays clean — the first impression is the whole character. */}
+      {mode === 'demo' && demo.stroke >= 0 && demoBadgeAt && (
+        <g>
+          <circle
+            cx={demoBadgeAt.x}
+            cy={demoBadgeAt.y}
+            r={52}
+            fill="var(--color-paper)"
+            stroke="currentColor"
+            className="text-shu"
+            strokeWidth={6}
+            opacity={0.96}
+          />
+          <text
+            x={demoBadgeAt.x}
+            y={demoBadgeAt.y + 20}
+            textAnchor="middle"
+            fontSize={64}
+            fontWeight={800}
+            fill="currentColor"
+            className="text-shu"
+          >
+            {faNum(demo.stroke + 1)}
+          </text>
+        </g>
+      )}
+      {mode === 'demo' && demo.stroke >= 0 && demoMedian.length >= 2 && (
+        <g>
+          <circle
+            cx={demoMedian[0]!.x}
+            cy={demoMedian[0]!.y}
+            r={30}
+            fill="currentColor"
+            className="text-shu"
+            opacity={0.92}
+          >
+            <animate attributeName="r" values="26;34;26" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+          {demoArrow && (
+            <g
+              transform={`translate(${demoArrow.tip.x} ${demoArrow.tip.y}) rotate(${demoArrow.angleDeg})`}
+              opacity={0.85}
+            >
+              <path d="M0,0 L-38,-20 L-30,0 L-38,20 Z" fill="currentColor" className="text-shu" />
+            </g>
+          )}
+        </g>
       )}
 
       {/* free-mode reveal after completion: the reference under the user's ink */}
@@ -433,7 +524,7 @@ export function WritingCanvas({
             strokeLinejoin="round"
             opacity={mode === 'free' ? 0.5 : 0.55}
             pathLength={1}
-            strokeDasharray="0.055 0.045"
+            strokeDasharray="0.042 0.065"
           />
           <circle
             cx={guideMedian[0]!.x}

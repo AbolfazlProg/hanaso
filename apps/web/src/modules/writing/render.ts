@@ -51,6 +51,18 @@ export function strokeDemoMs(median: Point[]): number {
 /** Pause between two demo strokes (#117 §4: a beat to observe each stroke). */
 export const DEMO_INTER_STROKE_MS = 900;
 
+/**
+ * INTRO pace (owner v4 §1/§3): the first encounter writes the whole glyph in
+ * one flowing motion — clearly more than a flicker, but a showcase, not a
+ * lecture. ~55% of the demo pace with a shorter breath between strokes.
+ */
+export function strokeIntroMs(median: Point[]): number {
+  return Math.round(strokeDemoMs(median) * 0.55);
+}
+
+/** Pause between two intro strokes — a soft continuous breath. */
+export const INTRO_INTER_STROKE_MS = 380;
+
 /** Point at fraction t (0..1) along a polyline by arc length. */
 export function pointAt(median: Point[], t: number): Point {
   const total = medianLength(median);

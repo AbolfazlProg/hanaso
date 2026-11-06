@@ -49,7 +49,7 @@ import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
-import { KanaCard, type KanaCardProgress } from './kana-card';
+import { KanaCard, normalizeKanaStage, type KanaCardProgress } from './kana-card';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
@@ -430,7 +430,7 @@ export function StationRunner(props: StationRunnerProps) {
             });
           }}
           onReturnToBlock={returnToBlock}
-          kanaCardStage={block.kind === 'kana-card' ? (kanaCardStages[block.id] ?? 'encounter') : undefined}
+          kanaCardStage={block.kind === 'kana-card' ? normalizeKanaStage(kanaCardStages[block.id]) : undefined}
           onKanaProgress={(progress: { stage: string }) => {
             if (block.kind !== 'kana-card') return;
             setKanaCardStages((prev) =>
