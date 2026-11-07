@@ -85,6 +85,12 @@ export interface WritingCanvasProps {
   hintSignal?: number;
   /** free mode: overlay the reference after completion (default true). */
   revealOnDone?: boolean;
+  /**
+   * Approved kana-introduction layout: the hero teaching canvas of a KanaCard
+   * renders LARGER than the drill canvas. Optional — every context that does
+   * not pass it keeps the historical 26rem square.
+   */
+  maxWidthRem?: number;
   className?: string;
 }
 
@@ -278,6 +284,7 @@ export function WritingCanvas({
   hintSignal = 0,
   revealOnDone = true,
   className,
+  maxWidthRem,
 }: WritingCanvasProps) {
   const [availability, setAvailability] = useState<'loading' | 'available' | 'data_missing'>('loading');
   const [charData, setCharData] = useState<WritingCharData | null>(null);
@@ -568,7 +575,7 @@ export function WritingCanvas({
     return (
       <div
         className={`frame-ink relative overflow-hidden rounded-lg bg-paper shadow-card ${className ?? ''}`}
-        style={{ width: '100%', maxWidth: '26rem', aspectRatio: '1 / 1' }}
+        style={{ width: '100%', maxWidth: `${maxWidthRem ?? 26}rem`, aspectRatio: '1 / 1' }}
         role="img"
         aria-label="در حال آماده‌سازی دفتر نوشتن"
         data-canvas-skeleton
@@ -616,7 +623,7 @@ export function WritingCanvas({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
-      style={{ width: '100%', maxWidth: '26rem', aspectRatio: '1 / 1' }}
+      style={{ width: '100%', maxWidth: `${maxWidthRem ?? 26}rem`, aspectRatio: '1 / 1' }}
       data-replaying={replaying ? 'true' : undefined}
     >
       {/* faint character frame guides (paper feel) */}

@@ -1,6 +1,6 @@
 'use client';
 /**
- * HANASO — KanaCard v5 (TASK-LEARNING-08 Addendum-3).
+ * HANASO — KanaCard v6 (TASK-LEARNING-08 Addendum-3 → approved intro layout).
  *
  * ONE page, ONE environment, ZERO stage-switching: the big WritingCanvas is
  * the heart of the card from the first second to the last. Addendum-3 §5 —
@@ -8,33 +8,39 @@
  * learner sees, playing in the canvas itself (no faint static template),
  * with the explanations unfolding AROUND it while it runs.
  *
- * Timeline:
- *   1 intro    the numbered stroke-order animation in the canvas + the
- *              sound + the reading — the explanations unfold around it
- *   2 ready    the ONE interactive stop: «فهمیدم، شروع کنیم» (Addendum-2 §4
- *              decision kept — the single CTA of the whole flow)
+ * APPROVED KANA INTRODUCTION LAYOUT (owner-approved wireframe) — the
+ * introduction is now five ordered sections, nothing below the canvas jumps
+ * in between, and the CTA lives at the very END, in the page footer:
+ *
+ *   §۱  عنوان کاراکتر        — script·row label + the BIG glyph + reading
+ *   §۲  کادر بزرگ آموزش نوشتن  — the hero canvas box (numbered stroke-order
+ *                               animation; strokes persist; the page's visual
+ *                               heart) + stroke progress + stage hints
+ *   §۳  دو باکس آموزشی        — «روش نوشتن» (start/direction/order/tips + live
+ *                               stroke narration & feedback) | «تلفظ و یادسپار"
+ *                               (fa+latin reading, character audio, mnemonic,
+ *                               confusable pair) — side by side on desktop
+ *   §۴  نمونه‌های کاربردی      — ALL related examples in ONE full-width box
+ *                               (word + fa reading + meaning + own audio +
+ *                               authored pronunciation guides)
+ *   §۵  Footer               — subtle divider → «پایان معرفی کاراکتر» → the
+ *                               CTA «شروع تمرین نوشتن ←» → the caption —
+ *                               AFTER every introduction element, never under
+ *                               the canvas or between the teaching boxes
+ *
+ * Timeline (kept — the stage machine is untouched):
+ *   1 intro    the numbered stroke-order animation in the hero canvas
+ *   2 ready    the ONE interactive stop: the footer CTA (Addendum-2 §4)
  *   3 guided   practice on the dashed guide in the same canvas
  *   4 free     writing from memory in the same canvas
  *   done       completion — the walk continues (onWritingDone)
  *
- * Addendum-3 §2 — «تکرار آموزش» replays the numbered animation IN PLACE at
- * any stage (canvas replaySignal); the stage/lesson/attempt state is never
- * reset, and rapid clicks are absorbed (button disabled while replaying).
- *
- * Addendum-3 §4 — the page's space is filled with per-character teaching
- * content (reading, current stroke, writing tips, the readable word with its
- * own audio, the confusable pair) — data-driven, never a mechanical template.
- *
- * Addendum-3 §11 — the mnemonic (still `draft` in the data) is NOT shown as
- * final content: only VERIFIED mnemonics render (no review badge anywhere in
- * the learner UI; the status lives on in the data for the admin tooling).
- *
- * Addendum-3 §12 — attribution is one short license line (KanjiVG CC BY-SA
- * + VOICEVOX credit — both required by their licenses); the full texts live
- * in writing-data/licenses/ — nothing else technical in the teaching space.
+ * During practice (guided/free) the intro-only sections COLLAPSE into folds
+ * (Addendum-5 §1 kept — nothing is deleted, one tap reopens) while the
+ * canvas, the stroke guide and the practice status stay around the canvas.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Ear, Hand, Info, RotateCcw, Volume2 } from 'lucide-react';
+import { ArrowLeft, Ear, Hand, Info, Mic, PenLine, RotateCcw, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { KANA_READING_FA_BY_GLYPH, KANA_TEACHING_BY_ID } from '@/modules/curriculum/content/kana-teaching';
 import { KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
@@ -42,6 +48,7 @@ import { kanaWordRomaji } from '@/modules/curriculum/kana-romaji';
 import type { KanaItem } from '@/modules/curriculum/types';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
+import { ExampleAudioButton } from '@/components/curriculum/example-audio-button';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { loadWritingCharData, writingAvailability, type WritingCharData } from '@/modules/writing';
 import { strokeInfoFa, type StrokeInfoFa } from '@/modules/writing/render';
@@ -66,6 +73,22 @@ export function normalizeKanaStage(stage: string | undefined): KanaStage {
 
 export interface KanaCardProgress {
   stage: KanaStage;
+}
+
+/**
+ * Approved intro layout §۴ — ONE usage example related to this glyph: the
+ * station's example-set entry whose Japanese word CONTAINS the character
+ * (structural subset of the example-set block item — station-runner passes
+ * the authored objects unchanged, in their authored educational order).
+ */
+export interface KanaRelatedExample {
+  id: string;
+  role: 'anchor' | 'near' | 'varied' | 'faded' | 'reading';
+  ja: string;
+  reading: string;
+  fa: string;
+  whyFa: string;
+  pronFa?: string;
 }
 
 export interface KanaCardProps {
@@ -96,6 +119,18 @@ export interface KanaCardProps {
   initialProgress?: KanaCardProgress | undefined;
   /** Stage persistence hook. */
   onProgress?: (progress: KanaCardProgress) => void;
+  /**
+   * Approved intro layout §۴ — the station's example-set entries that contain
+   * THIS glyph, in their authored educational order (empty/absent = the
+   * examples section renders with the host word only, or not at all).
+   */
+  relatedExamples?: KanaRelatedExample[];
+  /**
+   * Approved intro layout §۴ — the per-word example audio registry (the SAME
+   * record the example-set block uses; a word without a committed asset gets
+   * no play control — honest, never misbound).
+   */
+  exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
 }
 
 export function KanaCard({
@@ -107,6 +142,8 @@ export function KanaCard({
   onWritingDone,
   initialProgress,
   onProgress,
+  relatedExamples,
+  exampleAudioByWord,
 }: KanaCardProps): React.JSX.Element {
   const teaching = KANA_TEACHING_BY_ID[kana.kanaId];
   const [stage, setStage] = useState<KanaStage>(() => normalizeKanaStage(initialProgress?.stage));
@@ -215,9 +252,17 @@ export function KanaCard({
   const scrollToCanvas = useCallback(() => {
     if (typeof window === 'undefined' || !canvasAnchorRef.current) return;
     const el = canvasAnchorRef.current;
+    // Approved intro layout: the whole teaching card is brought into view —
+    // the compact title row (with the practice controls: replay / help) stays
+    // reachable below the sticky header, and the hero canvas sits fully
+    // visible below it. (The previous layout scrolled the bare canvas to the
+    // header edge, leaving the controls stranded underneath the sticky bar —
+    // measured on production: replay button top 51px vs header bottom 80px.)
+    const card = el.closest('section');
+    const target = card ?? el;
     const header = document.querySelector('header.sticky');
     const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
-    const top = el.getBoundingClientRect().top + window.scrollY - Math.max(0, headerBottom) - 12;
+    const top = target.getBoundingClientRect().top + window.scrollY - Math.max(0, headerBottom) - 12;
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
   }, []);
@@ -235,7 +280,7 @@ export function KanaCard({
     [kana.glyph, scrollToCanvas],
   );
 
-  /** «فهمیدم، شروع کنیم» → guided practice in the SAME canvas. */
+  /** «شروع تمرین نوشتن» (footer §۵) → guided practice in the SAME canvas. */
   const startPractice = useCallback(() => beginPractice('guided'), [beginPractice]);
 
   /**
@@ -357,6 +402,19 @@ export function KanaCard({
             : fa.curriculum.kanaStageChipDone;
 
   const speedChip = sound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal;
+
+  // -------------------------------------------------- approved intro layout
+  /** §۱ — the character's own name line: script + gojūon row (data-driven). */
+  const scriptLabel = kana.script === 'kata' ? fa.curriculum.kanaIntroScriptKata : fa.curriculum.kanaIntroScriptHira;
+  const rowLabel = fa.curriculum.kanaIntroRowLabel(kanaRowReadingFa(kana.row));
+  /**
+   * §۴ — the related usage examples, authored educational order kept. The
+   * host word leads when the station's example set does not already contain
+   * it (every datum the card had before is still rendered — nothing deleted).
+   */
+  const exampleList = relatedExamples ?? [];
+  const hostWordAlreadyExample = hostWord ? exampleList.some((ex) => ex.ja === hostWord.word) : false;
+  const hasExampleContent = exampleList.length > 0 || !!hostWord;
 
   // -------------------------------------------------- §8/§9 cards (shared JSX)
   // Addendum-5 §1: the same cards render OPEN in the full intro view and inside
@@ -485,23 +543,132 @@ export function KanaCard({
       <p className="kana-reveal kana-reveal-4 text-small text-ink-faint">{confusableNoteFa}</p>
     ) : null;
 
+  /**
+   * §۴ — the examples box body (ONE definition for the open view and the
+   * practice fold — no drift). Each row mirrors the example-set block's card
+   * contract exactly: the word is the hero (with THIS glyph highlighted
+   * inside it), the Persian reading is big/bold and visually separated from
+   * the meaning, the word's OWN audio control sits beside it (no asset → no
+   * button — honest), and authored pronunciation guides render where they
+   * exist. The host word leads only when the example set doesn't already
+   * contain it.
+   */
+  const examplesBody = (
+    <>
+      {hostWord && !hostWordAlreadyExample ? wordCard : null}
+      {exampleList.map((ex) => (
+        <article
+          key={ex.id}
+          className="rounded-md bg-surface-sunken/40 p-3"
+          data-example-card
+          data-example-word={ex.ja}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
+                {Array.from(ex.ja).map((ch, i) => (
+                  <span
+                    key={`${ch}-${i}`}
+                    className={ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : undefined}
+                  >
+                    {ch}
+                  </span>
+                ))}
+              </JaBlock>
+              {ex.role === 'reading' ? (
+                <span className="rounded-full border border-ai px-3 py-1 text-caption text-ai">
+                  {fa.curriculum.kanaIntroExampleNowReadable}
+                </span>
+              ) : null}
+            </div>
+            <ExampleAudioButton word={ex.ja} urls={exampleAudioByWord?.[ex.ja] ?? null} />
+          </div>
+          <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+            {ex.reading}
+          </p>
+          <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{ex.fa}</p>
+          {ex.whyFa ? (
+            <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
+              <MixedFaJaText text={ex.whyFa} />
+            </p>
+          ) : null}
+          {ex.pronFa ? (
+            <div
+              className="mt-3 flex items-start gap-2 rounded-md border border-shu/40 bg-surface-warm p-3"
+              data-pron-guide
+            >
+              <Mic aria-hidden className="mt-1 size-4 shrink-0 text-shu-deep" />
+              <div>
+                <p className="text-small font-bold text-ink">{fa.curriculum.examplePronGuideTitle}</p>
+                <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink">
+                  <MixedFaJaText text={ex.pronFa} />
+                </p>
+              </div>
+            </div>
+          ) : null}
+        </article>
+      ))}
+    </>
+  );
+
   // -------------------------------------------------- render
+  // APPROVED INTRODUCTION LAYOUT — five ordered sections; the CTA lives in
+  // the FOOTER (§۵), after every piece of introduction content and examples —
+  // never under the canvas, never between the teaching boxes.
   return (
     <section
-      className="flex flex-col gap-4 rounded-md border border-ink-faint bg-card p-5"
+      className="flex flex-col gap-5 rounded-md border border-ink-faint bg-card p-5"
       aria-label={`${readingFa} — ${stageTitle}`}
       data-kana-stage={stage}
     >
-      {/* ---- header: stage chip + title + the essential controls ---- */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="flex items-center gap-2 text-small font-bold text-ai">
-          <Hand aria-hidden className="size-4" />
-          {stageTitle}
-          <span className="rounded-full border border-ink-faint bg-surface-sunken px-2 py-0.5 text-micro font-normal text-ink-soft">
-            {stageChip}
-          </span>
-        </p>
-        <div className="flex items-center gap-2">
+      {/* ══════════ §۱ — عنوان کاراکتر ══════════
+          The character's own name line (script · row), the glyph itself BIG
+          and clear, the Persian reading leading with Latin as the small
+          complement — hierarchy aligned with the page header above.
+          During practice the title COMPACTS (the focused view — the character
+          itself is in the canvas): smaller glyph, tighter reading, and the
+          practice controls stay reachable right under the sticky bar. */}
+      <header className="flex flex-wrap items-center justify-between gap-3" data-intro-section="title">
+        <div className="flex items-center gap-4">
+          {/* the BIG glyph — the attribute rides on the wrapper so it never
+              depends on pattern-component prop forwarding */}
+          <div
+            data-intro-glyph
+            className={`grid shrink-0 place-items-center rounded-lg border-2 border-ink-faint bg-paper shadow-card ${
+              inPractice ? 'size-14' : 'size-20'
+            }`}
+          >
+            <JaBlock className={`font-jp font-bold text-ink ${inPractice ? 'text-h2' : 'text-[3.4rem] leading-none'}`}>
+              {kana.glyph}
+            </JaBlock>
+          </div>
+          <div className="min-w-0">
+            {!inPractice ? (
+              <p className="flex flex-wrap items-center gap-2 text-caption text-ink-soft">
+                {scriptLabel}
+                <span aria-hidden>·</span>
+                {rowLabel}
+              </p>
+            ) : null}
+            <p className="flex flex-wrap items-baseline gap-2">
+              <span className={`${inPractice ? 'text-h3 font-bold' : 'text-h1 font-black'} leading-tight text-ink`}>
+                {readingFa}
+              </span>
+              <span className="font-mono text-small text-ink-soft" dir="ltr">
+                {readingLatin}
+              </span>
+              <span className="rounded-full border border-ink-faint bg-surface-sunken px-2 py-0.5 text-micro font-normal text-ink-soft">
+                {stageChip}
+              </span>
+            </p>
+            <p className="mt-0.5 flex items-center gap-1.5 text-small font-bold text-ai">
+              <Hand aria-hidden className="size-4" />
+              {stageTitle}
+            </p>
+          </div>
+        </div>
+        {/* the essential controls — unchanged from the previous header row */}
+        <div className="flex flex-wrap items-center gap-2">
           {audioUrls ? (
             <button
               type="button"
@@ -538,13 +705,16 @@ export function KanaCard({
             </button>
           ) : null}
         </div>
-      </div>
+      </header>
 
-      {/* ---- THE environment: the canvas column + the teaching column ---- */}
-      <div className="flex flex-col items-center gap-5 lg:flex-row lg:items-start lg:justify-center">
-        {/* canvas column — the heart of the lesson; never unmounts (§3).
-            Addendum-5 §1: this wrapper is the scroll target when practice begins. */}
-        <div ref={canvasAnchorRef} className="w-full max-w-[26rem] shrink" data-canvas-anchor>
+      {/* ══════════ §۲ — کادر بزرگ آموزش نوشتن ══════════
+          THE hero of the introduction: one large, prominent box holding the
+          writing canvas. The numbered stroke-order animation runs HERE; after
+          it the strokes stay in their standard form; there is room to study
+          the shape closely. The canvas never unmounts across stages (§3 kept)
+          and this anchor is the scroll target when practice begins (A5 §1). */}
+      <div className="rounded-lg border border-ink-faint bg-surface-sunken/40 p-3 sm:p-4" data-intro-section="canvas">
+        <div ref={canvasAnchorRef} className="mx-auto w-full" data-canvas-anchor>
           <WritingCanvas
             character={kana.glyph}
             mode={stage === 'intro' ? 'intro' : stage === 'ready' || stage === 'done' ? 'reference' : stage}
@@ -556,107 +726,82 @@ export function KanaCard({
             onDemoStrokeStart={setDemoStroke}
             onJudgement={handleJudgement}
             onAttemptComplete={inPractice ? (stage === 'guided' ? onGuidedComplete : onFreeComplete) : undefined}
+            maxWidthRem={34}
           />
-          {/* stroke progress dots — status feedback (owner §2: وضعیت پیشرفت) */}
-          {totalStrokes > 0 ? (
-            <div
-              className="mt-3 flex flex-wrap items-center justify-center gap-2"
-              aria-label={fa.curriculum.kanaStageStrokeProgress}
-            >
-              {Array.from({ length: totalStrokes }, (_, i) => {
-                const done = showingTeaching ? i < demoStroke : attempt ? attempt.completed.includes(i) : false;
-                const current = showingTeaching ? i === demoStroke : attempt ? attempt.expectedIndex === i : false;
-                return (
-                  <span
-                    key={i}
-                    className={`size-3 rounded-full border transition-colors ${
-                      done
-                        ? 'border-success bg-success/50'
-                        : current
-                          ? 'border-shu bg-shu/40'
-                          : 'border-ink-faint bg-surface-sunken'
-                    }`}
-                  />
-                );
-              })}
-              <span className="text-caption text-ink-faint">
-                {faNum(currentStrokeIndex + 1)} / {faNum(totalStrokes)} {fa.curriculum.kanaStrokesWord}
-              </span>
-            </div>
-          ) : null}
-          {/* Addendum-4 §3 — THE action slot: ONE fixed-height area under the
-              canvas. Only its CONTENT swaps with the stage (hint → CTA →
-              practice hints → done) — the layout never jumps, the canvas never
-              moves, and the CTA is a REAL button. */}
-          <div
-            className="mt-2 flex min-h-[6.5rem] w-full flex-col items-center justify-start gap-2 text-center"
-            data-stage-action={stage}
-          >
-            {stage === 'intro' ? (
-              <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-faint">
-                {fa.curriculum.kanaStageIntroHint}
-              </p>
-            ) : null}
-            {stage === 'ready' ? (
-              <>
-                <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
-                  {fa.curriculum.kanaStageReadyHint}
-                </p>
-                {/* Addendum-2 §4 (kept): the ONE interactive stop. Addendum-4 §3:
-                    it must LOOK and FEEL like a real primary button. */}
-                <button
-                  type="button"
-                  onClick={startPractice}
-                  className="min-h-12 cursor-pointer rounded-md bg-ai px-8 text-lead font-bold text-paper shadow-card transition-all hover:bg-indigo-deep hover:shadow-card active:translate-y-0.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-                  data-ready-cta
-                >
-                  {fa.curriculum.kanaStageReadyCta}
-                </button>
-              </>
-            ) : null}
-            {stage === 'guided' ? (
-              <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
-                {fa.curriculum.kanaStageGuidedHint}
-              </p>
-            ) : null}
-            {stage === 'free' ? (
-              <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
-                {fa.curriculum.kanaStageFreeHint}
-              </p>
-            ) : null}
-            {stage === 'done' ? (
-              <p className="max-w-xl text-caption font-bold text-success">{fa.curriculum.kanaStageDoneHint}</p>
-            ) : null}
-          </div>
-
-          {/* Addendum-5 §1 — the focused practice view: the intro-only cards
-              (reading + host word) COLLAPSE into one fold while the learner
-              writes (never deleted — one tap reopens them; the intro/ready/done
-              stages keep the full view). */}
-          {inPractice ? (
-            <details className="mt-4 rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="reading">
-              <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
-                <Info aria-hidden className="ml-1 inline size-4 align-middle" />
-                {fa.curriculum.kanaIntroFoldReading}
-              </summary>
-              <div className="flex flex-col gap-3 px-4 pb-4">
-                {readingCard}
-                {wordCard}
-              </div>
-            </details>
-          ) : (
-            <>
-              {readingCard}
-              {wordCard}
-            </>
-          )}
         </div>
+        {/* stroke progress dots — status feedback (owner §2: وضعیت پیشرفت) */}
+        {totalStrokes > 0 ? (
+          <div
+            className="mt-3 flex flex-wrap items-center justify-center gap-2"
+            aria-label={fa.curriculum.kanaStageStrokeProgress}
+          >
+            {Array.from({ length: totalStrokes }, (_, i) => {
+              const done = showingTeaching ? i < demoStroke : attempt ? attempt.completed.includes(i) : false;
+              const current = showingTeaching ? i === demoStroke : attempt ? attempt.expectedIndex === i : false;
+              return (
+                <span
+                  key={i}
+                  className={`size-3 rounded-full border transition-colors ${
+                    done
+                      ? 'border-success bg-success/50'
+                      : current
+                        ? 'border-shu bg-shu/40'
+                        : 'border-ink-faint bg-surface-sunken'
+                  }`}
+                />
+              );
+            })}
+            <span className="text-caption text-ink-faint">
+              {faNum(currentStrokeIndex + 1)} / {faNum(totalStrokes)} {fa.curriculum.kanaStrokesWord}
+            </span>
+          </div>
+        ) : null}
+        {/* Addendum-4 §3 (kept, CTA relocated): ONE fixed-height hint area under
+            the canvas — ONLY the per-stage status text lives here now; the CTA
+            moved to the page footer (§۵) so nothing interactive competes with
+            watching the character. The layout still never jumps between stages. */}
+        <div
+          className="mx-auto mt-2 flex min-h-[3.75rem] w-full max-w-xl flex-col items-center justify-start gap-2 text-center"
+          data-stage-action={stage}
+        >
+          {stage === 'intro' ? (
+            <p className="text-caption leading-[var(--leading-fa)] text-ink-faint">
+              {fa.curriculum.kanaStageIntroHint}
+            </p>
+          ) : null}
+          {stage === 'ready' ? (
+            <p className="text-caption leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.kanaStageReadyHint}</p>
+          ) : null}
+          {stage === 'guided' ? (
+            <p className="text-caption leading-[var(--leading-fa)] text-ink-soft">
+              {fa.curriculum.kanaStageGuidedHint}
+            </p>
+          ) : null}
+          {stage === 'free' ? (
+            <p className="text-caption leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.kanaStageFreeHint}</p>
+          ) : null}
+          {stage === 'done' ? (
+            <p className="text-caption font-bold text-success">{fa.curriculum.kanaStageDoneHint}</p>
+          ) : null}
+        </div>
+      </div>
 
-        {/* teaching column — Addendum-4 §3: every slot is ALWAYS present in the
-            SAME order for every kana; only the CONTENT follows the stage. No
-            box ever appears from nowhere or disappears mid-flow. */}
-        <div className="w-full max-w-[24rem] space-y-3 lg:max-w-[22rem]" dir="rtl">
-          {/* ---- slot 1 — the stage panel ---- */}
+      {/* ══════════ §۳ — دو باکس آموزشی کنار یکدیگر ══════════
+          Desktop: two balanced side-by-side boxes (RTL grid). Mobile: one
+          ordered column. Box ۱ «روش نوشتن» = HOW the character is written —
+          the live stroke narration while the animation runs, the full
+          stroke-order overview once ready, the current stroke + feedback
+          while practicing, the neutral memory panel in free recall, plus the
+          per-character writing tips. Box ۲ «تلفظ و یادسپار» = the SOUND and the
+          SHAPE memory — Persian+Latin reading, the character's voice, the
+          verified mnemonic, the confusable pair. */}
+      <div className="grid items-start gap-4 md:grid-cols-2" data-intro-section="teaching">
+        {/* ---- Box ۱ — روش نوشتن ---- */}
+        <div className="flex flex-col gap-3 rounded-md border border-ink-faint bg-card p-4" data-teaching-box="how">
+          <p className="flex items-center gap-2 text-h3 font-bold text-ink">
+            <PenLine aria-hidden className="size-5 text-ai" />
+            {fa.curriculum.kanaIntroHowToWriteTitle}
+          </p>
           {/* intro: the live stroke narration follows the teaching pass */}
           {stage === 'intro' && strokeInfo ? (
             <div
@@ -669,9 +814,9 @@ export function KanaCard({
               <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-soft">{strokeInfo.movementFa}</p>
             </div>
           ) : null}
-          {/* Addendum-4 §2/§3 — ready: the FULL stroke-order overview. This panel
-              is completely INDEPENDENT of «تکرار آموزش» — a replay re-runs the
-              animation inside the canvas only; nothing around it moves. */}
+          {/* ready: the FULL stroke-order overview — completely INDEPENDENT of
+              «تکرار آموزش» (Addendum-4 §2 kept): a replay re-runs the canvas
+              animation only; nothing around it moves. */}
           {stage === 'ready' && charData ? (
             <div className="rounded-md border border-ai/40 bg-indigo-wash/40 p-4" data-stage-panel="order">
               <p className="text-body font-bold text-ink">{fa.curriculum.kanaStageOrderTitle}</p>
@@ -695,8 +840,8 @@ export function KanaCard({
               </p>
             </div>
           ) : null}
-          {/* guided: the current stroke narration + live feedback INSIDE the same
-              panel (no separate box appearing on mistakes). */}
+          {/* guided: the current stroke narration + live feedback INSIDE the
+              same panel (no separate box appearing on mistakes). */}
           {stage === 'guided' && strokeInfo ? (
             <div
               className="rounded-md border border-ai/40 bg-indigo-wash/40 p-4 transition-colors"
@@ -718,10 +863,8 @@ export function KanaCard({
               ) : null}
             </div>
           ) : null}
-          {/* Addendum-4 §5 — free: a NEUTRAL panel. It never reveals the start
-              point, the direction or the movement — the learner decides alone;
-              guidance only on request (the help button) or after repeated
-              misses. */}
+          {/* free: a NEUTRAL panel (Addendum-4 §5 kept) — no start point, no
+              direction, no movement; guidance only on request. */}
           {stage === 'free' ? (
             <div className="rounded-md border border-shu/40 bg-surface-warm p-4" data-stage-panel="memory">
               <p className="text-body font-bold text-ink">{fa.curriculum.kanaStageFreeTitle}</p>
@@ -741,8 +884,7 @@ export function KanaCard({
                   {feedback}
                 </p>
               ) : null}
-              {/* free: the way back to guided practice (owner §6) — kept, inside
-                  the same panel so nothing new appears below. */}
+              {/* free: the way back to guided practice (owner §6) — kept. */}
               <button
                 type="button"
                 onClick={() => beginPractice('guided')}
@@ -769,7 +911,6 @@ export function KanaCard({
               </button>
             </div>
           ) : null}
-
           {/* §4 — the per-character writing tips (fine points of THIS glyph) */}
           {teaching?.strokeHintFa ? (
             <div className="kana-reveal kana-reveal-3 rounded-md bg-surface-2 p-4">
@@ -779,28 +920,98 @@ export function KanaCard({
               </p>
             </div>
           ) : null}
+        </div>
 
-          {/* Addendum-5 §1 — the focused practice view: mnemonic + confusable
-              pair (intro-only) collapse into one fold; writing tips stay open. */}
-          {inPractice && (verifiedMnemonic || mn?.pairGlyphs) ? (
-            <details className="rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="side">
-              <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
-                <Info aria-hidden className="ml-1 inline size-4 align-middle" />
-                {fa.curriculum.kanaIntroFoldSide}
-              </summary>
-              <div className="flex flex-col gap-3 px-4 pb-4">
-                {mnemonicCard}
-                {pairCard}
-              </div>
-            </details>
-          ) : (
-            <>
+        {/* ---- Box ۲ — تلفظ و یادسپار ----
+            The focused practice view (Addendum-5 §1 kept): while the learner
+            writes, this whole box collapses into ONE fold — nothing deleted,
+            one tap reopens; intro/ready/done keep the full open view. */}
+        {inPractice && (teaching || verifiedMnemonic || mn?.pairGlyphs) ? (
+          <details className="rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="pron">
+            <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
+              <Info aria-hidden className="ml-1 inline size-4 align-middle" />
+              {fa.curriculum.kanaIntroPronBoxTitle}
+            </summary>
+            <div className="flex flex-col gap-3 px-4 pb-4">
+              {readingCard}
               {mnemonicCard}
               {pairCard}
-            </>
-          )}
-        </div>
+            </div>
+          </details>
+        ) : (
+          <div className="flex flex-col gap-3 rounded-md border border-ink-faint bg-card p-4" data-teaching-box="pron">
+            <p className="flex items-center gap-2 text-h3 font-bold text-ink">
+              <Volume2 aria-hidden className="size-5 text-ai" />
+              {fa.curriculum.kanaIntroPronBoxTitle}
+            </p>
+            {readingCard}
+            {mnemonicCard}
+            {pairCard}
+          </div>
+        )}
       </div>
+
+      {/* ══════════ §۴ — نمونه‌های کاربردی ══════════
+          ALL related examples in ONE independent full-width box: the Japanese
+          word (with THIS glyph highlighted inside it), the Persian reading big
+          and bold, the meaning on its own separated line, the word's OWN audio
+          control, and the authored pronunciation guide where one exists. The
+          authored educational order is kept. During practice the box collapses
+          into one fold (A5 §1 — data kept, one tap reopens). */}
+      {hasExampleContent ? (
+        inPractice ? (
+          <details className="rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="examples">
+            <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
+              <Info aria-hidden className="ml-1 inline size-4 align-middle" />
+              {fa.curriculum.kanaIntroExamplesTitle}
+            </summary>
+            <div className="flex flex-col gap-4 px-4 pb-4">{examplesBody}</div>
+          </details>
+        ) : (
+          <section className="rounded-md border border-ink-faint bg-card p-4" data-intro-section="examples">
+            <p className="text-h3 font-bold text-ink">{fa.curriculum.kanaIntroExamplesTitle}</p>
+            <div className="mt-3 flex flex-col gap-4">{examplesBody}</div>
+          </section>
+        )
+      ) : null}
+
+      {/* ══════════ §۵ — Footer و دکمهٔ شروع تمرین ══════════
+          A subtle divider, an end-of-introduction marker, THE main action of
+          the page, and a one-line caption. This footer sits AFTER all the
+          introduction content and examples — the CTA is the natural next step
+          once everything has been seen (the ONE interactive stop, A2 §4 kept).
+          Hidden while practicing (the canvas owns the page then). */}
+      {!inPractice ? (
+        <footer
+          className="flex flex-col items-center gap-3 border-t border-ink-faint pt-4 text-center"
+          data-intro-section="footer"
+        >
+          <p className="flex items-center gap-3 text-caption text-ink-faint" data-intro-footer-marker>
+            <span aria-hidden className="h-px w-10 bg-ink-faint/60" />
+            {fa.curriculum.kanaIntroFooterMarker}
+            <span aria-hidden className="h-px w-10 bg-ink-faint/60" />
+          </p>
+          {stage === 'ready' ? (
+            <div className="flex w-full flex-col items-center gap-2">
+              {/* Addendum-2 §4 (kept) + Addendum-4 §3 (kept): a REAL primary
+                  button — now in the footer, full-width on mobile, comfortable
+                  on desktop. */}
+              <button
+                type="button"
+                onClick={startPractice}
+                className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-ai px-8 text-lead font-bold text-paper shadow-card transition-all hover:bg-indigo-deep hover:shadow-card active:translate-y-0.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai sm:w-auto sm:min-w-[20rem]"
+                data-ready-cta
+              >
+                {fa.curriculum.kanaStageReadyCta}
+                <ArrowLeft aria-hidden className="size-5" />
+              </button>
+              <p className="text-caption leading-[var(--leading-fa)] text-ink-soft" data-intro-footer-caption>
+                {fa.curriculum.kanaIntroFooterCaption}
+              </p>
+            </div>
+          ) : null}
+        </footer>
+      ) : null}
 
       {/* §12 — attribution: ONE short line, only what the licenses require.
           KanjiVG (CC BY-SA 3.0) needs name + license + link; VOICEVOX
@@ -828,4 +1039,28 @@ export function KanaCard({
 /** Persian digits for the stroke counter. */
 function faNum(n: number): string {
   return String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]!);
+}
+
+/**
+ * §۱ — the gojūon row's Persian reading ('a-row' → 'آ', 'ka-row' → 'کا', …).
+ * Covers the 11 basic rows of both kana scripts (the registry's 92 glyphs);
+ * anything unexpected falls back to the raw row id — the label is cosmetic,
+ * never a gate.
+ */
+function kanaRowReadingFa(row: string): string {
+  const ROW_READINGS: Record<string, string> = {
+    a: 'آ',
+    ka: 'کا',
+    sa: 'سا',
+    ta: 'تا',
+    na: 'نا',
+    ha: 'ها',
+    ma: 'ما',
+    ya: 'یا',
+    ra: 'را',
+    wa: 'وا',
+    n: 'ن',
+  };
+  const key = (row ?? '').replace(/-row$/, '');
+  return ROW_READINGS[key] ?? row;
 }

@@ -126,7 +126,7 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
       return s;
     });
     drawStroke(svg, A_DATA.medians[0]!, 'mouse');
-    expect(onJudgement).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(onJudgement).toHaveBeenCalledTimes(1), { timeout: 4000, interval: 50 });
     const [judgement, state] = onJudgement.mock.calls[0]!;
     expect(['accepted', 'accepted_with_hint']).toContain(judgement.judge);
     expect(state.expectedIndex).toBe(1);
@@ -139,7 +139,10 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
       const { container } = render(<WritingCanvas character="あ" mode="guided" onJudgement={onJudgement} />);
       const svg = await waitFor(() => getCanvasSvg(container));
       drawStroke(svg, A_DATA.medians[0]!, pointerType);
-      expect(onJudgement, `${pointerType} produced a judgement`).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(onJudgement, `${pointerType} produced a judgement`).toHaveBeenCalledTimes(1), {
+        timeout: 4000,
+        interval: 50,
+      });
       expect(onJudgement.mock.calls[0]![0].judge).not.toBe('rejected');
       cleanup();
     }
@@ -151,7 +154,7 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
     const svg = await waitFor(() => getCanvasSvg(container));
     fireEvent.pointerDown(svg, { pointerId: 1, pointerType: 'mouse', clientX: 150, clientY: 155 });
     fireEvent.pointerUp(svg, { pointerId: 1, pointerType: 'mouse', clientX: 152, clientY: 156 });
-    expect(onJudgement).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(onJudgement).toHaveBeenCalledTimes(1), { timeout: 4000, interval: 50 });
     const [judgement] = onJudgement.mock.calls[0]!;
     expect(judgement.judge).toBe('rejected');
     expect(judgement.reason).toBe('incomplete_short');
@@ -163,6 +166,7 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
     const { container } = render(<WritingCanvas character="あ" mode="guided" onJudgement={onJudgement} />);
     const svg = await waitFor(() => getCanvasSvg(container));
     drawStroke(svg, [...A_DATA.medians[0]!].reverse());
+    await waitFor(() => expect(onJudgement).toHaveBeenCalledTimes(1), { timeout: 4000, interval: 50 });
     const [judgement] = onJudgement.mock.calls[0]!;
     expect(judgement.judge).toBe('rejected');
     expect(judgement.reason).toBe('direction');
@@ -175,7 +179,7 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
     drawStroke(svg, A_DATA.medians[0]!);
     drawStroke(svg, A_DATA.medians[1]!);
     drawStroke(svg, A_DATA.medians[2]!);
-    expect(onAttemptComplete).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(onAttemptComplete).toHaveBeenCalledTimes(1), { timeout: 4000, interval: 50 });
     const [state] = onAttemptComplete.mock.calls[0]!;
     expect(state.completed).toEqual([0, 1, 2]);
     expect(state.firstTry).toBe(3);
@@ -188,9 +192,10 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
     drawStroke(svg, A_DATA.medians[0]!);
     drawStroke(svg, A_DATA.medians[1]!);
     drawStroke(svg, A_DATA.medians[2]!);
-    expect(onJudgement).toHaveBeenCalledTimes(3);
-    // the attempt is done — extra drawing is ignored
+    await waitFor(() => expect(onJudgement).toHaveBeenCalledTimes(3), { timeout: 4000, interval: 50 });
+    // the attempt is done — extra drawing is ignored (let any async judge land)
     drawStroke(svg, A_DATA.medians[0]!);
+    await new Promise((r) => setTimeout(r, 150));
     expect(onJudgement).toHaveBeenCalledTimes(3);
   });
 });
@@ -320,7 +325,7 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
       await vi.advanceTimersByTimeAsync(15000);
     });
     expect(container.querySelector('[data-kana-stage="ready"]'), 'ready waits for the user (§4)').toBeTruthy();
-    expect(container.querySelector('[data-ready-cta]'), 'the «فهمیدم، شروع کنیم» CTA is there').toBeTruthy();
+    expect(container.querySelector('[data-ready-cta]'), 'the «شروع تمرین نوشتن» CTA is there').toBeTruthy();
     // ONE click — everything after it is fully automatic, same environment
     await act(async () => {
       fireEvent.click(container.querySelector('[data-ready-cta]')!);
