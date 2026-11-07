@@ -8,8 +8,8 @@
  *
  *   node apps/web/scripts/tl08-a4-audio-gen.mjs
  *
- * Regenerates, with the selected voice (speaker 14 — VOICEVOX:冥鳴ひまり;
- * A/B evidence: /root/a4-voice-ab/ + the checklist §A4-6 entry):
+ * Regenerates, with the selected voice (speaker 90 — VOICEVOX:ぞん子;
+ * Addendum-5 §6/§4 A/B evidence: /root/a5-voice-ab/ + the checklist §A5-4):
  *   1. 92 kana assets            public/audio/kana/<ref>.{opus,m4a} + manifest
  *   2. the host-word registry     public/audio/hostwords/<word>.{opus,m4a}
  *      — now covering the host words AND every example word (single per-word
@@ -28,14 +28,14 @@ import path from 'node:path';
 import os from 'node:os';
 
 const VOICEVOX = process.env.VOICEVOX_URL ?? 'http://127.0.0.1:50021';
-const SPEAKER = 14; // VOICEVOX:冥鳴ひまり ノーマル — Addendum-4 §6 (A/B evidence)
-const CREDIT = 'VOICEVOX:冥鳴ひまり';
+const SPEAKER = 90; // VOICEVOX:ぞん子 ノーマル — Addendum-5 §4 (A/B + ASR evidence)
+const CREDIT = 'VOICEVOX:ぞん子';
 const WEB = path.join(process.cwd(), 'apps', 'web');
 const KANA_DIR = path.join(WEB, 'public', 'audio', 'kana');
 const HOST_DIR = path.join(WEB, 'public', 'audio', 'hostwords');
 const GENERATED_BY =
-  `voicevox:latest (VPS engine, 2026-10 image) — TASK-LEARNING-08 Addendum-4 §6: speaker 14 (${CREDIT} ノーマル), speedScale 1.0, offline pre-generation. ` +
-  `A/B evidence: ops/checkpoints/TASK-LEARNING-08/OWNER_FEEDBACK_CHECKLIST.md §A4-6. ` +
+  `voicevox:latest (VPS engine) — TASK-LEARNING-08 Addendum-5 §4: speaker 90 (${CREDIT} ノーマル), speedScale 1.0, offline pre-generation. ` +
+  `A/B + word-ASR evidence: ops/checkpoints/TASK-LEARNING-08/OWNER_FEEDBACK_CHECKLIST.md §A5-4 (/root/a5-voice-ab/). ` +
   `Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + loudness-match (RMS→−17dBFS, peak≤−1.5dBFS); opus 64k / m4a 128k. Credit: ${CREDIT} (VOICEVOX character terms)`;
 
 // ---------------------------------------------------------------- content texts
@@ -89,7 +89,20 @@ function ffmpeg(args, input) {
 }
 
 function master(wav) {
-  return ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-af', 'highpass=f=70,treble=g=2.5:f=2500,agate=threshold=0.01:ratio=2', '-f', 'wav', 'pipe:1'], wav);
+  return ffmpeg(
+    [
+      '-f',
+      'wav',
+      '-i',
+      'pipe:0',
+      '-af',
+      'highpass=f=70,treble=g=2.5:f=2500,agate=threshold=0.01:ratio=2',
+      '-f',
+      'wav',
+      'pipe:1',
+    ],
+    wav,
+  );
 }
 
 function statsDbfs(wav) {
@@ -124,7 +137,10 @@ function normTo(wav) {
 }
 
 function encode(masterWav, base) {
-  const opus = ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '64k', '-f', 'ogg', 'pipe:1'], masterWav);
+  const opus = ffmpeg(
+    ['-f', 'wav', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '64k', '-f', 'ogg', 'pipe:1'],
+    masterWav,
+  );
   // the mp4-family muxer needs a seekable output — write to a SHORT temp name
   // in os.tmpdir() (never inside the assets dir; long words exceed the fs limit)
   const tmp = path.join(os.tmpdir(), `a4-${createHash('sha1').update(base).digest('hex').slice(0, 10)}.m4a`);
@@ -196,7 +212,9 @@ async function generateAll() {
     const base = path.join(HOST_DIR, stem);
     const { bytes, bytesM4a } = encode(wav, base);
     hostManifest.entries[word] = { file: stem, bytes, bytesM4a, durationMs: probeMs(`${base}.opus`), hash: hash(word) };
-    process.stdout.write(`word ${word} (${stem === encodeURIComponent(word) ? 'named' : 'hashed'}) ${probeMs(`${base}.opus`)}ms\n`);
+    process.stdout.write(
+      `word ${word} (${stem === encodeURIComponent(word) ? 'named' : 'hashed'}) ${probeMs(`${base}.opus`)}ms\n`,
+    );
   }
   writeFileSync(path.join(HOST_DIR, 'manifest.json'), JSON.stringify(hostManifest, null, 2) + '\n');
 
