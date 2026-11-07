@@ -59,7 +59,13 @@ describe('example-word audio — Addendum-4 §7 (content validator)', () => {
 
   it('an example with an asset renders the control bound to THIS word', () => {
     const { container } = render(
-      <ExampleAudioButton word="コーヒー" urls={{ opus: '/audio/hostwords/%E3%82%B3%E3%83%BC%E3%83%92%E3%83%BC.opus', m4a: '/audio/hostwords/%E3%82%B3%E3%83%BC%E3%83%92%E3%83%BC.m4a' }} />,
+      <ExampleAudioButton
+        word="コーヒー"
+        urls={{
+          opus: '/audio/hostwords/%E3%82%B3%E3%83%BC%E3%83%92%E3%83%BC.opus',
+          m4a: '/audio/hostwords/%E3%82%B3%E3%83%BC%E3%83%92%E3%83%BC.m4a',
+        }}
+      />,
     );
     const btn = container.querySelector('[data-example-audio]');
     expect(btn).toBeTruthy();

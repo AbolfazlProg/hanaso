@@ -132,7 +132,10 @@ export type ExerciseType =
   /** TASK-LEARNING-06 (S-K2): romaji shown → pick the kana glyph. Option-based. */
   | 'kana-recall'
   /** TASK-LEARNING-06 (S-K5): a decodable kana word shown → pick its romaji reading. Option-based. */
-  | 'kana-decode';
+  | 'kana-decode'
+  /** TASK-LEARNING-08 Addendum-5 §3: the kana SOUND is the question (auto-plays
+   *  at question start; replayable) → pick the glyph. Option-based. */
+  | 'kana-listening';
 
 export type TargetSkill = 'vocab' | 'grammar' | 'listening' | 'expression' | 'production' | 'structure';
 
@@ -262,6 +265,14 @@ export type TeachingBlock =
         whyFa: string;
         lineRef?: string;
         selfExplainFa?: string;
+        /**
+         * TASK-LEARNING-08 Addendum-5 §6 — a SHORT, genuinely-useful
+         * pronunciation guide (mouth / lips / tongue / airflow / voicing /
+         * how the Japanese sound differs from the nearest Persian sound).
+         * Authored ONLY where a real pronunciation point exists — never a
+         * mechanical template for every word. Persian leads; Latin complements.
+         */
+        pronFa?: string;
       }[];
     }
   | {

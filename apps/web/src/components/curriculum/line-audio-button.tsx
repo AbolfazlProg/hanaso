@@ -29,6 +29,10 @@ export interface LineAudioButtonProps {
   className?: string;
   /** Slow replay (0.9×) for the listening station (L2 default speed — LEVEL_MATRIX). */
   rate?: number;
+  /** TASK-LEARNING-08 Addendum-5 §3 — listening questions AUTO-PLAY the line
+   *  once at question start (a short beat after mount); the button stays for
+   *  replay (the owner's rule for listening questions). */
+  autoPlay?: boolean;
   onPlayed?: () => void;
 }
 
@@ -41,6 +45,7 @@ export function LineAudioButton({
   disabled,
   className,
   rate = 1,
+  autoPlay = false,
   onPlayed,
 }: LineAudioButtonProps) {
   const ref = useRef<HTMLAudioElement | null>(null);
@@ -87,6 +92,15 @@ export function LineAudioButton({
     }
     void ref.current.play().catch(() => setState('idle'));
   }, [audioAvailable, audioUrl, audioUrlFallback, onPlayed, rate]);
+
+  // Addendum-5 §3 — auto-play once at question start (a short beat after the
+  // mount/reset effect, so the element exists and the page has settled).
+  useEffect(() => {
+    if (!autoPlay) return;
+    const t = setTimeout(() => play(), 400);
+    return () => clearTimeout(t);
+    // `play` is stable per asset; autoPlay flips only on question change
+  }, [autoPlay, play]);
 
   return (
     <AudioSentenceButton

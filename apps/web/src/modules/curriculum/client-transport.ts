@@ -64,6 +64,10 @@ export type ClientTeachingBlock =
             whyFa: string;
             lineRef?: string;
             selfExplainFa?: string;
+            /** TASK-LEARNING-08 Addendum-5 §6 — a short authored pronunciation
+             *  guide (only where a real point exists). Passes through with the
+             *  block (example-set carries no answer material). */
+            pronFa?: string;
           }[];
     }
   | {

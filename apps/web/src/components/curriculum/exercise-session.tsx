@@ -29,12 +29,13 @@
  * (SKL-002 §۳-۶); options are uniform (no color-only distinction — SKL-004 §۶).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRight, CheckCircle2, CircleAlert, Ear, Lightbulb } from 'lucide-react';
+import { ArrowRight, CheckCircle2, CircleAlert, Ear, Lightbulb, Volume2 } from 'lucide-react';
 import { EXPERIENCE } from '@/config/experience';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { mergeEliminated } from '@/modules/curriculum/station-walk';
 import { JaBlock } from '@/components/patterns/ja-block';
+import { getCachedAudio, preloadAudio, reportPlaybackError } from '@/modules/audio/client-cache';
 import { LineAudioButton } from './line-audio-button';
 
 export interface ExerciseSessionProps {
@@ -75,7 +76,69 @@ interface GradeResponse {
     eliminateOptionIds?: string[];
     /** #106 F4: teaching block to return to (ladder exhausted at F3). */
     referenceBlockId?: string;
+    /** Addendum-5 §3 — the correct answer's committed audio (hearable after
+     *  answering; absent when no asset exists → the control stays hidden). */
+    correctAudio?: { what: string; opus: string; m4a: string };
   };
+}
+
+/**
+ * TASK-LEARNING-08 Addendum-5 §3 — a cache-backed play control for a question
+ * sound (the shared LRU — the same asset never downloads twice). Normal speed
+ * 1.0 (the owner's speed policy), replayable, honest when no asset exists.
+ */
+function KanaSoundButton({
+  urls,
+  label,
+  ariaLabel,
+  dataAttr,
+}: {
+  urls: { opus: string; m4a: string };
+  label: string;
+  ariaLabel: string;
+  dataAttr: string;
+}) {
+  const [playing, setPlaying] = useState(false);
+  const play = useCallback(() => {
+    const el = getCachedAudio(urls.opus);
+    if (!el) return;
+    try {
+      el.pause();
+      el.playbackRate = 1; // normal = real normal (Addendum-2 §8 policy)
+      try {
+        el.preservesPitch = true;
+      } catch {
+        /* engines without the property */
+      }
+      el.currentTime = 0;
+      el.onerror = () => {
+        if (urls.m4a && !el.src.endsWith(urls.m4a)) {
+          el.src = urls.m4a;
+          void el.play().catch(() => reportPlaybackError(el.src));
+        } else {
+          reportPlaybackError(el.src);
+        }
+      };
+      const p = el.play();
+      if (p && typeof p.then === 'function') p.catch(() => reportPlaybackError(el.src));
+      setPlaying(true);
+      el.onended = () => setPlaying(false);
+    } catch {
+      reportPlaybackError(urls.opus);
+    }
+  }, [urls]);
+  return (
+    <button
+      type="button"
+      onClick={play}
+      className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-ai bg-card px-4 text-small font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+      aria-label={ariaLabel}
+      data-question-audio={dataAttr}
+    >
+      <Volume2 aria-hidden className={`size-5 ${playing ? 'text-shu' : ''}`} />
+      {label}
+    </button>
+  );
 }
 
 export function ExerciseSession({
@@ -263,6 +326,35 @@ export function ExerciseSession({
     advancedRef.current = false;
   }, [index]);
 
+  /* TASK-LEARNING-08 Addendum-5 §3 — LISTENING questions AUTO-PLAY their sound
+   * at question start (the sound IS the question — the owner's rule). Warms
+   * the shared cache then plays once per question; the visible control always
+   * offers replay. Recognition questions NEVER auto-play (the kana sound is
+   * the ANSWER there — playing it would leak it «ناخواسته»). */
+  const listenPrompt = ex?.type === 'kana-listening' ? (ex.promptAudio ?? null) : null;
+  useEffect(() => {
+    if (!listenPrompt) return;
+    let cancelled = false;
+    const t = setTimeout(() => {
+      void preloadAudio(listenPrompt.opus).then((el) => {
+        if (cancelled || !el) return;
+        try {
+          el.playbackRate = 1;
+          el.preservesPitch = true;
+          el.currentTime = 0;
+          const p = el.play();
+          if (p && typeof p.then === 'function') p.catch(() => reportPlaybackError(el.src));
+        } catch {
+          reportPlaybackError(listenPrompt.opus);
+        }
+      });
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [index, listenPrompt?.opus]);
+
   if (!ex) return null;
 
   const canCheck =
@@ -287,14 +379,59 @@ export function ExerciseSession({
 
       <p className="text-body font-medium">{ex.promptFa}</p>
 
+      {/* Addendum-5 §3 — a LISTENING question: the sound IS the question. It
+          auto-plays at question start (see the effect above) and the replay
+          control is always visible. No glyph is shown — the shapes live in the
+          options. */}
+      {ex.type === 'kana-listening' && ex.promptAudio ? (
+        <div
+          className="flex flex-wrap items-center gap-3 rounded-md border border-ai/40 bg-indigo-wash/30 p-4"
+          data-listen-question
+        >
+          <KanaSoundButton
+            urls={ex.promptAudio}
+            label={fa.curriculum.exHearQuestionSound}
+            ariaLabel={fa.curriculum.exHearQuestionSoundAria}
+            dataAttr="replay"
+          />
+          <span className="text-caption leading-[var(--leading-fa)] text-ink-soft">
+            {fa.curriculum.exListenAutoNote}
+          </span>
+        </div>
+      ) : null}
+
+      {/* Addendum-5 §3 — a RECALL question (reading → glyph): the prompt's own
+          sound is hearable BEFORE answering — it is the audio form of the
+          visible Persian prompt (e.g. «آ»), so it can never reveal WHICH glyph
+          is correct. Reinforces the sound↔shape link the question trains. */}
+      {ex.type === 'kana-recall' && ex.promptAudio ? (
+        <div
+          className="flex flex-wrap items-center gap-3 rounded-md border border-ink-faint bg-card p-3"
+          data-recall-sound
+        >
+          <KanaSoundButton
+            urls={ex.promptAudio}
+            label={fa.curriculum.exHearQuestionSound}
+            ariaLabel={fa.curriculum.exHearQuestionSoundAria}
+            dataAttr="prompt"
+          />
+          <span className="text-caption leading-[var(--leading-fa)] text-ink-faint">
+            {fa.curriculum.exPromptSoundNote}
+          </span>
+        </div>
+      ) : null}
+
       {ex.audioLineRef && (
         <div className="flex items-center gap-3 rounded-md border border-ink-faint bg-card p-3">
+          {/* Addendum-5 §3 — a listening question's line AUTO-PLAYS at question
+              start; the button stays for replay. */}
           <LineAudioButton
             lineId={ex.audioLineRef}
             audioUrl={audioByLine[ex.audioLineRef] ?? ''}
             audioUrlFallback={audioFallbackByLine?.[ex.audioLineRef]}
             audioAvailable={audioAvailable}
             rate={0.9}
+            autoPlay
           />
           <span className="flex items-center gap-1.5 text-small text-ink-soft">
             <Ear aria-hidden className="size-4 shrink-0" />
@@ -474,6 +611,17 @@ export function ExerciseSession({
               {feedback.reveal}
             </p>
           )}
+          {/* Addendum-5 §3 — after ANY answered attempt the correct
+              pronunciation is hearable (kana sound / word audio — the server
+              attaches the committed asset with the outcome). */}
+          {feedback.correctAudio ? (
+            <KanaSoundButton
+              urls={feedback.correctAudio}
+              label={fa.curriculum.exHearCorrectPron}
+              ariaLabel={fa.curriculum.exHearCorrectPronAria(feedback.correctAudio.what)}
+              dataAttr="correct"
+            />
+          ) : null}
           {/* #106 F4: the ladder is exhausted — offer the authored teaching block. */}
           {!feedback.correct && feedback.referenceBlockId && onReturnToBlock && (
             <ReturnToTeachingButton blockId={feedback.referenceBlockId} onReturn={onReturnToBlock} />
@@ -595,13 +743,7 @@ export function OptionRow({ options, selected, eliminated, locked, onSelect }: O
               /* Addendum-4 §4 — a kana-shape option renders as a real JP glyph
                  (ja-block stack — `font-jp` alone is a no-op utility), big and
                  bold; the plain span stays for words/sentences/Persian labels. */
-              <JaBlock
-                className={
-                  'text-h2 font-bold' + (isEliminated ? ' line-through' : '')
-                }
-              >
-                {opt.label}
-              </JaBlock>
+              <JaBlock className={'text-h2 font-bold' + (isEliminated ? ' line-through' : '')}>{opt.label}</JaBlock>
             ) : (
               <span dir="auto" className={isEliminated ? 'line-through' : undefined}>
                 {opt.label}

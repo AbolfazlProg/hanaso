@@ -12,6 +12,8 @@ import {
   type ExerciseAnswerPayload,
 } from '@/modules/curriculum';
 import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
+import { kanaAudioUrls } from '@/modules/audio/kana-audio';
+import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { recordLearningEvent } from '@/modules/curriculum/events';
 import type { StationState } from '@/modules/curriculum/types';
 
@@ -185,6 +187,19 @@ export async function POST(req: Request) {
       );
     }
     const outcome = gradeExerciseAnswer(exercise, payload.answer as ExerciseAnswerPayload, payload.attemptNo);
+    /* TASK-LEARNING-08 Addendum-5 §3 — after ANY answered attempt the correct
+     * pronunciation is hearable (owner rule): the kana's own sound for the
+     * kana kinds, the word's committed audio for kana-decode. Absent asset →
+     * no correctAudio (the client hides the control honestly). Attached only
+     * here — on an ANSWERED outcome — never pre-answer (no leak). */
+    if (exercise.type === 'kana-recognition' || exercise.type === 'kana-recall' || exercise.type === 'kana-listening') {
+      const item = KANA_ITEMS.find((k) => k.kanaId === exercise.targetConcept);
+      const urls = item ? kanaAudioUrls(`kn-${item.kanaId}`) : null;
+      if (item && urls) outcome.correctAudio = { what: item.glyph, ...urls };
+    } else if (exercise.type === 'kana-decode' && exercise.promptJa) {
+      const urls = hostWordAudioUrls(exercise.promptJa);
+      if (urls) outcome.correctAudio = { what: exercise.promptJa, ...urls };
+    }
     await store.incrementAttempts(userId, station.slug);
     // TASK-LEARNING-06: analytics contract (in-memory store — pipeline = M6) +
     // weak-point signal when the F-ladder is exhausted (#106/F4).

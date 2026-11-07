@@ -57,7 +57,19 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
     if (block.kind !== 'exercise') continue;
     for (const id of block.exerciseIds) {
       const ex = chapter.exercises[id];
-      if (ex) clientExercises[id] = toClientExercise(ex);
+      if (!ex) continue;
+      const ce = toClientExercise(ex);
+      /* TASK-LEARNING-08 Addendum-5 §3 — the QUESTION's own sound, attached
+       * ONLY where hearing it is part of the prompt (never the answer key):
+       *  - kana-listening — the sound IS the question (auto-play + replay);
+       *  - kana-recall — the prompt reading's own sound (the visible Persian
+       *    prompt in audio form; it cannot reveal WHICH GLYPH is correct).
+       * NEVER for kana-recognition/kana-decode — there the sound equals the
+       * answer and would leak it before answering (owner rule §3). */
+      if (ex.type === 'kana-listening' || ex.type === 'kana-recall') {
+        ce.promptAudio = kanaAudioUrls(`kn-${ex.targetConcept}`);
+      }
+      clientExercises[id] = ce;
     }
   }
 

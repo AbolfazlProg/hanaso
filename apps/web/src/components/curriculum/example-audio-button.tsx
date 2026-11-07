@@ -14,13 +14,7 @@ import { Volume2 } from 'lucide-react';
 import { useAudioToggle } from '@/modules/audio/toggle-playback';
 import { fa } from '@/messages/fa';
 
-export function ExampleAudioButton({
-  word,
-  urls,
-}: {
-  word: string;
-  urls: { opus: string; m4a: string } | null;
-}) {
+export function ExampleAudioButton({ word, urls }: { word: string; urls: { opus: string; m4a: string } | null }) {
   const sound = useAudioToggle(urls, word);
   if (!urls) return null;
   const label = sound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal;
@@ -28,13 +22,13 @@ export function ExampleAudioButton({
     <button
       type="button"
       onClick={sound.toggle}
-      className="flex min-h-9 cursor-pointer items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+      className="flex min-h-11 cursor-pointer items-center gap-1.5 rounded-md border-2 border-ai bg-card px-4 text-small font-bold text-ai shadow-card transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
       aria-label={`${fa.curriculum.kanaExampleAudioLabel(word)} — ${fa.curriculum.kanaSpeedLabel}: ${label}`}
       data-example-audio
       data-example-word={word}
       data-audio-mode={sound.mode}
     >
-      <Volume2 aria-hidden className="size-4" />
+      <Volume2 aria-hidden className="size-5" />
       {label}
     </button>
   );

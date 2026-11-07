@@ -165,6 +165,10 @@ export const RECALL_FIRST_TYPES: ReadonlySet<ExerciseType> = new Set([
   // romaji→glyph and word→romaji both make the learner PRODUCE, not recognise).
   'kana-recall',
   'kana-decode',
+  // TASK-LEARNING-08 Addendum-5 §3: hearing the kana SOUND and retrieving the
+  // correct GLYPH is the recall direction too (the production is the shape,
+  // same as kana-recall — only the prompt channel is audio).
+  'kana-listening',
 ] as const);
 
 /**

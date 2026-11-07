@@ -38,6 +38,14 @@ export interface GradeOutcome {
    * client renders «بازگشت به آموزش» and a weak-point event is recorded.
    */
   referenceBlockId?: string;
+  /**
+   * TASK-LEARNING-08 Addendum-5 §3 — the correct answer's pronunciation (a
+   * committed audio asset) so the learner can HEAR it after answering. Set by
+   * the grading ROUTE for the kana exercise kinds (kana sound / word audio);
+   * absent when no committed asset exists (the client hides the control).
+   * Only ever attached to an ANSWERED outcome — never pre-answer (no leak).
+   */
+  correctAudio?: { what: string; opus: string; m4a: string };
 }
 
 /** Grade one answer at a given attempt number (1-based) against the ladder. */
@@ -80,6 +88,8 @@ function isCorrect(ex: Exercise, answer: ExerciseAnswerPayload): boolean {
     case 'kana-recognition':
     case 'kana-recall':
     case 'kana-decode':
+    // TASK-LEARNING-08 Addendum-5 §3: the kana SOUND → glyph (option-based).
+    case 'kana-listening':
       return answer.kind === 'option' && answer.optionId === ex.correctOptionId;
     case 'word-order':
     case 'dialogue-order':
@@ -254,6 +264,17 @@ export interface ClientExercise {
   chunks?: { id: string; ja: string }[];
   chips?: { id: string; ja: string }[];
   lineRef?: string;
+  /**
+   * TASK-LEARNING-08 Addendum-5 §3 — the QUESTION's own sound (committed
+   * asset): attached ONLY where hearing it is part of the prompt, never the
+   * answer key:
+   *   - kana-listening — the sound IS the question (auto-play + replay);
+   *   - kana-recall — the prompt's reading sound (the visible Persian prompt
+   *     in audio form; it cannot reveal which GLYPH is correct).
+   * NEVER attached to kana-recognition/kana-decode — there the sound equals
+   * the answer and would leak it before answering (owner rule §3).
+   */
+  promptAudio?: { opus: string; m4a: string } | null;
 }
 
 /**
