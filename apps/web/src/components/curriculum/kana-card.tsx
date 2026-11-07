@@ -34,7 +34,7 @@
  * in writing-data/licenses/ — nothing else technical in the teaching space.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Ear, Hand, RotateCcw, Volume2 } from 'lucide-react';
+import { Ear, Hand, Info, RotateCcw, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { KANA_READING_FA_BY_GLYPH, KANA_TEACHING_BY_ID } from '@/modules/curriculum/content/kana-teaching';
 import { KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
@@ -205,7 +205,22 @@ export function KanaCard({
    * to leak the PREVIOUS practice's last stroke into the new stage's panel and
    * progress dots), clears the feedback, then switches the stage. No stage
    * transition ever re-runs the teaching animation.
+   *
+   * Addendum-5 §1 — after the CTA «شروع تمرین نوشتن» the page SOFT-SCROLLS the
+   * writing canvas fully into view (below the sticky header, measured at run
+   * time — the canvas must never sit hidden under the bar) and the practice
+   * starts IMMEDIATELY in the same canvas. No route, no new page.
    */
+  const canvasAnchorRef = useRef<HTMLDivElement | null>(null);
+  const scrollToCanvas = useCallback(() => {
+    if (typeof window === 'undefined' || !canvasAnchorRef.current) return;
+    const el = canvasAnchorRef.current;
+    const header = document.querySelector('header.sticky');
+    const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+    const top = el.getBoundingClientRect().top + window.scrollY - Math.max(0, headerBottom) - 12;
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
+  }, []);
   const beginPractice = useCallback(
     (next: 'guided' | 'free') => {
       attemptStartRef.current = Date.now();
@@ -213,8 +228,11 @@ export function KanaCard({
       setRestartSignal((n) => n + 1);
       setAttempt(createAttemptState(kana.glyph)); // fresh — no stale stroke info
       setStage(next);
+      // Addendum-5 §1: the canvas becomes the focal point the moment practice
+      // begins — after React commits the new stage (rAF → next paint).
+      requestAnimationFrame(() => scrollToCanvas());
     },
-    [kana.glyph],
+    [kana.glyph, scrollToCanvas],
   );
 
   /** «فهمیدم، شروع کنیم» → guided practice in the SAME canvas. */
@@ -340,6 +358,133 @@ export function KanaCard({
 
   const speedChip = sound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal;
 
+  // -------------------------------------------------- §8/§9 cards (shared JSX)
+  // Addendum-5 §1: the same cards render OPEN in the full intro view and inside
+  // the collapsed practice fold — ONE definition, no drift between the two.
+  const readingCard = (
+    <div className="kana-reveal rounded-md border border-ink-faint bg-surface-sunken/60 p-4" data-reading-card>
+      <div className="flex flex-wrap items-baseline gap-2">
+        {teaching ? <span className="text-h3 font-bold text-ink">{teaching.pronunciationFa}</span> : null}
+        <span className="text-ink-faint" aria-hidden>
+          |
+        </span>
+        <span className="font-mono text-caption text-ink-soft" dir="ltr">
+          {readingLatin}
+        </span>
+        {audioUrls ? (
+          <span className="text-caption text-ink-faint">{fa.curriculum.kanaStageAudioOnce}</span>
+        ) : (
+          <span className="flex items-center gap-1 text-caption text-ink-faint">
+            <Ear aria-hidden className="size-3" />
+            {fa.curriculum.kanaAudioPending}
+          </span>
+        )}
+      </div>
+      {teaching?.pronunciationNoteFa ? (
+        <p className="kana-reveal mt-2 text-small leading-[var(--leading-fa)] text-ink-soft">
+          {teaching.pronunciationNoteFa}
+        </p>
+      ) : null}
+    </div>
+  );
+
+  const wordCard = hostWord ? (
+    <div className="kana-reveal kana-reveal-2 rounded-md border border-ai/30 bg-indigo-wash/30 p-4" data-word-card>
+      <p className="text-caption text-ink-faint">{fa.curriculum.kanaHostWordPrefix}</p>
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+        <p className="font-jp text-h2 font-bold text-ink" lang="ja" dir="ltr">
+          {Array.from(hostWord.word).map((ch, i) => (
+            <span
+              key={`${ch}-${i}`}
+              className={`word-char-in ${ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : ''}`}
+              style={{ animationDelay: `${300 + i * 450}ms` }}
+            >
+              {ch}
+            </span>
+          ))}
+        </p>
+        {wordAudioUrls ? (
+          <button
+            type="button"
+            onClick={wordSound.toggle}
+            className="flex min-h-9 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            aria-label={`${fa.curriculum.kanaWordAudioLabel(hostWord.word)} — ${fa.curriculum.kanaSpeedLabel}: ${
+              wordSound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal
+            }`}
+            data-word-audio
+            data-audio-mode={wordSound.mode}
+          >
+            <Volume2 aria-hidden className="size-4" />
+            {wordSound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal}
+          </button>
+        ) : null}
+      </div>
+      <div className="mt-1 flex flex-wrap items-baseline gap-2">
+        <span className="font-mono text-caption text-ink-soft" dir="ltr">
+          {kanaWordRomaji(hostWord.word)}
+        </span>
+        <span className="text-body text-ink-soft">— {hostWord.meaningFa}</span>
+      </div>
+    </div>
+  ) : null;
+
+  /** §11 — the mnemonic card renders ONLY when verified; a draft is never shown
+   *  as final content (no badge, no «review» state in the learner UI). */
+  const mnemonicCard = verifiedMnemonic ? (
+    <div className="kana-reveal kana-reveal-3 rounded-md bg-surface-2 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-small font-bold text-ink">{verifiedMnemonic.coreImageFa}</span>
+        <span className="rounded-full bg-ink-faint/30 px-2 py-0.5 text-micro text-ink-faint">
+          {verifiedMnemonic.honestLabelFa}
+        </span>
+      </div>
+      <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink">
+        <MixedFaJaText text={verifiedMnemonic.storyFa} />
+      </p>
+    </div>
+  ) : null;
+
+  /** confusable pair, side by side — Persian | Latin under each glyph (§8). */
+  const pairCard =
+    mn?.pairGlyphs && mn.pairGlyphs.length > 0 ? (
+      <div className="kana-reveal kana-reveal-4 rounded-md border border-shu/40 bg-surface-warm p-4">
+        <p className="text-small font-bold text-ink">{fa.curriculum.kanaPairCompareTitle}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-4">
+          <span className="flex flex-col items-center gap-1">
+            <JaBlock className="grid size-14 place-items-center rounded-md border-2 border-ai bg-card font-jp text-h2 font-bold text-ink">
+              {kana.glyph}
+            </JaBlock>
+            <span className="flex items-baseline gap-1 text-caption font-bold text-ink-soft">
+              {readingFa.replace(/[«»]/g, '').replace(' کوتاه', '').trim()}
+              <span className="font-mono text-micro font-normal text-ink-faint" dir="ltr">
+                {readingLatin}
+              </span>
+            </span>
+          </span>
+          {mn.pairGlyphs.map((glyph) => (
+            <span key={glyph} className="flex flex-col items-center gap-1">
+              <JaBlock className="grid size-14 place-items-center rounded-md border-2 border-ink-faint bg-card font-jp text-h2 font-bold text-ink-soft">
+                {glyph}
+              </JaBlock>
+              <span className="flex items-baseline gap-1 text-caption text-ink-faint">
+                {KANA_READING_FA_BY_GLYPH[glyph] ?? fa.curriculum.kanaPairOther}
+                <span className="font-mono text-micro text-ink-faint/70" dir="ltr">
+                  {KANA_ITEMS_BY_GLYPH[glyph]?.romaji ?? ''}
+                </span>
+              </span>
+            </span>
+          ))}
+        </div>
+        {mn.pairHintFa ? (
+          <p className="mt-3 text-small leading-[var(--leading-fa)] text-ink">
+            <MixedFaJaText text={mn.pairHintFa} />
+          </p>
+        ) : null}
+      </div>
+    ) : !mn?.pairGlyphs && confusableNoteFa ? (
+      <p className="kana-reveal kana-reveal-4 text-small text-ink-faint">{confusableNoteFa}</p>
+    ) : null;
+
   // -------------------------------------------------- render
   return (
     <section
@@ -397,8 +542,9 @@ export function KanaCard({
 
       {/* ---- THE environment: the canvas column + the teaching column ---- */}
       <div className="flex flex-col items-center gap-5 lg:flex-row lg:items-start lg:justify-center">
-        {/* canvas column — the heart of the lesson; never unmounts (§3) */}
-        <div className="w-full max-w-[26rem] shrink">
+        {/* canvas column — the heart of the lesson; never unmounts (§3).
+            Addendum-5 §1: this wrapper is the scroll target when practice begins. */}
+        <div ref={canvasAnchorRef} className="w-full max-w-[26rem] shrink" data-canvas-anchor>
           <WritingCanvas
             character={kana.glyph}
             mode={stage === 'intro' ? 'intro' : stage === 'ready' || stage === 'done' ? 'reference' : stage}
@@ -483,81 +629,27 @@ export function KanaCard({
             ) : null}
           </div>
 
-          {/* §8 — the reading: Persian LEADS (big, bold), Latin is the small
-              complement right beside it — for EVERY kana, uniformly. */}
-          <div
-            className="kana-reveal mt-4 rounded-md border border-ink-faint bg-surface-sunken/60 p-4"
-            data-reading-card
-          >
-            <div className="flex flex-wrap items-baseline gap-2">
-              {teaching ? <span className="text-h3 font-bold text-ink">{teaching.pronunciationFa}</span> : null}
-              <span className="text-ink-faint" aria-hidden>
-                |
-              </span>
-              <span className="font-mono text-caption text-ink-soft" dir="ltr">
-                {readingLatin}
-              </span>
-              {audioUrls ? (
-                <span className="text-caption text-ink-faint">{fa.curriculum.kanaStageAudioOnce}</span>
-              ) : (
-                <span className="flex items-center gap-1 text-caption text-ink-faint">
-                  <Ear aria-hidden className="size-3" />
-                  {fa.curriculum.kanaAudioPending}
-                </span>
-              )}
-            </div>
-            {teaching?.pronunciationNoteFa ? (
-              <p className="kana-reveal mt-2 text-small leading-[var(--leading-fa)] text-ink-soft">
-                {teaching.pronunciationNoteFa}
-              </p>
-            ) : null}
-          </div>
-
-          {/* §4 + §9 — the readable word: real vocabulary this kana can read,
-              with its OWN independent audio (normal ⇄ slow, §9) and the Latin
-              reading beside it (§8). */}
-          {hostWord ? (
-            <div
-              className="kana-reveal kana-reveal-2 mt-3 rounded-md border border-ai/30 bg-indigo-wash/30 p-4"
-              data-word-card
-            >
-              <p className="text-caption text-ink-faint">{fa.curriculum.kanaHostWordPrefix}</p>
-              <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
-                <p className="font-jp text-h2 font-bold text-ink" lang="ja" dir="ltr">
-                  {Array.from(hostWord.word).map((ch, i) => (
-                    <span
-                      key={`${ch}-${i}`}
-                      className={`word-char-in ${ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : ''}`}
-                      style={{ animationDelay: `${300 + i * 450}ms` }}
-                    >
-                      {ch}
-                    </span>
-                  ))}
-                </p>
-                {wordAudioUrls ? (
-                  <button
-                    type="button"
-                    onClick={wordSound.toggle}
-                    className="flex min-h-9 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-                    aria-label={`${fa.curriculum.kanaWordAudioLabel(hostWord.word)} — ${fa.curriculum.kanaSpeedLabel}: ${
-                      wordSound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal
-                    }`}
-                    data-word-audio
-                    data-audio-mode={wordSound.mode}
-                  >
-                    <Volume2 aria-hidden className="size-4" />
-                    {wordSound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal}
-                  </button>
-                ) : null}
+          {/* Addendum-5 §1 — the focused practice view: the intro-only cards
+              (reading + host word) COLLAPSE into one fold while the learner
+              writes (never deleted — one tap reopens them; the intro/ready/done
+              stages keep the full view). */}
+          {inPractice ? (
+            <details className="mt-4 rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="reading">
+              <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
+                <Info aria-hidden className="ml-1 inline size-4 align-middle" />
+                {fa.curriculum.kanaIntroFoldReading}
+              </summary>
+              <div className="flex flex-col gap-3 px-4 pb-4">
+                {readingCard}
+                {wordCard}
               </div>
-              <div className="mt-1 flex flex-wrap items-baseline gap-2">
-                <span className="font-mono text-caption text-ink-soft" dir="ltr">
-                  {kanaWordRomaji(hostWord.word)}
-                </span>
-                <span className="text-body text-ink-soft">— {hostWord.meaningFa}</span>
-              </div>
-            </div>
-          ) : null}
+            </details>
+          ) : (
+            <>
+              {readingCard}
+              {wordCard}
+            </>
+          )}
         </div>
 
         {/* teaching column — Addendum-4 §3: every slot is ALWAYS present in the
@@ -633,7 +725,9 @@ export function KanaCard({
           {stage === 'free' ? (
             <div className="rounded-md border border-shu/40 bg-surface-warm p-4" data-stage-panel="memory">
               <p className="text-body font-bold text-ink">{fa.curriculum.kanaStageFreeTitle}</p>
-              <p className="mt-2 text-small leading-[var(--leading-fa)] text-ink">{fa.curriculum.kanaStageMemoryHint}</p>
+              <p className="mt-2 text-small leading-[var(--leading-fa)] text-ink">
+                {fa.curriculum.kanaStageMemoryHint}
+              </p>
               <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-faint">
                 {fa.curriculum.kanaStageMemoryHelp}
               </p>
@@ -686,63 +780,25 @@ export function KanaCard({
             </div>
           ) : null}
 
-          {/* §11 — the mnemonic card renders ONLY when verified; a draft is
-              never shown as final content (no badge, no «review» state in the
-              learner UI — the data keeps its honest status for the tooling). */}
-          {verifiedMnemonic ? (
-            <div className="kana-reveal kana-reveal-3 rounded-md bg-surface-2 p-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-small font-bold text-ink">{verifiedMnemonic.coreImageFa}</span>
-                <span className="rounded-full bg-ink-faint/30 px-2 py-0.5 text-micro text-ink-faint">
-                  {verifiedMnemonic.honestLabelFa}
-                </span>
+          {/* Addendum-5 §1 — the focused practice view: mnemonic + confusable
+              pair (intro-only) collapse into one fold; writing tips stay open. */}
+          {inPractice && (verifiedMnemonic || mn?.pairGlyphs) ? (
+            <details className="rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="side">
+              <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
+                <Info aria-hidden className="ml-1 inline size-4 align-middle" />
+                {fa.curriculum.kanaIntroFoldSide}
+              </summary>
+              <div className="flex flex-col gap-3 px-4 pb-4">
+                {mnemonicCard}
+                {pairCard}
               </div>
-              <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink">
-                <MixedFaJaText text={verifiedMnemonic.storyFa} />
-              </p>
-            </div>
-          ) : null}
-
-          {/* confusable pair, side by side — Persian | Latin under each glyph (§8) */}
-          {mn?.pairGlyphs && mn.pairGlyphs.length > 0 ? (
-            <div className="kana-reveal kana-reveal-4 rounded-md border border-shu/40 bg-surface-warm p-4">
-              <p className="text-small font-bold text-ink">{fa.curriculum.kanaPairCompareTitle}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-4">
-                <span className="flex flex-col items-center gap-1">
-                  <JaBlock className="grid size-14 place-items-center rounded-md border-2 border-ai bg-card font-jp text-h2 font-bold text-ink">
-                    {kana.glyph}
-                  </JaBlock>
-                  <span className="flex items-baseline gap-1 text-caption font-bold text-ink-soft">
-                    {readingFa.replace(/[«»]/g, '').replace(' کوتاه', '').trim()}
-                    <span className="font-mono text-micro font-normal text-ink-faint" dir="ltr">
-                      {readingLatin}
-                    </span>
-                  </span>
-                </span>
-                {mn.pairGlyphs.map((glyph) => (
-                  <span key={glyph} className="flex flex-col items-center gap-1">
-                    <JaBlock className="grid size-14 place-items-center rounded-md border-2 border-ink-faint bg-card font-jp text-h2 font-bold text-ink-soft">
-                      {glyph}
-                    </JaBlock>
-                    <span className="flex items-baseline gap-1 text-caption text-ink-faint">
-                      {KANA_READING_FA_BY_GLYPH[glyph] ?? fa.curriculum.kanaPairOther}
-                      <span className="font-mono text-micro text-ink-faint/70" dir="ltr">
-                        {KANA_ITEMS_BY_GLYPH[glyph]?.romaji ?? ''}
-                      </span>
-                    </span>
-                  </span>
-                ))}
-              </div>
-              {mn.pairHintFa ? (
-                <p className="mt-3 text-small leading-[var(--leading-fa)] text-ink">
-                  <MixedFaJaText text={mn.pairHintFa} />
-                </p>
-              ) : null}
-            </div>
-          ) : null}
-          {!mn?.pairGlyphs && confusableNoteFa ? (
-            <p className="kana-reveal kana-reveal-4 text-small text-ink-faint">{confusableNoteFa}</p>
-          ) : null}
+            </details>
+          ) : (
+            <>
+              {mnemonicCard}
+              {pairCard}
+            </>
+          )}
         </div>
       </div>
 
@@ -762,7 +818,7 @@ export function KanaCard({
           >
             مجوز
           </a>
-          {' · '}صدا: VOICEVOX:冥鳴ひまり
+          {' · '}صدا: VOICEVOX:ぞん子
         </p>
       </details>
     </section>

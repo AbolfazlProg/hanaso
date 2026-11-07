@@ -96,6 +96,24 @@ function getCanvasSvg(container: HTMLElement): SVGSVGElement {
   return svg as SVGSVGElement;
 }
 
+/**
+ * Addendum-5 §2 — wait for an accepted stroke's MORPH to settle: the user's
+ * own ink is corrected IN PLACE into the exact standard `d` (never erased
+ * and re-drawn from the start). In jsdom rAF fires on ~16ms timers, so the
+ * ~560ms morph settles well within the waitFor window.
+ */
+async function waitForMorphSettled(container: HTMLElement, index: number, standardD: string) {
+  await waitFor(
+    () => {
+      const p = container.querySelector(`path[data-std-stroke="${index}"]`);
+      expect(p, `standard stroke ${index} present`).not.toBeNull();
+      expect(p!.getAttribute('d'), `stroke ${index} settles to the exact standard d`).toBe(standardD);
+      expect(p!.getAttribute('data-morphing'), `stroke ${index} finished morphing`).toBeNull();
+    },
+    { timeout: 4000, interval: 60 },
+  );
+}
+
 // ---------------------------------------------------------------- canvas: judging
 
 describe('WritingCanvas — pointer input + judging (real engine, real data)', () => {
@@ -509,40 +527,41 @@ describe('KanaCard v4 — ONE environment, ZERO stage CTAs (owner final correcti
 // ------------------------------------------------- Addendum-2 §1/§2/§3: success sample + review beat + Persian-first
 
 describe('KanaCard v4 — Addendum-2 final correction (§1 success sample · §2 review beat · §3 Persian-first)', () => {
-  it('§13: EACH accepted stroke is immediately replaced by the PRECISE standard form — per stroke, not at the end', async () => {
+  it('§13+A5§2: EACH accepted stroke MORPHES from the user’s own ink into the PRECISE standard form — per stroke, in place, never re-drawn', async () => {
     const { container } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={null} wordAudioUrls={null} initialProgress={{ stage: 'guided' }} />,
     );
     const svg = await waitFor(() => getCanvasSvg(container));
-    // stroke 1 accepted → the STANDARD stroke 1 (exact charData path) is on the
-    // paper RIGHT NOW — the raw hand ink cross-fades out (data-raw-fading)
+    // stroke 1 accepted → the paper keeps THE USER'S OWN LINE right now — a
+    // morph is running (data-morphing), NOT the standard d, NOT a fade-out
     drawStroke(svg, A_DATA.medians[0]!);
     const std1 = container.querySelectorAll('path[data-std-stroke]');
     expect(std1.length).toBe(1);
-    expect(std1[0]!.getAttribute('d')).toBe(A_DATA.strokes[0]);
-    expect(container.querySelectorAll('path[data-raw-fading]').length).toBe(1);
-    // the fading raw ink is the USER'S hand path — NOT the standard d
-    const rawD = container.querySelector('path[data-raw-fading]')!.getAttribute('d');
-    expect(rawD).not.toBe(A_DATA.strokes[0]);
-    // stroke 2 accepted → standard strokes 0 AND 1 both rest on the paper
+    expect(std1[0]!.getAttribute('data-morphing')).toBe('true');
+    expect(std1[0]!.getAttribute('d')).not.toBe(A_DATA.strokes[0]);
+    // …and it gently settles into the EXACT standard stroke 1
+    await waitForMorphSettled(container, 0, A_DATA.strokes[0]!);
+    // stroke 2 accepted → morphs too, while stroke 1 rests UNTOUCHED
     drawStroke(svg, A_DATA.medians[1]!);
-    const std2 = container.querySelectorAll('path[data-std-stroke]');
-    expect(std2.length).toBe(2);
-    expect(std2[1]!.getAttribute('d')).toBe(A_DATA.strokes[1]);
-    // completing the attempt adds the final standard stroke — same canvas
+    expect(container.querySelectorAll('path[data-std-stroke]').length).toBe(2);
+    expect(container.querySelector('path[data-std-stroke="0"]')!.getAttribute('d')).toBe(A_DATA.strokes[0]);
+    expect(container.querySelector('path[data-std-stroke="1"]')!.getAttribute('data-morphing')).toBe('true');
+    await waitForMorphSettled(container, 1, A_DATA.strokes[1]!);
+    // completing the attempt adds the final stroke — same in-place morph (the
+    // settle itself is not awaited here: the ~1.1s review beat then clears the
+    // paper for the free attempt, which races the settle on slow jsdom runners)
     drawStroke(svg, A_DATA.medians[2]!);
-    const std3 = container.querySelectorAll('path[data-std-stroke]');
-    expect(std3.length).toBe(3);
-    expect(std3[2]!.getAttribute('d')).toBe(A_DATA.strokes[2]);
-  });
+    expect(container.querySelectorAll('path[data-std-stroke]').length).toBe(3);
+    expect(container.querySelector('path[data-std-stroke="2"]')!.getAttribute('data-morphing')).toBe('true');
+  }, 30000);
 
   it('§13 (resilience): a REJECTED stroke never wipes the accepted standard strokes', async () => {
     const { container } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={null} wordAudioUrls={null} initialProgress={{ stage: 'guided' }} />,
     );
     const svg = await waitFor(() => getCanvasSvg(container));
-    drawStroke(svg, A_DATA.medians[0]!); // accepted → standard stroke 0 rests
-    expect(container.querySelectorAll('path[data-std-stroke]').length).toBe(1);
+    drawStroke(svg, A_DATA.medians[0]!); // accepted → morphs into standard stroke 0
+    await waitForMorphSettled(container, 0, A_DATA.strokes[0]!);
     // a bad stroke on stroke 2 (an accidental tap) → rejected with feedback
     fireEvent.pointerDown(svg, { pointerId: 1, pointerType: 'mouse', clientX: 150, clientY: 155 });
     fireEvent.pointerUp(svg, { pointerId: 1, pointerType: 'mouse', clientX: 152, clientY: 156 });
@@ -552,7 +571,7 @@ describe('KanaCard v4 — Addendum-2 final correction (§1 success sample · §2
     // the accepted standard stroke SURVIVED the mistake (§13: «ضربه‌های درست حفظ شوند»)
     expect(container.querySelectorAll('path[data-std-stroke]').length).toBe(1);
     expect(container.querySelector('path[data-std-stroke="0"]')!.getAttribute('d')).toBe(A_DATA.strokes[0]);
-  });
+  }, 20000);
 
   it('§13 (transition): guided → free clears the paper SOFTLY (accepted ink cross-fades, no flash)', async () => {
     const { container } = render(
@@ -679,7 +698,7 @@ describe('KanaCard v4 — Addendum-2 final correction (§1 success sample · §2
     // the two REQUIRED credits stay (license obligations — never removed)
     expect(text).toContain('KanjiVG');
     expect(text).toContain('CC BY-SA 3.0');
-    expect(text).toContain('VOICEVOX:冥鳴ひまり');
+    expect(text).toContain('VOICEVOX:ぞん子');
     expect(details!.querySelector('a[href="/writing-data/licenses/README-KanjiVG.md"]')).not.toBeNull();
     // the privacy sentence and the technical romaji line moved out (A3 §12)
     expect(text).not.toContain('مسیر قلم شما هرگز');
@@ -800,7 +819,7 @@ describe('WritingCanvas — §13 per-stroke replacement across stroke counts (ow
     medians: number[][][];
   };
 
-  it('く (SINGLE stroke): the one accepted stroke becomes the standard form and completes', async () => {
+  it('く (SINGLE stroke): the one accepted stroke morphs into the standard form and completes', async () => {
     expect(KU.strokes).toHaveLength(1);
     const { container } = render(<WritingCanvas character="く" mode="guided" />);
     const svg = await waitFor(() => getCanvasSvg(container));
@@ -808,11 +827,12 @@ describe('WritingCanvas — §13 per-stroke replacement across stroke counts (ow
     await waitFor(() => {
       expect(container.querySelectorAll('path[data-std-stroke]')).toHaveLength(1);
     });
-    // the rendered d IS the standard く stroke from the shipped data
-    expect(container.querySelector('path[data-std-stroke="0"]')!.getAttribute('d')).toBe(KU.strokes[0]);
-  });
+    // Addendum-5 §2 — the user's ink morphs IN PLACE, then rests as the EXACT
+    // standard く stroke from the shipped data
+    await waitForMorphSettled(container, 0, KU.strokes[0]!);
+  }, 20000);
 
-  it('き (FOUR strokes): every stroke swaps to its standard form, in order, as accepted', async () => {
+  it('き (FOUR strokes): every stroke morphs into its standard form, in order, as accepted', async () => {
     expect(KI.strokes).toHaveLength(4);
     const onAttemptComplete = vi.fn();
     const { container } = render(<WritingCanvas character="き" mode="guided" onAttemptComplete={onAttemptComplete} />);
@@ -824,9 +844,8 @@ describe('WritingCanvas — §13 per-stroke replacement across stroke counts (ow
       await waitFor(() => {
         expect(container.querySelectorAll('path[data-std-stroke]')).toHaveLength(i + 1);
       });
-      const std = container.querySelector(`path[data-std-stroke="${i}"]`);
-      expect(std!.getAttribute('d'), `き stroke ${i + 1} must render the standard path`).toBe(KI.strokes[i]);
+      await waitForMorphSettled(container, i, KI.strokes[i]!);
     }
     expect(onAttemptComplete).toHaveBeenCalledTimes(1);
-  });
+  }, 40000);
 });

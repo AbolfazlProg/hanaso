@@ -172,11 +172,9 @@ export const fa = {
     kanaStageFreeHint: 'حالا از حافظه بنویس — اگر جایی گیر کردی، دکمهٔ «راهنما» همین‌جا بالای صفحه است.',
     kanaStageDoneHint: 'تمرین کامل شد — فرم استاندارد و شمارهٔ ضربه‌ها بالاست؛ مسیر خودش ادامه می‌یابد.',
     kanaStageOrderTitle: 'ترتیب ضربه‌ها',
-    kanaStageOrderRest:
-      'فرم کامل و شمارهٔ هر ضربه بالاست — با «تکرار آموزش» می‌توانی دوباره تماشایش کنی.',
+    kanaStageOrderRest: 'فرم کامل و شمارهٔ هر ضربه بالاست — با «تکرار آموزش» می‌توانی دوباره تماشایش کنی.',
     kanaStageMemoryHint: 'از خودت تصمیم بگیر از کجا و چطور شروع کنی؛ سیستم چیزی را لو نمی‌دهد.',
-    kanaStageMemoryHelp:
-      'راهنما خواستی؟ دکمهٔ «راهنما» را بزن — بعد از چند اشتباه هم خودش کمکت می‌کند.',
+    kanaStageMemoryHelp: 'راهنما خواستی؟ دکمهٔ «راهنما» را بزن — بعد از چند اشتباه هم خودش کمکت می‌کند.',
     kanaStageChipIntro: 'آموزش',
     kanaStageChipDemo: 'نمایش نوشتن',
     kanaStageChipExplain: 'توضیح',
@@ -194,6 +192,19 @@ export const fa = {
     /* TASK-LEARNING-08 Addendum-4 §7 — example-word audio (example-set blocks) */
     kanaExampleAudioLabel: (word: string) => `پخش صدای مثالِ ${word}`,
     kanaExampleAudioNone: 'صدای این مثال هنوز تولید نشده.',
+    /* TASK-LEARNING-08 Addendum-5 §1 — practice-focused view: the intro-only
+       cards collapse (never deleted) while the learner is writing. */
+    kanaIntroFoldReading: 'اطلاعات معرفی — تلفظ و واژهٔ نمونه',
+    kanaIntroFoldSide: 'اطلاعات معرفی — یادسپار و جفت مشابه',
+    /* TASK-LEARNING-08 Addendum-5 §3 — audio presence in kana questions */
+    exHearQuestionSound: 'شنیدن صدا',
+    exHearQuestionSoundAria: 'پخش صدای این سؤال',
+    exListenAutoNote: 'صدا به‌صورت خودکار پخش می‌شود — دوباره خواستی، پخش مجدد را بزن.',
+    exPromptSoundNote: 'صدای همان خوانشی که در صورت سؤال می‌بینی — شکل درستش را از بین گزینه‌ها پیدا کن.',
+    exHearCorrectPron: 'شنیدن تلفظ درست',
+    exHearCorrectPronAria: (what: string) => `پخش تلفظ درست (${what})`,
+    /* TASK-LEARNING-08 Addendum-5 §6 — example pronunciation guide */
+    examplePronGuideTitle: 'چطور تلفظ کنیم؟',
     kanaWritingTipTitle: 'نکات نوشتن',
     unitProgress: 'بخش',
     islandMap: 'جزایر فصل',

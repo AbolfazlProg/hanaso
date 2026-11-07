@@ -43,12 +43,16 @@ import {
   CLEAR_FADE_MS,
   DEMO_INTER_STROKE_MS,
   GUIDE_WIDTH,
-  INK_FADE_MS,
-  SAMPLE_STROKE_MS,
+  MORPH_SAMPLES,
+  MORPH_STROKE_MS,
   STROKE_WIDTH,
   directionArrow,
+  easeInOutCubic,
+  flattenPathD,
   livePathD,
+  morphPolylineD,
   pointAt,
+  resamplePolyline,
   strokeDemoMs,
 } from '@/modules/writing/render';
 import { loadWritingCharData, writingAvailability, type Point, type WritingCharData } from '@/modules/writing';
@@ -132,23 +136,54 @@ function faNum(n: number): string {
 }
 
 /**
- * Addendum-3 §13: the STANDARD stroke that replaces the learner's accepted raw
- * ink — per stroke, immediately on acceptance. Mounts hidden then flows in
- * fast (double-rAF) so the swap is a clean re-ink, never a jump.
+ * Addendum-5 §2 — the accepted stroke's MORPH: the learner's OWN line stays on
+ * the paper and is gently CORRECTED into the precise standard path (never
+ * erased and re-drawn from the start — the owner's explicit rule). Both paths
+ * are flattened/resampled to the same arc-length grid, then interpolated
+ * point-by-point with an ease-in-out curve; at t=1 the EXACT standard `d`
+ * takes over (pixel-identical to the pre-morph era, so what rests on the paper
+ * is still the precise KanjiVG form). Previously accepted strokes are other
+ * instances of this component and are never touched by a later morph.
  */
-function StandardStrokePath({ d, index }: { d: string; index: number }) {
-  const [offset, setOffset] = useState(1);
-  useEffect(() => {
-    setOffset(1);
-    let raf2 = 0;
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => setOffset(0));
-    });
-    return () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
+function MorphStroke({ userPoints, standardD, index }: { userPoints: Point[]; standardD: string; index: number }) {
+  // correspondence grid — computed once per mount (pure math, jsdom-safe)
+  const { from, to, degenerate } = useMemo(() => {
+    const std = flattenPathD(standardD);
+    let userLen = 0;
+    for (let i = 1; i < userPoints.length; i += 1) {
+      userLen += Math.hypot(userPoints[i]!.x - userPoints[i - 1]!.x, userPoints[i]!.y - userPoints[i - 1]!.y);
+    }
+    if (std.length < 2 || userPoints.length < 2 || userLen < 8) {
+      // degenerate geometry — the owner's fallback: a short in-place crossfade
+      return { from: null, to: null, degenerate: true as const };
+    }
+    return {
+      from: resamplePolyline(userPoints, MORPH_SAMPLES),
+      to: resamplePolyline(std, MORPH_SAMPLES),
+      degenerate: false as const,
     };
-  }, [d]);
+  }, [userPoints, standardD]);
+
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    if (degenerate) {
+      // crossfade fallback: the standard form fades in over the (tiny) ink
+      const r = requestAnimationFrame(() => setProgress(1));
+      return () => cancelAnimationFrame(r);
+    }
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / MORPH_STROKE_MS);
+      setProgress(p);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [degenerate]);
+
+  const settled = progress >= 1;
+  const d = settled || degenerate || !from || !to ? standardD : morphPolylineD(from, to, easeInOutCubic(progress));
   return (
     <path
       d={d}
@@ -158,12 +193,9 @@ function StandardStrokePath({ d, index }: { d: string; index: number }) {
       strokeWidth={STROKE_WIDTH}
       strokeLinecap="round"
       strokeLinejoin="round"
-      pathLength={1}
-      strokeDasharray={1}
-      strokeDashoffset={offset}
       opacity={0.95}
       data-std-stroke={index}
-      style={{ transition: `stroke-dashoffset ${SAMPLE_STROKE_MS}ms cubic-bezier(.4,0,.2,1)` }}
+      data-morphing={settled || degenerate ? undefined : 'true'}
     />
   );
 }
@@ -252,10 +284,10 @@ export function WritingCanvas({
   const [attempt, setAttempt] = useState<WritingAttemptState>(() => createAttemptState(character));
   const [attemptDone, setAttemptDone] = useState(false);
   const [live, setLive] = useState<Point[]>([]);
-  /** Indices of ACCEPTED strokes — always rendered as the STANDARD form (§13). */
-  const [acceptedStandard, setAcceptedStandard] = useState<number[]>([]);
-  /** Raw hand ink cross-fading OUT into the standard form (§13 swap). */
-  const [replacing, setReplacing] = useState<Array<{ d: string; key: number }>>([]);
+  /** Addendum-5 §2 — each accepted stroke's live morph entry (user ink →
+   * standard form, in place). Rendered by <MorphStroke>; settles to the exact
+   * standard `d` and stays until the attempt resets. */
+  const [morphInk, setMorphInk] = useState<Array<{ key: number; index: number; points: Point[] }>>([]);
   /** Accepted standard strokes fading OUT when a new attempt clears the paper (§3). */
   const [clearing, setClearing] = useState<Array<{ d: string; key: number }>>([]);
   /** Rejected strokes fading away. */
@@ -272,7 +304,7 @@ export function WritingCanvas({
   const fadeKeyRef = useRef(0);
   const replayBusyRef = useRef(false);
   const replayStopRef = useRef<(() => void) | null>(null);
-  /** Mirror of acceptedStandard for the soft-clear in the reset effect (§3). */
+  /** Indices of accepted strokes — drives the soft-clear in the reset effect (§3). */
   const acceptedRef = useRef<number[]>([]);
   /** Latest callbacks (refs) so the teaching loop never restarts on identity changes. */
   const introDoneRef = useRef(onIntroDone);
@@ -340,8 +372,7 @@ export function WritingCanvas({
     liveRef.current = [];
     drawingRef.current = false;
     setDemo({ stroke: -1, shown: [] });
-    setAcceptedStandard([]);
-    setReplacing([]);
+    setMorphInk([]);
     // charData intentionally not a dep — only read for the soft clear above
   }, [availability, character, mode, restartSignal]);
 
@@ -461,16 +492,15 @@ export function WritingCanvas({
     attemptRef.current = next;
     setAttempt(next);
     if (judgement.judge === 'accepted' || judgement.judge === 'accepted_with_hint') {
-      // Addendum-3 §13 — per-stroke replacement: the raw hand ink cross-fades
-      // OUT while the PRECISE standard stroke re-inks in its place, right now
-      // (not at the end of the character).
+      // Addendum-5 §2 — per-stroke replacement as a MORPH: the raw hand ink is
+      // NOT erased and re-drawn; it stays exactly where the hand left it and is
+      // gently corrected into the precise standard stroke (see <MorphStroke>).
+      // Previously accepted strokes are untouched.
       const acceptedIndex = Math.min(state.expectedIndex, totalStrokes - 1);
       fadeKeyRef.current += 1;
       const key = fadeKeyRef.current;
-      setReplacing((r) => [...r, { d: livePathD(pts), key }]);
-      setTimeout(() => setReplacing((r) => r.filter((x) => x.key !== key)), INK_FADE_MS + 120);
+      setMorphInk((m) => [...m, { key, index: acceptedIndex, points: pts }]);
       acceptedRef.current = [...acceptedRef.current, acceptedIndex];
-      setAcceptedStandard((a) => [...a, acceptedIndex]);
     } else {
       fadeKeyRef.current += 1;
       const key = fadeKeyRef.current;
@@ -688,26 +718,18 @@ export function WritingCanvas({
         </g>
       )}
 
-      {/* practice: the accepted strokes — ALWAYS the precise standard form
-          (Addendum-3 §13 — per-stroke replacement, never the raw hand path) */}
+      {/* practice: the accepted strokes — the learner's ink MORPHED into the
+          precise standard form, in place (Addendum-3 §13 per-stroke +
+          Addendum-5 §2 morph — never a redraw from the start) */}
       {!isTeaching &&
-        acceptedStandard.map((i) => <StandardStrokePath key={`std-${i}`} d={charData.strokes[i]!} index={i} />)}
-
-      {/* §13: the raw hand ink cross-fading OUT into the standard form */}
-      {replacing.map((r) => (
-        <path
-          key={`swap-${r.key}`}
-          d={r.d}
-          fill="none"
-          stroke="currentColor"
-          className="text-ink"
-          strokeWidth={STROKE_WIDTH}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          data-raw-fading
-          style={{ transition: `opacity ${INK_FADE_MS}ms ease-out`, opacity: 0 }}
-        />
-      ))}
+        morphInk.map((m) => (
+          <MorphStroke
+            key={`morph-${m.key}`}
+            userPoints={m.points}
+            standardD={charData.strokes[m.index]!}
+            index={m.index}
+          />
+        ))}
 
       {/* §3: accepted strokes softly fading when a new attempt clears the paper */}
       {clearing.map((c) => (

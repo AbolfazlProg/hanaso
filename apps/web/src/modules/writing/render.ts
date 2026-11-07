@@ -56,6 +56,174 @@ export function livePathD(points: Point[]): string {
   return d;
 }
 
+/* ------------------------------------------------------------------------- *
+ * Addendum-5 §2 — the stroke MORPH (user ink → standard form, in place).
+ *
+ * The owner's rule: the accepted stroke must NOT be erased and re-drawn from
+ * the start; the learner's own line stays on the paper and is gently CORRECTED
+ * into the precise standard path. Pure-math geometry (no DOM calls — jsdom
+ * safe): flatten the standard SVG path to a polyline, resample BOTH paths
+ * uniformly by arc length so point i of one corresponds to point i of the
+ * other, then interpolate point-by-point.
+ * -------------------------------------------------------------------------- */
+
+/** Morph duration — a calm correction beat, fast enough to never block the
+ * next stroke (the guide for stroke n+1 is already up while it settles). */
+export const MORPH_STROKE_MS = 560;
+/** Correspondence resolution — enough points for a smooth bend, small enough
+ * for a tiny `d` string (re-rendered every frame). */
+export const MORPH_SAMPLES = 64;
+
+interface PathCursor {
+  x: number;
+  y: number;
+  sx: number;
+  sy: number;
+  lastC: Point | null;
+  lastQ: Point | null;
+}
+
+function cubicAt(p0: Point, p1: Point, p2: Point, p3: Point, t: number): Point {
+  const u = 1 - t;
+  return {
+    x: u * u * u * p0.x + 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + t * t * t * p3.x,
+    y: u * u * u * p0.y + 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + t * t * t * p3.y,
+  };
+}
+
+function quadAt(p0: Point, p1: Point, p2: Point, t: number): Point {
+  const u = 1 - t;
+  return { x: u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x, y: u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y };
+}
+
+/**
+ * Flatten an SVG path `d` into a dense polyline. Supports the subset the
+ * KanjiVG centerline data uses (M L H V C S Q T Z + lowercase relatives) with
+ * implicit repeated coordinate groups. Returns [] for unparsable input.
+ */
+export function flattenPathD(d: string): Point[] {
+  const out: Point[] = [];
+  const cmds = d.match(/[MLHVCSQTAZmlhvcsqtaz]|-?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?/g);
+  if (!cmds) return out;
+  let i = 0;
+  const next = (): number => {
+    const v = parseFloat(cmds[i++] ?? '');
+    return Number.isFinite(v) ? v : 0;
+  };
+  const c: PathCursor = { x: 0, y: 0, sx: 0, sy: 0, lastC: null, lastQ: null };
+  const SEG = 14; // samples per curve segment (dense → arc-length resample fixes spacing)
+  while (i < cmds.length) {
+    const cmd = cmds[i++]!;
+    const rel = cmd === cmd.toLowerCase();
+    const K = cmd.toUpperCase();
+    if (K === 'M') {
+      const x = next() + (rel ? c.x : 0);
+      const y = next() + (rel ? c.y : 0);
+      c.x = c.sx = x;
+      c.y = c.sy = y;
+      out.push({ x, y });
+      c.lastC = c.lastQ = null;
+    } else if (K === 'L') {
+      const x = next() + (rel ? c.x : 0);
+      const y = next() + (rel ? c.y : 0);
+      out.push({ x, y });
+      c.x = x;
+      c.y = y;
+      c.lastC = c.lastQ = null;
+    } else if (K === 'H') {
+      c.x = next() + (rel ? c.x : 0);
+      out.push({ x: c.x, y: c.y });
+      c.lastC = c.lastQ = null;
+    } else if (K === 'V') {
+      c.y = next() + (rel ? c.y : 0);
+      out.push({ x: c.x, y: c.y });
+      c.lastC = c.lastQ = null;
+    } else if (K === 'C' || K === 'S') {
+      let p1: Point;
+      if (K === 'C') {
+        p1 = { x: next() + (rel ? c.x : 0), y: next() + (rel ? c.y : 0) };
+      } else {
+        p1 = c.lastC ? { x: 2 * c.x - c.lastC.x, y: 2 * c.y - c.lastC.y } : { x: c.x, y: c.y };
+      }
+      const p2 = { x: next() + (rel ? c.x : 0), y: next() + (rel ? c.y : 0) };
+      const p3 = { x: next() + (rel ? c.x : 0), y: next() + (rel ? c.y : 0) };
+      for (let s = 1; s <= SEG; s += 1) out.push(cubicAt({ x: c.x, y: c.y }, p1, p2, p3, s / SEG));
+      c.lastC = p2;
+      c.lastQ = null;
+      c.x = p3.x;
+      c.y = p3.y;
+    } else if (K === 'Q' || K === 'T') {
+      const p1 =
+        K === 'Q'
+          ? { x: next() + (rel ? c.x : 0), y: next() + (rel ? c.y : 0) }
+          : c.lastQ
+            ? { x: 2 * c.x - c.lastQ.x, y: 2 * c.y - c.lastQ.y }
+            : { x: c.x, y: c.y };
+      const p2 = { x: next() + (rel ? c.x : 0), y: next() + (rel ? c.y : 0) };
+      for (let s = 1; s <= SEG; s += 1) out.push(quadAt({ x: c.x, y: c.y }, p1, p2, s / SEG));
+      c.lastQ = p1;
+      c.lastC = null;
+      c.x = p2.x;
+      c.y = p2.y;
+    } else if (K === 'Z') {
+      out.push({ x: c.sx, y: c.sy });
+      c.x = c.sx;
+      c.y = c.sy;
+      c.lastC = c.lastQ = null;
+    } else if (K === 'A') {
+      // (arc — not used by KanjiVG centerlines; consume the 7 args, line to end)
+      i += 5;
+      const x = next() + (rel ? c.x : 0);
+      const y = next() + (rel ? c.y : 0);
+      out.push({ x, y });
+      c.x = x;
+      c.y = y;
+      c.lastC = c.lastQ = null;
+    }
+  }
+  return out;
+}
+
+/** Resample a polyline to EXACTLY n points, uniformly by arc length. */
+export function resamplePolyline(points: Point[], n: number): Point[] {
+  if (points.length === 0) return [];
+  if (points.length === 1) return Array.from({ length: n }, () => points[0]!);
+  const lens = [0];
+  for (let i = 1; i < points.length; i += 1) lens.push(lens[i - 1]! + dist(points[i - 1]!, points[i]!));
+  const total = lens[lens.length - 1]!;
+  if (total <= 0) return Array.from({ length: n }, () => points[0]!);
+  const out: Point[] = [];
+  for (let k = 0; k < n; k += 1) {
+    const target = (total * k) / (n - 1);
+    let seg = 1;
+    while (seg < lens.length - 1 && lens[seg]! < target) seg += 1;
+    const segLen = lens[seg]! - lens[seg - 1]!;
+    const t = segLen === 0 ? 0 : (target - lens[seg - 1]!) / segLen;
+    const a = points[seg - 1]!;
+    const b = points[seg]!;
+    out.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+  }
+  return out;
+}
+
+/** ease-in-out cubic — the correction feels like a nudge, not a snap. */
+export function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+/** The morph frame: `from` and `to` are ALREADY resampled to the same length. */
+export function morphPolylineD(from: Point[], to: Point[], t: number): string {
+  const n = Math.min(from.length, to.length);
+  if (n === 0) return '';
+  let d = `M${from[0]!.x + (to[0]!.x - from[0]!.x) * t},${from[0]!.y + (to[0]!.y - from[0]!.y) * t}`;
+  for (let i = 1; i < n; i += 1) {
+    const x = from[i]!.x + (to[i]!.x - from[i]!.x) * t;
+    const y = from[i]!.y + (to[i]!.y - from[i]!.y) * t;
+    d += `L${x.toFixed(1)},${y.toFixed(1)}`;
+  }
+  return d;
+}
+
 /** The path-drawing length of a median (used for demo pacing + arrow placement). */
 export function medianLength(median: Point[]): number {
   let total = 0;
