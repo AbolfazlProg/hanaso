@@ -89,20 +89,7 @@ function ffmpeg(args, input) {
 }
 
 function master(wav) {
-  return ffmpeg(
-    [
-      '-f',
-      'wav',
-      '-i',
-      'pipe:0',
-      '-af',
-      'highpass=f=70,treble=g=2.5:f=2500,agate=threshold=0.01:ratio=2',
-      '-f',
-      'wav',
-      'pipe:1',
-    ],
-    wav,
-  );
+  return ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-af', 'highpass=f=70,treble=g=2.5:f=2500,agate=threshold=0.01:ratio=2', '-f', 'wav', 'pipe:1'], wav);
 }
 
 function statsDbfs(wav) {
@@ -137,10 +124,7 @@ function normTo(wav) {
 }
 
 function encode(masterWav, base) {
-  const opus = ffmpeg(
-    ['-f', 'wav', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '64k', '-f', 'ogg', 'pipe:1'],
-    masterWav,
-  );
+  const opus = ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '64k', '-f', 'ogg', 'pipe:1'], masterWav);
   // the mp4-family muxer needs a seekable output — write to a SHORT temp name
   // in os.tmpdir() (never inside the assets dir; long words exceed the fs limit)
   const tmp = path.join(os.tmpdir(), `a4-${createHash('sha1').update(base).digest('hex').slice(0, 10)}.m4a`);
@@ -174,15 +158,16 @@ function probeMs(file) {
 const hash = (text) => createHash('sha256').update(`${text}|voicevox:${SPEAKER}`).digest('hex').slice(0, 16);
 
 /**
- * File stem for a word: the urlencoded word while it fits a filesystem
- * component (<200 chars — keeps the human-readable naming of every existing
- * asset), otherwise a deterministic short hash (long example sentences exceed
- * the 255-byte component limit). The manifest entry records the exact stem in
- * `file`, so the resolver never guesses.
+ * Addendum-5 §5 — File stem for a word: ALWAYS a deterministic ASCII hash
+ * (w-<sha1-16>). The previous human-readable urlencoded names made the
+ * served URLs percent-encoded, and Next 16's static route then lost the
+ * custom cache headers (serving no-store — a re-download per play) or 500ed
+ * depending on the header-rule shape. ASCII stems go through the plain
+ * static path: correct MIME + max-age=86400 + stale-while-revalidate. The
+ * manifest entry records the exact stem in `file`, so the resolver never
+ * guesses and the word→asset binding stays 1:1.
  */
 function wordStem(word) {
-  const q = encodeURIComponent(word);
-  if (q.length <= 200) return { stem: q, hashed: false };
   const h = createHash('sha1').update(word).digest('hex').slice(0, 16);
   return { stem: `w-${h}`, hashed: true };
 }
@@ -212,9 +197,7 @@ async function generateAll() {
     const base = path.join(HOST_DIR, stem);
     const { bytes, bytesM4a } = encode(wav, base);
     hostManifest.entries[word] = { file: stem, bytes, bytesM4a, durationMs: probeMs(`${base}.opus`), hash: hash(word) };
-    process.stdout.write(
-      `word ${word} (${stem === encodeURIComponent(word) ? 'named' : 'hashed'}) ${probeMs(`${base}.opus`)}ms\n`,
-    );
+    process.stdout.write(`word ${word} (${stem === encodeURIComponent(word) ? 'named' : 'hashed'}) ${probeMs(`${base}.opus`)}ms\n`);
   }
   writeFileSync(path.join(HOST_DIR, 'manifest.json'), JSON.stringify(hostManifest, null, 2) + '\n');
 

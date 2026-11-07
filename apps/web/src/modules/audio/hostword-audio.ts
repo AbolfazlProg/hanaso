@@ -12,7 +12,9 @@
  * Same contract as the kana registry:
  *  - manifest at `public/audio/hostwords/manifest.json`, keyed by the WORD
  *    itself (content id — stable, never card index);
- *  - files at `public/audio/hostwords/<urlencoded-word>.{opus,m4a}`;
+ *  - files at `public/audio/hostwords/<w-hash>.{opus,m4a}` (Addendum-5 §5:
+ *    deterministic ASCII hash stems — percent-encoded urlencoded names broke
+ *    Next 16 static caching);
  *  - absent manifest/entry → null → the UI hides the play control honestly
  *    (never a fake or mislinked sound).
  */
