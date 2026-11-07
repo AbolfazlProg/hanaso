@@ -27,11 +27,11 @@ const nextConfig: NextConfig = {
         source: '/audio/:path*',
         headers: [{ key: 'Cache-Control', value: ASSET_CACHE }],
       },
-      // the real MIME for opus (browsers sniff, but correctness costs nothing)
-      {
-        source: '/audio/:path*.opus',
-        headers: [{ key: 'Content-Type', value: 'audio/ogg' }],
-      },
+      // NOTE (Addendum-5 §5): the '/audio/:path*.opus' MIME rule was REMOVED —
+      // path-to-regexp wildcard+suffix matching fails on percent-encoded
+      // (Japanese-word) filenames, which made every named hostword asset fall
+      // through to no-store. The static server already serves .opus as
+      // audio/ogg (verified live), so the rule was redundant anyway.
       // registries refresh immediately (they change with deploys) — listed
       // AFTER the general rule so they take precedence
       {
