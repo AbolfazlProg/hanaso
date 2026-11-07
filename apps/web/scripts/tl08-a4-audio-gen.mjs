@@ -89,7 +89,20 @@ function ffmpeg(args, input) {
 }
 
 function master(wav) {
-  return ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-af', 'highpass=f=70,treble=g=2.5:f=2500,agate=threshold=0.01:ratio=2', '-f', 'wav', 'pipe:1'], wav);
+  return ffmpeg(
+    [
+      '-f',
+      'wav',
+      '-i',
+      'pipe:0',
+      '-af',
+      'highpass=f=70,treble=g=2.5:f=2500,agate=threshold=0.01:ratio=2',
+      '-f',
+      'wav',
+      'pipe:1',
+    ],
+    wav,
+  );
 }
 
 function statsDbfs(wav) {
@@ -124,7 +137,10 @@ function normTo(wav) {
 }
 
 function encode(masterWav, base) {
-  const opus = ffmpeg(['-f', 'wav', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '64k', '-f', 'ogg', 'pipe:1'], masterWav);
+  const opus = ffmpeg(
+    ['-f', 'wav', '-i', 'pipe:0', '-c:a', 'libopus', '-b:a', '64k', '-f', 'ogg', 'pipe:1'],
+    masterWav,
+  );
   // the mp4-family muxer needs a seekable output — write to a SHORT temp name
   // in os.tmpdir() (never inside the assets dir; long words exceed the fs limit)
   const tmp = path.join(os.tmpdir(), `a4-${createHash('sha1').update(base).digest('hex').slice(0, 10)}.m4a`);
@@ -197,7 +213,9 @@ async function generateAll() {
     const base = path.join(HOST_DIR, stem);
     const { bytes, bytesM4a } = encode(wav, base);
     hostManifest.entries[word] = { file: stem, bytes, bytesM4a, durationMs: probeMs(`${base}.opus`), hash: hash(word) };
-    process.stdout.write(`word ${word} (${stem === encodeURIComponent(word) ? 'named' : 'hashed'}) ${probeMs(`${base}.opus`)}ms\n`);
+    process.stdout.write(
+      `word ${word} (${stem === encodeURIComponent(word) ? 'named' : 'hashed'}) ${probeMs(`${base}.opus`)}ms\n`,
+    );
   }
   writeFileSync(path.join(HOST_DIR, 'manifest.json'), JSON.stringify(hostManifest, null, 2) + '\n');
 
