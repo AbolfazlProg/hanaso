@@ -149,7 +149,7 @@ export const fa = {
     kanaStageReadyChip: 'تأیید آمادگی',
     kanaStageChipReady: 'آماده',
     kanaStageReadyHint: 'نویسه را نگاه کن، صدایش را بشنو و توضیحش را بخوان — وقتی آماده بودی شروع کن.',
-    kanaStageReadyCta: 'شروع تمرین نوشتن',
+    kanaStageReadyCta: 'فهمیدم، شروع کنیم',
     kanaStageDemoTitle: 'نحوهٔ نوشتن را ببین',
     kanaStageDemoReplay: 'نمایش دوباره',
     kanaStageDemoDone: 'نمایش تمام شد — با هم مرورش کنیم',
@@ -196,18 +196,6 @@ export const fa = {
        cards collapse (never deleted) while the learner is writing. */
     kanaIntroFoldReading: 'اطلاعات معرفی — تلفظ و واژهٔ نمونه',
     kanaIntroFoldSide: 'اطلاعات معرفی — یادسپار و جفت مشابه',
-    /* Approved Kana Introduction Layout (owner-approved wireframe) — the
-       five-section intro: title → hero canvas → two teaching boxes → usage
-       examples → footer with the start-practice CTA. */
-    kanaIntroScriptHira: 'هیراگانا',
-    kanaIntroScriptKata: 'کاتاکانا',
-    kanaIntroRowLabel: (faReading: string) => `ردیف ${faReading}`,
-    kanaIntroHowToWriteTitle: 'روش نوشتن',
-    kanaIntroPronBoxTitle: 'تلفظ و یادسپار',
-    kanaIntroExamplesTitle: 'نمونه‌های کاربردی',
-    kanaIntroExampleNowReadable: 'حالا می‌توانی بخوانی',
-    kanaIntroFooterMarker: 'پایان معرفی کاراکتر',
-    kanaIntroFooterCaption: 'اول مشاهده و یادگیری، سپس تمرین',
     /* TASK-LEARNING-08 Addendum-5 §3 — audio presence in kana questions */
     exHearQuestionSound: 'شنیدن صدا',
     exHearQuestionSoundAria: 'پخش صدای این سؤال',

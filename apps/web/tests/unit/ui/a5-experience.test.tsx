@@ -126,12 +126,11 @@ describe('Addendum-5 §1 — «شروع تمرین نوشتن» behavior', () =>
     await waitFor(() => {
       expect(container.querySelector('[data-kana-stage]')?.getAttribute('data-kana-stage')).toBe('guided');
     });
-    // guided = the FOCUSED view: the pronunciation box and the examples box
-    // collapse into folds — the data is still there (nothing deleted), one tap
-    // reopens it (approved intro layout: the folds are now per teaching box)
-    expect(container.querySelector('[data-intro-fold="pron"]')).not.toBeNull();
-    expect(container.querySelector('[data-intro-fold="pron"]')!.querySelector('[data-reading-card]')).not.toBeNull();
-    expect(container.querySelector('[data-intro-fold="examples"]')).not.toBeNull();
+    // guided = the FOCUSED view: the reading/word cards live INSIDE the fold —
+    // the data is still there (nothing deleted), one tap reopens it
+    expect(container.querySelector('[data-intro-fold="reading"]')).not.toBeNull();
+    expect(container.querySelector('[data-intro-fold="reading"]')!.querySelector('[data-reading-card]')).not.toBeNull();
+    expect(container.querySelector('[data-intro-fold="side"]')).not.toBeNull();
   });
 });
 

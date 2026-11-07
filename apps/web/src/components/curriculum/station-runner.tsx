@@ -50,9 +50,9 @@ import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
-import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
+import { KanaCard, normalizeKanaStage, type KanaCardProgress } from './kana-card';
 import { ExampleAudioButton } from './example-audio-button';
-import { KANA_ITEMS_BY_GLYPH, KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
+import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 import { loadWritingCharData, writingAvailability } from '@/modules/writing';
 import { preloadAudio } from '@/modules/audio/client-cache';
 
@@ -287,26 +287,6 @@ export function StationRunner(props: StationRunnerProps) {
     }
   }, [nextExampleBlock, exampleAudioByWord]);
 
-  /* ------- Approved kana introduction layout (§۴ نمونه‌های کاربردی) ---------
-   * Each kana card's related usage examples = the station's example-set
-   * entries whose Japanese word CONTAINS that glyph, in their authored
-   * educational order. Computed ONCE per station (data-driven; no content
-   * duplication, no new content structure — the walk's own example-set block
-   * stays exactly where it is). */
-  const relatedExamplesByKanaId = useMemo(() => {
-    const map: Record<string, KanaRelatedExample[]> = {};
-    for (const b of station.blocks) {
-      if (b.kind !== 'example-set') continue;
-      for (const ex of b.examples) {
-        for (const ch of Array.from(new Set(ex.ja))) {
-          const item = KANA_ITEMS_BY_GLYPH[ch];
-          if (item) (map[item.kanaId] ??= []).push(ex);
-        }
-      }
-    }
-    return map;
-  }, [station.blocks]);
-
   /* ---------------- WP-5: restore the persisted walk (once, after mount) ---- */
   useEffect(() => {
     if (restoreChecked) return;
@@ -496,7 +476,6 @@ export function StationRunner(props: StationRunnerProps) {
           kanaAudioByKanaId={kanaAudioByKanaId}
           hostWordAudioByKanaId={hostWordAudioByKanaId}
           exampleAudioByWord={exampleAudioByWord}
-          relatedExamplesByKanaId={relatedExamplesByKanaId}
           isLastBlock={step === blocks.length - 1}
           exerciseScore={block.kind === 'exercise' ? blockResult(blockResults, block.id) : null}
           exerciseInitialProgress={block.kind === 'exercise' ? exerciseProgress[block.id] : undefined}
@@ -801,7 +780,6 @@ function BlockView({
   kanaAudioByKanaId,
   hostWordAudioByKanaId,
   exampleAudioByWord,
-  relatedExamplesByKanaId,
   isLastBlock,
   exerciseScore,
   exerciseInitialProgress,
@@ -830,8 +808,6 @@ function BlockView({
   hostWordAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
   /** Addendum-4 §7: example word → its own audio pair (word → opus+m4a | null). */
   exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
-  /** Approved intro layout §۴: kanaId → the station's related example entries. */
-  relatedExamplesByKanaId?: Record<string, KanaRelatedExample[]>;
   /** True on the last authored block (drives the skip-panel CTA label). */
   isLastBlock: boolean;
   /**
@@ -967,8 +943,6 @@ function BlockView({
           confusableNoteFa={block.confusableNoteFa}
           audioUrls={kanaAudioByKanaId?.[kana.kanaId] ?? null}
           wordAudioUrls={hostWordAudioByKanaId?.[kana.kanaId] ?? null}
-          relatedExamples={relatedExamplesByKanaId?.[kana.kanaId]}
-          exampleAudioByWord={exampleAudioByWord}
           initialProgress={kanaCardStage ? ({ stage: kanaCardStage } as KanaCardProgress) : undefined}
           onProgress={onKanaProgress}
           onWritingDone={onKanaWritingDone}
