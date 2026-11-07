@@ -6,7 +6,7 @@ name: CI
 
 on:
   push:
-    branches: [main, "tl08-*"]
+    branches: [main, 'tl08-*']
   pull_request:
   workflow_dispatch:
 
