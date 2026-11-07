@@ -130,8 +130,12 @@ describe.skipIf(!drillAvailable)(DRILL_TITLE, () => {
     expect(restored.tables).toEqual(source.tables);
     expect(restored.tables['app.dialogue_mastery_attempts']).toBe(1);
     expect(restored.tables['app.lesson_progress']).toBe(1);
-    // TASK-LEARNING-01: 10 (PoC) + 9 (chapter 1 dialogue) seeded lines
-    expect(restored.tables['content.dialogue_lines']).toBe(19);
+    // TASK-LEARNING-01: seeded dialogue lines — 10 (PoC cafe-morning-01) +
+    // 13 (first-meeting-01 — the 05B 13-turn rebuild) + 3 (kana-welcome-01,
+    // TASK-LEARNING-06) = 26. The old 19 (10 + 9) predates those content
+    // rebuilds; CI had not reached this step since (the format gate failed
+    // earlier — fixed in Addendum-5).
+    expect(restored.tables['content.dialogue_lines']).toBe(26);
     expect(restored.pgbossAvailable).toBe(true);
   });
 
