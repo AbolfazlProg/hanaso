@@ -6,7 +6,9 @@ name: CI
 
 on:
   push:
-    branches: [main, 'tl08-*']
+    # TASK-LEARNING-09: mission branches now follow tl09-* too (tl08-* kept for
+    # backports; main for releases).
+    branches: [main, 'tl08-*', 'tl09-*']
   pull_request:
   workflow_dispatch:
 
