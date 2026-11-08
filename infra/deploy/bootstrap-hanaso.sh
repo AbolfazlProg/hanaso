@@ -1,16 +1,28 @@
 #!/usr/bin/env bash
-# HANASO-BOOTSTRAP-INTEGRITY: d4b04e2a1c9f3b7d
 # =============================================================================
-# HANASO bootstrap — zero-credential one-command entrypoint
-# TASK-HANASO-DEPLOY-04 (2026-11-08). Public repo: https://github.com/AbolfazlProg/hanaso
+# HANASO bootstrap — zero-credential one-command entrypoint (v3)
+# TASK-HANASO-DEPLOY-05 (2026-11-08). Public repo: https://github.com/AbolfazlProg/hanaso
 # =============================================================================
 # WHAT THIS IS
 #   The small, auditable entrypoint that the owner's ONE command downloads from
-#   the PUBLIC repository (raw.githubusercontent.com at an exact commit) and runs.
-#   It creates/updates the SOURCE workspace (a plain anonymous git clone — no
-#   PAT, no deploy key, no stored credentials of any kind), verifies the pinned
-#   commits, and then executes the full updater from EXACTLY the pinned deploy
-#   commit inside an isolated git worktree.
+#   the PUBLIC repository and runs. v3 (DEPLOY-05): the one-liner fetches THIS
+#   file over four independent paths —
+#     1) api.github.com      /repos/<o>/<r>/contents/<path>?ref=<commit>
+#                          with "Accept: application/vnd.github.raw" (tiny payload)
+#     2) codeload.github.com /<o>/<r>/tar.gz/<commit> → single-file extract
+#     3) raw.githubusercontent.com pinned to the owner-verified IP 185.199.108.133
+#                          via curl --resolve (TLS verification stays fully ON)
+#     4) raw.githubusercontent.com via DNS (last resort)
+#   — and verifies the REAL SHA-256 of the downloaded file against the pin
+#   embedded in the one-liner BEFORE executing anything. This removes the v2
+#   mandatory dependency on raw.githubusercontent.com (owner evidence 2026-11-08:
+#   github.com git = OK, api.github.com = 200, codeload = 200, raw = 200 only on
+#   185.199.108.133, SSL timeouts on the other three IPs) and replaces the old
+#   marker-line grep with a real content hash gate.
+#   It then creates/updates the SOURCE workspace (a plain anonymous git clone —
+#   no PAT, no deploy key, no stored credentials of any kind), verifies the pinned
+#   commits, and executes the full updater from EXACTLY the pinned deploy commit
+#   inside an isolated git worktree.
 #
 # SEPARATION OF CONCERNS on the VPS (never mix these):
 #   /opt/hanaso      → DEPLOY dir  (docker-compose.yml + .env + update-history +
@@ -22,6 +34,8 @@
 #
 # WHAT IT NEVER DOES
 #   - asks for a GitHub username/password/token (the repo is PUBLIC)
+#   - disables or weakens TLS certificate verification in any way (the fixed-IP
+#     raw fallback uses curl --resolve: SNI, hostname and cert checks all stay ON)
 #   - hides git/network errors (real stderr is always shown verbatim)
 #   - touches /opt/hanaso, docker, or anything KOTODAMA (that is the updater's
 #     job, guarded there; this file only does git + filesystem prep)
@@ -31,14 +45,14 @@
 #   bash bootstrap-hanaso.sh status         # read-only report
 #   bash bootstrap-hanaso.sh rollback       # app-level rollback
 #
-# PINNED TARGET (do NOT drift to "latest" — TASK-HANASO-DEPLOY-04):
+# PINNED TARGET (do NOT drift to "latest" — TASK-HANASO-DEPLOY-05):
 set -euo pipefail
 
 # --- pinned refs -------------------------------------------------------------
 TARGET_SHA="${HANASO_TARGET_SHA:-575b8dd8efeaa3e0cbc53bf134a6b71d80b130d4}"
 TARGET_VERSION="${HANASO_TARGET_VERSION:-1.0.0-tl08-cta01}"
 TARGET_BRANCH="${HANASO_TARGET_BRANCH:-tl08-cta01}"
-DEPLOY_BRANCH="${HANASO_DEPLOY_BRANCH:-tl08-deploy04}"
+DEPLOY_BRANCH="${HANASO_DEPLOY_BRANCH:-tl08-deploy05}"
 # Exact updater commit. The documented one-liner ALWAYS overrides this with an
 # immutable SHA (HANASO_DEPLOY_SHA=<sha>); the branch default here is only a
 # fallback for manual invocations and prints a notice when used.
@@ -53,7 +67,7 @@ log()  { printf '\n== [%s] %s\n' "$(date '+%H:%M:%S')" "$*"; }
 warn() { printf '   [!] %s\n' "$*"; }
 die()  { printf '\n!! FATAL: %s\n\n' "$*" >&2; exit 1; }
 
-log "HANASO bootstrap (TASK-HANASO-DEPLOY-04)"
+log "HANASO bootstrap v3 (TASK-HANASO-DEPLOY-05 — multi-path download, SHA-256 gated)"
 echo "   repo (public, anonymous) : ${REPO_URL}"
 echo "   updater ref              : ${DEPLOY_SHA}"
 echo "   target release           : ${TARGET_VERSION} @ ${TARGET_SHA:0:12} (${TARGET_BRANCH})"

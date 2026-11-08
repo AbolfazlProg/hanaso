@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 # =============================================================================
-# HANASO — one-command VPS updater v2 (TASK-HANASO-DEPLOY-04, 2026-11-08)
+# HANASO — one-command VPS updater v2.1 (TASK-HANASO-DEPLOY-05, 2026-11-08)
 # =============================================================================
 # WHAT THIS IS
 #   The canonical owner-run update for https://learn.kotodama.ir on the shared
 #   VPS. It performs, in order: preflight → backup → image build from a PINNED
 #   commit → staged swap (postgres → pgbouncer → migrate → web+worker) →
 #   health gates → smoke → KOTODAMA witness → automatic rollback on failure.
+#
+#   v2.1 (DEPLOY-05) — audited against the owner's live VPS evidence
+#   (github.com anonymous git OK · api.github.com 200 · codeload 200 · raw only
+#   via 185.199.108.133): the DELIVERY layer (how bootstrap/update scripts reach
+#   the server) moved to the multi-path, real-SHA-256-gated one-liner — see
+#   bootstrap-hanaso.sh v3 and OWNER-COMMAND.txt. The updater mechanics below
+#   are UNCHANGED from v2 (DEPLOY-04, 110/110 sandbox assertions): anonymous
+#   HTTPS source, pinned commits, honest errors, staged swap, auto-rollback.
 #
 #   v2 (DEPLOY-04) — ZERO GitHub credentials, honest errors:
 #     · the source code arrives via ANONYMOUS HTTPS from the PUBLIC repository

@@ -1,23 +1,107 @@
 #!/usr/bin/env bash
-# curl — simulation stub for the update-hanaso.sh sandbox tests.
-# Serves canned JSON/HTML for /api/health, /api/ready, / and the KOTODAMA
-# witness from the simulation state (set by the docker stub on `compose up`).
+# curl — simulation stub for the sandbox tests (run-deploy04.sh + run-deploy05.sh).
+#
+# Two jobs:
+#   1) DEPLOY-05 delivery layer — serves the ONE-COMMAND bootstrap download
+#      paths from the REAL git blobs of the simulation origin
+#      (HANASO_SIM_ORIGIN = bare mirror of the real repository), so the SHA-256
+#      pinned in the production one-liner matches byte-for-byte:
+#        api.github.com      /repos/<o>/<r>/contents/<path>?ref=<sha>   (raw media)
+#        codeload.github.com /<o>/<r>/tar.gz/<sha>                      (real layout)
+#        raw.githubusercontent.com/<o>/<r>/<sha>/<path>  (with/without --resolve)
+#      Failure injection via ${HANASO_SIM_DIR}/config.env:
+#        SIM_DL_API=403 · SIM_DL_CODELOAD=500 · SIM_DL_RAWIP=tls · SIM_DL_RAWDNS=timeout
+#          (default/unset = 200 serve; "tls"/"timeout"/"connrefused" = connect error;
+#           anything else = that HTTP code)
+#        SIM_DL_TAMPER=1 → bootstrap served with one appended line (SHA mismatch)
+#        SIM_DL_HTML=1   → an HTML error page is served instead of the file
+#      Every call is logged to calls.log as:  curl [--resolve <spec>] <url>
+#   2) DEPLOY-04 app layer — canned /api/health, /api/ready, / and the KOTODAMA
+#      witness from the simulation state (set by the docker stub on `compose up`).
+#      Behavior unchanged from the original stub.
 SIM="${HANASO_SIM_DIR:?set HANASO_SIM_DIR}"
 [ -f "${SIM}/config.env" ] && . "${SIM}/config.env"
 [ -f "${SIM}/state.env" ] && . "${SIM}/state.env"
 
-url=""; out=""; wfmt=""
+url=""; out=""; wfmt=""; resolve=""
 while [ $# -gt 0 ]; do
   case "$1" in
+    --resolve) resolve="${2:-}"; shift 2 ;;
     -o) out="$2"; shift 2 ;;
     -w) wfmt="$2"; shift 2 ;;
-    -m) shift 2 ;;
+    -H|-m|--connect-timeout|--max-time|--retry|--retry-delay) shift 2 ;;
     -[a-zA-Z]*) shift ;;
     http://*|https://*) url="$1"; shift ;;
     *) shift ;;
   esac
 done
 
+log_call() { printf 'curl %s%s\n' "${resolve:+--resolve ${resolve} }" "${url}" >> "${SIM}/calls.log"; }
+wants_code() { echo "${wfmt}" | grep -q 'http_code'; }
+
+# --- DEPLOY-05: GitHub download paths ----------------------------------------
+gh_http_fail() {
+  echo "curl: (22) The requested URL returned error: $1" >&2
+  exit 22
+}
+gh_tls_fail() {
+  echo "curl: (35) SSL connect error (simulated)" >&2
+  exit 35
+}
+dl_gate() { # <value> — 200/empty = serve; tls-ish = connect error; else HTTP code
+  case "${1:-200}" in
+    200|"") return 0 ;;
+    tls|timeout|connrefused) gh_tls_fail ;;
+    *) gh_http_fail "${1}" ;;
+  esac
+}
+gh_blob() { # <ref> <path> — the REAL bytes (or tampered/HTML variants)
+  if [ "${SIM_DL_HTML:-0}" = 1 ]; then
+    if [ -n "${out}" ]; then printf '<html><body>502 Bad Gateway (sim)</body></html>\n' > "${out}"
+    else printf '<html><body>502 Bad Gateway (sim)</body></html>\n'; fi
+    return 0
+  fi
+  if [ -n "${out}" ]; then
+    git --git-dir="${HANASO_SIM_ORIGIN:?set HANASO_SIM_ORIGIN}" show "${1}:${2}" > "${out}" || return 1
+    [ "${SIM_DL_TAMPER:-0}" = 1 ] && printf '# tampered-by-simulation\n' >> "${out}"
+  else
+    git --git-dir="${HANASO_SIM_ORIGIN:?set HANASO_SIM_ORIGIN}" show "${1}:${2}" || return 1
+  fi
+  return 0
+}
+gh_tarball() { # <ref> — same layout as real codeload: root "<repo>-<ref>/"
+  git --git-dir="${HANASO_SIM_ORIGIN:?set HANASO_SIM_ORIGIN}" \
+    archive --format=tar --prefix="hanaso-${1}/" "${1}" | gzip -c > "${out:-/dev/null}"
+}
+
+case "${url}" in
+  "https://api.github.com/repos/"*"/contents/"*)
+    log_call
+    dl_gate "${SIM_DL_API:-200}"
+    ref="${url##*\?ref=}"; path="${url#*/contents/}"; path="${path%%\?*}"
+    gh_blob "${ref}" "${path}" || { echo "curl: (22) object not found in sim origin" >&2; exit 22; }
+    if wants_code; then printf '200\n'; fi
+    exit 0 ;;
+  "https://codeload.github.com/"*"/tar.gz/"*)
+    log_call
+    dl_gate "${SIM_DL_CODELOAD:-200}"
+    ref="${url##*/tar.gz/}"
+    gh_tarball "${ref}"
+    if wants_code; then printf '200\n'; fi
+    exit 0 ;;
+  "https://raw.githubusercontent.com/"*)
+    log_call
+    if [ -n "${resolve}" ]; then dl_gate "${SIM_DL_RAWIP:-200}"; else dl_gate "${SIM_DL_RAWDNS:-200}"; fi
+    rest="${url#https://raw.githubusercontent.com/}"   # <owner>/<repo>/<ref>/<path>
+    rest="${rest#*/}"    # drop <owner>/
+    rest="${rest#*/}"    # drop <repo>/
+    ref="${rest%%/*}"; path="${rest#*/}"
+    gh_blob "${ref}" "${path}" || { echo "curl: (22) object not found in sim origin" >&2; exit 22; }
+    if wants_code; then printf '200\n'; fi
+    exit 0 ;;
+esac
+
+# --- DEPLOY-04: app-layer endpoints (unchanged) -------------------------------
 body() {
   case "${url}" in
     */api/health)

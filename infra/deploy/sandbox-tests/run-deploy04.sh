@@ -389,7 +389,7 @@ assert_not_called "${D}" "docker build" "S16 no build attempted"
 section "S17 — modified bootstrap file → integrity warning, updater still pinned"
 D="$(prep s17-integrity)"
 MOD="${ROOT}/s17-modified-bootstrap.sh"
-sed 's/^# HANASO-BOOTSTRAP-INTEGRITY: d4b04e2a1c9f3b7d$/# tampered line (test)/' \
+sed 's/^# HANASO bootstrap — zero-credential one-command entrypoint (v3)$/# HANASO bootstrap — TAMPERED FOR TEST/' \
   "${BOOTSTRAP}" > "${MOD}"
 (
   cd /
@@ -410,17 +410,18 @@ assert_out "${D}" "differs from" "S17 integrity WARNING printed"
 assert_env_image "${D}/deploy" "${NEW_IMAGE}" "S17 update still ran from the pinned updater"
 
 # =============================================================================
-section "S18 — one-liner integrity guard rejects a corrupted download"
+section "S18 — one-liner integrity guard (REAL SHA-256) rejects a corrupted download"
 D="$(prep s18-oneliner)"
 T="${ROOT}/s18-dl.sh"
+WANT_SHA="$(sha256sum "${BOOTSTRAP}" | cut -d' ' -f1)"
 printf '<html>gateway error page</html>\n' > "${T}"
 GUARD_RC=0
-grep -q '^# HANASO-BOOTSTRAP-INTEGRITY: d4b04e2a1c9f3b7d$' "${T}" || GUARD_RC=1
-assert_exit 1 "${GUARD_RC}" "S18 corrupted download rejected by the marker check"
+[ "$(sha256sum "${T}" | cut -d' ' -f1)" = "${WANT_SHA}" ] || GUARD_RC=1
+assert_exit 1 "${GUARD_RC}" "S18 corrupted download rejected by the SHA-256 gate"
 cp "${BOOTSTRAP}" "${T}"
 GUARD_RC=0
-grep -q '^# HANASO-BOOTSTRAP-INTEGRITY: d4b04e2a1c9f3b7d$' "${T}" || GUARD_RC=1
-assert_exit 0 "${GUARD_RC}" "S18 genuine bootstrap passes the marker check"
+[ "$(sha256sum "${T}" | cut -d' ' -f1)" = "${WANT_SHA}" ] || GUARD_RC=1
+assert_exit 0 "${GUARD_RC}" "S18 genuine bootstrap passes the SHA-256 gate"
 assert_env_unchanged "${D}/deploy" "${OLD_IMAGE}" "S18 nothing executed — server untouched"
 
 # =============================================================================
