@@ -28,9 +28,11 @@ ssh root@87.107.129.210
 ```bash
 cd /srv/hanaso
 
-# ۱) آوردن کامیت انتشار (اگر remote با توکن تنظیم نشده، فرمان بعدی را بزنید)
+# ۱) آوردن شاخهٔ انتشار (شامل اسکریپت امن deploy) و checkout آن
+#    (بدئیت: .env سرور gitignore است و دست نمی‌خورد)
 git fetch origin tl08-cta01 || \
   git fetch https://<توکن‌گیت‌هاب>@github.com/AbolfazlProg/hanaso.git tl08-cta01
+git checkout tl08-cta01
 
 # ۲) ساخت و انتشار با اسکریپت امن (build روی خود VPS — الگوی اثبات‌شدهٔ CP-11)
 bash infra/deploy/deploy-local-build.sh \
@@ -38,6 +40,11 @@ bash infra/deploy/deploy-local-build.sh \
   1.0.0-tl08-cta01 \
   <توکن‌گیت‌هاب>
 ```
+
+> اگر `git fetch origin` خطای احراز هویت داد، فرمان دوم (با توکن) را بزنید؛
+> اگر هر دو شکست خوردند، به‌جای fetch از GitHub می‌توانید از هر ماشینی که ریپو را دارد
+> یک git bundle بسازید و scp کنید (`git bundle create /tmp/cta01.bundle tl08-cta01`
+> → `git pull /tmp/cta01.bundle tl08-cta01` روی سرور).
 
 اسکریپت به‌ترتیب خودکار انجام می‌دهد:
 
