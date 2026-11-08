@@ -1,11 +1,32 @@
-# sandbox-tests — آزمون‌های ایزولهٔ استقرار بدون-Credential یک‌دستوری (TASK-HANASO-DEPLOY-04)
+# sandbox-tests — آزمون‌های ایزولهٔ استقرار بدون-Credential یک‌دستوری
 
 این پوشه **هارنس آزمون** مسیر کامل «دستور واحد مالک» است: از دانلود bootstrap تا
 به‌روزرسانی واقعی — بدون Docker واقعی، بدون GitHub واقعی، بدون VPS و بدون هیچ لمسی به KOTODAMA.
 
+دو هارنس هست:
+
+| هارنس | لایه | وضعیت |
+| --- | --- | --- |
+| `run-deploy04.sh` | مکانیک updater (bootstrap → updater از worktree کامیت Pin‌شده) | ۲۰ سناریو / ۱۱۰ ادعا — رگرسیون؛ S17/S18 در DEPLOY-05 به گیت SHA-256 واقعی به‌روز شد |
+| `run-deploy05.sh` | **لایهٔ تحویل دستور یک‌خطی** (TASK-HANASO-DEPLOY-05) | ۱۳ گروه / ۹۰ ادعا — همان دستورِ عین `OWNER-COMMAND.txt` |
+
+`run-deploy05.sh` تفاوت کلیدی دارد: **دستور یک‌خطی تولیدی را عیناً از `OWNER-COMMAND.txt`
+(ریشهٔ ریپو) استخراج و بدون هیچ تغییری اجرا می‌کند**؛ origin شبیه‌سازی‌شده = یک mirror محلی
+bare از خود ریپو (پروتکل file:// ناشناس)، پس Pinهای واقعی (کامیت ابزار `7c4f02f`،
+SHA-256 واقعی bootstrap، کامیت هدف واقعی `575b8dd`) بدون بازنویسی کار می‌کنند و فیکسچر =
+وضعیت واقعی Production فعلی (`fdddad34` / `1.0.0-tl08-a5r`). mock جدید `curl` چهار مسیر
+دانلود GitHub (API با Accept:raw · Codeload تاربال · raw با/بدون `--resolve` روی IP ثابت
+مالک) را از blobهای واقعی Git سرو می‌کند تا SHA-256 بایت‌به‌بایت یکی باشد؛ شکست هر مسیر با
+`SIM_DL_API` / `SIM_DL_CODELOAD` / `SIM_DL_RAWIP` / `SIM_DL_RAWDNS` (و `SIM_DL_TAMPER=1`
+/ `SIM_DL_HTML=1`) تزریق می‌شود. سناریوها: P0 امنیت ایستای متن دستور (Pinها سازگار با ریپو،
+عدم وجود `-k`/`--insecure`/`latest`/token) · P1 موفقیت از API · P2 Rate-limit واقعی ۴۰۳ →
+fallback به Codeload (با assert ترتیب) · P3 مسیر IP ثابت با `--resolve` · P4 مسیر DNS ·
+P5 شکست هر چهار مسیر = هیچ‌چیز اجرا نشد · P6/P7 فایل دستکاری‌شده/صفحهٔ HTML رد شدند در گیت
+SHA-256 · P8 اجرای مجدد no-op · P9 فقط-خواندنی بودن status · P10 رفت‌وبرگشت rollback ·
+P11 شکست migrate با رول‌بک خودکار · P12 جاروی سراسری KOTODAMA/TLS.
+
 هارنس نسخهٔ قبل (`run.sh` مربوط به TASK-HANASO-DEPLOY-02 که فقط `update-hanaso.sh` v1 را
-مستقیم اجرا می‌کرد) با `run-deploy04.sh` جایگزین شد؛ زیرا v1 حذف شد و جریان ران‌تایم
-اکنون از bootstrap شروع می‌شود. تاریخچهٔ هارنس قبلی در Git حفظ می‌شود.
+مستقیم اجرا می‌کرد) با `run-deploy04.sh` جایگزین شد (DEPLOY-04). تاریخچهٔ هر دو در Git حفظ می‌شود.
 
 ## روش آزمون (صادقانه — این شبیه‌سازی است، نه Deploy واقعی)
 
@@ -25,11 +46,12 @@
 ## اجرا
 
 ```bash
-bash infra/deploy/sandbox-tests/run-deploy04.sh          # خروجی PASS/FAIL؛ exit 0 = همه سبز
-bash infra/deploy/sandbox-tests/run-deploy04.sh --keep   # نگه‌داشتن پوشهٔ کار برای بازرسی
+bash infra/deploy/sandbox-tests/run-deploy04.sh          # رگرسیون updater — خروجی PASS/FAIL؛ exit 0 = همه سبز
+bash infra/deploy/sandbox-tests/run-deploy05.sh          # لایهٔ تحویل دستور یک‌خطی — OWNER-COMMAND.txt لازم دارد
+# هر دو با --keep برای نگه‌داشتن پوشهٔ کار
 ```
 
-آخرین نتیجه: **۱۱۰/۱۱۰ PASS** (۲۰ سناریو + جاروی سراسری invariantها).
+آخرین نتیجه: **۱۱۰/۱۱۰ PASS** (run-deploy04) · **۹۰/۹۰ PASS** (run-deploy05).
 
 ## سناریوها
 
@@ -52,7 +74,7 @@ bash infra/deploy/sandbox-tests/run-deploy04.sh --keep   # نگه‌داشتن �
 | S15 | زیرفرمان status                                                  | فقط-خواندنی، صفر جهت                                                                                   |
 | S16 | کامیت هدف Pinشدهٔ غیرواقعی (ghost)                               | توقف صادقانهٔ bootstrap در راستی‌آزمایی کامیت · صفر تغییر                                              |
 | S17 | bootstrap دستکاری‌شده (مغایر با کامیت Pinشده)                    | هشدار integrity · به‌روزرسانی همچنان از کامیت Pinشده اجرا می‌شود                                       |
-| S18 | دانلود خراب (صفحهٔ HTML به‌جای اسکریپت) — گارد دستور یک‌خطی      | رد شدن در بررسی marker · هیچ چیزی اجرا نمی‌شود                                                         |
+| S18 | دانلود خراب (صفحهٔ HTML به‌جای اسکریپت) — گیت SHA-256 دستور یک‌خطی | رد شدن در گیت SHA-256 واقعی · هیچ چیزی اجرا نمی‌شود                                                    |
 | S19 | اجرای مستقیم updater با remote خراب                              | راهنمای صادقانهٔ «عمومی/بدون credential» · صفر تغییر                                                   |
 | S20 | SRC_DIR روی deploy dir                                           | امتناع تفکیک · deploy dir دست‌نخورده                                                                   |
 

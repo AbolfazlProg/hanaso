@@ -1,103 +1,105 @@
-# دستور واحد به‌روزرسانی HANASO روی VPS — نسخهٔ ۲ (بدون Credential)
+# دستور واحد به‌روزرسانی HANASO روی VPS — نسخهٔ ۳ (چند‌مسیری + SHA-256 واقعی)
 
-**تاریخ:** ۲۰۲۶-۱۱-۰۸ · **مأموریت:** TASK-HANASO-DEPLOY-04
+**تاریخ:** ۲۰۲۶-۱۱-۰۸ · **مأموریت:** TASK-HANASO-DEPLOY-05
 **Repository:** `https://github.com/AbolfazlProg/hanaso` — **عمومی (Public)**؛ دریافت کد با HTTPS ناشناس و **بدون هیچ GitHub Token / Password / Deploy Key**
 **نسخهٔ هدف (Pin شده):** `1.0.0-tl08-cta01` @ کامیت `575b8dd8efeaa3e0cbc53bf134a6b71d80b130d4` (شاخهٔ `tl08-cta01`) — بدون تأیید مالک عوض نمی‌شود
-**کامیت ابزار استقرار (Pin شده):** `3a8a946223527189fdfe2cc42077ee491b71e204` (شاخهٔ `tl08-deploy04`)
+**کامیت ابزار استقرار (Pin شده):** `7c4f02fe9fe26d8f8ee5518dfe2defd7441c63d7` (شاخهٔ `tl08-deploy05`)
+**SHA-256 فایل bootstrap (Pin شده):** `bee61184d0d7ea605a10254ff8b6a8c9218d7efd9846345a354abb03dc265941`
 
-این نسخهٔ ۲ راهنما است. تفاوت کلیدی با نسخهٔ ۱: **بخش «راه‌اندازی اولیهٔ Credential» کاملاً حذف شد** —
-Repository عمومی شده و کل مسیر (دانلود bootstrap، کلون کد، fetch نسخه‌های بعدی) با HTTPS ناشناس
-انجام می‌شود. دیگر هیچ PAT، Deploy Key یا رمز ذخیره‌شده‌ای روی سرور لازم نیست.
+نسخهٔ ۳ راهنما است. مشکل نسخهٔ ۲ روی VPS شما ثابت شد: **وابستگی اجباری به `raw.githubusercontent.com`** — در حالی که طبق آزمایش واقعی شما (۲۰۲۶-۱۱-۰۸):
+
+| مسیر | وضعیت واقعی روی VPS شما |
+| --- | --- |
+| `github.com` (Git ناشناس) | ✅ کار می‌کند (`git ls-remote` بدون Credential موفق) |
+| `api.github.com` | ✅ HTTP 200 |
+| `codeload.github.com` | ✅ HTTP 200 |
+| `raw.githubusercontent.com` — IP `185.199.108.133` | ✅ HTTP 200 |
+| `raw.githubusercontent.com` — سه IP دیگر | ❌ SSL Connection Timeout (و IPv6 هم نیست) |
+
+در نسخهٔ ۳: **`raw.githubusercontent.com` دیگر مسیر اجباری نیست**، بلکه فقط «مسیر جایگزین» است (و تنها روی IP ثابتِ آزمایش‌شدهٔ شما، بدون خاموش‌کردن TLS). مسیرهای اصلی = GitHub API و Codeload روی کامیت دقیق Pin‌شده، و **SHA-256 واقعی فایل** قبل از هر اجرایی بررسی می‌شود (جایگزین marker نسخهٔ ۲).
 
 ## ۱) دستور واحد
 
-این یک خط را در ترمینال **سرور** (به‌عنوان root) کپی و اجرا کنید — همین:
+این **یک خط** را در ترمینال **سرور** (به‌عنوان root) کپی و اجرا کنید — همین:
 
 ```bash
-bash -c 'set -euo pipefail; U="https://raw.githubusercontent.com/AbolfazlProg/hanaso/3a8a946223527189fdfe2cc42077ee491b71e204/infra/deploy/bootstrap-hanaso.sh"; T="$(mktemp /tmp/hanaso-bootstrap.XXXXXX.sh)"; if command -v curl >/dev/null 2>&1; then curl -fsSL "$U" -o "$T"; elif command -v wget >/dev/null 2>&1; then wget -q -O "$T" "$U"; else echo "ERROR: curl or wget not found — apt-get install -y curl"; exit 1; fi; grep -q "^# HANASO-BOOTSTRAP-INTEGRITY: d4b04e2a1c9f3b7d$" "$T" || { echo "ERROR: bootstrap integrity check FAILED — aborting (nothing was changed)"; exit 1; }; HANASO_DEPLOY_SHA=3a8a946223527189fdfe2cc42077ee491b71e204 bash "$T" "$@"' hanaso-updater
+bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=7c4f02fe9fe26d8f8ee5518dfe2defd7441c63d7; W=bee61184d0d7ea605a10254ff8b6a8c9218d7efd9846345a354abb03dc265941; P=infra/deploy/bootstrap-hanaso.sh; command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found — install once: apt-get install -y curl" >&2; exit 1; }; command -v sha256sum >/dev/null 2>&1 || { echo "ERROR: sha256sum not found (coreutils)" >&2; exit 1; }; T="$(mktemp /tmp/hanaso-bootstrap.XXXXXX.sh)"; X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"; trap "rm -f \"$T\"; rm -rf \"$X\"" EXIT; GOT=""; echo "[hanaso] pinned bootstrap commit ${R:0:12} — download paths: api.github.com -> codeload.github.com -> raw(pinned IP 185.199.108.133) -> raw(dns)"; if curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/${H}/contents/${P}?ref=${R}" -o "$T"; then GOT="api.github.com"; else echo "[hanaso] 1/4 api.github.com FAILED (real curl error above) — trying codeload" >&2; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/${H}/tar.gz/${R}" -o "$X/src.tgz"; then if tar -xzf "$X/src.tgz" -C "$X" --strip-components=1 "hanaso-${R}/${P}" 2>/dev/null; then mv "$X/${P}" "$T"; GOT="codeload.github.com"; elif tar -xzf "$X/src.tgz" -C "$X"; then mv "$X/hanaso-${R}/${P}" "$T"; GOT="codeload.github.com"; else echo "[hanaso] codeload tarball fetched but extraction FAILED (tar error above)" >&2; fi; else echo "[hanaso] 2/4 codeload.github.com FAILED (real curl error above) — trying raw with the pinned IP" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --resolve raw.githubusercontent.com:443:185.199.108.133 --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via pinned IP 185.199.108.133"; else echo "[hanaso] 3/4 raw(pinned IP) FAILED (real curl error above) — trying raw via DNS" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via DNS"; else echo "[hanaso] 4/4 raw(dns) FAILED (real curl error above)" >&2; fi; fi; [ -n "$GOT" ] || { echo "ERROR: ALL bootstrap download paths failed — the real errors are printed above; NOTHING was executed or changed" >&2; exit 1; }; A="$(sha256sum "$T" | cut -d" " -f1)"; if [ "$A" != "$W" ]; then echo "ERROR: bootstrap SHA-256 MISMATCH — got ${A}, want ${W} (via ${GOT}). NOTHING was executed; nothing was changed" >&2; exit 1; fi; echo "[hanaso] bootstrap verified — sha256 ${A:0:16} OK (via ${GOT}) — starting pinned installer"; HANASO_DEPLOY_SHA="$R" bash "$T" "$@"' hanaso-updater
 ```
 
-اگر با کاربر غیر root هستید، همان دستور را با `sudo bash -c '…'` اجرا کنید (بقیه عیناً یکسان).
-
-این دستور **هیچ Username یا Passwordی نمی‌پرسد، هیچ فایلی را دستی ویرایش نمی‌کند و هیچ Placeholderی ندارد.**
-اگر workspace منبع (`/opt/hanaso-src`) وجود نداشته باشد، همان دستور آن را می‌سازد؛ اگر باشد، فقط fetch می‌کند.
+- همین دستور در `OWNER-COMMAND.txt` (ریشهٔ Repository) هم هست — کپی از هر دو یکسان است.
+- اگر با کاربر غیر root هستید، به‌جای `bash -c` از `sudo bash -c` استفاده کنید (بقیه عیناً یکسان).
+- این دستور **هیچ Username/Password/Token نمی‌پرسد، هیچ فایلی را دستی ویرایش نمی‌کند و هیچ Placeholderی ندارد.**
 
 ### زیرفرمان‌های اختیاری
 
-به انتهای دستور (بعد از کلمهٔ `hanaso-updater`) یک کلمه اضافه کنید:
+به انتهای دستور (بعد از `hanaso-updater`) اضافه کنید:
 
 ```bash
-# گزارش فقط-خواندنی وضعیت فعلی (بدون هیچ تغییری):
-…(دستور بخش ۱)… hanaso-updater status
-
-# بازگشت به image قبلی ثبت‌شده (دیتابیس دست‌نخورده):
-…(دستور بخش ۱)… hanaso-updater rollback
+…(دستور بخش ۱)… hanaso-updater status     # گزارش فقط-خواندنی
+…(دستور بخش ۱)… hanaso-updater rollback   # بازگشت به image قبلی (دیتابیس دست‌نخورده)
 ```
 
-## ۲) دستور به‌ترتیب چه می‌کند؟
+## ۲) زنجیرهٔ دریافت — چهار مسیر مستقل + گیت SHA-256
 
-| فاز              | کار                                                                                                                                                                                                      | تضمین                                                                        |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| دانلود bootstrap | دریافت اسکریپت از raw.githubusercontent.com روی **کامیت دقیق و Pin شده** (`3a8a946`) + بررسی marker یکپارچگی                                                                                             | نسخهٔ اجرا‌شده دقیقاً همان نسخهٔ بازبینی‌شده است؛ نه latest و نه شاخهٔ متحرک |
-| دسترسی ناشناس    | `git ls-remote` عمومی؛ اگر شکست بخورد **خطای واقعی git عیناً چاپ می‌شود** (نه پنهان‌سازی با /dev/null) و قبل از هر تغییری متوقف می‌شود                                                                   | خطای واقعی شبکه/احراز هویت همیشه دیده می‌شود                                 |
-| Workspace منبع   | کلون ناشناس (یا fetch) در `/opt/hanaso-src` — **کاملاً جدا از `/opt/hanaso`** (محل داده‌ها و تنظیمات Production)؛ اگر مسیری موجود ولی غیر-git باشد، امتناع از حذف/بازنویسی                               | `.env`، دیتابیس و فایل‌های عملیاتی هرگز پاک نمی‌شوند                         |
-| راستی‌آزمایی Pin | وجود کامیت هدف `575b8dd` و کامیت ابزار `3a8a946` در ریپو بررسی و updater از worktree ایزوله روی همان کامیت اجرا می‌شود + مقایسهٔ sha256 خودِ bootstrap با همان کامیت                                     | ضد drift؛ اسکریپت اجرایی = اسکریپت بازبینی‌شده                               |
-| Preflight        | root · Docker/Compose · دیسک (حداقل ۲.۵GB) · حافظه (حداقل ~۱.۸GB) · کلیدهای `.env` (بدون چاپ مقادیر) · پروژهٔ compose واقعاً `hanaso` · سلامت نسخهٔ فعلی + شاهد kotodama.ir · گارد no-op برای اجرای مجدد | قبل از هر تغییری می‌ایستد؛ استک اشتباه را قبول نمی‌کند                       |
-| Backup           | `.env` → نسخهٔ زمان‌دار + بکاپ واقعی دیتابیس با همان روتین شبانه (`pg_dump -Fc` + تأیید ok/bytes)                                                                                                        | اگر بکاپ نشود، **قبل از هر تغییری** متوقف می‌شود                             |
-| Build            | ساخت image در worktree موقت روی **همان کامیت Pin شده** (`NEXT_PUBLIC_APP_VERSION=1.0.0-tl08-cta01`) — روی خود VPS، بدون نیاز به GHCR/Registry                                                            | بدون وابستگی به Token یا Registry                                            |
-| Update مرحله‌ای  | تعویض `HANASO_WEB_IMAGE` → postgres (سالم) → pgbouncer (سالم) → migrate یک‌بارمصرف (idempotent: drizzle ردیابی می‌کند؛ seedها uuidv5+upsert) → `up -d web worker`                                        | ترتیب استاندارد استقرار مرحله‌ای                                             |
-| Health gate      | `ok:true` **و** تطبیق کامل کامیت **و** نسخه روی `127.0.0.1:3100`؛ سپس `/api/ready` (database: ok)؛ سپس مسیر عمومی `learn.kotodama.ir`؛ سپس smoke سه‌گانه؛ سپس اسکن لاگ خطا                               | هر ناهم‌خوانی = شکست                                                         |
-| KOTODAMA         | فقط چک شاهد HTTP قبل/بعد — باید **دقیقاً همان** باشد                                                                                                                                                     | هرگز لمس نمی‌شود (فقط پروژهٔ `hanaso`، فقط سرویس‌های خودش)                   |
-| رول‌بک خودکار    | اگر **هر قدمی بعد از تعویض** شکست بخورد: برگرداندن image قبلی + `up -d web worker` + گیت سلامت قبلی + گزارش علت                                                                                          | دیتابیس/داده هرگز حذف/ریست نمی‌شود                                           |
-| گزارش نهایی      | نسخه + کامیت نصب‌شده + image + مسیر بکاپ + رکورد اجرا در `/opt/hanaso/update-history/<زمان>.env` (بدون هیچ Secret)                                                                                       | شواهد قابل بازرسی پس از هر اجرا                                              |
+1. **`api.github.com`** — فایل bootstrap از Contents API روی **کامیت دقیق** `7c4f02f` (Accept: raw). حجم چند کیلوبایت. اگر ۴۰۳ Rate-limit ناشناس گرفت، **خودکار** به مسیر بعدی می‌رود (خطای واقعی curl چاپ می‌شود).
+2. **`codeload.github.com`** — تاربال کامل ریپو روی همان کامیت؛ فقط همان یک فایل استخراج می‌شود (آزمایش واقعی: ساختار و بایت‌ها عین Git است).
+3. **`raw.githubusercontent.com` با IP ثابت `185.199.108.133`** — از طریق `curl --resolve`؛ **بازبینی Certificate کاملاً روشن می‌ماند** (SNI و نام میزبان همان raw.githubusercontent.com است). این مسیر فقط «جایگزین» است، هرگز مسیر تنها نیست.
+4. **`raw.githubusercontent.com` با DNS** — آخرین تلاش (روی VPS شما معمولاً timeout می‌خورد؛ بی‌ضرر و محدود به ۱۰ ثانیه).
 
-اجرای مجدد همان دستور روی همان نسخهٔ هدف = **no-op کامل** (بدون build/migrate/تعویض)؛ فرایند idempotent است.
+سپس **SHA-256 واقعی فایل دانلودشده** با مقدار Pin‌شدهٔ بالا مقایسه می‌شود — **قبل از هر اجرایی**. فایل خراب، صفحهٔ خطای پروکسی یا هر محتوای دستکاری‌شده هرگز اجرا نمی‌شود. اگر هر چهار مسیر شکست بخورد، هر چهار خطای واقعی چاپ و دستور **بدون هیچ تغییری** متوقف می‌شود.
 
-## ۳) پیش‌نیازهای یک‌باره (معمولاً از قبل موجودند)
+## ۳) بعد از دانلود چه اتفاقی می‌افتد؟
+
+| فاز | کار | تضمین |
+| --- | --- | --- |
+| Workspace منبع | کلون ناشناس (یا fetch) در `/opt/hanaso-src` — **کاملاً جدا از `/opt/hanaso`** (محل داده‌ها و تنظیمات Production: compose + `.env` + `update-history` + volume بکاپ)؛ مسیر موجودِ غیر-git هرگز حذف/بازنویسی نمی‌شود | `.env`، دیتابیس و فایل‌های عملیاتی هرگز پاک نمی‌شوند |
+| راستی‌آزمایی Pin | وجود کامیت هدف `575b8dd` و کامیت ابزار `7c4f02f`؛ اجرای updater از worktree ایزوله روی **دقیقاً همان کامیت** + مقایسهٔ SHA-256 خود bootstrap با همان کامیت | ضد drift؛ اسکریپت اجرایی = اسکریپت بازبینی‌شده |
+| Preflight | root · Docker/Compose · دیسک (حداقل ۲.۵GB) · حافظه (~۱.۸GB) · کلیدهای `.env` فقط با نام · پروژهٔ compose = `hanaso` · سلامت خط پایه + شاهد kotodama.ir · گارد no-op اجرای مجدد | قبل از هر تغییری می‌ایستد |
+| Backup | `.env` زمان‌دار + بکاپ واقعی دیتابیس (`pg_dump -Fc` با تأیید ok/bytes) | اگر بکاپ نشود، **قبل از هر تغییر** متوقف می‌شود |
+| Build | ساخت image روی خود VPS از worktree روی کامیت Pin‌شده (`NEXT_PUBLIC_APP_VERSION=1.0.0-tl08-cta01`) | بدون نیاز به Registry/Token |
+| Update مرحله‌ای | تعویض `HANASO_WEB_IMAGE` → postgres (سالم) → pgbouncer (سالم) → migrate یک‌بارمصرف idempotent → `up -d web worker` | ترتیب استاندارد استقرار مرحله‌ای |
+| Health gate | `ok:true` + تطبیق کامیت + نسخه روی `127.0.0.1:3100` → `/api/ready` (database: ok) → مسیر عمومی `learn.kotodama.ir` → smoke → اسکن لاگ خطا | هر ناهم‌خوانی = شکست |
+| KOTODAMA | فقط شاهد HTTP قبل/بعد — باید **دقیقاً همان** باشد | هرگز لمس نمی‌شود (فقط پروژهٔ `hanaso`) |
+| رول‌بک خودکار | هر شکستِ بعد از تعویض: برگرداندن image قبلی + گیت سلامت + گزارش علت | دیتابیس/داده هرگز حذف/ریست نمی‌شود |
+| گزارش نهایی | نسخه + کامیت + image + مسیر بکاپ + رکورد در `/opt/hanaso/update-history/` (بدون Secret) | شواهد قابل بازرسی |
+
+اجرای مجدد همان دستور روی همان نسخهٔ هدف = **no-op کامل**؛ فرایند idempotent است.
+
+## ۴) پیش‌نیازهای یک‌باره (معمولاً از قبل موجودند)
 
 ```bash
-git --version || apt-get install -y git
-curl --version || apt-get install -y curl   # یا wget
-docker version && docker compose version    # باید موجود باشند (روی VPS شما هستند)
+git --version    || apt-get install -y git
+curl --version   || apt-get install -y curl      # این نسخه فقط curl می‌خواهد (wget حذف شد)
+docker version && docker compose version
 ```
 
-**هیچ تنظیم Credential یا Token لازم نیست.** اگر `git ls-remote https://github.com/AbolfazlProg/hanaso.git HEAD`
-را دستی اجرا کنید، باید بدون پرسیدن Username جواب بدهد (ریپو عمومی است).
+**هیچ تنظیم Credential یا Token لازم نیست.** تست مستقل: `git ls-remote https://github.com/AbolfazlProg/hanaso.git HEAD` باید بدون پرسیدن Username جواب بدهد (روی VPS شما جواب داده است).
 
-## ۴) راستی‌آزمایی بعد از اجرا
+## ۵) راستی‌آزمایی بعد از اجرا
 
 ```bash
 curl -sS https://learn.kotodama.ir/api/health
 # انتظار: {"ok":true, "version":"1.0.0-tl08-cta01", "commit":"575b8dd8efeaa3e0…"}
 ```
 
-سپس در مرورگر: `https://learn.kotodama.ir/learn` → فصل ۰۱ → ایستگاه «ردیف あ» → پس از تمام‌شدن
-معرفی، در **انتهای همهٔ محتوا** باید ببینید: «معرفی این کاراکتر تمام شد! حالا نوبت توست.» و دکمهٔ
-«شروع تمرین نوشتن ←». کلیک → اسکرول به بالای بوم و شروع تمرین با راهنما همان‌جا.
+## ۶) اگر مشکلی پیش آمد
 
-## ۵) اگر مشکلی پیش آمد
+- **۴۰۳ از api.github.com (Rate-limit ناشناس ۶۰req/h):** طبیعی و بی‌ضرر — دستور خودکار به Codeload می‌رود و پیام `[hanaso] 1/4 api.github.com FAILED …` را همراه خطای واقعی چاپ می‌کند. (همین رفتار در سندباکس به‌صورت واقعی اجرا و ثبت شد.)
+- **شکست همهٔ مسیرها:** هر چهار خطای واقعی چاپ می‌شوند؛ هیچ چیزی اجرا/تغییر نمی‌کند. مسیر شمارهٔ ۳ فقط با همان IP ثابتِ شما کار می‌کند؛ اگر GitHub آن IP را عوض کند، فقط همان مسیر جایگزین از کار می‌افتد (مسیرهای اصلی API/Codeload مستقل‌اند).
+- **SHA-256 MISMATCH:** یعنی فایل رسیده با کامیت Pin‌شده یکی نیست (فایل خراب/پروکسی/ریپو دستکاری‌شده). دستور متوقف می‌شود؛ **هیچ چیز اجرا نمی‌شود**.
+- **شکست midway (build/migrate/health):** رول‌بک خودکار + چاپ علت؛ دیتابیس دست‌نخورده.
+- **بازگشت دستی:** زیرفرمان `rollback`. **گزارش وضعیت:** زیرفرمان `status` (فقط-خواندنی).
+- **TLS هرگز خاموش نمی‌شود:** هیچ‌جا `-k`/`--insecure` نیست؛ مسیر IP ثابت با `--resolve` است که Certificate را کامل بررسی می‌کند.
 
-- **شکست midway (build/migrate/health):** خود اسکریپت به نسخهٔ قبلی رول‌بک می‌کند و علت را چاپ می‌کند؛ دیتابیس و داده‌ها دست‌نخورده می‌مانند.
-- **بازگشت دستی:** زیرفرمان `rollback` (بخش ۱) — app-level، دیتابیس هرگز لمس نمی‌شود.
-- **گزارش وضعیت:** زیرفرمان `status` — فقط-خواندنی.
-- **خطای دسترسی GitHub:** متن واقعی خطای git چاپ می‌شود؛ اگر «could not read Username» باشد یعنی ریپو عمومی نیست (باید Public بماند)؛ اگر خطای شبکه باشد، DNS/خروجی اینترنت سرور را بررسی کنید.
+## ۷) یکپارچگی و امنیت
 
-## ۶) یکپارچگی و امنیت
-
-- **دو لایهٔ Pin:** کامیت bootstrap در URL دانلود (تغییرناپذیر) + کامیت updater که bootstrap خودش بررسی و اجرا می‌کند (`HANASO_DEPLOY_SHA`)؛ کامیت هدف اپ نیز درون هر دو اسکریپت Pin شده (`575b8dd`).
-- **Marker یکپارچگی:** خط اول bootstrap با هش `d4b04e2a1c9f3b7d` توسط دستور بررسی می‌شود تا فایل خراب/صفحهٔ خطای پروکسی هرگز اجرا نشود.
+- **زنجیرهٔ Pin:** کامیت ابزار `7c4f02f` (تغییرناپذیر) در URL هر چهار مسیر + SHA-256 واقعی bootstrap (`bee61184…`) در خود دستور + کامیت هدف `575b8dd` درون هر دو اسکریپت. `latest` و شاخهٔ متحرک وجود ندارد.
 - **بدون Secret در هیچ‌جا:** نه در URL، نه در فرمان، نه در لاگ، نه در رکوردهای `update-history`.
-- **تاریخچهٔ Repository پیش از عمومی‌شدن اسکن شد:** هیچ Token/کلید خصوصی/.env واقعی/دیتابیس_Dump در هیچ کامیتی وجود ندارد (فقط مقادیر تستی CI و placeholder ها) — گزارش کامل در CP-14.
-
-## ۷) تضمین‌های KOTODAMA
-
-اسکریپت فقط پروژهٔ compose با نام `hanaso` را هدف می‌گیرد و فقط سرویس‌های خودش را `up` می‌کند:
-`compose down` هرگز اجرا نمی‌شود؛ کانتینر/دیتابیس/volume/ریورس‌پروکسی kotodama هرگز لمس نمی‌شود
-(تنها چک HTTP ۲۰۰ به‌عنوان شاهدِ «صدمه نزدن»، قبل و بعد). این قید به‌صورت invariant سراسری در
-۲۰ سناریوی آزمون sandbox (۱۱۰ ادعا) بررسی شد — همه PASS.
+- **اسکن کامل تاریخچهٔ Repository قبل از عمومی‌شدن:** صفر Secret واقعی (CP-14) — ریپو عمومی می‌ماند؛ Knowledge Base جدا و private می‌ماند.
 
 ## ۸) آزمون‌های انجام‌شده و محدودیت‌های صادقانه
 
-- **۲۰ سناریو / ۱۱۰ ادعا در sandbox ایزوله** (`infra/deploy/sandbox-tests/run-deploy04.sh`): کلون و fetch ناشناس (بدون هیچ git config)، نصب اولیه، به‌روزرسانی از نسخهٔ قبلی، رفت‌وبرگشت rollback، اجرای مجدد no-op، قطع GitHub با چاپ خطای واقعی، امتناع از حذف دایرکتوری موجود غیر-git، نبود/امضای اشتباه deploy dir، شکست Docker/دیسک/Build/Migration/Health/Backup/شاهد kotodama، کامیت ghost، bootstrap دستکاری‌شده، دانلود خراب، و جداسازی src/deploy — همه PASS + invariant سراسری KOTODAMA.
-- **آزمون واقعی دسترسی ناشناس به GitHub** (پس از عمومی‌شدن): `git ls-remote` بدون Token، clone کم‌عمق، دریافت همان URL خام bootstrap و اجرای همان دستور بخش ۱ — نتایج در `ops/checkpoints/TASK-LEARNING-08/CHECKPOINT_LOG.md` (CP-14) ثبت شده است.
-- **محدودیت صادقانه:** Docker واقعی در سندباکس Agent وجود ندارد؛ آزمون‌های sandbox جریان کنترل/ترتیب/رول‌بک/مکانیک git ناشناس/حفاظت KOTODAMA را می‌سنجند، نه خود Docker build را. مسیر شبکهٔ sandbox به پورت ۲۲ سرور فیلتر است؛ بنابراین استقرار نهایی طبق طراحی مأموریت، **با اجرای همین یک دستور توسط شما** انجام می‌شود و هیچ ادعای «منتشرشده» قبل از اجرای شما مطرح نیست.
+- **هارنس تحویل (`infra/deploy/sandbox-tests/run-deploy05.sh`): همان دستورِ عینِ این راهنما** (استخراج‌شده از `OWNER-COMMAND.txt`) در شبیه‌سازی ایزوله با mirror محلی از خود Repository — چون Pinها واقعی‌اند، کامیت هدف واقعی `575b8dd` نصب و فیکسچر = وضعیت واقعی Production فعلی (`fdddad34`/`1.0.0-tl08-a5r`): **۱۳ گروه سناریو / ۹۰ ادعا همه PASS** — موفقیت از API، fallback واقعی ۴۰۳→Codeload، مسیر IP ثابت با `--resolve`، مسیر DNS، شکست هر چهار مسیر (هیچ‌چیز اجرا نشد)، فایل دستکاری‌شده و صفحهٔ HTML (رد شدن در SHA-256)، اجرای مجدد no-op، status فقط-خواندنی، رفت‌وبرگشت rollback، شکست migrate با رول‌بک خودکار + invariant سراسری KOTODAMA/TLS.
+- **هارنس رگرسیون updater (`run-deploy04.sh`): ۲۰ سناریو / ۱۱۰ ادعا همه PASS** (S17/S18 به گیت SHA-256 واقعی به‌روز شد).
+- **اجرای واقعی همین دستور در سندباکس (شبکهٔ واقعی GitHub):** بار اول `api 403 → codeload → SHA-256 OK → کلون ناشناس → راستی‌آزمایی دو کامیت → توقف صادقانه در نبود deploy dir`؛ بار دوم `api 200 مستقیم + مسیر fetch`. هر دو مسیر اصلی واقعاً دیده شدند.
+- **محدودیت‌های صادقانه:** Docker واقعی در سندباکس نیست — آزمون‌های sandbox جریان کنترل/ترتیب/رول‌بک/SHA-256/حفاظت KOTODAMA را می‌سنجند، نه Docker build واقعی را. IP خروجی سندباکس Budget ناشناسِ API را دائماً مصرف می‌کند (۴۰۳) — همین، fallback را به‌صورت واقعی اثبات کرد؛ روی VPS شما API خودتان ۲۰۰ داده است. استقرار نهایی طبق طراحی، **با اجرای همین یک دستور توسط شما** انجام می‌شود؛ هیچ ادعای «منتشرشده» قبل از اجرای شما مطرح نیست.
