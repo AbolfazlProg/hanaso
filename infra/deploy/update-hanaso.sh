@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# HANASO — one-command VPS updater (TASK-HANASO-DEPLOY-02, 2026-11-08)
+# HANASO — one-command VPS updater v2 (TASK-HANASO-DEPLOY-04, 2026-11-08)
 # =============================================================================
 # WHAT THIS IS
 #   The canonical owner-run update for https://learn.kotodama.ir on the shared
@@ -8,23 +8,43 @@
 #   commit → staged swap (postgres → pgbouncer → migrate → web+worker) →
 #   health gates → smoke → KOTODAMA witness → automatic rollback on failure.
 #
+#   v2 (DEPLOY-04) — ZERO GitHub credentials, honest errors:
+#     · the source code arrives via ANONYMOUS HTTPS from the PUBLIC repository
+#       (https://github.com/AbolfazlProg/hanaso) — no PAT, no deploy key, no
+#       stored root git credentials, no token in any URL;
+#     · the SOURCE workspace (/opt/hanaso-src, a plain git clone) is fully
+#       separated from the DEPLOY dir (/opt/hanaso: compose + .env + history +
+#       backups volume) — fetching a new version can never delete .env, the
+#       database volume, or any production file;
+#     · git/network failures print their REAL stderr (never >/dev/null'd) and
+#       abort BEFORE any change on the server;
+#     · the previous version's "one-time credential setup" guidance is REMOVED.
+#
 #   It targets the REAL shared-VPS stack (infra/deploy/learn-kotodama/):
-#     /opt/hasanás deploy dir with docker-compose.yml (project `hanaso`:
+#     /opt/hanaso deploy dir with docker-compose.yml (project `hanaso`:
 #     web @ 127.0.0.1:3100, postgres, pgbouncer, worker, migrate profile)
 #     fronted by the host HAProxy/nginx. It deliberately has NOTHING to do
 #     with infra/docker/docker-compose.yml (the dedicated-host caddy stack).
+#
+# HOW IT IS INVOKED
+#   Normally via the documented one-liner → bootstrap-hanaso.sh → this file,
+#   executed from an isolated worktree of the pinned deploy commit. Direct
+#   invocation works too (bash infra/deploy/update-hanaso.sh [status|rollback])
+#   when the source workspace already exists.
 #
 # USAGE (root on the VPS — no arguments needed, defaults are pinned below):
 #   bash infra/deploy/update-hanaso.sh            # update to the pinned target
 #   bash infra/deploy/update-hanaso.sh status     # read-only state report
 #   bash infra/deploy/update-hanaso.sh rollback   # back to the previous image
 #
-# PINNED TARGET (TASK-HANASO-DEPLOY-02 release — do NOT drift to "latest"):
+# PINNED TARGET (do NOT drift to "latest"):
 set -euo pipefail
 
 TARGET_SHA="${HANASO_TARGET_SHA:-575b8dd8efeaa3e0cbc53bf134a6b71d80b130d4}"
 TARGET_VERSION="${HANASO_TARGET_VERSION:-1.0.0-tl08-cta01}"
 TARGET_BRANCH="${HANASO_TARGET_BRANCH:-tl08-cta01}"
+REPO_URL="${HANASO_REPO_URL:-https://github.com/AbolfazlProg/hanaso.git}"
+SRC_DIR="${HANASO_SRC_DIR:-${HANASO_REPO_DIR:-/opt/hanaso-src}}"   # HANASO_REPO_DIR = v1 legacy alias
 IMAGE="ghcr.io/abolfazlprog/hanaso:${TARGET_SHA}"
 PUBLIC_BASE="${HANASO_PUBLIC_BASE:-https://learn.kotodama.ir}"
 KOTODAMA_URL="${HANASO_KOTODAMA_URL:-https://kotodama.ir}"
@@ -37,53 +57,68 @@ MIN_MEM_MB="${HANASO_MIN_MEM_MB:-1800}"        # hard floor of MemAvailable
 TS="$(date +%Y%m%d-%H%M%S)"
 HIST_DIR_NAME="update-history"
 
+export GIT_TERMINAL_PROMPT=0   # never hang on auth (public repo — none needed);
+                               # failures still print their REAL git stderr.
+
 log()  { printf '\n== [%s] %s\n' "$(date '+%H:%M:%S')" "$*"; }
 warn() { printf '   [!] %s\n' "$*"; }
 die()  { printf '\n!! FATAL: %s\n\n' "$*" >&2; exit 1; }
 
 # -----------------------------------------------------------------------------
-# 0) locate the deploy dir (compose + .env) and the repo clone (for the build)
+# 0) locate the DEPLOY dir (compose + .env — production config, never deleted)
+#    Honest per-path diagnostics: an existing directory that does NOT match the
+#    stack signature is REPORTED and left untouched (never deleted/overwritten).
 # -----------------------------------------------------------------------------
 find_deploy_dir() {
-  local d candidate
+  local d candidate found=0
+  : > "${TMP_DIAG:-/tmp/hanaso-deploydiag.$$}"
   for candidate in "${HANASO_DEPLOY_DIR:-}" /opt/hanaso /srv/hanaso; do
     d="${candidate%/}"
     [ -n "$d" ] || continue
-    if [ -f "$d/docker-compose.yml" ] && [ -f "$d/.env" ] \
-       && grep -q 'hanaso-postgres' "$d/docker-compose.yml" 2>/dev/null \
-       && grep -q 'hanaso-pgbouncer' "$d/docker-compose.yml" 2>/dev/null; then
-      DEPLOY_DIR="$d"; return 0
+    local has_compose=0 has_env=0 sig_pg=0 sig_b=0 is_git=0
+    [ -f "$d/docker-compose.yml" ] && has_compose=1
+    [ -f "$d/.env" ] && has_env=1
+    grep -q 'hanaso-postgres' "$d/docker-compose.yml" 2>/dev/null && sig_pg=1
+    grep -q 'hanaso-pgbouncer' "$d/docker-compose.yml" 2>/dev/null && sig_b=1
+    [ -e "$d/.git" ] && is_git=1
+    printf '   %s: exists; docker-compose.yml=%s .env=%s git-repo=%s compose-signature=%s%s\n' \
+      "$d" "$([ $has_compose = 1 ] && echo yes || echo no)" \
+      "$([ $has_env = 1 ] && echo yes || echo no)" \
+      "$([ $is_git = 1 ] && echo yes || echo no)" \
+      "$([ $sig_pg = 1 ] && [ $sig_b = 1 ] && echo matched || echo NO)" \
+      >> "${TMP_DIAG:-/tmp/hanaso-deploydiag.$$}"
+    if [ "${has_compose}" = 1 ] && [ "${has_env}" = 1 ] && [ "${sig_pg}" = 1 ] && [ "${sig_b}" = 1 ]; then
+      DEPLOY_DIR="$d"; found=1
     fi
   done
-  return 1
+  [ "${found}" = 1 ]
 }
 
-find_repo_dir() {
-  local d candidate
-  for candidate in "${HANASO_REPO_DIR:-}" /srv/hanaso /opt/hanaso; do
-    d="${candidate%/}"
-    [ -n "$d" ] || continue
-    if [ -e "$d/.git" ] && git -C "$d" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      REPO_DIR="$d"; return 0
-    fi
-  done
-  return 1
-}
-
+TMP_DIAG="$(mktemp /tmp/hanaso-diag.XXXXXX)"
 if ! find_deploy_dir; then
-  die "deploy dir not found (expected /opt/hanaso with docker-compose.yml + .env of the shared-VPS stack).
+  cat "${TMP_DIAG}" >&2
+  die "deploy dir not found — findings above (an existing directory was NOT touched).
+     Expected /opt/hanaso with docker-compose.yml + .env of the shared-VPS stack.
      If it lives elsewhere: export HANASO_DEPLOY_DIR=/path and re-run.
      NOTE: this updater must NOT run against infra/docker/docker-compose.yml (dedicated-host/caddy stack)."
 fi
-if ! find_repo_dir; then
-  die "git clone of the hanaso repository not found (expected /srv/hanaso or /opt/hanaso with a .git dir).
-     If it lives elsewhere: export HANASO_REPO_DIR=/path and re-run."
-fi
+rm -f "${TMP_DIAG}"
+
+# src workspace — REQUIRED only for 'update'; checked lazily below
+check_src_dir() {
+  if ! git -C "${SRC_DIR}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    die "source workspace not found at ${SRC_DIR} (anonymous git clone of the public repo).
+     Run the documented ONE-COMMAND update (bootstrap-hanaso.sh creates it automatically),
+     or clone it once:  git clone ${REPO_URL} ${SRC_DIR}"
+  fi
+  [ "${SRC_DIR}" != "${DEPLOY_DIR}" ] \
+    || die "SRC_DIR and DEPLOY_DIR are the same (${SRC_DIR}) — refusing (source must stay separate from production data)."
+}
 
 COMPOSE="docker compose -f ${DEPLOY_DIR}/docker-compose.yml --project-directory ${DEPLOY_DIR} --env-file ${DEPLOY_DIR}/.env"
 HIST_DIR="${DEPLOY_DIR}/${HIST_DIR_NAME}"
 
-log "HANASO updater — deploy dir: ${DEPLOY_DIR} · repo: ${REPO_DIR}"
+log "HANASO updater v2 — deploy dir: ${DEPLOY_DIR} · source workspace: ${SRC_DIR}"
 
 # =============================================================================
 # status — read-only report
@@ -95,6 +130,12 @@ cmd_status() {
   echo "  image  : ${IMAGE}"
   echo "── current (.env) ──────────────────────────────"
   grep -E '^HANASO_WEB_IMAGE=' "${DEPLOY_DIR}/.env" || true
+  echo "── source workspace ────────────────────────────"
+  if git -C "${SRC_DIR}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    git -C "${SRC_DIR}" log -1 --oneline origin/"${TARGET_BRANCH}" 2>/dev/null || true
+  else
+    echo "  (no clone at ${SRC_DIR} — the one-command update creates it)"
+  fi
   echo "── containers (project hanaso) ─────────────────"
   ${COMPOSE} ps || true
   echo "── health (local) ──────────────────────────────"
@@ -177,28 +218,29 @@ preflight() {
   grep -qE '^name:[[:space:]]*hanaso[[:space:]]*$' "${DEPLOY_DIR}/docker-compose.yml" \
     || die "compose project name is not 'hanaso' — refusing to touch an unexpected stack."
 
-  # A5) the pinned commit must exist locally (fetch if needed)
-  if ! git -C "${REPO_DIR}" cat-file -e "${TARGET_SHA}^{commit}" 2>/dev/null; then
-    log "target commit not local — fetching origin/${TARGET_BRANCH}"
-    if ! git -C "${REPO_DIR}" fetch origin "${TARGET_BRANCH}" 2>&1; then
+  # A5) source workspace + pinned commit (anonymous; fetch ONLY if missing).
+  #     Real git output is shown — never redirected to /dev/null.
+  check_src_dir
+  if ! git -C "${SRC_DIR}" cat-file -e "${TARGET_SHA}^{commit}" 2>/dev/null; then
+    log "target commit not local — fetching origin/${TARGET_BRANCH} (anonymous, no credentials)"
+    if ! git -C "${SRC_DIR}" fetch origin "${TARGET_BRANCH}"; then
       cat <<'EOF'
 
-!! Could not fetch the release branch from GitHub.
+!! Could not fetch the release branch from GitHub — the REAL git error is printed above.
 
-If the error was an AUTH failure, do this ONE-TIME setup on the VPS (never per update):
+   This updater uses ANONYMOUS HTTPS against the PUBLIC repository:
+     https://github.com/AbolfazlProg/hanaso
+   No username/password/token is needed or configured. If the error above is an
+   AUTH failure ("could not read Username"), the repository has been re-privatized —
+   check its visibility on GitHub. If it is a NETWORK failure, check DNS/egress
+   to github.com and re-run the same command.
 
-    git config --global credential.helper store
-    printf 'protocol=https\nhost=github.com\nusername=AbolfazlProg\npassword=<YOUR_GITHUB_PAT>\n' | git credential approve
-
-(That stores the token only in ~/.git-credentials on this server — never in the repo, a command line, or logs.)
-Then simply re-run the same update command.
-
-If the error was a NETWORK failure, check DNS/egress to github.com and re-run.
+   Nothing was changed on the server.
 EOF
-      die "git fetch failed — nothing was changed on the server."
+      die "git fetch failed — aborting before any change."
     fi
   fi
-  git -C "${REPO_DIR}" cat-file -e "${TARGET_SHA}^{commit}" \
+  git -C "${SRC_DIR}" cat-file -e "${TARGET_SHA}^{commit}" \
     || die "commit ${TARGET_SHA} still missing after fetching ${TARGET_BRANCH} (wrong branch?)"
 
   # A6) baseline: the current stack must be healthy so rollback has a good target
@@ -263,20 +305,21 @@ do_backup() {
 do_build() {
   log "BUILD ${TARGET_VERSION} @ ${TARGET_SHA:0:12}"
   BUILD_TMP="$(mktemp -d /tmp/hanaso-build.XXXXXX)"
-  git -C "${REPO_DIR}" worktree add --detach "${BUILD_TMP}" "${TARGET_SHA}" >/dev/null
+  git -C "${SRC_DIR}" worktree add --detach "${BUILD_TMP}" "${TARGET_SHA}" >/dev/null
   docker build -f "${BUILD_TMP}/infra/docker/Dockerfile" "${BUILD_TMP}" \
     --build-arg NEXT_PUBLIC_BUILD_SHA="${TARGET_SHA}" \
     --build-arg NEXT_PUBLIC_APP_VERSION="${TARGET_VERSION}" \
     --build-arg NEXT_PUBLIC_ENV=production \
-    -t "${IMAGE}" || { git -C "${REPO_DIR}" worktree remove --force "${BUILD_TMP}" 2>/dev/null || true;
+    -t "${IMAGE}" || { git -C "${SRC_DIR}" worktree remove --force "${BUILD_TMP}" 2>/dev/null || true;
                         die "docker build FAILED — nothing was changed on the server."; }
-  git -C "${REPO_DIR}" worktree remove --force "${BUILD_TMP}" 2>/dev/null || true
+  git -C "${SRC_DIR}" worktree remove --force "${BUILD_TMP}" 2>/dev/null || true
   IMAGE_ID="$(docker image inspect -f '{{.Id}}' "${IMAGE}")"
   IMAGE_SIZE="$(docker image inspect -f '{{.Size}}' "${IMAGE}")"
   log "image built: ${IMAGE} (${IMAGE_ID}, $((IMAGE_SIZE / 1024 / 1024))MB)"
 
   # OPTIONAL immutability push — only when a token was provided in the ENV
-  # (never an argument, never printed, never stored)
+  # (never an argument, never printed, never stored). The VPS one-command
+  # flow does NOT need this: it builds locally from the public source.
   if [ -n "${HANASO_GHCR_TOKEN:-}" ]; then
     log "pushing immutable tag to GHCR"
     echo "${HANASO_GHCR_TOKEN}" | docker login ghcr.io -u AbolfazlProg --password-stdin >/dev/null
