@@ -1,7 +1,26 @@
 # CURRENT_STATE — TASK-LEARNING-08
 
-> آخرین به‌روزرسانی: **CP-14 (TASK-HANASO-DEPLOY-04 — Repository عمومی شد + استقرار بدون Credential با یک دستور؛ اسکن صفر-Secret تاریخچه · ۲۰ سناریو/۱۱۰ ادعای sandbox · اجرای زندهٔ همان دستور) · 2026-11-08**
-> زنده: https://learn.kotodama.ir @ `fdddad34edddc64ab6590bdd57fdb0e80c4bd1f1` (health ok · `1.0.0-tl08-a5r` — دست‌نخورده؛ انتشار همچنان در انتظار اجرای مالک) · کامیت هدف Pinشده: `575b8dd8efeaa3e0cbc53bf134a6b71d80b130d4` (`1.0.0-tl08-cta01`) · شاخهٔ ابزار استقرار: `tl08-deploy04` (کامیت Pinشدهٔ ابزار: `3a8a946`) · **Repository: Public — دریافت کد ناشناس بدون Credential راستی‌آزمایی شد.**
+> آخرین به‌روزرسانی: **CP-15 (TASK-HANASO-DEPLOY-05 — مسیر دانلود چندمسیری API/Codeload/raw-IP + گیت SHA-256 واقعی؛ ۹۰+۱۱۰ ادعای sandbox · ۲ اجرای زندهٔ شبکهٔ واقعی) · 2026-11-08**
+> زنده: https://learn.kotodama.ir @ `fdddad34edddc64ab6590bdd57fdb0e80c4bd1f1` (health ok · `1.0.0-tl08-a5r` — دست‌نخورده؛ انتشار همچنان در انتظار اجرای مالک) · کامیت هدف Pinشده: `575b8dd8efeaa3e0cbc53bf134a6b71d80b130d4` (`1.0.0-tl08-cta01`) · شاخهٔ ابزار استقرار: `tl08-deploy05` (کامیت Pinشدهٔ ابزار: `7c4f02f` · SHA-256 bootstrap: `bee61184…`) · **Repository: Public — دستور یک‌خطی v3 بدون Credential و بدون وابستگی به raw به‌عنوان مسیر اصلی.**
+
+## CP-15 — TASK-HANASO-DEPLOY-05: اصلاح مسیر دانلود + SHA-256 واقعی (دستور مالک ۲۰۲۶-۱۱-۰۸)
+
+| قلم | وضعیت |
+| --- | --- |
+| شواهد VPS مالک | ✅ github.com Git ناشناس OK · api.github.com 200 · codeload 200 · raw فقط روی 185.199.108.133 (سه IP دیگر SSL timeout، بدون IPv6) — مبنای طراحی مسیرها. |
+| دستور یک‌خطی v3 | ✅ چهار مسیر مستقل (API contents → Codeload tarball → raw با IP ثابت از `curl --resolve` [TLS کامل روشن] → raw DNS) + **SHA-256 واقعی bootstrap (`bee61184…`) قبل از هر اجرایی** · Pin ابزار `7c4f02f` · Pin هدف `575b8dd` بدون تغییر · curl-only · عین دستور در `OWNER-COMMAND.txt` (ریشهٔ ریپو) و راهنمای v3 فارسی (cmp یکسان). |
+| راستی‌آزمایی زندهٔ مسیرها | ✅ codeload 200 + استخراج تک‌فایل + SHA یکسان با blob · raw+--resolve 200 با ssl_verify موفق · raw DNS 200 · api 403 (Rate-limit دائمی IP سندباکس) → fallback زنده اثبات شد؛ در پنجرهٔ باز Budget مسیر API هم واقعاً 200 شد. |
+| اجرای زندهٔ عین دستور | ✅ ۲ بار روی شبکهٔ واقعی GitHub: مسیر دانلود + SHA-256 + کلون/fetch ناشناس + راستی‌آمیابی هر دو کامیت + توقف صادقانه در نبود deploy dir سندباکس (هیچ‌چیز لمس نشد). یافته و رفع: عیب تشخیص «exists» برای مسیر ناموجود → `not-found` (کامیت 7c4f02f). |
+| آزمون‌های sandbox | ✅ `run-deploy05.sh` جدید: **۱۳ گروه / ۹۰ ادعا همه PASS** (همان دستور عین OWNER-COMMAND.txt روی mirror خود ریپو با Pinهای واقعی و فیکسچر = وضعیت واقعی Production) + رگرسیون `run-deploy04.sh`: **۱۱۰/۱۱۰ PASS** (S17/S18 به SHA-256 واقعی). |
+| امنیت | ✅ TLS هرگز خاموش نمی‌شود (`--resolve` با گواهی کامل؛ هیچ `-k`/`--insecure` — P0 استاتیک روی دستور و سورس‌ها) · فایل قبل از اعتبارسنجی هرگز اجرا نمی‌شود (P5/P6/P7) · `latest`/token وجود ندارد · Secretی وارد Git/لاگ نشد. |
+| KOTODAMA | ✅ دست‌نخورده (فقط شاهد HTTP؛ هیچ compose down/کانتینر غیر-hanaso/فرمان سراسری docker — جاروی P12 + S-GLOBAL). |
+| معماری نصب | ✅ حفظ شد: `/opt/hanaso` (بدون git) = deploy dir با تشخیص امضا · پورت 3100 · HAProxy/nginx · workspace منبع جدا `/opt/hanaso-src` · هیچ فایل/دادهٔ موجود حذف/بازنویسی نشد. |
+| Push | ✅ شاخهٔ `tl08-deploy05`: `7e86b4d` (ابزار) → `7c4f02f` (اصلاح تشخیص؛ کامیت Pin ابزار) → `3bb5189` (OWNER-COMMAND + راهنمای v3) + رکورد CP-15 — همه Push و با ls-remote ناشناس تأیید. |
+| شواهد | `download/TASK-HANASO-DEPLOY-05/`: لاگ دو اجرای زنده · لاگ رسمی هر دو هارنس · ۳ اسکرین‌شات مرورگر واقعی (ریپوی عمومی · OWNER-COMMAND روی GitHub · health خط پایهٔ Production دست‌نخورده) + گزارش نهایی فارسی. |
+
+### دستور نهایی مالک (کپی در `OWNER-COMMAND.txt` ریشهٔ ریپو و `docs/deployment/OWNER-ONE-COMMAND-UPDATE.fa.md`)
+
+مسیر کامل + Pinها + زیرفرمان‌ها در همان فایل‌ها؛ نکتهٔ کلیدی v3: **هیچ وابستگی اجباری به raw.githubusercontent.com** — مسیرهای اصلی GitHub API و Codeload روی کامیت Pinشده، با گیت SHA-256 واقعی فایل قبل از اجرا.
 
 ## CP-14 — TASK-HANASO-DEPLOY-04: Repository عمومی + استقرار بدون-Credential (دستور مالک ۲۰۲۶-۱۱-۰۸)
 
