@@ -89,8 +89,9 @@ find_deploy_dir() {
     grep -q 'hanaso-postgres' "$d/docker-compose.yml" 2>/dev/null && sig_pg=1
     grep -q 'hanaso-pgbouncer' "$d/docker-compose.yml" 2>/dev/null && sig_b=1
     [ -e "$d/.git" ] && is_git=1
-    printf '   %s: exists; docker-compose.yml=%s .env=%s git-repo=%s compose-signature=%s%s\n' \
-      "$d" "$([ $has_compose = 1 ] && echo yes || echo no)" \
+    printf '   %s: %s; docker-compose.yml=%s .env=%s git-repo=%s compose-signature=%s%s\n' \
+      "$d" "$([ -d "$d" ] && echo 'exists' || echo 'not-found')" \
+      "$([ $has_compose = 1 ] && echo yes || echo no)" \
       "$([ $has_env = 1 ] && echo yes || echo no)" \
       "$([ $is_git = 1 ] && echo yes || echo no)" \
       "$([ $sig_pg = 1 ] && [ $sig_b = 1 ] && echo matched || echo NO)" \
