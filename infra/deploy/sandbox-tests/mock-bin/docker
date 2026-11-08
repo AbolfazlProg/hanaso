@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+# docker — simulation stub for the update-hanaso.sh sandbox tests.
+# NOT a real docker: it records every call into ${HANASO_SIM_DIR}/calls.log and
+# models just enough behaviour (build / compose up / migrate / exec / inspect /
+# health state) to exercise the updater's control flow. Failure injection is
+# driven by ${HANASO_SIM_DIR}/config.env (see run.sh scenarios).
+SIM="${HANASO_SIM_DIR:?set HANASO_SIM_DIR}"
+CALLS="${SIM}/calls.log"
+[ -f "${SIM}/config.env" ] && . "${SIM}/config.env"
+[ -f "${SIM}/state.env" ] && . "${SIM}/state.env"
+say() { printf '%s\n' "$*" >> "${CALLS}"; }
+
+tag_of()  { case "$1" in *:*) echo "${1##*:}";; *) echo "$1";; esac; }
+set_state() { # key value — persist to state.env
+  local k="$1" v="$2" f="${SIM}/state.env"
+  touch "$f"
+  sed -i "s|^${k}=.*||" "$f" 2>/dev/null || true
+  printf '%s=%s\n' "$k" "$v" >> "$f"
+}
+image_version() { # tag → version recorded at build time (or the prev default)
+  local t v
+  t="$(tag_of "$1")"
+  v="$(grep -F "$(printf '%s\t' "${t}")" "${SIM}/images.list" 2>/dev/null | head -1 | cut -f2)"
+  echo "${v:-${SIM_PREV_VERSION:-unknown-sim}}"
+}
+
+arg="$1"
+case "${arg}" in
+  version)
+    [ "${SIM_NO_DOCKER:-0}" = 1 ] && exit 127
+    shift; echo "24.0.0-sim"
+    ;;
+  info)
+    shift
+    # docker info --format '{{.DockerRootDir}}'
+    echo "/var/lib/docker-sim"
+    ;;
+  login|logout|push)
+    say "docker ${arg}"
+    exit 0
+    ;;
+  inspect)
+    shift
+    if [ "${1:-}" = "-f" ]; then fmt="${2:-}"; shift 2; fi
+    for name in "$@"; do
+      case "${name}" in
+        hanaso-postgres|hanaso-pgbouncer)
+          say "docker inspect ${name}"
+          case "${fmt}" in
+            *Health.Status*) echo "healthy" ;;
+            *Name*)          echo "${name} running" ;;
+            *)               echo "healthy" ;;
+          esac
+          ;;
+        *)
+          echo "unknown-container" >&2; exit 1 ;;
+      esac
+    done
+    ;;
+  image)
+    shift # "image"
+    sub="$1"; shift
+    if [ "${1:-}" = "-f" ]; then fmt="${2:-}"; shift 2; fi
+    img="${1:-}"
+    tag="$(tag_of "${img}")"
+    if ! grep -qF "$(printf '%s\t' "${tag}")" "${SIM}/images.list" 2>/dev/null \
+       && [ "${img}" != "${CURRENT_IMAGE:-}" ]; then
+      echo "no such image: ${img}" >&2; exit 1
+    fi
+    case "${sub}" in
+      inspect)
+        case "${fmt}" in
+          *Id*)   echo "sha256:sim${tag}" ;;
+          *Size*) echo "750000000" ;;
+          *)      echo "sha256:sim${tag}" ;;
+        esac
+        ;;
+    esac
+    ;;
+  build)
+    shift
+    img=""; ver=""; sha=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        -t) img="$2"; shift 2 ;;
+        --build-arg)
+          case "${2:-}" in
+            NEXT_PUBLIC_APP_VERSION=*) ver="${2#NEXT_PUBLIC_APP_VERSION=}" ;;
+            NEXT_PUBLIC_BUILD_SHA=*)   sha="${2#NEXT_PUBLIC_BUILD_SHA=}" ;;
+          esac
+          shift 2 ;;
+        --build-arg=*)
+          case "$1" in
+            NEXT_PUBLIC_APP_VERSION=*) ver="${1#--build-arg=NEXT_PUBLIC_APP_VERSION=}" ;;
+            NEXT_PUBLIC_BUILD_SHA=*)   sha="${1#--build-arg=NEXT_PUBLIC_BUILD_SHA=}" ;;
+          esac
+          shift ;;
+        *) shift ;;
+      esac
+    done
+    say "docker build -t ${img} (version=${ver:-?} sha=${sha:-?})"
+    if [ "${SIM_BUILD_FAIL:-0}" = 1 ]; then
+      echo "simulated build failure" >&2
+      exit 1
+    fi
+    printf '%s\t%s\n' "$(tag_of "${img}")" "${ver:-unknown}" >> "${SIM}/images.list"
+    echo "Successfully built sim-${img}"
+    ;;
+  compose)
+    shift
+    sub=""; envfile=""; services=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --env-file) envfile="$2"; shift 2 ;;
+        -f|--project-directory) shift 2 ;;
+        up|run|exec|ps|logs|pull|version) sub="$1"; shift ;;
+        -*) shift ;;
+        *) services="${services} $1"; shift ;;
+      esac
+    done
+    case "${sub}" in
+      up)
+        say "compose up:${services}"
+        if echo "${services}" | grep -q web; then
+          say "compose up touched web — switching live image"
+          if [ "${SIM_STUCK_OLD:-0}" = 1 ]; then
+            say "compose up SIM_STUCK_OLD — state NOT switched"
+          else
+            newimg="$(grep -E '^HANASO_WEB_IMAGE=' "${envfile}" | head -1 | cut -d= -f2-)"
+            set_state CURRENT_IMAGE "${newimg}"
+            set_state CURRENT_COMMIT "$(tag_of "${newimg}")"
+            set_state CURRENT_VERSION "$(image_version "${newimg}")"
+            set_state PHASE updated
+          fi
+        fi
+        echo "sim: services up"
+        ;;
+      run)
+        say "compose run --rm migrate"
+        if [ "${SIM_MIGRATE_FAIL:-0}" = 1 ]; then
+          echo "simulated migrate failure" >&2
+          exit 1
+        fi
+        echo '{"ok":true,"command":"migrate+seed","applied":0}'
+        ;;
+      exec)
+        say "compose exec worker db-cli backup"
+        if [ "${SIM_BACKUP_FAIL:-0}" = 1 ]; then
+          echo '{"ok":false,"error":"simulated backup failure"}'
+          exit 1
+        fi
+        printf '{"ok":true,"file":"sim-backup-%s.dump","bytes":5400,"archiveEntries":42}\n' \
+          "$(date +%H%M%S)"
+        ;;
+      ps)
+        echo "NAME                 IMAGE                 STATUS"
+        echo "hanaso-web           ${CURRENT_IMAGE:-?}   Up (healthy)"
+        echo "hanaso-worker        ${CURRENT_IMAGE:-?}   Up"
+        echo "hanaso-postgres      postgres:18-alpine    Up (healthy)"
+        echo "hanaso-pgbouncer     pgbouncer:1.26        Up (healthy)"
+        ;;
+      version)
+        echo "Docker Compose version v2.32.4-sim"
+        ;;
+      logs)
+        exit 0
+        ;;
+      *)
+        say "compose ${sub:-?}:${services}"
+        ;;
+    esac
+    ;;
+  *)
+    say "docker ${arg} (unmodeled)"
+    echo "unmodeled docker subcommand: ${arg}" >&2
+    exit 1
+    ;;
+esac
