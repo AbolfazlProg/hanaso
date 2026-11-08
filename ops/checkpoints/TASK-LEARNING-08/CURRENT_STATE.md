@@ -1,5 +1,28 @@
 # CURRENT_STATE — TASK-LEARNING-08
 
+> آخرین به‌روزرسانی: **CP-11 (بازگردانی چیدمان به نسخهٔ سالم — دستور مالک: رد پیوست ۶) · 2026-11-08**
+> زنده: https://learn.kotodama.ir @ `fdddad34edddc64ab6590bdd57fdb0e80c4bd1f1` (health ok/ok · smoke ALL GREEN · version `1.0.0-tl08-a5r`) · شاخه: `tl08-addendum6` (کامیت رول‌بک روی همان شاخه — بدون reset/force-push).
+
+## CP-11 — رول‌بک چیدمان معرفی کانا به آخرین نسخهٔ سالم (دستور مالک ۲۰۲۶-۱۱-۰۸)
+
+| قلم                      | وضعیت                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| علت رول‌بک               | مالک چیدمان پنج‌بخشی پیوست ۶ (استقرار `8f387a9`) را رد کرد: ضعیف‌تر از نسخهٔ قبلی، خراب‌کردن تعادل بصری و ساختار آموزشی صفحه.                                                                                                                                                                                                                |
+| نسخهٔ مرجع سالم          | `tl08-addendum5` @ `e970103` = کدِ آخرین استقرار مورد تأیید مالک (image `2b74daa` · `1.0.0-tl08-a5`) — فایل‌ها بایت‌به‌بایت از همان کامیت بازیابی شدند (`git diff e970103 -- <files>` = خالی).                                                                                                                                               |
+| کامیت مقصر               | `360d402` (feat: approved kana introduction layout) — تنها تغییرِ چیدمان؛ `8f387a9`/`0191325` فقط docs (ماندند)؛ `c991d89` (پایدارسازی تست‌ها — مستقل از چیدمان) سالم و حفظ شد.                                                                                                                                                              |
+| فایل‌های بازیابی‌شده     | `kana-card.tsx` · `station-runner.tsx` · `writing-canvas.tsx` · `fa.ts` · `a5-experience.test.tsx` + حذف `kana-intro-layout.test.tsx` (۱۰ تست چیدمان a6).                                                                                                                                                                                    |
+| قابلیت‌های حفظ‌شده       | همهٔ پیوست ۴/۵ دست‌نخورده: اصلاحات صوت + Voice جدید (VOICEVOX:ぞん子) + کش صوت (max-age=86400) + MORPH ضربه‌ها + صوت سؤالات + کارت‌های مثال + Progress/Resume + Lesson Engine + پایداری walk — تأیید زنده ۱۹/۱۹.                                                                                                                             |
+| اسنپ‌شات پیش از رول‌بک   | tag `rollback-snapshot/pre-a6-rollback-20261108` @ `c991d89` + bundle کامل `/root/rollback-backups/pre-a6-rollback-20261108.bundle` (32MB، verify ok، کپی sandbox) + `.env.pre-a6rollback-backup` + تصاویر before — چیدمان ردشده به‌طور کامل قابل بازتولید است (image `8f387a9` روی GHCR).                                                   |
+| گیت‌ها (کانتینر a5gate)  | prettier ✓ · vitest **572/572** ✓ (582 − ۱۰ تست چیدمان a6) · eqa 37/37 ✓ · tsc ✓ · eslint 0 ✓ · build ✓                                                                                                                                                                                                                                      |
+| راستی‌آزمایی زنده        | a5-verify **۱۹/۱۹ PASS** (۱۳ سناریوی مالک + تایپوگرافی + کش + اثر انگشت Voice) · جریان کامل あ: ready ← CTA (اسکرول نرم، همان صفحه) ← guided×3 (پذیرش + Morph) ← free×3 ← done ← auto-next به い (intro ← ready-hold) · walk snapshot: stepIndex 0→1 · «تکرار آموزش»: stage پایدار + rect ثابت.                                              |
+| شواهد چیدمان بازیابی‌شده | دسکتاپ: بوم 289px (a6: 544) · CTA «فهمیدم، شروع کنیم» 207×48 زیر بوم (a6: 320px در انتهای صفحهٔ 2560px) · دو ستون متعادل · صفحهٔ 1161px (a6: 2560) · صفر نشانگر `data-intro-section`/`data-teaching-box` · موبایل 390px: بوم 316px، CTA 207px زیر بوم، بدون overflow · VLM قبل/بعد (دسکتاپ + موبایل): کارت فشردهٔ متعادل، بدون نقص رندر.     |
+| تصاویر قبل/بعد           | `/root/rollback-verify/` — `before-desktop-intro-full` · `before-desktop-after-cta` · `before-mobile-intro-full` · `after-desktop-intro-full` · `after-desktop-after-cta` · `after-desktop-flow-end` · `after-mobile-intro-full` + `before-metrics.json`/`after-metrics.json`/`flow2-metrics.json`/`flow3-endgame.json`/`replay-probe.json`. |
+| KOTODAMA                 | دست‌نخورده — kotodama.ir 200 قبل/بعد.                                                                                                                                                                                                                                                                                                        |
+
+---
+
+# CURRENT_STATE — TASK-LEARNING-08
+
 > آخرین به‌روزرسانی: **CP-10 (پیوست ۶ — چیدمان تأییدشدهٔ معرفی کانا) · 2026-11-08**
 > زنده: https://learn.kotodama.ir @ `8f387a9` · شاخهٔ کاری: `tl08-addendum6` (مبتنی بر سر `tl08-addendum5` = 2b74daa).
 
