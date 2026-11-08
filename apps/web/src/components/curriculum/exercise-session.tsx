@@ -712,10 +712,13 @@ export interface OptionRowProps {
 const KANA_OPTION_RE = /^[\u3040-\u30ff\u31f0-\u31ff]+$/;
 const isKanaGlyphOption = (label: string): boolean => KANA_OPTION_RE.test(label) && label.length <= 4;
 
-/** The select row — uniform radios (SKL-004 §۶) with #106 F2 elimination states. */
+/** The select row — uniform radios (SKL-004 §۶) with #106 F2 elimination states.
+ *  TASK-LEARNING-09 §۸: the options flow into TWO columns once the card has
+ *  real horizontal room (tablets/desktop) — glyph tiles and Persian labels
+ *  alike; phones keep the single column (touch targets stay full-width). */
 export function OptionRow({ options, selected, eliminated, locked, onSelect }: OptionRowProps) {
   return (
-    <div role="radiogroup" className="flex flex-col gap-2">
+    <div role="radiogroup" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {options.map((opt) => {
         const isEliminated = eliminated.includes(opt.id);
         return (

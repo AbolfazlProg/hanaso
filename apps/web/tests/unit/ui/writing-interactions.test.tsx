@@ -740,7 +740,7 @@ describe('KanaCard v4 — Addendum-2 final correction (§1 success sample · §2
     expect(details?.textContent).not.toContain('romaji:');
   });
 
-  it('§11: NO «پیش‌نویس / بازبینی انسانی» badge — a draft mnemonic is never shown as final content', async () => {
+  it('§11 + TASK-LEARNING-09 §۱۵: NO «پیش‌نویس / بازبینی انسانی» badge — the mnemonic STORY renders with its honest label, never as reviewed content', async () => {
     const { container } = render(<KanaCard kana={KANA_A} showRomaji audioUrls={null} wordAudioUrls={null} />);
     await waitFor(() => {
       expect(container.querySelector('svg[role="img"]')).not.toBeNull();
@@ -748,9 +748,12 @@ describe('KanaCard v4 — Addendum-2 final correction (§1 success sample · §2
     // the ugly review badge is gone from the learner UI entirely
     expect(container.textContent).not.toContain('پیش‌نویس');
     expect(container.textContent).not.toContain('بازبینی انسانی');
-    // the (still-draft) mnemonic STORY is not presented as final content
-    const teaching = container.textContent ?? '';
-    expect(teaching).not.toContain('A لاتین با یک قلاب'); // hira-a draft story
+    // §۱۵ (owner 2026-11-09): the story is BACK in the introduction flow —
+    // rendered as a mnemonic card WITH its honest label (never «final» fact)
+    const mnemonic = container.querySelector('[data-mnemonic-card]');
+    expect(mnemonic).not.toBeNull();
+    expect(mnemonic!.textContent).toContain('A لاتین با یک قلاب'); // hira-a story is back
+    expect(mnemonic!.textContent).toContain('داستانِ یادسپار'); // the honest label travels with it
   });
 
   it('§12: attribution is ONE short license line — no engine/tech names in the teaching space', async () => {
@@ -841,7 +844,7 @@ describe('KanaCard v5 — audio coordination (A3 §9 normal⇄slow + §10 one ca
     expect(container.querySelector('svg[role="img"]')).not.toBeNull();
   });
 
-  it('§9: the HOST WORD has its own audio control (independent asset, same cycle)', async () => {
+  it('§9 + TASK-LEARNING-09 §۶: the HOST WORD keeps its own audio control inside the merged section (independent asset, same cycle)', async () => {
     const { container, findByRole } = render(
       <KanaCard
         kana={KANA_A}
@@ -850,7 +853,9 @@ describe('KanaCard v5 — audio coordination (A3 §9 normal⇄slow + §10 one ca
         wordAudioUrls={{ opus: '/audio/hostwords/%E3%81%82%E3%81%84.opus', m4a: '/w.m4a' }}
       />,
     );
-    const wordBtn = (await findByRole('button', { name: /پخش صدای واژهٔ/ })) as HTMLButtonElement;
+    // the anchor card's play control (the per-word registry is empty here, so
+    // the host word's OWN pair backs it — same asset, same behavior)
+    const wordBtn = (await findByRole('button', { name: /پخش صدای (واژهٔ|مثالِ)/ })) as HTMLButtonElement;
     expect(wordBtn.getAttribute('data-audio-mode')).toBe('normal');
     fireEvent.click(wordBtn);
     const el = FakeAudio.instances.find((a) => a.src.includes('hostwords'));
@@ -858,8 +863,8 @@ describe('KanaCard v5 — audio coordination (A3 §9 normal⇄slow + §10 one ca
     expect(el!.playbackRate).toBe(1);
     fireEvent.click(wordBtn);
     expect(el!.playbackRate).toBe(0.7);
-    // the word card is real: word + romaji + meaning (§8 + §9)
-    const wordCard = container.querySelector('[data-word-card]');
+    // the anchor card is real: word + romaji + meaning (§8 + §9)
+    const wordCard = container.querySelector('[data-host-word-card="true"]');
     expect(wordCard?.textContent).toContain('あい');
     expect(wordCard?.textContent).toContain('ai');
   });
@@ -867,9 +872,9 @@ describe('KanaCard v5 — audio coordination (A3 §9 normal⇄slow + §10 one ca
   it('§9 (honest absence): no word audio → no word play control, no fake sound', async () => {
     const { container } = render(<KanaCard kana={KANA_A} showRomaji audioUrls={null} wordAudioUrls={null} />);
     await waitFor(() => {
-      expect(container.querySelector('[data-word-card]')).not.toBeNull();
+      expect(container.querySelector('[data-host-word-card="true"]')).not.toBeNull();
     });
-    expect(container.querySelector('[data-word-audio]')).toBeNull();
+    expect(container.querySelector('[data-example-audio]')).toBeNull();
   });
 });
 

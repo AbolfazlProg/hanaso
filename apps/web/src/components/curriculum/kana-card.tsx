@@ -1,6 +1,6 @@
 'use client';
 /**
- * HANASO — KanaCard v5 (TASK-LEARNING-08 Addendum-3).
+ * HANASO — KanaCard v6 (TASK-LEARNING-09 — responsive learning experience).
  *
  * ONE page, ONE environment, ZERO stage-switching: the big WritingCanvas is
  * the heart of the card from the first second to the last. Addendum-3 §5 —
@@ -8,11 +8,30 @@
  * learner sees, playing in the canvas itself (no faint static template),
  * with the explanations unfolding AROUND it while it runs.
  *
- * Timeline:
+ * TASK-LEARNING-09 — the responsive re-architecture (owner audit 2026-11-09):
+ *   • the card is a CSS @container — the layout responds to the REAL card
+ *     width, not to device names: phones get one tidy column, ≥42rem content
+ *     gets the balanced two-column grid (canvas column + info column)
+ *   • semantic grouping (owner §5): group 1 «رسم و ترتیب نوشتن» = canvas +
+ *     stroke dots + action slot + the live stage panel (they are NEVER
+ *     separated again — the panel sits WITH the canvas on every size);
+ *     group 2 «شناخت و تلفظ» = reading + writing tip + mnemonic story +
+ *     confusable pair; group 3 «واژگان» = the merged readable examples
+ *   • §6 — «واژهٔ قابل‌خواندن» + «نمونه‌های کاربردی» are ONE section now
+ *     («نمونه‌های قابل‌خواندن»), deduplicated by word — a word never renders
+ *     twice; the host word stays the ANCHOR card (caption + staggered reveal)
+ *   • §15 — the mnemonic story is BACK in the introduction flow for every
+ *     kana that has one (all 92 authored stories render with their honest
+ *     «داستانِ یادسپار» label — never as a fact; the data keeps its status)
+ *   • spacing rhythm: clear gaps BETWEEN the semantic groups, tight and
+ *     regular gaps INSIDE each group; no min-height fillers — the action slot
+ *     keeps the canvas still simply because nothing above it ever changes
+ *
+ * Timeline (unchanged — v5 behavior preserved):
  *   1 intro    the numbered stroke-order animation in the canvas + the
  *              sound + the reading — the explanations unfold around it
- *   2 ready    the ONE interactive stop: «فهمیدم، شروع کنیم» (Addendum-2 §4
- *              decision kept — the single CTA of the whole flow)
+ *   2 ready    the ONE interactive stop: «فهمیدم، شروع کنیم» (the single CTA
+ *              of the whole flow — TASK-HANASO-CTA-01 footer position kept)
  *   3 guided   practice on the dashed guide in the same canvas
  *   4 free     writing from memory in the same canvas
  *   done       completion — the walk continues (onWritingDone)
@@ -83,6 +102,21 @@ export interface KanaRelatedExample {
   reading: string;
   fa: string;
   whyFa: string;
+  pronFa?: string;
+}
+
+/**
+ * TASK-LEARNING-09 §۶ — one entry of the merged «نمونه‌های قابل‌خواندن»
+ * section: the host readable word (isHost — the anchor card) or one of the
+ * related usage examples, deduplicated by word (never rendered twice).
+ */
+interface ReadableExampleCard {
+  key: string;
+  isHost: boolean;
+  ja: string;
+  readingFa: string | null;
+  meaningFa: string;
+  whyFa?: string;
   pronFa?: string;
 }
 
@@ -193,7 +227,6 @@ export function KanaCard({
 
   // -------------------------------------------------- audio (§9: normal ⇄ slow)
   const sound = useAudioToggle(audioUrls, kana.kanaId);
-  const wordSound = useAudioToggle(wordAudioUrls, kana.hostWord?.word);
 
   /** Audio moments (owner §5): entry once → teaching-done once → guided entry once. */
   const audioMomentsRef = useRef<Set<string>>(new Set());
@@ -376,8 +409,10 @@ export function KanaCard({
   const totalStrokes = charData?.medians.length ?? 0;
 
   const mn = teaching?.mnemonic;
-  /** §11 — ONLY approved (human-verified) mnemonics render (no badge, never «final» for a draft). */
-  const verifiedMnemonic = mn?.status === 'approved' ? mn : null;
+  /** §15 (TASK-LEARNING-09) — the mnemonic story renders for EVERY kana that
+   *  has one (all 92 authored stories are back in the introduction flow) with
+   *  its honest label; the review status stays in the data for the tooling. */
+  const mnemonic = mn ?? null;
   const inPractice = stage === 'guided' || stage === 'free';
   /** Persian reading FIRST (Addendum-2 §3) — Latin is the small complement (§8). */
   const readingFa = teaching?.pronunciationFa ?? kana.romaji;
@@ -409,8 +444,8 @@ export function KanaCard({
   const speedChip = sound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal;
 
   // -------------------------------------------------- §8/§9 cards (shared JSX)
-  // Addendum-5 §1: the same cards render OPEN in the full intro view and inside
-  // the collapsed practice fold — ONE definition, no drift between the two.
+  // Addendum-5 §1 (kept): the same cards render OPEN in the full intro view
+  // and inside the collapsed practice fold — ONE definition, no drift.
   const readingCard = (
     <div className="kana-reveal rounded-md border border-ink-faint bg-surface-sunken/60 p-4" data-reading-card>
       <div className="flex flex-wrap items-baseline gap-2">
@@ -438,58 +473,61 @@ export function KanaCard({
     </div>
   );
 
-  const wordCard = hostWord ? (
-    <div className="kana-reveal kana-reveal-2 rounded-md border border-ai/30 bg-indigo-wash/30 p-4" data-word-card>
-      <p className="text-caption text-ink-faint">{fa.curriculum.kanaHostWordPrefix}</p>
-      <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
-        <p className="font-jp text-h2 font-bold text-ink" lang="ja" dir="ltr">
-          {Array.from(hostWord.word).map((ch, i) => (
-            <span
-              key={`${ch}-${i}`}
-              className={`word-char-in ${ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : ''}`}
-              style={{ animationDelay: `${300 + i * 450}ms` }}
-            >
-              {ch}
-            </span>
-          ))}
-        </p>
-        {wordAudioUrls ? (
-          <button
-            type="button"
-            onClick={wordSound.toggle}
-            className="flex min-h-9 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-            aria-label={`${fa.curriculum.kanaWordAudioLabel(hostWord.word)} — ${fa.curriculum.kanaSpeedLabel}: ${
-              wordSound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal
-            }`}
-            data-word-audio
-            data-audio-mode={wordSound.mode}
-          >
-            <Volume2 aria-hidden className="size-4" />
-            {wordSound.mode === 'slow' ? fa.curriculum.kanaSpeedSlow : fa.curriculum.kanaSpeedNormal}
-          </button>
-        ) : null}
-      </div>
-      <div className="mt-1 flex flex-wrap items-baseline gap-2">
-        <span className="font-mono text-caption text-ink-soft" dir="ltr">
-          {kanaWordRomaji(hostWord.word)}
-        </span>
-        <span className="text-body text-ink-soft">— {hostWord.meaningFa}</span>
-      </div>
-    </div>
-  ) : null;
+  /**
+   * TASK-LEARNING-09 §۶ — ONE vocabulary list «نمونه‌های قابل‌خواندن»: the host
+   * readable word (the ANCHOR — enriched with the matching example's Persian
+   * reading/guides when the station's example-set carries the same word) + the
+   * related usage examples, deduplicated by word — a word never renders twice.
+   * Kana with neither → no section at all (no placeholder, §۷).
+   */
+  const readableExamples = useMemo<ReadableExampleCard[]>(() => {
+    const cards: ReadableExampleCard[] = [];
+    const seen = new Set<string>();
+    if (hostWord) {
+      seen.add(hostWord.word);
+      const match = (relatedExamples ?? []).find((ex) => ex.ja === hostWord.word);
+      cards.push({
+        key: `host-${hostWord.word}`,
+        isHost: true,
+        ja: hostWord.word,
+        readingFa: match?.reading ?? null,
+        meaningFa: hostWord.meaningFa,
+        whyFa: match?.whyFa,
+        pronFa: match?.pronFa,
+      });
+    }
+    for (const ex of relatedExamples ?? []) {
+      if (seen.has(ex.ja)) continue; // the anchor card already carries this word
+      seen.add(ex.ja);
+      cards.push({
+        key: ex.id,
+        isHost: false,
+        ja: ex.ja,
+        readingFa: ex.reading,
+        meaningFa: ex.fa,
+        whyFa: ex.whyFa,
+        pronFa: ex.pronFa,
+      });
+    }
+    return cards;
+  }, [hostWord, relatedExamples]);
 
-  /** §11 — the mnemonic card renders ONLY when verified; a draft is never shown
-   *  as final content (no badge, no «review» state in the learner UI). */
-  const mnemonicCard = verifiedMnemonic ? (
-    <div className="kana-reveal kana-reveal-3 rounded-md bg-surface-2 p-4">
+  /**
+   * §15 (TASK-LEARNING-09) — the mnemonic story card: a subtle teaching card
+   * with the honest «داستانِ یادسپار» label (never presented as fact — the
+   * data keeps its review status for the tooling). Renders for every kana
+   * that HAS a story; a kana without one renders no card and no placeholder.
+   */
+  const mnemonicCard = mnemonic ? (
+    <div className="kana-reveal kana-reveal-3 rounded-md bg-surface-2 p-4" data-mnemonic-card>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-small font-bold text-ink">{verifiedMnemonic.coreImageFa}</span>
+        <span className="text-small font-bold text-ink">{mnemonic.coreImageFa}</span>
         <span className="rounded-full bg-ink-faint/30 px-2 py-0.5 text-micro text-ink-faint">
-          {verifiedMnemonic.honestLabelFa}
+          {mnemonic.honestLabelFa}
         </span>
       </div>
       <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink">
-        <MixedFaJaText text={verifiedMnemonic.storyFa} />
+        <MixedFaJaText text={mnemonic.storyFa} />
       </p>
     </div>
   ) : null;
@@ -536,33 +574,77 @@ export function KanaCard({
     ) : null;
 
   /**
-   * TASK-HANASO-CTA-01 §۴ — the related-example articles (shared body for the
-   * open section AND the practice fold). Same card anatomy as the station's
-   * example-set cards: the WORD is the hero (glyph highlighted inside it),
-   * its OWN playable audio beside it, the Persian reading bold + the meaning
-   * visually separated (Addendum-5 §6 rules kept), plus why/pron guides.
+   * TASK-LEARNING-09 §۶ — the merged «نمونه‌های قابل‌خواندن» articles (shared
+   * body for the open section AND the practice fold). Same card anatomy as the
+   * station's example-set cards: the WORD is the hero (glyph highlighted
+   * inside it), its OWN playable audio beside it, the Persian reading bold +
+   * the meaning visually separated (Addendum-5 §6 rules kept), plus why/pron
+   * guides. The ANCHOR (host) card keeps its caption + the staggered
+   * char-by-char reveal (the v5 «واژهٔ قابل‌خواندن» choreography, now inside
+   * the one section) and its Latin romaji complement.
    */
-  const examplesBody = (relatedExamples ?? []).map((ex) => (
-    <article key={ex.id} className="rounded-md bg-surface-sunken/40 p-3" data-example-card data-example-word={ex.ja}>
+  const readableExamplesBody = readableExamples.map((ex) => (
+    <article
+      key={ex.key}
+      className="flex flex-col rounded-md bg-surface-sunken/40 p-3"
+      data-example-card
+      data-example-word={ex.ja}
+      data-host-word-card={ex.isHost ? 'true' : undefined}
+    >
+      {ex.isHost ? <p className="text-caption text-ink-faint">{fa.curriculum.kanaHostWordPrefix}</p> : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
-          {Array.from(ex.ja).map((ch, i) => (
-            <span
-              key={`${ch}-${i}`}
-              className={ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : undefined}
-            >
-              {ch}
-            </span>
-          ))}
-        </JaBlock>
-        {/* Addendum-4 §7 (kept): every example word keeps its OWN playable
-            audio — independent asset bound to THIS word. No asset → no button. */}
-        <ExampleAudioButton word={ex.ja} urls={exampleAudioByWord?.[ex.ja] ?? null} />
+        {ex.isHost ? (
+          /* the anchor word keeps the v5 hero (a real <p> with the ja-block
+             LTR island class) + the staggered char-by-char reveal */
+          <p className="ja-block font-jp text-h2 font-bold text-ink" lang="ja" dir="ltr">
+            {Array.from(ex.ja).map((ch, i) => (
+              <span
+                key={`${ch}-${i}`}
+                className={`word-char-in ${ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : ''}`}
+                style={{ animationDelay: `${300 + i * 450}ms` }}
+              >
+                {ch}
+              </span>
+            ))}
+          </p>
+        ) : (
+          <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
+            {Array.from(ex.ja).map((ch, i) => (
+              <span
+                key={`${ch}-${i}`}
+                className={ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : undefined}
+              >
+                {ch}
+              </span>
+            ))}
+          </JaBlock>
+        )}
+        {/* Addendum-4 §7 (kept): every readable word keeps its OWN playable
+            audio — independent asset bound to THIS word (the host word's own
+            pair falls back in when the registry has no separate entry). No
+            asset → no button. */}
+        <ExampleAudioButton
+          word={ex.ja}
+          urls={exampleAudioByWord?.[ex.ja] ?? (ex.isHost ? wordAudioUrls : null) ?? null}
+        />
       </div>
-      <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
-        {ex.reading}
-      </p>
-      <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{ex.fa}</p>
+      {ex.readingFa ? (
+        <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+          {ex.readingFa}
+          {ex.isHost ? (
+            <span className="ms-2 font-mono align-middle text-caption font-normal text-ink-soft" dir="ltr">
+              {kanaWordRomaji(ex.ja)}
+            </span>
+          ) : null}
+        </p>
+      ) : ex.isHost ? (
+        <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+          <span className="font-mono align-middle text-caption font-normal text-ink-soft" dir="ltr">
+            {kanaWordRomaji(ex.ja)}
+          </span>
+        </p>
+      ) : null}
+      <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{ex.meaningFa}</p>
       {ex.whyFa ? (
         <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
           <MixedFaJaText text={ex.whyFa} />
@@ -588,7 +670,7 @@ export function KanaCard({
   // -------------------------------------------------- render
   return (
     <section
-      className="flex flex-col gap-4 rounded-md border border-ink-faint bg-card p-5"
+      className="@container flex flex-col gap-5 rounded-md border border-ink-faint bg-card p-4 @min-[42rem]:gap-6 @min-[42rem]:p-6"
       aria-label={`${readingFa} — ${stageTitle}`}
       data-kana-stage={stage}
     >
@@ -601,7 +683,7 @@ export function KanaCard({
             {stageChip}
           </span>
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {audioUrls ? (
             <button
               type="button"
@@ -640,11 +722,24 @@ export function KanaCard({
         </div>
       </div>
 
-      {/* ---- THE environment: the canvas column + the teaching column ---- */}
-      <div className="flex flex-col items-center gap-5 lg:flex-row lg:items-start lg:justify-center">
-        {/* canvas column — the heart of the lesson; never unmounts (§3).
-            Addendum-5 §1: this wrapper is the scroll target when practice begins. */}
-        <div ref={canvasAnchorRef} className="w-full max-w-[26rem] shrink" data-canvas-anchor>
+      {/* ══════════ TASK-LEARNING-09 — THE environment ══════════
+          The card is its own @container: below 42rem of CONTENT width the two
+          semantic groups stack in one tidy column; from 42rem up they sit in
+          the balanced two-column grid — the canvas column (owner §3 «ستون
+          اصلی»: WritingCanvas + stroke-order teaching + practice status) and
+          the info column (§3 «ستون مکمل»: reading, writing notes, mnemonic
+          story, confusable pair). The canvas track never exceeds 26rem (never
+          oversized), the info track caps at 34rem (readable line lengths),
+          and the whole row centers in whatever space remains — smart use of
+          the width, never forced filling. */}
+      <div className="grid grid-cols-1 gap-6 @min-[42rem]:grid-cols-[minmax(19rem,26rem)_minmax(19rem,34rem)] @min-[42rem]:items-start @min-[42rem]:justify-center @min-[42rem]:gap-8">
+        {/* ---- group 1 «رسم و ترتیب نوشتن» — the canvas column (owner §5).
+            The heart of the lesson; never unmounts (§3). The STAGE PANEL now
+            lives HERE (with the canvas it narrates — the old layout put it in
+            the far teaching column, which is what the owner's «بخش‌های مرتبط
+            از هم جدا افتاده‌اند» audit flagged). This wrapper is the scroll
+            target when practice begins (Addendum-5 §1 kept). */}
+        <div ref={canvasAnchorRef} className="flex min-w-0 flex-col gap-3" data-canvas-anchor>
           <WritingCanvas
             character={kana.glyph}
             mode={stage === 'intro' ? 'intro' : stage === 'ready' || stage === 'done' ? 'reference' : stage}
@@ -660,7 +755,7 @@ export function KanaCard({
           {/* stroke progress dots — status feedback (owner §2: وضعیت پیشرفت) */}
           {totalStrokes > 0 ? (
             <div
-              className="mt-3 flex flex-wrap items-center justify-center gap-2"
+              className="flex flex-wrap items-center justify-center gap-2"
               aria-label={fa.curriculum.kanaStageStrokeProgress}
             >
               {Array.from({ length: totalStrokes }, (_, i) => {
@@ -684,24 +779,17 @@ export function KanaCard({
               </span>
             </div>
           ) : null}
-          {/* Addendum-4 §3 — THE action slot: ONE fixed-height area under the
-              canvas. Only its CONTENT swaps with the stage (hint → CTA →
-              practice hints → done) — the layout never jumps, the canvas never
-              moves, and the CTA is a REAL button. */}
-          <div
-            className="mt-2 flex min-h-[6.5rem] w-full flex-col items-center justify-start gap-2 text-center"
-            data-stage-action={stage}
-          >
+          {/* Addendum-4 §3 (TASK-LEARNING-09 revision) — the action slot: a calm
+              one-line hint area under the canvas. No min-height filler (owner
+              §5): nothing ABOVE the canvas ever changes, so the canvas stays
+              still across stages on its own; the ready stage is deliberately
+              empty (the CTA lives in the footer — TASK-HANASO-CTA-01). */}
+          <div className="flex w-full flex-col items-center gap-1 text-center" data-stage-action={stage}>
             {stage === 'intro' ? (
               <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-faint">
                 {fa.curriculum.kanaStageIntroHint}
               </p>
             ) : null}
-            {/* TASK-HANASO-CTA-01 — the «ready» slot is deliberately EMPTY: the
-                confirm button (and its explanatory text) moved to the footer at
-                the end of the introduction content, after the related examples
-                (owner 2026-11-08). The min-height slot keeps the canvas from
-                moving between stages (Addendum-4 §3 stays true). */}
             {stage === 'guided' ? (
               <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
                 {fa.curriculum.kanaStageGuidedHint}
@@ -717,34 +805,9 @@ export function KanaCard({
             ) : null}
           </div>
 
-          {/* Addendum-5 §1 — the focused practice view: the intro-only cards
-              (reading + host word) COLLAPSE into one fold while the learner
-              writes (never deleted — one tap reopens them; the intro/ready/done
-              stages keep the full view). */}
-          {inPractice ? (
-            <details className="mt-4 rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="reading">
-              <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
-                <Info aria-hidden className="ml-1 inline size-4 align-middle" />
-                {fa.curriculum.kanaIntroFoldReading}
-              </summary>
-              <div className="flex flex-col gap-3 px-4 pb-4">
-                {readingCard}
-                {wordCard}
-              </div>
-            </details>
-          ) : (
-            <>
-              {readingCard}
-              {wordCard}
-            </>
-          )}
-        </div>
-
-        {/* teaching column — Addendum-4 §3: every slot is ALWAYS present in the
-            SAME order for every kana; only the CONTENT follows the stage. No
-            box ever appears from nowhere or disappears mid-flow. */}
-        <div className="w-full max-w-[24rem] space-y-3 lg:max-w-[22rem]" dir="rtl">
-          {/* ---- slot 1 — the stage panel ---- */}
+          {/* ---- slot 1 — the stage panel (Addendum-4 §3 kept: every slot is
+              ALWAYS present in the SAME order for every kana; only the CONTENT
+              follows the stage — no box ever appears from nowhere). ---- */}
           {/* intro: the live stroke narration follows the teaching pass */}
           {stage === 'intro' && strokeInfo ? (
             <div
@@ -857,10 +920,18 @@ export function KanaCard({
               </button>
             </div>
           ) : null}
+        </div>
 
-          {/* §4 — the per-character writing tips (fine points of THIS glyph) */}
+        {/* ---- group 2 «شناخت و تلفظ» — the info column (owner §3/§5): the
+            reading with the character's own sound, the writing notes, the
+            mnemonic story (§15 — back in the flow) and the confusable pair.
+            Data-driven: a kana without a piece of content renders no card and
+            no placeholder (§۷) — the column simply stays compact. During
+            practice (Addendum-5 §1 kept) the intro-only cards collapse into
+            ONE fold; the writing tips stay open (practice-relevant). ---- */}
+        <div className="flex min-w-0 flex-col gap-3" dir="rtl">
           {teaching?.strokeHintFa ? (
-            <div className="kana-reveal kana-reveal-3 rounded-md bg-surface-2 p-4">
+            <div className="kana-reveal kana-reveal-2 rounded-md bg-surface-2 p-4" data-writing-tip>
               <p className="text-small font-bold text-ink">{fa.curriculum.kanaWritingTipTitle}</p>
               <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink">
                 <MixedFaJaText text={teaching.strokeHintFa} />
@@ -868,21 +939,21 @@ export function KanaCard({
             </div>
           ) : null}
 
-          {/* Addendum-5 §1 — the focused practice view: mnemonic + confusable
-              pair (intro-only) collapse into one fold; writing tips stay open. */}
-          {inPractice && (verifiedMnemonic || mn?.pairGlyphs) ? (
-            <details className="rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="side">
+          {inPractice && (readingCard || mnemonicCard || pairCard) ? (
+            <details className="rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="info">
               <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
                 <Info aria-hidden className="ml-1 inline size-4 align-middle" />
-                {fa.curriculum.kanaIntroFoldSide}
+                {fa.curriculum.kanaIntroFoldInfo}
               </summary>
               <div className="flex flex-col gap-3 px-4 pb-4">
+                {readingCard}
                 {mnemonicCard}
                 {pairCard}
               </div>
             </details>
           ) : (
             <>
+              {readingCard}
               {mnemonicCard}
               {pairCard}
             </>
@@ -890,26 +961,31 @@ export function KanaCard({
         </div>
       </div>
 
-      {/* ══════════ TASK-HANASO-CTA-01 §۴ — نمونه‌های کاربردی (content order ۴) ══════════
-          The related usage examples of THIS character (station example-set
-          entries whose word contains the glyph, authored order, per-word audio,
-          Persian reading + meaning + why + the authored pronunciation guide).
-          They close the introduction content BEFORE the footer CTA. During
-          practice they collapse into ONE fold (Addendum-5 §1 pattern — the
-          focused practice view; nothing is ever deleted). */}
-      {relatedExamples && relatedExamples.length > 0 ? (
+      {/* ══════════ TASK-LEARNING-09 §۶ — نمونه‌های قابل‌خواندن (content order ۴) ══════════
+          ONE merged vocabulary section (the owner's §۶ order): the host
+          readable word (the anchor) + the related usage examples of THIS
+          character (station example-set entries whose word contains the
+          glyph), deduplicated by word — never two cards for the same word.
+          Persian reading + meaning + per-word audio + why/pron guides (the
+          Addendum-5 §6 card anatomy). The cards flow into a responsive grid
+          (1 → 2 → 3 columns by real available width). They close the
+          introduction content BEFORE the footer CTA. During practice they
+          collapse into ONE fold (Addendum-5 §1 — the focused practice view;
+          nothing is ever deleted). A kana with no readable vocabulary renders
+          NO section at all (§۷ — no placeholder). */}
+      {readableExamples.length > 0 ? (
         inPractice ? (
           <details className="rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="examples">
             <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
               <Info aria-hidden className="ml-1 inline size-4 align-middle" />
-              {fa.curriculum.kanaIntroExamplesFold}
+              {fa.curriculum.kanaReadableExamplesFold}
             </summary>
-            <div className="flex flex-col gap-3 px-4 pb-4">{examplesBody}</div>
+            <div className="examples-grid px-4 pb-4">{readableExamplesBody}</div>
           </details>
         ) : (
           <section className="rounded-md border border-ink-faint p-4" data-intro-examples>
-            <p className="text-h3 font-bold text-ink">{fa.curriculum.kanaIntroExamplesTitle}</p>
-            <div className="mt-3 flex flex-col gap-3">{examplesBody}</div>
+            <p className="text-h3 font-bold text-ink">{fa.curriculum.kanaReadableExamplesTitle}</p>
+            <div className="examples-grid mt-3">{readableExamplesBody}</div>
           </section>
         )
       ) : null}

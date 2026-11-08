@@ -126,11 +126,13 @@ describe('Addendum-5 §1 — «شروع تمرین نوشتن» behavior', () =>
     await waitFor(() => {
       expect(container.querySelector('[data-kana-stage]')?.getAttribute('data-kana-stage')).toBe('guided');
     });
-    // guided = the FOCUSED view: the reading/word cards live INSIDE the fold —
-    // the data is still there (nothing deleted), one tap reopens it
-    expect(container.querySelector('[data-intro-fold="reading"]')).not.toBeNull();
-    expect(container.querySelector('[data-intro-fold="reading"]')!.querySelector('[data-reading-card]')).not.toBeNull();
-    expect(container.querySelector('[data-intro-fold="side"]')).not.toBeNull();
+    // guided = the FOCUSED view (TASK-LEARNING-09: ONE consolidated info fold
+    // — «تلفظ، یادسپار و جفت مشابه»): the reading/mnemonic/pair cards live
+    // INSIDE the fold — the data is still there (nothing deleted), one tap
+    // reopens it
+    expect(container.querySelector('[data-intro-fold="info"]')).not.toBeNull();
+    expect(container.querySelector('[data-intro-fold="info"]')!.querySelector('[data-reading-card]')).not.toBeNull();
+    expect(container.querySelector('[data-intro-fold="info"]')!.querySelector('[data-mnemonic-card]')).not.toBeNull();
   });
 });
 

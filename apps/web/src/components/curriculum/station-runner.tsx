@@ -1108,64 +1108,69 @@ function BlockView({
       return (
         <section className="flex flex-col gap-3">
           <h3 className="text-h3 font-bold">{fa.curriculum.examplesTitle}</h3>
-          {block.examples.map((example) => (
-            <article key={example.id} className="rounded-md border border-ink-faint bg-card p-4" data-example-card>
-              <div className="flex items-center justify-between gap-2">
-                <span className="rounded-full border border-ai px-3 py-1 text-caption text-ai">
-                  {roleLabel(example.role)}
-                </span>
-                {example.lineRef && <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>}
-              </div>
-              {/* Addendum-5 §6 — the WORD is the hero of the card: big, readable
+          {/* TASK-LEARNING-09 §۸ — the example cards flow into the same
+              adaptive grid as the kana card's merged vocabulary section
+              (1 → 2 → 3 columns by real width; no reserved empty columns). */}
+          <div className="examples-grid">
+            {block.examples.map((example) => (
+              <article key={example.id} className="rounded-md border border-ink-faint bg-card p-4" data-example-card>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="rounded-full border border-ai px-3 py-1 text-caption text-ai">
+                    {roleLabel(example.role)}
+                  </span>
+                  {example.lineRef && <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>}
+                </div>
+                {/* Addendum-5 §6 — the WORD is the hero of the card: big, readable
                   Japanese with the play control right beside it (recognizable,
                   thumb-sized) — the audio is part of the example, not a footer
                   decoration. */}
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
-                  {example.ja}
-                </JaBlock>
-                {/* Addendum-4 §7 — every example word gets its OWN playable
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
+                    {example.ja}
+                  </JaBlock>
+                  {/* Addendum-4 §7 — every example word gets its OWN playable
                     audio (independent asset bound to THIS word; normal ⇄ slow
                     cycle like every other teaching sound). No asset → no
                     button (never dead, never misbound). */}
-                <ExampleAudioButton word={example.ja} urls={exampleAudioByWord?.[example.ja] ?? null} />
-              </div>
-              {/* Addendum-5 §6 — the Persian reading is BIG and bold, and the
+                  <ExampleAudioButton word={example.ja} urls={exampleAudioByWord?.[example.ja] ?? null} />
+                </div>
+                {/* Addendum-5 §6 — the Persian reading is BIG and bold, and the
                   meaning sits on its own visually separated line (reading ≠
                   translation — the learner should never conflate them). */}
-              <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
-                {example.reading}
-              </p>
-              <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{example.fa}</p>
-              <p className="mt-1 text-small text-ink-soft">
-                <MixedFaJaText text={example.whyFa} />
-              </p>
-              {/* Addendum-5 §6 — a SHORT pronunciation guide, authored ONLY for
+                <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+                  {example.reading}
+                </p>
+                <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{example.fa}</p>
+                <p className="mt-1 text-small text-ink-soft">
+                  <MixedFaJaText text={example.whyFa} />
+                </p>
+                {/* Addendum-5 §6 — a SHORT pronunciation guide, authored ONLY for
                   words with a real pronunciation point (mouth / lips / tongue /
                   airflow / how it differs from the nearest Persian sound) —
                   never a mechanical template on every card. Persian leads. */}
-              {example.pronFa ? (
-                <div
-                  className="mt-3 flex items-start gap-2 rounded-md border border-shu/40 bg-surface-warm p-3"
-                  data-pron-guide
-                >
-                  <Mic aria-hidden className="mt-1 size-4 shrink-0 text-shu-deep" />
-                  <div>
-                    <p className="text-small font-bold text-ink">{fa.curriculum.examplePronGuideTitle}</p>
-                    <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink">
-                      <MixedFaJaText text={example.pronFa} />
-                    </p>
+                {example.pronFa ? (
+                  <div
+                    className="mt-3 flex items-start gap-2 rounded-md border border-shu/40 bg-surface-warm p-3"
+                    data-pron-guide
+                  >
+                    <Mic aria-hidden className="mt-1 size-4 shrink-0 text-shu-deep" />
+                    <div>
+                      <p className="text-small font-bold text-ink">{fa.curriculum.examplePronGuideTitle}</p>
+                      <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink">
+                        <MixedFaJaText text={example.pronFa} />
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ) : null}
-              {example.selfExplainFa && (
-                <p className="mt-3 flex items-start gap-2 rounded-md bg-surface-warm p-3 text-small">
-                  <MessageCircleQuestion aria-hidden className="mt-0.5 size-4 shrink-0 text-ink-soft" />
-                  <MixedFaJaText text={example.selfExplainFa} />
-                </p>
-              )}
-            </article>
-          ))}
+                ) : null}
+                {example.selfExplainFa && (
+                  <p className="mt-3 flex items-start gap-2 rounded-md bg-surface-warm p-3 text-small">
+                    <MessageCircleQuestion aria-hidden className="mt-0.5 size-4 shrink-0 text-ink-soft" />
+                    <MixedFaJaText text={example.selfExplainFa} />
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
         </section>
       );
 

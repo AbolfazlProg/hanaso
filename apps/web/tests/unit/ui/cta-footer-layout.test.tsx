@@ -161,13 +161,19 @@ describe('TASK-HANASO-CTA-01 §۴ — the footer CTA closes the introduction', (
     expect(slot!.textContent!.trim()).toBe('');
   });
 
-  it('every related example renders with meaning, glyph highlight and its own audio', () => {
+  it('every readable card renders with meaning, glyph highlight and its own audio — and the host word never duplicates (TASK-LEARNING-09 §۶ dedup)', () => {
     const { container } = renderReady();
     const cards = container.querySelectorAll('[data-example-card]');
+    // the host word あい IS also the first related example — the merge keeps
+    // ONE card for it (anchor) + あさ = 2 cards total, never 3
     expect(cards).toHaveLength(2);
+    // ONE CARD (the article) for the word あい — the play control inside it
+    // also carries data-example-word, so count the CARDS, not every attribute
+    expect(container.querySelectorAll('[data-example-card][data-example-word="あい"]')).toHaveLength(1);
     expect(cards[0]!.getAttribute('data-example-word')).toBe('あい');
+    expect(cards[0]!.getAttribute('data-host-word-card')).toBe('true');
     expect(cards[0]!.textContent).toContain('عشق'); // معنی
-    expect(cards[0]!.textContent).toContain('آی'); // خوانش فارسی
+    expect(cards[0]!.textContent).toContain('آی'); // خوانش فارسی (enriched from the matching example)
     // the glyph is highlighted inside the hero word
     const hero = cards[0]!.querySelector('.ja-block')!;
     expect(hero.textContent).toBe('あい');
@@ -181,15 +187,39 @@ describe('TASK-HANASO-CTA-01 §۴ — the footer CTA closes the introduction', (
     expect(cards[1]!.querySelector('[data-pron-guide]')).toBeNull();
   });
 
-  it('no related examples → no examples layer; the footer CTA still closes the card', () => {
+  it('TASK-LEARNING-09 §۶ — the host word ALONE still renders the merged section (the anchor card); a kana with NO readable vocabulary renders no section', () => {
+    // host word, no related examples → the merged «نمونه‌های قابل‌خواندن»
+    // section renders with the ONE anchor card (dedup is a non-issue here)
     const { container } = render(
       <KanaCard kana={KANA_A} showRomaji audioUrls={null} wordAudioUrls={null} initialProgress={{ stage: 'ready' }} />,
     );
     const card = container.querySelector<HTMLElement>('[data-kana-stage]')!;
-    expect(card.querySelector('[data-intro-examples]')).toBeNull();
+    const section = card.querySelector<HTMLElement>('[data-intro-examples]');
+    expect(section).not.toBeNull();
+    expect(section!.querySelectorAll('[data-example-card]')).toHaveLength(1);
+    expect(section!.querySelector('[data-example-word="あい"]')).not.toBeNull();
+    expect(section!.querySelector('[data-host-word-card="true"]')).not.toBeNull();
+    expect(section!.textContent).toContain('واژهٔ قابل‌خواندن');
     const footer = card.querySelector<HTMLElement>('[data-intro-cta-footer]');
     expect(footer).not.toBeNull();
     expect(card.lastElementChild).toBe(footer);
+
+    // no host word AND no examples → no vocabulary section at all (§۷ — no placeholder)
+    const bare = render(
+      <KanaCard
+        kana={{ ...KANA_A, hostWord: undefined } as unknown as KanaItem}
+        showRomaji
+        audioUrls={null}
+        wordAudioUrls={null}
+        initialProgress={{ stage: 'ready' }}
+      />,
+    );
+    const bareCard = bare.container.querySelector<HTMLElement>('[data-kana-stage]')!;
+    expect(bareCard.querySelector('[data-intro-examples]')).toBeNull();
+    expect(bareCard.querySelector('[data-example-card]')).toBeNull();
+    const bareFooter = bareCard.querySelector<HTMLElement>('[data-intro-cta-footer]');
+    expect(bareFooter).not.toBeNull();
+    expect(bareCard.lastElementChild).toBe(bareFooter);
   });
 });
 

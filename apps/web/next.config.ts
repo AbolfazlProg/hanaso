@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   reactCompiler: true,
+  // TASK-LEARNING-09: sandbox live-preview hosts (agent browser 127.0.0.1 +
+  // the platform preview gateway) must reach dev resources (HMR websocket,
+  // fonts) — Next 16 blocks cross-origin dev requests by default.
+  allowedDevOrigins: ['127.0.0.1', 'localhost', 'preview-chat-7136d8b9-b732-4cbc-9520-cec5d6a587f1.space-z.ai'],
   async headers() {
     return [
       // §10 — pre-generated audio assets (opus + m4a twins)

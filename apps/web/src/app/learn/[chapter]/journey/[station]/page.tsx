@@ -118,7 +118,12 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-6">
+    /* TASK-LEARNING-09 §۳/§۴ — the lesson container grows with the screen:
+     * phones stay compact (42rem), tablets get real horizontal room (50rem),
+     * laptops 64rem, desktops cap at 72rem (≈1152px — the task's 1100–1250
+     * band). The KanaCard is a @container, so ITS layout responds to the
+     * actual card width, not to device names. */
+    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-6 md:max-w-[50rem] lg:max-w-[64rem] xl:max-w-[72rem]">
       <header className="sticky top-0 z-10 -mx-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-ink-faint bg-paper/95 px-4 py-3 backdrop-blur">
         <Link
           href={`/learn/${chapterSlug}/journey`}

@@ -202,6 +202,13 @@ export const fa = {
        cards collapse (never deleted) while the learner is writing. */
     kanaIntroFoldReading: 'اطلاعات معرفی — تلفظ و واژهٔ نمونه',
     kanaIntroFoldSide: 'اطلاعات معرفی — یادسپار و جفت مشابه',
+    /* TASK-LEARNING-09 §۶ — the host readable word + the related usage
+       examples merge into ONE section (no duplicated word cards). */
+    kanaReadableExamplesTitle: 'نمونه‌های قابل‌خواندن',
+    kanaReadableExamplesFold: 'نمونه‌های قابل‌خواندن این نویسه',
+    /* TASK-LEARNING-09 §۱۵ — the mnemonic story returns to the introduction
+       flow; the practice fold groups the whole introduction info column. */
+    kanaIntroFoldInfo: 'اطلاعات معرفی — تلفظ، یادسپار و جفت مشابه',
     /* TASK-LEARNING-08 Addendum-5 §3 — audio presence in kana questions */
     exHearQuestionSound: 'شنیدن صدا',
     exHearQuestionSoundAria: 'پخش صدای این سؤال',
