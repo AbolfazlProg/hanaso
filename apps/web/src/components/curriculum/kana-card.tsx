@@ -34,7 +34,7 @@
  * in writing-data/licenses/ — nothing else technical in the teaching space.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Ear, Hand, Info, RotateCcw, Volume2 } from 'lucide-react';
+import { ArrowLeft, Ear, Hand, Info, Mic, RotateCcw, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { KANA_READING_FA_BY_GLYPH, KANA_TEACHING_BY_ID } from '@/modules/curriculum/content/kana-teaching';
 import { KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
@@ -42,6 +42,7 @@ import { kanaWordRomaji } from '@/modules/curriculum/kana-romaji';
 import type { KanaItem } from '@/modules/curriculum/types';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
+import { ExampleAudioButton } from '@/components/curriculum/example-audio-button';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { loadWritingCharData, writingAvailability, type WritingCharData } from '@/modules/writing';
 import { strokeInfoFa, type StrokeInfoFa } from '@/modules/writing/render';
@@ -68,6 +69,23 @@ export interface KanaCardProgress {
   stage: KanaStage;
 }
 
+/**
+ * TASK-HANASO-CTA-01 — a related usage example rendered inside the kana
+ * introduction (content order §۴): the station's example-set entry whose
+ * Japanese word CONTAINS the character (structural subset of the example-set
+ * block item — station-runner passes the authored objects unchanged, in
+ * their authored educational order).
+ */
+export interface KanaRelatedExample {
+  id: string;
+  role: 'anchor' | 'near' | 'varied' | 'faded' | 'reading';
+  ja: string;
+  reading: string;
+  fa: string;
+  whyFa: string;
+  pronFa?: string;
+}
+
 export interface KanaCardProps {
   kana: KanaItem;
   /** Kept for back-compat — the Latin reading is ALWAYS shown now (§8). */
@@ -78,6 +96,10 @@ export interface KanaCardProps {
   audioUrls: { opus: string; m4a: string } | null;
   /** Addendum-3 §9 — the host word's own audio pair (null = not generated). */
   wordAudioUrls: { opus: string; m4a: string } | null;
+  /** TASK-HANASO-CTA-01 §۴ — related usage examples (word contains the glyph). */
+  relatedExamples?: KanaRelatedExample[];
+  /** TASK-HANASO-CTA-01 §۴ — per-word audio pair registry (null = no asset). */
+  exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
   /** Writing-practice record callback (structured summary only — DD-111). */
   onWritingAttempt?: (summary: {
     character: string;
@@ -103,6 +125,8 @@ export function KanaCard({
   confusableNoteFa,
   audioUrls,
   wordAudioUrls,
+  relatedExamples,
+  exampleAudioByWord,
   onWritingAttempt,
   onWritingDone,
   initialProgress,
@@ -193,11 +217,37 @@ export function KanaCard({
   /**
    * The numbered teaching pass finished → the ready beat (Addendum-2 §4 +
    * Addendum-3 §5: the animation is watched FIRST, then the ONE confirm).
+   *
+   * TASK-HANASO-CTA-01 — the confirm now lives in the FOOTER at the end of
+   * the introduction content (after the related examples), so when the
+   * teaching pass finishes, the footer is brought into view: the learner
+   * SEES «معرفی این کاراکتر تمام شد! حالا نوبت توست.» + the CTA the moment
+   * it becomes active (the old layout had it right under the canvas, always
+   * in view — this preserves that discoverability). Only fires on the LIVE
+   * intro→ready transition; a restored «ready» stage never yanks the page.
    */
+  const ctaFooterRef = useRef<HTMLElement | null>(null);
+  const introJustFinishedRef = useRef(false);
   const onIntroDone = useCallback(() => {
     playOnce('teach-done');
+    introJustFinishedRef.current = true;
     setStage('ready');
   }, [playOnce]);
+
+  useEffect(() => {
+    if (stage !== 'ready' || !introJustFinishedRef.current) return;
+    introJustFinishedRef.current = false;
+    const el = ctaFooterRef.current;
+    if (!el || typeof window === 'undefined') return;
+    const header = document.querySelector('header.sticky');
+    const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+    const rect = el.getBoundingClientRect();
+    // center the small footer in the viewport (minus the sticky header) so the
+    // CTA and a glimpse of the content above it are both visible
+    const top = rect.top + window.scrollY - Math.max(0, (window.innerHeight - rect.height) / 2) - headerBottom / 2 - 12;
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
+  }, [stage]);
 
   /**
    * Addendum-4 §3/§5 — ONE helper for EVERY practice (re)start: bumps the
@@ -485,6 +535,56 @@ export function KanaCard({
       <p className="kana-reveal kana-reveal-4 text-small text-ink-faint">{confusableNoteFa}</p>
     ) : null;
 
+  /**
+   * TASK-HANASO-CTA-01 §۴ — the related-example articles (shared body for the
+   * open section AND the practice fold). Same card anatomy as the station's
+   * example-set cards: the WORD is the hero (glyph highlighted inside it),
+   * its OWN playable audio beside it, the Persian reading bold + the meaning
+   * visually separated (Addendum-5 §6 rules kept), plus why/pron guides.
+   */
+  const examplesBody = (relatedExamples ?? []).map((ex) => (
+    <article key={ex.id} className="rounded-md bg-surface-sunken/40 p-3" data-example-card data-example-word={ex.ja}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
+          {Array.from(ex.ja).map((ch, i) => (
+            <span
+              key={`${ch}-${i}`}
+              className={ch === kana.glyph ? 'rounded-md bg-shu/20 px-1 text-shu-deep' : undefined}
+            >
+              {ch}
+            </span>
+          ))}
+        </JaBlock>
+        {/* Addendum-4 §7 (kept): every example word keeps its OWN playable
+            audio — independent asset bound to THIS word. No asset → no button. */}
+        <ExampleAudioButton word={ex.ja} urls={exampleAudioByWord?.[ex.ja] ?? null} />
+      </div>
+      <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+        {ex.reading}
+      </p>
+      <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{ex.fa}</p>
+      {ex.whyFa ? (
+        <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
+          <MixedFaJaText text={ex.whyFa} />
+        </p>
+      ) : null}
+      {ex.pronFa ? (
+        <div
+          className="mt-3 flex items-start gap-2 rounded-md border border-shu/40 bg-surface-warm p-3"
+          data-pron-guide
+        >
+          <Mic aria-hidden className="mt-1 size-4 shrink-0 text-shu-deep" />
+          <div>
+            <p className="text-small font-bold text-ink">{fa.curriculum.examplePronGuideTitle}</p>
+            <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink">
+              <MixedFaJaText text={ex.pronFa} />
+            </p>
+          </div>
+        </div>
+      ) : null}
+    </article>
+  ));
+
   // -------------------------------------------------- render
   return (
     <section
@@ -597,23 +697,11 @@ export function KanaCard({
                 {fa.curriculum.kanaStageIntroHint}
               </p>
             ) : null}
-            {stage === 'ready' ? (
-              <>
-                <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
-                  {fa.curriculum.kanaStageReadyHint}
-                </p>
-                {/* Addendum-2 §4 (kept): the ONE interactive stop. Addendum-4 §3:
-                    it must LOOK and FEEL like a real primary button. */}
-                <button
-                  type="button"
-                  onClick={startPractice}
-                  className="min-h-12 cursor-pointer rounded-md bg-ai px-8 text-lead font-bold text-paper shadow-card transition-all hover:bg-indigo-deep hover:shadow-card active:translate-y-0.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-                  data-ready-cta
-                >
-                  {fa.curriculum.kanaStageReadyCta}
-                </button>
-              </>
-            ) : null}
+            {/* TASK-HANASO-CTA-01 — the «ready» slot is deliberately EMPTY: the
+                confirm button (and its explanatory text) moved to the footer at
+                the end of the introduction content, after the related examples
+                (owner 2026-11-08). The min-height slot keeps the canvas from
+                moving between stages (Addendum-4 §3 stays true). */}
             {stage === 'guided' ? (
               <p className="max-w-xl text-caption leading-[var(--leading-fa)] text-ink-soft">
                 {fa.curriculum.kanaStageGuidedHint}
@@ -802,6 +890,30 @@ export function KanaCard({
         </div>
       </div>
 
+      {/* ══════════ TASK-HANASO-CTA-01 §۴ — نمونه‌های کاربردی (content order ۴) ══════════
+          The related usage examples of THIS character (station example-set
+          entries whose word contains the glyph, authored order, per-word audio,
+          Persian reading + meaning + why + the authored pronunciation guide).
+          They close the introduction content BEFORE the footer CTA. During
+          practice they collapse into ONE fold (Addendum-5 §1 pattern — the
+          focused practice view; nothing is ever deleted). */}
+      {relatedExamples && relatedExamples.length > 0 ? (
+        inPractice ? (
+          <details className="rounded-md border border-ink-faint bg-surface-sunken/60" data-intro-fold="examples">
+            <summary className="cursor-pointer select-none px-4 py-3 text-caption font-bold text-ink-soft">
+              <Info aria-hidden className="ml-1 inline size-4 align-middle" />
+              {fa.curriculum.kanaIntroExamplesFold}
+            </summary>
+            <div className="flex flex-col gap-3 px-4 pb-4">{examplesBody}</div>
+          </details>
+        ) : (
+          <section className="rounded-md border border-ink-faint p-4" data-intro-examples>
+            <p className="text-h3 font-bold text-ink">{fa.curriculum.kanaIntroExamplesTitle}</p>
+            <div className="mt-3 flex flex-col gap-3">{examplesBody}</div>
+          </section>
+        )
+      ) : null}
+
       {/* §12 — attribution: ONE short line, only what the licenses require.
           KanjiVG (CC BY-SA 3.0) needs name + license + link; VOICEVOX
           character terms need the voice credit. Full texts live in
@@ -821,6 +933,34 @@ export function KanaCard({
           {' · '}صدا: VOICEVOX:ぞん子
         </p>
       </details>
+
+      {/* ══════════ TASK-HANASO-CTA-01 §۴ — Footer و CTA شروع تمرین (content order ۵) ══════════
+          A small, independent, tidy footer — THE last element of the card: a
+          divider, the one-line lead, and the ONE primary action of the page.
+          Nothing (example or information) sits below it. The button keeps the
+          exact proven click behavior: progress saved, soft-scroll to the top of
+          the WritingCanvas, Guided writing begins on the SAME page (no route). */}
+      {stage === 'ready' && !inPractice ? (
+        <footer
+          ref={ctaFooterRef}
+          className="flex flex-col items-center gap-3 border-t border-ink-faint pt-4 text-center"
+          data-intro-cta-footer
+        >
+          <p className="text-body font-bold text-ink">{fa.curriculum.kanaIntroFooterLead}</p>
+          {/* Addendum-2 §4 (kept): the ONE interactive stop. Addendum-4 §3 (kept):
+              a REAL primary button — now the natural closing step of the whole
+              introduction. Arrow = lucide icon (no emoji, Issue #108). */}
+          <button
+            type="button"
+            onClick={startPractice}
+            className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-ai px-8 text-lead font-bold text-paper shadow-card transition-all hover:bg-indigo-deep hover:shadow-card active:translate-y-0.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai sm:w-auto sm:min-w-[18rem]"
+            data-ready-cta
+          >
+            {fa.curriculum.kanaStageReadyCta}
+            <ArrowLeft aria-hidden className="size-5" />
+          </button>
+        </footer>
+      ) : null}
     </section>
   );
 }

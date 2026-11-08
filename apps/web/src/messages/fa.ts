@@ -149,7 +149,13 @@ export const fa = {
     kanaStageReadyChip: 'تأیید آمادگی',
     kanaStageChipReady: 'آماده',
     kanaStageReadyHint: 'نویسه را نگاه کن، صدایش را بشنو و توضیحش را بخوان — وقتی آماده بودی شروع کن.',
-    kanaStageReadyCta: 'فهمیدم، شروع کنیم',
+    /* TASK-HANASO-CTA-01 (owner 2026-11-08): the CTA leaves the slot under the
+       canvas and becomes the natural LAST step of the introduction — a small
+       tidy footer after all the related examples. Arrow = lucide icon (no emoji). */
+    kanaStageReadyCta: 'شروع تمرین نوشتن',
+    kanaIntroFooterLead: 'معرفی این کاراکتر تمام شد! حالا نوبت توست.',
+    kanaIntroExamplesTitle: 'نمونه‌های کاربردی',
+    kanaIntroExamplesFold: 'نمونه‌های کاربردی این نویسه',
     kanaStageDemoTitle: 'نحوهٔ نوشتن را ببین',
     kanaStageDemoReplay: 'نمایش دوباره',
     kanaStageDemoDone: 'نمایش تمام شد — با هم مرورش کنیم',

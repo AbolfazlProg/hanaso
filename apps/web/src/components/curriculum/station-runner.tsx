@@ -50,9 +50,9 @@ import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
-import { KanaCard, normalizeKanaStage, type KanaCardProgress } from './kana-card';
+import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
 import { ExampleAudioButton } from './example-audio-button';
-import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
+import { KANA_ITEMS_BY_ID, KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
 import { loadWritingCharData, writingAvailability } from '@/modules/writing';
 import { preloadAudio } from '@/modules/audio/client-cache';
 
@@ -244,6 +244,26 @@ export function StationRunner(props: StationRunnerProps) {
    * until its free-writing stage completes) and the stage survives refresh.
    */
   const [kanaCardStages, setKanaCardStages] = useState<Record<string, string>>({});
+
+  /* ------- TASK-HANASO-CTA-01 §۴ — related usage examples per kana ---------
+   * Each kana card's related usage examples = the station's example-set
+   * entries whose Japanese word CONTAINS that glyph, in their authored
+   * educational order. Computed ONCE per station (data-driven; no content
+   * duplication, no new content structure — the walk's own example-set block
+   * stays exactly where it is). */
+  const relatedExamplesByKanaId = useMemo(() => {
+    const map: Record<string, KanaRelatedExample[]> = {};
+    for (const b of station.blocks) {
+      if (b.kind !== 'example-set') continue;
+      for (const ex of b.examples) {
+        for (const ch of Array.from(new Set(ex.ja))) {
+          const item = KANA_ITEMS_BY_GLYPH[ch];
+          if (item) (map[item.kanaId] ??= []).push(ex);
+        }
+      }
+    }
+    return map;
+  }, [station.blocks]);
 
   const blocks = station.blocks;
   const block = blocks[step];
@@ -491,6 +511,7 @@ export function StationRunner(props: StationRunnerProps) {
           }}
           onReturnToBlock={returnToBlock}
           kanaCardStage={block.kind === 'kana-card' ? normalizeKanaStage(kanaCardStages[block.id]) : undefined}
+          relatedExamplesByKanaId={relatedExamplesByKanaId}
           onKanaProgress={(progress: { stage: string }) => {
             if (block.kind !== 'kana-card') return;
             setKanaCardStages((prev) =>
@@ -790,6 +811,7 @@ function BlockView({
   kanaCardStage,
   onKanaProgress,
   onKanaWritingDone,
+  relatedExamplesByKanaId,
 }: {
   block: ClientTeachingBlock;
   stationSlug: string;
@@ -829,6 +851,8 @@ function BlockView({
   onKanaProgress?: (progress: { stage: string }) => void;
   /** #117 §8: the staged writing experience completed → the walk continues. */
   onKanaWritingDone?: () => void;
+  /** TASK-HANASO-CTA-01 §۴: kanaId → its related usage examples (station-wide). */
+  relatedExamplesByKanaId?: Record<string, KanaRelatedExample[]>;
 }) {
   switch (block.kind) {
     case 'scene':
@@ -943,6 +967,8 @@ function BlockView({
           confusableNoteFa={block.confusableNoteFa}
           audioUrls={kanaAudioByKanaId?.[kana.kanaId] ?? null}
           wordAudioUrls={hostWordAudioByKanaId?.[kana.kanaId] ?? null}
+          relatedExamples={relatedExamplesByKanaId?.[kana.kanaId]}
+          exampleAudioByWord={exampleAudioByWord}
           initialProgress={kanaCardStage ? ({ stage: kanaCardStage } as KanaCardProgress) : undefined}
           onProgress={onKanaProgress}
           onWritingDone={onKanaWritingDone}
