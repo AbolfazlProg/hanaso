@@ -164,7 +164,7 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
           type="button"
           onClick={complete}
           disabled={posting}
-          className="flex h-14 items-center justify-center gap-3 rounded-md bg-shu px-6 text-lead font-black text-paper transition-colors hover:bg-shu-deep disabled:opacity-45"
+          className="flex h-14 items-center justify-center gap-3 rounded-md bg-indigo px-6 text-lead font-black text-paper transition-colors hover:bg-indigo-deep disabled:opacity-45"
         >
           {posting ? fa.common.loading : fa.curriculum.startChapter}
           <ArrowLeft aria-hidden className="size-5" />

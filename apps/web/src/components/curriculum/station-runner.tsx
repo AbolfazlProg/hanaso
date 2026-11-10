@@ -70,6 +70,15 @@ export interface StationRunnerProps {
   /** The stripped station (no answer material — server grades everything). */
   station: ClientStation;
   chapter: Pick<Chapter, 'words' | 'expressions'>;
+  /**
+   * TASK-LEARNING-10 §6 — the next CORE station on the learning map after this
+   * one (server-resolved from the real chapter data, same core-path ordering
+   * the island map uses). Drives the completion CTA: present → «رفتن به
+   * ایستگاه بعدی» deep-linked to it; null/absent → «ادامهٔ مسیر» to the island
+   * map (the mastery gate has just opened there). Absent prop = the host has
+   * no map context — the map CTA is the safe fallback.
+   */
+  nextCoreStation?: { slug: string; titleFa: string } | null;
   clientExercises: Record<string, ClientExercise>;
   dialogue: {
     lines: Line[];
@@ -128,13 +137,19 @@ async function gradeBlock(payload: {
 }
 
 /**
- * TASK-LEARNING-08 (WP-5): fetch the server-side resume anchor (the in_progress
- * station's last synced block). Read from the SAME API the walk writes to — the
+ * TASK-LEARNING-08 (WP-5) + TASK-LEARNING-10 §6: fetch the server-side walk
+ * state for this station. Read from the SAME API the walk writes to — the
  * client fetch works identically in dev (route-handler store) and production
  * (Postgres), unlike an RSC prop (RSC and route handlers may read different
  * module instances in dev).
+ *
+ * TL-10 §6 adds the `completed` branch: a refresh (or a re-visit) of an
+ * ALREADY-COMPLETED station re-renders its completion state instead of
+ * silently restarting the walk — the owner's protection «از دست رفتن وضعیت
+ * ایستگاه پس از Refresh».
  */
-async function fetchServerResumeAnchor(chapterSlug: string, stationSlug: string): Promise<string | null> {
+type ServerResume = { kind: 'anchor'; blockId: string } | { kind: 'completed' } | null;
+async function fetchServerResume(chapterSlug: string, stationSlug: string): Promise<ServerResume> {
   try {
     const res = await fetch(
       `/api/curriculum/station?chapter=${encodeURIComponent(chapterSlug)}&station=${encodeURIComponent(stationSlug)}`,
@@ -142,7 +157,10 @@ async function fetchServerResumeAnchor(chapterSlug: string, stationSlug: string)
     );
     const json = (await res.json()) as { data?: { state?: { status?: string; currentBlock?: string | null } | null } };
     const state = json.data?.state;
-    if (state && state.status === 'in_progress' && state.currentBlock) return state.currentBlock;
+    if (state?.status === 'completed') return { kind: 'completed' };
+    if (state && state.status === 'in_progress' && state.currentBlock) {
+      return { kind: 'anchor', blockId: state.currentBlock };
+    }
     return null;
   } catch {
     return null;
@@ -205,6 +223,7 @@ export function StationRunner(props: StationRunnerProps) {
   const {
     station,
     chapter,
+    nextCoreStation,
     clientExercises,
     dialogue,
     audioByLine,
@@ -325,12 +344,18 @@ export function StationRunner(props: StationRunnerProps) {
       }
       return;
     }
-    // no local snapshot — the server anchor is the honest fallback (cleared
+    // no local snapshot — the server walk state is the honest fallback (cleared
     // localStorage on the same browser; a different browser has a different
     // learner id and thus no claim on this walk).
-    void fetchServerResumeAnchor(chapterSlug, station.slug).then((anchor) => {
-      if (!anchor) return;
-      const target = stepOfBlock(blocks, anchor);
+    // TL-10 §6: `completed` → the station re-renders its completion state
+    // (refresh/re-visit never loses it, and the walk never silently restarts).
+    void fetchServerResume(chapterSlug, station.slug).then((resume) => {
+      if (!resume) return;
+      if (resume.kind === 'completed') {
+        setCompleted(true);
+        return;
+      }
+      const target = stepOfBlock(blocks, resume.blockId);
       if (target !== null && target > 0) {
         setStep(target);
         setResumedNotice(true);
@@ -430,7 +455,49 @@ export function StationRunner(props: StationRunnerProps) {
     [station.blocks],
   );
 
-  const doneHref = `/learn/${chapterSlug}/journey`;
+  /*
+   * TASK-LEARNING-10 §6 — the completion CTA's REAL destination, derived from
+   * the learning-map structure itself: the host page resolves the next core
+   * station server-side (same ordering the island map uses) and passes it in.
+   * Present → deep-linked directly («رفتن به ایستگاه بعدی»); absent → the island
+   * map, where the mastery gate has just opened («ادامهٔ مسیر»). The label
+   * always names the destination — the owner's rule — and it is ONE CTA, never
+   * a second follow-up button.
+   */
+  const completionTarget = useMemo(() => {
+    if (nextCoreStation) {
+      return {
+        href: `/learn/${chapterSlug}/journey/${nextCoreStation.slug}`,
+        label: fa.curriculum.ctaNextStation,
+        stationTitleFa: nextCoreStation.titleFa as string | null,
+      };
+    }
+    return { href: `/learn/${chapterSlug}/journey`, label: fa.curriculum.ctaContinuePath, stationTitleFa: null };
+  }, [nextCoreStation, chapterSlug]);
+
+  /* TL-10 §6: rapid double-click on the CTA navigates exactly once. */
+  const navLatchRef = useRef(false);
+  const goCompletionDestination = useCallback(() => {
+    if (navLatchRef.current) return;
+    navLatchRef.current = true;
+    router.push(completionTarget.href);
+  }, [completionTarget.href, router]);
+
+  /*
+   * TL-10 §6: «مرور دوباره» — the tertiary text action that preserves the
+   * pre-TL-10 capability of re-walking a completed station for practice. It
+   * restarts the LOCAL walk only; the server's completion record and rewards
+   * stay exactly as registered (the API is idempotent — `already: true`).
+   */
+  const reviewWalkAgain = useCallback(() => {
+    setCompleted(false);
+    setStep(0);
+    setBlockResults({});
+    setExerciseProgress({});
+    setKanaCardStages({});
+    setSessionScore(null);
+    setResumedNotice(false);
+  }, []);
 
   /*
    * WP-5: the restore check runs on mount; until it settles, a one-line placeholder
@@ -480,7 +547,13 @@ export function StationRunner(props: StationRunnerProps) {
         </p>
       </div>
 
-      {block && (
+      {/*
+       * TL-10 §6: once the station is completed, the walk content RETIRES —
+       * the completion panel is the one clear state (message + ONE CTA). No
+       * half-alive walk buttons next to it (the «مرور دوباره» link brings the
+       * walk back for practice).
+       */}
+      {!completed && block && (
         <BlockView
           block={block}
           stationSlug={station.slug}
@@ -553,50 +626,76 @@ export function StationRunner(props: StationRunnerProps) {
        * button until its free-writing stage completes; the card owns its CTA
        * and auto-advances via onKanaWritingDone).
        */}
-      {(step > 0 ||
-        (block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card')) && (
-        <div className="flex items-center gap-3">
-          {step > 0 && (
-            <button
-              type="button"
-              onClick={prev}
-              className="flex h-11 items-center gap-2 rounded-md border border-ink-faint bg-card px-5 text-body font-bold text-ink transition-colors hover:bg-surface-warm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-            >
-              <ArrowRight aria-hidden className="size-4" />
-              {fa.curriculum.prevBlock}
-            </button>
-          )}
-          {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card' && (
-            <button
-              type="button"
-              onClick={next}
-              disabled={completing}
-              className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
-            >
-              {step === blocks.length - 1 ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
-              <ArrowLeft aria-hidden className="size-4" />
-            </button>
-          )}
-        </div>
-      )}
+      {!completed &&
+        (step > 0 ||
+          (block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card')) && (
+          <div className="flex items-center gap-3">
+            {step > 0 && (
+              <button
+                type="button"
+                onClick={prev}
+                className="flex h-11 items-center gap-2 rounded-md border border-ink-faint bg-card px-5 text-body font-bold text-ink transition-colors hover:bg-surface-warm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+              >
+                <ArrowRight aria-hidden className="size-4" />
+                {fa.curriculum.prevBlock}
+              </button>
+            )}
+            {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card' && (
+              <button
+                type="button"
+                onClick={next}
+                disabled={completing}
+                className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
+              >
+                {/* TL-10 §6/§7: a plain forward action — a status text is never
+                 posed as a button, and a normal action is never red. */}
+                {fa.curriculum.continueBlock}
+                <ArrowLeft aria-hidden className="size-4" />
+              </button>
+            )}
+          </div>
+        )}
 
+      {/*
+       * TASK-LEARNING-10 §6 — the completion panel, redesigned after the owner's
+       * order: the success moment is a NON-INTERACTIVE status message
+       * («این ایستگاه را با موفقیت پشت سر گذشتی!») followed by exactly ONE
+       * primary CTA whose label names its real destination. The old flow had
+       * a «ایستگاه تمام شد» BUTTON and then a second red «بازگشت به نقشه»
+       * button — two sequential actions for one transition; both are gone.
+       * The replay/review tertiary action stays a quiet text link (never a
+       * second primary CTA), and the color is Aizen's primary indigo — red is
+       * reserved for errors only (TL-10 §7 rule 9).
+       */}
       {completed && (
         <div
           role="status"
           aria-live="polite"
+          data-station-complete
           className="flex flex-col gap-3 rounded-md border border-success bg-card p-5"
         >
           <p className="flex items-center gap-2 text-body font-bold text-success">
             <CheckCircle2 aria-hidden className="size-5" />
-            {fa.curriculum.stationDone}
+            {fa.curriculum.stationCompletedMessage}
           </p>
           <button
             type="button"
-            onClick={() => router.push(doneHref)}
-            className="flex h-11 w-fit items-center gap-2 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep"
+            onClick={goCompletionDestination}
+            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
-            {fa.curriculum.backToJourney}
+            {completionTarget.label}
             <ArrowLeft aria-hidden className="size-4" />
+          </button>
+          {completionTarget.stationTitleFa && (
+            <p className="text-caption text-ink-soft">{completionTarget.stationTitleFa}</p>
+          )}
+          <button
+            type="button"
+            onClick={reviewWalkAgain}
+            className="flex w-fit items-center gap-1 text-small text-ai underline underline-offset-4"
+          >
+            <RotateCcw aria-hidden className="size-4" />
+            {fa.curriculum.reviewStationAgain}
           </button>
         </div>
       )}
@@ -1551,7 +1650,7 @@ function CharacterSceneBlock({
                     busy ||
                     (s.userReply.kind === 'choice' ? !choice : built.length !== (s.userReply.chips?.length ?? 0))
                   }
-                  className="h-11 w-fit rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep disabled:opacity-45"
+                  className="h-11 w-fit rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep disabled:opacity-45"
                 >
                   {fa.curriculum.checkAnswer}
                 </button>
@@ -1580,9 +1679,11 @@ function CharacterSceneBlock({
         <button
           type="button"
           onClick={onSceneDone}
-          className="flex h-11 w-fit items-center gap-2 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep"
+          className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
         >
-          {fa.curriculum.stationDone}
+          {/* TL-10 §6/§7: a plain forward action — never a status text posed as
+             a button, and a normal action is never red. */}
+          {fa.curriculum.continueBlock}
         </button>
       )}
     </section>

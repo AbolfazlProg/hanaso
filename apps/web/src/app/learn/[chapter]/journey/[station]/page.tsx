@@ -51,6 +51,19 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
   const station = chapter.stations.find((s) => s.slug === stationSlug);
   if (!station) notFound();
 
+  /*
+   * TASK-LEARNING-10 §6 — the next CORE station after this one on the real
+   * learning-map order (authored `order`, core path only — the same semantics
+   * the island map resolves). Passed to the runner for its completion CTA:
+   * «رفتن به ایستگاه بعدی» deep-linked to it, or «ادامهٔ مسیر» to the map when
+   * this was the last core station (the mastery gate opens there).
+   */
+  const nextCoreStation =
+    chapter.stations
+      .slice()
+      .sort((a, b) => a.order - b.order)
+      .find((s) => s.core && s.order > station.order) ?? null;
+
   // client-safe exercise payloads (no answers/feedback)
   const clientExercises: Record<string, ClientExercise> = {};
   for (const block of station.blocks) {
@@ -172,6 +185,7 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
           kanaAudioByKanaId={kanaAudioByKanaId}
           hostWordAudioByKanaId={hostWordAudioByKanaId}
           exampleAudioByWord={exampleAudioByWord}
+          nextCoreStation={nextCoreStation ? { slug: nextCoreStation.slug, titleFa: nextCoreStation.titleFa } : null}
         />
       </div>
     </main>

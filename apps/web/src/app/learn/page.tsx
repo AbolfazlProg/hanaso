@@ -67,7 +67,7 @@ export default async function LearnPage() {
           ) : null}
           <a
             href={`/learn/${chapter.slug}`}
-            className="mt-5 flex h-12 w-fit items-center gap-2 rounded-md bg-shu px-6 text-body font-bold text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="mt-5 flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {state && state.status !== 'started' ? fa.curriculum.continueChapter : fa.curriculum.startChapter}
           </a>

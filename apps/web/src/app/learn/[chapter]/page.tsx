@@ -72,7 +72,7 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
       {/* CTA into stage A */}
       <a
         href={`/learn/${chapter.slug}/dialogue`}
-        className="flex h-14 items-center justify-center gap-3 rounded-md bg-shu px-6 text-lead font-black text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+        className="flex h-14 items-center justify-center gap-3 rounded-md bg-indigo px-6 text-lead font-black text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
       >
         {fa.curriculum.startChapter}
         <ArrowLeft aria-hidden className="size-5" />

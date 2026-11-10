@@ -79,6 +79,9 @@ interface GradeResponse {
     /** Addendum-5 §3 — the correct answer's committed audio (hearable after
      *  answering; absent when no asset exists → the control stays hidden). */
     correctAudio?: { what: string; opus: string; m4a: string };
+    /** TASK-LEARNING-10 §3 — the correct answer's reading for the integrated
+     *  answer card (glyph + Persian reading + Latin romaji). */
+    correctReading?: { glyph: string; fa: string; latin: string };
   };
 }
 
@@ -178,6 +181,167 @@ export function ExerciseSession({
   const autoNextTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const advancedRef = useRef(false);
 
+  const advanceRef = useRef<(() => void) | null>(null);
+  const scheduleAutoNextRef = useRef<((wasFirstTry: boolean) => void) | null>(null);
+
+  /* ---------------- TASK-LEARNING-10 §5: the correct-answer sound owns the clock
+   *
+   * After a CORRECT answer the pronunciation AUTO-PLAYS once (no extra click —
+   * the owner's rule); the auto-next then waits for the sound to END + a short
+   * review beat, so the next question can never appear before the learner has
+   * heard/read the answer. A failed or stalled load NEVER locks the question:
+   * an immediate failure falls back to the configured fixed delay, a stall is
+   * bounded by autoNextAudioFallbackMs, a short note is shown, and the replay
+   * control always stays available. Every playback (auto or manual replay)
+   * runs through ONE controller — manual and auto can never overlap, and the
+   * whole flow is event-scoped (fired from the grade handler), so re-renders
+   * can never re-trigger a play.
+   */
+  const [outcomeAudioPlaying, setOutcomeAudioPlaying] = useState(false);
+  const [outcomeAudioFailed, setOutcomeAudioFailed] = useState(false);
+  const outcomeAudioCtlRef = useRef<{
+    el: HTMLAudioElement | null;
+    urls: { opus: string; m4a: string } | null;
+    beatTimer: ReturnType<typeof setTimeout> | null;
+    fallbackTimer: ReturnType<typeof setTimeout> | null;
+    /** correct path: end → beat → advance (a wrong-path reveal play never advances) */
+    advanceArmed: boolean;
+    triedM4a: boolean;
+  }>({ el: null, urls: null, beatTimer: null, fallbackTimer: null, advanceArmed: false, triedM4a: false });
+
+  const clearOutcomeTimers = useCallback(() => {
+    const ctl = outcomeAudioCtlRef.current;
+    if (ctl.beatTimer !== null) {
+      clearTimeout(ctl.beatTimer);
+      ctl.beatTimer = null;
+    }
+    if (ctl.fallbackTimer !== null) {
+      clearTimeout(ctl.fallbackTimer);
+      ctl.fallbackTimer = null;
+    }
+  }, []);
+
+  const stopOutcomeAudio = useCallback(() => {
+    clearOutcomeTimers();
+    const ctl = outcomeAudioCtlRef.current;
+    const el = ctl.el;
+    ctl.advanceArmed = false;
+    if (el) {
+      el.onended = null;
+      el.onerror = null;
+      try {
+        el.pause();
+        el.currentTime = 0;
+      } catch {
+        /* jsdom and engines without media — the state flags are what matter */
+      }
+    }
+    ctl.el = null;
+    ctl.urls = null;
+    setOutcomeAudioPlaying(false);
+  }, [clearOutcomeTimers]);
+
+  /** The sound is not hearable. Two shapes:
+   *  - IMMEDIATE failure (load/play rejected, both formats dead): a short note
+   *    + the standard fixed delay — the panel just appeared, so the learner
+   *    still gets the normal reading beat. Never locked.
+   *  - STALL (no ended, no error — caught by the fallback bound): the panel has
+   *    already been up for autoNextAudioFallbackMs, so there is no long wait
+   *    (never locked) — but the honest note still has to be SEEABLE, so the
+   *    question holds for one short review beat and then advances. A note
+   *    that dies in the same commit as the advance would never be read.
+   * Both show the honest note; the replay control stays available. */
+  const onOutcomeAudioUnavailable = useCallback(
+    (advanceArmed: boolean, kind: 'immediate' | 'stall') => {
+      stopOutcomeAudio();
+      setOutcomeAudioFailed(true);
+      if (!advanceArmed) return;
+      if (kind === 'immediate') {
+        scheduleAutoNextRef.current?.(false);
+      } else {
+        outcomeAudioCtlRef.current.beatTimer = setTimeout(() => advanceRef.current?.(), EXPERIENCE.autoNextAudioBeatMs);
+      }
+    },
+    [stopOutcomeAudio],
+  );
+
+  /** Fire-and-hear: play the correct-answer sound once. `withAdvance` (the
+   *  correct path) arms end→beat→advance; the wrong-path reveal play never
+   *  advances (retry stays the learner's choice there). */
+  const startOutcomeAudio = useCallback(
+    (urls: { opus: string; m4a: string }, withAdvance: boolean) => {
+      stopOutcomeAudio();
+      setOutcomeAudioFailed(false);
+      const ctl = outcomeAudioCtlRef.current;
+      ctl.urls = urls;
+      ctl.advanceArmed = withAdvance;
+      ctl.triedM4a = false;
+      const el = getCachedAudio(urls.opus);
+      if (!el) {
+        onOutcomeAudioUnavailable(withAdvance, 'immediate');
+        return;
+      }
+      ctl.el = el;
+      el.onended = () => {
+        setOutcomeAudioPlaying(false);
+        const armed = outcomeAudioCtlRef.current.advanceArmed;
+        clearOutcomeTimers();
+        if (armed) {
+          outcomeAudioCtlRef.current.beatTimer = setTimeout(
+            () => advanceRef.current?.(),
+            EXPERIENCE.autoNextAudioBeatMs,
+          );
+        }
+      };
+      el.onerror = () => {
+        const c = outcomeAudioCtlRef.current;
+        if (!c.triedM4a && c.urls && c.el && !c.el.src.endsWith(c.urls.m4a)) {
+          c.triedM4a = true;
+          c.el.src = c.urls.m4a;
+          void c.el.play().catch(() => onOutcomeAudioUnavailable(c.advanceArmed, 'immediate'));
+          return;
+        }
+        onOutcomeAudioUnavailable(outcomeAudioCtlRef.current.advanceArmed, 'immediate');
+      };
+      try {
+        el.playbackRate = 1; // normal = real normal (owner speed policy)
+        try {
+          el.preservesPitch = true;
+        } catch {
+          /* engines without the property */
+        }
+        el.currentTime = 0;
+        const p = el.play();
+        setOutcomeAudioPlaying(true);
+        if (withAdvance) {
+          outcomeAudioCtlRef.current.fallbackTimer = setTimeout(
+            () => onOutcomeAudioUnavailable(outcomeAudioCtlRef.current.advanceArmed, 'stall'),
+            EXPERIENCE.autoNextAudioFallbackMs,
+          );
+        }
+        if (p && typeof p.then === 'function') {
+          p.then(() => undefined).catch(() =>
+            onOutcomeAudioUnavailable(outcomeAudioCtlRef.current.advanceArmed, 'immediate'),
+          );
+        }
+      } catch {
+        onOutcomeAudioUnavailable(withAdvance, 'immediate');
+      }
+    },
+    [clearOutcomeTimers, onOutcomeAudioUnavailable, stopOutcomeAudio],
+  );
+
+  /** The visible replay control: a manual replay cancels any pending advance
+   *  beat/fallback and re-arms end→beat→advance, so a replaying learner is
+   *  never advanced mid-listen. */
+  const replayOutcomeAudio = useCallback(() => {
+    const ctl = outcomeAudioCtlRef.current;
+    if (!ctl.urls) return;
+    const urls = ctl.urls;
+    const armed = ctl.advanceArmed;
+    startOutcomeAudio(urls, armed);
+  }, [startOutcomeAudio]);
+
   // report the in-flight position to the host on every question transition
   useEffect(() => {
     onProgress?.({ index, firstTryCorrect });
@@ -206,6 +370,9 @@ export function ExerciseSession({
   }, []);
 
   const advance = useCallback(() => {
+    // TL-10 §5: leaving this question stops its outcome sound (never bleeds
+    // into the next question's own sounds).
+    stopOutcomeAudio();
     // WP-5: manual + auto advance share this single gate — the second caller is a no-op.
     if (advancedRef.current) return;
     advancedRef.current = true;
@@ -221,7 +388,12 @@ export function ExerciseSession({
     reset();
     // re-arm happens in the [index] effect — never synchronously here, so a
     // rapid double fire (timer + click in the same tick) cannot double-advance.
-  }, [firstTryCorrect, isLast, onSessionDone, reset, total]);
+  }, [firstTryCorrect, isLast, onSessionDone, reset, stopOutcomeAudio, total]);
+
+  /* TL-10 §5: late-bind the advance/schedule callbacks into the outcome-audio
+   * controller (it is declared earlier); reads happen only inside event
+   * handlers and timers, never during render. */
+  advanceRef.current = advance;
 
   /**
    * WP-5 (owner feedback D): schedule the automatic advance after a CORRECT
@@ -243,6 +415,8 @@ export function ExerciseSession({
     },
     [advance],
   );
+  /* TL-10 §5: late-bind (see the note at advanceRef above). */
+  scheduleAutoNextRef.current = scheduleAutoNext;
 
   const grade = useCallback(
     async (payload: Record<string, unknown>) => {
@@ -272,9 +446,20 @@ export function ExerciseSession({
           setEliminated((cur) => mergeEliminated(cur, ids));
           setSelected((sel) => (sel !== null && ids.includes(sel) ? null : sel));
         }
-        // WP-5 (owner feedback D): correct → auto-advance after the configured
-        // delay; wrong → stays put (retry / return-to-teaching are the choices).
-        if (outcome.correct) scheduleAutoNext(attemptNo === 1);
+        // WP-5 (owner feedback D) + TASK-LEARNING-10 §5: on a CORRECT answer the
+        // correct pronunciation AUTO-PLAYS once and the auto-next waits for it
+        // to END (+ a short beat). No committed asset (or an unavailable one)
+        // falls back to the configured fixed delay — the flow never locks.
+        // On a WRONG answer the sound plays only when the reveal itself appears
+        // (F3 — the moment the correct answer is shown), never before, and the
+        // question stays put (retry / return-to-teaching are the choices).
+        if (outcome.correct && outcome.correctAudio) {
+          startOutcomeAudio(outcome.correctAudio, true);
+        } else if (outcome.correct) {
+          scheduleAutoNext(attemptNo === 1);
+        } else if (outcome.reveal && outcome.correctAudio) {
+          startOutcomeAudio(outcome.correctAudio, false);
+        }
         return outcome;
       } catch {
         // Reviewer-B S1: never fail silently — a dead «بررسی پاسخ» button reads as broken.
@@ -284,7 +469,7 @@ export function ExerciseSession({
         setBusy(false);
       }
     },
-    [attemptNo, chapterSlug, ex, scheduleAutoNext, stationSlug],
+    [attemptNo, chapterSlug, ex, scheduleAutoNext, startOutcomeAudio, stationSlug],
   );
 
   const check = useCallback(async () => {
@@ -577,13 +762,20 @@ export function ExerciseSession({
         </div>
       )}
 
-      {/* ---- feedback panel (in-place, role=status — SKL-002 §۳-۶) ---- */}
+      {/* ---- feedback panel (in-place, role=status — SKL-002 §۳-۶) ----
+       * TASK-LEARNING-10 §3: rebuilt as an INTEGRATED answer card — one clear
+       * structure with the question's own visual language: status row, the
+       * character + its Persian|Latin reading, the teaching copy, and a compact
+       * Aizen replay control. The correct-answer sound AUTO-PLAYS (started by
+       * the grade handler); this control is only a replay, never a required
+       * click (the owner's rule: no extra click to hear the pronunciation). */}
       {feedback && (
         <div
           role="status"
           aria-live="polite"
+          data-feedback-panel
           className={[
-            'flex flex-col gap-2 rounded-md border p-4',
+            'flex flex-col gap-3 rounded-md border p-4',
             feedback.correct ? 'border-success bg-card' : 'border-error bg-card',
           ].join(' ')}
         >
@@ -605,22 +797,68 @@ export function ExerciseSession({
               </>
             )}
           </p>
-          <p className="text-body">{feedback.feedbackFa}</p>
+          {/* TASK-LEARNING-10 §3 — the answer card: the character at a readable
+              size + its reading, Persian as the primary guide and Latin as the
+              complement («کی | ki» — the owner's display rule). */}
+          {feedback.correctReading && (
+            <div
+              className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-md border border-ink-faint bg-surface-warm px-4 py-3"
+              data-feedback-reading
+            >
+              <JaBlock className="text-[clamp(2.75rem,11vw,4rem)] font-bold leading-[1.15] text-ink">
+                {feedback.correctReading.glyph}
+              </JaBlock>
+              <p className="flex flex-wrap items-baseline gap-x-2">
+                {feedback.correctReading.fa ? (
+                  <span className="text-h3 font-black text-ink">{feedback.correctReading.fa}</span>
+                ) : null}
+                {feedback.correctReading.fa && feedback.correctReading.latin ? (
+                  <span aria-hidden className="text-body text-ink-faint">
+                    |
+                  </span>
+                ) : null}
+                <span className="text-body font-medium text-ink-soft" dir="ltr" lang="ja">
+                  {feedback.correctReading.latin}
+                </span>
+              </p>
+            </div>
+          )}
+          {/* the teaching copy — never a duplicate of the status title (the
+              server's first-try correct copy is exactly «درست!») */}
+          {feedback.feedbackFa !== fa.curriculum.correct && (
+            <p className="text-body leading-[var(--leading-fa)]">{feedback.feedbackFa}</p>
+          )}
           {feedback.reveal && (
             <p className="text-body text-ink-soft" dir="auto">
               {feedback.reveal}
             </p>
           )}
-          {/* Addendum-5 §3 — after ANY answered attempt the correct
-              pronunciation is hearable (kana sound / word audio — the server
-              attaches the committed asset with the outcome). */}
+          {/* TASK-LEARNING-10 §3/§5 — the compact replay control (small,
+              professional, Aizen-consistent — replaces the old big standalone
+              labeled button). Auto-play already ran from the grade handler;
+              this is a replay. The honest short note shows when the sound is
+              unavailable; the control never disappears before it is used. */}
           {feedback.correctAudio ? (
-            <KanaSoundButton
-              urls={feedback.correctAudio}
-              label={fa.curriculum.exHearCorrectPron}
-              ariaLabel={fa.curriculum.exHearCorrectPronAria(feedback.correctAudio.what)}
-              dataAttr="correct"
-            />
+            <div className="flex flex-wrap items-center gap-3" data-feedback-audio>
+              <button
+                type="button"
+                onClick={replayOutcomeAudio}
+                data-question-audio="correct"
+                aria-label={fa.curriculum.exHearCorrectPronAria(feedback.correctAudio.what)}
+                className={[
+                  'flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-colors',
+                  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai',
+                  outcomeAudioPlaying
+                    ? 'border-ai bg-indigo-wash text-ai'
+                    : 'border-ink-faint bg-card text-ink-soft hover:border-ai hover:text-ai',
+                ].join(' ')}
+              >
+                <Volume2 aria-hidden className="size-5" />
+              </button>
+              <span className="text-small leading-[var(--leading-fa)] text-ink-soft">
+                {outcomeAudioFailed ? fa.curriculum.audioUnavailableShort : fa.curriculum.exHearCorrectPron}
+              </span>
+            </div>
           ) : null}
           {/* #106 F4: the ladder is exhausted — offer the authored teaching block. */}
           {!feedback.correct && feedback.referenceBlockId && onReturnToBlock && (
@@ -662,19 +900,24 @@ export function ExerciseSession({
         )}
         {/*
          * TASK-LEARNING-08 Addendum-2 §7: after a CORRECT answer there is NO
-         * «ادامه» button anymore — the system itself advances after the short
-         * review beat (scheduleAutoNext). A visible manual-override button next
-         * to an automatic advance read as duplication/confusion. The button
-         * survives ONLY on the wrong-answer path when the ladder is exhausted
-         * (attempt 3, reveal shown) — there advancing is the learner's choice.
+         * «ادامه» button anymore — the system itself advances after the sound
+         * ends + the review beat (TL-10 §5) or the fallback bound. A visible
+         * manual-override button next to an automatic advance read as
+         * duplication/confusion. The button survives ONLY on the wrong-answer
+         * path when the ladder is exhausted (attempt 3, reveal shown) — there
+         * advancing is the learner's choice.
+         * TASK-LEARNING-10 §7: a normal forward action is never red — Aizen's
+         * shu red is reserved for real errors/warnings, so this is the primary
+         * indigo like every other forward action, and its label is a plain
+         * action («ادامه»), never a status text posed as a button.
          */}
         {feedback && !feedback.correct && attemptNo >= 3 && (
           <button
             type="button"
             onClick={advance}
-            className="h-11 min-w-28 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
-            {isLast ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
+            {fa.curriculum.continueBlock}
           </button>
         )}
         {feedback?.correct && !isLast && (

@@ -46,6 +46,15 @@ export interface GradeOutcome {
    * Only ever attached to an ANSWERED outcome — never pre-answer (no leak).
    */
   correctAudio?: { what: string; opus: string; m4a: string };
+  /**
+   * TASK-LEARNING-10 §3 — the correct answer's READING for the kana kinds so
+   * the feedback panel can show the character with its Persian AND Latin
+   * reading («کی | ki» — Persian the primary guide, Latin the complement).
+   * `fa` is the authored recognition label for that kana (single source of
+   * truth in the exercise bank); empty when the kana has none authored.
+   * Set by the grading ROUTE; attached only to an ANSWERED outcome.
+   */
+  correctReading?: { glyph: string; fa: string; latin: string };
 }
 
 /** Grade one answer at a given attempt number (1-based) against the ladder. */

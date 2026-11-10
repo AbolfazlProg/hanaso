@@ -445,7 +445,7 @@ export function JourneyMap({ chapterSlug, initial }: JourneyMapProps) {
               {(gateReady || understood) && (
                 <Link
                   href={`/learn/${chapterSlug}/assessment`}
-                  className="flex h-11 shrink-0 items-center gap-2 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+                  className="flex h-11 shrink-0 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
                 >
                   {understood ? fa.curriculum.viewResult : fa.curriculum.goToGate}
                   <ArrowLeft aria-hidden className="size-4" />

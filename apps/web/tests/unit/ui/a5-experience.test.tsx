@@ -28,6 +28,7 @@ import { toClientStation } from '@/modules/curriculum';
 import { toClientExercise } from '@/modules/curriculum/grading';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import type { Chapter, KanaItem, Station } from '@/modules/curriculum/types';
+import { getCachedAudio } from '@/modules/audio/client-cache';
 
 // §3 — the shared LRU cache is mocked (jsdom has no real media playback); the
 // autoplay effect's preload call + the control markup are what the contract
@@ -257,13 +258,39 @@ describe('Addendum-5 §3 — audio presence in kana questions', () => {
         audioAvailable
       />,
     );
-    // answer the question
-    fireEvent.click(container.querySelector('button[role="radio"]')!);
-    fireEvent.click(container.querySelector('button:not([role="radio"])')!);
-    await waitFor(() => {
-      expect(container.querySelector('[data-question-audio="correct"]')).not.toBeNull();
-      expect(container.textContent).toContain('شنیدن تلفظ درست');
-    });
+    // TL-10 §3/§5: the healthy path needs a LIVE element in the cache (the
+    // file-wide mock returns null = "unavailable" → the honest note replaces
+    // the label). Give this question a working element so the ORIGINAL a5
+    // contract keeps its meaning: the control + its label, plus the new
+    // TL-10 auto-play (no extra click to hear the correct pronunciation).
+    const fakeEl = {
+      play: vi.fn(() => Promise.resolve()),
+      pause: vi.fn(),
+      onended: null,
+      onerror: null,
+      currentTime: 0,
+      playbackRate: 1,
+      preservesPitch: true,
+      src: '',
+    } as unknown as HTMLAudioElement;
+    const getCached = vi.mocked(getCachedAudio);
+    getCached.mockImplementation(
+      (url: string) => (url === '/audio/kana/kn-hira-a.opus' ? fakeEl : null) as HTMLAudioElement | null,
+    );
+    try {
+      // answer the question
+      fireEvent.click(container.querySelector('button[role="radio"]')!);
+      fireEvent.click(container.querySelector('button:not([role="radio"])')!);
+      await waitFor(() => {
+        expect(container.querySelector('[data-question-audio="correct"]')).not.toBeNull();
+        expect(container.textContent).toContain('شنیدن تلفظ درست');
+      });
+      // TL-10: the sound AUTO-PLAYED with the outcome — hearing the correct
+      // pronunciation took NO extra click
+      expect(fakeEl.play).toHaveBeenCalledTimes(1);
+    } finally {
+      getCached.mockImplementation(() => null);
+    }
   });
 });
 

@@ -16,6 +16,7 @@ import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { recordLearningEvent } from '@/modules/curriculum/events';
 import type { StationState } from '@/modules/curriculum/types';
+import type { Chapter } from '@/modules/curriculum/types';
 
 /**
  * POST /api/curriculum/station — island station walk events (TASK-LEARNING-01).
@@ -114,6 +115,28 @@ const bodySchema = z.discriminatedUnion('action', [
   }),
 ]);
 
+/**
+ * TASK-LEARNING-10 §3 — authored Persian reading per kana id, derived from the
+ * chapter's recognition exercises (their correct option label IS the authored
+ * Persian reading — «»-stripped for a clean feedback display). First authored
+ * label wins (stable order). Cached per chapter slug: the bank is static
+ * in-process, so repeated grade calls never rescan it.
+ */
+const persianReadingCache = new Map<string, Map<string, string>>();
+function persianReadingByKana(chapter: Chapter): Map<string, string> {
+  const cached = persianReadingCache.get(chapter.slug);
+  if (cached) return cached;
+  const map = new Map<string, string>();
+  for (const ex of Object.values(chapter.exercises)) {
+    if (ex.type !== 'kana-recognition' || !ex.targetConcept || map.has(ex.targetConcept)) continue;
+    const correct = ex.options?.find((o) => o.id === ex.correctOptionId);
+    const label = correct?.label?.replace(/[«»]/g, '').trim();
+    if (label) map.set(ex.targetConcept, label);
+  }
+  persianReadingCache.set(chapter.slug, map);
+  return map;
+}
+
 export async function POST(req: Request) {
   let body: unknown;
   try {
@@ -196,6 +219,17 @@ export async function POST(req: Request) {
       const item = KANA_ITEMS.find((k) => k.kanaId === exercise.targetConcept);
       const urls = item ? kanaAudioUrls(`kn-${item.kanaId}`) : null;
       if (item && urls) outcome.correctAudio = { what: item.glyph, ...urls };
+      /* TASK-LEARNING-10 §3 — the answer's reading (glyph + Persian + Latin)
+       * for the integrated feedback panel. Persian reading = the authored
+       * recognition label for that kana (exercise bank = single source of
+       * truth; «»-stripped for a clean display). */
+      if (item) {
+        outcome.correctReading = {
+          glyph: item.glyph,
+          fa: persianReadingByKana(bundle.chapter).get(item.kanaId) ?? '',
+          latin: item.romaji,
+        };
+      }
     } else if (exercise.type === 'kana-decode' && exercise.promptJa) {
       const urls = hostWordAudioUrls(exercise.promptJa);
       if (urls) outcome.correctAudio = { what: exercise.promptJa, ...urls };

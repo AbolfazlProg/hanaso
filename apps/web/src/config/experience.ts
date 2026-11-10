@@ -28,4 +28,17 @@ export const EXPERIENCE = {
    * continues on its own — a teaching pause, not a slowdown.
    */
   kanaReviewPauseMs: 1100,
+  /**
+   * TASK-LEARNING-10 §5 — the review beat AFTER the correct-answer sound
+   * ends. The auto-next no longer races the audio: it waits for the learner
+   * to HEAR the correct pronunciation, holds this short beat so the reading
+   * can also be READ, and only then advances.
+   */
+  autoNextAudioBeatMs: 650,
+  /**
+   * TASK-LEARNING-10 §5 — a stalled sound (no `ended`, no `error`) may never
+   * lock the learner on a question: the flow still advances after this bound
+   * and a short note is shown (the replay control stays available).
+   */
+  autoNextAudioFallbackMs: 3200,
 } as const;
