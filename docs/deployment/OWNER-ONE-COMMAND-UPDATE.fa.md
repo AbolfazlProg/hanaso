@@ -1,16 +1,17 @@
-# دستور واحد به‌روزرسانی HANASO روی VPS — نسخهٔ ۵ (نسخهٔ تجربهٔ جریان یادگیری TL-10)
+# دستور واحد به‌روزرسانی HANASO روی VPS — نسخهٔ ۶ (وصلهٔ TL-10 CP-04)
 
-**تاریخ:** ۲۰۲۶-۱۱-۱۰ · **مأموریت:** TASK-LEARNING-10 (بازخورد کوییز + صوت + جریان تکمیل)
+**تاریخ:** ۲۰۲۶-۱۱-۱۰ · **مأموریت:** TASK-LEARNING-10 CP-04 (وصلهٔ رفع باگ Refresh دوم ایستگاه تکمیل‌شده)
 **Repository:** `https://github.com/AbolfazlProg/hanaso` — **عمومی (Public)**؛ دریافت کد با HTTPS ناشناس و **بدون هیچ GitHub Token / Password / Deploy Key**
-**نسخهٔ هدف (Pin شده):** `1.0.0-tl10-r01` @ کامیت `161e6b3747793a85fdc321bf8263da3f1613bd8c` (شاخهٔ `tl10-quiz-ux`) — بدون تأیید مالک عوض نمی‌شود
-**کامیت ابزار استقرار (Pin شده):** `44c3f7b483cfa220a3bee55e8fb2c2bda8c879ca` (شاخهٔ `tl10-quiz-ux`)
-**SHA-256 فایل bootstrap (Pin شده):** `422e37d3c9f5ab141e185d034f7a8c5fb6f2231a6e85eea0bdd75aa6f65b1260`
+**نسخهٔ هدف (Pin شده):** `1.0.0-tl10-r02` @ کامیت `816eb90cdf3c5084c4d410fc280b394b071283de` (شاخهٔ `tl10-quiz-ux`) — بدون تأیید مالک عوض نمی‌شود
+**کامیت ابزار استقرار (Pin شده):** `7e7fbbb7b61348f34cd3ff534e85741f846ee528` (شاخهٔ `tl10-quiz-ux`)
+**SHA-256 فایل bootstrap (Pin شده):** `ab6db4785257d278d757a5f3d3766b16e95047bcb79869c4653da151865dcaaf`
 
-نسخهٔ ۵ راهنما است. **مکانیزم استقرار دقیقاً همان نسخهٔ ۳ است** (چهار مسیر دریافت مستقل + گیت SHA-256 واقعی + بکاپ/رول‌بک/چک سلامت — ساخته‌شده روی شواهد واقعی VPS شما در DEPLOY-05)؛ فقط **Pinها به نسخهٔ جدید TASK-LEARNING-10 منتقل شده‌اند**. آنچه این نسخهٔ جدید به اپ می‌آورد:
+نسخهٔ ۶ راهنما است. **مکانیزم استقرار دقیقاً همان نسخهٔ ۳ است** (چهار مسیر دریافت مستقل + گیت SHA-256 واقعی + بکاپ/رول‌بک/چک سلامت — ساخته‌شده روی شواهد واقعی VPS شما در DEPLOY-05)؛ فقط **Pinها به وصلهٔ TASK-LEARNING-10 CP-04 منتقل شده‌اند**. آنچه این وصله به اپ می‌آورد (علاوه بر همهٔ چیزهای نسخهٔ ۵):
 
 - **کارت پاسخ یکپارچه:** بعد از پاسخ، کارت خوانش با گلیف ژاپنی + خوانش فارسی و لاتین («کی | ki») داخل همان ساختار سؤال نشان داده می‌شود — باکس کوچک قدیمی حذف شد.
 - **پخش خودکار تلفظ درست:** بعد از پاسخ صحیح، صوت همان کانا بلافاصله بدون کلیک اضافی پخش می‌شود؛ سؤال بعدی تا پایان صوت + یک بیت کوتاه صبر می‌کند (دیگر با صوت مسابقه نمی‌کند)؛ کنترل Replay کوچک و هماهنگ با Aizen همیشه در دسترس است.
 - **تکمیل ایستگاه با یک اقدام:** پیام وضعیتِ غیرتعاملی + فقط یک CTA که برچسبش مقصد واقعی است («رفتن به ایستگاه بعدی» / «ادامهٔ مسیر»)؛ دکمهٔ قرمز دوم حذف شد؛ Refresh وضعیت تکمیل را نگه می‌دارد.
+- **رفع باگ Refresh دوم (CP-04):** در نسخهٔ قبل، اولین بازدیدِ ایستگاهِ تکمیل‌شده پنل تکمیل را درست نشان می‌داد اما بی‌صدا یک snapshot خالی walk می‌نوشت؛ Refresh بعدی ایستگاه را از بلوک ۱ ری‌استارت می‌کرد (بازتولید قطعی روی production). حالا ثبت سرور بر walk محلیِ خالی غلبه می‌کند، snapshot خراب خودکار شفا می‌یابد و مرور نیمه‌کارهٔ عمدی حفظ می‌شود — ۳ تست رگرسیون جدید، مجموع ۵۹۴/۵۹۴ سبز.
 
 مبنای طراحی مسیرهای دریافت (آزمایش واقعی شما در ۲۰۲۶-۱۱-۰۸ — سرجای خود مانده): مشکل نسخهٔ ۲ روی VPS شما ثابت شد: **وابستگی اجباری به `raw.githubusercontent.com`** — در حالی که طبق آزمایش واقعی شما (۲۰۲۶-۱۱-۰۸):
 
@@ -29,7 +30,7 @@
 این **یک خط** را در ترمینال **سرور** (به‌عنوان root) کپی و اجرا کنید — همین:
 
 ```bash
-bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=44c3f7b483cfa220a3bee55e8fb2c2bda8c879ca; W=422e37d3c9f5ab141e185d034f7a8c5fb6f2231a6e85eea0bdd75aa6f65b1260; P=infra/deploy/bootstrap-hanaso.sh; command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found — install once: apt-get install -y curl" >&2; exit 1; }; command -v sha256sum >/dev/null 2>&1 || { echo "ERROR: sha256sum not found (coreutils)" >&2; exit 1; }; T="$(mktemp /tmp/hanaso-bootstrap.XXXXXX.sh)"; X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"; trap "rm -f \"$T\"; rm -rf \"$X\"" EXIT; GOT=""; echo "[hanaso] pinned bootstrap commit ${R:0:12} — download paths: api.github.com -> codeload.github.com -> raw(pinned IP 185.199.108.133) -> raw(dns)"; if curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/${H}/contents/${P}?ref=${R}" -o "$T"; then GOT="api.github.com"; else echo "[hanaso] 1/4 api.github.com FAILED (real curl error above) — trying codeload" >&2; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/${H}/tar.gz/${R}" -o "$X/src.tgz"; then if tar -xzf "$X/src.tgz" -C "$X" --strip-components=1 "hanaso-${R}/${P}" 2>/dev/null; then mv "$X/${P}" "$T"; GOT="codeload.github.com"; elif tar -xzf "$X/src.tgz" -C "$X"; then mv "$X/hanaso-${R}/${P}" "$T"; GOT="codeload.github.com"; else echo "[hanaso] codeload tarball fetched but extraction FAILED (tar error above)" >&2; fi; else echo "[hanaso] 2/4 codeload.github.com FAILED (real curl error above) — trying raw with the pinned IP" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --resolve raw.githubusercontent.com:443:185.199.108.133 --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via pinned IP 185.199.108.133"; else echo "[hanaso] 3/4 raw(pinned IP) FAILED (real curl error above) — trying raw via DNS" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via DNS"; else echo "[hanaso] 4/4 raw(dns) FAILED (real curl error above)" >&2; fi; fi; [ -n "$GOT" ] || { echo "ERROR: ALL bootstrap download paths failed — the real errors are printed above; NOTHING was executed or changed" >&2; exit 1; }; A="$(sha256sum "$T" | cut -d" " -f1)"; if [ "$A" != "$W" ]; then echo "ERROR: bootstrap SHA-256 MISMATCH — got ${A}, want ${W} (via ${GOT}). NOTHING was executed; nothing was changed" >&2; exit 1; fi; echo "[hanaso] bootstrap verified — sha256 ${A:0:16} OK (via ${GOT}) — starting pinned installer"; HANASO_DEPLOY_SHA="$R" bash "$T" "$@"' hanaso-updater
+bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=7e7fbbb7b61348f34cd3ff534e85741f846ee528; W=ab6db4785257d278d757a5f3d3766b16e95047bcb79869c4653da151865dcaaf; P=infra/deploy/bootstrap-hanaso.sh; command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found — install once: apt-get install -y curl" >&2; exit 1; }; command -v sha256sum >/dev/null 2>&1 || { echo "ERROR: sha256sum not found (coreutils)" >&2; exit 1; }; T="$(mktemp /tmp/hanaso-bootstrap.XXXXXX.sh)"; X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"; trap "rm -f \"$T\"; rm -rf \"$X\"" EXIT; GOT=""; echo "[hanaso] pinned bootstrap commit ${R:0:12} — download paths: api.github.com -> codeload.github.com -> raw(pinned IP 185.199.108.133) -> raw(dns)"; if curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/${H}/contents/${P}?ref=${R}" -o "$T"; then GOT="api.github.com"; else echo "[hanaso] 1/4 api.github.com FAILED (real curl error above) — trying codeload" >&2; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/${H}/tar.gz/${R}" -o "$X/src.tgz"; then if tar -xzf "$X/src.tgz" -C "$X" --strip-components=1 "hanaso-${R}/${P}" 2>/dev/null; then mv "$X/${P}" "$T"; GOT="codeload.github.com"; elif tar -xzf "$X/src.tgz" -C "$X"; then mv "$X/hanaso-${R}/${P}" "$T"; GOT="codeload.github.com"; else echo "[hanaso] codeload tarball fetched but extraction FAILED (tar error above)" >&2; fi; else echo "[hanaso] 2/4 codeload.github.com FAILED (real curl error above) — trying raw with the pinned IP" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --resolve raw.githubusercontent.com:443:185.199.108.133 --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via pinned IP 185.199.108.133"; else echo "[hanaso] 3/4 raw(pinned IP) FAILED (real curl error above) — trying raw via DNS" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via DNS"; else echo "[hanaso] 4/4 raw(dns) FAILED (real curl error above)" >&2; fi; fi; [ -n "$GOT" ] || { echo "ERROR: ALL bootstrap download paths failed — the real errors are printed above; NOTHING was executed or changed" >&2; exit 1; }; A="$(sha256sum "$T" | cut -d" " -f1)"; if [ "$A" != "$W" ]; then echo "ERROR: bootstrap SHA-256 MISMATCH — got ${A}, want ${W} (via ${GOT}). NOTHING was executed; nothing was changed" >&2; exit 1; fi; echo "[hanaso] bootstrap verified — sha256 ${A:0:16} OK (via ${GOT}) — starting pinned installer"; HANASO_DEPLOY_SHA="$R" bash "$T" "$@"' hanaso-updater
 ```
 
 - همین دستور در `OWNER-COMMAND.txt` (ریشهٔ Repository) هم هست — کپی از هر دو یکسان است.
@@ -47,7 +48,7 @@ bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=44c3f7b483cfa220a3bee55e8fb
 
 ## ۲) زنجیرهٔ دریافت — چهار مسیر مستقل + گیت SHA-256
 
-1. **`api.github.com`** — فایل bootstrap از Contents API روی **کامیت دقیق** `44c3f7b483cf` (Accept: raw). حجم چند کیلوبایت. اگر ۴۰۳ Rate-limit ناشناس گرفت، **خودکار** به مسیر بعدی می‌رود (خطای واقعی curl چاپ می‌شود).
+1. **`api.github.com`** — فایل bootstrap از Contents API روی **کامیت دقیق** `7e7fbbb7b6` (Accept: raw). حجم چند کیلوبایت. اگر ۴۰۳ Rate-limit ناشناس گرفت، **خودکار** به مسیر بعدی می‌رود (خطای واقعی curl چاپ می‌شود).
 2. **`codeload.github.com`** — تاربال کامل ریپو روی همان کامیت؛ فقط همان یک فایل استخراج می‌شود (آزمایش واقعی: ساختار و بایت‌ها عین Git است).
 3. **`raw.githubusercontent.com` با IP ثابت `185.199.108.133`** — از طریق `curl --resolve`؛ **بازبینی Certificate کاملاً روشن می‌ماند** (SNI و نام میزبان همان raw.githubusercontent.com است). این مسیر فقط «جایگزین» است، هرگز مسیر تنها نیست.
 4. **`raw.githubusercontent.com` با DNS** — آخرین تلاش (روی VPS شما معمولاً timeout می‌خورد؛ بی‌ضرر و محدود به ۱۰ ثانیه).
@@ -59,10 +60,10 @@ bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=44c3f7b483cfa220a3bee55e8fb
 | فاز              | کار                                                                                                                                                                                                                | تضمین                                                |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
 | Workspace منبع   | کلون ناشناس (یا fetch) در `/opt/hanaso-src` — **کاملاً جدا از `/opt/hanaso`** (محل داده‌ها و تنظیمات Production: compose + `.env` + `update-history` + volume بکاپ)؛ مسیر موجودِ غیر-git هرگز حذف/بازنویسی نمی‌شود | `.env`، دیتابیس و فایل‌های عملیاتی هرگز پاک نمی‌شوند |
-| راستی‌آزمایی Pin | وجود کامیت هدف `161e6b374779` و کامیت ابزار `44c3f7b483cf`؛ اجرای updater از worktree ایزوله روی **دقیقاً همان کامیت** + مقایسهٔ SHA-256 خود bootstrap با همان کامیت                                               | ضد drift؛ اسکریپت اجرایی = اسکریپت بازبینی‌شده       |
+| راستی‌آزمایی Pin | وجود کامیت هدف `816eb90cdf` و کامیت ابزار `7e7fbbb7b6`؛ اجرای updater از worktree ایزوله روی **دقیقاً همان کامیت** + مقایسهٔ SHA-256 خود bootstrap با همان کامیت                                                   | ضد drift؛ اسکریپت اجرایی = اسکریپت بازبینی‌شده       |
 | Preflight        | root · Docker/Compose · دیسک (حداقل ۲.۵GB) · حافظه (~۱.۸GB) · کلیدهای `.env` فقط با نام · پروژهٔ compose = `hanaso` · سلامت خط پایه + شاهد kotodama.ir · گارد no-op اجرای مجدد                                     | قبل از هر تغییری می‌ایستد                            |
 | Backup           | `.env` زمان‌دار + بکاپ واقعی دیتابیس (`pg_dump -Fc` با تأیید ok/bytes)                                                                                                                                             | اگر بکاپ نشود، **قبل از هر تغییر** متوقف می‌شود      |
-| Build            | ساخت image روی خود VPS از worktree روی کامیت Pin‌شده (`NEXT_PUBLIC_APP_VERSION=1.0.0-tl10-r01`)                                                                                                                    | بدون نیاز به Registry/Token                          |
+| Build            | ساخت image روی خود VPS از worktree روی کامیت Pin‌شده (`NEXT_PUBLIC_APP_VERSION=1.0.0-tl10-r02`)                                                                                                                    | بدون نیاز به Registry/Token                          |
 | Update مرحله‌ای  | تعویض `HANASO_WEB_IMAGE` → postgres (سالم) → pgbouncer (سالم) → migrate یک‌بارمصرف idempotent → `up -d web worker`                                                                                                 | ترتیب استاندارد استقرار مرحله‌ای                     |
 | Health gate      | `ok:true` + تطبیق کامیت + نسخه روی `127.0.0.1:3100` → `/api/ready` (database: ok) → مسیر عمومی `learn.kotodama.ir` → smoke → اسکن لاگ خطا                                                                          | هر ناهم‌خوانی = شکست                                 |
 | KOTODAMA         | فقط شاهد HTTP قبل/بعد — باید **دقیقاً همان** باشد                                                                                                                                                                  | هرگز لمس نمی‌شود (فقط پروژهٔ `hanaso`)               |
@@ -85,7 +86,7 @@ docker version && docker compose version
 
 ```bash
 curl -sS https://learn.kotodama.ir/api/health
-# انتظار: {"ok":true, "version":"1.0.0-tl10-r01", "commit":"161e6b3747793a…"}
+# انتظار: {"ok":true, "version":"1.0.0-tl10-r02", "commit":"816eb90cdf3c…"}
 ```
 
 ## ۶) اگر مشکلی پیش آمد
@@ -99,7 +100,7 @@ curl -sS https://learn.kotodama.ir/api/health
 
 ## ۷) یکپارچگی و امنیت
 
-- **زنجیرهٔ Pin:** کامیت ابزار `44c3f7b483cf` (تغییرناپذیر) در URL هر چهار مسیر + SHA-256 واقعی bootstrap (`422e37d3c9f5ab…`) در خود دستور + کامیت هدف `161e6b374779` درون هر دو اسکریپت. `latest` و شاخهٔ متحرک وجود ندارد.
+- **زنجیرهٔ Pin:** کامیت ابزار `7e7fbbb7b6` (تغییرناپذیر) در URL هر چهار مسیر + SHA-256 واقعی bootstrap (`ab6db4785257…`) در خود دستور + کامیت هدف `816eb90cdf` درون هر دو اسکریپت. `latest` و شاخهٔ متحرک وجود ندارد.
 - **بدون Secret در هیچ‌جا:** نه در URL، نه در فرمان، نه در لاگ، نه در رکوردهای `update-history`.
 - **اسکن کامل تاریخچهٔ Repository قبل از عمومی‌شدن:** صفر Secret واقعی (CP-14) — ریپو عمومی می‌ماند؛ Knowledge Base جدا و private می‌ماند.
 
