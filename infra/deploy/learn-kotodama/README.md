@@ -39,6 +39,10 @@
 
 ## ۳. deploy نسخهٔ جدید (SHA جدید main)
 
+> **مسیر استاندارد مالک از TASK-HANASO-DEPLOY-02:** دستور واحدِ `docs/deployment/OWNER-ONE-COMMAND-UPDATE.fa.md`
+> (اسکریپت `infra/deploy/update-hanaso.sh`) همین §۳ + §۵-۱ + بکاپ + گیت سلامت + رول‌بک خودکار را
+> خودکار انجام می‌دهد. مراحل دستی زیر برای مرجع/عیب‌یابی باقی می‌مانند.
+
 ```bash
 # ۱) image جدید را بکش (توکن GHCR فقط با stdin؛ هرگز در command-line/فایل نگذار):
 cd /opt/hanaso

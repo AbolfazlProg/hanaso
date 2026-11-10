@@ -1,0 +1,3805 @@
+{
+  "purpose": "92-mora A/B on the shipping use-case (single kana samples, mastered with the shipping chain)",
+  "voices": {
+    "8": {
+      "name": "春日部つむぎ (CURRENT)",
+      "n": 92,
+      "quietMorae": [
+        {
+          "kanaId": "hira-tsu",
+          "glyph": "つ",
+          "dbfs": -35.06,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "hira-fu",
+          "glyph": "ふ",
+          "dbfs": -39.14,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "hira-ri",
+          "glyph": "り",
+          "dbfs": -35.08,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "hira-ru",
+          "glyph": "る",
+          "dbfs": -36.0,
+          "ms": 330.7
+        },
+        {
+          "kanaId": "kata-tsu",
+          "glyph": "ツ",
+          "dbfs": -35.06,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "kata-fu",
+          "glyph": "フ",
+          "dbfs": -39.14,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "kata-ri",
+          "glyph": "リ",
+          "dbfs": -35.08,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "kata-ru",
+          "glyph": "ル",
+          "dbfs": -36.0,
+          "ms": 330.7
+        }
+      ],
+      "presence_mean": 0.064,
+      "presence_sd": 0.0586,
+      "harsh_mean": 0.0375,
+      "body_mean": 0.6607,
+      "dbfs_mean": -31.17,
+      "ms_median": 410.6,
+      "morae": [
+        {
+          "kanaId": "hira-a",
+          "glyph": "あ",
+          "ms": 394.7,
+          "dbfs": -30.07,
+          "presence": 0.2619,
+          "harsh": 0.0005,
+          "body": 0.0772
+        },
+        {
+          "kanaId": "hira-i",
+          "glyph": "い",
+          "ms": 416.0,
+          "dbfs": -31.77,
+          "presence": 0.0749,
+          "harsh": 0.0046,
+          "body": 0.8752
+        },
+        {
+          "kanaId": "hira-u",
+          "glyph": "う",
+          "ms": 405.3,
+          "dbfs": -32.95,
+          "presence": 0.0243,
+          "harsh": 0.0035,
+          "body": 0.9483
+        },
+        {
+          "kanaId": "hira-e",
+          "glyph": "え",
+          "ms": 426.7,
+          "dbfs": -29.94,
+          "presence": 0.1514,
+          "harsh": 0.0091,
+          "body": 0.6418
+        },
+        {
+          "kanaId": "hira-o",
+          "glyph": "お",
+          "ms": 394.7,
+          "dbfs": -33.82,
+          "presence": 0.0015,
+          "harsh": 0.0003,
+          "body": 0.6052
+        },
+        {
+          "kanaId": "hira-ka",
+          "glyph": "か",
+          "ms": 416.0,
+          "dbfs": -32.63,
+          "presence": 0.2015,
+          "harsh": 0.0038,
+          "body": 0.2956
+        },
+        {
+          "kanaId": "hira-ki",
+          "glyph": "き",
+          "ms": 437.3,
+          "dbfs": -31.51,
+          "presence": 0.0642,
+          "harsh": 0.0126,
+          "body": 0.8837
+        },
+        {
+          "kanaId": "hira-ku",
+          "glyph": "く",
+          "ms": 384.0,
+          "dbfs": -32.32,
+          "presence": 0.036,
+          "harsh": 0.0037,
+          "body": 0.9391
+        },
+        {
+          "kanaId": "hira-ke",
+          "glyph": "け",
+          "ms": 426.7,
+          "dbfs": -30.41,
+          "presence": 0.1479,
+          "harsh": 0.0085,
+          "body": 0.6786
+        },
+        {
+          "kanaId": "hira-ko",
+          "glyph": "こ",
+          "ms": 426.7,
+          "dbfs": -33.55,
+          "presence": 0.0004,
+          "harsh": 0.0002,
+          "body": 0.7788
+        },
+        {
+          "kanaId": "hira-sa",
+          "glyph": "さ",
+          "ms": 458.7,
+          "dbfs": -31.41,
+          "presence": 0.0939,
+          "harsh": 0.0443,
+          "body": 0.4663
+        },
+        {
+          "kanaId": "hira-shi",
+          "glyph": "し",
+          "ms": 501.3,
+          "dbfs": -33.57,
+          "presence": 0.0501,
+          "harsh": 0.5362,
+          "body": 0.3425
+        },
+        {
+          "kanaId": "hira-su",
+          "glyph": "す",
+          "ms": 437.3,
+          "dbfs": -33.44,
+          "presence": 0.0458,
+          "harsh": 0.4391,
+          "body": 0.4907
+        },
+        {
+          "kanaId": "hira-se",
+          "glyph": "せ",
+          "ms": 448.0,
+          "dbfs": -29.85,
+          "presence": 0.0639,
+          "harsh": 0.0651,
+          "body": 0.7551
+        },
+        {
+          "kanaId": "hira-so",
+          "glyph": "そ",
+          "ms": 480.0,
+          "dbfs": -29.31,
+          "presence": 0.0023,
+          "harsh": 0.0244,
+          "body": 0.4583
+        },
+        {
+          "kanaId": "hira-ta",
+          "glyph": "た",
+          "ms": 384.0,
+          "dbfs": -29.27,
+          "presence": 0.1067,
+          "harsh": 0.0042,
+          "body": 0.3023
+        },
+        {
+          "kanaId": "hira-chi",
+          "glyph": "ち",
+          "ms": 490.7,
+          "dbfs": -32.88,
+          "presence": 0.0495,
+          "harsh": 0.2033,
+          "body": 0.701
+        },
+        {
+          "kanaId": "hira-tsu",
+          "glyph": "つ",
+          "ms": 416.0,
+          "dbfs": -35.06,
+          "presence": 0.038,
+          "harsh": 0.267,
+          "body": 0.6608
+        },
+        {
+          "kanaId": "hira-te",
+          "glyph": "て",
+          "ms": 394.7,
+          "dbfs": -31.19,
+          "presence": 0.1095,
+          "harsh": 0.0091,
+          "body": 0.6771
+        },
+        {
+          "kanaId": "hira-to",
+          "glyph": "と",
+          "ms": 405.3,
+          "dbfs": -31.94,
+          "presence": 0.0011,
+          "harsh": 0.0004,
+          "body": 0.5851
+        },
+        {
+          "kanaId": "hira-na",
+          "glyph": "な",
+          "ms": 405.3,
+          "dbfs": -31.97,
+          "presence": 0.0799,
+          "harsh": 0.0019,
+          "body": 0.6478
+        },
+        {
+          "kanaId": "hira-ni",
+          "glyph": "に",
+          "ms": 416.0,
+          "dbfs": -28.83,
+          "presence": 0.0033,
+          "harsh": 0.0012,
+          "body": 0.9878
+        },
+        {
+          "kanaId": "hira-nu",
+          "glyph": "ぬ",
+          "ms": 352.0,
+          "dbfs": -29.12,
+          "presence": 0.0064,
+          "harsh": 0.0014,
+          "body": 0.9816
+        },
+        {
+          "kanaId": "hira-ne",
+          "glyph": "ね",
+          "ms": 394.7,
+          "dbfs": -31.95,
+          "presence": 0.1098,
+          "harsh": 0.0076,
+          "body": 0.7977
+        },
+        {
+          "kanaId": "hira-no",
+          "glyph": "の",
+          "ms": 405.3,
+          "dbfs": -32.61,
+          "presence": 0.0023,
+          "harsh": 0.0004,
+          "body": 0.7251
+        },
+        {
+          "kanaId": "hira-ha",
+          "glyph": "は",
+          "ms": 416.0,
+          "dbfs": -29.76,
+          "presence": 0.1028,
+          "harsh": 0.0006,
+          "body": 0.1162
+        },
+        {
+          "kanaId": "hira-hi",
+          "glyph": "ひ",
+          "ms": 512.0,
+          "dbfs": -31.88,
+          "presence": 0.1137,
+          "harsh": 0.0116,
+          "body": 0.8358
+        },
+        {
+          "kanaId": "hira-fu",
+          "glyph": "ふ",
+          "ms": 394.7,
+          "dbfs": -39.14,
+          "presence": 0.0354,
+          "harsh": 0.0111,
+          "body": 0.9155
+        },
+        {
+          "kanaId": "hira-he",
+          "glyph": "へ",
+          "ms": 426.7,
+          "dbfs": -29.94,
+          "presence": 0.1514,
+          "harsh": 0.0091,
+          "body": 0.6418
+        },
+        {
+          "kanaId": "hira-ho",
+          "glyph": "ほ",
+          "ms": 469.3,
+          "dbfs": -30.67,
+          "presence": 0.0009,
+          "harsh": 0.0002,
+          "body": 0.7415
+        },
+        {
+          "kanaId": "hira-ma",
+          "glyph": "ま",
+          "ms": 416.0,
+          "dbfs": -27.33,
+          "presence": 0.1476,
+          "harsh": 0.0015,
+          "body": 0.4543
+        },
+        {
+          "kanaId": "hira-mi",
+          "glyph": "み",
+          "ms": 448.0,
+          "dbfs": -27.05,
+          "presence": 0.0175,
+          "harsh": 0.0018,
+          "body": 0.9638
+        },
+        {
+          "kanaId": "hira-mu",
+          "glyph": "む",
+          "ms": 384.0,
+          "dbfs": -27.04,
+          "presence": 0.0173,
+          "harsh": 0.0021,
+          "body": 0.9611
+        },
+        {
+          "kanaId": "hira-me",
+          "glyph": "め",
+          "ms": 405.3,
+          "dbfs": -27.19,
+          "presence": 0.0709,
+          "harsh": 0.006,
+          "body": 0.7702
+        },
+        {
+          "kanaId": "hira-mo",
+          "glyph": "も",
+          "ms": 437.3,
+          "dbfs": -27.34,
+          "presence": 0.001,
+          "harsh": 0.0002,
+          "body": 0.5587
+        },
+        {
+          "kanaId": "hira-ya",
+          "glyph": "や",
+          "ms": 394.7,
+          "dbfs": -27.53,
+          "presence": 0.1112,
+          "harsh": 0.0045,
+          "body": 0.4174
+        },
+        {
+          "kanaId": "hira-yu",
+          "glyph": "ゆ",
+          "ms": 384.0,
+          "dbfs": -27.86,
+          "presence": 0.0472,
+          "harsh": 0.0029,
+          "body": 0.9202
+        },
+        {
+          "kanaId": "hira-yo",
+          "glyph": "よ",
+          "ms": 426.7,
+          "dbfs": -28.95,
+          "presence": 0.031,
+          "harsh": 0.0011,
+          "body": 0.7332
+        },
+        {
+          "kanaId": "hira-ra",
+          "glyph": "ら",
+          "ms": 384.0,
+          "dbfs": -29.1,
+          "presence": 0.094,
+          "harsh": 0.0026,
+          "body": 0.1875
+        },
+        {
+          "kanaId": "hira-ri",
+          "glyph": "り",
+          "ms": 384.0,
+          "dbfs": -35.08,
+          "presence": 0.0357,
+          "harsh": 0.0046,
+          "body": 0.9436
+        },
+        {
+          "kanaId": "hira-ru",
+          "glyph": "る",
+          "ms": 330.7,
+          "dbfs": -36.0,
+          "presence": 0.0248,
+          "harsh": 0.0031,
+          "body": 0.9481
+        },
+        {
+          "kanaId": "hira-re",
+          "glyph": "れ",
+          "ms": 362.7,
+          "dbfs": -31.57,
+          "presence": 0.1158,
+          "harsh": 0.0073,
+          "body": 0.7545
+        },
+        {
+          "kanaId": "hira-ro",
+          "glyph": "ろ",
+          "ms": 394.7,
+          "dbfs": -30.64,
+          "presence": 0.0166,
+          "harsh": 0.0009,
+          "body": 0.5281
+        },
+        {
+          "kanaId": "hira-wa",
+          "glyph": "わ",
+          "ms": 416.0,
+          "dbfs": -29.76,
+          "presence": 0.1028,
+          "harsh": 0.0006,
+          "body": 0.1162
+        },
+        {
+          "kanaId": "hira-wo",
+          "glyph": "を",
+          "ms": 394.7,
+          "dbfs": -33.82,
+          "presence": 0.0015,
+          "harsh": 0.0003,
+          "body": 0.6052
+        },
+        {
+          "kanaId": "hira-n",
+          "glyph": "ん",
+          "ms": 405.3,
+          "dbfs": -34.15,
+          "presence": 0.0149,
+          "harsh": 0.0017,
+          "body": 0.9463
+        },
+        {
+          "kanaId": "kata-a",
+          "glyph": "ア",
+          "ms": 394.7,
+          "dbfs": -30.07,
+          "presence": 0.2619,
+          "harsh": 0.0005,
+          "body": 0.0772
+        },
+        {
+          "kanaId": "kata-i",
+          "glyph": "イ",
+          "ms": 416.0,
+          "dbfs": -31.77,
+          "presence": 0.0749,
+          "harsh": 0.0046,
+          "body": 0.8752
+        },
+        {
+          "kanaId": "kata-u",
+          "glyph": "ウ",
+          "ms": 405.3,
+          "dbfs": -32.95,
+          "presence": 0.0243,
+          "harsh": 0.0035,
+          "body": 0.9483
+        },
+        {
+          "kanaId": "kata-e",
+          "glyph": "エ",
+          "ms": 426.7,
+          "dbfs": -29.94,
+          "presence": 0.1514,
+          "harsh": 0.0091,
+          "body": 0.6418
+        },
+        {
+          "kanaId": "kata-o",
+          "glyph": "オ",
+          "ms": 394.7,
+          "dbfs": -33.82,
+          "presence": 0.0015,
+          "harsh": 0.0003,
+          "body": 0.6052
+        },
+        {
+          "kanaId": "kata-ka",
+          "glyph": "カ",
+          "ms": 416.0,
+          "dbfs": -32.63,
+          "presence": 0.2015,
+          "harsh": 0.0038,
+          "body": 0.2956
+        },
+        {
+          "kanaId": "kata-ki",
+          "glyph": "キ",
+          "ms": 437.3,
+          "dbfs": -31.51,
+          "presence": 0.0642,
+          "harsh": 0.0126,
+          "body": 0.8837
+        },
+        {
+          "kanaId": "kata-ku",
+          "glyph": "ク",
+          "ms": 384.0,
+          "dbfs": -32.32,
+          "presence": 0.036,
+          "harsh": 0.0037,
+          "body": 0.9391
+        },
+        {
+          "kanaId": "kata-ke",
+          "glyph": "ケ",
+          "ms": 426.7,
+          "dbfs": -30.41,
+          "presence": 0.1479,
+          "harsh": 0.0085,
+          "body": 0.6786
+        },
+        {
+          "kanaId": "kata-ko",
+          "glyph": "コ",
+          "ms": 426.7,
+          "dbfs": -33.55,
+          "presence": 0.0004,
+          "harsh": 0.0002,
+          "body": 0.7788
+        },
+        {
+          "kanaId": "kata-sa",
+          "glyph": "サ",
+          "ms": 458.7,
+          "dbfs": -31.41,
+          "presence": 0.0939,
+          "harsh": 0.0443,
+          "body": 0.4663
+        },
+        {
+          "kanaId": "kata-shi",
+          "glyph": "シ",
+          "ms": 501.3,
+          "dbfs": -33.57,
+          "presence": 0.0501,
+          "harsh": 0.5362,
+          "body": 0.3425
+        },
+        {
+          "kanaId": "kata-su",
+          "glyph": "ス",
+          "ms": 437.3,
+          "dbfs": -33.44,
+          "presence": 0.0458,
+          "harsh": 0.4391,
+          "body": 0.4907
+        },
+        {
+          "kanaId": "kata-se",
+          "glyph": "セ",
+          "ms": 448.0,
+          "dbfs": -29.85,
+          "presence": 0.0639,
+          "harsh": 0.0651,
+          "body": 0.7551
+        },
+        {
+          "kanaId": "kata-so",
+          "glyph": "ソ",
+          "ms": 480.0,
+          "dbfs": -29.31,
+          "presence": 0.0023,
+          "harsh": 0.0244,
+          "body": 0.4583
+        },
+        {
+          "kanaId": "kata-ta",
+          "glyph": "タ",
+          "ms": 384.0,
+          "dbfs": -29.27,
+          "presence": 0.1067,
+          "harsh": 0.0042,
+          "body": 0.3023
+        },
+        {
+          "kanaId": "kata-chi",
+          "glyph": "チ",
+          "ms": 490.7,
+          "dbfs": -32.88,
+          "presence": 0.0495,
+          "harsh": 0.2033,
+          "body": 0.701
+        },
+        {
+          "kanaId": "kata-tsu",
+          "glyph": "ツ",
+          "ms": 416.0,
+          "dbfs": -35.06,
+          "presence": 0.038,
+          "harsh": 0.267,
+          "body": 0.6608
+        },
+        {
+          "kanaId": "kata-te",
+          "glyph": "テ",
+          "ms": 394.7,
+          "dbfs": -31.19,
+          "presence": 0.1095,
+          "harsh": 0.0091,
+          "body": 0.6771
+        },
+        {
+          "kanaId": "kata-to",
+          "glyph": "ト",
+          "ms": 405.3,
+          "dbfs": -31.94,
+          "presence": 0.0011,
+          "harsh": 0.0004,
+          "body": 0.5851
+        },
+        {
+          "kanaId": "kata-na",
+          "glyph": "ナ",
+          "ms": 405.3,
+          "dbfs": -31.97,
+          "presence": 0.0799,
+          "harsh": 0.0019,
+          "body": 0.6478
+        },
+        {
+          "kanaId": "kata-ni",
+          "glyph": "ニ",
+          "ms": 416.0,
+          "dbfs": -28.83,
+          "presence": 0.0033,
+          "harsh": 0.0012,
+          "body": 0.9878
+        },
+        {
+          "kanaId": "kata-nu",
+          "glyph": "ヌ",
+          "ms": 352.0,
+          "dbfs": -29.12,
+          "presence": 0.0064,
+          "harsh": 0.0014,
+          "body": 0.9816
+        },
+        {
+          "kanaId": "kata-ne",
+          "glyph": "ネ",
+          "ms": 394.7,
+          "dbfs": -31.95,
+          "presence": 0.1098,
+          "harsh": 0.0076,
+          "body": 0.7977
+        },
+        {
+          "kanaId": "kata-no",
+          "glyph": "ノ",
+          "ms": 405.3,
+          "dbfs": -32.61,
+          "presence": 0.0023,
+          "harsh": 0.0004,
+          "body": 0.7251
+        },
+        {
+          "kanaId": "kata-ha",
+          "glyph": "ハ",
+          "ms": 448.0,
+          "dbfs": -30.91,
+          "presence": 0.0792,
+          "harsh": 0.0019,
+          "body": 0.0999
+        },
+        {
+          "kanaId": "kata-hi",
+          "glyph": "ヒ",
+          "ms": 512.0,
+          "dbfs": -31.88,
+          "presence": 0.1137,
+          "harsh": 0.0116,
+          "body": 0.8358
+        },
+        {
+          "kanaId": "kata-fu",
+          "glyph": "フ",
+          "ms": 394.7,
+          "dbfs": -39.14,
+          "presence": 0.0354,
+          "harsh": 0.0111,
+          "body": 0.9155
+        },
+        {
+          "kanaId": "kata-he",
+          "glyph": "ヘ",
+          "ms": 448.0,
+          "dbfs": -30.01,
+          "presence": 0.1043,
+          "harsh": 0.0083,
+          "body": 0.7199
+        },
+        {
+          "kanaId": "kata-ho",
+          "glyph": "ホ",
+          "ms": 469.3,
+          "dbfs": -30.67,
+          "presence": 0.0009,
+          "harsh": 0.0002,
+          "body": 0.7415
+        },
+        {
+          "kanaId": "kata-ma",
+          "glyph": "マ",
+          "ms": 416.0,
+          "dbfs": -27.33,
+          "presence": 0.1476,
+          "harsh": 0.0015,
+          "body": 0.4543
+        },
+        {
+          "kanaId": "kata-mi",
+          "glyph": "ミ",
+          "ms": 448.0,
+          "dbfs": -27.05,
+          "presence": 0.0175,
+          "harsh": 0.0018,
+          "body": 0.9638
+        },
+        {
+          "kanaId": "kata-mu",
+          "glyph": "ム",
+          "ms": 384.0,
+          "dbfs": -27.04,
+          "presence": 0.0173,
+          "harsh": 0.0021,
+          "body": 0.9611
+        },
+        {
+          "kanaId": "kata-me",
+          "glyph": "メ",
+          "ms": 405.3,
+          "dbfs": -27.19,
+          "presence": 0.0709,
+          "harsh": 0.006,
+          "body": 0.7702
+        },
+        {
+          "kanaId": "kata-mo",
+          "glyph": "モ",
+          "ms": 437.3,
+          "dbfs": -27.34,
+          "presence": 0.001,
+          "harsh": 0.0002,
+          "body": 0.5587
+        },
+        {
+          "kanaId": "kata-ya",
+          "glyph": "ヤ",
+          "ms": 394.7,
+          "dbfs": -27.53,
+          "presence": 0.1112,
+          "harsh": 0.0045,
+          "body": 0.4174
+        },
+        {
+          "kanaId": "kata-yu",
+          "glyph": "ユ",
+          "ms": 384.0,
+          "dbfs": -27.86,
+          "presence": 0.0472,
+          "harsh": 0.0029,
+          "body": 0.9202
+        },
+        {
+          "kanaId": "kata-yo",
+          "glyph": "ヨ",
+          "ms": 426.7,
+          "dbfs": -28.95,
+          "presence": 0.031,
+          "harsh": 0.0011,
+          "body": 0.7332
+        },
+        {
+          "kanaId": "kata-ra",
+          "glyph": "ラ",
+          "ms": 384.0,
+          "dbfs": -29.1,
+          "presence": 0.094,
+          "harsh": 0.0026,
+          "body": 0.1875
+        },
+        {
+          "kanaId": "kata-ri",
+          "glyph": "リ",
+          "ms": 384.0,
+          "dbfs": -35.08,
+          "presence": 0.0357,
+          "harsh": 0.0046,
+          "body": 0.9436
+        },
+        {
+          "kanaId": "kata-ru",
+          "glyph": "ル",
+          "ms": 330.7,
+          "dbfs": -36.0,
+          "presence": 0.0248,
+          "harsh": 0.0031,
+          "body": 0.9481
+        },
+        {
+          "kanaId": "kata-re",
+          "glyph": "レ",
+          "ms": 362.7,
+          "dbfs": -31.57,
+          "presence": 0.1158,
+          "harsh": 0.0073,
+          "body": 0.7545
+        },
+        {
+          "kanaId": "kata-ro",
+          "glyph": "ロ",
+          "ms": 394.7,
+          "dbfs": -30.64,
+          "presence": 0.0166,
+          "harsh": 0.0009,
+          "body": 0.5281
+        },
+        {
+          "kanaId": "kata-wa",
+          "glyph": "ワ",
+          "ms": 416.0,
+          "dbfs": -29.76,
+          "presence": 0.1028,
+          "harsh": 0.0006,
+          "body": 0.1162
+        },
+        {
+          "kanaId": "kata-wo",
+          "glyph": "ヲ",
+          "ms": 394.7,
+          "dbfs": -33.82,
+          "presence": 0.0015,
+          "harsh": 0.0003,
+          "body": 0.6052
+        },
+        {
+          "kanaId": "kata-n",
+          "glyph": "ン",
+          "ms": 405.3,
+          "dbfs": -34.15,
+          "presence": 0.0149,
+          "harsh": 0.0017,
+          "body": 0.9463
+        }
+      ]
+    },
+    "30": {
+      "name": "No.7 アナウンス",
+      "n": 92,
+      "quietMorae": [
+        {
+          "kanaId": "hira-a",
+          "glyph": "あ",
+          "dbfs": -35.17,
+          "ms": 352.0
+        },
+        {
+          "kanaId": "hira-i",
+          "glyph": "い",
+          "dbfs": -40.46,
+          "ms": 352.0
+        },
+        {
+          "kanaId": "hira-u",
+          "glyph": "う",
+          "dbfs": -40.99,
+          "ms": 330.7
+        },
+        {
+          "kanaId": "hira-e",
+          "glyph": "え",
+          "dbfs": -35.42,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "hira-o",
+          "glyph": "お",
+          "dbfs": -35.68,
+          "ms": 330.7
+        },
+        {
+          "kanaId": "hira-ka",
+          "glyph": "か",
+          "dbfs": -35.49,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "hira-ki",
+          "glyph": "き",
+          "dbfs": -41.58,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "hira-ku",
+          "glyph": "く",
+          "dbfs": -40.32,
+          "ms": 362.7
+        },
+        {
+          "kanaId": "hira-ke",
+          "glyph": "け",
+          "dbfs": -39.09,
+          "ms": 405.3
+        },
+        {
+          "kanaId": "hira-ko",
+          "glyph": "こ",
+          "dbfs": -39.46,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "hira-sa",
+          "glyph": "さ",
+          "dbfs": -35.73,
+          "ms": 458.7
+        },
+        {
+          "kanaId": "hira-shi",
+          "glyph": "し",
+          "dbfs": -39.65,
+          "ms": 448.0
+        },
+        {
+          "kanaId": "hira-su",
+          "glyph": "す",
+          "dbfs": -40.22,
+          "ms": 448.0
+        },
+        {
+          "kanaId": "hira-se",
+          "glyph": "せ",
+          "dbfs": -39.11,
+          "ms": 458.7
+        },
+        {
+          "kanaId": "hira-so",
+          "glyph": "そ",
+          "dbfs": -38.43,
+          "ms": 448.0
+        },
+        {
+          "kanaId": "hira-chi",
+          "glyph": "ち",
+          "dbfs": -40.73,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "hira-tsu",
+          "glyph": "つ",
+          "dbfs": -41.11,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "hira-te",
+          "glyph": "て",
+          "dbfs": -38.19,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "hira-to",
+          "glyph": "と",
+          "dbfs": -38.7,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "hira-hi",
+          "glyph": "ひ",
+          "dbfs": -43.87,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "hira-fu",
+          "glyph": "ふ",
+          "dbfs": -40.17,
+          "ms": 373.3
+        },
+        {
+          "kanaId": "hira-he",
+          "glyph": "へ",
+          "dbfs": -35.42,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "hira-ho",
+          "glyph": "ほ",
+          "dbfs": -40.48,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "hira-wo",
+          "glyph": "を",
+          "dbfs": -35.68,
+          "ms": 330.7
+        },
+        {
+          "kanaId": "kata-a",
+          "glyph": "ア",
+          "dbfs": -35.17,
+          "ms": 352.0
+        },
+        {
+          "kanaId": "kata-i",
+          "glyph": "イ",
+          "dbfs": -40.46,
+          "ms": 352.0
+        },
+        {
+          "kanaId": "kata-u",
+          "glyph": "ウ",
+          "dbfs": -40.99,
+          "ms": 330.7
+        },
+        {
+          "kanaId": "kata-e",
+          "glyph": "エ",
+          "dbfs": -35.42,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "kata-o",
+          "glyph": "オ",
+          "dbfs": -35.68,
+          "ms": 330.7
+        },
+        {
+          "kanaId": "kata-ka",
+          "glyph": "カ",
+          "dbfs": -35.49,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "kata-ki",
+          "glyph": "キ",
+          "dbfs": -41.58,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "kata-ku",
+          "glyph": "ク",
+          "dbfs": -40.32,
+          "ms": 362.7
+        },
+        {
+          "kanaId": "kata-ke",
+          "glyph": "ケ",
+          "dbfs": -39.09,
+          "ms": 405.3
+        },
+        {
+          "kanaId": "kata-ko",
+          "glyph": "コ",
+          "dbfs": -39.46,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "kata-sa",
+          "glyph": "サ",
+          "dbfs": -35.73,
+          "ms": 458.7
+        },
+        {
+          "kanaId": "kata-shi",
+          "glyph": "シ",
+          "dbfs": -39.65,
+          "ms": 448.0
+        },
+        {
+          "kanaId": "kata-su",
+          "glyph": "ス",
+          "dbfs": -40.22,
+          "ms": 448.0
+        },
+        {
+          "kanaId": "kata-se",
+          "glyph": "セ",
+          "dbfs": -39.11,
+          "ms": 458.7
+        },
+        {
+          "kanaId": "kata-so",
+          "glyph": "ソ",
+          "dbfs": -38.43,
+          "ms": 448.0
+        },
+        {
+          "kanaId": "kata-chi",
+          "glyph": "チ",
+          "dbfs": -40.73,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "kata-tsu",
+          "glyph": "ツ",
+          "dbfs": -41.11,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "kata-te",
+          "glyph": "テ",
+          "dbfs": -38.19,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "kata-to",
+          "glyph": "ト",
+          "dbfs": -38.7,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "kata-ha",
+          "glyph": "ハ",
+          "dbfs": -39.61,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "kata-hi",
+          "glyph": "ヒ",
+          "dbfs": -43.87,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "kata-fu",
+          "glyph": "フ",
+          "dbfs": -40.17,
+          "ms": 373.3
+        },
+        {
+          "kanaId": "kata-he",
+          "glyph": "ヘ",
+          "dbfs": -38.98,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "kata-ho",
+          "glyph": "ホ",
+          "dbfs": -40.48,
+          "ms": 394.7
+        },
+        {
+          "kanaId": "kata-wo",
+          "glyph": "ヲ",
+          "dbfs": -35.68,
+          "ms": 330.7
+        }
+      ],
+      "presence_mean": 0.0201,
+      "presence_sd": 0.0253,
+      "harsh_mean": 0.0218,
+      "body_mean": 0.9184,
+      "dbfs_mean": -34.74,
+      "ms_median": 384.0,
+      "morae": [
+        {
+          "kanaId": "hira-a",
+          "glyph": "あ",
+          "ms": 352.0,
+          "dbfs": -35.17,
+          "presence": 0.016,
+          "harsh": 0.0004,
+          "body": 0.8742
+        },
+        {
+          "kanaId": "hira-i",
+          "glyph": "い",
+          "ms": 352.0,
+          "dbfs": -40.46,
+          "presence": 0.0172,
+          "harsh": 0.0018,
+          "body": 0.9788
+        },
+        {
+          "kanaId": "hira-u",
+          "glyph": "う",
+          "ms": 330.7,
+          "dbfs": -40.99,
+          "presence": 0.0095,
+          "harsh": 0.0014,
+          "body": 0.984
+        },
+        {
+          "kanaId": "hira-e",
+          "glyph": "え",
+          "ms": 384.0,
+          "dbfs": -35.42,
+          "presence": 0.0098,
+          "harsh": 0.0006,
+          "body": 0.9858
+        },
+        {
+          "kanaId": "hira-o",
+          "glyph": "お",
+          "ms": 330.7,
+          "dbfs": -35.68,
+          "presence": 0.0002,
+          "harsh": 0.0002,
+          "body": 0.9817
+        },
+        {
+          "kanaId": "hira-ka",
+          "glyph": "か",
+          "ms": 394.7,
+          "dbfs": -35.49,
+          "presence": 0.0379,
+          "harsh": 0.0015,
+          "body": 0.875
+        },
+        {
+          "kanaId": "hira-ki",
+          "glyph": "き",
+          "ms": 394.7,
+          "dbfs": -41.58,
+          "presence": 0.0872,
+          "harsh": 0.0314,
+          "body": 0.8425
+        },
+        {
+          "kanaId": "hira-ku",
+          "glyph": "く",
+          "ms": 362.7,
+          "dbfs": -40.32,
+          "presence": 0.0276,
+          "harsh": 0.0059,
+          "body": 0.9266
+        },
+        {
+          "kanaId": "hira-ke",
+          "glyph": "け",
+          "ms": 405.3,
+          "dbfs": -39.09,
+          "presence": 0.039,
+          "harsh": 0.0148,
+          "body": 0.9206
+        },
+        {
+          "kanaId": "hira-ko",
+          "glyph": "こ",
+          "ms": 394.7,
+          "dbfs": -39.46,
+          "presence": 0.0007,
+          "harsh": 0.0014,
+          "body": 0.9305
+        },
+        {
+          "kanaId": "hira-sa",
+          "glyph": "さ",
+          "ms": 458.7,
+          "dbfs": -35.73,
+          "presence": 0.0764,
+          "harsh": 0.042,
+          "body": 0.7723
+        },
+        {
+          "kanaId": "hira-shi",
+          "glyph": "し",
+          "ms": 448.0,
+          "dbfs": -39.65,
+          "presence": 0.0793,
+          "harsh": 0.2345,
+          "body": 0.4795
+        },
+        {
+          "kanaId": "hira-su",
+          "glyph": "す",
+          "ms": 448.0,
+          "dbfs": -40.22,
+          "presence": 0.0553,
+          "harsh": 0.233,
+          "body": 0.6723
+        },
+        {
+          "kanaId": "hira-se",
+          "glyph": "せ",
+          "ms": 458.7,
+          "dbfs": -39.11,
+          "presence": 0.0204,
+          "harsh": 0.0445,
+          "body": 0.9012
+        },
+        {
+          "kanaId": "hira-so",
+          "glyph": "そ",
+          "ms": 448.0,
+          "dbfs": -38.43,
+          "presence": 0.0179,
+          "harsh": 0.0766,
+          "body": 0.8285
+        },
+        {
+          "kanaId": "hira-ta",
+          "glyph": "た",
+          "ms": 384.0,
+          "dbfs": -34.94,
+          "presence": 0.0494,
+          "harsh": 0.0012,
+          "body": 0.8587
+        },
+        {
+          "kanaId": "hira-chi",
+          "glyph": "ち",
+          "ms": 416.0,
+          "dbfs": -40.73,
+          "presence": 0.0826,
+          "harsh": 0.1663,
+          "body": 0.6319
+        },
+        {
+          "kanaId": "hira-tsu",
+          "glyph": "つ",
+          "ms": 416.0,
+          "dbfs": -41.11,
+          "presence": 0.0473,
+          "harsh": 0.1196,
+          "body": 0.8001
+        },
+        {
+          "kanaId": "hira-te",
+          "glyph": "て",
+          "ms": 394.7,
+          "dbfs": -38.19,
+          "presence": 0.0109,
+          "harsh": 0.0017,
+          "body": 0.9749
+        },
+        {
+          "kanaId": "hira-to",
+          "glyph": "と",
+          "ms": 384.0,
+          "dbfs": -38.7,
+          "presence": 0.0031,
+          "harsh": 0.0029,
+          "body": 0.9544
+        },
+        {
+          "kanaId": "hira-na",
+          "glyph": "な",
+          "ms": 373.3,
+          "dbfs": -27.42,
+          "presence": 0.0104,
+          "harsh": 0.0002,
+          "body": 0.9473
+        },
+        {
+          "kanaId": "hira-ni",
+          "glyph": "に",
+          "ms": 373.3,
+          "dbfs": -26.73,
+          "presence": 0.001,
+          "harsh": 0.0003,
+          "body": 0.9981
+        },
+        {
+          "kanaId": "hira-nu",
+          "glyph": "ぬ",
+          "ms": 341.3,
+          "dbfs": -25.87,
+          "presence": 0.0013,
+          "harsh": 0.0001,
+          "body": 0.9975
+        },
+        {
+          "kanaId": "hira-ne",
+          "glyph": "ね",
+          "ms": 373.3,
+          "dbfs": -30.07,
+          "presence": 0.0043,
+          "harsh": 0.0004,
+          "body": 0.9894
+        },
+        {
+          "kanaId": "hira-no",
+          "glyph": "の",
+          "ms": 373.3,
+          "dbfs": -28.81,
+          "presence": 0.0004,
+          "harsh": 0.0001,
+          "body": 0.9912
+        },
+        {
+          "kanaId": "hira-ha",
+          "glyph": "は",
+          "ms": 384.0,
+          "dbfs": -33.76,
+          "presence": 0.0022,
+          "harsh": 0.0004,
+          "body": 0.972
+        },
+        {
+          "kanaId": "hira-hi",
+          "glyph": "ひ",
+          "ms": 394.7,
+          "dbfs": -43.87,
+          "presence": 0.0355,
+          "harsh": 0.007,
+          "body": 0.9483
+        },
+        {
+          "kanaId": "hira-fu",
+          "glyph": "ふ",
+          "ms": 373.3,
+          "dbfs": -40.17,
+          "presence": 0.0056,
+          "harsh": 0.0024,
+          "body": 0.974
+        },
+        {
+          "kanaId": "hira-he",
+          "glyph": "へ",
+          "ms": 384.0,
+          "dbfs": -35.42,
+          "presence": 0.0098,
+          "harsh": 0.0006,
+          "body": 0.9858
+        },
+        {
+          "kanaId": "hira-ho",
+          "glyph": "ほ",
+          "ms": 394.7,
+          "dbfs": -40.48,
+          "presence": 0.0003,
+          "harsh": 0.0005,
+          "body": 0.9484
+        },
+        {
+          "kanaId": "hira-ma",
+          "glyph": "ま",
+          "ms": 373.3,
+          "dbfs": -28.25,
+          "presence": 0.0096,
+          "harsh": 0.0003,
+          "body": 0.9402
+        },
+        {
+          "kanaId": "hira-mi",
+          "glyph": "み",
+          "ms": 362.7,
+          "dbfs": -25.51,
+          "presence": 0.0014,
+          "harsh": 0.0002,
+          "body": 0.9978
+        },
+        {
+          "kanaId": "hira-mu",
+          "glyph": "む",
+          "ms": 352.0,
+          "dbfs": -25.27,
+          "presence": 0.0015,
+          "harsh": 0.0002,
+          "body": 0.9963
+        },
+        {
+          "kanaId": "hira-me",
+          "glyph": "め",
+          "ms": 394.7,
+          "dbfs": -28.25,
+          "presence": 0.0035,
+          "harsh": 0.0004,
+          "body": 0.9891
+        },
+        {
+          "kanaId": "hira-mo",
+          "glyph": "も",
+          "ms": 373.3,
+          "dbfs": -26.62,
+          "presence": 0.0001,
+          "harsh": 0.0001,
+          "body": 0.9936
+        },
+        {
+          "kanaId": "hira-ya",
+          "glyph": "や",
+          "ms": 394.7,
+          "dbfs": -30.25,
+          "presence": 0.0173,
+          "harsh": 0.0005,
+          "body": 0.9477
+        },
+        {
+          "kanaId": "hira-yu",
+          "glyph": "ゆ",
+          "ms": 394.7,
+          "dbfs": -31.0,
+          "presence": 0.011,
+          "harsh": 0.0008,
+          "body": 0.9853
+        },
+        {
+          "kanaId": "hira-yo",
+          "glyph": "よ",
+          "ms": 394.7,
+          "dbfs": -30.9,
+          "presence": 0.0055,
+          "harsh": 0.0006,
+          "body": 0.9708
+        },
+        {
+          "kanaId": "hira-ra",
+          "glyph": "ら",
+          "ms": 373.3,
+          "dbfs": -31.76,
+          "presence": 0.0286,
+          "harsh": 0.0004,
+          "body": 0.8896
+        },
+        {
+          "kanaId": "hira-ri",
+          "glyph": "り",
+          "ms": 373.3,
+          "dbfs": -31.58,
+          "presence": 0.0069,
+          "harsh": 0.0008,
+          "body": 0.9914
+        },
+        {
+          "kanaId": "hira-ru",
+          "glyph": "る",
+          "ms": 341.3,
+          "dbfs": -31.55,
+          "presence": 0.0038,
+          "harsh": 0.0003,
+          "body": 0.9936
+        },
+        {
+          "kanaId": "hira-re",
+          "glyph": "れ",
+          "ms": 384.0,
+          "dbfs": -32.73,
+          "presence": 0.0049,
+          "harsh": 0.0008,
+          "body": 0.9908
+        },
+        {
+          "kanaId": "hira-ro",
+          "glyph": "ろ",
+          "ms": 384.0,
+          "dbfs": -33.09,
+          "presence": 0.0011,
+          "harsh": 0.0005,
+          "body": 0.976
+        },
+        {
+          "kanaId": "hira-wa",
+          "glyph": "わ",
+          "ms": 384.0,
+          "dbfs": -33.76,
+          "presence": 0.0022,
+          "harsh": 0.0004,
+          "body": 0.972
+        },
+        {
+          "kanaId": "hira-wo",
+          "glyph": "を",
+          "ms": 330.7,
+          "dbfs": -35.68,
+          "presence": 0.0002,
+          "harsh": 0.0002,
+          "body": 0.9817
+        },
+        {
+          "kanaId": "hira-n",
+          "glyph": "ん",
+          "ms": 330.7,
+          "dbfs": -33.92,
+          "presence": 0.001,
+          "harsh": 0.0,
+          "body": 0.998
+        },
+        {
+          "kanaId": "kata-a",
+          "glyph": "ア",
+          "ms": 352.0,
+          "dbfs": -35.17,
+          "presence": 0.016,
+          "harsh": 0.0004,
+          "body": 0.8742
+        },
+        {
+          "kanaId": "kata-i",
+          "glyph": "イ",
+          "ms": 352.0,
+          "dbfs": -40.46,
+          "presence": 0.0172,
+          "harsh": 0.0018,
+          "body": 0.9788
+        },
+        {
+          "kanaId": "kata-u",
+          "glyph": "ウ",
+          "ms": 330.7,
+          "dbfs": -40.99,
+          "presence": 0.0095,
+          "harsh": 0.0014,
+          "body": 0.984
+        },
+        {
+          "kanaId": "kata-e",
+          "glyph": "エ",
+          "ms": 384.0,
+          "dbfs": -35.42,
+          "presence": 0.0098,
+          "harsh": 0.0006,
+          "body": 0.9858
+        },
+        {
+          "kanaId": "kata-o",
+          "glyph": "オ",
+          "ms": 330.7,
+          "dbfs": -35.68,
+          "presence": 0.0002,
+          "harsh": 0.0002,
+          "body": 0.9817
+        },
+        {
+          "kanaId": "kata-ka",
+          "glyph": "カ",
+          "ms": 394.7,
+          "dbfs": -35.49,
+          "presence": 0.0379,
+          "harsh": 0.0015,
+          "body": 0.875
+        },
+        {
+          "kanaId": "kata-ki",
+          "glyph": "キ",
+          "ms": 394.7,
+          "dbfs": -41.58,
+          "presence": 0.0872,
+          "harsh": 0.0314,
+          "body": 0.8425
+        },
+        {
+          "kanaId": "kata-ku",
+          "glyph": "ク",
+          "ms": 362.7,
+          "dbfs": -40.32,
+          "presence": 0.0276,
+          "harsh": 0.0059,
+          "body": 0.9266
+        },
+        {
+          "kanaId": "kata-ke",
+          "glyph": "ケ",
+          "ms": 405.3,
+          "dbfs": -39.09,
+          "presence": 0.039,
+          "harsh": 0.0148,
+          "body": 0.9206
+        },
+        {
+          "kanaId": "kata-ko",
+          "glyph": "コ",
+          "ms": 394.7,
+          "dbfs": -39.46,
+          "presence": 0.0007,
+          "harsh": 0.0014,
+          "body": 0.9305
+        },
+        {
+          "kanaId": "kata-sa",
+          "glyph": "サ",
+          "ms": 458.7,
+          "dbfs": -35.73,
+          "presence": 0.0764,
+          "harsh": 0.042,
+          "body": 0.7723
+        },
+        {
+          "kanaId": "kata-shi",
+          "glyph": "シ",
+          "ms": 448.0,
+          "dbfs": -39.65,
+          "presence": 0.0793,
+          "harsh": 0.2345,
+          "body": 0.4795
+        },
+        {
+          "kanaId": "kata-su",
+          "glyph": "ス",
+          "ms": 448.0,
+          "dbfs": -40.22,
+          "presence": 0.0553,
+          "harsh": 0.233,
+          "body": 0.6723
+        },
+        {
+          "kanaId": "kata-se",
+          "glyph": "セ",
+          "ms": 458.7,
+          "dbfs": -39.11,
+          "presence": 0.0204,
+          "harsh": 0.0445,
+          "body": 0.9012
+        },
+        {
+          "kanaId": "kata-so",
+          "glyph": "ソ",
+          "ms": 448.0,
+          "dbfs": -38.43,
+          "presence": 0.0179,
+          "harsh": 0.0766,
+          "body": 0.8285
+        },
+        {
+          "kanaId": "kata-ta",
+          "glyph": "タ",
+          "ms": 384.0,
+          "dbfs": -34.94,
+          "presence": 0.0494,
+          "harsh": 0.0012,
+          "body": 0.8587
+        },
+        {
+          "kanaId": "kata-chi",
+          "glyph": "チ",
+          "ms": 416.0,
+          "dbfs": -40.73,
+          "presence": 0.0826,
+          "harsh": 0.1663,
+          "body": 0.6319
+        },
+        {
+          "kanaId": "kata-tsu",
+          "glyph": "ツ",
+          "ms": 416.0,
+          "dbfs": -41.11,
+          "presence": 0.0473,
+          "harsh": 0.1196,
+          "body": 0.8001
+        },
+        {
+          "kanaId": "kata-te",
+          "glyph": "テ",
+          "ms": 394.7,
+          "dbfs": -38.19,
+          "presence": 0.0109,
+          "harsh": 0.0017,
+          "body": 0.9749
+        },
+        {
+          "kanaId": "kata-to",
+          "glyph": "ト",
+          "ms": 384.0,
+          "dbfs": -38.7,
+          "presence": 0.0031,
+          "harsh": 0.0029,
+          "body": 0.9544
+        },
+        {
+          "kanaId": "kata-na",
+          "glyph": "ナ",
+          "ms": 373.3,
+          "dbfs": -27.42,
+          "presence": 0.0104,
+          "harsh": 0.0002,
+          "body": 0.9473
+        },
+        {
+          "kanaId": "kata-ni",
+          "glyph": "ニ",
+          "ms": 373.3,
+          "dbfs": -26.73,
+          "presence": 0.001,
+          "harsh": 0.0003,
+          "body": 0.9981
+        },
+        {
+          "kanaId": "kata-nu",
+          "glyph": "ヌ",
+          "ms": 341.3,
+          "dbfs": -25.87,
+          "presence": 0.0013,
+          "harsh": 0.0001,
+          "body": 0.9975
+        },
+        {
+          "kanaId": "kata-ne",
+          "glyph": "ネ",
+          "ms": 373.3,
+          "dbfs": -30.07,
+          "presence": 0.0043,
+          "harsh": 0.0004,
+          "body": 0.9894
+        },
+        {
+          "kanaId": "kata-no",
+          "glyph": "ノ",
+          "ms": 373.3,
+          "dbfs": -28.81,
+          "presence": 0.0004,
+          "harsh": 0.0001,
+          "body": 0.9912
+        },
+        {
+          "kanaId": "kata-ha",
+          "glyph": "ハ",
+          "ms": 394.7,
+          "dbfs": -39.61,
+          "presence": 0.0814,
+          "harsh": 0.0015,
+          "body": 0.4514
+        },
+        {
+          "kanaId": "kata-hi",
+          "glyph": "ヒ",
+          "ms": 394.7,
+          "dbfs": -43.87,
+          "presence": 0.0355,
+          "harsh": 0.007,
+          "body": 0.9483
+        },
+        {
+          "kanaId": "kata-fu",
+          "glyph": "フ",
+          "ms": 373.3,
+          "dbfs": -40.17,
+          "presence": 0.0056,
+          "harsh": 0.0024,
+          "body": 0.974
+        },
+        {
+          "kanaId": "kata-he",
+          "glyph": "ヘ",
+          "ms": 416.0,
+          "dbfs": -38.98,
+          "presence": 0.0665,
+          "harsh": 0.0013,
+          "body": 0.9241
+        },
+        {
+          "kanaId": "kata-ho",
+          "glyph": "ホ",
+          "ms": 394.7,
+          "dbfs": -40.48,
+          "presence": 0.0003,
+          "harsh": 0.0005,
+          "body": 0.9484
+        },
+        {
+          "kanaId": "kata-ma",
+          "glyph": "マ",
+          "ms": 373.3,
+          "dbfs": -28.25,
+          "presence": 0.0096,
+          "harsh": 0.0003,
+          "body": 0.9402
+        },
+        {
+          "kanaId": "kata-mi",
+          "glyph": "ミ",
+          "ms": 362.7,
+          "dbfs": -25.51,
+          "presence": 0.0014,
+          "harsh": 0.0002,
+          "body": 0.9978
+        },
+        {
+          "kanaId": "kata-mu",
+          "glyph": "ム",
+          "ms": 352.0,
+          "dbfs": -25.27,
+          "presence": 0.0015,
+          "harsh": 0.0002,
+          "body": 0.9963
+        },
+        {
+          "kanaId": "kata-me",
+          "glyph": "メ",
+          "ms": 394.7,
+          "dbfs": -28.25,
+          "presence": 0.0035,
+          "harsh": 0.0004,
+          "body": 0.9891
+        },
+        {
+          "kanaId": "kata-mo",
+          "glyph": "モ",
+          "ms": 373.3,
+          "dbfs": -26.62,
+          "presence": 0.0001,
+          "harsh": 0.0001,
+          "body": 0.9936
+        },
+        {
+          "kanaId": "kata-ya",
+          "glyph": "ヤ",
+          "ms": 394.7,
+          "dbfs": -30.25,
+          "presence": 0.0173,
+          "harsh": 0.0005,
+          "body": 0.9477
+        },
+        {
+          "kanaId": "kata-yu",
+          "glyph": "ユ",
+          "ms": 394.7,
+          "dbfs": -31.0,
+          "presence": 0.011,
+          "harsh": 0.0008,
+          "body": 0.9853
+        },
+        {
+          "kanaId": "kata-yo",
+          "glyph": "ヨ",
+          "ms": 394.7,
+          "dbfs": -30.9,
+          "presence": 0.0055,
+          "harsh": 0.0006,
+          "body": 0.9708
+        },
+        {
+          "kanaId": "kata-ra",
+          "glyph": "ラ",
+          "ms": 373.3,
+          "dbfs": -31.76,
+          "presence": 0.0286,
+          "harsh": 0.0004,
+          "body": 0.8896
+        },
+        {
+          "kanaId": "kata-ri",
+          "glyph": "リ",
+          "ms": 373.3,
+          "dbfs": -31.58,
+          "presence": 0.0069,
+          "harsh": 0.0008,
+          "body": 0.9914
+        },
+        {
+          "kanaId": "kata-ru",
+          "glyph": "ル",
+          "ms": 341.3,
+          "dbfs": -31.55,
+          "presence": 0.0038,
+          "harsh": 0.0003,
+          "body": 0.9936
+        },
+        {
+          "kanaId": "kata-re",
+          "glyph": "レ",
+          "ms": 384.0,
+          "dbfs": -32.73,
+          "presence": 0.0049,
+          "harsh": 0.0008,
+          "body": 0.9908
+        },
+        {
+          "kanaId": "kata-ro",
+          "glyph": "ロ",
+          "ms": 384.0,
+          "dbfs": -33.09,
+          "presence": 0.0011,
+          "harsh": 0.0005,
+          "body": 0.976
+        },
+        {
+          "kanaId": "kata-wa",
+          "glyph": "ワ",
+          "ms": 384.0,
+          "dbfs": -33.76,
+          "presence": 0.0022,
+          "harsh": 0.0004,
+          "body": 0.972
+        },
+        {
+          "kanaId": "kata-wo",
+          "glyph": "ヲ",
+          "ms": 330.7,
+          "dbfs": -35.68,
+          "presence": 0.0002,
+          "harsh": 0.0002,
+          "body": 0.9817
+        },
+        {
+          "kanaId": "kata-n",
+          "glyph": "ン",
+          "ms": 330.7,
+          "dbfs": -33.92,
+          "presence": 0.001,
+          "harsh": 0.0,
+          "body": 0.998
+        }
+      ]
+    },
+    "31": {
+      "name": "No.7 読み聞かせ",
+      "n": 92,
+      "quietMorae": [
+        {
+          "kanaId": "hira-ka",
+          "glyph": "か",
+          "dbfs": -35.76,
+          "ms": 458.7
+        },
+        {
+          "kanaId": "hira-ki",
+          "glyph": "き",
+          "dbfs": -35.79,
+          "ms": 448.0
+        },
+        {
+          "kanaId": "hira-ku",
+          "glyph": "く",
+          "dbfs": -35.3,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "hira-chi",
+          "glyph": "ち",
+          "dbfs": -35.39,
+          "ms": 501.3
+        },
+        {
+          "kanaId": "hira-tsu",
+          "glyph": "つ",
+          "dbfs": -35.25,
+          "ms": 501.3
+        },
+        {
+          "kanaId": "kata-ka",
+          "glyph": "カ",
+          "dbfs": -35.76,
+          "ms": 458.7
+        },
+        {
+          "kanaId": "kata-ki",
+          "glyph": "キ",
+          "dbfs": -35.79,
+          "ms": 448.0
+        },
+        {
+          "kanaId": "kata-ku",
+          "glyph": "ク",
+          "dbfs": -35.3,
+          "ms": 416.0
+        },
+        {
+          "kanaId": "kata-chi",
+          "glyph": "チ",
+          "dbfs": -35.39,
+          "ms": 501.3
+        },
+        {
+          "kanaId": "kata-tsu",
+          "glyph": "ツ",
+          "dbfs": -35.25,
+          "ms": 501.3
+        },
+        {
+          "kanaId": "kata-he",
+          "glyph": "ヘ",
+          "dbfs": -35.79,
+          "ms": 458.7
+        }
+      ],
+      "presence_mean": 0.0656,
+      "presence_sd": 0.0843,
+      "harsh_mean": 0.0399,
+      "body_mean": 0.7147,
+      "dbfs_mean": -30.93,
+      "ms_median": 426.7,
+      "morae": [
+        {
+          "kanaId": "hira-a",
+          "glyph": "あ",
+          "ms": 405.3,
+          "dbfs": -31.1,
+          "presence": 0.1335,
+          "harsh": 0.0034,
+          "body": 0.4215
+        },
+        {
+          "kanaId": "hira-i",
+          "glyph": "い",
+          "ms": 373.3,
+          "dbfs": -30.03,
+          "presence": 0.0056,
+          "harsh": 0.0016,
+          "body": 0.9847
+        },
+        {
+          "kanaId": "hira-u",
+          "glyph": "う",
+          "ms": 362.7,
+          "dbfs": -33.26,
+          "presence": 0.0175,
+          "harsh": 0.0018,
+          "body": 0.9258
+        },
+        {
+          "kanaId": "hira-e",
+          "glyph": "え",
+          "ms": 416.0,
+          "dbfs": -30.55,
+          "presence": 0.04,
+          "harsh": 0.0033,
+          "body": 0.8638
+        },
+        {
+          "kanaId": "hira-o",
+          "glyph": "お",
+          "ms": 352.0,
+          "dbfs": -33.35,
+          "presence": 0.0027,
+          "harsh": 0.0016,
+          "body": 0.6615
+        },
+        {
+          "kanaId": "hira-ka",
+          "glyph": "か",
+          "ms": 458.7,
+          "dbfs": -35.76,
+          "presence": 0.3368,
+          "harsh": 0.0285,
+          "body": 0.1131
+        },
+        {
+          "kanaId": "hira-ki",
+          "glyph": "き",
+          "ms": 448.0,
+          "dbfs": -35.79,
+          "presence": 0.0871,
+          "harsh": 0.1982,
+          "body": 0.5398
+        },
+        {
+          "kanaId": "hira-ku",
+          "glyph": "く",
+          "ms": 416.0,
+          "dbfs": -35.3,
+          "presence": 0.1244,
+          "harsh": 0.0126,
+          "body": 0.7798
+        },
+        {
+          "kanaId": "hira-ke",
+          "glyph": "け",
+          "ms": 458.7,
+          "dbfs": -34.02,
+          "presence": 0.132,
+          "harsh": 0.0349,
+          "body": 0.6229
+        },
+        {
+          "kanaId": "hira-ko",
+          "glyph": "こ",
+          "ms": 448.0,
+          "dbfs": -34.02,
+          "presence": 0.0052,
+          "harsh": 0.0067,
+          "body": 0.6574
+        },
+        {
+          "kanaId": "hira-sa",
+          "glyph": "さ",
+          "ms": 522.7,
+          "dbfs": -32.14,
+          "presence": 0.2774,
+          "harsh": 0.0969,
+          "body": 0.1674
+        },
+        {
+          "kanaId": "hira-shi",
+          "glyph": "し",
+          "ms": 501.3,
+          "dbfs": -33.42,
+          "presence": 0.0842,
+          "harsh": 0.3427,
+          "body": 0.4223
+        },
+        {
+          "kanaId": "hira-su",
+          "glyph": "す",
+          "ms": 501.3,
+          "dbfs": -32.64,
+          "presence": 0.088,
+          "harsh": 0.2739,
+          "body": 0.4455
+        },
+        {
+          "kanaId": "hira-se",
+          "glyph": "せ",
+          "ms": 522.7,
+          "dbfs": -32.18,
+          "presence": 0.0833,
+          "harsh": 0.0743,
+          "body": 0.5724
+        },
+        {
+          "kanaId": "hira-so",
+          "glyph": "そ",
+          "ms": 501.3,
+          "dbfs": -31.03,
+          "presence": 0.0313,
+          "harsh": 0.0614,
+          "body": 0.4819
+        },
+        {
+          "kanaId": "hira-ta",
+          "glyph": "た",
+          "ms": 437.3,
+          "dbfs": -34.39,
+          "presence": 0.3623,
+          "harsh": 0.0231,
+          "body": 0.1283
+        },
+        {
+          "kanaId": "hira-chi",
+          "glyph": "ち",
+          "ms": 501.3,
+          "dbfs": -35.39,
+          "presence": 0.0687,
+          "harsh": 0.3217,
+          "body": 0.4611
+        },
+        {
+          "kanaId": "hira-tsu",
+          "glyph": "つ",
+          "ms": 501.3,
+          "dbfs": -35.25,
+          "presence": 0.104,
+          "harsh": 0.265,
+          "body": 0.5132
+        },
+        {
+          "kanaId": "hira-te",
+          "glyph": "て",
+          "ms": 437.3,
+          "dbfs": -34.1,
+          "presence": 0.1191,
+          "harsh": 0.0131,
+          "body": 0.6451
+        },
+        {
+          "kanaId": "hira-to",
+          "glyph": "と",
+          "ms": 426.7,
+          "dbfs": -32.12,
+          "presence": 0.0258,
+          "harsh": 0.0065,
+          "body": 0.6337
+        },
+        {
+          "kanaId": "hira-na",
+          "glyph": "な",
+          "ms": 416.0,
+          "dbfs": -28.25,
+          "presence": 0.0484,
+          "harsh": 0.0017,
+          "body": 0.8137
+        },
+        {
+          "kanaId": "hira-ni",
+          "glyph": "に",
+          "ms": 384.0,
+          "dbfs": -27.04,
+          "presence": 0.003,
+          "harsh": 0.0013,
+          "body": 0.9837
+        },
+        {
+          "kanaId": "hira-nu",
+          "glyph": "ぬ",
+          "ms": 384.0,
+          "dbfs": -29.45,
+          "presence": 0.012,
+          "harsh": 0.0009,
+          "body": 0.9368
+        },
+        {
+          "kanaId": "hira-ne",
+          "glyph": "ね",
+          "ms": 416.0,
+          "dbfs": -27.5,
+          "presence": 0.0262,
+          "harsh": 0.0019,
+          "body": 0.8822
+        },
+        {
+          "kanaId": "hira-no",
+          "glyph": "の",
+          "ms": 416.0,
+          "dbfs": -28.93,
+          "presence": 0.0084,
+          "harsh": 0.0005,
+          "body": 0.9081
+        },
+        {
+          "kanaId": "hira-ha",
+          "glyph": "は",
+          "ms": 448.0,
+          "dbfs": -30.11,
+          "presence": 0.0532,
+          "harsh": 0.0024,
+          "body": 0.6712
+        },
+        {
+          "kanaId": "hira-hi",
+          "glyph": "ひ",
+          "ms": 437.3,
+          "dbfs": -33.88,
+          "presence": 0.0394,
+          "harsh": 0.0217,
+          "body": 0.9081
+        },
+        {
+          "kanaId": "hira-fu",
+          "glyph": "ふ",
+          "ms": 426.7,
+          "dbfs": -33.53,
+          "presence": 0.0588,
+          "harsh": 0.0023,
+          "body": 0.8921
+        },
+        {
+          "kanaId": "hira-he",
+          "glyph": "へ",
+          "ms": 416.0,
+          "dbfs": -30.55,
+          "presence": 0.04,
+          "harsh": 0.0033,
+          "body": 0.8638
+        },
+        {
+          "kanaId": "hira-ho",
+          "glyph": "ほ",
+          "ms": 448.0,
+          "dbfs": -33.47,
+          "presence": 0.0025,
+          "harsh": 0.0021,
+          "body": 0.6974
+        },
+        {
+          "kanaId": "hira-ma",
+          "glyph": "ま",
+          "ms": 437.3,
+          "dbfs": -26.06,
+          "presence": 0.0325,
+          "harsh": 0.001,
+          "body": 0.8793
+        },
+        {
+          "kanaId": "hira-mi",
+          "glyph": "み",
+          "ms": 384.0,
+          "dbfs": -24.27,
+          "presence": 0.0011,
+          "harsh": 0.0005,
+          "body": 0.9906
+        },
+        {
+          "kanaId": "hira-mu",
+          "glyph": "む",
+          "ms": 394.7,
+          "dbfs": -24.85,
+          "presence": 0.0054,
+          "harsh": 0.0002,
+          "body": 0.9687
+        },
+        {
+          "kanaId": "hira-me",
+          "glyph": "め",
+          "ms": 426.7,
+          "dbfs": -24.72,
+          "presence": 0.0128,
+          "harsh": 0.001,
+          "body": 0.9266
+        },
+        {
+          "kanaId": "hira-mo",
+          "glyph": "も",
+          "ms": 416.0,
+          "dbfs": -27.46,
+          "presence": 0.0047,
+          "harsh": 0.0003,
+          "body": 0.9091
+        },
+        {
+          "kanaId": "hira-ya",
+          "glyph": "や",
+          "ms": 458.7,
+          "dbfs": -26.96,
+          "presence": 0.0695,
+          "harsh": 0.0024,
+          "body": 0.7966
+        },
+        {
+          "kanaId": "hira-yu",
+          "glyph": "ゆ",
+          "ms": 448.0,
+          "dbfs": -26.53,
+          "presence": 0.0084,
+          "harsh": 0.001,
+          "body": 0.9322
+        },
+        {
+          "kanaId": "hira-yo",
+          "glyph": "よ",
+          "ms": 448.0,
+          "dbfs": -27.45,
+          "presence": 0.0109,
+          "harsh": 0.0011,
+          "body": 0.867
+        },
+        {
+          "kanaId": "hira-ra",
+          "glyph": "ら",
+          "ms": 426.7,
+          "dbfs": -28.84,
+          "presence": 0.1732,
+          "harsh": 0.0022,
+          "body": 0.4478
+        },
+        {
+          "kanaId": "hira-ri",
+          "glyph": "り",
+          "ms": 394.7,
+          "dbfs": -29.89,
+          "presence": 0.0132,
+          "harsh": 0.0026,
+          "body": 0.9718
+        },
+        {
+          "kanaId": "hira-ru",
+          "glyph": "る",
+          "ms": 384.0,
+          "dbfs": -28.3,
+          "presence": 0.0104,
+          "harsh": 0.0009,
+          "body": 0.9363
+        },
+        {
+          "kanaId": "hira-re",
+          "glyph": "れ",
+          "ms": 416.0,
+          "dbfs": -30.24,
+          "presence": 0.0391,
+          "harsh": 0.0027,
+          "body": 0.8838
+        },
+        {
+          "kanaId": "hira-ro",
+          "glyph": "ろ",
+          "ms": 426.7,
+          "dbfs": -30.02,
+          "presence": 0.0043,
+          "harsh": 0.0012,
+          "body": 0.7442
+        },
+        {
+          "kanaId": "hira-wa",
+          "glyph": "わ",
+          "ms": 448.0,
+          "dbfs": -30.11,
+          "presence": 0.0532,
+          "harsh": 0.0024,
+          "body": 0.6712
+        },
+        {
+          "kanaId": "hira-wo",
+          "glyph": "を",
+          "ms": 352.0,
+          "dbfs": -33.35,
+          "presence": 0.0027,
+          "harsh": 0.0016,
+          "body": 0.6615
+        },
+        {
+          "kanaId": "hira-n",
+          "glyph": "ん",
+          "ms": 352.0,
+          "dbfs": -31.89,
+          "presence": 0.0067,
+          "harsh": 0.0001,
+          "body": 0.9771
+        },
+        {
+          "kanaId": "kata-a",
+          "glyph": "ア",
+          "ms": 405.3,
+          "dbfs": -31.1,
+          "presence": 0.1335,
+          "harsh": 0.0034,
+          "body": 0.4215
+        },
+        {
+          "kanaId": "kata-i",
+          "glyph": "イ",
+          "ms": 373.3,
+          "dbfs": -30.03,
+          "presence": 0.0056,
+          "harsh": 0.0016,
+          "body": 0.9847
+        },
+        {
+          "kanaId": "kata-u",
+          "glyph": "ウ",
+          "ms": 362.7,
+          "dbfs": -33.26,
+          "presence": 0.0175,
+          "harsh": 0.0018,
+          "body": 0.9258
+        },
+        {
+          "kanaId": "kata-e",
+          "glyph": "エ",
+          "ms": 416.0,
+          "dbfs": -30.55,
+          "presence": 0.04,
+          "harsh": 0.0033,
+          "body": 0.8638
+        },
+        {
+          "kanaId": "kata-o",
+          "glyph": "オ",
+          "ms": 352.0,
+          "dbfs": -33.35,
+          "presence": 0.0027,
+          "harsh": 0.0016,
+          "body": 0.6615
+        },
+        {
+          "kanaId": "kata-ka",
+          "glyph": "カ",
+          "ms": 458.7,
+          "dbfs": -35.76,
+          "presence": 0.3368,
+          "harsh": 0.0285,
+          "body": 0.1131
+        },
+        {
+          "kanaId": "kata-ki",
+          "glyph": "キ",
+          "ms": 448.0,
+          "dbfs": -35.79,
+          "presence": 0.0871,
+          "harsh": 0.1982,
+          "body": 0.5398
+        },
+        {
+          "kanaId": "kata-ku",
+          "glyph": "ク",
+          "ms": 416.0,
+          "dbfs": -35.3,
+          "presence": 0.1244,
+          "harsh": 0.0126,
+          "body": 0.7798
+        },
+        {
+          "kanaId": "kata-ke",
+          "glyph": "ケ",
+          "ms": 458.7,
+          "dbfs": -34.02,
+          "presence": 0.132,
+          "harsh": 0.0349,
+          "body": 0.6229
+        },
+        {
+          "kanaId": "kata-ko",
+          "glyph": "コ",
+          "ms": 448.0,
+          "dbfs": -34.02,
+          "presence": 0.0052,
+          "harsh": 0.0067,
+          "body": 0.6574
+        },
+        {
+          "kanaId": "kata-sa",
+          "glyph": "サ",
+          "ms": 522.7,
+          "dbfs": -32.14,
+          "presence": 0.2774,
+          "harsh": 0.0969,
+          "body": 0.1674
+        },
+        {
+          "kanaId": "kata-shi",
+          "glyph": "シ",
+          "ms": 501.3,
+          "dbfs": -33.42,
+          "presence": 0.0842,
+          "harsh": 0.3427,
+          "body": 0.4223
+        },
+        {
+          "kanaId": "kata-su",
+          "glyph": "ス",
+          "ms": 501.3,
+          "dbfs": -32.64,
+          "presence": 0.088,
+          "harsh": 0.2739,
+          "body": 0.4455
+        },
+        {
+          "kanaId": "kata-se",
+          "glyph": "セ",
+          "ms": 522.7,
+          "dbfs": -32.18,
+          "presence": 0.0833,
+          "harsh": 0.0743,
+          "body": 0.5724
+        },
+        {
+          "kanaId": "kata-so",
+          "glyph": "ソ",
+          "ms": 501.3,
+          "dbfs": -31.03,
+          "presence": 0.0313,
+          "harsh": 0.0614,
+          "body": 0.4819
+        },
+        {
+          "kanaId": "kata-ta",
+          "glyph": "タ",
+          "ms": 437.3,
+          "dbfs": -34.39,
+          "presence": 0.3623,
+          "harsh": 0.0231,
+          "body": 0.1283
+        },
+        {
+          "kanaId": "kata-chi",
+          "glyph": "チ",
+          "ms": 501.3,
+          "dbfs": -35.39,
+          "presence": 0.0687,
+          "harsh": 0.3217,
+          "body": 0.4611
+        },
+        {
+          "kanaId": "kata-tsu",
+          "glyph": "ツ",
+          "ms": 501.3,
+          "dbfs": -35.25,
+          "presence": 0.104,
+          "harsh": 0.265,
+          "body": 0.5132
+        },
+        {
+          "kanaId": "kata-te",
+          "glyph": "テ",
+          "ms": 437.3,
+          "dbfs": -34.1,
+          "presence": 0.1191,
+          "harsh": 0.0131,
+          "body": 0.6451
+        },
+        {
+          "kanaId": "kata-to",
+          "glyph": "ト",
+          "ms": 426.7,
+          "dbfs": -32.12,
+          "presence": 0.0258,
+          "harsh": 0.0065,
+          "body": 0.6337
+        },
+        {
+          "kanaId": "kata-na",
+          "glyph": "ナ",
+          "ms": 416.0,
+          "dbfs": -28.25,
+          "presence": 0.0484,
+          "harsh": 0.0017,
+          "body": 0.8137
+        },
+        {
+          "kanaId": "kata-ni",
+          "glyph": "ニ",
+          "ms": 384.0,
+          "dbfs": -27.04,
+          "presence": 0.003,
+          "harsh": 0.0013,
+          "body": 0.9837
+        },
+        {
+          "kanaId": "kata-nu",
+          "glyph": "ヌ",
+          "ms": 384.0,
+          "dbfs": -29.45,
+          "presence": 0.012,
+          "harsh": 0.0009,
+          "body": 0.9368
+        },
+        {
+          "kanaId": "kata-ne",
+          "glyph": "ネ",
+          "ms": 416.0,
+          "dbfs": -27.5,
+          "presence": 0.0262,
+          "harsh": 0.0019,
+          "body": 0.8822
+        },
+        {
+          "kanaId": "kata-no",
+          "glyph": "ノ",
+          "ms": 416.0,
+          "dbfs": -28.93,
+          "presence": 0.0084,
+          "harsh": 0.0005,
+          "body": 0.9081
+        },
+        {
+          "kanaId": "kata-ha",
+          "glyph": "ハ",
+          "ms": 458.7,
+          "dbfs": -31.79,
+          "presence": 0.2007,
+          "harsh": 0.008,
+          "body": 0.3238
+        },
+        {
+          "kanaId": "kata-hi",
+          "glyph": "ヒ",
+          "ms": 437.3,
+          "dbfs": -33.88,
+          "presence": 0.0394,
+          "harsh": 0.0217,
+          "body": 0.9081
+        },
+        {
+          "kanaId": "kata-fu",
+          "glyph": "フ",
+          "ms": 426.7,
+          "dbfs": -33.53,
+          "presence": 0.0588,
+          "harsh": 0.0023,
+          "body": 0.8921
+        },
+        {
+          "kanaId": "kata-he",
+          "glyph": "ヘ",
+          "ms": 458.7,
+          "dbfs": -35.79,
+          "presence": 0.1885,
+          "harsh": 0.009,
+          "body": 0.6402
+        },
+        {
+          "kanaId": "kata-ho",
+          "glyph": "ホ",
+          "ms": 448.0,
+          "dbfs": -33.47,
+          "presence": 0.0025,
+          "harsh": 0.0021,
+          "body": 0.6974
+        },
+        {
+          "kanaId": "kata-ma",
+          "glyph": "マ",
+          "ms": 437.3,
+          "dbfs": -26.06,
+          "presence": 0.0325,
+          "harsh": 0.001,
+          "body": 0.8793
+        },
+        {
+          "kanaId": "kata-mi",
+          "glyph": "ミ",
+          "ms": 384.0,
+          "dbfs": -24.27,
+          "presence": 0.0011,
+          "harsh": 0.0005,
+          "body": 0.9906
+        },
+        {
+          "kanaId": "kata-mu",
+          "glyph": "ム",
+          "ms": 394.7,
+          "dbfs": -24.85,
+          "presence": 0.0054,
+          "harsh": 0.0002,
+          "body": 0.9687
+        },
+        {
+          "kanaId": "kata-me",
+          "glyph": "メ",
+          "ms": 426.7,
+          "dbfs": -24.72,
+          "presence": 0.0128,
+          "harsh": 0.001,
+          "body": 0.9266
+        },
+        {
+          "kanaId": "kata-mo",
+          "glyph": "モ",
+          "ms": 416.0,
+          "dbfs": -27.46,
+          "presence": 0.0047,
+          "harsh": 0.0003,
+          "body": 0.9091
+        },
+        {
+          "kanaId": "kata-ya",
+          "glyph": "ヤ",
+          "ms": 458.7,
+          "dbfs": -26.96,
+          "presence": 0.0695,
+          "harsh": 0.0024,
+          "body": 0.7966
+        },
+        {
+          "kanaId": "kata-yu",
+          "glyph": "ユ",
+          "ms": 448.0,
+          "dbfs": -26.53,
+          "presence": 0.0084,
+          "harsh": 0.001,
+          "body": 0.9322
+        },
+        {
+          "kanaId": "kata-yo",
+          "glyph": "ヨ",
+          "ms": 448.0,
+          "dbfs": -27.45,
+          "presence": 0.0109,
+          "harsh": 0.0011,
+          "body": 0.867
+        },
+        {
+          "kanaId": "kata-ra",
+          "glyph": "ラ",
+          "ms": 426.7,
+          "dbfs": -28.84,
+          "presence": 0.1732,
+          "harsh": 0.0022,
+          "body": 0.4478
+        },
+        {
+          "kanaId": "kata-ri",
+          "glyph": "リ",
+          "ms": 394.7,
+          "dbfs": -29.89,
+          "presence": 0.0132,
+          "harsh": 0.0026,
+          "body": 0.9718
+        },
+        {
+          "kanaId": "kata-ru",
+          "glyph": "ル",
+          "ms": 384.0,
+          "dbfs": -28.3,
+          "presence": 0.0104,
+          "harsh": 0.0009,
+          "body": 0.9363
+        },
+        {
+          "kanaId": "kata-re",
+          "glyph": "レ",
+          "ms": 416.0,
+          "dbfs": -30.24,
+          "presence": 0.0391,
+          "harsh": 0.0027,
+          "body": 0.8838
+        },
+        {
+          "kanaId": "kata-ro",
+          "glyph": "ロ",
+          "ms": 426.7,
+          "dbfs": -30.02,
+          "presence": 0.0043,
+          "harsh": 0.0012,
+          "body": 0.7442
+        },
+        {
+          "kanaId": "kata-wa",
+          "glyph": "ワ",
+          "ms": 448.0,
+          "dbfs": -30.11,
+          "presence": 0.0532,
+          "harsh": 0.0024,
+          "body": 0.6712
+        },
+        {
+          "kanaId": "kata-wo",
+          "glyph": "ヲ",
+          "ms": 352.0,
+          "dbfs": -33.35,
+          "presence": 0.0027,
+          "harsh": 0.0016,
+          "body": 0.6615
+        },
+        {
+          "kanaId": "kata-n",
+          "glyph": "ン",
+          "ms": 352.0,
+          "dbfs": -31.89,
+          "presence": 0.0067,
+          "harsh": 0.0001,
+          "body": 0.9771
+        }
+      ]
+    },
+    "14": {
+      "name": "冥鳴ひまり",
+      "n": 92,
+      "quietMorae": [
+        {
+          "kanaId": "hira-a",
+          "glyph": "あ",
+          "dbfs": -40.62,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "hira-u",
+          "glyph": "う",
+          "dbfs": -39.31,
+          "ms": 426.7
+        },
+        {
+          "kanaId": "kata-a",
+          "glyph": "ア",
+          "dbfs": -40.62,
+          "ms": 384.0
+        },
+        {
+          "kanaId": "kata-u",
+          "glyph": "ウ",
+          "dbfs": -39.31,
+          "ms": 426.7
+        }
+      ],
+      "presence_mean": 0.0203,
+      "presence_sd": 0.0295,
+      "harsh_mean": 0.0148,
+      "body_mean": 0.8967,
+      "dbfs_mean": -28.11,
+      "ms_median": 426.7,
+      "morae": [
+        {
+          "kanaId": "hira-a",
+          "glyph": "あ",
+          "ms": 384.0,
+          "dbfs": -40.62,
+          "presence": 0.049,
+          "harsh": 0.0065,
+          "body": 0.0802
+        },
+        {
+          "kanaId": "hira-i",
+          "glyph": "い",
+          "ms": 416.0,
+          "dbfs": -32.68,
+          "presence": 0.005,
+          "harsh": 0.0019,
+          "body": 0.9866
+        },
+        {
+          "kanaId": "hira-u",
+          "glyph": "う",
+          "ms": 426.7,
+          "dbfs": -39.31,
+          "presence": 0.016,
+          "harsh": 0.0069,
+          "body": 0.956
+        },
+        {
+          "kanaId": "hira-e",
+          "glyph": "え",
+          "ms": 448.0,
+          "dbfs": -25.53,
+          "presence": 0.0209,
+          "harsh": 0.0012,
+          "body": 0.967
+        },
+        {
+          "kanaId": "hira-o",
+          "glyph": "お",
+          "ms": 405.3,
+          "dbfs": -31.88,
+          "presence": 0.0004,
+          "harsh": 0.0002,
+          "body": 0.9674
+        },
+        {
+          "kanaId": "hira-ka",
+          "glyph": "か",
+          "ms": 458.7,
+          "dbfs": -27.61,
+          "presence": 0.0965,
+          "harsh": 0.0034,
+          "body": 0.6603
+        },
+        {
+          "kanaId": "hira-ki",
+          "glyph": "き",
+          "ms": 480.0,
+          "dbfs": -28.16,
+          "presence": 0.0187,
+          "harsh": 0.0089,
+          "body": 0.9481
+        },
+        {
+          "kanaId": "hira-ku",
+          "glyph": "く",
+          "ms": 426.7,
+          "dbfs": -26.09,
+          "presence": 0.0082,
+          "harsh": 0.0017,
+          "body": 0.9826
+        },
+        {
+          "kanaId": "hira-ke",
+          "glyph": "け",
+          "ms": 480.0,
+          "dbfs": -23.96,
+          "presence": 0.0265,
+          "harsh": 0.0046,
+          "body": 0.9356
+        },
+        {
+          "kanaId": "hira-ko",
+          "glyph": "こ",
+          "ms": 458.7,
+          "dbfs": -28.1,
+          "presence": 0.0007,
+          "harsh": 0.0005,
+          "body": 0.9234
+        },
+        {
+          "kanaId": "hira-sa",
+          "glyph": "さ",
+          "ms": 490.7,
+          "dbfs": -29.22,
+          "presence": 0.1303,
+          "harsh": 0.0631,
+          "body": 0.6539
+        },
+        {
+          "kanaId": "hira-shi",
+          "glyph": "し",
+          "ms": 501.3,
+          "dbfs": -28.44,
+          "presence": 0.0187,
+          "harsh": 0.0946,
+          "body": 0.8166
+        },
+        {
+          "kanaId": "hira-su",
+          "glyph": "す",
+          "ms": 458.7,
+          "dbfs": -29.95,
+          "presence": 0.0134,
+          "harsh": 0.1225,
+          "body": 0.8568
+        },
+        {
+          "kanaId": "hira-se",
+          "glyph": "せ",
+          "ms": 490.7,
+          "dbfs": -25.33,
+          "presence": 0.0212,
+          "harsh": 0.0156,
+          "body": 0.9414
+        },
+        {
+          "kanaId": "hira-so",
+          "glyph": "そ",
+          "ms": 458.7,
+          "dbfs": -29.95,
+          "presence": 0.003,
+          "harsh": 0.0706,
+          "body": 0.8852
+        },
+        {
+          "kanaId": "hira-ta",
+          "glyph": "た",
+          "ms": 437.3,
+          "dbfs": -27.73,
+          "presence": 0.0691,
+          "harsh": 0.002,
+          "body": 0.7398
+        },
+        {
+          "kanaId": "hira-chi",
+          "glyph": "ち",
+          "ms": 522.7,
+          "dbfs": -27.81,
+          "presence": 0.0154,
+          "harsh": 0.1108,
+          "body": 0.8431
+        },
+        {
+          "kanaId": "hira-tsu",
+          "glyph": "つ",
+          "ms": 469.3,
+          "dbfs": -29.94,
+          "presence": 0.0207,
+          "harsh": 0.1307,
+          "body": 0.8364
+        },
+        {
+          "kanaId": "hira-te",
+          "glyph": "て",
+          "ms": 437.3,
+          "dbfs": -24.17,
+          "presence": 0.0161,
+          "harsh": 0.0021,
+          "body": 0.9595
+        },
+        {
+          "kanaId": "hira-to",
+          "glyph": "と",
+          "ms": 416.0,
+          "dbfs": -28.67,
+          "presence": 0.0043,
+          "harsh": 0.0017,
+          "body": 0.9528
+        },
+        {
+          "kanaId": "hira-na",
+          "glyph": "な",
+          "ms": 426.7,
+          "dbfs": -24.74,
+          "presence": 0.0186,
+          "harsh": 0.0005,
+          "body": 0.9481
+        },
+        {
+          "kanaId": "hira-ni",
+          "glyph": "に",
+          "ms": 437.3,
+          "dbfs": -23.98,
+          "presence": 0.0009,
+          "harsh": 0.0004,
+          "body": 0.9966
+        },
+        {
+          "kanaId": "hira-nu",
+          "glyph": "ぬ",
+          "ms": 394.7,
+          "dbfs": -25.43,
+          "presence": 0.0033,
+          "harsh": 0.0003,
+          "body": 0.9943
+        },
+        {
+          "kanaId": "hira-ne",
+          "glyph": "ね",
+          "ms": 405.3,
+          "dbfs": -23.03,
+          "presence": 0.0107,
+          "harsh": 0.0007,
+          "body": 0.9788
+        },
+        {
+          "kanaId": "hira-no",
+          "glyph": "の",
+          "ms": 426.7,
+          "dbfs": -26.01,
+          "presence": 0.0014,
+          "harsh": 0.0002,
+          "body": 0.9802
+        },
+        {
+          "kanaId": "hira-ha",
+          "glyph": "は",
+          "ms": 384.0,
+          "dbfs": -25.57,
+          "presence": 0.0111,
+          "harsh": 0.0005,
+          "body": 0.7617
+        },
+        {
+          "kanaId": "hira-hi",
+          "glyph": "ひ",
+          "ms": 469.3,
+          "dbfs": -30.58,
+          "presence": 0.0176,
+          "harsh": 0.0109,
+          "body": 0.9473
+        },
+        {
+          "kanaId": "hira-fu",
+          "glyph": "ふ",
+          "ms": 426.7,
+          "dbfs": -32.55,
+          "presence": 0.0148,
+          "harsh": 0.0018,
+          "body": 0.9764
+        },
+        {
+          "kanaId": "hira-he",
+          "glyph": "へ",
+          "ms": 448.0,
+          "dbfs": -25.53,
+          "presence": 0.0209,
+          "harsh": 0.0012,
+          "body": 0.967
+        },
+        {
+          "kanaId": "hira-ho",
+          "glyph": "ほ",
+          "ms": 458.7,
+          "dbfs": -31.55,
+          "presence": 0.0004,
+          "harsh": 0.0002,
+          "body": 0.9334
+        },
+        {
+          "kanaId": "hira-ma",
+          "glyph": "ま",
+          "ms": 416.0,
+          "dbfs": -24.19,
+          "presence": 0.014,
+          "harsh": 0.0002,
+          "body": 0.9378
+        },
+        {
+          "kanaId": "hira-mi",
+          "glyph": "み",
+          "ms": 437.3,
+          "dbfs": -24.01,
+          "presence": 0.0015,
+          "harsh": 0.0003,
+          "body": 0.996
+        },
+        {
+          "kanaId": "hira-mu",
+          "glyph": "む",
+          "ms": 405.3,
+          "dbfs": -24.63,
+          "presence": 0.0047,
+          "harsh": 0.0001,
+          "body": 0.992
+        },
+        {
+          "kanaId": "hira-me",
+          "glyph": "め",
+          "ms": 426.7,
+          "dbfs": -23.35,
+          "presence": 0.0106,
+          "harsh": 0.0007,
+          "body": 0.9723
+        },
+        {
+          "kanaId": "hira-mo",
+          "glyph": "も",
+          "ms": 437.3,
+          "dbfs": -25.25,
+          "presence": 0.0003,
+          "harsh": 0.0001,
+          "body": 0.9739
+        },
+        {
+          "kanaId": "hira-ya",
+          "glyph": "や",
+          "ms": 426.7,
+          "dbfs": -24.94,
+          "presence": 0.0369,
+          "harsh": 0.0015,
+          "body": 0.8601
+        },
+        {
+          "kanaId": "hira-yu",
+          "glyph": "ゆ",
+          "ms": 394.7,
+          "dbfs": -26.69,
+          "presence": 0.0083,
+          "harsh": 0.0014,
+          "body": 0.9876
+        },
+        {
+          "kanaId": "hira-yo",
+          "glyph": "よ",
+          "ms": 426.7,
+          "dbfs": -26.44,
+          "presence": 0.0054,
+          "harsh": 0.0006,
+          "body": 0.9813
+        },
+        {
+          "kanaId": "hira-ra",
+          "glyph": "ら",
+          "ms": 384.0,
+          "dbfs": -27.71,
+          "presence": 0.0474,
+          "harsh": 0.0007,
+          "body": 0.7179
+        },
+        {
+          "kanaId": "hira-ri",
+          "glyph": "り",
+          "ms": 394.7,
+          "dbfs": -31.6,
+          "presence": 0.0182,
+          "harsh": 0.003,
+          "body": 0.9693
+        },
+        {
+          "kanaId": "hira-ru",
+          "glyph": "る",
+          "ms": 352.0,
+          "dbfs": -30.43,
+          "presence": 0.0138,
+          "harsh": 0.0004,
+          "body": 0.9827
+        },
+        {
+          "kanaId": "hira-re",
+          "glyph": "れ",
+          "ms": 373.3,
+          "dbfs": -26.25,
+          "presence": 0.0149,
+          "harsh": 0.0007,
+          "body": 0.9771
+        },
+        {
+          "kanaId": "hira-ro",
+          "glyph": "ろ",
+          "ms": 384.0,
+          "dbfs": -30.12,
+          "presence": 0.0062,
+          "harsh": 0.0003,
+          "body": 0.963
+        },
+        {
+          "kanaId": "hira-wa",
+          "glyph": "わ",
+          "ms": 384.0,
+          "dbfs": -25.57,
+          "presence": 0.0111,
+          "harsh": 0.0005,
+          "body": 0.7617
+        },
+        {
+          "kanaId": "hira-wo",
+          "glyph": "を",
+          "ms": 405.3,
+          "dbfs": -31.88,
+          "presence": 0.0004,
+          "harsh": 0.0002,
+          "body": 0.9674
+        },
+        {
+          "kanaId": "hira-n",
+          "glyph": "ん",
+          "ms": 490.7,
+          "dbfs": -31.27,
+          "presence": 0.0011,
+          "harsh": 0.0001,
+          "body": 0.9955
+        },
+        {
+          "kanaId": "kata-a",
+          "glyph": "ア",
+          "ms": 384.0,
+          "dbfs": -40.62,
+          "presence": 0.049,
+          "harsh": 0.0065,
+          "body": 0.0802
+        },
+        {
+          "kanaId": "kata-i",
+          "glyph": "イ",
+          "ms": 416.0,
+          "dbfs": -32.68,
+          "presence": 0.005,
+          "harsh": 0.0019,
+          "body": 0.9866
+        },
+        {
+          "kanaId": "kata-u",
+          "glyph": "ウ",
+          "ms": 426.7,
+          "dbfs": -39.31,
+          "presence": 0.016,
+          "harsh": 0.0069,
+          "body": 0.956
+        },
+        {
+          "kanaId": "kata-e",
+          "glyph": "エ",
+          "ms": 448.0,
+          "dbfs": -25.53,
+          "presence": 0.0209,
+          "harsh": 0.0012,
+          "body": 0.967
+        },
+        {
+          "kanaId": "kata-o",
+          "glyph": "オ",
+          "ms": 405.3,
+          "dbfs": -31.88,
+          "presence": 0.0004,
+          "harsh": 0.0002,
+          "body": 0.9674
+        },
+        {
+          "kanaId": "kata-ka",
+          "glyph": "カ",
+          "ms": 458.7,
+          "dbfs": -27.61,
+          "presence": 0.0965,
+          "harsh": 0.0034,
+          "body": 0.6603
+        },
+        {
+          "kanaId": "kata-ki",
+          "glyph": "キ",
+          "ms": 480.0,
+          "dbfs": -28.16,
+          "presence": 0.0187,
+          "harsh": 0.0089,
+          "body": 0.9481
+        },
+        {
+          "kanaId": "kata-ku",
+          "glyph": "ク",
+          "ms": 426.7,
+          "dbfs": -26.09,
+          "presence": 0.0082,
+          "harsh": 0.0017,
+          "body": 0.9826
+        },
+        {
+          "kanaId": "kata-ke",
+          "glyph": "ケ",
+          "ms": 480.0,
+          "dbfs": -23.96,
+          "presence": 0.0265,
+          "harsh": 0.0046,
+          "body": 0.9356
+        },
+        {
+          "kanaId": "kata-ko",
+          "glyph": "コ",
+          "ms": 458.7,
+          "dbfs": -28.1,
+          "presence": 0.0007,
+          "harsh": 0.0005,
+          "body": 0.9234
+        },
+        {
+          "kanaId": "kata-sa",
+          "glyph": "サ",
+          "ms": 490.7,
+          "dbfs": -29.22,
+          "presence": 0.1303,
+          "harsh": 0.0631,
+          "body": 0.6539
+        },
+        {
+          "kanaId": "kata-shi",
+          "glyph": "シ",
+          "ms": 501.3,
+          "dbfs": -28.44,
+          "presence": 0.0187,
+          "harsh": 0.0946,
+          "body": 0.8166
+        },
+        {
+          "kanaId": "kata-su",
+          "glyph": "ス",
+          "ms": 458.7,
+          "dbfs": -29.95,
+          "presence": 0.0134,
+          "harsh": 0.1225,
+          "body": 0.8568
+        },
+        {
+          "kanaId": "kata-se",
+          "glyph": "セ",
+          "ms": 490.7,
+          "dbfs": -25.33,
+          "presence": 0.0212,
+          "harsh": 0.0156,
+          "body": 0.9414
+        },
+        {
+          "kanaId": "kata-so",
+          "glyph": "ソ",
+          "ms": 458.7,
+          "dbfs": -29.95,
+          "presence": 0.003,
+          "harsh": 0.0706,
+          "body": 0.8852
+        },
+        {
+          "kanaId": "kata-ta",
+          "glyph": "タ",
+          "ms": 437.3,
+          "dbfs": -27.73,
+          "presence": 0.0691,
+          "harsh": 0.002,
+          "body": 0.7398
+        },
+        {
+          "kanaId": "kata-chi",
+          "glyph": "チ",
+          "ms": 522.7,
+          "dbfs": -27.81,
+          "presence": 0.0154,
+          "harsh": 0.1108,
+          "body": 0.8431
+        },
+        {
+          "kanaId": "kata-tsu",
+          "glyph": "ツ",
+          "ms": 469.3,
+          "dbfs": -29.94,
+          "presence": 0.0207,
+          "harsh": 0.1307,
+          "body": 0.8364
+        },
+        {
+          "kanaId": "kata-te",
+          "glyph": "テ",
+          "ms": 437.3,
+          "dbfs": -24.17,
+          "presence": 0.0161,
+          "harsh": 0.0021,
+          "body": 0.9595
+        },
+        {
+          "kanaId": "kata-to",
+          "glyph": "ト",
+          "ms": 416.0,
+          "dbfs": -28.67,
+          "presence": 0.0043,
+          "harsh": 0.0017,
+          "body": 0.9528
+        },
+        {
+          "kanaId": "kata-na",
+          "glyph": "ナ",
+          "ms": 426.7,
+          "dbfs": -24.74,
+          "presence": 0.0186,
+          "harsh": 0.0005,
+          "body": 0.9481
+        },
+        {
+          "kanaId": "kata-ni",
+          "glyph": "ニ",
+          "ms": 437.3,
+          "dbfs": -23.98,
+          "presence": 0.0009,
+          "harsh": 0.0004,
+          "body": 0.9966
+        },
+        {
+          "kanaId": "kata-nu",
+          "glyph": "ヌ",
+          "ms": 394.7,
+          "dbfs": -25.43,
+          "presence": 0.0033,
+          "harsh": 0.0003,
+          "body": 0.9943
+        },
+        {
+          "kanaId": "kata-ne",
+          "glyph": "ネ",
+          "ms": 405.3,
+          "dbfs": -23.03,
+          "presence": 0.0107,
+          "harsh": 0.0007,
+          "body": 0.9788
+        },
+        {
+          "kanaId": "kata-no",
+          "glyph": "ノ",
+          "ms": 426.7,
+          "dbfs": -26.01,
+          "presence": 0.0014,
+          "harsh": 0.0002,
+          "body": 0.9802
+        },
+        {
+          "kanaId": "kata-ha",
+          "glyph": "ハ",
+          "ms": 448.0,
+          "dbfs": -34.26,
+          "presence": 0.1734,
+          "harsh": 0.0073,
+          "body": 0.4646
+        },
+        {
+          "kanaId": "kata-hi",
+          "glyph": "ヒ",
+          "ms": 469.3,
+          "dbfs": -30.58,
+          "presence": 0.0176,
+          "harsh": 0.0109,
+          "body": 0.9473
+        },
+        {
+          "kanaId": "kata-fu",
+          "glyph": "フ",
+          "ms": 426.7,
+          "dbfs": -32.55,
+          "presence": 0.0148,
+          "harsh": 0.0018,
+          "body": 0.9764
+        },
+        {
+          "kanaId": "kata-he",
+          "glyph": "ヘ",
+          "ms": 448.0,
+          "dbfs": -25.68,
+          "presence": 0.0247,
+          "harsh": 0.0012,
+          "body": 0.9325
+        },
+        {
+          "kanaId": "kata-ho",
+          "glyph": "ホ",
+          "ms": 458.7,
+          "dbfs": -31.55,
+          "presence": 0.0004,
+          "harsh": 0.0002,
+          "body": 0.9334
+        },
+        {
+          "kanaId": "kata-ma",
+          "glyph": "マ",
+          "ms": 416.0,
+          "dbfs": -24.19,
+          "presence": 0.014,
+          "harsh": 0.0002,
+          "body": 0.9378
+        },
+        {
+          "kanaId": "kata-mi",
+          "glyph": "ミ",
+          "ms": 437.3,
+          "dbfs": -24.01,
+          "presence": 0.0015,
+          "harsh": 0.0003,
+          "body": 0.996
+        },
+        {
+          "kanaId": "kata-mu",
+          "glyph": "ム",
+          "ms": 405.3,
+          "dbfs": -24.63,
+          "presence": 0.0047,
+          "harsh": 0.0001,
+          "body": 0.992
+        },
+        {
+          "kanaId": "kata-me",
+          "glyph": "メ",
+          "ms": 426.7,
+          "dbfs": -23.35,
+          "presence": 0.0106,
+          "harsh": 0.0007,
+          "body": 0.9723
+        },
+        {
+          "kanaId": "kata-mo",
+          "glyph": "モ",
+          "ms": 437.3,
+          "dbfs": -25.25,
+          "presence": 0.0003,
+          "harsh": 0.0001,
+          "body": 0.9739
+        },
+        {
+          "kanaId": "kata-ya",
+          "glyph": "ヤ",
+          "ms": 426.7,
+          "dbfs": -24.94,
+          "presence": 0.0369,
+          "harsh": 0.0015,
+          "body": 0.8601
+        },
+        {
+          "kanaId": "kata-yu",
+          "glyph": "ユ",
+          "ms": 394.7,
+          "dbfs": -26.69,
+          "presence": 0.0083,
+          "harsh": 0.0014,
+          "body": 0.9876
+        },
+        {
+          "kanaId": "kata-yo",
+          "glyph": "ヨ",
+          "ms": 426.7,
+          "dbfs": -26.44,
+          "presence": 0.0054,
+          "harsh": 0.0006,
+          "body": 0.9813
+        },
+        {
+          "kanaId": "kata-ra",
+          "glyph": "ラ",
+          "ms": 384.0,
+          "dbfs": -27.71,
+          "presence": 0.0474,
+          "harsh": 0.0007,
+          "body": 0.7179
+        },
+        {
+          "kanaId": "kata-ri",
+          "glyph": "リ",
+          "ms": 394.7,
+          "dbfs": -31.6,
+          "presence": 0.0182,
+          "harsh": 0.003,
+          "body": 0.9693
+        },
+        {
+          "kanaId": "kata-ru",
+          "glyph": "ル",
+          "ms": 352.0,
+          "dbfs": -30.43,
+          "presence": 0.0138,
+          "harsh": 0.0004,
+          "body": 0.9827
+        },
+        {
+          "kanaId": "kata-re",
+          "glyph": "レ",
+          "ms": 373.3,
+          "dbfs": -26.25,
+          "presence": 0.0149,
+          "harsh": 0.0007,
+          "body": 0.9771
+        },
+        {
+          "kanaId": "kata-ro",
+          "glyph": "ロ",
+          "ms": 384.0,
+          "dbfs": -30.12,
+          "presence": 0.0062,
+          "harsh": 0.0003,
+          "body": 0.963
+        },
+        {
+          "kanaId": "kata-wa",
+          "glyph": "ワ",
+          "ms": 384.0,
+          "dbfs": -25.57,
+          "presence": 0.0111,
+          "harsh": 0.0005,
+          "body": 0.7617
+        },
+        {
+          "kanaId": "kata-wo",
+          "glyph": "ヲ",
+          "ms": 405.3,
+          "dbfs": -31.88,
+          "presence": 0.0004,
+          "harsh": 0.0002,
+          "body": 0.9674
+        },
+        {
+          "kanaId": "kata-n",
+          "glyph": "ン",
+          "ms": 490.7,
+          "dbfs": -31.27,
+          "presence": 0.0011,
+          "harsh": 0.0001,
+          "body": 0.9955
+        }
+      ]
+    }
+  }
+}

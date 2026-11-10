@@ -9,6 +9,7 @@
  * lesson card / practice session per the recorded weak points.
  */
 import { useState } from 'react';
+import { Play } from 'lucide-react';
 import { logEvent, postProgressEvent } from '@/lib/poc/client';
 import { JpLine, POC_SCENE_CSS } from '../jp-text';
 import type { AssessmentQuestionClient } from '@/lib/poc/assessment-bank';
@@ -100,7 +101,7 @@ export function AssessmentForm({
             recorded: false,
             message:
               progress.code === 'progress/invalid_transition'
-                ? 'برای ثبت رسمی «فهمیدم»، چرخهٔ A→D را از /learn ادامه بده (مکالمه → درس → تمرین).'
+                ? 'برای ثبت رسمی «فهمیدم»، چرخهٔ چهار مرحله‌ای (مکالمه، درس، تمرین، فهم) را از /learn ادامه بده.'
                 : (progress.message ?? 'ثبت وضعیت واحد ناموفق بود.'),
           });
         }
@@ -128,7 +129,7 @@ export function AssessmentForm({
           <fieldset key={q.id} className="flex flex-col gap-2 rounded-lg border border-ink-faint bg-paper p-4">
             <legend className="px-1 text-small text-ink-soft">
               سؤال {qi + 1} از {questions.length} · {q.measureLabelFa} ({q.measure})
-              {g ? (g.correct ? ' — درست ✓' : ' — نادرست ✗') : ''}
+              {g ? (g.correct ? ' — درست' : ' — نادرست') : ''}
             </legend>
             <p className="text-body font-bold">{q.promptFa}</p>
             {q.jpTokens && <JpLine tokens={q.jpTokens} className="rounded-md bg-surface-warm px-3 py-2 text-ja" />}
@@ -137,9 +138,10 @@ export function AssessmentForm({
                 type="button"
                 onClick={() => playAudio(q.audioLineId!)}
                 disabled={!audioAvailable}
-                className="self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
+                className="flex items-center gap-1.5 self-start rounded-md bg-ai px-4 py-2 text-small text-paper transition-colors hover:bg-ai-deep disabled:opacity-40"
               >
-                ▶ پخش جمله (بدون متن)
+                <Play aria-hidden className="size-4" />
+                پخش جمله (بدون متن)
                 {audioAvailable && (
                   <span className="ms-2 rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft">
                     صوت آزمایشی
@@ -202,7 +204,7 @@ export function AssessmentForm({
 
       {result && understood?.recorded && (
         <section className="flex flex-col gap-3 rounded-lg border-2 border-success bg-paper p-4" aria-live="polite">
-          <h3 className="text-h3 font-bold text-success">این مکالمه را فهمیدی ✓</h3>
+          <h3 className="text-h3 font-bold text-success">این مکالمه را فهمیدی</h3>
           <p className="text-small text-ink-soft">
             وضعیت واحد: <b>understood (فهمیدم)</b> — نه «completed»؛ زبان «تمام» نمی‌شود (DD-048). تلاش شمارهٔ{' '}
             {result.attempt.attemptNo} با نتیجهٔ {result.attempt.outcome} ثبت شد و پیشرفت واحد از همان جا ادامه می‌یابد.
@@ -225,7 +227,7 @@ export function AssessmentForm({
         <section className="flex flex-col gap-3 rounded-lg border-2 border-ai bg-paper p-4" aria-live="polite">
           <h3 className="text-h3 font-bold text-ai">
             {result.attempt.outcome === 'passed'
-              ? 'پاسخ‌ها درست بود ✓'
+              ? 'پاسخ‌ها درست بود'
               : correctCount >= questions.length - 1
                 ? 'تقریباً — این نقطه‌ها را دوباره ببین'
                 : 'هنوز زود است؛ اول درس و تمرین را مرور کن'}
@@ -239,12 +241,12 @@ export function AssessmentForm({
           </p>
           {result.attempt.outcome === 'passed' && !understood?.message && (
             <p className="text-small text-ink-soft">
-              برای ثبت رسمی «فهمیدم» چرخهٔ A→D را کامل کن — از /learn ادامه بده.
+              برای ثبت رسمی «فهمیدم» چرخهٔ چهار مرحله‌ای را کامل کن — از /learn ادامه بده.
             </p>
           )}
           {result.attempt.weakPoints.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-body font-bold">نقاط ضعف (خط ↔ هدف) — دقیقاً به همان‌جا برگرد:</p>
+              <p className="text-body font-bold">نقاط ضعف (خط و هدف) — دقیقاً به همان‌جا برگرد:</p>
               <ul className="flex flex-col gap-2 text-small">
                 {result.attempt.weakPoints.map((wp, i) => (
                   <li key={`${wp.lineId}-${wp.objective}-${i}`} className="flex flex-wrap items-center gap-2">
@@ -252,10 +254,10 @@ export function AssessmentForm({
                     <span>خط {wp.lineId.replace('s-cafe-morning-01-l', '')}</span>
                     <span className="text-ink-soft">شدت: {wp.severity}</span>
                     <a className="text-ai underline" href={`/poc/lesson#item-${wp.objective}`}>
-                      بازگشت به درس ↗
+                      بازگشت به درس
                     </a>
                     <a className="text-ai underline" href="/poc/practice">
-                      بازگشت به تمرین ↗
+                      بازگشت به تمرین
                     </a>
                   </li>
                 ))}

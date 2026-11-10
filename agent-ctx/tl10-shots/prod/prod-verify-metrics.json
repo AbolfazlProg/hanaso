@@ -1,0 +1,178 @@
+{
+  "startedAt": "2026-11-10T19:02:56.392Z",
+  "base": "https://learn.kotodama.ir",
+  "phases": {
+    "A_completion": {
+      "role": "status",
+      "message": "این ایستگاه را با موفقیت پشت سر گذشتی!",
+      "messageIsButton": false,
+      "primaryCtaCount": 1,
+      "primaryCtaLabel": "رفتن به ایستگاه بعدی",
+      "destinationTitle": "ردیف あ",
+      "tertiary": [
+        "مرور دوبارهٔ این ایستگاه"
+      ],
+      "bgShuCount": 1,
+      "bgShuWhere": [
+        "SPAN.bg-shu"
+      ]
+    },
+    "A_refresh": {
+      "completionVisible": true,
+      "walkContinueVisible": false,
+      "message": "این ایستگاه را با موفقیت پشت سر گذشتی!"
+    },
+    "A_ctaDeepLink": "https://learn.kotodama.ir/learn/kana-foundation-01/journey/stn-kana-h1",
+    "B_kanaCards": [
+      {
+        "glyph": "あ",
+        "stages": {},
+        "readyReached": true,
+        "tReadyMs": 8433,
+        "guidedReached": true,
+        "afterGuided": "free",
+        "doneReached": false,
+        "totalMs": 54291
+      },
+      {
+        "glyph": "い",
+        "stages": {},
+        "readyReached": true,
+        "tReadyMs": 2,
+        "guidedReached": true,
+        "afterGuided": "free",
+        "doneReached": false,
+        "totalMs": 37260
+      },
+      {
+        "glyph": "う",
+        "stages": {},
+        "readyReached": true,
+        "tReadyMs": 2,
+        "guidedReached": true,
+        "afterGuided": "free",
+        "doneReached": false,
+        "totalMs": 38246
+      }
+    ],
+    "B_q1": {
+      "counter": "1 / 3",
+      "prompt": "این کانا چه صدایی دارد؟",
+      "glyph": "あ",
+      "options": [
+        "«ای»",
+        "«اُ»",
+        "«آ»"
+      ]
+    },
+    "B_correct": {
+      "status": "درست!",
+      "readingText": "あ آ | a",
+      "readingGlyph": "あ",
+      "hasReplayControl": true,
+      "audioRowText": "شنیدن تلفظ درست",
+      "tryAgain": false,
+      "panelMs": 845,
+      "audioFiredAtAnswer": false,
+      "audioUrls": [],
+      "audioReqDelayMs": null
+    },
+    "B_autoAdvance": {
+      "advanced": true,
+      "advanceMs": 178,
+      "totalFromAnswerMs": 1525,
+      "nextQuestion": "2 / 3",
+      "nextGlyph": "い"
+    },
+    "B_wrong": {
+      "status": "نادرست",
+      "readingText": "い ای | i",
+      "readingGlyph": "い",
+      "hasReplayControl": true,
+      "audioRowText": "شنیدن تلفظ درست",
+      "tryAgain": false,
+      "revealAudioFired": false,
+      "revealAudioUrls": [],
+      "panelPersistsAfter4s": true,
+      "stillSameQuestion": "نادرست",
+      "questionCounter": "2 / 3"
+    },
+    "C_mobileQuiz": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "overflow": false,
+      "panelRect": {
+        "left": 37,
+        "right": 353,
+        "width": 316
+      }
+    },
+    "C_mobileCompletion": {
+      "completionVisible": false,
+      "bgShuCount": 1,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "overflow": false,
+      "panelRect": null
+    }
+  },
+  "health": {
+    "ok": true,
+    "status": "ok",
+    "service": "hanaso-web",
+    "version": "1.0.0-tl10-r01",
+    "commit": "161e6b3747793a85fdc321bf8263da3f1613bd8c",
+    "env": "production",
+    "uptimeSec": 37623,
+    "timestamp": "2026-11-10T19:02:57.534Z"
+  },
+  "ok": true,
+  "audioRequests": [
+    {
+      "t": 1794337390097,
+      "url": "https://learn.kotodama.ir/audio/kana/kn-hira-i.opus",
+      "at": "2026-11-10T19:03:10.097Z"
+    },
+    {
+      "t": 1794337390098,
+      "url": "https://learn.kotodama.ir/audio/hostwords/w-bf4e36ec42389c32.opus",
+      "at": "2026-11-10T19:03:10.098Z"
+    },
+    {
+      "t": 1794337390098,
+      "url": "https://learn.kotodama.ir/audio/hostwords/w-a60311a2fc88eec5.opus",
+      "at": "2026-11-10T19:03:10.098Z"
+    },
+    {
+      "t": 1794337390100,
+      "url": "https://learn.kotodama.ir/audio/hostwords/w-bae8a4bd8e8f9a4b.opus",
+      "at": "2026-11-10T19:03:10.100Z"
+    },
+    {
+      "t": 1794337390100,
+      "url": "https://learn.kotodama.ir/audio/hostwords/w-f59fa14c0c97bd00.opus",
+      "at": "2026-11-10T19:03:10.100Z"
+    },
+    {
+      "t": 1794337390100,
+      "url": "https://learn.kotodama.ir/audio/hostwords/w-e9b0c313e1419453.opus",
+      "at": "2026-11-10T19:03:10.100Z"
+    },
+    {
+      "t": 1794337390129,
+      "url": "https://learn.kotodama.ir/audio/kana/kn-hira-a.opus",
+      "at": "2026-11-10T19:03:10.129Z"
+    },
+    {
+      "t": 1794337416478,
+      "url": "https://learn.kotodama.ir/audio/kana/kn-hira-u.opus",
+      "at": "2026-11-10T19:03:36.478Z"
+    },
+    {
+      "t": 1794337454523,
+      "url": "https://learn.kotodama.ir/audio/kana/kn-hira-e.opus",
+      "at": "2026-11-10T19:04:14.523Z"
+    }
+  ],
+  "finishedAt": "2026-11-10T19:05:34.194Z"
+}

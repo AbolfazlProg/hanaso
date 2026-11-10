@@ -49,3 +49,38 @@
 - **شاخه:** `feat/learning-01-island-chapter` → PR #86 — نخستین فصل کامل جزیره‌ای (بازتعریف M0-11).
 - **فایل‌های مشترک تغییرکرده (ترتیبی، طبق قاعده):** `docs/engineering/roadmap/NEXT_EXECUTION_TASK.md` (بازنویسی — هدف M0-11 بازتعریف شد) · `MASTER_ROADMAP.md` (ردیف M0 + حوزه‌های D..H) · `docs/owner/OWNER_BRIEFING.fa.md` · `docs/owner/HANASO_PROJECT_GUIDE.fa.md` (فصل ۷/۱۲).
 - **هم‌نقطه با دیگر Agentها:** هیچ (Agent هنری/تحقیق در این بازه فعال نبودند).
+
+## ۲۰۲۶-۱۱-۰۴ — TASK-LEARNING-07 Wave 2 — اعلام هماهنگی (Z.ai — dialogue player overhaul)
+
+- **شاخه:** `feat/learning-06-lesson-system` (کار روی working tree موجود؛ بدون commit).
+- **اعلام قبلی فایل‌های هم‌نقطه (تغییر ترتیبی، تک-Agent):** `apps/web/src/modules/audio/index.ts` (افزودن خروجی عمومی `composite-handle` — TASK-LEARNING-07)، `apps/web/src/modules/audio/server.ts` (بازصادرات word-audio برای RSC)، `apps/web/src/modules/character/contracts.ts` (فیلد اختیاری `coSpeakerId` روی `ControllerLineStartInput` — افزودنی/نابشکننده). این اجرا تنها Agent فعال روی این شاخه است.
+
+## ۲۰۲۶-۱۱-۰۴ — TASK-LEARNING-07 Wave 3 — اعلام هماهنگی (Z.ai — feedback ladder + walk nav + emoji sweep)
+
+- **شاخه:** `feat/learning-06-lesson-system` (کار روی working tree موجود؛ بدون commit — ادامهٔ Wave 2).
+- **اعلام قبلی فایل‌های هم‌نقطه (تغییر ترتیبی، تک-Agent):** `apps/web/src/messages/fa.ts`
+  (Issue #94: بازنویسی `prerequisitesNote` + کلید‌های تازهٔ `prevBlock` / `exerciseAlreadyDoneTitle` /
+  `exerciseAlreadyDoneBody` + اصلاح متن `eliminatedOption` + حذف فلش‌های → در دو رشتهٔ uiKit) —
+  این اجرا تنها Agent فعال روی این شاخه است. `apps/web/tests/unit/curriculum-content.test.ts` هم
+  (افزودن دو تست قرارداد F4 — ترتیبی، بدون تعارض).
+- **انجام (Issues #106/#102/#105/#108/#94):** سیم‌کشی F2 (حذف گزینه) + F4 (بازگشت به آموزش) در
+  exercise-session؛ ناوبری «مرحلهٔ قبل» با حفظ نتایج (station-walk.ts خالص + پنل رد شدن از تمرین
+  انجام‌شده)؛ سلسله‌مراتب کارت واژه به «معنی-محور»؛ جاروی ایموجی باقیمانده (poc ها + صفحهٔ خانه +
+  محتوای kana + حذف learn-card.tsx مرده) + گارد تست no-emoji؛ گیت فصل روی دیپ‌لینک ایستگاه/مکالمه.
+  دروازه‌ها: typecheck + lint + vitest (28 فایل/273 تست) + eqa (37) سبز — رکورد: `agent-ctx/TASK-LEARNING-07-W3-zai.md`.
+
+## ۲۰۲۶-۱۱-۰۵ — TASK-LEARNING-07 W4-W7 (Z.ai — writing engine + trail map + VPS deploy)
+
+- **W4 (commit a8dc594):** موتور نوشتار مشترک (modules/writing + Hanzi Writer) با لایهٔ تحلیل هندسی اختصاصی هاناسو + ۲۳ بلوک writing-practice در Ch01 + رفع باگ واقعی mount (quiz هرگز شروع نمی‌شد) — ۳۱ تست جدید.
+- **W5 (commits 57f9872+667ebf1):** نقشهٔ مسیر عمودی (بافت کاغذ، مسیر نقطه‌چین SVG، نشانگر شکل‌محور) + auto-scroll هوشمند + ۲ دور بازبینی VLM (verdict: PASS) — شواهد: agent-ctx/tl07-shots/.
+- **W7 (استقرار):** بیلد image روی VPS از git-bundle (11MB) → migrate/seed → تعویض staged → health/ready/smoke ALL GREEN → رسم واقعی کانا روی learn.kotodama.ir تأیید شد → KOTODAMA دست‌نخورده (کاتینرها Up 8-50 روز، kotodama.ir 200 قبل/بعد) → rollback آماده (.env.pre-tl07-backup + imageهای قدیمی).
+- نسخهٔ زنده: `https://learn.kotodama.ir` — commit `667ebf1` (شاخهٔ feat/learning-06-lesson-system، PR #115).
+
+## ۲۰۲۶-۱۱-۰۶ — TASK-LEARNING-08 (Z.ai — deep learning experience reconstruction)
+
+- **شروع:** Issue #116 ثبت شد. WP-1 بازیابی: PR #115 @ b21512a، ۳۰۴ تست سبز، هر ۶ بازخورد مالک (A–F) با شواهد واقعی بازتولید شد (`agent-ctx/tl08-shots/` + تحلیل VLM نقشهٔ production). Checkpoints: `ops/checkpoints/TASK-LEARNING-08/`.
+- **فایل‌های هم‌نقطهٔ اعلامی (تغییر ترتیبی، تک-Agent):** `src/messages/fa.ts`، `src/modules/curriculum/content/{kana-items,chapter-kana01.stations}.ts`، `src/components/curriculum/{station-runner,exercise-session,journey-map}.tsx`، ایستگاه/نقشه/API صفحات learn — این اجرا تنها Agent فعال روی این شاخه است.
+
+- **WP-2..WP-6 (commits 212a39c, cf74437, a42fc08, a2f7628, a865475):** KanaCard v2 (صدا-اول ۰٫۸× + تلفظ فارسی + جفت side-by-side + نوشتن درون‌کارت) + ۹۲ یادسپار بازنویسی + ۹۲ صوت کانا و ۳ خط خوش‌آمد (VOICEVOX از پیش تولیدشده روی VPS) + بلوک writing در ۲۳ ایستگاه قبل از recall + Auto-next race-safe + هویت per-browser (#109) + پایداری walk (snapshot محلی + لنگر سروری) + ماسک SVG نقشه (32 سوراخ) — چک‌پوینت‌ها: `ops/checkpoints/TASK-LEARNING-08/` (CP-01/CP-02).
+- **تأیید نهایی (سشن بازیابی‌شده پس از Reset):** CI #79 روی `a865475` همهٔ جاب‌ها سبز (شامل integration PG18 واقعی + compose-smoke/دریل بکاپ) · استقرار زنده @ `a865475` (health ok) · راستی‌آمایی A–F با مرورگر واقعی روی production: صوت استریم ۲۰۰/۲۰۶ · KanaCard v2 کامل · Auto-next ~۲٫۲s · Refresh/Back → resume دقیق (۴/۱۱) · ماسک ۳۲ سوراخ در DOM · ۳۹۰px بدون overflow · kotodama.ir ۲۰۰ — شواهد: `agent-ctx/tl08-shots-prod/` (CP-03).
+- **پایان مأموریت:** گزارش کامل: `ops/checkpoints/TASK-LEARNING-08/FINAL-REPORT.fa.md` · رکورد KB: `RUN-20261105-06`. PR #115 باز و clean — در انتظار بازبینی/ادغام مالک.

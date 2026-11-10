@@ -1,11 +1,17 @@
 'use client';
 /**
- * HANASO — LineAudioButton (TASK-LEARNING-01) — plays ONE dialogue line's audio.
+ * HANASO — LineAudioButton (TASK-LEARNING-01) — plays ONE audio asset on demand.
  *
  * Station islands (vocab cards / listening tasks / exercises) play the SOURCE LINE
- * audio (the word's context — station-design §۱ گام ۱..۲) instead of shipping
- * per-word TTS assets (audio pipeline is per-line — ADR-009). The line text is
- * NOT shown for listening-only usages (prop `hideText`).
+ * audio (the word's context — station-design §۱ گام ۱..۲) unless the word has a
+ * committed INDEPENDENT asset (wordAudio registry, DD-119 — Issue #103) — the
+ * caller decides which URL pair to pass; the honest fallback is the caller's.
+ * The line text is NOT shown for listening-only usages (prop `hideText`).
+ *
+ * Issue #103-bug (TASK-LEARNING-07): the Audio element is cached per instance —
+ * when the `audioUrl` prop changes (the runner reuses this component across cards)
+ * the stale element is discarded and rebuilt, so the FIRST card's audio can never
+ * replay on later cards.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AudioSentenceButton } from '@/components/patterns/audio-button';
@@ -23,6 +29,10 @@ export interface LineAudioButtonProps {
   className?: string;
   /** Slow replay (0.9×) for the listening station (L2 default speed — LEVEL_MATRIX). */
   rate?: number;
+  /** TASK-LEARNING-08 Addendum-5 §3 — listening questions AUTO-PLAY the line
+   *  once at question start (a short beat after mount); the button stays for
+   *  replay (the owner's rule for listening questions). */
+  autoPlay?: boolean;
   onPlayed?: () => void;
 }
 
@@ -35,11 +45,21 @@ export function LineAudioButton({
   disabled,
   className,
   rate = 1,
+  autoPlay = false,
   onPlayed,
 }: LineAudioButtonProps) {
   const ref = useRef<HTMLAudioElement | null>(null);
   const [state, setState] = useState<'idle' | 'loading' | 'playing'>('idle');
 
+  // Issue #103-bug: reset the cached element whenever the target asset changes —
+  // otherwise the first card's Audio (old url) keeps playing on later cards.
+  useEffect(() => {
+    ref.current?.pause();
+    ref.current = null;
+    setState('idle');
+  }, [audioUrl, audioUrlFallback]);
+
+  // unmount: halt whatever is playing.
   useEffect(() => {
     return () => {
       ref.current?.pause();
@@ -72,6 +92,15 @@ export function LineAudioButton({
     }
     void ref.current.play().catch(() => setState('idle'));
   }, [audioAvailable, audioUrl, audioUrlFallback, onPlayed, rate]);
+
+  // Addendum-5 §3 — auto-play once at question start (a short beat after the
+  // mount/reset effect, so the element exists and the page has settled).
+  useEffect(() => {
+    if (!autoPlay) return;
+    const t = setTimeout(() => play(), 400);
+    return () => clearTimeout(t);
+    // `play` is stable per asset; autoPlay flips only on question change
+  }, [autoPlay, play]);
 
   return (
     <AudioSentenceButton

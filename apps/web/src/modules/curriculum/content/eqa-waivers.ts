@@ -12,71 +12,19 @@
  *  - A waiver must name the mission that will remove it (resolvedBy).
  *  - Removing the finding without removing the waiver fails CI (stale waiver).
  *  - Adding a NEW violation without a waiver fails CI.
+ *
+ * TASK-LEARNING-06 (2026-11-05): ALL SEVEN TASK-LEARNING-04 waivers are CLOSED by
+ * the 05A/05B content rebuild — zero waivers remain:
+ *   - #96 EQA-1 ×2 (ex-fm01-v1-01/02 line-grammar) → the vocab packet items are
+ *     now WORD-level Q2 drills (targetConcept = word id) and the line layer is
+ *     exempt for them by design (gates.ts word-drill rule).
+ *   - #95 EQA-2 ×2 (stn-02/stn-06 S-3 alternation) → the rebuilt stations use
+ *     3-card packets with in-flow retrieval + alternating expression cards.
+ *   - #106 EQA-3 (recall-first share) → the rebuilt practice pool is ≥60%
+ *     recall-first (kana-decode C1/C3 recycling + produce/cloze/word-order mix).
+ *   - #104 EQA-6 ×2 (watashi/daigaku noteFa slots) → both words carry usage
+ *     notes now.
  */
 import type { EqaWaiver } from '../eqa/waivers';
 
-export const EQA_WAIVERS: EqaWaiver[] = [
-  /* ---------------- Chapter first-meeting-01 — TASK-LEARNING-05 will rebuild these ---------------- */
-  {
-    key: 'EQA-1:ex-fm01-v1-01:line-grammar-not-taught',
-    issue: 96,
-    reason:
-      'تمرین audio-meaning اول ایستگاه واژگان، درک جملهٔ L8 (だいがくの せんせいです) را می‌سنجد در حالی که AはBです در ایستگاه ۳ تدریس می‌شود و ذرهٔ の در کل فصل تدریس نمی‌شود — ثبت‌شده در LEARNING_EXPERIENCE_AUDIT §۲ (ردیف ۱۱) و ISSUE_REGISTER.',
-    resolvedBy: 'TASK-LEARNING-05 (بازنویسی تمرین‌های واژگان به سطح واژه طبق 13-06 §۴-۲)',
-    registeredAt: '2026-11-04',
-    chapter: 'first-meeting-01',
-  },
-  {
-    key: 'EQA-1:ex-fm01-v1-02:line-grammar-not-taught',
-    issue: 96,
-    reason: 'همان الگو با جملهٔ L3 (わたしは にほんじんです) — سنجش ساختار آموزش‌نداده (は/です) در ایستگاه واژگان.',
-    resolvedBy: 'TASK-LEARNING-05 (بازنویسی تمرین‌های واژگان به سطح واژه طبق 13-06 §۴-۲)',
-    registeredAt: '2026-11-04',
-    chapter: 'first-meeting-01',
-  },
-  {
-    key: 'EQA-2:stn-fm01-02-vocab:S-3-alternation',
-    issue: 95,
-    reason:
-      'الگوی ممنوع «همهٔ کارت‌ها سپس همهٔ تمرین‌ها»: صحنه + ۸ کارت واژه پیاپی + تمرین در پایان — نقض مستقیم DD-94 §۳-۱/۳-۲؛ گزارش مالک (۹۰ دقیقه گیرکردن) دقیقاً همین‌جا رخ داد.',
-    resolvedBy: 'TASK-LEARNING-05 (پکت‌بندی ۲–۳ کارتی + بازیابی درون‌پکتی طبق LEARNING_SEQUENCE_POLICY)',
-    registeredAt: '2026-11-04',
-    chapter: 'first-meeting-01',
-  },
-  {
-    key: 'EQA-2:stn-fm01-06-expression:S-3-alternation',
-    issue: 95,
-    reason:
-      'یافتهٔ جدید گیت (نمونهٔ دوم همان کلاس خطا): ایستگاه عبارات هم الگوی «۴ کارت عبارت پیاپی سپس تمرین» دارد؛ DD-94 §۳-۱ برای عبارات «کارت موقعیتی → انتخاب موقعیت → کارت بعدی» تجویز می‌کند.',
-    resolvedBy: 'TASK-LEARNING-05 (تناوب کارت/انتخاب طبق LEARNING_SEQUENCE_POLICY)',
-    registeredAt: '2026-11-04',
-    chapter: 'first-meeting-01',
-  },
-  {
-    key: 'EQA-3:practice-pool:recall-first-share',
-    issue: 106,
-    reason:
-      'استخر practice فصل ۱۵/۳۳ آیتم recall-first است (۴۵٫۵٪ < ۶۰٪) — ترکیب جلسه به تشخیص آسان انحراف دارد؛ با طبقه‌بندی بستهٔ انواع (exercise-design §۱ + QUESTION §۳) محاسبه شده.',
-    resolvedBy: 'TASK-LEARNING-05 (بازطراحی ترکیب تمرین‌ها — افزایش اقلام cloze/word-order/produce/درک شنیداری)',
-    registeredAt: '2026-11-04',
-    chapter: 'first-meeting-01',
-  },
-  {
-    key: 'EQA-6:voc-watashi:slot-missing',
-    issue: 104,
-    reason:
-      'کارت اول فصل (watashi) بدون noteFa و با معنی تک‌کلمه‌ای «من» — قالب کارت پیش از قرارداد §۲-۲ تألیف شده بود؛ گزارش مالک (کارت «خالی»).',
-    resolvedBy: 'TASK-LEARNING-05 (تکمیل اسلات‌های §۲-۲ همهٔ کارت‌ها)',
-    registeredAt: '2026-11-04',
-    chapter: 'first-meeting-01',
-  },
-  {
-    key: 'EQA-6:voc-daigaku:slot-missing',
-    issue: 104,
-    reason:
-      'یافتهٔ جدید گیت (نمونهٔ دوم همان کلاس #104): کارت daigaku نیز بدون noteFa است — ممیزی انسانی TASK-LEARNING-03 فقط watashi را دیده بود؛ گیت ماشینی هر دو را گرفت.',
-    resolvedBy: 'TASK-LEARNING-05 (تکمیل اسلات‌های §۲-۲ همهٔ کارت‌ها)',
-    registeredAt: '2026-11-04',
-    chapter: 'first-meeting-01',
-  },
-];
+export const EQA_WAIVERS: EqaWaiver[] = [];

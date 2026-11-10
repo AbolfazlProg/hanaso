@@ -20,8 +20,11 @@ git clone https://github.com/AbolfazlProg/hanaso.git /srv/hanaso && cd /srv/hana
 cp infra/docker/.env.preview.example .env        # مقادیر را تنظیم کنید (هرگز commit نشود)
 docker login ghcr.io                             # PAT با دسترسی read:packages
 
-# هر استقرار:
-bash infra/deploy/deploy.sh <IMAGE_TAG=SHA>      # pull → up → گیت سلامت → smoke
+# هر استقرار (مسیر استاندارد مالک — TASK-HANASO-DEPLOY-02):
+# یک دستور از docs/deployment/OWNER-ONE-COMMAND-UPDATE.fa.md
+#   → preflight + بکاپ + build از کامیت Pinشده + استقرار مرحله‌ای + گیت سلامت + رول‌بک خودکار
+# (اسکریپت: infra/deploy/update-hanaso.sh — زیرفرمان‌های status / rollback)
+bash infra/deploy/deploy.sh <IMAGE_TAG=SHA>      # pull → up → گیت سلامت → smoke (مسیر قدیمی میزبان اختصاصی)
 bash infra/deploy/rollback.sh <SHA-قبلی>          # بازگشت (< ۱۰ دقیقه تا سالم)
 ```
 

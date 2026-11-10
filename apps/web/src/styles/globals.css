@@ -173,3 +173,116 @@ body {
   outline: var(--focus-ring);
   outline-offset: 2px;
 }
+
+/* TASK-LEARNING-07 (#107): حلقهٔ نبض نقطهٔ ادامه روی نقشهٔ مسیر — فقط motion-safe */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1.28);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.28);
+    opacity: 0;
+  }
+}
+
+/* TASK-LEARNING-08 phase 2 (#117 §6): ورود تدریجی محتوای آموزشی با حس جوهر.
+   Addendum-2 §5 (owner: حس چاپ شدن حروف با ماشین تحریر قدیمی روی کاغذ — ظریف
+   و حرفه‌ای): هر بلوک مثل حروفی که با فشار مهر روی کاغذ می‌نشینند، از سمت
+   راستِ جهت خواندنِ فارسی «چاپ» می‌شود — پاکِ سریع + محوِ کوتاه + کمی
+   فرورفتگی که راست می‌شود (جوهر نشسته). سریع و خوانا، بدون معطلی.
+   ترتیب پله‌ای با تأخیرهای kana-reveal-2..5 (پس از عنصر اول). */
+@keyframes kana-ink-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.985);
+    filter: blur(2px);
+    clip-path: inset(0 0 0 100%);
+  }
+  60% {
+    filter: blur(0.4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+.kana-reveal {
+  animation: kana-ink-in 420ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+.kana-reveal-2 {
+  animation: kana-ink-in 420ms cubic-bezier(0.2, 0.6, 0.2, 1) 220ms both;
+}
+.kana-reveal-3 {
+  animation: kana-ink-in 420ms cubic-bezier(0.2, 0.6, 0.2, 1) 460ms both;
+}
+.kana-reveal-4 {
+  animation: kana-ink-in 420ms cubic-bezier(0.2, 0.6, 0.2, 1) 700ms both;
+}
+.kana-reveal-5 {
+  animation: kana-ink-in 420ms cubic-bezier(0.2, 0.6, 0.2, 1) 940ms both;
+}
+
+/* TASK-LEARNING-08 v4 (owner §3 مرحلهٔ چهارم): واژهٔ نمونه حرف‌به‌حرف و به
+   ترتیب صحیح خواندن ژاپنی ظاهر می‌شود — هر کاراکتر با تأخیر پله‌ای خودش
+   (استایل درون‌خطی)، معنی پس از آخرین حرف. حس جوهر، نه تایپ ماشینی. */
+.word-char-in {
+  animation: kana-ink-in 420ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+.word-meaning-in {
+  animation: kana-ink-in 520ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kana-reveal,
+  .kana-reveal-2,
+  .kana-reveal-3,
+  .kana-reveal-4,
+  .kana-reveal-5,
+  .word-char-in,
+  .word-meaning-in {
+    animation: none;
+  }
+}
+
+/* TASK-LEARNING-08 Addendum-3 §3: اسکلتون کاغذیِ بوم نوشتن — همان قاب، همان
+   مربع، یک نبضِ جوهریِ ملایم؛ نه جعبهٔ متنی که Layout را بلرزد و نه محتوای
+   قدیمی که چشمک بزند. (با prefetch §10 معمولاً هرگز دیده نمی‌شود.) */
+@keyframes ink-shimmer-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.04);
+  }
+}
+.ink-shimmer {
+  animation: ink-shimmer-pulse 1.4s ease-in-out infinite;
+}
+
+/* respects the reduced-motion preference for the calm skeleton pulse */
+@media (prefers-reduced-motion: reduce) {
+  .ink-shimmer {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
+/* TASK-LEARNING-09 §۶/§۸ — کارت‌های «نمونه‌های قابل‌خواندن» در یک شبکهٔ تطبیقی:
+   ستون‌ها براساس عرض واقعیِ در دسترس جاری می‌شوند (۱ → ۲ → ۳ ستون؛ حداقلِ
+   کارت ۱۹.۵rem = خوانایی تضمین‌شدهٔ کارت در تبلت). auto-fit یعنی هیچ ستونِ
+   کاملاً خالیِ رزروشده‌ای باقی نمی‌ماند — کارت آخرِ تنها، عرض ردیف را پر
+   می‌کند. ارتفاع ردیف‌ها براساس محتوای واقعی است (بدون min-height ساختگی). */
+.examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19.5rem), 1fr));
+  gap: 0.75rem;
+}

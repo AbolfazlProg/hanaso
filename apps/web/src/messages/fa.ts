@@ -69,9 +69,9 @@ export const fa = {
     /* امضاهای Aizen — TASK-DSGN-01 (DD-084) */
     aizenSection: 'امضاهای Aizen — نیلیِ ساختاری و شنگرف',
     aizenIntro:
-      'عناصر هویتی جهت هنری منتخب (DD-084): مُهر دایره‌ای فهم، نوار فاز A→D پستی، پیشرفت راه‌راه مورب و کارت نیلی مکالمه.',
+      'عناصر هویتی جهت هنری منتخب (DD-084): مُهر دایره‌ای فهم، نوار فاز A تا D پستی، پیشرفت راه‌راه مورب و کارت نیلی مکالمه.',
     aizenSealLabel: 'مُهر فهم — پایان مرحلهٔ D',
-    aizenRulerLabel: 'نوار فاز A→D (نمونه: مرحلهٔ C فعال)',
+    aizenRulerLabel: 'نوار فاز A تا D (نمونه: مرحلهٔ C فعال)',
     aizenRulerDone: 'A مکالمه',
     aizenRulerDone2: 'B درس',
     aizenRulerNow: 'C تمرین',
@@ -102,10 +102,15 @@ export const fa = {
     canDoTitle: 'در پایان این فصل می‌توانی…',
     sceneTitle: 'صحنه',
     levelLabel: 'سطح',
-    prerequisitesNote: 'پیش‌نیاز: الفبای کانا (مرحلهٔ ۱) — بدون آن هم می‌توانی شروع کنی.',
+    /*
+     * Issue #94 (Wave 3): honest copy — the chapter soft lock (DD-117/120) means
+     * the prerequisite gate REALLY gates entry; the old «بدون آن هم می‌توانی شروع
+     * کنی» contradicted it. Rendered ONLY on chapters that declare a prerequisite.
+     */
+    prerequisitesNote: 'برای باز شدن این فصل، باید ابتدا گیت فهم فصل پیش‌نیاز (فصل کانا) را بگذرانی.',
     /* island journey */
     journeyTitle: 'مسیر جزیره‌ای فصل',
-    journeyLead: 'هر ایستگاه یک مهنگ است؛ مسیر اصلی را دنبال کن، شاخه‌های اختیاری برای کنجکاوها.',
+    journeyLead: 'هر ایستگاه یک لنگرگاه است؛ مسیر اصلی را دنبال کن، شاخه‌های اختیاری برای کنجکاوها.',
     stationLocked: 'قفل',
     stationAvailable: 'آماده',
     stationInProgress: 'در جریان',
@@ -118,8 +123,125 @@ export const fa = {
     understoodBadge: 'این مکالمه را فهمیدی',
     goToGate: 'آزمون فهم مکالمه',
     nextUp: 'ایستگاه بعدی',
+    /* TASK-LEARNING-06 — kana cards + two-level map + chapter prereq */
+    kanaCardMissing: (glyph: string) => `کارت کانا «${glyph}» در رجیستری پیدا نشد — محتوای ایستگاه ناقص است.`,
+    kanaRomajiHidden: 'روماجی در این مرحله نمایش داده نمی‌شود — از صدای کانا در تمرین بعدی حدس بزن.',
+    kanaMnemonicDraft: 'پیش‌نویس — در بازبینی انسانی',
+    /* TASK-LEARNING-08 WP-2 (KanaCard v2 — owner feedback A+C): the card TEACHES */
+    kanaSoundLabel: (glyph: string) => `پخش صدای ${glyph}`,
+    kanaSoundReplay: 'پخش مجدد',
+    kanaHostWordPrefix: 'واژهٔ قابل‌خواندن',
+    kanaPairCompareTitle: 'جفت اشتباه‌پذیر — با هم ببین',
+    kanaPairOther: 'جفتش',
+    kanaWritingTitle: (glyph: string) => `نوشتن ${glyph} — ترتیب ضربه‌ها را ببین و خودت بنویس`,
+    kanaWritingHide: 'بستن تمرین نوشتن',
+    kanaWritingShow: 'نمایش تمرین نوشتن',
+    kanaWritingCollapsedNote: 'تمرین نوشتن همین‌جاست — هر وقت خواستی بازش کن.',
+    kanaAudioPending: 'صدای این نویسه هنوز تولید نشده؛ به‌محض آماده‌شدن همین‌جا اضافه می‌شود.',
+    kanaConfusablePre: 'جفت اشتباه‌پذیر: ',
+    /* TASK-LEARNING-08 v4 (owner final correction) — KanaCard v4: ONE unified
+       environment, auto-flowing timeline, NO stage CTAs (بند ۱ و ۱۰ مالک) */
+    kanaStageIntroTitle: 'آموزش نوشتن این نویسه',
+    kanaStageIntroHint: 'شماره، نقطهٔ شروع و جهت هر ضربه را همان‌جا در دفتر می‌بینی — نویسه خودش را می‌نویسد.',
+    /* TASK-LEARNING-08 Addendum-2 §4: the ONE interactive stop — after the calm
+       introduction, the user confirms readiness; everything after is automatic. */
+    kanaStageReadyTitle: 'آماده‌ای؟',
+    kanaStageReadyChip: 'تأیید آمادگی',
+    kanaStageChipReady: 'آماده',
+    kanaStageReadyHint: 'نویسه را نگاه کن، صدایش را بشنو و توضیحش را بخوان — وقتی آماده بودی شروع کن.',
+    /* TASK-HANASO-CTA-01 (owner 2026-11-08): the CTA leaves the slot under the
+       canvas and becomes the natural LAST step of the introduction — a small
+       tidy footer after all the related examples. Arrow = lucide icon (no emoji). */
+    kanaStageReadyCta: 'شروع تمرین نوشتن',
+    kanaIntroFooterLead: 'معرفی این کاراکتر تمام شد! حالا نوبت توست.',
+    kanaIntroExamplesTitle: 'نمونه‌های کاربردی',
+    kanaIntroExamplesFold: 'نمونه‌های کاربردی این نویسه',
+    kanaStageDemoTitle: 'نحوهٔ نوشتن را ببین',
+    kanaStageDemoReplay: 'نمایش دوباره',
+    kanaStageDemoDone: 'نمایش تمام شد — با هم مرورش کنیم',
+    kanaStageExplainTitle: 'خوانش و شکل نویسه',
+    kanaStageGuidedTitle: 'تمرین با راهنما',
+    kanaStageGuidedDone: 'همهٔ ضربه‌ها درست شد — حالا بدون راهنما',
+    kanaStageFreeTitle: 'نوشتن از حافظه',
+    kanaStageFreeDone: 'تمرین نوشتن کامل شد',
+    kanaStageWriteAgain: 'یک بار دیگر بنویس',
+    kanaStageHelpBtn: 'راهنما',
+    kanaStageBackToGuided: 'با راهنما تمرین می‌کنم',
+    kanaStageDoneTitle: (glyph: string) => `نوشتن ${glyph} یاد گرفته شد`,
+    kanaStagePracticeAgain: 'تمرین مجدد',
+    kanaStageStrokeProgress: 'پیشرفت ضربه‌ها',
+    kanaStageAudioOnce: 'هر وقت خواستی دوباره پخش کن.',
+    kanaReplayTeaching: 'تکرار آموزش',
+    /* TASK-LEARNING-08 Addendum-4 — §3 stable action slot + §5 neutral free panel */
+    kanaStageGuidedHint:
+      'ضربه‌ها را روی راهنمای نقطه‌چین بکش — بعد از هر ضربهٔ درست، همان ضربه با شکل استانداردش جوهری می‌شود.',
+    kanaStageFreeHint: 'حالا از حافظه بنویس — اگر جایی گیر کردی، دکمهٔ «راهنما» همین‌جا بالای صفحه است.',
+    kanaStageDoneHint: 'تمرین کامل شد — فرم استاندارد و شمارهٔ ضربه‌ها بالاست؛ مسیر خودش ادامه می‌یابد.',
+    kanaStageOrderTitle: 'ترتیب ضربه‌ها',
+    kanaStageOrderRest: 'فرم کامل و شمارهٔ هر ضربه بالاست — با «تکرار آموزش» می‌توانی دوباره تماشایش کنی.',
+    kanaStageMemoryHint: 'از خودت تصمیم بگیر از کجا و چطور شروع کنی؛ سیستم چیزی را لو نمی‌دهد.',
+    kanaStageMemoryHelp: 'راهنما خواستی؟ دکمهٔ «راهنما» را بزن — بعد از چند اشتباه هم خودش کمکت می‌کند.',
+    kanaStageChipIntro: 'آموزش',
+    kanaStageChipDemo: 'نمایش نوشتن',
+    kanaStageChipExplain: 'توضیح',
+    kanaStageChipGuided: 'تمرین با راهنما',
+    kanaStageChipFree: 'نوشتن از حافظه',
+    kanaStageChipDone: 'کامل شد',
+    kanaStrokesWord: 'ضربه',
+    /* TASK-LEARNING-08 Addendum-3 — §8 Latin complement + §9 audio speed state */
+    kanaReadingLatin: (faReading: string, latin: string) => `${faReading} | ${latin}`,
+    kanaSpeedNormal: 'عادی',
+    kanaSpeedSlow: 'آهسته',
+    kanaSpeedLabel: 'سرعت پخش',
+    kanaWordAudioLabel: (word: string) => `پخش صدای واژهٔ ${word}`,
+    kanaWordAudioPending: 'صدای این واژه هنوز تولید نشده.',
+    /* TASK-LEARNING-08 Addendum-4 §7 — example-word audio (example-set blocks) */
+    kanaExampleAudioLabel: (word: string) => `پخش صدای مثالِ ${word}`,
+    kanaExampleAudioNone: 'صدای این مثال هنوز تولید نشده.',
+    /* TASK-LEARNING-08 Addendum-5 §1 — practice-focused view: the intro-only
+       cards collapse (never deleted) while the learner is writing. */
+    kanaIntroFoldReading: 'اطلاعات معرفی — تلفظ و واژهٔ نمونه',
+    kanaIntroFoldSide: 'اطلاعات معرفی — یادسپار و جفت مشابه',
+    /* TASK-LEARNING-09 §۶ — the host readable word + the related usage
+       examples merge into ONE section (no duplicated word cards). */
+    kanaReadableExamplesTitle: 'نمونه‌های قابل‌خواندن',
+    kanaReadableExamplesFold: 'نمونه‌های قابل‌خواندن این نویسه',
+    /* TASK-LEARNING-09 §۱۵ — the mnemonic story returns to the introduction
+       flow; the practice fold groups the whole introduction info column. */
+    kanaIntroFoldInfo: 'اطلاعات معرفی — تلفظ، یادسپار و جفت مشابه',
+    /* TASK-LEARNING-08 Addendum-5 §3 — audio presence in kana questions */
+    exHearQuestionSound: 'شنیدن صدا',
+    exHearQuestionSoundAria: 'پخش صدای این سؤال',
+    exListenAutoNote: 'صدا به‌صورت خودکار پخش می‌شود — دوباره خواستی، پخش مجدد را بزن.',
+    exPromptSoundNote: 'صدای همان خوانشی که در صورت سؤال می‌بینی — شکل درستش را از بین گزینه‌ها پیدا کن.',
+    exHearCorrectPron: 'شنیدن تلفظ درست',
+    exHearCorrectPronAria: (what: string) => `پخش تلفظ درست (${what})`,
+    /* TASK-LEARNING-08 Addendum-5 §6 — example pronunciation guide */
+    examplePronGuideTitle: 'چطور تلفظ کنیم؟',
+    kanaWritingTipTitle: 'نکات نوشتن',
+    unitProgress: 'بخش',
+    islandMap: 'جزایر فصل',
+    chapterLockedTitle: 'این فصل قفل است',
+    chapterLockedBody: 'برای ورود به این فصل، ابتدا گیت فهم فصل قبل را بگذران.',
+    goPrerequisite: 'رفتن به فصل پیش‌نیاز',
+    prevStation: 'ایستگاه قبلی',
+    /* feedback ladder F2/F4 (Issue #106) */
+    eliminatedOption: 'یک گزینهٔ نادرست حذف شد',
+    returnToTeaching: 'بازگشت به آموزش',
+    /* block navigation + revisit (Issue #102) */
+    prevBlock: 'مرحلهٔ قبل',
+    exerciseAlreadyDoneTitle: 'این تمرین را کامل کرده‌ای',
+    exerciseAlreadyDoneBody: 'نتیجه‌اش ثبت شده و با رفت‌وآمد بین مراحل از بین نمی‌رود؛ بدون تکرار می‌توانی ادامه بدهی.',
     /* station runner */
     continueBlock: 'ادامه',
+    /* TASK-LEARNING-08 WP-5: auto-next after a correct answer (owner feedback D) */
+    autoNextHint: 'درست بود — به سؤال بعد می‌رویم…',
+    /* TASK-LEARNING-08 Addendum-2 §1: the accepted ink is replaced by the clean
+       standard sample for a short review beat. */
+    kanaReviewSampleNote: 'نمونهٔ استاندارد — نتیجهٔ تمیز نوشتنت را ببین.',
+    /* TASK-LEARNING-08 WP-5: walk resume notice (owner feedback E) */
+    walkResumedTitle: 'از همان‌جا ادامه دادی',
+    walkResumedBody: 'موقعیت قبلی‌ات در همین ایستگاه ذخیره شده بود و بازگردانده شد.',
     checkAnswer: 'بررسی پاسخ',
     tryAgain: 'دوباره تلاش کن',
     correct: 'درست!',
@@ -127,6 +249,14 @@ export const fa = {
     showHint: 'سرنخ',
     stationDone: 'ایستگاه کامل شد',
     backToJourney: 'بازگشت به نقشه',
+    /* ---- TASK-LEARNING-10 §6 — station completion flow (status = message,
+     * ONE main CTA labeled by its real destination; never a second red button) */
+    stationCompletedMessage: 'این ایستگاه را با موفقیت پشت سر گذشتی!',
+    ctaNextStation: 'رفتن به ایستگاه بعدی',
+    ctaContinuePath: 'ادامهٔ مسیر',
+    reviewStationAgain: 'مرور دوبارهٔ این ایستگاه',
+    /* ---- TASK-LEARNING-10 §5 — honest short note when the sound is unavailable */
+    audioUnavailableShort: 'صوت در دسترس نیست',
     playLine: 'پخش صدای این خط',
     inDialogue: 'در مکالمه ببین',
     wordCardNote: 'نکته',
@@ -142,6 +272,20 @@ export const fa = {
     masteryStationNote: 'آزمون فهم (دروازهٔ D) در صفحهٔ جدا اجرا می‌شود.',
     prevQuestion: 'قبلی',
     examplesTitle: 'مثال‌ها',
+    /* writing practice (TASK-LEARNING-07 / DD-105/DD-111) */
+    writingBlockTitle: 'نوشتن با دست',
+    writingPickChar: 'نویسهٔ تمرین:',
+    writingPairFocusTitle: 'جفت‌های شبیه — دقیق نگاه کن',
+    writingPairNote: 'این دو نویسه فقط در جزئیات فرق دارند؛ هر دو را چند بار بکش و تفاوت را حس کن.',
+    /* vertical trail map (TASK-LEARNING-07 · #107) */
+    trailLegendTitle: 'راهنمای نشانه‌های مسیر',
+    trailLegendCompleted: 'انجام‌شده',
+    trailLegendCurrent: 'نقطهٔ ادامه',
+    trailLegendAvailable: 'آماده',
+    trailLegendLocked: 'قفل',
+    trailLegendOptional: 'اختیاری',
+    trailBackToFocus: 'بازگشت به نقطهٔ ادامه',
+    trailScrolledNotice: 'مسیر روی نقطهٔ ادامهٔ تو تنظیم شد',
     yourTurn: 'نوبت تو',
     typeYourName: 'نامت را بنویس',
     /* mastery gate */

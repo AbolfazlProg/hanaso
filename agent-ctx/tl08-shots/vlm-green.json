@@ -1,0 +1,29 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "The dotted trail and its halo stay **completely outside** the green circle — there is a clean gap of paper between them.\n\nSpecifics:\n- The green completed marker is centered around (200, 178) with an outer border radius reaching down to roughly y ≈ 214–216.\n- The dotted indigo trail begins at about (211, 262) — the topmost dot (with its pale halo) is a clear ~45 px below the bottom edge of the green circle.\n- No dots touch or cross the green border, and nothing shows through the light green translucent fill. The fill appears uniform with only the dark checkmark inside.\n\nSo the separation is clean, with a visible ring/strip of paper background between the marker and the first trail dot.",
+        "reasoning_content": "Green circle at ~(200,178), dotted trail below starting ~(210,260). Top dot ~ (210,262), green circle bottom ~ y=215. Gap exists — trail stays outside.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1793916895,
+  "id": "20261106061449f89ee12f58dc47e0",
+  "model": "glm-5.3-flash",
+  "object": "chat.completion",
+  "request_id": "20261106061449f89ee12f58dc47e0",
+  "usage": {
+    "completion_tokens": 201,
+    "completion_tokens_details": {
+      "reasoning_tokens": 41
+    },
+    "prompt_tokens": 491,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 692
+  }
+}

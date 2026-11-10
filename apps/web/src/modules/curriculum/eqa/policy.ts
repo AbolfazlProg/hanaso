@@ -91,6 +91,7 @@ export const RECEIPT_STATION_TYPES: ReadonlySet<StationType> = new Set(['anchor'
 const RECEPTIVE_KINDS: ReadonlySet<string> = new Set([
   'scene',
   'vocab-card',
+  'kana-card',
   'expression-card',
   'rule-card',
   'example-set',
@@ -160,6 +161,14 @@ export const RECALL_FIRST_TYPES: ReadonlySet<ExerciseType> = new Set([
   'dialogue-order',
   'gist-select',
   'listen-who-asked',
+  // TASK-LEARNING-06: kana recall/decoding = retrieval from memory (S-K2/S-K5 —
+  // romaji→glyph and word→romaji both make the learner PRODUCE, not recognise).
+  'kana-recall',
+  'kana-decode',
+  // TASK-LEARNING-08 Addendum-5 §3: hearing the kana SOUND and retrieving the
+  // correct GLYPH is the recall direction too (the production is the shape,
+  // same as kana-recall — only the prompt channel is audio).
+  'kana-listening',
 ] as const);
 
 /**

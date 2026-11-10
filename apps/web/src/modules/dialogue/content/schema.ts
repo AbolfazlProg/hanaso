@@ -38,6 +38,13 @@ export const lineSchema = z.object({
   gap_after_ms: z.number().int().min(0).max(5000).optional(),
   voice_override: z.string().min(1).optional(),
   teaches: z.array(z.string().min(1)).optional(),
+  /** TASK-LEARNING-07: joint turns (05B BLUEPRINT §6 / DR-01d — «دو فایل مجزا هم‌زمان»).
+   * Primary `speaker` owns the line's main audio asset; the co-speaker's asset
+   * is keyed `${lineId}-co` and plays simultaneously when present. */
+  co_speaker: z
+    .string()
+    .regex(/^chr-[a-z0-9-]+$/, 'co_speaker must be a character id (chr-*)')
+    .optional(),
 });
 
 export const dialogueFileSchema = z.object({
@@ -80,7 +87,14 @@ export function parseDialogueDocument(slug: string, doc: unknown): Dialogue {
     if (!d.characters.includes(line.speaker)) {
       throw new Error(`dialogue ${slug}: line ${line.id} speaker ${line.speaker} not in characters`);
     }
+    if (line.co_speaker && line.co_speaker === line.speaker) {
+      throw new Error(`dialogue ${slug}: line ${line.id} co_speaker must differ from speaker`);
+    }
+    if (line.co_speaker && !d.characters.includes(line.co_speaker)) {
+      throw new Error(`dialogue ${slug}: line ${line.id} co_speaker ${line.co_speaker} not in characters`);
+    }
     speakers.add(line.speaker);
+    if (line.co_speaker) speakers.add(line.co_speaker);
   }
   if (speakers.size < 2) {
     throw new Error(`dialogue ${slug}: needs at least 2 distinct speakers (multi-speaker contract)`);
@@ -103,6 +117,7 @@ export function parseDialogueDocument(slug: string, doc: unknown): Dialogue {
           gapAfterMs: l.gap_after_ms,
           voiceOverride: l.voice_override,
           teaches: l.teaches,
+          coSpeaker: l.co_speaker,
         }) satisfies DialogueLine,
     ),
   };

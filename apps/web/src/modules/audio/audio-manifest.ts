@@ -199,7 +199,7 @@ export interface DialogueAudioManifest {
 
 export interface BuildManifestInput {
   dialogueId: string;
-  lines: { id: string; speaker: string; voiceOverride?: string; text: string }[];
+  lines: { id: string; speaker: string; coSpeaker?: string; voiceOverride?: string; text: string }[];
   resolveVoice: (speaker: string, voiceOverride?: string) => { voiceId: string };
 }
 
@@ -213,16 +213,21 @@ export function placeholderUrls(lineId: string): { opus: string; m4a: string } {
   return { opus: wav, m4a: wav };
 }
 
+/** True when a REAL (VOICEVOX) asset exists for this exact asset key. */
+export function hasRealAudioAsset(lineId: string): boolean {
+  return loadRealAudioAssets()?.entries[lineId] !== undefined;
+}
+
 /** Build the per-line audio manifest for a dialogue. */
 export function buildAudioManifest(input: BuildManifestInput): DialogueAudioManifest {
   const sidecar = loadAudioSidecar();
   const real = loadRealAudioAssets();
-  const entries = input.lines.map((line) => {
+  const entries = input.lines.flatMap((line) => {
     const voiceId = input.resolveVoice(line.speaker, line.voiceOverride).voiceId;
     const hash = hashAudioLine(line.text, voiceId);
     const realEntry = real?.entries[line.id];
     const side = sidecar?.entries[line.id];
-    return {
+    const main = {
       lineId: line.id,
       voiceId,
       characterId: line.speaker,
@@ -231,6 +236,28 @@ export function buildAudioManifest(input: BuildManifestInput): DialogueAudioMani
       bytes: realEntry?.bytes ?? side?.bytes ?? 0,
       durationMs: realEntry?.durationMs ?? side?.durationMs,
     };
+    // TASK-LEARNING-07 joint turns: the co-speaker's asset is keyed `${lineId}-co`
+    // and plays simultaneously with the main asset (05B §6). When the co asset is
+    // not generated yet, we still surface the entry (honest — the player plays
+    // what exists and the note reports mixed/pending status).
+    if (line.coSpeaker) {
+      const coVoiceId = input.resolveVoice(line.coSpeaker).voiceId;
+      const coKey = `${line.id}-co`;
+      const coReal = real?.entries[coKey];
+      return [
+        main,
+        {
+          lineId: coKey,
+          voiceId: coVoiceId,
+          characterId: line.coSpeaker,
+          hash: hashAudioLine(line.text, coVoiceId),
+          files: placeholderUrls(coKey),
+          bytes: coReal?.bytes ?? 0,
+          durationMs: coReal?.durationMs,
+        },
+      ];
+    }
+    return [main];
   });
   const realCount = input.lines.filter((l) => real?.entries[l.id]).length;
   const allReal = real !== null && realCount === input.lines.length;

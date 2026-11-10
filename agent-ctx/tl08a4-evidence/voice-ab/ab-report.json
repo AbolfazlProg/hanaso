@@ -1,0 +1,87 @@
+{
+  "text": "あいうえお、かきくけこ。こんにちは、ありがとう。おはようございます。",
+  "engine": "voicevox:latest (127.0.0.1:50021)",
+  "samples": [
+    {
+      "speakerId": 8,
+      "name": "春日部つむぎ",
+      "role": "CURRENT (baseline only — the owner asked for a genuinely different voice)",
+      "sampleMs": 5813.3,
+      "rmsDbfs": -22.96,
+      "presence_16_4k": 0.0889,
+      "harsh_gt6k": 0.0049,
+      "body_80_800": 0.1977,
+      "settings": {
+        "speedScale": 1.0,
+        "pitchScale": 0.0,
+        "intonationScale": 1.0,
+        "volumeScale": 1.0
+      }
+    },
+    {
+      "speakerId": 30,
+      "name": "No.7 アナウンス",
+      "role": "candidate",
+      "sampleMs": 5344.0,
+      "rmsDbfs": -23.88,
+      "presence_16_4k": 0.0293,
+      "harsh_gt6k": 0.0026,
+      "body_80_800": 0.705,
+      "settings": {
+        "speedScale": 1.0,
+        "pitchScale": 0.0,
+        "intonationScale": 1.0,
+        "volumeScale": 1.0
+      }
+    },
+    {
+      "speakerId": 31,
+      "name": "No.7 読み聞かせ",
+      "role": "candidate",
+      "sampleMs": 7818.7,
+      "rmsDbfs": -24.48,
+      "presence_16_4k": 0.0135,
+      "harsh_gt6k": 0.0048,
+      "body_80_800": 0.8798,
+      "settings": {
+        "speedScale": 1.0,
+        "pitchScale": 0.0,
+        "intonationScale": 1.0,
+        "volumeScale": 1.0
+      }
+    },
+    {
+      "speakerId": 14,
+      "name": "冥鳴ひまり",
+      "role": "candidate",
+      "sampleMs": 5290.7,
+      "rmsDbfs": -25.65,
+      "presence_16_4k": 0.017,
+      "harsh_gt6k": 0.0042,
+      "body_80_800": 0.9234,
+      "settings": {
+        "speedScale": 1.0,
+        "pitchScale": 0.0,
+        "intonationScale": 1.0,
+        "volumeScale": 1.0
+      }
+    },
+    {
+      "speakerId": 11,
+      "name": "玄野武宏",
+      "role": "contrast (male)",
+      "sampleMs": 5365.3,
+      "rmsDbfs": -23.8,
+      "presence_16_4k": 0.1827,
+      "harsh_gt6k": 0.0031,
+      "body_80_800": 0.661,
+      "settings": {
+        "speedScale": 1.0,
+        "pitchScale": 0.0,
+        "intonationScale": 1.0,
+        "volumeScale": 1.0
+      }
+    }
+  ],
+  "method": "same text, untouched engine defaults per speaker (speedScale 1.0); each sample mastered with the SHIPPING chain (HPF70 + shelf +2.5dB@2.5k + gate -40dB 2:1); 4096-point STFT average magnitude spectrum"
+}

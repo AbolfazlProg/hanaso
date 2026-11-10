@@ -96,6 +96,12 @@
       "durationMs": 2033,
       "hash": "827fd65b82e92522"
     },
+    "s-first-meeting-01-l13": {
+      "bytes": 8756,
+      "bytesM4a": 27542,
+      "durationMs": 2172,
+      "hash": "86fbe78d64dc6d07"
+    },
     "s-first-meeting-01-l2": {
       "bytes": 6435,
       "bytesM4a": 23154,
@@ -138,11 +144,23 @@
       "durationMs": 3782,
       "hash": "52211cdabe4bafa8"
     },
-    "s-first-meeting-01-l9": {
-      "bytes": 8756,
-      "bytesM4a": 27542,
-      "durationMs": 2172,
-      "hash": "86fbe78d64dc6d07"
+    "s-kana-welcome-01-l1": {
+      "bytes": 4115,
+      "bytesM4a": 15023,
+      "durationMs": 1030,
+      "hash": "3230d47dd806deac"
+    },
+    "s-kana-welcome-01-l2": {
+      "bytes": 9503,
+      "bytesM4a": 32778,
+      "durationMs": 2236,
+      "hash": "b9bdf5f62229076c"
+    },
+    "s-kana-welcome-01-l3": {
+      "bytes": 5718,
+      "bytesM4a": 22519,
+      "durationMs": 1425,
+      "hash": "973166103e3d9672"
     }
   }
 }

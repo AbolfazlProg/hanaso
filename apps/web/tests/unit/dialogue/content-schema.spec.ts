@@ -37,7 +37,8 @@ describe('dialogue content — cafe-morning-01 (KB dialogue-content-schema §۴)
       expect(voices.has(voiceId)).toBe(true);
     }
     // exactly 3 characters, one central (DD-082 v1 scope)
-    expect(listCharacters()).toHaveLength(3);
+    // TASK-LEARNING-06: chr-kim joined the cast (Ch02 unit 02-2 — Kim's entrance).
+    expect(listCharacters()).toHaveLength(4);
     expect(listCharacters().filter((c) => c.role === 'central')).toHaveLength(1);
   });
 

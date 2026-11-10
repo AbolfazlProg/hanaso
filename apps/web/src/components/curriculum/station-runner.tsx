@@ -8,19 +8,53 @@
  * grades through /api/curriculum/station (bank exercises AND block interactions:
  * discovery / prediction / integrate replies — SKL-013).
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, BookOpenText, CheckCircle2, Ear, MessageCircleQuestion, PlayCircle, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpenText,
+  CheckCircle2,
+  Ear,
+  MessageCircleQuestion,
+  Mic,
+  Play,
+  PlayCircle,
+  RotateCcw,
+  Sparkles,
+} from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import type { ClientStation, ClientTeachingBlock } from '@/modules/curriculum/client-transport';
 import type { Chapter, Station } from '@/modules/curriculum/types';
+import {
+  blockResult,
+  prevStep,
+  stationFinishScore,
+  stepOfBlock,
+  withBlockResult,
+  type BlockResults,
+} from '@/modules/curriculum/station-walk';
+import {
+  clampStepIndex,
+  clearWalkSnapshot,
+  loadWalkSnapshot,
+  saveWalkSnapshot,
+  type ExerciseBlockProgress,
+  type StationWalkSnapshot,
+} from '@/modules/curriculum/walk-persistence';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
+import { WritingCanvas } from '@/components/writing/writing-canvas';
+import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
+import { ExampleAudioButton } from './example-audio-button';
+import { KANA_ITEMS_BY_ID, KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
+import { loadWritingCharData, writingAvailability } from '@/modules/writing';
+import { preloadAudio } from '@/modules/audio/client-cache';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
@@ -36,6 +70,15 @@ export interface StationRunnerProps {
   /** The stripped station (no answer material — server grades everything). */
   station: ClientStation;
   chapter: Pick<Chapter, 'words' | 'expressions'>;
+  /**
+   * TASK-LEARNING-10 §6 — the next CORE station on the learning map after this
+   * one (server-resolved from the real chapter data, same core-path ordering
+   * the island map uses). Drives the completion CTA: present → «رفتن به
+   * ایستگاه بعدی» deep-linked to it; null/absent → «ادامهٔ مسیر» to the island
+   * map (the mastery gate has just opened there). Absent prop = the host has
+   * no map context — the map CTA is the safe fallback.
+   */
+  nextCoreStation?: { slug: string; titleFa: string } | null;
   clientExercises: Record<string, ClientExercise>;
   dialogue: {
     lines: Line[];
@@ -44,6 +87,32 @@ export interface StationRunnerProps {
   audioByLine: Record<string, string>;
   audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
+  /**
+   * Issue #103 (TASK-LEARNING-07): wordId → resolved INDEPENDENT word-audio URL pair
+   * (wordAudio registry — DD-119, resolved server-side). Null/absent = honest fallback
+   * to the source-line audio on the vocab card.
+   */
+  wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /**
+   * TASK-LEARNING-08 (WP-2/WP-3): kanaId → resolved PRE-GENERATED audio pair
+   * (public/audio/kana registry — DD-081). Null = no committed asset yet; the
+   * card hides the sound affordance honestly (owner feedback A).
+   */
+  kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
+  /**
+   * TASK-LEARNING-08 Addendum-3 §9: kanaId → the host word's OWN audio pair
+   * (public/audio/hostwords registry). Null = not generated; the word card
+   * hides its play control honestly.
+   */
+  hostWordAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
+  /**
+   * TASK-LEARNING-08 Addendum-4 §7: example word → its OWN audio pair from the
+   * SAME per-word registry (one asset per unique word — an example and a host
+   * word that are the same word share the word's asset, never another word's).
+   * Null = no committed asset; the example card hides its play control honestly
+   * (never a dead button, never a neighboring character/word sound).
+   */
+  exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
 }
 
 /** Grading round-trip for one block interaction. */
@@ -67,18 +136,297 @@ async function gradeBlock(payload: {
   }
 }
 
+/**
+ * TASK-LEARNING-08 (WP-5) + TASK-LEARNING-10 §6: fetch the server-side walk
+ * state for this station. Read from the SAME API the walk writes to — the
+ * client fetch works identically in dev (route-handler store) and production
+ * (Postgres), unlike an RSC prop (RSC and route handlers may read different
+ * module instances in dev).
+ *
+ * TL-10 §6 adds the `completed` branch: a refresh (or a re-visit) of an
+ * ALREADY-COMPLETED station re-renders its completion state instead of
+ * silently restarting the walk — the owner's protection «از دست رفتن وضعیت
+ * ایستگاه پس از Refresh».
+ */
+type ServerResume = { kind: 'anchor'; blockId: string } | { kind: 'completed' } | null;
+async function fetchServerResume(chapterSlug: string, stationSlug: string): Promise<ServerResume> {
+  try {
+    const res = await fetch(
+      `/api/curriculum/station?chapter=${encodeURIComponent(chapterSlug)}&station=${encodeURIComponent(stationSlug)}`,
+      { cache: 'no-store' },
+    );
+    const json = (await res.json()) as { data?: { state?: { status?: string; currentBlock?: string | null } | null } };
+    const state = json.data?.state;
+    if (state?.status === 'completed') return { kind: 'completed' };
+    if (state && state.status === 'in_progress' && state.currentBlock) {
+      return { kind: 'anchor', blockId: state.currentBlock };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * TASK-LEARNING-08 (WP-5 — owner feedback E): fire-and-forget walk position sync
+ * (station `enter`/`progress` actions). Keeps the SERVER-side resume anchor
+ * (StationState.currentBlock) fresh on every block transition; never blocks the
+ * walk on network state and never double-fires for the same step.
+ */
+async function syncWalkPosition(
+  action: 'enter' | 'progress',
+  payload: { chapterSlug: string; stationSlug: string; currentBlockId: string; stepIndex: number },
+): Promise<void> {
+  try {
+    await fetch('/api/curriculum/station', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action, ...payload }),
+      keepalive: action === 'progress', // survives a tab close mid-flight
+    });
+  } catch {
+    /* offline: the LOCAL snapshot still carries the walk (mission §8.5) */
+  }
+}
+
+/**
+ * TASK-LEARNING-07 (DD-105/DD-111): record a handwriting practice summary.
+ * Structured summary only — raw pen paths never leave the browser. Best-effort:
+ * analytics must never break the practice flow.
+ */
+async function recordWritingPractice(payload: {
+  chapterSlug: string;
+  stationSlug: string;
+  blockId?: string;
+  character: string;
+  mode: 'guided' | 'trace' | 'free';
+  verdict: string;
+  strokesTotal: number;
+  strokesFirstTry: number;
+  totalMistakes: number;
+  hintsShown: number;
+  completed: boolean;
+  durationMs: number;
+}): Promise<void> {
+  try {
+    await fetch('/api/curriculum/station', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'writing-practice', ...payload }),
+    });
+  } catch {
+    /* honest best-effort — the practice verdict is already shown to the user */
+  }
+}
+
 export function StationRunner(props: StationRunnerProps) {
-  const { station, chapter, clientExercises, dialogue, audioByLine, audioFallbackByLine, audioAvailable, chapterSlug } =
-    props;
+  const {
+    station,
+    chapter,
+    nextCoreStation,
+    clientExercises,
+    dialogue,
+    audioByLine,
+    audioFallbackByLine,
+    audioAvailable,
+    wordAudioByWord,
+    kanaAudioByKanaId,
+    hostWordAudioByKanaId,
+    exampleAudioByWord,
+    chapterSlug,
+  } = props;
   const router = useRouter();
+  /*
+   * WP-5 (owner feedback E): the walk starts at step 0 for SSR/hydration, then a
+   * mount effect restores the persisted snapshot (localStorage first — it also
+   * carries earned results + in-flight exercise positions; server anchor only as
+   * a fallback). `restoreChecked` gates the first paint so the learner never sees
+   * block 1 flash before jumping to the real position.
+   */
   const [step, setStep] = useState(0);
+  const [restoreChecked, setRestoreChecked] = useState(false);
+  /**
+   * CP-04 fix (TL-10 §6 gap): the server resume must settle before ANY walk
+   * position is persisted. On a revisit of a COMPLETED station the persist
+   * effect used to race the resume and plant a fresh step-0 snapshot, so the
+   * NEXT refresh restored that empty walk instead of the completion panel —
+   * the owner-reported bug, surviving TL-10's first fix from the second
+   * refresh on (live-reproduced on production 2026-11-10, probe5: reload #1
+   * panel ✓ → reload #2 walk restart ✗).
+   */
+  const [resumeSettled, setResumeSettled] = useState(false);
+  const [resumedNotice, setResumedNotice] = useState(false);
   const [sessionScore, setSessionScore] = useState<number | null>(null);
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(false);
+  /**
+   * Issue #102: earned exercise results per block id — they live OUTSIDE the
+   * current step, so stepping back (and forward again) never loses them. A
+   * block with a recorded result renders the skip panel instead of re-grading.
+   */
+  const [blockResults, setBlockResults] = useState<BlockResults>({});
+  /** WP-5: in-flight exercise positions per block id (survives refresh). */
+  const [exerciseProgress, setExerciseProgress] = useState<Record<string, ExerciseBlockProgress>>({});
+  /**
+   * TASK-LEARNING-08 phase 2 (#117 §8/§10): kana-card v3 stage per block id —
+   * writing is a REQUIRED part of the walk (the block gates forward movement
+   * until its free-writing stage completes) and the stage survives refresh.
+   */
+  const [kanaCardStages, setKanaCardStages] = useState<Record<string, string>>({});
+
+  /* ------- TASK-HANASO-CTA-01 §۴ — related usage examples per kana ---------
+   * Each kana card's related usage examples = the station's example-set
+   * entries whose Japanese word CONTAINS that glyph, in their authored
+   * educational order. Computed ONCE per station (data-driven; no content
+   * duplication, no new content structure — the walk's own example-set block
+   * stays exactly where it is). */
+  const relatedExamplesByKanaId = useMemo(() => {
+    const map: Record<string, KanaRelatedExample[]> = {};
+    for (const b of station.blocks) {
+      if (b.kind !== 'example-set') continue;
+      for (const ex of b.examples) {
+        for (const ch of Array.from(new Set(ex.ja))) {
+          const item = KANA_ITEMS_BY_GLYPH[ch];
+          if (item) (map[item.kanaId] ??= []).push(ex);
+        }
+      }
+    }
+    return map;
+  }, [station.blocks]);
 
   const blocks = station.blocks;
   const block = blocks[step];
   const lineById = useMemo(() => new Map(dialogue.lines.map((l) => [l.id, l])), [dialogue.lines]);
+
+  /* ------- Addendum-3 §3/§10: targeted prefetch of the NEXT kana card -------
+   * While the learner works on the current card (many seconds before the
+   * walk auto-advances), the NEXT kana's stroke data and BOTH audio assets
+   * are warmed — one element each, deduped, never a bulk preload — so the
+   * transition shows no skeleton flash and no network round-trip. */
+  const nextKanaBlock = useMemo(
+    () => station.blocks.find((b, i) => b.kind === 'kana-card' && i > step),
+    [station.blocks, step],
+  );
+  useEffect(() => {
+    if (!nextKanaBlock || nextKanaBlock.kind !== 'kana-card') return;
+    const item = KANA_ITEMS_BY_ID[nextKanaBlock.kanaId];
+    if (!item) return;
+    void writingAvailability(item.glyph).then((a) => {
+      if (a.status === 'available') loadWritingCharData(item.glyph).catch(() => undefined);
+    });
+    const pair = kanaAudioByKanaId?.[nextKanaBlock.kanaId];
+    if (pair) void preloadAudio(pair.opus);
+    const hostPair = hostWordAudioByKanaId?.[nextKanaBlock.kanaId];
+    if (hostPair) void preloadAudio(hostPair.opus);
+  }, [nextKanaBlock, kanaAudioByKanaId, hostWordAudioByKanaId]);
+
+  /* ------- Addendum-5 §5 — targeted preload of the NEXT example-set block's
+   * word audio (bounded: only the words of the ONE upcoming example block;
+   * deduped + LRU-bounded by the shared cache — never a bulk preload, never a
+   * repeat download: the same asset plays from cache when the block arrives). */
+  const nextExampleBlock = useMemo(
+    () => station.blocks.find((b, i) => b.kind === 'example-set' && i > step),
+    [station.blocks, step],
+  );
+  useEffect(() => {
+    if (!nextExampleBlock || nextExampleBlock.kind !== 'example-set') return;
+    for (const ex of nextExampleBlock.examples.slice(0, 6)) {
+      const pair = exampleAudioByWord?.[ex.ja];
+      if (pair) void preloadAudio(pair.opus);
+    }
+  }, [nextExampleBlock, exampleAudioByWord]);
+
+  /* ---------------- WP-5: restore the persisted walk (once, after mount) ---- */
+  useEffect(() => {
+    if (restoreChecked) return;
+    setRestoreChecked(true);
+    const snapshot = loadWalkSnapshot(chapterSlug, station.slug);
+    if (snapshot) {
+      const restored = clampStepIndex(snapshot.stepIndex, blocks.length);
+      setStep(restored);
+      setBlockResults(snapshot.blockResults ?? {});
+      setExerciseProgress(snapshot.exerciseProgress ?? {});
+      setKanaCardStages(snapshot.kanaCardStages ?? {});
+      if (typeof snapshot.sessionScore === 'number') setSessionScore(snapshot.sessionScore);
+      if (snapshot.stepIndex > 0 || Object.keys(snapshot.blockResults ?? {}).length > 0) {
+        setResumedNotice(true);
+        window.setTimeout(() => setResumedNotice(false), 4000);
+      }
+      /* CP-04 fix (TL-10 §6 gap): DO NOT stop at the local snapshot. The
+       * server resume below is consulted on EVERY mount now: a revisit of a
+       * completed station could carry a PLANTED empty step-0 snapshot (see
+       * resumeSettled above) or a review that never progressed — the server's
+       * completion record is the truth and wins over an EMPTY walk. A
+       * snapshot with EARNED progress keeps the walk (a deliberate mid-review
+       * resume — the user left work in flight). */
+    }
+    // the server walk state is the honest fallback for the position (cleared
+    // localStorage on the same browser; a different browser has a different
+    // learner id and thus no claim on this walk) AND the authority on
+    // completion.
+    // TL-10 §6: `completed` → the station re-renders its completion state
+    // (refresh/re-visit never loses it, and the walk never silently restarts).
+    void fetchServerResume(chapterSlug, station.slug)
+      .then((resume) => {
+        if (!resume) return;
+        const emptyWalk =
+          !snapshot ||
+          (snapshot.stepIndex === 0 &&
+            Object.keys(snapshot.blockResults ?? {}).length === 0 &&
+            Object.keys(snapshot.exerciseProgress ?? {}).length === 0 &&
+            Object.keys(snapshot.kanaCardStages ?? {}).length === 0);
+        if (resume.kind === 'completed') {
+          if (emptyWalk) {
+            setCompleted(true);
+            // heal a planted snapshot (also covers browsers that already
+            // carry the stale step-0 snapshot from BEFORE this fix)
+            clearWalkSnapshot(chapterSlug, station.slug);
+          }
+          return; // a snapshot WITH progress keeps its mid-review walk
+        }
+        if (snapshot) return; // a local walk exists — it owns the position
+        const target = stepOfBlock(blocks, resume.blockId);
+        if (target !== null && target > 0) {
+          setStep(target);
+          setResumedNotice(true);
+          window.setTimeout(() => setResumedNotice(false), 4000);
+        }
+      })
+      .finally(() => setResumeSettled(true));
+    // restore + fallback run exactly once per mount (deps limited on purpose)
+  }, []);
+
+  /* ---------------- WP-5: persist + sync on every meaningful transition ------ */
+  const persistedRef = useRef<StationWalkSnapshot | null>(null);
+  const syncStepRef = useRef(-1);
+  useEffect(() => {
+    if (!restoreChecked) return;
+    /* CP-04 fix: never persist a walk position before the server resume has
+     * settled (see resumeSettled) — this race planted the step-0 snapshot that
+     * made the NEXT refresh of a completed station restart the walk. */
+    if (!resumeSettled) return;
+    if (completed || !block) return;
+    const snapshot = {
+      chapterSlug,
+      stationSlug: station.slug,
+      stepIndex: step,
+      blockResults,
+      exerciseProgress,
+      kanaCardStages,
+      sessionScore,
+    };
+    persistedRef.current = snapshot as StationWalkSnapshot;
+    saveWalkSnapshot(snapshot);
+    if (syncStepRef.current !== step) {
+      syncStepRef.current = step;
+      void syncWalkPosition(step === 0 ? 'enter' : 'progress', {
+        chapterSlug,
+        stationSlug: station.slug,
+        currentBlockId: block.id,
+        stepIndex: step,
+      });
+    }
+  }, [restoreChecked, step, blockResults, exerciseProgress, kanaCardStages, sessionScore]);
 
   const finishSession = useCallback(
     async (score: number | null, taskCompleted = false) => {
@@ -97,6 +445,7 @@ export function StationRunner(props: StationRunnerProps) {
           }),
         });
         setCompleted(res.ok);
+        if (res.ok) clearWalkSnapshot(chapterSlug, station.slug); // walk done — no stale resume
       } finally {
         setCompleting(false);
       }
@@ -114,14 +463,107 @@ export function StationRunner(props: StationRunnerProps) {
     } else if (station.completion.kind === 'task_completed') {
       void finishSession(null, true);
     } else {
-      void finishSession(sessionScore ?? 0);
+      // Issue #102: the LAST authored exercise block's earned result finishes the
+      // station (a re-visited earlier block's skip must not overwrite it).
+      void finishSession(stationFinishScore(blocks, blockResults, sessionScore) ?? 0);
     }
-  }, [blocks.length, finishSession, sessionScore, station.completion.kind, step]);
+  }, [blockResults, blocks, finishSession, sessionScore, station.completion.kind, step]);
 
-  const doneHref = `/learn/${chapterSlug}/journey`;
+  /**
+   * Issue #102 «مرحلهٔ قبل»: one block back — earned exercise results survive by
+   * design (they live in blockResults, not in the rendered block component).
+   */
+  const prev = useCallback(() => {
+    setStep((s) => prevStep(s));
+  }, []);
+
+  /**
+   * Issue #106 (F4): jump the walk back to the authored teaching block the
+   * feedback ladder named (blocks render one-at-a-time, so "returning" = moving
+   * the step pointer; an unresolvable id keeps the learner where they are).
+   */
+  const returnToBlock = useCallback(
+    (blockId: string) => {
+      const target = stepOfBlock(station.blocks, blockId);
+      if (target !== null) setStep(target);
+    },
+    [station.blocks],
+  );
+
+  /*
+   * TASK-LEARNING-10 §6 — the completion CTA's REAL destination, derived from
+   * the learning-map structure itself: the host page resolves the next core
+   * station server-side (same ordering the island map uses) and passes it in.
+   * Present → deep-linked directly («رفتن به ایستگاه بعدی»); absent → the island
+   * map, where the mastery gate has just opened («ادامهٔ مسیر»). The label
+   * always names the destination — the owner's rule — and it is ONE CTA, never
+   * a second follow-up button.
+   */
+  const completionTarget = useMemo(() => {
+    if (nextCoreStation) {
+      return {
+        href: `/learn/${chapterSlug}/journey/${nextCoreStation.slug}`,
+        label: fa.curriculum.ctaNextStation,
+        stationTitleFa: nextCoreStation.titleFa as string | null,
+      };
+    }
+    return { href: `/learn/${chapterSlug}/journey`, label: fa.curriculum.ctaContinuePath, stationTitleFa: null };
+  }, [nextCoreStation, chapterSlug]);
+
+  /* TL-10 §6: rapid double-click on the CTA navigates exactly once. */
+  const navLatchRef = useRef(false);
+  const goCompletionDestination = useCallback(() => {
+    if (navLatchRef.current) return;
+    navLatchRef.current = true;
+    router.push(completionTarget.href);
+  }, [completionTarget.href, router]);
+
+  /*
+   * TL-10 §6: «مرور دوباره» — the tertiary text action that preserves the
+   * pre-TL-10 capability of re-walking a completed station for practice. It
+   * restarts the LOCAL walk only; the server's completion record and rewards
+   * stay exactly as registered (the API is idempotent — `already: true`).
+   */
+  const reviewWalkAgain = useCallback(() => {
+    setCompleted(false);
+    setStep(0);
+    setBlockResults({});
+    setExerciseProgress({});
+    setKanaCardStages({});
+    setSessionScore(null);
+    setResumedNotice(false);
+  }, []);
+
+  /*
+   * WP-5: the restore check runs on mount; until it settles, a one-line placeholder
+   * prevents block 1 from flashing before the jump to the real position (also
+   * keeps SSR markup and client hydration identical).
+   */
+  if (!restoreChecked) {
+    return (
+      <p className="text-small text-ink-soft" role="status">
+        {fa.common.loading}
+      </p>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
+      {/* WP-5 (owner feedback E): honest resume notice — the walk came back. */}
+      {resumedNotice && (
+        <p
+          role="status"
+          className="flex items-center gap-2 rounded-md border border-ai/40 bg-indigo-wash/60 px-4 py-2 text-small text-ink"
+          data-walk-resumed
+        >
+          <RotateCcw aria-hidden className="size-4 text-ai" />
+          <span>
+            <b>{fa.curriculum.walkResumedTitle}. </b>
+            {fa.curriculum.walkResumedBody}
+          </span>
+        </p>
+      )}
+
       {/* progress rail + step counter */}
       <div className="flex items-center gap-3">
         <div className="flex flex-1 items-center gap-1" aria-hidden>
@@ -140,7 +582,13 @@ export function StationRunner(props: StationRunnerProps) {
         </p>
       </div>
 
-      {block && (
+      {/*
+       * TL-10 §6: once the station is completed, the walk content RETIRES —
+       * the completion panel is the one clear state (message + ONE CTA). No
+       * half-alive walk buttons next to it (the «مرور دوباره» link brings the
+       * walk back for practice).
+       */}
+      {!completed && block && (
         <BlockView
           block={block}
           stationSlug={station.slug}
@@ -152,7 +600,48 @@ export function StationRunner(props: StationRunnerProps) {
           audioByLine={audioByLine}
           audioFallbackByLine={audioFallbackByLine}
           audioAvailable={audioAvailable}
+          wordAudioByWord={wordAudioByWord}
+          kanaAudioByKanaId={kanaAudioByKanaId}
+          hostWordAudioByKanaId={hostWordAudioByKanaId}
+          exampleAudioByWord={exampleAudioByWord}
+          isLastBlock={step === blocks.length - 1}
+          exerciseScore={block.kind === 'exercise' ? blockResult(blockResults, block.id) : null}
+          exerciseInitialProgress={block.kind === 'exercise' ? exerciseProgress[block.id] : undefined}
+          onExerciseProgress={(progress) => {
+            if (block.kind !== 'exercise') return;
+            setExerciseProgress((prev) => {
+              const cur = prev[block.id];
+              if (cur && cur.index === progress.index && cur.firstTryCorrect === progress.firstTryCorrect) {
+                return prev;
+              }
+              return { ...prev, [block.id]: progress };
+            });
+          }}
+          onReturnToBlock={returnToBlock}
+          kanaCardStage={block.kind === 'kana-card' ? normalizeKanaStage(kanaCardStages[block.id]) : undefined}
+          relatedExamplesByKanaId={relatedExamplesByKanaId}
+          onKanaProgress={(progress: { stage: string }) => {
+            if (block.kind !== 'kana-card') return;
+            setKanaCardStages((prev) =>
+              prev[block.id] === progress.stage ? prev : { ...prev, [block.id]: progress.stage },
+            );
+          }}
+          onKanaWritingDone={() => {
+            // #117 §8: the writing stage completed — the walk continues.
+            if (step < blocks.length - 1) setStep((s) => s + 1);
+            else void finishSession(null);
+          }}
           onExerciseDone={(score) => {
+            if (block.kind === 'exercise') {
+              setBlockResults((r) => withBlockResult(r, block.id, score));
+              // the block is done — its in-flight position is no longer needed
+              setExerciseProgress((prev) => {
+                if (!(block.id in prev)) return prev;
+                const next = { ...prev };
+                delete next[block.id];
+                return next;
+              });
+            }
             setSessionScore(score);
             if (step < blocks.length - 1) setStep((s) => s + 1);
             else void finishSession(score);
@@ -165,37 +654,83 @@ export function StationRunner(props: StationRunnerProps) {
         />
       )}
 
-      {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && (
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={next}
-            disabled={completing}
-            className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
-          >
-            {step === blocks.length - 1 ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
-            <ArrowLeft aria-hidden className="size-4" />
-          </button>
-        </div>
-      )}
+      {/*
+       * Action row (Issue #102 + #117 §8): «مرحلهٔ قبل» appears from the 2nd block
+       * onward; the forward button keeps its exercise/scene exceptions AND the
+       * kana-card gate (writing is required — no skipping past a kana card by
+       * button until its free-writing stage completes; the card owns its CTA
+       * and auto-advances via onKanaWritingDone).
+       */}
+      {!completed &&
+        (step > 0 ||
+          (block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card')) && (
+          <div className="flex items-center gap-3">
+            {step > 0 && (
+              <button
+                type="button"
+                onClick={prev}
+                className="flex h-11 items-center gap-2 rounded-md border border-ink-faint bg-card px-5 text-body font-bold text-ink transition-colors hover:bg-surface-warm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+              >
+                <ArrowRight aria-hidden className="size-4" />
+                {fa.curriculum.prevBlock}
+              </button>
+            )}
+            {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card' && (
+              <button
+                type="button"
+                onClick={next}
+                disabled={completing}
+                className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
+              >
+                {/* TL-10 §6/§7: a plain forward action — a status text is never
+                 posed as a button, and a normal action is never red. */}
+                {fa.curriculum.continueBlock}
+                <ArrowLeft aria-hidden className="size-4" />
+              </button>
+            )}
+          </div>
+        )}
 
+      {/*
+       * TASK-LEARNING-10 §6 — the completion panel, redesigned after the owner's
+       * order: the success moment is a NON-INTERACTIVE status message
+       * («این ایستگاه را با موفقیت پشت سر گذشتی!») followed by exactly ONE
+       * primary CTA whose label names its real destination. The old flow had
+       * a «ایستگاه تمام شد» BUTTON and then a second red «بازگشت به نقشه»
+       * button — two sequential actions for one transition; both are gone.
+       * The replay/review tertiary action stays a quiet text link (never a
+       * second primary CTA), and the color is Aizen's primary indigo — red is
+       * reserved for errors only (TL-10 §7 rule 9).
+       */}
       {completed && (
         <div
           role="status"
           aria-live="polite"
+          data-station-complete
           className="flex flex-col gap-3 rounded-md border border-success bg-card p-5"
         >
           <p className="flex items-center gap-2 text-body font-bold text-success">
             <CheckCircle2 aria-hidden className="size-5" />
-            {fa.curriculum.stationDone}
+            {fa.curriculum.stationCompletedMessage}
           </p>
           <button
             type="button"
-            onClick={() => router.push(doneHref)}
-            className="flex h-11 w-fit items-center gap-2 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep"
+            onClick={goCompletionDestination}
+            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
-            {fa.curriculum.backToJourney}
+            {completionTarget.label}
             <ArrowLeft aria-hidden className="size-4" />
+          </button>
+          {completionTarget.stationTitleFa && (
+            <p className="text-caption text-ink-soft">{completionTarget.stationTitleFa}</p>
+          )}
+          <button
+            type="button"
+            onClick={reviewWalkAgain}
+            className="flex w-fit items-center gap-1 text-small text-ai underline underline-offset-4"
+          >
+            <RotateCcw aria-hidden className="size-4" />
+            {fa.curriculum.reviewStationAgain}
           </button>
         </div>
       )}
@@ -205,6 +740,185 @@ export function StationRunner(props: StationRunnerProps) {
 }
 
 /* ------------------------------------------------------------------ block renderers */
+
+/**
+ * TASK-LEARNING-07 (DD-105/DD-111): writing-practice block — the owner-ordered
+ * handwriting capability as a TEACHING-layer station block. One canvas with a
+ * switchable target picker (small station sets) + optional confusable-pair
+ * focus chips. Practice-layer only (never a mastery gate — DD-106): summaries
+ * are recorded best-effort via the station API and raw pen paths never leave
+ * the browser.
+ */
+function WritingPracticeBlock({
+  block,
+  chapterSlug,
+  stationSlug,
+}: {
+  block: Extract<ClientTeachingBlock, { kind: 'writing-practice' }>;
+  chapterSlug: string;
+  stationSlug: string;
+}) {
+  /*
+   * TASK-LEARNING-08 phase 2 (#117 §2): the drill keeps its character picker
+   * (small station sets) but drops the mode tabs/toggles of the old panel —
+   * one canvas, free writing with per-stroke feedback, an on-demand demo and
+   * the same compact attribution. Practice-layer only (never a gate — DD-106).
+   */
+  const [activeChar, setActiveChar] = useState(block.characters[0] ?? '');
+  const [demo, setDemo] = useState(false);
+  const [restartSignal, setRestartSignal] = useState(0);
+  const [hintSignal, setHintSignal] = useState(0);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState<import('@/modules/writing/engine').WritingAttemptState | null>(null);
+  const attemptStartRef = useRef<number | null>(null);
+  const attemptRef = useRef<import('@/modules/writing/engine').WritingAttemptState | null>(null);
+  attemptRef.current = attempt;
+  if (!activeChar) return null;
+  const pairChars = (block.focusPairs ?? []).flatMap(([a, b]) => [a, b]);
+  return (
+    <section className="flex flex-col gap-4" aria-label={fa.curriculum.writingBlockTitle}>
+      <h3 className="text-h3 font-bold">{fa.curriculum.writingBlockTitle}</h3>
+      {block.instructionsFa ? (
+        <p className="text-body leading-[var(--leading-fa)] text-ink-soft">{block.instructionsFa}</p>
+      ) : null}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-small text-ink-faint">{fa.curriculum.writingPickChar}</span>
+        {block.characters.map((ch) => (
+          <button
+            key={ch}
+            type="button"
+            onClick={() => {
+              setActiveChar(ch);
+              setDemo(false);
+              setFeedback(null);
+              setRestartSignal((n) => n + 1);
+            }}
+            aria-pressed={activeChar === ch}
+            className={`min-h-11 min-w-11 rounded-md border-2 px-3 font-jp text-h3 font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai ${
+              activeChar === ch
+                ? 'border-indigo bg-indigo text-paper'
+                : 'border-ink-faint bg-card text-ink hover:bg-surface-warm'
+            }`}
+          >
+            {ch}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-col items-center gap-4 md:flex-row md:items-start md:justify-center">
+        <WritingCanvas
+          key={`${activeChar}-${demo}-${restartSignal}`}
+          character={activeChar}
+          mode={demo ? 'demo' : 'free'}
+          restartSignal={restartSignal}
+          hintSignal={hintSignal}
+          onDemoDone={() => setDemo(false)}
+          onJudgement={(j, state) => {
+            setAttempt(state);
+            setFeedback(j.feedbackFa);
+            if ((j.judge === 'rejected' || j.judge === 'uncertain_retry') && state.missesOnStroke >= 2) {
+              setHintSignal((n) => n + 1);
+            }
+          }}
+          onAttemptComplete={(state) => {
+            const started = attemptStartRef.current ?? Date.now();
+            void recordWritingPractice({
+              chapterSlug,
+              stationSlug,
+              blockId: block.id,
+              character: activeChar,
+              mode: 'free',
+              verdict:
+                state.totalMisses === 0
+                  ? 'correct'
+                  : state.assistedCount > 0
+                    ? 'correct_with_hints'
+                    : 'accepted_with_review',
+              strokesTotal: state.history.length,
+              strokesFirstTry: state.firstTry,
+              totalMistakes: state.totalMisses,
+              hintsShown: state.assistedCount,
+              completed: true,
+              durationMs: Date.now() - started,
+            });
+            setFeedback(fa.curriculum.kanaStageFreeDone);
+          }}
+        />
+        <div className="w-full max-w-[20rem] space-y-3" dir="rtl">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                attemptStartRef.current = Date.now();
+                setDemo((d) => !d);
+                setFeedback(null);
+              }}
+              className="flex min-h-10 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash"
+            >
+              <Play aria-hidden className="size-4" />
+              {fa.curriculum.kanaStageDemoReplay}
+            </button>
+            {!demo ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setHintSignal((n) => n + 1)}
+                  className="min-h-10 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash"
+                >
+                  {fa.curriculum.kanaStageHelpBtn}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    attemptStartRef.current = Date.now();
+                    setFeedback(null);
+                    setRestartSignal((n) => n + 1);
+                  }}
+                  className="min-h-10 rounded-md border border-ink-faint bg-card px-3 text-caption font-bold text-ink transition-colors hover:bg-surface-warm"
+                >
+                  {fa.curriculum.kanaStageWriteAgain}
+                </button>
+              </>
+            ) : null}
+          </div>
+          {feedback ? (
+            <p
+              role="status"
+              aria-live="polite"
+              className="rounded-md border border-shu/40 bg-surface-warm px-3 py-2 text-small leading-[var(--leading-fa)] text-ink"
+            >
+              {feedback}
+            </p>
+          ) : (
+            <p className="text-small leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.writingPairNote}</p>
+          )}
+        </div>
+      </div>
+      {block.focusPairs && block.focusPairs.length > 0 ? (
+        <div className="rounded-md border border-shu/40 bg-surface-warm p-4">
+          <p className="text-small font-bold text-ink">{fa.curriculum.writingPairFocusTitle}</p>
+          <p className="mt-1 text-small text-ink-soft">{fa.curriculum.writingPairNote}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {pairChars.map((ch) => (
+              <button
+                key={ch}
+                type="button"
+                onClick={() => setActiveChar(ch)}
+                aria-pressed={activeChar === ch}
+                className={`min-h-11 min-w-11 rounded-md border-2 px-3 font-jp text-h3 font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai ${
+                  activeChar === ch
+                    ? 'border-shu bg-shu text-paper'
+                    : 'border-ink-faint bg-card text-ink hover:bg-surface-warm'
+                }`}
+              >
+                {ch}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
 
 function BlockView({
   block,
@@ -217,8 +931,21 @@ function BlockView({
   audioByLine,
   audioFallbackByLine,
   audioAvailable,
+  wordAudioByWord,
+  kanaAudioByKanaId,
+  hostWordAudioByKanaId,
+  exampleAudioByWord,
+  isLastBlock,
+  exerciseScore,
+  exerciseInitialProgress,
+  onExerciseProgress,
+  onReturnToBlock,
   onExerciseDone,
   onSceneDone,
+  kanaCardStage,
+  onKanaProgress,
+  onKanaWritingDone,
+  relatedExamplesByKanaId,
 }: {
   block: ClientTeachingBlock;
   stationSlug: string;
@@ -230,8 +957,36 @@ function BlockView({
   audioByLine: Record<string, string>;
   audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
+  wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /** WP-2/WP-3: resolved kana audio pairs (kanaId → opus+m4a | null). */
+  kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
+  /** Addendum-3 §9: the host word's own audio pair (kanaId → opus+m4a | null). */
+  hostWordAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
+  /** Addendum-4 §7: example word → its own audio pair (word → opus+m4a | null). */
+  exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /** True on the last authored block (drives the skip-panel CTA label). */
+  isLastBlock: boolean;
+  /**
+   * Issue #102: the block's already-earned exercise score (null = not completed
+   * yet — render the live ExerciseSession). Only meaningful for exercise blocks.
+   */
+  exerciseScore: number | null;
+  /** WP-5 (owner feedback E): persisted in-flight position for this block. */
+  exerciseInitialProgress?: { index: number; firstTryCorrect: number };
+  /** WP-5: question-transition reporter → the host persists the walk snapshot. */
+  onExerciseProgress?: (progress: { index: number; firstTryCorrect: number }) => void;
+  /** Issue #106 (F4): host-owned «بازگشت به آموزش» jump handler. */
+  onReturnToBlock?: (blockId: string) => void;
   onExerciseDone: (score: number) => void;
   onSceneDone: () => void;
+  /** #117 §10: restored kana-card stage for this block (undefined = fresh). */
+  kanaCardStage?: string;
+  /** #117 §10: stage persistence reporter. */
+  onKanaProgress?: (progress: { stage: string }) => void;
+  /** #117 §8: the staged writing experience completed → the walk continues. */
+  onKanaWritingDone?: () => void;
+  /** TASK-HANASO-CTA-01 §۴: kanaId → its related usage examples (station-wide). */
+  relatedExamplesByKanaId?: Record<string, KanaRelatedExample[]>;
 }) {
   switch (block.kind) {
     case 'scene':
@@ -250,32 +1005,46 @@ function BlockView({
     case 'vocab-card': {
       const word = chapter.words.find((w) => w.id === block.wordId)!;
       const line = lineById.get(word.lineRef);
+      // Issue #103: prefer the word's INDEPENDENT audio when the registry has a
+      // committed asset; honest fallback to the source-line audio otherwise.
+      const wordAudio = wordAudioByWord?.[word.id] ?? null;
+      const useWordAudio = wordAudio !== null;
+      const audioLineId = useWordAudio ? word.id : line?.id;
+      const audioUrl = useWordAudio ? wordAudio!.opus : line ? (audioByLine[line.id] ?? '') : '';
+      const audioFallback = useWordAudio ? wordAudio!.m4a : line ? audioFallbackByLine?.[line.id] : undefined;
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              {/*
+               * Issue #105 (meaning-first): absolute beginners read Persian before
+               * Japanese — the MEANING leads with the strongest type weight, the
+               * term follows second with furigana (never hidden, just re-weighted).
+               */}
+              <p className="text-h2 font-black leading-tight text-ink">{word.meaningFa}</p>
               {word.termFurigana ? (
-                <JaBlock className="text-h2 font-bold">
+                <JaBlock className="mt-2 text-lead font-bold">
                   <FuriganaText>{word.termFurigana}</FuriganaText>
                 </JaBlock>
               ) : (
-                <JaBlock className="text-h2 font-bold">{word.term}</JaBlock>
+                <JaBlock className="mt-2 text-lead font-bold">{word.term}</JaBlock>
               )}
               <p className="mt-1 text-small text-ink-soft" dir="ltr" lang="ja">
                 {word.readingKana} · {word.romaji}
               </p>
             </div>
-            {line && (
+            {(useWordAudio || line) && (
               <LineAudioButton
-                lineId={line.id}
-                audioUrl={audioByLine[line.id] ?? ''}
-                audioUrlFallback={audioFallbackByLine?.[line.id]}
-                audioAvailable={audioAvailable}
-                label={fa.curriculum.playLine}
+                lineId={audioLineId!}
+                audioUrl={audioUrl}
+                audioUrlFallback={audioFallback}
+                /* a resolved word asset is playable even when the dialogue-level
+                   audio is still pending generation (bytes live in the registry) */
+                audioAvailable={useWordAudio || audioAvailable}
+                label={useWordAudio ? 'پخش تلفظ واژه' : fa.curriculum.playLine}
               />
             )}
           </div>
-          <p className="mt-3 text-lead font-bold text-ai">{word.meaningFa}</p>
           {word.noteFa && (
             <p className="mt-2 flex items-start gap-2 text-small text-ink-soft">
               <BookOpenText aria-hidden className="mt-0.5 size-4 shrink-0" />
@@ -306,6 +1075,54 @@ function BlockView({
             </div>
           )}
         </section>
+      );
+    }
+
+    case 'kana-card': {
+      /*
+       * TASK-LEARNING-08 (WP-2 — owner feedback A+C): the glyph card is now a
+       * REAL TEACHING moment (KanaCard v2 — DD-121): sound-first + Persian
+       * pronunciation + pair comparison + the writing engine INSIDE the card
+       * (Observe → Trace → Free recall). Structure stays data-driven (DD-122).
+       */
+      const kana = KANA_ITEMS_BY_ID[block.kanaId];
+      if (!kana) {
+        return (
+          <section className="rounded-md border border-danger/40 bg-card p-5">
+            <p className="text-body text-ink">{fa.curriculum.kanaCardMissing(block.kanaId)}</p>
+          </section>
+        );
+      }
+      return (
+        <KanaCard
+          key={block.id}
+          kana={kana}
+          showRomaji={block.showRomaji}
+          confusableNoteFa={block.confusableNoteFa}
+          audioUrls={kanaAudioByKanaId?.[kana.kanaId] ?? null}
+          wordAudioUrls={hostWordAudioByKanaId?.[kana.kanaId] ?? null}
+          relatedExamples={relatedExamplesByKanaId?.[kana.kanaId]}
+          exampleAudioByWord={exampleAudioByWord}
+          initialProgress={kanaCardStage ? ({ stage: kanaCardStage } as KanaCardProgress) : undefined}
+          onProgress={onKanaProgress}
+          onWritingDone={onKanaWritingDone}
+          onWritingAttempt={(summary) => {
+            void recordWritingPractice({
+              chapterSlug,
+              stationSlug,
+              blockId: block.id,
+              character: summary.character,
+              mode: summary.mode,
+              verdict: summary.verdict,
+              strokesTotal: summary.strokesTotal,
+              strokesFirstTry: summary.strokesFirstTry,
+              totalMistakes: summary.totalMistakes,
+              hintsShown: summary.hintsShown,
+              completed: summary.completed,
+              durationMs: summary.durationMs,
+            });
+          }}
+        />
       );
     }
 
@@ -412,8 +1229,9 @@ function BlockView({
             </div>
           )}
           {block.persianBridgeFa && (
-            <p className="mt-4 rounded-md border-s-2 border-s-ai bg-surface-warm p-3 text-body">
-              <MixedFaJaText text={`🌉 ${block.persianBridgeFa}`} />
+            <p className="mt-4 flex items-start gap-2 rounded-md border-s-2 border-s-ai bg-surface-warm p-3 text-body">
+              <Sparkles aria-hidden className="mt-0.5 size-4 shrink-0 text-ai" />
+              <MixedFaJaText text={block.persianBridgeFa} />
             </p>
           )}
           {block.honestyLabelFa && <p className="mt-2 text-caption text-ink-faint">{block.honestyLabelFa}</p>}
@@ -424,40 +1242,112 @@ function BlockView({
       return (
         <section className="flex flex-col gap-3">
           <h3 className="text-h3 font-bold">{fa.curriculum.examplesTitle}</h3>
-          {block.examples.map((example) => (
-            <article key={example.id} className="rounded-md border border-ink-faint bg-card p-4">
-              <div className="flex items-center justify-between gap-2">
-                <span className="rounded-full border border-ai px-3 py-1 text-caption text-ai">
-                  {roleLabel(example.role)}
-                </span>
-                {example.lineRef && <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>}
-              </div>
-              <JaBlock className="mt-3 text-lead font-bold">{example.ja}</JaBlock>
-              <p className="mt-1 text-caption text-ink-soft" dir="ltr" lang="ja">
-                {example.reading}
-              </p>
-              <p className="mt-2 text-body">{example.fa}</p>
-              <p className="mt-1 text-small text-ink-soft">
-                <MixedFaJaText text={example.whyFa} />
-              </p>
-              {example.selfExplainFa && (
-                <p className="mt-3 rounded-md bg-surface-warm p-3 text-small">
-                  <MixedFaJaText text={`💭 ${example.selfExplainFa}`} />
+          {/* TASK-LEARNING-09 §۸ — the example cards flow into the same
+              adaptive grid as the kana card's merged vocabulary section
+              (1 → 2 → 3 columns by real width; no reserved empty columns). */}
+          <div className="examples-grid">
+            {block.examples.map((example) => (
+              <article key={example.id} className="rounded-md border border-ink-faint bg-card p-4" data-example-card>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="rounded-full border border-ai px-3 py-1 text-caption text-ai">
+                    {roleLabel(example.role)}
+                  </span>
+                  {example.lineRef && <span className="text-caption text-ink-soft">{fa.curriculum.inDialogue}</span>}
+                </div>
+                {/* Addendum-5 §6 — the WORD is the hero of the card: big, readable
+                  Japanese with the play control right beside it (recognizable,
+                  thumb-sized) — the audio is part of the example, not a footer
+                  decoration. */}
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
+                    {example.ja}
+                  </JaBlock>
+                  {/* Addendum-4 §7 — every example word gets its OWN playable
+                    audio (independent asset bound to THIS word; normal ⇄ slow
+                    cycle like every other teaching sound). No asset → no
+                    button (never dead, never misbound). */}
+                  <ExampleAudioButton word={example.ja} urls={exampleAudioByWord?.[example.ja] ?? null} />
+                </div>
+                {/* Addendum-5 §6 — the Persian reading is BIG and bold, and the
+                  meaning sits on its own visually separated line (reading ≠
+                  translation — the learner should never conflate them). */}
+                <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+                  {example.reading}
                 </p>
-              )}
-            </article>
-          ))}
+                <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{example.fa}</p>
+                <p className="mt-1 text-small text-ink-soft">
+                  <MixedFaJaText text={example.whyFa} />
+                </p>
+                {/* Addendum-5 §6 — a SHORT pronunciation guide, authored ONLY for
+                  words with a real pronunciation point (mouth / lips / tongue /
+                  airflow / how it differs from the nearest Persian sound) —
+                  never a mechanical template on every card. Persian leads. */}
+                {example.pronFa ? (
+                  <div
+                    className="mt-3 flex items-start gap-2 rounded-md border border-shu/40 bg-surface-warm p-3"
+                    data-pron-guide
+                  >
+                    <Mic aria-hidden className="mt-1 size-4 shrink-0 text-shu-deep" />
+                    <div>
+                      <p className="text-small font-bold text-ink">{fa.curriculum.examplePronGuideTitle}</p>
+                      <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink">
+                        <MixedFaJaText text={example.pronFa} />
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
+                {example.selfExplainFa && (
+                  <p className="mt-3 flex items-start gap-2 rounded-md bg-surface-warm p-3 text-small">
+                    <MessageCircleQuestion aria-hidden className="mt-0.5 size-4 shrink-0 text-ink-soft" />
+                    <MixedFaJaText text={example.selfExplainFa} />
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
         </section>
       );
+
+    case 'writing-practice':
+      /* TASK-LEARNING-07 (DD-105/DD-111): practice-layer block — the forward
+       * button stays available; summaries are recorded best-effort (never a gate). */
+      return <WritingPracticeBlock block={block} chapterSlug={chapterSlug} stationSlug={stationSlug} />;
 
     case 'exercise': {
       const items = block.exerciseIds
         .map((id) => clientExercises[id])
         .filter((e): e is ClientExercise => e !== undefined);
       if (items.length === 0) return null;
+      /*
+       * Issue #102: a previously completed exercise block stays completed — the
+       * earned result (exerciseScore) is offered as a skip panel, so walking back
+       * and forward again never re-grades or re-requires the session.
+       */
+      if (exerciseScore != null) {
+        return (
+          <section className="flex flex-col gap-4 rounded-md border border-ink-faint bg-card p-5">
+            <h3 className="flex items-center gap-2 text-h3 font-bold text-success">
+              <CheckCircle2 aria-hidden className="size-5" />
+              {fa.curriculum.exerciseAlreadyDoneTitle}
+            </h3>
+            <p className="text-body leading-[var(--leading-fa)] text-ink-soft">
+              {fa.curriculum.exerciseAlreadyDoneBody}
+            </p>
+            <button
+              type="button"
+              onClick={() => onExerciseDone(exerciseScore)}
+              className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            >
+              {isLastBlock ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
+              <ArrowLeft aria-hidden className="size-4" />
+            </button>
+          </section>
+        );
+      }
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <ExerciseSession
+            key={block.id}
             chapterSlug={chapterSlug}
             stationSlug={stationSlug}
             exercises={items}
@@ -465,6 +1355,9 @@ function BlockView({
             audioFallbackByLine={audioFallbackByLine}
             audioAvailable={audioAvailable}
             onSessionDone={(score) => onExerciseDone(score)}
+            onReturnToBlock={onReturnToBlock}
+            initialProgress={exerciseInitialProgress}
+            onProgress={onExerciseProgress}
           />
         </section>
       );
@@ -792,15 +1685,16 @@ function CharacterSceneBlock({
                     busy ||
                     (s.userReply.kind === 'choice' ? !choice : built.length !== (s.userReply.chips?.length ?? 0))
                   }
-                  className="h-11 w-fit rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep disabled:opacity-45"
+                  className="h-11 w-fit rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep disabled:opacity-45"
                 >
                   {fa.curriculum.checkAnswer}
                 </button>
               </div>
             )}
             {answered && (
-              <p role="status" aria-live="polite" className="mt-3 text-body text-success">
-                ✓ {fa.curriculum.correct}
+              <p role="status" aria-live="polite" className="mt-3 flex items-center gap-1.5 text-body text-success">
+                <CheckCircle2 aria-hidden className="size-4" />
+                {fa.curriculum.correct}
               </p>
             )}
           </article>
@@ -820,9 +1714,11 @@ function CharacterSceneBlock({
         <button
           type="button"
           onClick={onSceneDone}
-          className="flex h-11 w-fit items-center gap-2 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep"
+          className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
         >
-          {fa.curriculum.stationDone}
+          {/* TL-10 §6/§7: a plain forward action — never a status text posed as
+             a button, and a normal action is never red. */}
+          {fa.curriculum.continueBlock}
         </button>
       )}
     </section>
@@ -839,6 +1735,10 @@ function roleLabel(role: string): string {
       return 'بافت جدید';
     case 'faded':
       return 'جای‌خالی';
+    case 'reading':
+      // TASK-LEARNING-06: reading-moment item (05A §۴) — a real word the learner
+      // can now decode; label communicates the «حالا می‌توانی بخوانی» moment.
+      return 'حالا می‌توانی بخوانی';
     default:
       return role;
   }

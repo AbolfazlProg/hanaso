@@ -74,6 +74,13 @@ export interface VocabItem {
   fsrs: { w: string; s: string };
   /** The word as it appears inside its source line (for in-context highlighting). */
   surfaceInLine: string;
+  /**
+   * TASK-LEARNING-06 (DD-119 / D-3, Issue #103): stable content-id of this word's
+   * INDEPENDENT audio asset (never a card index). The asset itself may not be
+   * generated yet — resolution goes through the word-audio registry, and the UI
+   * falls back to the source-line audio honestly when the file is absent.
+   */
+  wordAudio?: string;
 }
 
 /** Grammar pattern cluster (S1: one cluster = one station objective). */
@@ -119,7 +126,16 @@ export type ExerciseType =
   | 'listen-minimal-pair' // Q14 — minimal pair (vowel length / intonation)
   | 'listen-who-asked' // Q15 — audio-only: what/whom was asked about
   | 'produce-template' // Q10 semi-free — build from chips (L2 no-IME pattern)
-  | 'gist-select'; // listening gist (LISTEN station)
+  | 'gist-select' // listening gist (LISTEN station)
+  /** TASK-LEARNING-06 (S-K1): kana glyph shown → pick its sound/romaji. Option-based. */
+  | 'kana-recognition'
+  /** TASK-LEARNING-06 (S-K2): romaji shown → pick the kana glyph. Option-based. */
+  | 'kana-recall'
+  /** TASK-LEARNING-06 (S-K5): a decodable kana word shown → pick its romaji reading. Option-based. */
+  | 'kana-decode'
+  /** TASK-LEARNING-08 Addendum-5 §3: the kana SOUND is the question (auto-plays
+   *  at question start; replayable) → pick the glyph. Option-based. */
+  | 'kana-listening';
 
 export type TargetSkill = 'vocab' | 'grammar' | 'listening' | 'expression' | 'production' | 'structure';
 
@@ -175,6 +191,12 @@ export interface Exercise {
   };
   /** practice | mastery_M1..M5 (non-overlapping pools — QUESTION §۵-۱). */
   assessmentRole: 'practice' | `mastery_${'M1' | 'M2' | 'M3' | 'M4' | 'M5'}`;
+  /**
+   * TASK-LEARNING-06 (Issue #106 — feedback ladder step F4): the teaching block
+   * this exercise returns to when the learner exhausts the ladder (wrong at F3).
+   * The grade outcome carries it back so the client can offer «بازگشت به آموزش».
+   */
+  referenceBlockId?: string;
 }
 
 /* ------------------------------------------------------------------ teaching blocks */
@@ -230,13 +252,27 @@ export type TeachingBlock =
       id: string;
       examples: {
         id: string;
-        role: 'anchor' | 'near' | 'varied' | 'faded';
+        /**
+         * TASK-LEARNING-06 (05A §۴): 'reading' = a reading-moment item — a REAL
+         * newly-unlocked word (meaning + reading accompany it; kana words are
+         * reading vessels, never L1 vocabulary — DD-119). Rendered with its own
+         * label, not as a fading-ladder rung.
+         */
+        role: 'anchor' | 'near' | 'varied' | 'faded' | 'reading';
         ja: string;
         reading: string;
         fa: string;
         whyFa: string;
         lineRef?: string;
         selfExplainFa?: string;
+        /**
+         * TASK-LEARNING-08 Addendum-5 §6 — a SHORT, genuinely-useful
+         * pronunciation guide (mouth / lips / tongue / airflow / voicing /
+         * how the Japanese sound differs from the nearest Persian sound).
+         * Authored ONLY where a real pronunciation point exists — never a
+         * mechanical template for every word. Persian leads; Latin complements.
+         */
+        pronFa?: string;
       }[];
     }
   | {
@@ -249,7 +285,46 @@ export type TeachingBlock =
       correctOptionId: string;
       explainFa: string;
     }
+  | {
+      /**
+       * TASK-LEARNING-06 (DD-122 / TB-KanaCard — Issue #94, add-only): one kana
+       * glyph presentation card. Purely receptive — the micro-retrieval that
+       * follows a 2–3 card packet is a normal `exercise` block (packet rule,
+       * LEARNING_SEQUENCE_POLICY §۱-۲), so this block carries NO answer material.
+       *
+       * Fields come from the KanaItem registry by `kanaId`; only display policy
+       * lives here (romaji fading is unit-scoped data — CONTENT-107).
+       */
+      kind: 'kana-card';
+      id: string;
+      /** Registry key (kana-items registry: 'hira-a', 'kata-a', …). */
+      kanaId: string;
+      /** Show the romaji on the card (H1–H6 full · H7–H15 after-answer is exercised via packets · K off). */
+      showRomaji: boolean;
+      /** Explicitly confusable pair(s) surfaced on the card (discrimination aid — S-K4). */
+      confusableNoteFa?: string;
+    }
   | { kind: 'exercise'; id: string; exerciseIds: string[] }
+  | {
+      /**
+       * TASK-LEARNING-07 (DD-111 / TB-WriteCanvas — owner-ordered capability):
+       * handwriting practice block — REAL drawing with correctness evaluation
+       * (modes: guided stroke animation / trace over the guide / free recall).
+       * Practice-layer only: NEVER a mastery gate (DD-106 «هرگز گیت پیشرفت»).
+       * Char-agnostic: kana glyphs today, kanji for future chapters — the engine
+       * reports `data_missing` honestly when a character has no stroke data.
+       */
+      kind: 'writing-practice';
+      id: string;
+      /** Characters to practice, in order (curated per station — small sets). */
+      characters: string[];
+      /** First mode the panel opens in (guided for new glyphs, free for review). */
+      initialMode: 'guided' | 'trace' | 'free';
+      /** Similar-pair discrimination focus (e.g. さ/き, シ/ツ) — rendered as a compare panel. */
+      focusPairs?: [string, string][];
+      /** Persian instructions shown above the canvas. */
+      instructionsFa?: string;
+    }
   | {
       /** Character scene — INTEGRATE communicative task (C5) and light reactions (C6). */
       kind: 'character-scene';
@@ -292,6 +367,8 @@ export const STATION_TYPES = [
   'mastery',
   'review',
   'deepdive',
+  /** TASK-LEARNING-06 (DD-117/122 — Issue #94): kana-teaching station (row/rule unit of chapter 01). */
+  'kana',
 ] as const;
 export type StationType = (typeof STATION_TYPES)[number];
 
@@ -341,6 +418,13 @@ export interface MasteryBank {
   /** Weakness-measure → station slugs (DD-048 point-return — arrays so a measure
    *  probing two stations (e.g. M3: は + ですか) can return to both). */
   weakPointMap: Record<string, string[]>;
+  /**
+   * TASK-LEARNING-06 (DD-120): chapter-specific Persian labels for the M1..M5
+   * slots — e.g. the kana gate maps M1..M5 onto M-K1..M-K5 (recognition/recall/
+   * decoding/discrimination/typing) on the SAME shared scoring engine (a parallel
+   * gate system is forbidden — DD-117). Absent → the default measure labels are used.
+   */
+  measureLabelsFa?: Partial<Record<'M1' | 'M2' | 'M3' | 'M4' | 'M5', string>>;
 }
 
 /** One chapter (≡ unit) — the complete vertical-slice unit. */
@@ -365,6 +449,112 @@ export interface Chapter {
   /** All exercises (practice + mastery pools) keyed by id. */
   exercises: Record<string, Exercise>;
   mastery: MasteryBank;
+  /**
+   * TASK-LEARNING-06 (T-79 — DD-123, add-only): story/island sub-units inside the
+   * chapter (Ch02 = two story units; Ch01 = four kana islands). Purely a grouping
+   * of station slugs for the two-level journey map and per-unit checkpoints —
+   * walk order and prereqs stay station-scoped data (unchanged engine).
+   * Absent → the chapter renders as a single flat journey (all existing chapters).
+   */
+  units?: ChapterUnit[];
+  /**
+   * TASK-LEARNING-06 (DD-117/120 — OQ-053): a chapter that stays LOCKED until the
+   * prerequisite chapter reaches `understood` (the kana gate G1 unlocks Ch02).
+   * Soft lock: enforced at the journey/page layer, never destroys stored progress.
+   */
+  prerequisiteChapterSlug?: string;
+}
+
+/** A story/island sub-unit of a chapter (T-79 — grouping only, never a walk gate). */
+export interface ChapterUnit {
+  slug: string;
+  titleFa: string;
+  /** Short Persian subtitle (e.g. «نوبت‌های ۱–۸» / island promise). */
+  summaryFa?: string;
+  /** Station slugs belonging to this unit, in walk order (subset of chapter.stations). */
+  stationSlugs: string[];
+}
+
+/* ------------------------------------------------------------------ kana (TASK-LEARNING-06 — DD-122) */
+
+/** Persian mnemonic for one kana glyph — HONEST review status is part of the data. */
+export interface KanaMnemonic {
+  /** The shape/sound hook in a few words (e.g. «A لاتین با یک پیچ»). */
+  coreImageFa: string;
+  /** The full Persian memory story (≤ ~220 chars — rubric R1). */
+  storyFa: string;
+  /** Honesty label rendered with the story («داستانِ یادسپار» — never presented as fact). */
+  honestLabelFa: string;
+  /** Glyph(s) this story explicitly contrasts with (discrimination aid). */
+  pairGlyphs?: string[];
+  /** Katakana mirror: the hiragana glyph this katakana card mirrors (transfer schema). */
+  mirrorOf?: string;
+  /**
+   * Review status (OQ-051): 'draft' = pilot_draft, human review PENDING — the UI
+   * must surface the pending-review badge; 'approved' only after human review.
+   */
+  status: 'draft' | 'approved';
+}
+
+/** One kana glyph of the L1 kana foundation (registry mirror of KanjiItem — DD-122). */
+export interface KanaItem {
+  /** Registry key: 'hira-a' | 'kata-a' | … (stable content id). */
+  kanaId: string;
+  glyph: string;
+  script: 'hira' | 'kata';
+  /** Gojūon row ('a-row', 'ka-row', …) — packet schema data. */
+  row: string;
+  /** HANASO-standard romaji (double-vowel style — R1-03). */
+  romaji: string;
+  /** Persian note on the romaji where the mapping is not 1:1 (e.g. を/he-row exceptions). */
+  romajiNoteFa?: string;
+  /** A real decodable word this glyph unlocks first (reading vessel — DD-119: words are NOT L1 cards). */
+  hostWord?: { word: string; meaningFa: string };
+  /** Documented confusable glyph(s) (S-K4 discrimination data — CONTENT-104). */
+  confusableWith?: string[];
+  /** Persian mnemonic (may be absent — the card renders without it; status preserved). */
+  mnemonic?: KanaMnemonic;
+  /** DD-119 kn- card id (data-only; FSRS engine = future task, not integrated). */
+  fsrsCardId?: string;
+  /** Unit that introduces this glyph (e.g. 'H1'). */
+  introducedInUnit: string;
+}
+
+/**
+ * TASK-LEARNING-08 (WP-2/WP-3 — owner feedback A+B): the per-glyph TEACHING layer
+ * joined to KanaItem by kanaId (content/kana-teaching.ts). Separately editable per
+ * character (mission §4.2); the base registry stays the structural truth (DD-122).
+ */
+export interface KanaTeaching {
+  /** Registry key — joins KanaItem.kanaId 1:1. */
+  kanaId: string;
+  /** Content id for the pre-generated audio pair public/audio/kana/<ref>.{opus,m4a}. */
+  audioRef: string;
+  /** Persian approximation of the sound (the card TEACHES the sound — owner feedback A). */
+  pronunciationFa: string;
+  /** Persian-speaker pitfall/simile (unrounded u, flap r, wo→o, …). */
+  pronunciationNoteFa?: string;
+  /** One-line writing hint where stroke order/direction genuinely matters. */
+  strokeHintFa?: string;
+  /** Rewritten mnemonic (owner quality standard — mission §4.1). */
+  mnemonic: {
+    /** The shape/sound hook in a few words. */
+    coreImageFa: string;
+    /** The memory story / shape rule (≤ ~220 chars). */
+    storyFa: string;
+    /** story = mental image; pattern = shape-recognition rule (beats a weak story). */
+    style: 'story' | 'pattern';
+    /** Honest label rendered with the story (never presented as fact). */
+    honestLabelFa: string;
+    /** Glyph(s) this story explicitly contrasts with (discrimination aid). */
+    pairGlyphs?: string[];
+    /** HOW to tell the pair apart (the concrete cue — owner feedback A). */
+    pairHintFa?: string;
+    /** Katakana mirror: the hiragana glyph this katakana card transfers from. */
+    mirrorOf?: string;
+    /** Review status (OQ-051): draft = human review PENDING (honest badge in UI). */
+    status: 'draft' | 'approved';
+  };
 }
 
 /* ------------------------------------------------------------------ journey (runtime view) */
@@ -397,6 +587,14 @@ export interface JourneyNode {
   blockedBy: string[];
 }
 
+/** One resolved sub-unit group (T-79) — a lane/isle of the two-level map. */
+export interface JourneyUnitGroup {
+  unit: ChapterUnit;
+  nodes: JourneyNode[];
+  coreCompleted: number;
+  coreTotal: number;
+}
+
 /** The resolved chapter journey — ORDER COMES FROM DATA (never hardcoded in UI). */
 export interface Journey {
   chapter: Chapter;
@@ -405,4 +603,6 @@ export interface Journey {
   coreCompleted: number;
   coreTotal: number;
   chapterState: ChapterState | null;
+  /** Present only when the chapter declares units[] (T-79) — same nodes, grouped. */
+  unitGroups?: JourneyUnitGroup[];
 }

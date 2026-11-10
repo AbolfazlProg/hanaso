@@ -10,7 +10,7 @@
  */
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CircleCheck, RotateCcw } from 'lucide-react';
+import { ArrowLeft, CircleCheck, Ear, RotateCcw } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { JaBlock } from '@/components/patterns/ja-block';
@@ -109,7 +109,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
         <button
           type="button"
           onClick={() => setPhase('questions')}
-          className="flex h-12 w-fit items-center gap-2 rounded-md bg-shu px-6 text-body font-bold text-paper transition-colors hover:bg-shu-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+          className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
         >
           {fa.curriculum.gateStart}
           <ArrowLeft aria-hidden className="size-4" />
@@ -145,7 +145,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
             </div>
             <Link
               href={`/learn/${chapterSlug}/complete`}
-              className="flex h-12 w-fit items-center gap-2 rounded-md bg-shu px-6 text-body font-bold text-paper transition-colors hover:bg-shu-deep"
+              className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
             >
               {fa.curriculum.viewResult}
               <ArrowLeft aria-hidden className="size-4" />
@@ -223,7 +223,10 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
               audioAvailable={audioAvailable}
               rate={0.9}
             />
-            <span className="text-small text-ink-soft">🎧 فقط گوش کن</span>
+            <span className="flex items-center gap-1.5 text-small text-ink-soft">
+              <Ear aria-hidden className="size-4 shrink-0" />
+              فقط گوش کن
+            </span>
           </div>
         )}
 
@@ -342,7 +345,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
             type="button"
             onClick={submit}
             disabled={submitting || (ex.options ? !selected : ex.chunks ? ordered.length !== ex.chunks.length : true)}
-            className="flex h-11 items-center gap-2 rounded-md bg-shu px-5 text-body font-bold text-paper transition-colors hover:bg-shu-deep disabled:opacity-45"
+            className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep disabled:opacity-45"
           >
             {fa.curriculum.gateSubmit}
           </button>

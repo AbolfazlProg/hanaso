@@ -24,6 +24,14 @@ export type ClientTeachingBlock =
   | { kind: 'vocab-card'; id: string; wordId: string }
   | { kind: 'expression-card'; id: string; expressionId: string }
   | {
+      /** TASK-LEARNING-06 (DD-122): kana glyph card — purely receptive (no answer material). */
+      kind: 'kana-card';
+      id: string;
+      kanaId: string;
+      showRomaji: boolean;
+      confusableNoteFa?: string;
+    }
+  | {
       kind: 'guided-discovery';
       id: string;
       displayLineRef: string;
@@ -49,13 +57,17 @@ export type ClientTeachingBlock =
         ? never
         : {
             id: string;
-            role: 'anchor' | 'near' | 'varied' | 'faded';
+            role: 'anchor' | 'near' | 'varied' | 'faded' | 'reading';
             ja: string;
             reading: string;
             fa: string;
             whyFa: string;
             lineRef?: string;
             selfExplainFa?: string;
+            /** TASK-LEARNING-08 Addendum-5 §6 — a short authored pronunciation
+             *  guide (only where a real point exists). Passes through with the
+             *  block (example-set carries no answer material). */
+            pronFa?: string;
           }[];
     }
   | {
@@ -66,6 +78,15 @@ export type ClientTeachingBlock =
       options: { id: string; label: string }[];
     }
   | { kind: 'exercise'; id: string; exerciseIds: string[] }
+  | {
+      /** TASK-LEARNING-07 (DD-111): handwriting practice — no answer material to strip. */
+      kind: 'writing-practice';
+      id: string;
+      characters: string[];
+      initialMode: 'guided' | 'trace' | 'free';
+      focusPairs?: [string, string][];
+      instructionsFa?: string;
+    }
   | {
       kind: 'character-scene';
       id: string;
@@ -93,6 +114,16 @@ export interface ClientStation {
 /** Strip one block's answer material (pure). */
 function stripBlock(block: TeachingBlock): ClientTeachingBlock {
   switch (block.kind) {
+    case 'writing-practice':
+      // practice-layer block — carries no answer material (never a gate, DD-106)
+      return {
+        kind: 'writing-practice',
+        id: block.id,
+        characters: block.characters,
+        initialMode: block.initialMode,
+        ...(block.focusPairs ? { focusPairs: block.focusPairs } : {}),
+        ...(block.instructionsFa ? { instructionsFa: block.instructionsFa } : {}),
+      };
     case 'guided-discovery':
       return {
         kind: 'guided-discovery',

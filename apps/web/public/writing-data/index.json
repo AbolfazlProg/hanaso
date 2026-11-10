@@ -1,0 +1,282 @@
+{
+  "source": "KanjiVG r20260714 (CC BY-SA 3.0) — kanjivg.tagaini.net",
+  "format": "centerline-v2 (strokes = writing-direction centerlines in 1024×1024, y-down)",
+  "chars": {
+    "あ": {
+      "strokes": 3
+    },
+    "い": {
+      "strokes": 2
+    },
+    "う": {
+      "strokes": 2
+    },
+    "え": {
+      "strokes": 2
+    },
+    "お": {
+      "strokes": 3
+    },
+    "か": {
+      "strokes": 3
+    },
+    "き": {
+      "strokes": 4
+    },
+    "く": {
+      "strokes": 1
+    },
+    "け": {
+      "strokes": 3
+    },
+    "こ": {
+      "strokes": 2
+    },
+    "さ": {
+      "strokes": 3
+    },
+    "し": {
+      "strokes": 1
+    },
+    "す": {
+      "strokes": 2
+    },
+    "せ": {
+      "strokes": 3
+    },
+    "そ": {
+      "strokes": 1
+    },
+    "た": {
+      "strokes": 4
+    },
+    "ち": {
+      "strokes": 2
+    },
+    "つ": {
+      "strokes": 1
+    },
+    "て": {
+      "strokes": 1
+    },
+    "と": {
+      "strokes": 2
+    },
+    "な": {
+      "strokes": 4
+    },
+    "に": {
+      "strokes": 3
+    },
+    "ぬ": {
+      "strokes": 2
+    },
+    "ね": {
+      "strokes": 2
+    },
+    "の": {
+      "strokes": 1
+    },
+    "は": {
+      "strokes": 3
+    },
+    "ひ": {
+      "strokes": 1
+    },
+    "ふ": {
+      "strokes": 4
+    },
+    "へ": {
+      "strokes": 1
+    },
+    "ほ": {
+      "strokes": 4
+    },
+    "ま": {
+      "strokes": 3
+    },
+    "み": {
+      "strokes": 2
+    },
+    "む": {
+      "strokes": 3
+    },
+    "め": {
+      "strokes": 2
+    },
+    "も": {
+      "strokes": 3
+    },
+    "や": {
+      "strokes": 3
+    },
+    "ゆ": {
+      "strokes": 2
+    },
+    "よ": {
+      "strokes": 2
+    },
+    "ら": {
+      "strokes": 2
+    },
+    "り": {
+      "strokes": 2
+    },
+    "る": {
+      "strokes": 1
+    },
+    "れ": {
+      "strokes": 2
+    },
+    "ろ": {
+      "strokes": 1
+    },
+    "わ": {
+      "strokes": 2
+    },
+    "を": {
+      "strokes": 3
+    },
+    "ん": {
+      "strokes": 1
+    },
+    "ア": {
+      "strokes": 2
+    },
+    "イ": {
+      "strokes": 2
+    },
+    "ウ": {
+      "strokes": 3
+    },
+    "エ": {
+      "strokes": 3
+    },
+    "オ": {
+      "strokes": 3
+    },
+    "カ": {
+      "strokes": 2
+    },
+    "キ": {
+      "strokes": 3
+    },
+    "ク": {
+      "strokes": 2
+    },
+    "ケ": {
+      "strokes": 3
+    },
+    "コ": {
+      "strokes": 2
+    },
+    "サ": {
+      "strokes": 3
+    },
+    "シ": {
+      "strokes": 3
+    },
+    "ス": {
+      "strokes": 2
+    },
+    "セ": {
+      "strokes": 2
+    },
+    "ソ": {
+      "strokes": 2
+    },
+    "タ": {
+      "strokes": 3
+    },
+    "チ": {
+      "strokes": 3
+    },
+    "ツ": {
+      "strokes": 3
+    },
+    "テ": {
+      "strokes": 3
+    },
+    "ト": {
+      "strokes": 2
+    },
+    "ナ": {
+      "strokes": 2
+    },
+    "ニ": {
+      "strokes": 2
+    },
+    "ヌ": {
+      "strokes": 2
+    },
+    "ネ": {
+      "strokes": 4
+    },
+    "ノ": {
+      "strokes": 1
+    },
+    "ハ": {
+      "strokes": 2
+    },
+    "ヒ": {
+      "strokes": 2
+    },
+    "フ": {
+      "strokes": 1
+    },
+    "ヘ": {
+      "strokes": 1
+    },
+    "ホ": {
+      "strokes": 4
+    },
+    "マ": {
+      "strokes": 2
+    },
+    "ミ": {
+      "strokes": 3
+    },
+    "ム": {
+      "strokes": 2
+    },
+    "メ": {
+      "strokes": 2
+    },
+    "モ": {
+      "strokes": 3
+    },
+    "ヤ": {
+      "strokes": 2
+    },
+    "ユ": {
+      "strokes": 2
+    },
+    "ヨ": {
+      "strokes": 3
+    },
+    "ラ": {
+      "strokes": 2
+    },
+    "リ": {
+      "strokes": 2
+    },
+    "ル": {
+      "strokes": 2
+    },
+    "レ": {
+      "strokes": 1
+    },
+    "ロ": {
+      "strokes": 3
+    },
+    "ワ": {
+      "strokes": 2
+    },
+    "ヲ": {
+      "strokes": 3
+    },
+    "ン": {
+      "strokes": 2
+    }
+  }
+}

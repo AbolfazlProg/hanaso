@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# df — simulation stub: reports SIM_DISK_MB available for any path.
+SIM="${HANASO_SIM_DIR:?set HANASO_SIM_DIR}"
+[ -f "${SIM}/config.env" ] && . "${SIM}/config.env"
+printf 'Filesystem 1024-blocks Used Available Capacity Mounted on\n'
+printf 'simsim 999999 1000 %s 1%% /\n' "${SIM_DISK_MB:-20000}"

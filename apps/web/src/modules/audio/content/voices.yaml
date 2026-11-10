@@ -36,6 +36,17 @@ voices:
     character: chr-sora
     family: neutral-mid
     params: { f0Hz: 160, harmonics: [1.0, 0.4, 0.18], speedScale: 0.95 }
+  # TASK-LEARNING-06 (Ch02 unit 02-2 — Kim): bright young female, highest pitch of
+  # the cast (placeholder params; VOICEVOX casting for the future audio task —
+  # speakerStyleId to be re-verified against the engine at generation time).
+  vv-female-04-bright:
+    engine: voicevox
+    speakerName: 春日部つむぎ
+    speakerStyleId: 8
+    credit: VOICEVOX:春日部つむぎ
+    character: chr-kim
+    family: female-young-bright
+    params: { f0Hz: 255, harmonics: [1.0, 0.3, 0.1], speedScale: 0.95 }
 
 # Voice distinctness matrix (KB audio-ms §۳) — every co-present pair must differ on ≥2 of 3 axes.
 # Pitch axis: |Δ semitones| between F0s (≥3 semitones required).
@@ -51,3 +62,14 @@ distinctness_matrix:
   - pair: [vv-male-02-normal, vv-neutral-03-normal]
     delta_semitones: 6.51
     axes_passed: [pitch, timbre, rhythm]
+  # TASK-LEARNING-06 — Kim pairs (vs miki 210Hz: 3.34st + different speaker timbre;
+  # vs yamada 110Hz / sora 160Hz: large pitch gaps + timbre).
+  - pair: [vv-female-04-bright, vv-female-01-normal]
+    delta_semitones: 3.34
+    axes_passed: [pitch, timbre]
+  - pair: [vv-female-04-bright, vv-male-02-normal]
+    delta_semitones: 14.52
+    axes_passed: [pitch, timbre, rhythm]
+  - pair: [vv-female-04-bright, vv-neutral-03-normal]
+    delta_semitones: 8.14
+    axes_passed: [pitch, timbre]

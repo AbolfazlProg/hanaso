@@ -10,6 +10,7 @@
  */
 import type { Chapter, Exercise, LevelPolicy } from './types';
 import { orderedStations } from './journey';
+import { KANA_ITEMS, KANA_ITEMS_BY_ID } from './content/kana-items';
 
 export interface ContentViolation {
   rule: string;
@@ -34,6 +35,9 @@ const RULES = {
   gateThreshold: 'GATE-THRESHOLD (level caps — chapter gate must match level policy)',
   exerciseAnchored: 'EXERCISE-ANCHORED (CONTENT-085 — non-production exercises carry lineRef/audioLineRef)',
   weightsSum: 'WEIGHTS-SUM (dialogue-mastery-model §۱ — weights sum to 1)',
+  kanaRegistry: 'KANA-REGISTRY (CONTENT-106 — every kana-card kanaId exists in the registry)',
+  kanaDecodable: 'KANA-DECODABLE (CONTENT-105 — kana text is decodable with glyphs taught by that point)',
+  kanaUnitPacket: 'KANA-PACKET (CONTENT-103 — a kana unit teaches exactly one full row/ん/one rule)',
 } as const;
 
 /** Validate one chapter against its level policy. Returns [] when shippable. */
@@ -148,6 +152,9 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
     validateExercise(ex, practiceIdsInBlocks, lineIds, chapter.slug, v);
   }
 
+  /* ---- TASK-LEARNING-06: kana rules (CONTENT-103/105/106, machine-checkable core) ---- */
+  validateKanaContent(chapter, v);
+
   /* ---- mastery pool wiring ---- */
   for (const id of practiceIdsInBlocks) {
     const ex = chapter.exercises[id];
@@ -211,6 +218,10 @@ function validateExercise(
     'match-in-line',
     'speaker-identify',
     'listen-minimal-pair',
+    // TASK-LEARNING-06: kana shapes are option-based.
+    'kana-recognition',
+    'kana-recall',
+    'kana-decode',
   ].includes(ex.type);
   if (usesOptions) {
     const count = ex.options?.length ?? 0;
@@ -283,4 +294,95 @@ export function validateChapterAgainstDialogue(
     }
   }
   return v;
+}
+
+/**
+ * TASK-LEARNING-06 — kana-specific content rules (05A checklist §۲ — the
+ * machine-checkable core of CONTENT-103/105/106):
+ *
+ * - CONTENT-106: every kana-card's kanaId exists in the KANA_ITEMS registry.
+ * - CONTENT-105: every kana-decode promptJa and every reading-moment example ja
+ *   is decodable — all its kana glyphs are taught by kana-cards at order ≤ the
+ *   station that carries the exercise/example (the decoding-engine guarantee,
+ *   reproduced over the shipped glyph set).
+ * - CONTENT-103 (light): a kana station's kana-cards carry ≥1 and ≤6 glyphs
+ *   (a full row/ん/small rows — broken packets are rejected).
+ */
+function validateKanaContent(chapter: Chapter, v: ContentViolation[]): void {
+  const hasKanaCards = chapter.stations.some((s) => s.blocks.some((b) => b.kind === 'kana-card'));
+  if (!hasKanaCards) return; // non-kana chapters: nothing to check
+
+  // cumulative glyph set by station order
+  const ordered = [...chapter.stations].sort((a, b) => a.order - b.order);
+  const cumulative = new Set<string>();
+  const cumulativeBySlug = new Map<string, Set<string>>();
+  for (const s of ordered) {
+    for (const b of s.blocks) {
+      if (b.kind === 'kana-card') {
+        const item = KANA_ITEMS_BY_ID[b.kanaId];
+        if (!item) {
+          v.push({
+            rule: RULES.kanaRegistry,
+            message: `${s.slug}: kana-card references unknown kanaId ${b.kanaId} (registry has no such record — CONTENT-106)`,
+          });
+          continue;
+        }
+        cumulative.add(item.glyph);
+      }
+    }
+    cumulativeBySlug.set(s.slug, new Set(cumulative));
+  }
+
+  // Only BASE glyphs (the 92 registry records) are card-taught and checkable here.
+  // Rule-derived forms — precomposed dakuten/handakuten (が/パ…), small kana
+  // (っ/ゃ/ェ…), and the chōonpu — are taught by RULE units (05A §۲: a rule is one
+  // unit, not per-glyph cards); their coverage is the unit design itself, which
+  // the decodability engine guaranteed upstream (WP-0 package).
+  const BASE_GLYPHS = new Set(KANA_ITEMS.map((k) => k.glyph));
+  const kanaOf = (text: string): string[] => [...text].filter((ch) => BASE_GLYPHS.has(ch));
+
+  for (const s of ordered) {
+    const taught = cumulativeBySlug.get(s.slug) ?? new Set<string>();
+    // CONTENT-103 (light): a kana station carries either glyph cards (row units,
+    // 1–6) or a rule card (rule units — H4/H5/H6/H13/K8/K12 teach a RULE, not
+    // new glyphs). Neither = not a kana unit.
+    const glyphCards = s.blocks.filter((b) => b.kind === 'kana-card').length;
+    const hasRuleCard = s.blocks.some((b) => b.kind === 'rule-card');
+    if (s.type === 'kana' && ((glyphCards === 0 && !hasRuleCard) || glyphCards > 6)) {
+      v.push({
+        rule: RULES.kanaUnitPacket,
+        message: `${s.slug}: ${glyphCards} kana-card block(s) — a kana unit carries one full row (1–6 cards) or exactly one rule (rule-card, CONTENT-103)`,
+      });
+    }
+    // CONTENT-105: decode prompts + reading moments decodable
+    for (const b of s.blocks) {
+      if (b.kind === 'exercise') {
+        for (const id of b.exerciseIds) {
+          const ex = chapter.exercises[id];
+          if (ex?.type === 'kana-decode' && ex.promptJa) {
+            const unknown = kanaOf(ex.promptJa).filter((g) => !taught.has(g));
+            if (unknown.length > 0) {
+              v.push({
+                rule: RULES.kanaDecodable,
+                message: `${s.slug}/${ex.id}: promptJa uses untaught glyph(s) ${unknown.join('')} (CONTENT-105 — decoding engine guarantee)`,
+              });
+            }
+          }
+        }
+      }
+      if (b.kind === 'example-set') {
+        for (const ex of b.examples) {
+          if (ex.role === 'reading') {
+            const unknown = kanaOf(ex.ja).filter((g) => !taught.has(g));
+            if (unknown.length > 0) {
+              v.push({
+                rule: RULES.kanaDecodable,
+                message: `${s.slug}/${ex.id}: reading-moment word ${ex.ja} uses untaught glyph(s) ${unknown.join('')} (CONTENT-105)`,
+              });
+            }
+          }
+        }
+      }
+    }
+  }
 }

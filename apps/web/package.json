@@ -5,7 +5,7 @@
   "description": "HANASO web app — single deployable (Next.js 16 App Router, modular monolith per KB ADR-001)",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/bundle-tools.mjs",
+    "build": "node scripts/build-kana-writing-data.mjs && next build && node scripts/bundle-tools.mjs",
     "build:next": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -44,6 +44,8 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
     "@types/node": "24.19.2",
     "@types/pg": "^8.15.6",
     "@types/react": "19.3.0",
@@ -52,6 +54,7 @@
     "drizzle-kit": "^0.31.11",
     "esbuild": "^0.28.2",
     "eslint": "10.14.0",
+    "jsdom": "^30.1.3",
     "stylelint": "^17.16.0",
     "stylelint-use-logical": "^2.1.3",
     "tailwindcss": "4.3.3",
