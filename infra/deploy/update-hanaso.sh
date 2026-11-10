@@ -48,9 +48,9 @@
 # PINNED TARGET (do NOT drift to "latest"):
 set -euo pipefail
 
-TARGET_SHA="${HANASO_TARGET_SHA:-988bcc64c57d3ee555e3b2462b45b382b329a89c}"
-TARGET_VERSION="${HANASO_TARGET_VERSION:-1.0.0-tl09-r01}"
-TARGET_BRANCH="${HANASO_TARGET_BRANCH:-tl09-responsive}"
+TARGET_SHA="${HANASO_TARGET_SHA:-161e6b3747793a85fdc321bf8263da3f1613bd8c}"
+TARGET_VERSION="${HANASO_TARGET_VERSION:-1.0.0-tl10-r01}"
+TARGET_BRANCH="${HANASO_TARGET_BRANCH:-tl10-quiz-ux}"
 REPO_URL="${HANASO_REPO_URL:-https://github.com/AbolfazlProg/hanaso.git}"
 SRC_DIR="${HANASO_SRC_DIR:-${HANASO_REPO_DIR:-/opt/hanaso-src}}"   # HANASO_REPO_DIR = v1 legacy alias
 IMAGE="ghcr.io/abolfazlprog/hanaso:${TARGET_SHA}"
