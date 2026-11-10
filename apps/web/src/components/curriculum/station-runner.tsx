@@ -245,6 +245,16 @@ export function StationRunner(props: StationRunnerProps) {
    */
   const [step, setStep] = useState(0);
   const [restoreChecked, setRestoreChecked] = useState(false);
+  /**
+   * CP-04 fix (TL-10 §6 gap): the server resume must settle before ANY walk
+   * position is persisted. On a revisit of a COMPLETED station the persist
+   * effect used to race the resume and plant a fresh step-0 snapshot, so the
+   * NEXT refresh restored that empty walk instead of the completion panel —
+   * the owner-reported bug, surviving TL-10's first fix from the second
+   * refresh on (live-reproduced on production 2026-11-10, probe5: reload #1
+   * panel ✓ → reload #2 walk restart ✗).
+   */
+  const [resumeSettled, setResumeSettled] = useState(false);
   const [resumedNotice, setResumedNotice] = useState(false);
   const [sessionScore, setSessionScore] = useState<number | null>(null);
   const [completing, setCompleting] = useState(false);
@@ -342,26 +352,47 @@ export function StationRunner(props: StationRunnerProps) {
         setResumedNotice(true);
         window.setTimeout(() => setResumedNotice(false), 4000);
       }
-      return;
+      /* CP-04 fix (TL-10 §6 gap): DO NOT stop at the local snapshot. The
+       * server resume below is consulted on EVERY mount now: a revisit of a
+       * completed station could carry a PLANTED empty step-0 snapshot (see
+       * resumeSettled above) or a review that never progressed — the server's
+       * completion record is the truth and wins over an EMPTY walk. A
+       * snapshot with EARNED progress keeps the walk (a deliberate mid-review
+       * resume — the user left work in flight). */
     }
-    // no local snapshot — the server walk state is the honest fallback (cleared
+    // the server walk state is the honest fallback for the position (cleared
     // localStorage on the same browser; a different browser has a different
-    // learner id and thus no claim on this walk).
+    // learner id and thus no claim on this walk) AND the authority on
+    // completion.
     // TL-10 §6: `completed` → the station re-renders its completion state
     // (refresh/re-visit never loses it, and the walk never silently restarts).
-    void fetchServerResume(chapterSlug, station.slug).then((resume) => {
-      if (!resume) return;
-      if (resume.kind === 'completed') {
-        setCompleted(true);
-        return;
-      }
-      const target = stepOfBlock(blocks, resume.blockId);
-      if (target !== null && target > 0) {
-        setStep(target);
-        setResumedNotice(true);
-        window.setTimeout(() => setResumedNotice(false), 4000);
-      }
-    });
+    void fetchServerResume(chapterSlug, station.slug)
+      .then((resume) => {
+        if (!resume) return;
+        const emptyWalk =
+          !snapshot ||
+          (snapshot.stepIndex === 0 &&
+            Object.keys(snapshot.blockResults ?? {}).length === 0 &&
+            Object.keys(snapshot.exerciseProgress ?? {}).length === 0 &&
+            Object.keys(snapshot.kanaCardStages ?? {}).length === 0);
+        if (resume.kind === 'completed') {
+          if (emptyWalk) {
+            setCompleted(true);
+            // heal a planted snapshot (also covers browsers that already
+            // carry the stale step-0 snapshot from BEFORE this fix)
+            clearWalkSnapshot(chapterSlug, station.slug);
+          }
+          return; // a snapshot WITH progress keeps its mid-review walk
+        }
+        if (snapshot) return; // a local walk exists — it owns the position
+        const target = stepOfBlock(blocks, resume.blockId);
+        if (target !== null && target > 0) {
+          setStep(target);
+          setResumedNotice(true);
+          window.setTimeout(() => setResumedNotice(false), 4000);
+        }
+      })
+      .finally(() => setResumeSettled(true));
     // restore + fallback run exactly once per mount (deps limited on purpose)
   }, []);
 
@@ -370,6 +401,10 @@ export function StationRunner(props: StationRunnerProps) {
   const syncStepRef = useRef(-1);
   useEffect(() => {
     if (!restoreChecked) return;
+    /* CP-04 fix: never persist a walk position before the server resume has
+     * settled (see resumeSettled) — this race planted the step-0 snapshot that
+     * made the NEXT refresh of a completed station restart the walk. */
+    if (!resumeSettled) return;
     if (completed || !block) return;
     const snapshot = {
       chapterSlug,

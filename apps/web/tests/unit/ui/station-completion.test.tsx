@@ -27,6 +27,7 @@ import * as React from 'react';
 import { StationRunner } from '@/components/curriculum/station-runner';
 import { getChapter } from '@/modules/curriculum/content';
 import { toClientStation } from '@/modules/curriculum';
+import { saveWalkSnapshot } from '@/modules/curriculum/walk-persistence';
 import type { Chapter } from '@/modules/curriculum/types';
 
 // StationRunner navigates via the App Router on station completion — jsdom has
@@ -223,6 +224,104 @@ describe('StationRunner — TASK-LEARNING-10 §6 station completion flow', () =>
       expect(screen.queryByText('این ایستگاه را با موفقیت پشت سر گذشتی!')).toBeNull();
       // the server record was not touched by the local restart
       expect(completeCalls).toBe(before);
+    },
+  );
+
+  /* ------------------------------------------------------------------ */
+  /* CP-04 fix (TL-10 §6 gap) — live-reproduced on production 2026-11-10:
+   * the FIRST revisit of a completed station rendered the panel (server
+   * resume) but the persist effect planted a fresh step-0 snapshot before the
+   * resume landed, so the SECOND refresh restored that empty walk and the
+   * station silently restarted — the owner-reported bug surviving TL-10's
+   * first fix. */
+
+  function walkSnapshotKey() {
+    return Object.keys(window.localStorage).find((k) => k.startsWith('hanaso.walk.v1.') && k.endsWith('.stn-kana-h0'));
+  }
+
+  it(
+    'a SECOND refresh of the completed station still renders the completion state (no step-0 snapshot is planted by the revisit)',
+    { timeout: 20000 },
+    async () => {
+      const first = renderStation();
+      await waitFor(() => expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeTruthy());
+      await walkToCompletion();
+      first.unmount();
+
+      // revisit #1 — the panel renders AND no walk snapshot is planted anymore
+      const second = renderStation();
+      await waitFor(() => expect(screen.getByText('این ایستگاه را با موفقیت پشت سر گذشتی!')).toBeTruthy());
+      await waitFor(() => {
+        // the resume must have settled by now; a planted snapshot would exist
+        expect(walkSnapshotKey()).toBeUndefined();
+      });
+      second.unmount();
+
+      // revisit #2 — the production repro (probe5 reload #2): the walk must
+      // NOT restart; the completion panel is still the truth
+      renderStation();
+      await waitFor(() => expect(screen.getByText('این ایستگاه را با موفقیت پشت سر گذشتی!')).toBeTruthy());
+      expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeNull();
+      expect(screen.getByRole('button', { name: 'رفتن به ایستگاه بعدی' })).toBeTruthy();
+    },
+  );
+
+  it(
+    'a stale step-0 snapshot planted by a PRE-FIX revisit heals: the server completed record wins and the snapshot is cleared',
+    { timeout: 20000 },
+    async () => {
+      const first = renderStation();
+      await waitFor(() => expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeTruthy());
+      await walkToCompletion();
+      first.unmount();
+
+      // simulate a browser that already carries the stale step-0 snapshot
+      // planted before the fix (same shape the persist effect used to write)
+      saveWalkSnapshot({
+        chapterSlug: 'kana-foundation-01',
+        stationSlug: 'stn-kana-h0',
+        stepIndex: 0,
+        blockResults: {},
+        exerciseProgress: {},
+        kanaCardStages: {},
+        sessionScore: null,
+        updatedAt: Date.now(),
+      });
+      expect(walkSnapshotKey()).toBeDefined();
+
+      renderStation();
+      await waitFor(() => expect(screen.getByText('این ایستگاه را با موفقیت پشت سر گذشتی!')).toBeTruthy());
+      // the walk did not restart, and the planted snapshot is healed (cleared)
+      expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeNull();
+      await waitFor(() => expect(walkSnapshotKey()).toBeUndefined());
+    },
+  );
+
+  it(
+    'a mid-review walk with EARNED progress survives the refresh (the deliberate resume is kept, not the panel)',
+    { timeout: 20000 },
+    async () => {
+      const first = renderStation();
+      await waitFor(() => expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeTruthy());
+      await walkToCompletion();
+      first.unmount();
+
+      // a review the user deliberately left in flight: step 1 with a result
+      saveWalkSnapshot({
+        chapterSlug: 'kana-foundation-01',
+        stationSlug: 'stn-kana-h0',
+        stepIndex: 1,
+        blockResults: { 'blk-stn-kana-h0-scene': 1 },
+        exerciseProgress: {},
+        kanaCardStages: {},
+        sessionScore: null,
+        updatedAt: Date.now(),
+      });
+
+      renderStation();
+      // the walk resumes at block 2 — NOT the completion panel
+      await waitFor(() => expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeTruthy());
+      expect(screen.queryByText('این ایستگاه را با موفقیت پشت سر گذشتی!')).toBeNull();
     },
   );
 });
