@@ -57,3 +57,11 @@
 - **راجرایی عین یک‌خطی v6 (شبکهٔ واقعی GitHub):** `api 403 (rate-limit ناشناس) → codeload → SHA-256 ab6db4785257… OK → بوت‌استرپ v3 با پین‌های درست → توقف صادقانهٔ کلون در نبود /opt (هیچ‌چیز لمس نشد)`.
 - **CI:** push `e3ea3c9..e9da659` → run `42883990479` روی `e9da659`: job اصلی **سبز** (format — پس از رفع فرمت CURRENT_STATE که خودش عامل شکست CI روی کامیت سشن پیشین بود — /lint/typecheck/۵۹۴ تست/EQA/integration PG18)؛ نتیجهٔ compose-smoke/image در زمان ثبت ثبت نشده بود — اگر لازم شد در CP بعدی تکمیل می‌شود.
 - **وضعیت:** منتظر اجرای یک‌خطی v6 توسط مالک + بازخورد؛ PR به main پس از تأیید مالک.
+
+## CP-04b — 2026-11-10 ~20:0x — CI نهایی شاخه سبز (run 42884700211 روی e4afef7)
+
+- پس از push اسناد CP-04: run قبلی (`42883990479`) طبق concurrency لغو شد (طبیعی — الگوی CP-03) و run نهایی روی HEAD شاخه `e4afef7` **کاملاً سبز** شد:
+  - job اصلی **format / lint / typecheck / test / integration(PG18)** — success (۵۹۴/۵۹۴ تست)
+  - job **compose smoke** (real image · pgbouncer path · backup) — success
+  - job **image → GHCR** — skipped (طبق شرط مسیر؛ مانع نیست — updater روی VPS از worktree کامیت پین‌شده build می‌کند و به Registry نیاز ندارد)
+- شاخهٔ `tl10-quiz-ux` در وضعیت نهایی: `b2e92a7 → … → e4afef7` — آمادهٔ ادغام توسط مالک (PR باز است) و آمادهٔ نصب r02 با یک‌خطی v6.
