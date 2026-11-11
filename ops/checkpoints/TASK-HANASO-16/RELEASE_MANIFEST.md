@@ -19,7 +19,7 @@
 `777fb2b61afdc9021090d60ad23986c93c7d4d66` — HANASO-16 CP-05 (آخرین کامیت محتوای کامل: کد + Installer v3 + CHANGELOG + همهٔ اسناد Checkpoint)
 
 **کامیت ابزار استقرار (Deploy tooling — یک‌خطی از این دانلود می‌کند):**
-`df50431d123b7d2e71b6c9269828d0a181967fb4` — pin updater/bootstrap به `1.0.0-hanaso16-r01` @ `840b993`
+`df50431d123b7d2e71b6c9269828d0a181967fb4` — pin updater/bootstrap به `1.0.0-hanaso16-r01` @ `777fb2b` (پیام کامیت به‌اشتباه `e1a01cb` نوشته — محتوای پین‌شده در خود فایل‌ها معتبر و راستی‌آزمایی‌شده است: `TARGET_SHA=777fb2b6…`)
 
 **زنجیرهٔ کامل شاخه (۹ کامیت جدید روی `9a466644`):**
 
@@ -63,11 +63,11 @@
 1. **تعمیر خط مقدم VPS توسط مالک** (HAProxy/nginx میزبان — وضعیت فعلی: هر دو دامنه برای دنیا قطع؛ App داخلی سالم). دستورات تشخیصی در راهنمای فارسی §۷.
 2. Push شاخه (از Bundle تحویلی — §۷ همین سند).
 3. اجرای یک‌خطی v9 (OWNER-COMMAND.txt / راهنمای فارسی §۱). Preflight جدید اگر خط مقدم هنوز خراب باشد، **قبل از هر تغییری** متوقف می‌شود (`INGRESS_PREEXISTING_BROKEN`) — بدون رول‌بک بی‌فایده.
-4. راستی‌آزمایی: `curl -sS https://learn.kotodama.ir/api/health` → `{"ok":true,"version":"1.0.0-hanaso16-r01","commit":"840b993…"}` + سلامت KOTODAMA (شاهد داخل رکورد انتشار).
+4. راستی‌آزمایی: `curl -sS https://learn.kotodama.ir/api/health` → `{"ok":true,"version":"1.0.0-hanaso16-r01","commit":"777fb2b…"}` + سلامت KOTODAMA (شاهد داخل رکورد انتشار).
 
 ## ۷) تحویل (سندباکس بدون توکن Push)
 
-- **Git Bundle:** `hanaso-hanaso16.bundle` — کل شاخهٔ `hanaso16-learning-journey` (از `9a466644` تا `ee29578e`) + تاریخچهٔ کامل.
+- **Git Bundle:** `hanaso-hanaso16.bundle` — کل شاخهٔ `hanaso16-learning-journey` (از `9a466644` تا tip شاخه) + تاریخچهٔ کامل.
 - Push توسط مالک:
   ```bash
   git clone https://github.com/AbolfazlProg/hanaso.git hanoso-push && cd hanoso-push
