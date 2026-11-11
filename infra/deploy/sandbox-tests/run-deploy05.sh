@@ -19,7 +19,7 @@
 #       updater runs its REAL control flow against a simulated shared-VPS stack
 #       whose fixture mirrors the REAL production state: live image
 #       ghcr.io/abolfazlprog/hanaso:4d0827ad… (1.0.0-tl13-r01 — the live
-#       image after the tl14 rollback) → target 1.0.0-hanaso16-r01 @ 840b993…
+#       image after the tl14 rollback) → target 1.0.0-hanaso17-r01 @ 3f41f6ee…
 #       (HANASO-16: the progressive learning journey + the TL-14 payload
 #       A-1..A-8, kana intro auto-scroll removal, Japanese foundations rule
 #       lessons — the actual planned update).
@@ -58,8 +58,8 @@ KEEP=0
 # real production constants (fixture mirrors them)
 OLD_SHA="4d0827ad7d4fdf87fd920b238f542629371e7288"
 OLD_VERSION="1.0.0-tl13-r01"
-TARGET_SHA_REAL="777fb2b61afdc9021090d60ad23986c93c7d4d66"
-TARGET_VERSION_REAL="1.0.0-hanaso16-r01"
+TARGET_SHA_REAL="3f41f6ee510e28914934ddc83375a0e1d49405a3"
+TARGET_VERSION_REAL="1.0.0-hanaso17-r01"
 OLD_IMAGE="ghcr.io/abolfazlprog/hanaso:${OLD_SHA}"
 NEW_IMAGE="ghcr.io/abolfazlprog/hanaso:${TARGET_SHA_REAL}"
 
@@ -227,7 +227,7 @@ assert_env_image "${D}/deploy" "${NEW_IMAGE}" "P1 .env switched to the real targ
 assert_called "${D}" "docker build" "P1 image built from the pinned commit"
 assert_called "${D}" "compose run --rm migrate" "P1 one-shot migrate ran"
 assert_out "${D}" "UPDATE COMPLETE — HANASO ${TARGET_VERSION_REAL}" "P1 success banner with the real version"
-assert_out "${D}" "1.0.0-hanaso16-r01" "P1 health gate matched the real pinned version"
+assert_out "${D}" "1.0.0-hanaso17-r01" "P1 health gate matched the real pinned version"
 assert_out "${D}" "smoke: ALL GREEN" "P1 smoke passed"
 assert_out "${D}" "KOTODAMA" "P1 KOTODAMA witness reported"
 if grep -q -- '--resolve' "${D}/sim/calls.log" 2>/dev/null; then bad "P1 raw fallback used although api worked"; else ok "P1 no fallback needed (api served first)"; fi
