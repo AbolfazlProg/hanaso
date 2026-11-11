@@ -1,6 +1,6 @@
 # CURRENT_STATE — TASK-HANASO-16 (Learning Journey + Deployment Recovery)
 
-> آخرین به‌روزرسانی: **CP-01 · ۲۰۲۶-۱۱-۱۱**
+> آخرین به‌روزرسانی: **CP-05 (پیاده‌سازی کامل + Installer v3) · ۲۰۲۶-۱۱-۱۱**
 > شاخه محصول: `hanaso16-learning-journey` (ایجادشده از `origin/tl14-foundations-redesign` @ `9a466644` — جدیدترین Remote؛ شامل کل TL-14 و تغییرات معوق `1.0.0-tl14-r01` @ `935010f8`)
 > مبنای انتشار معوق: `1.0.0-tl14-r01` (TL-14 کامل: دک‌های اسلایدی ۸ ایستگاه قواعد + ۶ گیت محتوایی + رفع ۱۰۲ تخلف؛ ۶۲۶/۶۲۶ تست سبز)
 
@@ -9,10 +9,10 @@
 | هدف | وضعیت |
 | --- | --- |
 | بخش ۱ — بازیابی وضعیت واقعی (Git/Checkpoint/Production) | ✅ CP-01 — `LEARNING_JOURNEY_AUDIT.md` + `DEPLOYMENT_FAILURE_ANALYSIS.md` |
-| بخش ۲-۷ — معماری Chapter→Section→Rows→Lessons + پیاده‌سازی | ⏳ CP-02 (طراحی IA) → CP-03..05 |
-| بخش ۹ — تست‌های اجباری Learning Journey | ⬜ |
-| بخش ۸ — اصلاح Installer سه‌سطحی + انتشار معوق | ⬜ |
-| بخش ۱۰-۱۲ — Release، Bundle، گزارش نهایی | ⬜ |
+| بخش ۲-۷ — معماری Chapter→Section→Rows→Lessons + پیاده‌سازی | ✅ CP-02..04 — IA + Resolverها + UI + رفع باگ learner-id |
+| بخش ۹ — تست‌های اجباری Learning Journey | ✅ — `TEST_REPORT.md` (۶۵۱ واحد + ۹/۹ سناریوی مرورگر) |
+| بخش ۸ — اصلاح Installer سه‌سطحی + انتشار معوق | ✅ CP-05 — updater v3.0 + ۱۴۰/۱۴۰ سندباکس — `DEPLOYMENT_GATE_FIX.md` |
+| بخش ۱۰-۱۲ — Release، Bundle، گزارش نهایی | ⏳ CP-06 (پین + OWNER-COMMAND v9 + Bundle) |
 
 ## وضعیت بازیابی‌شده (خلاصهٔ واقعی)
 

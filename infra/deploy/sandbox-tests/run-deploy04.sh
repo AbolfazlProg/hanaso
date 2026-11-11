@@ -144,6 +144,7 @@ run_boot() { # scenario-dir [bootstrap-args...] — the REAL one-command entrypo
     export HANASO_LOCAL_HEALTH="http://127.0.0.1:3100/api/health"
     export HANASO_LOCAL_READY="http://127.0.0.1:3100/api/ready"
     export HANASO_KOTODAMA_URL="https://kotodama.ir/"
+    export HANASO_CHECKHOST_DELAY=0
     bash "${BOOTSTRAP}" "$@"
   ) > "${d}/out.log" 2>&1
   echo "$?" > "${d}/exit.code"
@@ -168,6 +169,7 @@ run_boot_url() { # scenario-dir repo-url [extra env as K=V ...]
     export HANASO_LOCAL_READY="http://127.0.0.1:3100/api/ready"
     export HANASO_KOTODAMA_URL="https://kotodama.ir/"
     for kv in "$@"; do export "${kv}"; done
+    export HANASO_CHECKHOST_DELAY=0
     bash "${BOOTSTRAP}"
   ) > "${d}/out.log" 2>&1
   echo "$?" > "${d}/exit.code"
@@ -190,6 +192,7 @@ run_update_direct() { # scenario-dir — the REAL updater invoked directly (no b
     export HANASO_LOCAL_HEALTH="http://127.0.0.1:3100/api/health"
     export HANASO_LOCAL_READY="http://127.0.0.1:3100/api/ready"
     export HANASO_KOTODAMA_URL="https://kotodama.ir/"
+    export HANASO_CHECKHOST_DELAY=0
     bash "${REPO_ROOT}/infra/deploy/update-hanaso.sh"
   ) > "${d}/out.log" 2>&1
   echo "$?" > "${d}/exit.code"
@@ -458,6 +461,92 @@ assert_out "${D}" "refusing to delete or overwrite" "S20 separation guard fired 
 assert_file "${D}/deploy/smoke.sh" "S20 deploy dir untouched"
 assert_file "${D}/deploy/.env" "S20 deploy .env untouched"
 assert_not_called "${D}" "docker build" "S20 no build attempted"
+
+
+# =============================================================================
+section "G1 — HANASO-16 three-tier gate: PRE-EXISTING public outage (the TL-14 incident) → ABORT before any change"
+D="$(prep g1-preexisting)"
+git clone -q "${REPO_URL}" "${D}/src"
+printf 'SIM_PUBLIC_SELF=broken\nSIM_EXTERNAL=broken\nSIM_KOTODAMA_BEFORE=000\nSIM_KOTODAMA_AFTER=000\n' >> "${D}/sim/config.env"
+run_update_direct "${D}"
+assert_exit_nonzero "$(exit_of "${D}")" "G1 updater aborts (public endpoint verifiably broken at baseline)"
+assert_out "${D}" "INGRESS_PREEXISTING_BROKEN" "G1 explicit pre-existing-front-line diagnosis"
+assert_out "${D}" "aborting BEFORE any change" "G1 nothing-changed guarantee stated"
+assert_out "${D}" "tier 3 independent verdict (baseline): BROKEN" "G1 independent tier-3 evidence recorded"
+assert_env_unchanged "${D}/deploy" "${OLD_IMAGE}" "G1 .env untouched"
+assert_not_called "${D}" "docker build" "G1 no build attempted"
+assert_not_called "${D}" "compose run --rm migrate" "G1 no migrate ran"
+assert_not_called "${D}" "compose exec worker db-cli backup" "G1 no backup needed (nothing will change)"
+
+# =============================================================================
+section "G2 — escape hatch: ALLOW_UNVERIFIED_INGRESS=1 deploys anyway; gate classifies, smoke goes local"
+D="$(prep g2-allowunverified)"
+git clone -q "${REPO_URL}" "${D}/src"
+printf 'SIM_PUBLIC_SELF=broken\nSIM_EXTERNAL=broken\n' >> "${D}/sim/config.env"
+(
+  cd /
+  export PATH="${MOCK}:${PATH}"
+  export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null
+  export HANASO_SIM_DIR="${D}/sim" HANASO_REPO_URL="${REPO_URL}" HANASO_SRC_DIR="${D}/src"
+  export HANASO_TARGET_SHA="${TARGET_SHA}" HANASO_TARGET_VERSION="1.0.0-sim-target" HANASO_TARGET_BRANCH="tl08-cta01"
+  export HANASO_DEPLOY_DIR="${D}/deploy" HANASO_PUBLIC_BASE="https://learn.kotodama.ir"
+  export HANASO_LOCAL_HEALTH="http://127.0.0.1:3100/api/health"
+  export HANASO_LOCAL_READY="http://127.0.0.1:3100/api/ready"
+  export HANASO_KOTODAMA_URL="https://kotodama.ir/"
+  export HANASO_CHECKHOST_DELAY=0 HANASO_ALLOW_UNVERIFIED_INGRESS=1
+  bash "${REPO_ROOT}/infra/deploy/update-hanaso.sh"
+) > "${D}/out.log" 2>&1
+echo "$?" > "${D}/exit.code"
+assert_exit 0 "$(exit_of "${D}")" "G2 escape-hatch deploy completes"
+assert_out "${D}" "deploying DESPITE the broken/unverifiable public path" "G2 escape hatch acknowledged"
+assert_out "${D}" "Keeping the release" "G2 gate keeps the healthy release (no pointless rollback)"
+assert_out "${D}" "smoke runs against http://127.0.0.1:3100" "G2 smoke rerouted to the local app plane"
+assert_out "${D}" "INGRESS_PREEXISTING_BROKEN_PUBLIC_DOWN" "G2 final classification recorded"
+assert_env_image "${D}/deploy" "${NEW_IMAGE}" "G2 release actually deployed"
+
+# =============================================================================
+section "G3 — hairpin artifact: public self-probe fails, independent tier 3 says the world CAN reach it → release stands"
+D="$(prep g3-hairpin)"
+git clone -q "${REPO_URL}" "${D}/src"
+printf 'SIM_PUBLIC_SELF=broken\nSIM_EXTERNAL=ok\n' >> "${D}/sim/config.env"
+run_update_direct "${D}"
+assert_exit 0 "$(exit_of "${D}")" "G3 hairpin-artifact deploy completes"
+assert_out "${D}" "hairpin/self-probe network artifact" "G3 artifact correctly identified"
+assert_out "${D}" "PUBLIC_OK_SELF_PROBE_ARTIFACT" "G3 classification recorded"
+assert_env_image "${D}/deploy" "${NEW_IMAGE}" "G3 release deployed (no rollback)"
+
+# =============================================================================
+section "G4 — tier 3 unavailable (check-host API down) → honest EXTERNAL_UNVERIFIED, no rollback"
+D="$(prep g4-unverified)"
+git clone -q "${REPO_URL}" "${D}/src"
+printf 'SIM_PUBLIC_SELF=broken\nSIM_CHECKHOST_API=down\n' >> "${D}/sim/config.env"
+run_update_direct "${D}"
+assert_exit 0 "$(exit_of "${D}")" "G4 unverified-external deploy completes"
+assert_out "${D}" "EXTERNAL_UNVERIFIED" "G4 status recorded explicitly"
+assert_out "${D}" "verify from a phone/other network" "G4 owner follow-up hint printed"
+assert_env_image "${D}/deploy" "${NEW_IMAGE}" "G4 release deployed (no rollback)"
+
+# =============================================================================
+section "G5 — healthy baseline, public path BREAKS in the deploy window → REAL rollback"
+D="$(prep g5-deploybroke)"
+git clone -q "${REPO_URL}" "${D}/src"
+printf 'SIM_PUBLIC_SELF=after-swap-broken\nSIM_EXTERNAL=broken\n' >> "${D}/sim/config.env"
+run_update_direct "${D}"
+assert_exit_nonzero "$(exit_of "${D}")" "G5 updater fails (deploy broke the public path)"
+assert_out "${D}" "this deploy window broke the public path" "G5 deploy-caused breakage identified"
+assert_out "${D}" "rolling the APP back" "G5 app rolled back"
+assert_env_unchanged "${D}/deploy" "${OLD_IMAGE}" "G5 .env restored to the previous image"
+
+# =============================================================================
+section "G6 — tier 2a (ingress-direct) broken at baseline with tier 3 unverifiable → abort before any change"
+D="$(prep g6-ingresslocal)"
+git clone -q "${REPO_URL}" "${D}/src"
+printf 'SIM_PUBLIC_SELF=broken\nSIM_INGRESS_DIRECT=broken\nSIM_CHECKHOST_API=down\n' >> "${D}/sim/config.env"
+run_update_direct "${D}"
+assert_exit_nonzero "$(exit_of "${D}")" "G6 updater aborts (proxy broken on the host)"
+assert_out "${D}" "tier 2a ingress-direct broken at baseline" "G6 local ingress diagnosis"
+assert_env_unchanged "${D}/deploy" "${OLD_IMAGE}" "G6 .env untouched"
+assert_not_called "${D}" "docker build" "G6 no build attempted"
 
 # =============================================================================
 section "GLOBAL — KOTODAMA / isolation invariants across ALL scenarios"

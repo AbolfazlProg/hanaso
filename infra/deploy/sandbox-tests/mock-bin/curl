@@ -19,6 +19,12 @@
 #   2) DEPLOY-04 app layer — canned /api/health, /api/ready, / and the KOTODAMA
 #      witness from the simulation state (set by the docker stub on `compose up`).
 #      Behavior unchanged from the original stub.
+#   3) HANASO-16 three-tier gate — the public layers are simulatable:
+#      SIM_PUBLIC_SELF=broken     → tier 2b (public URL from this host) fails curl 52
+#      SIM_INGRESS_DIRECT=broken  → tier 2a (proxy via --resolve 127.0.0.1) fails 52
+#      SIM_CHECKHOST_API=down     → tier 3 check-host.net API unreachable (UNVERIFIED)
+#      SIM_EXTERNAL=ok|broken|pending → tier 3 node verdicts
+#      The LOCAL endpoints (127.0.0.1:3100) always answer from the sim state.
 SIM="${HANASO_SIM_DIR:?set HANASO_SIM_DIR}"
 [ -f "${SIM}/config.env" ] && . "${SIM}/config.env"
 [ -f "${SIM}/state.env" ] && . "${SIM}/state.env"
@@ -99,6 +105,49 @@ case "${url}" in
     gh_blob "${ref}" "${path}" || { echo "curl: (22) object not found in sim origin" >&2; exit 22; }
     if wants_code; then printf '200\n'; fi
     exit 0 ;;
+esac
+
+# --- HANASO-16: tier-3 independent verifier (check-host.net simulation) -------
+case "${url}" in
+  "https://check-host.net/check-http"*)
+    log_call
+    if [ "${SIM_CHECKHOST_API:-up}" = down ]; then
+      echo "curl: (28) Operation timed out (simulated check-host API down)" >&2; exit 28
+    fi
+    printf '{"nodes":{"sim1.node.check-host.net":["sim","Sim","City","1.2.3.4",1],"sim2.node.check-host.net":["sim","Sim","Town","5.6.7.8",1]},"ok":1,"request_id":"sim-req-1","permanent_link":"sim"}\n'
+    exit 0 ;;
+  "https://check-host.net/check-result/"*)
+    log_call
+    case "${SIM_EXTERNAL:-ok}" in
+      ok)      printf '{"sim1.node.check-host.net":[[1,0.02,"OK","200","93.184.216.34"]],"sim2.node.check-host.net":[[1,0.03,"OK","200","1.1.1.1"]]}\n' ;;
+      broken)  printf '{"sim1.node.check-host.net":[[0,0.42,"Broken pipe",null,"87.107.129.210"]],"sim2.node.check-host.net":[[0,0.31,"Empty reply from server",null,"87.107.129.210"]]}\n' ;;
+      pending) printf '{"sim1.node.check-host.net":null,"sim2.node.check-host.net":null}\n' ;;
+    esac
+    exit 0 ;;
+esac
+
+# --- HANASO-16: tier 2a/2b public-path switches --------------------------------
+#     learn.kotodama.ir/api/health = the PUBLIC path (tier 2b plain, tier 2a with
+#     --resolve); 127.0.0.1:3100 = the local app (tier 1 — always the sim state).
+case "${url}" in
+  "https://learn.kotodama.ir/api/health"|"https://kotodama.ir/api/health")
+    if [ -n "${resolve}" ] && [ "${SIM_INGRESS_DIRECT:-ok}" = broken ]; then
+      log_call
+      echo "curl: (52) Empty reply from server (simulated tier 2a)" >&2; exit 52
+    fi
+    if [ -z "${resolve}" ]; then
+      case "${SIM_PUBLIC_SELF:-ok}" in
+        broken)
+          log_call
+          echo "curl: (52) Empty reply from server (simulated tier 2b)" >&2; exit 52 ;;
+        after-swap-broken)
+          if [ "${PHASE:-before}" = updated ]; then
+            log_call
+            echo "curl: (52) Empty reply from server (simulated tier 2b, post-swap)" >&2; exit 52
+          fi ;;
+      esac
+    fi
+    ;;
 esac
 
 # --- DEPLOY-04: app-layer endpoints (unchanged) -------------------------------
