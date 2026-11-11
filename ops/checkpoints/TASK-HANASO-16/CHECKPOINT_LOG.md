@@ -40,3 +40,12 @@ CP-06: کامیت پین انتشار (TARGET_SHA → کامیت محتوای ن
 - کامیت پین: `ee29578` (updater/bootstrap → 1.0.0-hanaso16-r01 @ `840b993`)؛ OWNER-COMMAND v9 + راهنمای فارسی v9 (R=`ee29578` · W=`7e45d4f9…`) + RELEASE_MANIFEST (فهرست کامل کامیت‌ها، Migration=هیچ، شرط انتشار، دستور Bundle).
 - فیکسچر run-deploy05 به وضعیت واقعی Production به‌روز شد (live=tl13-r01 → target=hanaso16-r01).
 - تحویل: `hanaso-hanaso16.bundle` + دستور Push مالک (سندباکس بدون توکن).
+
+## CP-06 — بسته‌شدن نهایی (۲۰۲۶-۱۱-۱۱)
+
+- شاخهٔ `hanaso16-learning-journey` نهایی شد: ۱۴ کامیت روی `9a466644` (کل TL-14 معوق + HANASO-16 کامل) · tip در Bundle تحویلی.
+- پین‌های نهایی و تغییرناپذیر: **هدف `1.0.0-hanaso16-r01` @ `777fb2b6`** · ابزار `df50431d` · bootstrap SHA-256 `35ca9742…` — عین همان مقادیر داخل `OWNER-COMMAND.txt` v9 و راهنمای فارسی v9.
+- گیت‌های نهایی (همه سبز): ۶۵۱/۶۵۱ تست واحد · EQA ۳۷/۳۷ · tsc/eslint/prettier ✓ · Build تولیدی ✓ · deploy04 **۱۴۰/۱۴۰** (شامل ۶ سناریوی گیت سه‌سطحی) · deploy05 **۹۰/۹۰** (یک‌خطی عین OWNER-COMMAND.txt) · مرورگر ۹/۹ سناریو.
+- تحویل: `download/hanaso-hanaso16.bundle` (۳۶MB · تاریخچهٔ کامل · fetch راستی‌آزمایی شد) + `download/HANASO-16-DELIVERY.fa.md` (دستور Push + یک‌خطی + هشدار خط مقدم).
+- **Deploy واقعی انجام نشد — علت صادقانه:** (۱) سندباکس به توکن Push دسترسی ندارد (توکن با بازیافت سندباکس حذف شد؛ «could not read Username» راستی‌آزمایی شد)؛ (۲) مسیر عمومی VPS برای کل دنیا قطع است (شواهد ۵ کشور) — انتشار جدید طبق سیاست v3.0 به‌درستی متوقف می‌شود تا مالک ابتدا خط مقدم (HAProxy/nginx میزبان) را تعمیر کند.
+- قدم بعدی برای مالک: تعمیر خط مقدم → Push از Bundle (RELEASE_MANIFEST §۷) → اجرای یک‌خطی v9 → راستی‌آزمایی health عمومی با version=1.0.0-hanaso16-r01 و commit=777fb2b… .
