@@ -1,0 +1,38 @@
+# PROGRESS_MAPPING — TASK-HANASO-16 CP-02
+
+> ۲۰۲۶-۱۱-۱۱ · نگاشت دقیق مفاهیم پیشرفت بر Entityهای موجود و قواعد مأموریت §۵ (پنجم)
+
+## ۱) جدول نگاشت مفهوم → داده
+
+| مفهوم مأموریت | داده/موتور موجود | ذخیره‌سازی | تغییر HANASO-16 |
+| --- | --- | --- | --- |
+| Attempted (تلاش) | `StationState.attempts` (incrementAttempts) + مخزن Attemptهای تسلط | Postgres (یا in-memory dev) | هیچ |
+| Completed (درس/ایستگاه) | `StationState.status ∈ {completed, skipped, needs_retry}` — واقعیت walk (island §۹) | همان | هیچ |
+| Completed (بخش) | **Derived**: همهٔ coreهای Section در PREREQ_OK | محاسباتی — هرگز ذخیره نمی‌شود | تابع خالص `resolveSections` |
+| Completed (فصل) | `ChapterState.status = 'stations_complete'` (پس از همهٔ ایستگاه‌ها) | همان | هیچ |
+| Mastered/Understood (فصل) | `ChapterState.status = 'understood'` فقط با قبولی گیت (DD-048: «تمام کرد» ≠ «فهمیدم») | همان | هیچ |
+| Station Completion + مهر AIZEN | موتور StationRunner/progress-machine (مستقل از گیت فصل) | همان | بدون تغییر — نشانگر سطح ایستگاه، جدا از نشانگر بخش/فصل |
+| FSRS | کارت‌های fsrsItems در تکمیل ایستگاه — قرارداد not-integrated | همان | هیچ |
+
+## ۲) قواعد مأموریت §۵ → مکانیزم برآورده‌شونده
+
+1. **«تکمیل Lesson باید Progress همان واحد را به‌روزرسانی کند»** → وضعیت بخش Derived از همان StationStateهاست؛ هر upsert ایستگاه بلافاصله وضعیت بخش را در رندر بعدی (سرور RSC یا refresh کلاینت) عوض می‌کند. هیچ State موازی جدیدی ساخته نمی‌شود (تک منبع حقیقت).
+2. **«تکمیل Section فصل را زودتر از موعد کامل نکند»** → فصل فقط با تکمیل همهٔ coreها `stations_complete` می‌شود (منطق موجود)؛ بخش‌ها گیت نیستند (DD-123: grouping صرف) — سلسله‌مراتب حفظ می‌شود.
+3. **«Chapter فقط پس از پیش‌نیازهای ضروری Completed شود»** → فصل با گیت فهم (صفحهٔ assessment — بانک M1..M5) «understood» می‌شود؛ در معماری فعول گیت فصل ایستگاه walk نیست (DD-117) و همین می‌ماند.
+4. **«Chapter بعدی فقط پس از احراز شرایط واقعی Unlock شود»** → `prerequisiteChapterSlug` + `chapterAccessStatus` (صفحه/API/دیپ‌لینک‌ها — تست رگرسیون #94) + گیت اعتبارسنجی محتوای جدید (هر فصل به‌جز اول باید prereq داشته باشد).
+5. **«Review چند بار ثبت نکند»** → walk-persistence موجود: ورود مجدد به ایستگاه completed وضعیت را بازنمی‌گرداند (idempotent)؛ تست مرور در TEST_REPORT ثبت می‌شود. ردیف‌های گذرانده CTA «مرور» می‌گیرند نه «ادامه».
+6. **«Refresh و ورود مجدد State را تغییر ندهد»** → همهٔ وضعیت‌ها سمت سرور از stores خوانده می‌شوند (`force-dynamic`)؛ کلاینت فقط refresh می‌خواند؛ انتخاب بخش از Progress (اولین بخشِ فعال) نه از شمارندهٔ ثابت. تست: refresh → همان فصل/بخش/ردیف.
+7. **«مهر Station با Completion Section/Chapter اشتباه نشود»** → سه نشانگر مستقل: ردیف (ایستگاه)، نوار وضعیت پنل بخش (Derived)، نشانگر فصل (understood/در جریان) — هر کدام برچسب و شکل خودش (DD-084: شکل + نشانگر، نه فقط رنگ).
+
+## ۳) جریان رخداد (بدون تغییر قرارداد)
+
+`StationRunner → (progress-machine) → stationProgressStore.upsert → (رویدادها) → ChapterState (سرِ خودش در assessment)`. HANASO-16 فقط «خوانندهٔ» این داده‌ها می‌شود (پنل بخش/Reveal) — هیچ نوشتن جدیدی در مسیر پیشرفت اضافه نمی‌کند. ریسک صفر روی Migration: **بدون Migration و بدون Seed جدید** (ساختار داده دست‌نخورده).
+
+## ۴) تست‌های الزامی نگاشت (→ TEST_REPORT)
+
+- تکمیل یک ایستگاه → ردیف همان بخش انجام‌شده و شمارش بخش/فصل به‌روز.
+- تکمیل همهٔ coreهای یک بخش → بخش completed؛ فصل هنوز completed نمی‌شود (ایستگاه‌های بخش بعدی باز).
+- تکمیل همهٔ ایستگاه‌ها → CTA به گیت فهم می‌رود (نه «فصل بعدی» — قفل honest).
+- مرور ایستگاه گذرانده → وضعیت و شمارش‌ها بدون تغییر (idempotency).
+- Refresh → همان بخش فعال همان ردیف ادامه.
+- دیپ‌لینک فصل قفل → ChapterLockedNotice (سرور).
