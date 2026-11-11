@@ -49,10 +49,10 @@
 set -euo pipefail
 
 # --- pinned refs -------------------------------------------------------------
-TARGET_SHA="${HANASO_TARGET_SHA:-4d0827ad7d4fdf87fd920b238f542629371e7288}"
-TARGET_VERSION="${HANASO_TARGET_VERSION:-1.0.0-tl13-r01}"
-TARGET_BRANCH="${HANASO_TARGET_BRANCH:-tl13-learning-integrity}"
-DEPLOY_BRANCH="${HANASO_DEPLOY_BRANCH:-tl13-learning-integrity}"
+TARGET_SHA="${HANASO_TARGET_SHA:-840b99335b0c23888d92e0e780b5988f12d06709}"
+TARGET_VERSION="${HANASO_TARGET_VERSION:-1.0.0-hanaso16-r01}"
+TARGET_BRANCH="${HANASO_TARGET_BRANCH:-hanaso16-learning-journey}"
+DEPLOY_BRANCH="${HANASO_DEPLOY_BRANCH:-hanaso16-learning-journey}"
 # Exact updater commit. The documented one-liner ALWAYS overrides this with an
 # immutable SHA (HANASO_DEPLOY_SHA=<sha>); the branch default here is only a
 # fallback for manual invocations and prints a notice when used.
