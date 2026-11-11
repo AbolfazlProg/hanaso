@@ -57,13 +57,15 @@ export interface ExerciseSessionProps {
   /**
    * TASK-LEARNING-08 (WP-5 — owner feedback E): restore the in-flight question
    * position for THIS exercise block (from the persisted walk snapshot).
+   * TL-13 (A-6): `attemptNo` (optional) restores the in-flight attempt number.
    */
-  initialProgress?: { index: number; firstTryCorrect: number };
+  initialProgress?: { index: number; firstTryCorrect: number; attemptNo?: number };
   /**
    * TASK-LEARNING-08 (WP-5): fired on every question transition so the host can
-   * persist the walk snapshot (never only at station end).
+   * persist the walk snapshot (never only at station end). TL-13 (A-6): the
+   * current attempt number rides along (refresh keeps the ladder honest).
    */
-  onProgress?: (progress: { index: number; firstTryCorrect: number }) => void;
+  onProgress?: (progress: { index: number; firstTryCorrect: number; attemptNo?: number }) => void;
 }
 
 interface GradeResponse {
@@ -159,7 +161,14 @@ export function ExerciseSession({
   const [index, setIndex] = useState(() =>
     initialProgress ? Math.min(Math.max(0, initialProgress.index), Math.max(0, exercises.length - 1)) : 0,
   );
-  const [attemptNo, setAttemptNo] = useState(1);
+  /**
+   * TL-13 (A-6): the in-flight attempt number survives a refresh — a question
+   * the learner already answered wrong does NOT become first-try-eligible again
+   * (no score inflation through reload).
+   */
+  const [attemptNo, setAttemptNo] = useState(() =>
+    initialProgress?.attemptNo ? Math.min(Math.max(1, initialProgress.attemptNo), 3) : 1,
+  );
   const [selected, setSelected] = useState<string | null>(null);
   const [ordered, setOrdered] = useState<string[]>([]);
   const [built, setBuilt] = useState<string[]>([]);
@@ -172,6 +181,16 @@ export function ExerciseSession({
   const [hintRevealed, setHintRevealed] = useState(false);
   /** #106 F2: option ids the server eliminated — they stay dead for every later attempt. */
   const [eliminated, setEliminated] = useState<string[]>([]);
+
+  /**
+   * TL-13 (A-2): SYNCHRONOUS re-entrancy guard for grade submission. The
+   * `disabled={busy}` button only protects after React commits — clicks fired
+   * in the SAME tick (double-tap, ghost click, assistive double-activation)
+   * all reach check() before the re-render. Live-reproduced: 4 rapid clicks →
+   * 4 grade POSTs (attemptCount 12→16, firstTryCorrect +4 for ONE answer).
+   * The ref closes within the first call's synchronous prologue.
+   */
+  const gradingRef = useRef(false);
 
   /**
    * WP-5 auto-next: the pending advance timer + a fired-once latch. The manual
@@ -343,9 +362,11 @@ export function ExerciseSession({
   }, [startOutcomeAudio]);
 
   // report the in-flight position to the host on every question transition
+  // TL-13 (A-6): attemptNo rides along, so a mid-question refresh restores the
+  // real attempt number (wrong-then-reload no longer resets the ladder).
   useEffect(() => {
-    onProgress?.({ index, firstTryCorrect });
-  }, [index, firstTryCorrect, onProgress]);
+    onProgress?.({ index, firstTryCorrect, attemptNo });
+  }, [index, firstTryCorrect, attemptNo, onProgress]);
 
   // drop any pending auto-next timer when the block unmounts (back-nav, F4 return)
   useEffect(
@@ -420,6 +441,11 @@ export function ExerciseSession({
 
   const grade = useCallback(
     async (payload: Record<string, unknown>) => {
+      // TL-13 (A-2): same-tick re-entrancy — the FIRST call closes the gate;
+      // every later call in the same commit window is a no-op (never a second
+      // grade POST, never a second firstTryCorrect increment).
+      if (gradingRef.current) return;
+      gradingRef.current = true;
       setBusy(true);
       try {
         const res = await fetch('/api/curriculum/station', {
@@ -466,6 +492,7 @@ export function ExerciseSession({
         setFeedback({ correct: false, level: 0, feedbackFa: fa.curriculum.gradingUnavailable });
         return null;
       } finally {
+        gradingRef.current = false;
         setBusy(false);
       }
     },
@@ -474,6 +501,9 @@ export function ExerciseSession({
 
   const check = useCallback(async () => {
     if (!ex) return;
+    // TL-13 (A-2): the busy state is ALSO checked here so a stale-props click
+    // (option selected → rapid double activation before commit) never re-enters.
+    if (busy || gradingRef.current) return;
     if (ex.options || ex.clozeTokens) {
       if (!selected) return;
       await grade({ kind: 'option', optionId: selected });
@@ -552,12 +582,15 @@ export function ExerciseSession({
 
   return (
     <section
-      aria-label={`${fa.curriculum.gateQuestion} ${index + 1} ${fa.curriculum.gateOf} ${total}`}
+      aria-label={`${fa.curriculum.gateQuestion} ${faNum(index + 1)} ${fa.curriculum.gateOf} ${faNum(total)}`}
       className="flex flex-col gap-4"
     >
       <header className="flex items-center justify-between gap-2">
-        <p className="text-small text-ink-soft">
-          {index + 1} / {total}
+        <p className="text-small text-ink-soft" dir="rtl">
+          {/* TL-13 (A-7): Persian digits — the rest of the walk UI (block rail,
+              map, kana cards) already uses faNum (SKL-003 §۴); this counter was
+              the lone Latin-digit holdout. */}
+          {faNum(index + 1)} / {faNum(total)}
         </p>
         <p className="text-caption text-ink-soft">{skillLabel(ex.targetSkill)}</p>
       </header>
@@ -1027,6 +1060,11 @@ export function ReturnToTeachingButton({
       {fa.curriculum.returnToTeaching}
     </button>
   );
+}
+
+/** Persian digits for the question counter (SKL-003 §۴ — TL-13 A-7). */
+function faNum(n: number): string {
+  return String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]!);
 }
 
 function skillLabel(skill: ClientExercise['targetSkill']): string {

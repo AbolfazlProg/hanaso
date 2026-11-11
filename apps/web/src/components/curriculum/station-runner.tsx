@@ -260,6 +260,14 @@ export function StationRunner(props: StationRunnerProps) {
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(false);
   /**
+   * TL-13 (A-3): an honest completion-failure notice + retry. The old flow
+   * swallowed a failed/aborted `complete` POST (silent dead button + unhandled
+   * rejection — live-reproduced by aborting the network). The score of the
+   * failed attempt is kept so the retry re-submits exactly what was earned.
+   */
+  const [completionFailed, setCompletionFailed] = useState(false);
+  const completionFailedRef = useRef(false);
+  /**
    * Issue #102: earned exercise results per block id — they live OUTSIDE the
    * current step, so stepping back (and forward again) never loses them. A
    * block with a recorded result renders the skip panel instead of re-grading.
@@ -348,7 +356,13 @@ export function StationRunner(props: StationRunnerProps) {
       setExerciseProgress(snapshot.exerciseProgress ?? {});
       setKanaCardStages(snapshot.kanaCardStages ?? {});
       if (typeof snapshot.sessionScore === 'number') setSessionScore(snapshot.sessionScore);
-      if (snapshot.stepIndex > 0 || Object.keys(snapshot.blockResults ?? {}).length > 0) {
+      if (snapshot.stepIndex > 0 ||
+        Object.keys(snapshot.blockResults ?? {}).length > 0 ||
+        // TL-13 (A-8): in-flight exercise/kana progress is ALSO real resumed
+        // work — the notice fired only for block-level moves before, leaving a
+        // mid-question restore silent.
+        Object.keys(snapshot.exerciseProgress ?? {}).length > 0 ||
+        Object.keys(snapshot.kanaCardStages ?? {}).length > 0) {
         setResumedNotice(true);
         window.setTimeout(() => setResumedNotice(false), 4000);
       }
@@ -378,6 +392,11 @@ export function StationRunner(props: StationRunnerProps) {
         if (resume.kind === 'completed') {
           if (emptyWalk) {
             setCompleted(true);
+            // TL-13 (A-1): the walk rail/counter must tell the truth on a
+            // completed station — the full walk is DONE, not «1 / n». The step
+            // pointer moves to the last authored block (the rail renders
+            // «n / n» with every segment filled).
+            setStep(Math.max(0, blocks.length - 1));
             // heal a planted snapshot (also covers browsers that already
             // carry the stale step-0 snapshot from BEFORE this fix)
             clearWalkSnapshot(chapterSlug, station.slug);
@@ -428,10 +447,21 @@ export function StationRunner(props: StationRunnerProps) {
     }
   }, [restoreChecked, step, blockResults, exerciseProgress, kanaCardStages, sessionScore]);
 
+  /** TL-13 (A-3): the retry re-submits the LAST completion payload verbatim
+   *  (score + taskCompleted flag — a viewed/task station retries identically). */
+  const lastCompletionRef = useRef<{ score: number | null; taskCompleted: boolean }>({
+    score: null,
+    taskCompleted: false,
+  });
+
   const finishSession = useCallback(
     async (score: number | null, taskCompleted = false) => {
       setSessionScore(score);
+      lastCompletionRef.current = { score, taskCompleted };
       setCompleting(true);
+      // TL-13 (A-3): a retry clears the failure state up-front; it re-arms if
+      // this attempt fails again.
+      completionFailedRef.current = false;
       try {
         const res = await fetch('/api/curriculum/station', {
           method: 'POST',
@@ -445,13 +475,31 @@ export function StationRunner(props: StationRunnerProps) {
           }),
         });
         setCompleted(res.ok);
-        if (res.ok) clearWalkSnapshot(chapterSlug, station.slug); // walk done — no stale resume
+        if (res.ok) {
+          setCompletionFailed(false);
+          clearWalkSnapshot(chapterSlug, station.slug); // walk done — no stale resume
+        } else {
+          // TL-13 (A-3): honest failure (409 criterion/prereq, 5xx, offline) — the
+          // learner sees WHY nothing happened and can retry in place.
+          completionFailedRef.current = true;
+          setCompletionFailed(true);
+        }
+      } catch {
+        // network error / abort — same honest path (never an unhandled rejection)
+        completionFailedRef.current = true;
+        setCompletionFailed(true);
       } finally {
         setCompleting(false);
       }
     },
     [chapterSlug, station.slug],
   );
+
+  /** TL-13 (A-3): the retry button re-submits the last earned payload. */
+  const retryCompletion = useCallback(() => {
+    const { score, taskCompleted } = lastCompletionRef.current;
+    void finishSession(score, taskCompleted);
+  }, [finishSession]);
 
   const next = useCallback(() => {
     if (step < blocks.length - 1) {
@@ -611,7 +659,12 @@ export function StationRunner(props: StationRunnerProps) {
             if (block.kind !== 'exercise') return;
             setExerciseProgress((prev) => {
               const cur = prev[block.id];
-              if (cur && cur.index === progress.index && cur.firstTryCorrect === progress.firstTryCorrect) {
+              if (
+                cur &&
+                cur.index === progress.index &&
+                cur.firstTryCorrect === progress.firstTryCorrect &&
+                (cur.attemptNo ?? 1) === (progress.attemptNo ?? 1)
+              ) {
                 return prev;
               }
               return { ...prev, [block.id]: progress };
@@ -735,6 +788,33 @@ export function StationRunner(props: StationRunnerProps) {
         </div>
       )}
       {completing && !completed && <p className="text-small text-ink-soft">{fa.common.loading}</p>}
+
+      {/*
+       * TL-13 (A-3): the honest completion-failure notice. The complete POST
+       * failed (offline / server error / criterion rejected) — the walk is NOT
+       * lost (local + server anchors keep it), but the learner must know and
+       * must have a one-click retry. Never a silent dead button again.
+       */}
+      {completionFailed && !completed && !completing && (
+        <div
+          role="alert"
+          data-completion-failed
+          className="flex flex-col gap-2 rounded-md border border-error bg-card p-4"
+        >
+          <p className="text-body font-bold text-error">{fa.curriculum.completionFailedTitle}</p>
+          <p className="text-small leading-[var(--leading-fa)] text-ink-soft">
+            {fa.curriculum.completionFailedBody}
+          </p>
+          <button
+            type="button"
+            onClick={retryCompletion}
+            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+          >
+            <RotateCcw aria-hidden className="size-4" />
+            {fa.curriculum.completionRetry}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -971,10 +1051,12 @@ function BlockView({
    * yet — render the live ExerciseSession). Only meaningful for exercise blocks.
    */
   exerciseScore: number | null;
-  /** WP-5 (owner feedback E): persisted in-flight position for this block. */
-  exerciseInitialProgress?: { index: number; firstTryCorrect: number };
-  /** WP-5: question-transition reporter → the host persists the walk snapshot. */
-  onExerciseProgress?: (progress: { index: number; firstTryCorrect: number }) => void;
+  /** WP-5 (owner feedback E): persisted in-flight position for this block.
+   *  TL-13 (A-6): `attemptNo` restores the in-flight attempt number too. */
+  exerciseInitialProgress?: { index: number; firstTryCorrect: number; attemptNo?: number };
+  /** WP-5: question-transition reporter → the host persists the walk snapshot
+   *  (TL-13 A-6: the attempt number rides along). */
+  onExerciseProgress?: (progress: { index: number; firstTryCorrect: number; attemptNo?: number }) => void;
   /** Issue #106 (F4): host-owned «بازگشت به آموزش» jump handler. */
   onReturnToBlock?: (blockId: string) => void;
   onExerciseDone: (score: number) => void;

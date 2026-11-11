@@ -255,6 +255,12 @@ export const fa = {
     ctaNextStation: 'رفتن به ایستگاه بعدی',
     ctaContinuePath: 'ادامهٔ مسیر',
     reviewStationAgain: 'مرور دوبارهٔ این ایستگاه',
+    /* ---- TASK-LEARNING-13 (A-3) — honest completion-failure notice + retry
+     * (a failed/aborted complete POST was previously silent) */
+    completionFailedTitle: 'ثبت پایان ایستگاه ناموفق بود',
+    completionFailedBody:
+      'پیشرفت تو از دست نرفته — فقط ثبتِ پایانی روی سرور انجام نشد. اتصال اینترنت را بررسی کن و دوباره تلاش کن.',
+    completionRetry: 'تلاش دوباره برای ثبت',
     /* ---- TASK-LEARNING-10 §5 — honest short note when the sound is unavailable */
     audioUnavailableShort: 'صوت در دسترس نیست',
     playLine: 'پخش صدای این خط',

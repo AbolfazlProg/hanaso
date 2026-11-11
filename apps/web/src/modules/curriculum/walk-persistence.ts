@@ -25,6 +25,13 @@ export interface ExerciseBlockProgress {
   index: number;
   /** First-try-correct count earned so far in this block session. */
   firstTryCorrect: number;
+  /**
+   * TL-13 (A-6): the in-flight attempt number (1..3). Additive + optional —
+   * older snapshots simply have none and the question starts at attempt 1
+   * (the pre-TL-13 behavior). A refresh mid-question no longer resets the
+   * F-ladder, and a wrong-then-reload answer can never count as first-try.
+   */
+  attemptNo?: number;
 }
 
 export interface StationWalkSnapshot {

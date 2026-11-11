@@ -26,6 +26,23 @@ describe('bundled chapters', () => {
     // TASK-LEARNING-06: chapter 01 (kana, L1) precedes the conversation chapter (L2).
     expect(listChapters().map((c) => c.slug)).toEqual(['kana-foundation-01', 'first-meeting-01']);
   });
+
+  /* TASK-LEARNING-13 (progress audit A-5): the kana bank shipped 80 exercise
+   * ids with TWO different definitions — Object.fromEntries silently kept the
+   * last, so edits to the shadowed copies were no-ops (live-reproduced while
+   * auditing). The bank is deduped now; this gate keeps it that way. The check
+   * must run on the ARRAY (the chapter record collapses duplicates before
+   * validation could ever see them). */
+  it('banks every exercise id exactly once (no silent shadowing — TL-13 A-5)', async () => {
+    const { KANA_EXERCISES } = await import('@/modules/curriculum/content/chapter-kana01.exercises');
+    const seen = new Map<string, number>();
+    for (const ex of KANA_EXERCISES) seen.set(ex.id, (seen.get(ex.id) ?? 0) + 1);
+    const dups = [...seen.entries()].filter(([, n]) => n > 1);
+    expect(dups, `duplicate exercise ids: ${dups.map(([id]) => id).join(', ')}`).toEqual([]);
+    const fmSeen = new Map<string, number>();
+    for (const ex of FM01_EXERCISES) fmSeen.set(ex.id, (fmSeen.get(ex.id) ?? 0) + 1);
+    expect([...fmSeen.entries()].filter(([, n]) => n > 1)).toEqual([]);
+  });
 });
 
 describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {

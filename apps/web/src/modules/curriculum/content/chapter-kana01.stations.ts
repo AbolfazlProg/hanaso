@@ -132,17 +132,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h1-listening',
-        exerciseIds: [
-          'ex-kana-h1-lis-hira-a',
-          'ex-kana-h1-lis-hira-i',
-          'ex-kana-h1-lis-hira-u',
-          'ex-kana-h1-lis-hira-e',
-          'ex-kana-h1-lis-hira-o',
-        ],
-      },
-      {
         kind: 'example-set',
         id: 'blk-stn-kana-h1-reading',
         examples: [
@@ -284,17 +273,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h2-listening',
-        exerciseIds: [
-          'ex-kana-h2-lis-hira-ka',
-          'ex-kana-h2-lis-hira-ki',
-          'ex-kana-h2-lis-hira-ku',
-          'ex-kana-h2-lis-hira-ke',
-          'ex-kana-h2-lis-hira-ko',
-        ],
-      },
-      {
         kind: 'example-set',
         id: 'blk-stn-kana-h2-reading',
         examples: [
@@ -418,17 +396,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h3-rcl-hira-su',
           'ex-kana-h3-rcl-hira-se',
           'ex-kana-h3-rcl-hira-so',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h3-listening',
-        exerciseIds: [
-          'ex-kana-h3-lis-hira-sa',
-          'ex-kana-h3-lis-hira-shi',
-          'ex-kana-h3-lis-hira-su',
-          'ex-kana-h3-lis-hira-se',
-          'ex-kana-h3-lis-hira-so',
         ],
       },
       {
@@ -1009,17 +976,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h8-listening',
-        exerciseIds: [
-          'ex-kana-h8-lis-hira-na',
-          'ex-kana-h8-lis-hira-ni',
-          'ex-kana-h8-lis-hira-nu',
-          'ex-kana-h8-lis-hira-ne',
-          'ex-kana-h8-lis-hira-no',
-        ],
-      },
-      {
         kind: 'example-set',
         id: 'blk-stn-kana-h8-reading',
         examples: [
@@ -1157,17 +1113,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h9-listening',
-        exerciseIds: [
-          'ex-kana-h9-lis-hira-ta',
-          'ex-kana-h9-lis-hira-chi',
-          'ex-kana-h9-lis-hira-tsu',
-          'ex-kana-h9-lis-hira-te',
-          'ex-kana-h9-lis-hira-to',
-        ],
-      },
-      {
         kind: 'example-set',
         id: 'blk-stn-kana-h9-reading',
         examples: [
@@ -1289,17 +1234,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h10-rcl-hira-mu',
           'ex-kana-h10-rcl-hira-me',
           'ex-kana-h10-rcl-hira-mo',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h10-listening',
-        exerciseIds: [
-          'ex-kana-h10-lis-hira-ma',
-          'ex-kana-h10-lis-hira-mi',
-          'ex-kana-h10-lis-hira-mu',
-          'ex-kana-h10-lis-hira-me',
-          'ex-kana-h10-lis-hira-mo',
         ],
       },
       {
@@ -1474,17 +1408,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h11-listening',
-        exerciseIds: [
-          'ex-kana-h11-lis-hira-ra',
-          'ex-kana-h11-lis-hira-ri',
-          'ex-kana-h11-lis-hira-ru',
-          'ex-kana-h11-lis-hira-re',
-          'ex-kana-h11-lis-hira-ro',
-        ],
-      },
-      {
         kind: 'example-set',
         id: 'blk-stn-kana-h11-reading',
         examples: [
@@ -1627,17 +1550,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h12-rcl-hira-fu',
           'ex-kana-h12-rcl-hira-he',
           'ex-kana-h12-rcl-hira-ho',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h12-listening',
-        exerciseIds: [
-          'ex-kana-h12-lis-hira-ha',
-          'ex-kana-h12-lis-hira-hi',
-          'ex-kana-h12-lis-hira-fu',
-          'ex-kana-h12-lis-hira-he',
-          'ex-kana-h12-lis-hira-ho',
         ],
       },
       {
@@ -2114,17 +2026,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k1-listening',
-        exerciseIds: [
-          'ex-kana-k1-lis-kata-a',
-          'ex-kana-k1-lis-kata-i',
-          'ex-kana-k1-lis-kata-u',
-          'ex-kana-k1-lis-kata-e',
-          'ex-kana-k1-lis-kata-o',
-        ],
-      },
-      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-k1-wrapup',
         titleFa: 'ردیف ア + طرحوارهٔ قرینه‌گری — جمع‌بندی',
@@ -2200,17 +2101,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k2-rcl-kata-tsu',
           'ex-kana-k2-rcl-kata-te',
           'ex-kana-k2-rcl-kata-to',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k2-listening',
-        exerciseIds: [
-          'ex-kana-k2-lis-kata-ta',
-          'ex-kana-k2-lis-kata-chi',
-          'ex-kana-k2-lis-kata-tsu',
-          'ex-kana-k2-lis-kata-te',
-          'ex-kana-k2-lis-kata-to',
         ],
       },
       {
@@ -2320,17 +2210,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k3-rcl-kata-ru',
           'ex-kana-k3-rcl-kata-re',
           'ex-kana-k3-rcl-kata-ro',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k3-listening',
-        exerciseIds: [
-          'ex-kana-k3-lis-kata-ra',
-          'ex-kana-k3-lis-kata-ri',
-          'ex-kana-k3-lis-kata-ru',
-          'ex-kana-k3-lis-kata-re',
-          'ex-kana-k3-lis-kata-ro',
         ],
       },
       {
@@ -2466,17 +2345,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k4-listening',
-        exerciseIds: [
-          'ex-kana-k4-lis-kata-sa',
-          'ex-kana-k4-lis-kata-shi',
-          'ex-kana-k4-lis-kata-su',
-          'ex-kana-k4-lis-kata-se',
-          'ex-kana-k4-lis-kata-so',
-        ],
-      },
-      {
         kind: 'example-set',
         id: 'blk-stn-kana-k4-reading',
         examples: [
@@ -2593,17 +2461,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k5-rcl-kata-fu',
           'ex-kana-k5-rcl-kata-he',
           'ex-kana-k5-rcl-kata-ho',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k5-listening',
-        exerciseIds: [
-          'ex-kana-k5-lis-kata-ha',
-          'ex-kana-k5-lis-kata-hi',
-          'ex-kana-k5-lis-kata-fu',
-          'ex-kana-k5-lis-kata-he',
-          'ex-kana-k5-lis-kata-ho',
         ],
       },
       {
@@ -2827,17 +2684,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k7-rcl-kata-ku',
           'ex-kana-k7-rcl-kata-ke',
           'ex-kana-k7-rcl-kata-ko',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k7-listening',
-        exerciseIds: [
-          'ex-kana-k7-lis-kata-ka',
-          'ex-kana-k7-lis-kata-ki',
-          'ex-kana-k7-lis-kata-ku',
-          'ex-kana-k7-lis-kata-ke',
-          'ex-kana-k7-lis-kata-ko',
         ],
       },
       {
@@ -3097,17 +2943,6 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k9-listening',
-        exerciseIds: [
-          'ex-kana-k9-lis-kata-ma',
-          'ex-kana-k9-lis-kata-mi',
-          'ex-kana-k9-lis-kata-mu',
-          'ex-kana-k9-lis-kata-me',
-          'ex-kana-k9-lis-kata-mo',
-        ],
-      },
-      {
         kind: 'example-set',
         id: 'blk-stn-kana-k9-reading',
         examples: [
@@ -3308,17 +3143,6 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k11-rcl-kata-nu',
           'ex-kana-k11-rcl-kata-ne',
           'ex-kana-k11-rcl-kata-no',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-k11-listening',
-        exerciseIds: [
-          'ex-kana-k11-lis-kata-na',
-          'ex-kana-k11-lis-kata-ni',
-          'ex-kana-k11-lis-kata-nu',
-          'ex-kana-k11-lis-kata-ne',
-          'ex-kana-k11-lis-kata-no',
         ],
       },
       {
