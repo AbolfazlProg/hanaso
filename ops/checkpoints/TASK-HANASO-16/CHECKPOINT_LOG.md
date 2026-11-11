@@ -34,3 +34,9 @@
 ## قدم بعدی
 
 CP-06: کامیت پین انتشار (TARGET_SHA → کامیت محتوای نهایی) + OWNER-COMMAND v9 + راهنمای فارسی v9 + RELEASE_MANIFEST + Git Bundle تحویل (Push از سندباکس ممکن نیست — توکن با بازیافت سندباکس حذف شد؛ تحویل با الگوی Bundle جاافتادهٔ پروژه).
+
+## CP-06 — نهایی‌سازی انتشار (۲۰۲۶-۱۱-۱۱)
+
+- کامیت پین: `ee29578` (updater/bootstrap → 1.0.0-hanaso16-r01 @ `840b993`)؛ OWNER-COMMAND v9 + راهنمای فارسی v9 (R=`ee29578` · W=`7e45d4f9…`) + RELEASE_MANIFEST (فهرست کامل کامیت‌ها، Migration=هیچ، شرط انتشار، دستور Bundle).
+- فیکسچر run-deploy05 به وضعیت واقعی Production به‌روز شد (live=tl13-r01 → target=hanaso16-r01).
+- تحویل: `hanaso-hanaso16.bundle` + دستور Push مالک (سندباکس بدون توکن).

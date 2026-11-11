@@ -1,6 +1,6 @@
 # CURRENT_STATE — TASK-HANASO-16 (Learning Journey + Deployment Recovery)
 
-> آخرین به‌روزرسانی: **CP-05 (پیاده‌سازی کامل + Installer v3) · ۲۰۲۶-۱۱-۱۱**
+> آخرین به‌روزرسانی: **CP-06 (نهایی) · ۲۰۲۶-۱۱-۱۱ — انتشار 1.0.0-hanaso16-r01 آماده (Pin نهایی + Bundle)**
 > شاخه محصول: `hanaso16-learning-journey` (ایجادشده از `origin/tl14-foundations-redesign` @ `9a466644` — جدیدترین Remote؛ شامل کل TL-14 و تغییرات معوق `1.0.0-tl14-r01` @ `935010f8`)
 > مبنای انتشار معوق: `1.0.0-tl14-r01` (TL-14 کامل: دک‌های اسلایدی ۸ ایستگاه قواعد + ۶ گیت محتوایی + رفع ۱۰۲ تخلف؛ ۶۲۶/۶۲۶ تست سبز)
 
@@ -12,7 +12,11 @@
 | بخش ۲-۷ — معماری Chapter→Section→Rows→Lessons + پیاده‌سازی | ✅ CP-02..04 — IA + Resolverها + UI + رفع باگ learner-id |
 | بخش ۹ — تست‌های اجباری Learning Journey | ✅ — `TEST_REPORT.md` (۶۵۱ واحد + ۹/۹ سناریوی مرورگر) |
 | بخش ۸ — اصلاح Installer سه‌سطحی + انتشار معوق | ✅ CP-05 — updater v3.0 + ۱۴۰/۱۴۰ سندباکس — `DEPLOYMENT_GATE_FIX.md` |
-| بخش ۱۰-۱۲ — Release، Bundle، گزارش نهایی | ⏳ CP-06 (پین + OWNER-COMMAND v9 + Bundle) |
+| بخش ۱۰-۱۲ — Release، Bundle، گزارش نهایی | ✅ CP-06 — `RELEASE_MANIFEST.md` + OWNER-COMMAND v9 + راهنمای فارسی v9 + Bundle |
+
+## پین‌های نهایی
+
+هدف: `1.0.0-hanaso16-r01` @ `840b993` · ابزار: `ee29578` · bootstrap sha256: `7e45d4f9…` · **شرط انتشار: تعمیر خط مقدم VPS توسط مالک** (هر دو دامنه فعلاً برای دنیا قطعند — شواهد در DEPLOYMENT_FAILURE_ANALYSIS §۲).
 
 ## وضعیت بازیابی‌شده (خلاصهٔ واقعی)
 
