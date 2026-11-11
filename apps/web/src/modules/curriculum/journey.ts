@@ -249,9 +249,7 @@ export function resolveSections(journey: Journey): SectionsView {
     const core = g.nodes.filter((n) => n.station.core);
     const coreCompleted = core.filter((n) => DONE.has(n.availability)).length;
     const rows: SectionRow[] = g.nodes.map((node) => ({ node, action: rowAction(node.availability) }));
-    const hasLive = g.nodes.some(
-      (n) => n.availability === 'in_progress' || n.availability === 'needs_retry',
-    );
+    const hasLive = g.nodes.some((n) => n.availability === 'in_progress' || n.availability === 'needs_retry');
     const isFocus = focus !== null && g.nodes.some((n) => n.station.slug === focus);
     const allLocked = g.nodes.every((n) => n.availability === 'locked');
     const status: SectionStatus =

@@ -29,16 +29,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  ArrowRight,
-  CircleCheck,
-  Compass,
-  Diamond,
-  Lock,
-  Play,
-  Repeat2,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, CircleCheck, Compass, Diamond, Lock, Play, Repeat2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 
 /* ------------------------------------------------------------------ DTOs */
@@ -97,12 +88,19 @@ function RowMarker({ action }: { action: SectionRowAction }) {
       );
     case 'continue':
       return (
-        <span className={`${box} border-ink bg-paper text-ink shadow-[0_0_0_3px_var(--color-surface-warm)]`} aria-hidden>
+        <span
+          className={`${box} border-ink bg-paper text-ink shadow-[0_0_0_3px_var(--color-surface-warm)]`}
+          aria-hidden
+        >
           <Play className="size-3.5 fill-current" />
         </span>
       );
     case 'start':
-      return <span className={`${box} border-ink bg-paper text-ink`} aria-hidden><Compass className="size-4" /></span>;
+      return (
+        <span className={`${box} border-ink bg-paper text-ink`} aria-hidden>
+          <Compass className="size-4" />
+        </span>
+      );
     default:
       return (
         <span className={`${box} border-dashed border-ink-faint bg-paper text-ink-faint`} aria-hidden>
@@ -214,9 +212,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
           ) : (
             <span>{fa.curriculum.sectionStatusInProgress}</span>
           )}
-          {section.coreCompleted > 0 ? (
-            <span>{fa.curriculum.sectionRowsDone(section.coreCompleted)}</span>
-          ) : null}
+          {section.coreCompleted > 0 ? <span>{fa.curriculum.sectionRowsDone(section.coreCompleted)}</span> : null}
         </p>
       </header>
 

@@ -4,15 +4,15 @@
 
 ## ۱) جدول نگاشت مفهوم → داده
 
-| مفهوم مأموریت | داده/موتور موجود | ذخیره‌سازی | تغییر HANASO-16 |
-| --- | --- | --- | --- |
-| Attempted (تلاش) | `StationState.attempts` (incrementAttempts) + مخزن Attemptهای تسلط | Postgres (یا in-memory dev) | هیچ |
-| Completed (درس/ایستگاه) | `StationState.status ∈ {completed, skipped, needs_retry}` — واقعیت walk (island §۹) | همان | هیچ |
-| Completed (بخش) | **Derived**: همهٔ coreهای Section در PREREQ_OK | محاسباتی — هرگز ذخیره نمی‌شود | تابع خالص `resolveSections` |
-| Completed (فصل) | `ChapterState.status = 'stations_complete'` (پس از همهٔ ایستگاه‌ها) | همان | هیچ |
-| Mastered/Understood (فصل) | `ChapterState.status = 'understood'` فقط با قبولی گیت (DD-048: «تمام کرد» ≠ «فهمیدم») | همان | هیچ |
-| Station Completion + مهر AIZEN | موتور StationRunner/progress-machine (مستقل از گیت فصل) | همان | بدون تغییر — نشانگر سطح ایستگاه، جدا از نشانگر بخش/فصل |
-| FSRS | کارت‌های fsrsItems در تکمیل ایستگاه — قرارداد not-integrated | همان | هیچ |
+| مفهوم مأموریت                  | داده/موتور موجود                                                                      | ذخیره‌سازی                    | تغییر HANASO-16                                        |
+| ------------------------------ | ------------------------------------------------------------------------------------- | ----------------------------- | ------------------------------------------------------ |
+| Attempted (تلاش)               | `StationState.attempts` (incrementAttempts) + مخزن Attemptهای تسلط                    | Postgres (یا in-memory dev)   | هیچ                                                    |
+| Completed (درس/ایستگاه)        | `StationState.status ∈ {completed, skipped, needs_retry}` — واقعیت walk (island §۹)   | همان                          | هیچ                                                    |
+| Completed (بخش)                | **Derived**: همهٔ coreهای Section در PREREQ_OK                                        | محاسباتی — هرگز ذخیره نمی‌شود | تابع خالص `resolveSections`                            |
+| Completed (فصل)                | `ChapterState.status = 'stations_complete'` (پس از همهٔ ایستگاه‌ها)                   | همان                          | هیچ                                                    |
+| Mastered/Understood (فصل)      | `ChapterState.status = 'understood'` فقط با قبولی گیت (DD-048: «تمام کرد» ≠ «فهمیدم») | همان                          | هیچ                                                    |
+| Station Completion + مهر AIZEN | موتور StationRunner/progress-machine (مستقل از گیت فصل)                               | همان                          | بدون تغییر — نشانگر سطح ایستگاه، جدا از نشانگر بخش/فصل |
+| FSRS                           | کارت‌های fsrsItems در تکمیل ایستگاه — قرارداد not-integrated                          | همان                          | هیچ                                                    |
 
 ## ۲) قواعد مأموریت §۵ → مکانیزم برآورده‌شونده
 

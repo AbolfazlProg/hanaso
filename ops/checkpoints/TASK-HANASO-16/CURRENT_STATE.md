@@ -6,13 +6,13 @@
 
 ## مأموریت در یک نگاه
 
-| هدف | وضعیت |
-| --- | --- |
-| بخش ۱ — بازیابی وضعیت واقعی (Git/Checkpoint/Production) | ✅ CP-01 — `LEARNING_JOURNEY_AUDIT.md` + `DEPLOYMENT_FAILURE_ANALYSIS.md` |
-| بخش ۲-۷ — معماری Chapter→Section→Rows→Lessons + پیاده‌سازی | ✅ CP-02..04 — IA + Resolverها + UI + رفع باگ learner-id |
-| بخش ۹ — تست‌های اجباری Learning Journey | ✅ — `TEST_REPORT.md` (۶۵۱ واحد + ۹/۹ سناریوی مرورگر) |
-| بخش ۸ — اصلاح Installer سه‌سطحی + انتشار معوق | ✅ CP-05 — updater v3.0 + ۱۴۰/۱۴۰ سندباکس — `DEPLOYMENT_GATE_FIX.md` |
-| بخش ۱۰-۱۲ — Release، Bundle، گزارش نهایی | ✅ CP-06 — `RELEASE_MANIFEST.md` + OWNER-COMMAND v9 + راهنمای فارسی v9 + Bundle |
+| هدف                                                        | وضعیت                                                                           |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| بخش ۱ — بازیابی وضعیت واقعی (Git/Checkpoint/Production)    | ✅ CP-01 — `LEARNING_JOURNEY_AUDIT.md` + `DEPLOYMENT_FAILURE_ANALYSIS.md`       |
+| بخش ۲-۷ — معماری Chapter→Section→Rows→Lessons + پیاده‌سازی | ✅ CP-02..04 — IA + Resolverها + UI + رفع باگ learner-id                        |
+| بخش ۹ — تست‌های اجباری Learning Journey                    | ✅ — `TEST_REPORT.md` (۶۵۱ واحد + ۹/۹ سناریوی مرورگر)                           |
+| بخش ۸ — اصلاح Installer سه‌سطحی + انتشار معوق              | ✅ CP-05 — updater v3.0 + ۱۴۰/۱۴۰ سندباکس — `DEPLOYMENT_GATE_FIX.md`            |
+| بخش ۱۰-۱۲ — Release، Bundle، گزارش نهایی                   | ✅ CP-06 — `RELEASE_MANIFEST.md` + OWNER-COMMAND v9 + راهنمای فارسی v9 + Bundle |
 
 ## پین‌های نهایی
 

@@ -165,7 +165,9 @@ export function JourneyHome(props: JourneyHomeProps) {
           ) : (
             <>
               {coreCompleted > 0 ? fa.curriculum.continueLearning : fa.curriculum.startLearning}
-              {nextStationTitleFa ? <span className="text-body font-bold text-indigo-mist">— {nextStationTitleFa}</span> : null}
+              {nextStationTitleFa ? (
+                <span className="text-body font-bold text-indigo-mist">— {nextStationTitleFa}</span>
+              ) : null}
               <ArrowLeft aria-hidden className="size-5" />
             </>
           )}
@@ -191,7 +193,9 @@ export function JourneyHome(props: JourneyHomeProps) {
             {fa.curriculum.teaserTitle}
           </h2>
           <p className="mt-2 text-body font-bold text-ink">{reveal.teaser.titleFa}</p>
-          <p className="mt-1 max-w-prose text-small leading-[var(--leading-fa)] text-ink-soft">{reveal.teaser.topicFa}</p>
+          <p className="mt-1 max-w-prose text-small leading-[var(--leading-fa)] text-ink-soft">
+            {reveal.teaser.topicFa}
+          </p>
           <p className="mt-3 text-caption text-ink-faint">{fa.curriculum.teaserHint}</p>
         </aside>
       ) : null}

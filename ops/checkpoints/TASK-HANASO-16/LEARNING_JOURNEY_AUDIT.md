@@ -4,12 +4,12 @@
 
 ## ۱) ساختار موجود — چارچوب داده
 
-| مفهوم | Entity موجود | توضیح |
-| --- | --- | --- |
-| فصل | `Chapter` (`modules/curriculum/types.ts`) | slug، titleFa، canDoFa، sceneFa، `stations[]`، `units?`، `prerequisiteChapterSlug?` |
-| بخش/جزیره | `ChapterUnit` (`units?` — DD-123/T-79) | **از قبل موجود**: slug + titleFa + summaryFa + stationSlugs — «گروه‌بندی صرف، هرگز گیت راه رفتن نیست» |
-| ردیف/درس | `Station` (≡ Lesson) | واحد راه‌رفتن واقعی: order + prerequisites + blocks + completion criteria |
-| محتوا | `TeachingBlock[]` داخل Station | دک‌های اسلایدی TL-14 (rule-prereq/contrast/step/…) + تمرین‌ها |
+| مفهوم     | Entity موجود                              | توضیح                                                                                                 |
+| --------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| فصل       | `Chapter` (`modules/curriculum/types.ts`) | slug، titleFa، canDoFa، sceneFa، `stations[]`، `units?`، `prerequisiteChapterSlug?`                   |
+| بخش/جزیره | `ChapterUnit` (`units?` — DD-123/T-79)    | **از قبل موجود**: slug + titleFa + summaryFa + stationSlugs — «گروه‌بندی صرف، هرگز گیت راه رفتن نیست» |
+| ردیف/درس  | `Station` (≡ Lesson)                      | واحد راه‌رفتن واقعی: order + prerequisites + blocks + completion criteria                             |
+| محتوا     | `TeachingBlock[]` داخل Station            | دک‌های اسلایدی TL-14 (rule-prereq/contrast/step/…) + تمرین‌ها                                         |
 
 فصل‌های فعلی: `kana-foundation-01` (L1، ۳۱ ایستگاه، ۴ جزیره: H0..H6 / H7..H15 / K1..K12 / K13+گیت) و `first-meeting-01` (L2، ۲۲ ایستگاه، ۲ واحد داستانی؛ قفل با prerequisiteChapterSlug تا «understood» شدن فصل کانا).
 
@@ -32,12 +32,12 @@
 
 ## ۴) Mapping معماری جدید روی Entityهای موجود (بدون سطح جدید Data Model)
 
-| مفهوم مأموریت | Entity موجود | تغییر لازم |
-| --- | --- | --- |
-| Chapter | `Chapter` | هیچ (فعالیت از Progress استخراج می‌شود) |
-| Section | `ChapterUnit` (units[]) | هیچ تغییری در شکل داده — summaryFa نقش «هدف بخش» را دارد؛ وضعیت بخش **Derived** است (نه Stored) |
-| Rows | ایستگاه‌های همان Section به ترتیب walk | ردیف = ایستگاه؛ وضعیت ردیف همان availability موجود |
-| Lessons | `Station` + blocks | هیچ |
+| مفهوم مأموریت | Entity موجود                           | تغییر لازم                                                                                      |
+| ------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Chapter       | `Chapter`                              | هیچ (فعالیت از Progress استخراج می‌شود)                                                         |
+| Section       | `ChapterUnit` (units[])                | هیچ تغییری در شکل داده — summaryFa نقش «هدف بخش» را دارد؛ وضعیت بخش **Derived** است (نه Stored) |
+| Rows          | ایستگاه‌های همان Section به ترتیب walk | ردیف = ایستگاه؛ وضعیت ردیف همان availability موجود                                              |
+| Lessons       | `Station` + blocks                     | هیچ                                                                                             |
 
 **نتیجهٔ کلیدی ممیزی: ساختار داده از Section پشتیبانی می‌کند؛ بازطراحی principally در لایهٔ Presentation + یک Resolver خالص جدید + سیاست Reveal است.** هیچ Migration دیتابیسی لازم نیست (units از content-as-code می‌آید؛ stores فقط StationState/ChapterState دارند که دست نمی‌خورند).
 
@@ -55,13 +55,13 @@
 
 ## ۶) مسیرهای هدف پس از بازطراحی
 
-| مسیر | نقش | تغییر |
-| --- | --- | --- |
-| `/learn` | **خانهٔ Learning Journey**: فصل فعال به‌صورت خودکار + پنل Section فعال + CTA اصلی «شروع/ادامهٔ یادگیری» + آرشیو + Teaser (در صورت احراز) | بازنویسی صفحه |
-| `/learn/[chapter]/journey` | همان پنل Section برای فصل مشخص (آرشیو/مرور) + `?s=<sectionSlug>` برای دیپ‌لینک بخش | جایگزینی Trail بلند با پنل Section |
-| `/learn/[chapter]/journey/[station]` | موتور درس (StationRunner) | بدون تغییر رفتاری |
-| `/learn/[chapter]` | معرفی فصل (can-do + صحنه) | می‌ماند؛ از هدر پنل لینک می‌شود؛ دیگر گام اجباری نیست |
-| `/learn/[chapter]/dialogue` · `/assessment` · `/complete` | مراحل A و D و صفحهٔ اتمام | بدون تغییر |
+| مسیر                                                      | نقش                                                                                                                                      | تغییر                                                 |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `/learn`                                                  | **خانهٔ Learning Journey**: فصل فعال به‌صورت خودکار + پنل Section فعال + CTA اصلی «شروع/ادامهٔ یادگیری» + آرشیو + Teaser (در صورت احراز) | بازنویسی صفحه                                         |
+| `/learn/[chapter]/journey`                                | همان پنل Section برای فصل مشخص (آرشیو/مرور) + `?s=<sectionSlug>` برای دیپ‌لینک بخش                                                       | جایگزینی Trail بلند با پنل Section                    |
+| `/learn/[chapter]/journey/[station]`                      | موتور درس (StationRunner)                                                                                                                | بدون تغییر رفتاری                                     |
+| `/learn/[chapter]`                                        | معرفی فصل (can-do + صحنه)                                                                                                                | می‌ماند؛ از هدر پنل لینک می‌شود؛ دیگر گام اجباری نیست |
+| `/learn/[chapter]/dialogue` · `/assessment` · `/complete` | مراحل A و D و صفحهٔ اتمام                                                                                                                | بدون تغییر                                            |
 
 قواعد وضعیت Section (Derived از availability ردیف‌ها):
 `completed` = همهٔ coreهای بخش انجام‌شده · `in_progress` = برخی انجام‌شده یا شامل nextStation/in_progress/needs_retry · `locked` = همهٔ ردیف‌ها locked · `upcoming` = بخش بعدیِ فعلیِ کاربر که هنوز ردیفِ در دسترسی ندارد (نمایش با دکمهٔ «بخش بعدی» و ردیف‌های قفل).

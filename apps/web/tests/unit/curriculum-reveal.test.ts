@@ -184,7 +184,10 @@ describe('resolveSections — one section at a time, derived from availability',
     const island1Core = island1.stationSlugs
       .map((slug) => chapter.stations.find((s) => s.slug === slug)!)
       .filter((s) => s.core);
-    const journey = journeyOf(chapter, island1Core.map((s) => stationState(s.slug, 'completed')));
+    const journey = journeyOf(
+      chapter,
+      island1Core.map((s) => stationState(s.slug, 'completed')),
+    );
     const sections = resolveSections(journey);
 
     expect(sections.sections[0]!.status).toBe('completed');
@@ -201,16 +204,26 @@ describe('resolveSections — one section at a time, derived from availability',
       .map((slug) => chapter.stations.find((s) => s.slug === slug)!)
       .filter((s) => s.core)
       .slice(0, -1); // all but the last
-    const sections = resolveSections(journeyOf(chapter, oneShort.map((s) => stationState(s.slug, 'completed'))));
+    const sections = resolveSections(
+      journeyOf(
+        chapter,
+        oneShort.map((s) => stationState(s.slug, 'completed')),
+      ),
+    );
     expect(sections.sections[0]!.status).toBe('in_progress'); // one core row short
     expect(sections.sections[0]!.coreCompleted).toBe(oneShort.length);
   });
 
   it('completed rows turn into review CTAs (returning without re-recording)', () => {
-    const island1 = chapter.units![0]!.stationSlugs
-      .map((slug) => chapter.stations.find((s) => s.slug === slug)!)
+    const island1 = chapter
+      .units![0]!.stationSlugs.map((slug) => chapter.stations.find((s) => s.slug === slug)!)
       .filter((s) => s.core);
-    const sections = resolveSections(journeyOf(chapter, island1.map((s) => stationState(s.slug, 'completed'))));
+    const sections = resolveSections(
+      journeyOf(
+        chapter,
+        island1.map((s) => stationState(s.slug, 'completed')),
+      ),
+    );
     expect(sections.sections[0]!.rows.every((r) => r.action === 'review' || !r.node.station.core)).toBe(true);
   });
 
@@ -218,10 +231,7 @@ describe('resolveSections — one section at a time, derived from availability',
     const h0 = chapter.stations.find((s) => s.slug === 'stn-kana-h0')!;
     const h1 = chapter.stations.find((s) => s.slug === 'stn-kana-h1')!;
     const sections = resolveSections(
-      journeyOf(chapter, [
-        stationState(h0.slug, 'completed'),
-        stationState(h1.slug, 'in_progress'),
-      ]),
+      journeyOf(chapter, [stationState(h0.slug, 'completed'), stationState(h1.slug, 'in_progress')]),
     );
     expect(sections.activeIndex).toBe(0);
     const row = sections.sections[0]!.rows.find((r) => r.node.station.slug === h1.slug)!;
