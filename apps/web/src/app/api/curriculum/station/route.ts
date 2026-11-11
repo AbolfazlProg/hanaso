@@ -233,6 +233,17 @@ export async function POST(req: Request) {
     } else if (exercise.type === 'kana-decode' && exercise.promptJa) {
       const urls = hostWordAudioUrls(exercise.promptJa);
       if (urls) outcome.correctAudio = { what: exercise.promptJa, ...urls };
+    } else if (exercise.type === 'rule-listening' && exercise.promptJa) {
+      /* TL-13 (T1): the WORD recording is the question; the reveal carries the
+       * word's own audio + its reading (glyph + Persian) — the word never
+       * crossed the client boundary pre-answer (station page strips it). */
+      const urls = hostWordAudioUrls(exercise.promptJa);
+      if (urls) outcome.correctAudio = { what: exercise.promptJa, ...urls };
+      outcome.correctReading = {
+        glyph: exercise.promptJa,
+        fa: exercise.promptJaReading ?? '',
+        latin: '',
+      };
     }
     await store.incrementAttempts(userId, station.slug);
     // TASK-LEARNING-06: analytics contract (in-memory store — pipeline = M6) +

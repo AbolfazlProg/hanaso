@@ -1,5 +1,5 @@
-HANASO — OWNER ONE-COMMAND UPDATE (v6)
-TASK-LEARNING-10 CP-04 · 2026-11-10 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
+HANASO — OWNER ONE-COMMAND UPDATE (v7)
+TASK-LEARNING-13 CP-04 · 2026-11-11 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
 
 WHAT THIS IS
   The single copy-paste command that installs or updates HANASO on the VPS
@@ -7,17 +7,29 @@ WHAT THIS IS
   is public and everything arrives over anonymous HTTPS.
 
 PINS (immutable — never drift to "latest")
-  target release : 1.0.0-tl10-r02 @ commit 816eb90cdf3c5084c4d410fc280b394b071283de
-                   (TASK-LEARNING-10 CP-04 — everything in r01 PLUS the fix for the
-                   completed-station SECOND-refresh walk restart: the first
-                   revisit planted a step-0 walk snapshot before the server
-                   resume landed, so the next refresh silently restarted the
-                   station from block 1; the server's completion record now
-                   wins over an empty local walk and the revisit never plants
-                   the snapshot — 594/594 tests green)
-  deploy tooling : commit 7e7fbbb7b61348f34cd3ff534e85741f846ee528 (branch tl10-quiz-ux)
+  target release : 1.0.0-tl13-r01 @ commit 4d0827ad7d4fdf87fd920b238f542629371e7288
+                   (TASK-LEARNING-13 — the three owner goals, all browser-verified
+                   on the real dev server; 600/600 unit tests green:
+                   (1) progress/completion integrity A-1..A-8 — the grade button
+                   can no longer double-submit (a 4x rapid click on «بررسی پاسخ»
+                   now records exactly ONE attempt), a network drop during the
+                   completion POST now shows an honest error + retry button
+                   instead of silently losing the record, re-entering a station
+                   applies the server's progress, and refreshing a COMPLETED
+                   station keeps the completion panel with the full rail and
+                   Persian-digit counters («۸ / ۸»);
+                   (2) the kana writing page no longer auto-scrolls when the
+                   stroke animation ends — the page stays exactly where it is,
+                   Repeat does not jump, and CTAs scroll only when the user
+                   clicks them (measured: scrollY 801→0 at animation end);
+                   (3) Japanese foundations rule lessons — 7 kana-chapter
+                   stations (H4 vowel length, H5 dakuten, H6 yōon, H7 ん, H13
+                   sokuon, H15 handakuten, K8 chōonpu) rebuilt on the 8-stage
+                   template with a new listening exercise type driven by the
+                   committed hostword audio assets)
+  deploy tooling : commit 4c9c58f3008865656d4f049cf0f93979def19462 (branch tl13-learning-integrity)
   bootstrap file : infra/deploy/bootstrap-hanaso.sh
-                   sha256 ab6db4785257d278d757a5f3d3766b16e95047bcb79869c4653da151865dcaaf
+                   sha256 2db40838ad565d95340bce376838146898a7608c5221692c4abedd259a60b262
 
 DOWNLOAD PATHS (tried in this order — the design follows the owner's live VPS
 evidence of 2026-11-08: github.com git OK · api.github.com 200 · codeload 200 ·
@@ -34,7 +46,7 @@ raw 200 only on 185.199.108.133, SSL timeouts on the other three raw IPs):
 
 THE COMMAND — copy this ONE line and run it on the VPS as root:
 
-bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=7e7fbbb7b61348f34cd3ff534e85741f846ee528; W=ab6db4785257d278d757a5f3d3766b16e95047bcb79869c4653da151865dcaaf; P=infra/deploy/bootstrap-hanaso.sh; command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found — install once: apt-get install -y curl" >&2; exit 1; }; command -v sha256sum >/dev/null 2>&1 || { echo "ERROR: sha256sum not found (coreutils)" >&2; exit 1; }; T="$(mktemp /tmp/hanaso-bootstrap.XXXXXX.sh)"; X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"; trap "rm -f \"$T\"; rm -rf \"$X\"" EXIT; GOT=""; echo "[hanaso] pinned bootstrap commit ${R:0:12} — download paths: api.github.com -> codeload.github.com -> raw(pinned IP 185.199.108.133) -> raw(dns)"; if curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/${H}/contents/${P}?ref=${R}" -o "$T"; then GOT="api.github.com"; else echo "[hanaso] 1/4 api.github.com FAILED (real curl error above) — trying codeload" >&2; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/${H}/tar.gz/${R}" -o "$X/src.tgz"; then if tar -xzf "$X/src.tgz" -C "$X" --strip-components=1 "hanaso-${R}/${P}" 2>/dev/null; then mv "$X/${P}" "$T"; GOT="codeload.github.com"; elif tar -xzf "$X/src.tgz" -C "$X"; then mv "$X/hanaso-${R}/${P}" "$T"; GOT="codeload.github.com"; else echo "[hanaso] codeload tarball fetched but extraction FAILED (tar error above)" >&2; fi; else echo "[hanaso] 2/4 codeload.github.com FAILED (real curl error above) — trying raw with the pinned IP" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --resolve raw.githubusercontent.com:443:185.199.108.133 --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via pinned IP 185.199.108.133"; else echo "[hanaso] 3/4 raw(pinned IP) FAILED (real curl error above) — trying raw via DNS" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via DNS"; else echo "[hanaso] 4/4 raw(dns) FAILED (real curl error above)" >&2; fi; fi; [ -n "$GOT" ] || { echo "ERROR: ALL bootstrap download paths failed — the real errors are printed above; NOTHING was executed or changed" >&2; exit 1; }; A="$(sha256sum "$T" | cut -d" " -f1)"; if [ "$A" != "$W" ]; then echo "ERROR: bootstrap SHA-256 MISMATCH — got ${A}, want ${W} (via ${GOT}). NOTHING was executed; nothing was changed" >&2; exit 1; fi; echo "[hanaso] bootstrap verified — sha256 ${A:0:16} OK (via ${GOT}) — starting pinned installer"; HANASO_DEPLOY_SHA="$R" bash "$T" "$@"' hanaso-updater
+bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=4c9c58f3008865656d4f049cf0f93979def19462; W=2db40838ad565d95340bce376838146898a7608c5221692c4abedd259a60b262; P=infra/deploy/bootstrap-hanaso.sh; command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found — install once: apt-get install -y curl" >&2; exit 1; }; command -v sha256sum >/dev/null 2>&1 || { echo "ERROR: sha256sum not found (coreutils)" >&2; exit 1; }; T="$(mktemp /tmp/hanaso-bootstrap.XXXXXX.sh)"; X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"; trap "rm -f \"$T\"; rm -rf \"$X\"" EXIT; GOT=""; echo "[hanaso] pinned bootstrap commit ${R:0:12} — download paths: api.github.com -> codeload.github.com -> raw(pinned IP 185.199.108.133) -> raw(dns)"; if curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/${H}/contents/${P}?ref=${R}" -o "$T"; then GOT="api.github.com"; else echo "[hanaso] 1/4 api.github.com FAILED (real curl error above) — trying codeload" >&2; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/${H}/tar.gz/${R}" -o "$X/src.tgz"; then if tar -xzf "$X/src.tgz" -C "$X" --strip-components=1 "hanaso-${R}/${P}" 2>/dev/null; then mv "$X/${P}" "$T"; GOT="codeload.github.com"; elif tar -xzf "$X/src.tgz" -C "$X"; then mv "$X/hanaso-${R}/${P}" "$T"; GOT="codeload.github.com"; else echo "[hanaso] codeload tarball fetched but extraction FAILED (tar error above)" >&2; fi; else echo "[hanaso] 2/4 codeload.github.com FAILED (real curl error above) — trying raw with the pinned IP" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --resolve raw.githubusercontent.com:443:185.199.108.133 --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via pinned IP 185.199.108.133"; else echo "[hanaso] 3/4 raw(pinned IP) FAILED (real curl error above) — trying raw via DNS" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via DNS"; else echo "[hanaso] 4/4 raw(dns) FAILED (real curl error above)" >&2; fi; fi; [ -n "$GOT" ] || { echo "ERROR: ALL bootstrap download paths failed — the real errors are printed above; NOTHING was executed or changed" >&2; exit 1; }; A="$(sha256sum "$T" | cut -d" " -f1)"; if [ "$A" != "$W" ]; then echo "ERROR: bootstrap SHA-256 MISMATCH — got ${A}, want ${W} (via ${GOT}). NOTHING was executed; nothing was changed" >&2; exit 1; fi; echo "[hanaso] bootstrap verified — sha256 ${A:0:16} OK (via ${GOT}) — starting pinned installer"; HANASO_DEPLOY_SHA="$R" bash "$T" "$@"' hanaso-updater
 
 OPTIONAL SUBCOMMANDS (append after "hanaso-updater" at the end of the line):
   # read-only status report:      … hanaso-updater status
@@ -42,7 +54,7 @@ OPTIONAL SUBCOMMANDS (append after "hanaso-updater" at the end of the line):
 
 VERIFY AFTER THE RUN
   curl -sS https://learn.kotodama.ir/api/health
-  expected: {"ok":true,...,"version":"1.0.0-tl10-r02","commit":"816eb90cdf3c..."}
+  expected: {"ok":true,...,"version":"1.0.0-tl13-r01","commit":"4d0827ad..."}
 
 FULL OWNER GUIDE (Persian, same branch)
   docs/deployment/OWNER-ONE-COMMAND-UPDATE.fa.md

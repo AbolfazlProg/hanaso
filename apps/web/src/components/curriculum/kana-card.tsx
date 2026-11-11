@@ -251,36 +251,21 @@ export function KanaCard({
    * The numbered teaching pass finished → the ready beat (Addendum-2 §4 +
    * Addendum-3 §5: the animation is watched FIRST, then the ONE confirm).
    *
-   * TASK-HANASO-CTA-01 — the confirm now lives in the FOOTER at the end of
-   * the introduction content (after the related examples), so when the
-   * teaching pass finishes, the footer is brought into view: the learner
-   * SEES «معرفی این کاراکتر تمام شد! حالا نوبت توست.» + the CTA the moment
-   * it becomes active (the old layout had it right under the canvas, always
-   * in view — this preserves that discoverability). Only fires on the LIVE
-   * intro→ready transition; a restored «ready» stage never yanks the page.
+   * TASK-LEARNING-13 (owner order — kana writing scroll fix): when the teaching
+   * animation ends, the page STAYS EXACTLY WHERE IT IS. The old behavior
+   * auto-scrolled the CTA footer into view (live-reproduced: scrollY 0 → 801
+   * the moment the stage flipped intro→ready) — the learner was yanked past
+   * the pronunciation guide, the mnemonic story and the readable vocabulary
+   * they were still reading. The footer CTA («شروع تمرین نوشتن») now waits at
+   * the END of the introduction content, reached by the learner's OWN scroll —
+   * nothing above or below moves on its own anymore. Only USER-initiated
+   * scrolls remain: the CTA's own click still soft-scrolls the canvas into
+   * view when practice begins (Addendum-5 §1 — an explicit action).
    */
-  const ctaFooterRef = useRef<HTMLElement | null>(null);
-  const introJustFinishedRef = useRef(false);
   const onIntroDone = useCallback(() => {
     playOnce('teach-done');
-    introJustFinishedRef.current = true;
     setStage('ready');
   }, [playOnce]);
-
-  useEffect(() => {
-    if (stage !== 'ready' || !introJustFinishedRef.current) return;
-    introJustFinishedRef.current = false;
-    const el = ctaFooterRef.current;
-    if (!el || typeof window === 'undefined') return;
-    const header = document.querySelector('header.sticky');
-    const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
-    const rect = el.getBoundingClientRect();
-    // center the small footer in the viewport (minus the sticky header) so the
-    // CTA and a glimpse of the content above it are both visible
-    const top = rect.top + window.scrollY - Math.max(0, (window.innerHeight - rect.height) / 2) - headerBottom / 2 - 12;
-    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-    window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
-  }, [stage]);
 
   /**
    * Addendum-4 §3/§5 — ONE helper for EVERY practice (re)start: bumps the
@@ -1015,10 +1000,12 @@ export function KanaCard({
           divider, the one-line lead, and the ONE primary action of the page.
           Nothing (example or information) sits below it. The button keeps the
           exact proven click behavior: progress saved, soft-scroll to the top of
-          the WritingCanvas, Guided writing begins on the SAME page (no route). */}
+          the WritingCanvas, Guided writing begins on the SAME page (no route).
+          TASK-LEARNING-13: the footer is reached by the learner's OWN scroll —
+          the animation end never jumps to it anymore (the intro→ready scroll
+          was removed; see onIntroDone). */}
       {stage === 'ready' && !inPractice ? (
         <footer
-          ref={ctaFooterRef}
           className="flex flex-col items-center gap-3 border-t border-ink-faint pt-4 text-center"
           data-intro-cta-footer
         >

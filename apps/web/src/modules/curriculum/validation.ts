@@ -38,6 +38,16 @@ const RULES = {
   kanaRegistry: 'KANA-REGISTRY (CONTENT-106 — every kana-card kanaId exists in the registry)',
   kanaDecodable: 'KANA-DECODABLE (CONTENT-105 — kana text is decodable with glyphs taught by that point)',
   kanaUnitPacket: 'KANA-PACKET (CONTENT-103 — a kana unit teaches exactly one full row/ん/one rule)',
+  /*
+   * TASK-LEARNING-13 (progress audit A-4/A-5): id uniqueness gates. Both bugs
+   * shipped to production silently — 16 stations carried a duplicated listening
+   * block (same id twice → React duplicate keys + stepOfBlock ambiguity + the
+   * same 5 questions answered twice) and the kana bank carried 80 exercise ids
+   * with TWO different definitions (Object.fromEntries silently kept the last —
+   * edits to the shadowed copies were no-ops). Load-time fail-fast from now on.
+   */
+  blockIdUnique: 'BLOCK-ID-UNIQUE (TL-13 A-4 — block ids unique within a station)',
+  exerciseIdUnique: 'EXERCISE-ID-UNIQUE (TL-13 A-5 — exercise ids unique in the bank)',
 } as const;
 
 /** Validate one chapter against its level policy. Returns [] when shippable. */
@@ -119,6 +129,15 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
           message: `${s.slug}: prerequisite ${ref} has order ${p.order} >= ${s.order}`,
         });
       }
+    }
+    // TL-13 (A-4): block ids unique within the station — walk anchors
+    // (resume / return-to-teaching / skip panels) address blocks BY id.
+    const blockIds = new Set<string>();
+    for (const b of s.blocks) {
+      if (blockIds.has(b.id)) {
+        v.push({ rule: RULES.blockIdUnique, message: `${s.slug}: duplicate block id ${b.id}` });
+      }
+      blockIds.add(b.id);
     }
   }
 
