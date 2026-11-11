@@ -44,6 +44,8 @@ export function SiteNav({ active }: SiteNavProps) {
             <span aria-hidden className="inline-block size-2.5 rounded-full bg-shu" />
             هاناسو
           </span>
+          {/* the destination links live on the TOP bar only ≥md — on phones the
+           * bottom tab bar is the navigation (never two competing menus). */}
           {DESTINATIONS.map(({ key, href, label }) => (
             <Link
               key={key}
@@ -51,7 +53,7 @@ export function SiteNav({ active }: SiteNavProps) {
               hrefLang="fa"
               aria-current={active === key ? 'page' : undefined}
               className={[
-                'flex h-11 items-center rounded-md px-4 text-body font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai',
+                'hidden h-11 items-center rounded-md px-4 text-body font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai md:flex',
                 active === key
                   ? 'bg-indigo-wash text-indigo underline decoration-2 underline-offset-8'
                   : 'text-ink-soft hover:bg-surface-warm hover:text-ink',
