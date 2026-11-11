@@ -186,8 +186,10 @@ describe('TL-13 A-3 — a failed completion is honest + retryable', () => {
     });
     renderStation();
     // skip-panel → continue → … → last block → final continue fires the (failing) complete
+    // (TL-14: the rule stations are now slide decks of up to ~15 blocks — the
+    // walk loop must be able to click through all of them.)
     let guard = 0;
-    while (guard++ < 12) {
+    while (guard++ < 40) {
       if (screen.queryByText('ثبت پایان ایستگاه ناموفق بود')) break;
       const forward = [...screen.queryAllByRole('button')].find(
         (b) => b.textContent === 'ادامه' || b.textContent === 'ایستگاه کامل شد',

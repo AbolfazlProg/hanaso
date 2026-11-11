@@ -165,7 +165,7 @@ export const KANA_STATIONS: Station[] = [
             id: 'rd-stn-kana-h1-3',
             role: 'reading',
             ja: 'いえ',
-            reading: 'ایِ',
+            reading: 'ایه',
             pronFa: '«اِ»ی آخر دهان کمی بازتر از «ای» فارسی است — نزدیک «ایِـ» کوتاه و باز (e).',
             fa: 'خانه',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
@@ -288,7 +288,7 @@ export const KANA_STATIONS: Station[] = [
             id: 'rd-stn-kana-h2-1',
             role: 'reading',
             ja: 'ここ',
-            reading: 'کُکو',
+            reading: 'کوکو',
             fa: 'اینجا',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
@@ -441,7 +441,7 @@ export const KANA_STATIONS: Station[] = [
             id: 'rd-stn-kana-h3-3',
             role: 'reading',
             ja: 'あさ',
-            reading: 'آسا',
+            reading: 'اَسا',
             fa: 'صبح',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
@@ -487,10 +487,11 @@ export const KANA_STATIONS: Station[] = [
     prerequisites: ['stn-kana-h3'],
     lineRefs: [],
     objectiveCode: 'kana-hira-foundation',
-    estMinutes: 12,
+    estMinutes: 14,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -498,69 +499,110 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h4-warm-1', 'ex-kana-h4-warm-2', 'ex-kana-h4-warm-3'],
       },
       {
-        kind: 'rule-card',
-        id: 'blk-stn-kana-h4-rule-longvowel',
-        patternJa: 'あ段+あ · い段+い · う段+う',
-        titleFa: 'مصوتِ کشیده — وقتی «کمی بلندتر» معنا را عوض می‌کند',
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-h4-prereq',
+        titleFa: 'پیش از شروع: مصوت‌هایی که می‌کِشیم',
+        items: [
+          { glyph: 'あ', readingFa: 'اَ', noteFa: 'مصوت «ا»' },
+          { glyph: 'い', readingFa: 'ای', noteFa: 'مصوت «ای»' },
+          { glyph: 'う', readingFa: 'اُ', noteFa: 'مصوت «اُ»' },
+        ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h4-step-ie',
+        role: 'notice',
+        bodyFa: 'این واژه دو ضربه دارد: ای — هِ. صدا را پخش کن و با انگشت همراه بزن.',
+        word: { ja: 'いえ', readingFa: 'ایه', fa: 'خانه', highlight: [], beats: 2 },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-h4-contrast-ie',
+        titleFa: 'دو ضربه در برابر سه ضربه',
+        a: { ja: 'いえ', readingFa: 'ایه', fa: 'خانه', highlight: [], beats: 2 },
+        b: { ja: 'いいえ', readingFa: 'اییه', fa: 'نه', highlight: ['いい'], beats: 3 },
+        ask: {
+          questionFa: 'هر دو را پشت‌سرهم گوش بده — کدام سه ضربه بود؟',
+          options: [
+            { id: 'a', label: 'いえ' },
+            { id: 'b', label: 'いいえ' },
+          ],
+          correctOptionId: 'b',
+          revealFa:
+            'واژهٔ دوم سه ضربه داشت: ای — ای — هِ. آیِ اول دوبار تکرار شد و «ایه» (خانه) را به «اییه» (نه) تبدیل کرد.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h4-step-concept',
+        role: 'explain',
+        titleFa: 'مصوتِ کشیده',
         bodyFa:
-          'در فارسی وقتی مصوتی را می‌کشی، حال‌وهوای جمله عوض می‌شود («مادر!» التماس‌آمیز می‌شود). در ژاپنی، کشیدن مصوت خودِ واژه را عوض می‌کند: «ایِه» یعنی خانه، «اییِه» یعنی نه. مصوتِ بلند دقیقاً دو برابرِ کوتاه است — دو ضربهٔ مساوی، نه «کمی بیشتر» و نه صدای بلندتر.',
-        structureTable: {
-          headers: ['واژهٔ کوتاه', 'واژهٔ بلند', 'تفاوت'],
+          'مصوتِ بلند دقیقاً دو برابرِ کوتاه است — دو ضربهٔ مساوی، نه صدای بلندتر و نه مؤکدتر. در فارسی بکشیدن مصوت حالِ جمله را عوض می‌کند («مادر!» التماس‌آمیز می‌شود)؛ در ژاپنی کشیدن مصوت خودِ واژه را عوض می‌کند.',
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h4-predict-ookii',
+        role: 'notice',
+        bodyFa: 'این واژه را ببین — «بزرگ». حدس بزن و بعد جواب را ببین.',
+        word: { ja: 'おおきい', readingFa: 'اووکیی', fa: 'بزرگ', highlight: ['おお'], beats: 4 },
+        ask: {
+          questionFa: 'حدس بزن: مصوتِ اولِ این واژه کوتاه است یا کشیده؟',
+          options: [
+            { id: 'a', label: 'کوتاه (یک ضربه)' },
+            { id: 'b', label: 'کشیده (دو ضربه)' },
+          ],
+          correctOptionId: 'b',
+          revealFa:
+            'کشیده — お+お یعنی یک اُوی دوضربه. چهار ضربه: اُو — کی — ای. اگر کوتاه بخوانی «اُکیی» می‌شود که واژه نیست.',
+        },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-h4-contrast-ee',
+        titleFa: 'یک ضربه در برابر دو',
+        a: { ja: 'え', readingFa: 'اِ', fa: 'نقاشی', highlight: [], beats: 1 },
+        b: { ja: 'ええ', readingFa: 'اِی', fa: 'بله', highlight: ['ええ'], beats: 2 },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h4-step-patterns',
+        role: 'explain',
+        titleFa: 'الگوهای نوشتاریِ کشش',
+        bodyFa:
+          'کشش را با تکرار همان مصوت می‌نویسند. سه الگوی اصلی را ببین — بعداً همین‌ها را در واژه‌های واقعی می‌خوانی.',
+        miniTable: {
+          headers: ['الگو', 'مثال', 'شنیدن'],
           rows: [
-            ['いえ (خانه) — ۲ مورا', 'いいえ (نه) — ۳ مورا', 'آیِ اول دوبار: い+い'],
-            ['え (نقاشی) — ۱ مورا', 'ええ (بله) — ۲ مورا', 'اِی دوبار: え+え'],
-            ['くき (ساقهٔ گیاه) — ۲ مورا', 'くうき (هوا) — ۳ مورا', 'اُوی کشیده: く+う'],
-            ['—', 'こうこう (دبیرستان) — ۴ مورا', 'دو کشش: こ+う و こ+う'],
+            ['い段 + い', 'いいえ (نه)', 'ای — ای — هِ'],
+            ['え段 + え', 'ええ (بله)', 'اِ — اِی'],
+            ['う段 + う', 'く+う → «کوو»', 'کشیدن مصوت اُ'],
           ],
         },
-        persianBridgeFa:
-          'با انگشت ضربه بشمار: «ایه» دو ضربه، «اییه» سه ضربه. اگر کشش را نمی‌شنوی، دو بار پخش کن و هم‌زمان بشمار — گوش فارسی‌زبان ما کشش را «حسِ جمله» می‌داند، نه بخشی از واژه؛ اینجا باید آن را بخشی از واژه بشنویم.',
-        honestyLabelFa: 'الگوی نوشتاری بر پایهٔ واج‌شناسی استاندارد ژاپنی؛ شمارش ضربه = مدل آموزشی ساده‌شدهٔ مورا.',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h4-guided',
+        exerciseIds: ['ex-kana-h4-clo-1', 'ex-kana-h4-dec-1'],
       },
       {
         kind: 'example-set',
-        id: 'blk-stn-kana-h4-ruleex',
+        id: 'blk-stn-kana-h4-apply',
         examples: [
           {
-            id: 'ex-stn-kana-h4-t0',
-            role: 'anchor',
-            ja: 'こうこう',
-            reading: 'کووکوو',
-            pronFa: '«اُو» در هر دو هجا کشیده می‌شود (ō) — «کووکوو» با دو اُوی بلند و مساوی.',
-            fa: 'دبیرستان',
-            whyFa: 'دو جا قاعدهٔ مصوت کشیده: こ+う و こ+う.',
-          },
-          {
-            id: 'ex-stn-kana-h4-t1',
-            role: 'anchor',
-            ja: 'おおきい',
-            reading: 'اووکیی',
-            pronFa: 'واکهٔ اول کشیده است: «اُو» دو برابر طول می‌کشد — طول واکه در ژاپنی معنا را عوض می‌کند (ō).',
-            fa: 'بزرگ',
-            whyFa: 'お+お = یک اُوی کشیده (الگوی همان‌مصوت).',
-          },
-          {
-            id: 'ex-stn-kana-h4-t2',
-            role: 'anchor',
-            ja: 'いいえ',
-            reading: 'اییه',
-            fa: 'نه',
-            whyFa: 'い+い = آیِ کشیده. با 「いえ» (خانه) اشتباه نشود.',
-          },
-          {
-            id: 'ex-stn-kana-h4-t3',
+            id: 'ex-stn-kana-h4-apply-0',
             role: 'varied',
-            ja: 'え',
-            reading: 'اِ',
-            fa: 'نقاشی',
-            whyFa: 'یک مورا. در برابر 「ええ」 (بله) با دو مورا.',
+            ja: 'おおさか',
+            reading: 'اووساکا',
+            fa: 'اوساکا (نام شهر)',
+            whyFa: 'الگوی همان‌مصوت: お+お در ابتدای واژه.',
           },
         ],
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-h4-rule-drill',
-        exerciseIds: ['ex-kana-h4-dec-1', 'ex-kana-h4-dec-2', 'ex-kana-h4-dec-3', 'ex-kana-h4-dec-4'],
+        id: 'blk-stn-kana-h4-apply-read',
+        exerciseIds: ['ex-kana-h4-dec-2', 'ex-kana-h4-dec-3', 'ex-kana-h4-dec-4'],
       },
       {
         kind: 'exercise',
@@ -568,43 +610,23 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h4-lis-1', 'ex-kana-h4-lis-2', 'ex-kana-h4-ind-1'],
       },
       {
-        kind: 'example-set',
-        id: 'blk-stn-kana-h4-reading',
-        examples: [
-          {
-            id: 'rd-stn-kana-h4-0',
-            role: 'reading',
-            ja: 'こうこう',
-            reading: 'کووکوو',
-            fa: 'دبیرستان',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-          {
-            id: 'rd-stn-kana-h4-1',
-            role: 'reading',
-            ja: 'おおきい',
-            reading: 'اووکیی',
-            fa: 'بزرگ',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-          {
-            id: 'rd-stn-kana-h4-2',
-            role: 'reading',
-            ja: 'いいえ',
-            reading: 'اییه',
-            fa: 'نه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-          {
-            id: 'rd-stn-kana-h4-3',
-            role: 'reading',
-            ja: 'おおさか',
-            reading: 'اووساکا',
-            pronFa: '«اُو»ی اول کشیده است: «اُوساکا» — با «اوساکا»ی کوتاه فرق دارد (Ōsaka).',
-            fa: 'اوساکا (شهر)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-        ],
+        kind: 'rule-card',
+        id: 'blk-stn-kana-h4-rule-longvowel',
+        patternJa: 'あ段+あ · い段+い · う段+う',
+        titleFa: 'کارت مرجع: مصوتِ کشیده',
+        bodyFa:
+          'مصوتِ بلند = همان مصوت، دو برابر — با تکرار همان کانا نوشته می‌شود. جفت‌های واقعی که شنیدی: いえ/いいえ، え/ええ — کشش معنا را عوض می‌کند.',
+        structureTable: {
+          headers: ['واژهٔ کوتاه', 'واژهٔ بلند', 'تفاوت'],
+          rows: [
+            ['いえ (خانه) — ۲ مورا', 'いいえ (نه) — ۳ مورا', 'آیِ اول دوبار: い+い'],
+            ['え (نقاشی) — ۱ مورا', 'ええ (بله) — ۲ مورا', 'اِی دوبار: え+え'],
+            ['—', 'こうこう (دبیرستان) — ۴ مورا', 'دو کشش: こ+う و こ+う'],
+          ],
+        },
+        persianBridgeFa:
+          'با انگشت ضربه بشمار: «ایه» دو ضربه، «اییه» سه ضربه. اگر کشش را نمی‌شنوی، دو بار پخش کن و هم‌زمان بشمار.',
+        honestyLabelFa: 'الگوی نوشتاری بر پایهٔ واج‌شناسی استاندارد ژاپنی؛ شمارش ضربه = مدل آموزشی ساده‌شدهٔ مورا.',
       },
       {
         kind: 'exercise',
@@ -617,8 +639,8 @@ export const KANA_STATIONS: Station[] = [
         titleFa: 'قاعدهٔ طول مصوت — جمع‌بندی',
         itemsFa: [
           'قاعدهٔ تازه: مصوتِ کشیده = دو برابرِ همان مصوت، نه «کمی بلندتر».',
-          'جفت‌های واقعی را شنیدی: いえ/いいえ، え/ええ، くき/くうき — طول واکه معنا را عوض می‌کند.',
-          '۱۰ واژهٔ واقعی تازه خواندنی شد — مجموع ۵۶ واژه از جزوهٔ N5.',
+          'جفت‌های واقعی را شنیدی و دیدی: いえ/いいえ، え/ええ — طول واکه معنا را عوض می‌کند.',
+          'واژه‌های تازهٔ خواندنی: おおきい، おおさか — کشش را در نوشتارشان دیدی.',
         ],
       },
     ],
@@ -634,10 +656,11 @@ export const KANA_STATIONS: Station[] = [
     prerequisites: ['stn-kana-h4'],
     lineRefs: [],
     objectiveCode: 'kana-hira-foundation',
-    estMinutes: 12,
+    estMinutes: 13,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -645,66 +668,85 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h5-warm-1', 'ex-kana-h5-warm-2', 'ex-kana-h5-warm-3'],
       },
       {
-        kind: 'rule-card',
-        id: 'blk-stn-kana-h5-rule-dakuten',
-        patternJa: 'か→が · さ→ざ',
-        titleFa: 'داکوتن — همان صامت، با لرزشِ گلو',
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-h5-prereq',
+        titleFa: 'پیش از شروع: صامت‌های بی‌واک',
+        items: [
+          { glyph: 'か', readingFa: 'کا', noteFa: 'دست روی گلویت بگو: «کا» — گلو نمی‌لرزد (بی‌واک).' },
+          { glyph: 'さ', readingFa: 'سا', noteFa: '«سا» هم بی‌واک است — مثل س/ک فارسی.' },
+        ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h5-step-gakusei',
+        role: 'notice',
         bodyFa:
-          'تو این قاعده را از فارسی می‌دانی: «س» و «ز»، «ت» و «د»، «ک» و «گ»، «پ» و «ب» جفت‌اند. دست روی گلویت بگذار و بگو «س…ز»: در «ز» گلو می‌لرزد. ژاپنی همین جفت‌ها را با دو خطِ کوچکِ راست‌بالای کانا می‌نویسد: か→が، さ→ざ. دشواری تو فقط «دیدنِ» علامت است، نه ساختن صدا.',
-        structureTable: {
-          headers: ['بی‌واک', 'با ゛ (واک‌دار)', 'جفت فارسی'],
+          'این واژه «گاکوسِی» خوانده می‌شود — دانش‌آموز. گلیف اول か نیست: دو خطِ کوچک ゛ بالایش آن را واک‌دار کرده.',
+        word: { ja: 'がくせい', readingFa: 'گاکوسِی', fa: 'دانش‌آموز', highlight: ['が'], beats: 4 },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-h5-contrast-koko',
+        titleFa: 'فرق این دو واژه فقط یک ゛ است',
+        a: { ja: 'ここ', readingFa: 'کوکو', fa: 'اینجا', highlight: [], beats: 2 },
+        b: { ja: 'ごご', readingFa: 'گوگو', fa: 'بعدازظهر', highlight: ['ごご'], beats: 2 },
+        ask: {
+          questionFa: 'هر دو دو ضربه دارند — گوش بده و نگاه کن: فرقشان چیست؟',
+          options: [
+            { id: 'a', label: 'یکی ゛ (دو خط کوچک) دارد' },
+            { id: 'b', label: 'یکی کشیده‌تر است' },
+          ],
+          correctOptionId: 'a',
+          revealFa:
+            'فقط ゛: ここ (اینجا) در برابر ごご (بعدازظهر). ゛ «ک» را «گ» می‌کند — معنا عوض می‌شود، طول‌ها یکی است.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h5-step-concept',
+        role: 'explain',
+        titleFa: 'داکوتن ゛',
+        bodyFa:
+          'داکوتن ゛ صامت را واک‌دار می‌کند — همان جفت‌هایی که از فارسی می‌دانی: ک/گ، س/ز. صدای جدیدی ساخته نمی‌شود؛ فقط گلو به لرزش می‌افتد.',
+        miniTable: {
+          headers: ['بی‌واک', 'با ゛', 'جفت فارسی'],
           rows: [
             ['か (کا)', 'が (گا)', 'ک / گ'],
-            ['き (کی)', 'ぎ (گی)', 'ک / گ'],
             ['さ (سا)', 'ざ (زا)', 'س / ز'],
-            ['し (شی)', 'じ (جی)', 'س‌ـ/ز‌ـ → ش / ژ'],
-            ['ここ (کوکو — اینجا)', 'ごご (گوگو — بعدازظهر)', 'جفت کمینه‌ای واقعی!'],
+            ['き (کی)', 'ぎ (گی)', 'ک / گ'],
           ],
         },
-        persianBridgeFa:
-          'تمرین فیزیکی: دست روی گلو، جفت‌ها را پشت‌سرهم بگو — کا/گا، کی/گی، سا/زا، شی/جی. همان لرزشی که در «ز» می‌شنوی، ゛ در نوشتن نشان می‌دهد.',
-        honestyLabelFa: 'ردیف‌های た/は (だ/ば) بعداً همراه خودِ ردیف‌ها معرفی می‌شوند.',
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h5-step-kazoku',
+        role: 'notice',
+        bodyFa: 'این‌بار فقط یک گلیف واک‌دار شده: そ → ぞ. اگر ゛ را نبینی، «کاسوکو» می‌خوانی — واژه‌ای که وجود ندارد.',
+        word: { ja: 'かぞく', readingFa: 'کازوکو', fa: 'خانواده', highlight: ['ぞ'], beats: 3 },
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h5-guided',
+        exerciseIds: ['ex-kana-h5-clo-1', 'ex-kana-h5-dec-1'],
       },
       {
         kind: 'example-set',
-        id: 'blk-stn-kana-h5-ruleex',
+        id: 'blk-stn-kana-h5-apply',
         examples: [
           {
-            id: 'ex-stn-kana-h5-t0',
-            role: 'anchor',
-            ja: 'がくせい',
-            reading: 'گاکوسِی',
-            fa: 'دانش‌آموز',
-            whyFa: 'が = か+゛. اگر ゛ را نبینی، «کاکوسِی» می‌شود و واژه خراب است.',
-          },
-          {
-            id: 'ex-stn-kana-h5-t1',
-            role: 'anchor',
-            ja: 'かぞく',
-            reading: 'کازوکو',
-            fa: 'خانواده',
-            whyFa: 'فقط そ واک‌دار شده: か+ぞ+く.',
-          },
-          {
-            id: 'ex-stn-kana-h5-t2',
-            role: 'anchor',
+            id: 'ex-stn-kana-h5-apply-0',
+            role: 'varied',
             ja: 'かいぎ',
             reading: 'کایگی',
             fa: 'جلسه',
-            whyFa: 'ぎ = き+゛ در پایان واژه.',
+            whyFa: 'واک‌دار در پایان واژه: き+゛ = ぎ.',
           },
         ],
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-h5-rule-drill',
-        exerciseIds: [
-          'ex-kana-h5-dec-1',
-          'ex-kana-h5-dec-2',
-          'ex-kana-h5-dec-3',
-          'ex-kana-h5-dec-4',
-          'ex-kana-h5-clo-1',
-        ],
+        id: 'blk-stn-kana-h5-apply-read',
+        exerciseIds: ['ex-kana-h5-dec-2', 'ex-kana-h5-dec-3', 'ex-kana-h5-dec-4'],
       },
       {
         kind: 'exercise',
@@ -712,18 +754,23 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h5-lis-1', 'ex-kana-h5-lis-2', 'ex-kana-h5-ind-1'],
       },
       {
-        kind: 'example-set',
-        id: 'blk-stn-kana-h5-reading',
-        examples: [
-          {
-            id: 'rd-stn-kana-h5-0',
-            role: 'reading',
-            ja: 'ごご',
-            reading: 'گوگو',
-            fa: 'بعدازظهر',
-            whyFa: 'هر دو か با ゛.',
-          },
-        ],
+        kind: 'rule-card',
+        id: 'blk-stn-kana-h5-rule-dakuten',
+        patternJa: 'か→が · さ→ざ',
+        titleFa: 'کارت مرجع: داکوتن ゛',
+        bodyFa:
+          '゛ = واک‌دار کردن صامت (ک→گ، س→ز). مفهوم را از فارسی داری — جفت‌های واک‌دار/بی‌واک؛ دشواری فقط «دیدنِ» علامت است.',
+        structureTable: {
+          headers: ['بی‌واک', 'با ゛ (واک‌دار)', 'جفت فارسی'],
+          rows: [
+            ['か (کا)', 'が (گا)', 'ک / گ'],
+            ['さ (سا)', 'ざ (زا)', 'س / ز'],
+            ['ここ (کوکو — اینجا)', 'ごご (گوگو — بعدازظهر)', 'جفت کمینه‌ای واقعی!'],
+          ],
+        },
+        persianBridgeFa:
+          'تمرین فیزیکی: دست روی گلو، جفت‌ها را پشت‌سرهم بگو — کا/گا، سا/زا. همان لرزشی که در «ز» می‌شنوی، ゛ در نوشتن نشان می‌دهد.',
+        honestyLabelFa: 'ردیف‌های た/は (だ/ば) بعداً همراه خودِ ردیف‌ها معرفی می‌شوند.',
       },
       {
         kind: 'exercise',
@@ -737,7 +784,7 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           'قاعدهٔ تازه: ゛ = واک‌دار کردن صامت (ک→گ، س→ز).',
           'جفت کمینه‌ای ここ/ごご را شنیدی و دیدی — فقط یک ゛ فرق دارد.',
-          '۲۰ واژهٔ واقعی تازه خواندنی شد — مجموع ۷۶ واژه از جزوهٔ N5.',
+          'واژه‌های تازهٔ خواندنی: かぞく، かいぎ — ゛ را در نوشتارشان دیدی.',
         ],
       },
     ],
@@ -753,10 +800,11 @@ export const KANA_STATIONS: Station[] = [
     prerequisites: ['stn-kana-h5'],
     lineRefs: [],
     objectiveCode: 'kana-hira-foundation',
-    estMinutes: 13,
+    estMinutes: 15,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: ['や', 'ゆ', 'よ'],
     blocks: [
       {
         kind: 'exercise',
@@ -764,93 +812,126 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h6-warm-1', 'ex-kana-h6-warm-2', 'ex-kana-h6-warm-3'],
       },
       {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-h6-prereq',
+        titleFa: 'اولین نگاه: سه جفتِ کوچک/بزرگ',
+        items: [
+          { glyph: 'ゃ', readingFa: 'یای کوچک', noteFa: 'به کانای قبل می‌چسبد.', firstLook: true },
+          { glyph: 'や', readingFa: 'یا (یای بزرگ)', noteFa: 'مستقل — یک ضربهٔ خودش.', firstLook: true },
+          { glyph: 'ゅ', readingFa: 'یوی کوچک', noteFa: 'چسبیده.', firstLook: true },
+          { glyph: 'ゆ', readingFa: 'یو (یوی بزرگ)', noteFa: 'مستقل.', firstLook: true },
+          { glyph: 'ょ', readingFa: 'یوی کوچکِ گرد', noteFa: 'چسبیده.', firstLook: true },
+          { glyph: 'よ', readingFa: 'یُ (یوی بزرگِ گرد)', noteFa: 'مستقل.', firstLook: true },
+        ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h6-step-kyou',
+        role: 'notice',
+        bodyFa:
+          '«امروز»: «کیو». ょ کوچک به き چسبیده و با آن «یک ضربه» شده است — نوشتنِ این واژه را بعدها می‌آموزی؛ الان فقط اندازه را ببین.',
+        word: { ja: 'きょう', readingFa: 'کیو', fa: 'امروز', highlight: ['ょ'], beats: 2 },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-h6-contrast-kyou',
+        titleFa: 'کوچک = فشرده، بزرگ = جدا',
+        a: { ja: 'きょう', readingFa: 'کیو', fa: 'امروز (۲ ضربه)', highlight: ['ょ'], beats: 2 },
+        b: {
+          ja: 'きよう',
+          readingFa: 'کی‌یو',
+          fa: 'این شکل واژه نیست — よ بزرگ جدا مانده (۳ ضربه)',
+          highlight: ['よ'],
+          beats: 3,
+        },
+        ask: {
+          questionFa: 'کدام دو ضربه است؟',
+          options: [
+            { id: 'a', label: 'きょう (با ょ کوچک)' },
+            { id: 'b', label: 'きよう (با よ بزرگ)' },
+          ],
+          correctOptionId: 'a',
+          revealFa: '«کیو» دو ضربه است (کیو — اُو)؛ «کی‌یو» سه ضربه (کی — یو — اُو). اندازهٔ ゃゅょ همان فشردگی است.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h6-step-concept',
+        role: 'explain',
+        titleFa: 'یُوئون — کوچک یعنی فشرده',
+        bodyFa:
+          'گانای کوچک ゃゅょ صدای مستقل ندارد — به کانای قبل می‌چسبد و با آن یک مورا می‌شود. اندازه در ژاپنی معنا دارد؛ مثل فرق «کیــا» و «کی‌یا» در تلفظ فارسی.',
+        miniTable: {
+          headers: ['فشرده (۱ مورا)', 'جدا (۲ مورا)', 'شنیدن'],
+          rows: [
+            ['きゃ = کیا', 'きや = کی‌یا', 'فشرده: یک ضربه'],
+            ['しゃ = شا', 'しや = شی‌یا', 'فشرده: یک ضربه'],
+          ],
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h6-predict-kaisha',
+        role: 'notice',
+        bodyFa: 'این واژه «شرکت» است. حدس بزن و جواب را ببین.',
+        word: { ja: 'かいしゃ', readingFa: 'کایشا', fa: 'شرکت', highlight: ['しゃ'], beats: 3 },
+        ask: {
+          questionFa: '«しゃ» چند ضربه است؟',
+          options: [
+            { id: 'a', label: 'یک ضربه (فشرده)' },
+            { id: 'b', label: 'دو ضربه (شی — یا)' },
+          ],
+          correctOptionId: 'a',
+          revealFa: 'یک ضربه — «کایشا»: کا — اِی — شا. اگر «شی‌یا» بخوانی سه ضربهٔ جدا می‌شود.',
+        },
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h6-guided',
+        exerciseIds: ['ex-kana-h6-clo-1', 'ex-kana-h6-prd-1'],
+      },
+      {
+        kind: 'example-set',
+        id: 'blk-stn-kana-h6-apply',
+        examples: [
+          {
+            id: 'ex-stn-kana-h6-apply-0',
+            role: 'varied',
+            ja: 'いしゃ',
+            reading: 'ایشا',
+            fa: 'پزشک',
+            whyFa: 'همان しゃ فشرده — با 「いしや» (ای-شی-یا) اشتباه نشود.',
+          },
+        ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h6-apply-read',
+        exerciseIds: ['ex-kana-h6-dec-1', 'ex-kana-h6-dec-2', 'ex-kana-h6-dec-3', 'ex-kana-h6-dec-4'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h6-independent',
+        exerciseIds: ['ex-kana-h6-lis-1', 'ex-kana-h6-lis-2'],
+      },
+      {
         kind: 'rule-card',
         id: 'blk-stn-kana-h6-rule-yoon',
         patternJa: 'きゃ (۱ مورا) ≠ きや (۲ مورا)',
-        titleFa: 'یُوئون — کوچک یعنی فشرده',
+        titleFa: 'کارت مرجع: یُوئون ゃゅょ',
         bodyFa:
-          'در فارسی «کیــا» را یک‌تکه می‌گویی و «کی‌یا» را دوتکه. ژاپنی همین فرق را با اندازهٔ کانا می‌نویسد: ゃ/ゅ/ょ کوچک به کانای قبل می‌چسبند و با آن «یک ضربه» می‌شوند — きゃ یک موراست (کیا)، اما きや دو موراست (کی‌یا). اندازهٔ کانا در ژاپنی معنایی است؛ مثل فاصله در فارسی.',
+          'ゃゅょ کوچک = فشرده با کانای قبل (یک مورا)؛ やゆよ بزرگ = مورای مستقل. کوچک/بزرگ را دیدی و شنیدی: اندازه معنا می‌سازد.',
         structureTable: {
           headers: ['فشرده (۱ مورا)', 'جدا (۲ مورا)', 'شنیدن'],
           rows: [
             ['きゃ = کیا', 'きや = کی‌یا', 'فشرده: یک ضربه'],
             ['しゃ = شا', 'しや = شی‌یا', 'فشرده: یک ضربه'],
             ['きょう (امروز) = کیو', 'きよう = کی‌یو', 'معنا فقط در فشرده است'],
-            ['びょういん (بیمارستان)', 'びよういん (آرایشگاه!)', 'یک نویسه، دو جهان'],
           ],
         },
         persianBridgeFa:
-          'این دو را بلند بگو: «کیّا» (یک‌تکه، مثل اسم کیا) و «کی‌یا» (دو‌تکه، با مکث). تفاوت کوچکِ نوشتاری همان تفاوت بزرگِ شنیداری است.',
-        honestyLabelFa:
-          'جفت びょういん/びよういنداردار ゛/だ — علامت‌ها تا این‌جا آموخته شده‌اند؛ ردیف ひ در واحد بعدی می‌آید.',
-      },
-      {
-        kind: 'example-set',
-        id: 'blk-stn-kana-h6-ruleex',
-        examples: [
-          {
-            id: 'ex-stn-kana-h6-t0',
-            role: 'anchor',
-            ja: 'きょう',
-            reading: 'کیو',
-            fa: 'امروز',
-            whyFa: 'き+ょ+う: ょ کوچک = «کیو» یک‌ضربه؛ う کشش.',
-          },
-          {
-            id: 'ex-stn-kana-h6-t1',
-            role: 'anchor',
-            ja: 'いしゃ',
-            reading: 'ایشا',
-            fa: 'پزشک',
-            whyFa: 'しゃ فشرده — با 「いしや» (ای-شی-یا) اشتباه نشود.',
-          },
-          {
-            id: 'ex-stn-kana-h6-t2',
-            role: 'anchor',
-            ja: 'かいしゃ',
-            reading: 'کایشا',
-            fa: 'شرکت',
-            whyFa: 'همان しゃ فشرده، در واژهٔ بلندتر.',
-          },
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h6-rule-drill',
-        exerciseIds: [
-          'ex-kana-h6-dec-1',
-          'ex-kana-h6-dec-2',
-          'ex-kana-h6-dec-3',
-          'ex-kana-h6-dec-4',
-          'ex-kana-h6-clo-1',
-        ],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h6-independent',
-        exerciseIds: ['ex-kana-h6-lis-1', 'ex-kana-h6-lis-2', 'ex-kana-h6-prd-1'],
-      },
-      {
-        kind: 'example-set',
-        id: 'blk-stn-kana-h6-reading',
-        examples: [
-          {
-            id: 'rd-stn-kana-h6-0',
-            role: 'reading',
-            ja: 'きょう',
-            reading: 'کیو',
-            fa: 'امروز',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-          {
-            id: 'rd-stn-kana-h6-1',
-            role: 'reading',
-            ja: 'いしゃ',
-            reading: 'ایشا',
-            fa: 'پزشک',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-        ],
+          'این دو را بلند بگو: «کیّا» (یک‌تکه، مثل اسم کیا) و «کی‌یا» (دوتکه، با مکث). تفاوت کوچکِ نوشتاری همان تفاوت بزرگِ شنیداری است.',
+        honestyLabelFa: 'ردیف ひ (و びょういن/びよういن) هنوز آموزش ندیده‌ای — این جفت معروف بعد از ردیف は می‌آید.',
       },
       {
         kind: 'exercise',
@@ -862,9 +943,9 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h6-wrapup',
         titleFa: 'قاعدهٔ یُوئون — جمع‌بندی',
         itemsFa: [
-          'قاعدهٔ تازه: ゃ/ゅ/ょ کوچک = فشرده با کانای قبل (یک مورا).',
+          'قاعدهٔ تازه: ゃゅょ کوچک = فشرده با کانای قبل (یک مورا).',
           'کوچک/بزرگ را دیدی و شنیدی: きょう ≠ きよう — اندازه معنا می‌سازد.',
-          '۱۶ واژهٔ واقعی تازه خواندنی شد — مجموع ۹۲ واژه از جزوهٔ N5.',
+          'واژه‌های تازهٔ خواندنی: いしゃ، かいしゃ — しゃ فشرده را در نوشتارشان دیدی.',
         ],
       },
     ],
@@ -880,10 +961,11 @@ export const KANA_STATIONS: Station[] = [
     prerequisites: ['stn-kana-h6'],
     lineRefs: [],
     objectiveCode: 'kana-hira-mastery',
-    estMinutes: 10,
+    estMinutes: 12,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'writing-practice',
@@ -899,32 +981,75 @@ export const KANA_STATIONS: Station[] = [
       },
       { kind: 'kana-card', id: 'blk-stn-kana-h7-card-hira-n', kanaId: 'hira-n', showRomaji: false },
       {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-h7-prereq',
+        titleFa: 'پیش از شروع: هر کانا، یک ضربه',
+        items: [
+          { glyph: 'さ', readingFa: 'سا', noteFa: 'یک ضربه.' },
+          { glyph: 'せ', readingFa: 'سِ', noteFa: 'یک ضربه.' },
+        ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h7-step-sensei',
+        role: 'notice',
+        bodyFa: '«معلم»: سِن — سِ — ای. ん خودش یک ضربهٔ کامل است، هم‌عرضِ هر کانا — نه یک «ن»ی سبکِ آخر واژه.',
+        word: { ja: 'せんせい', readingFa: 'سِنسِی', fa: 'معلم / استاد', highlight: ['ん'], beats: 4 },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-h7-contrast-san',
+        titleFa: 'همهٔ ضربه‌ها را بشمار',
+        a: { ja: 'さん', readingFa: 'سان', fa: 'عدد ۳ / پسوند محترمانه', highlight: ['ん'], beats: 2 },
+        b: { ja: 'せんせい', readingFa: 'سِنسِی', fa: 'معلم', highlight: ['ん'], beats: 4 },
+        ask: {
+          questionFa: '«سِنسِی» چند ضربه دارد؟',
+          options: [
+            { id: 'a', label: 'سه ضربه' },
+            { id: 'b', label: 'چهار ضربه' },
+          ],
+          correctOptionId: 'b',
+          revealFa: 'چهار: سِ — ن — سِ — ای. اگر ん را نشماری «سِنسِ» می‌ماند — واژه‌ای که وجود ندارد.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h7-step-concept',
+        role: 'explain',
+        titleFa: 'ん — یک مورای کامل',
+        bodyFa:
+          '「ん」 صامتِ ساکتِ آخر نیست؛ یک ضربهٔ کامل است. نکتهٔ گوش: آوای ん با حرف بعدی کمی عوض می‌شود (مثل هم‌جذب فارسی) — اما در شمارش همیشه یک موراست.',
+        miniTable: {
+          headers: ['واژه', 'موراها', 'خوانش'],
+          rows: [
+            ['さん (عدد ۳)', 'さ+ん = ۲', 'سان'],
+            ['せんせい (معلم)', 'せ+ん+せ+い = ۴', 'سِنسِی'],
+          ],
+        },
+      },
+      { kind: 'exercise', id: 'blk-stn-kana-h7-guided', exerciseIds: ['ex-kana-h7-nas-1', 'ex-kana-h7-nas-2'] },
+      { kind: 'exercise', id: 'blk-stn-kana-h7-independent', exerciseIds: ['ex-kana-h7-lis-1', 'ex-kana-h7-asm-1'] },
+      { kind: 'exercise', id: 'blk-stn-kana-h7-retrieval-1', exerciseIds: ['ex-kana-h7-rec-hira-n'] },
+      { kind: 'exercise', id: 'blk-stn-kana-h7-recall', exerciseIds: ['ex-kana-h7-rcl-hira-n'] },
+      {
         kind: 'rule-card',
         id: 'blk-stn-kana-h7-rule-nasal',
         patternJa: 'せんせい = せ·ん·せ·い (۴ مورا)',
-        titleFa: 'ん — یک مورای کامل، نه یک «ن» کوچک',
+        titleFa: 'کارت مرجع: ん مورایی',
         bodyFa:
-          '「ん」 صامت نیست؛ یک ضربهٔ کامل است، هم‌عرضِ هر کانا. 「さん» (عدد ۳) دو موراست: سا + ن. اگر 「ん」 را «ن»ی سبک بخوانی و نشماری، 「せんせい» را «سِنسِ» می‌خوانی — و این واژه دیگر وجود ندارد. نکتهٔ شنیداری: آوای «ん» با صامتِ بعدش عوض می‌شود (مثل هم‌جذب در فارسی) — اما در شمارش، همیشه یک موراست.',
+          '「ん» یک ضربهٔ کامل است، هم‌عرضِ هر کانا. اگر آن را «ن»ی سبک بخوانی و نشماری، 「せんせい» را «سِنسِ» می‌خوانی — و این واژه وجود ندارد.',
         structureTable: {
           headers: ['واژه', 'موراها', 'خوانش'],
           rows: [
             ['さん (عدد ۳)', 'さ+ん = ۲', 'سان'],
-            ['せん (عدد ۱۰۰۰)', 'せ+ん = ۲', 'سِن'],
             ['せんせい (معلم)', 'せ+ん+せ+い = ۴', 'سِنسِی'],
             ['せんせ (نادرست)', 'واژهٔ ژاپنی نیست — مورای آخر حذف شده', '—'],
           ],
         },
         persianBridgeFa:
           'با انگشت بشمار: سِ-ن-سِ-ی. چهار ضربه. اگر سه ضربه می‌شماریم، 「ん」 یا 「い» را جا انداخته‌ایم.',
-        honestyLabelFa: 'تغییر آوای ゛ن» بر اساس صامت بعد (m/n/ŋ) آگاهی‌بخش است — در سطح N5 ارزیابی نمی‌شود.',
+        honestyLabelFa: 'تغییر آوای 「ん» بر اساس صامت بعد (m/n/ŋ) آگاهی‌بخش است — در سطح N5 ارزیابی نمی‌شود.',
       },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-h7-nasal-practice',
-        exerciseIds: ['ex-kana-h7-nas-1', 'ex-kana-h7-nas-2', 'ex-kana-h7-lis-1', 'ex-kana-h7-asm-1'],
-      },
-      { kind: 'exercise', id: 'blk-stn-kana-h7-retrieval-1', exerciseIds: ['ex-kana-h7-rec-hira-n'] },
-      { kind: 'exercise', id: 'blk-stn-kana-h7-recall', exerciseIds: ['ex-kana-h7-rcl-hira-n'] },
       { kind: 'exercise', id: 'blk-stn-kana-h7-listening', exerciseIds: ['ex-kana-h7-lis-hira-n'] },
       {
         kind: 'example-set',
@@ -971,8 +1096,8 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h7-wrapup',
         titleFa: 'ん — جمع‌بندی',
         itemsFa: [
-          '1 کانای جدید: ん(ن)',
-          '33 واژهٔ واقعی تازه خواندنی شد — مجموع 125 واژه از جزوهٔ N5.',
+          '1 کانای جدید: ん(ن) — یک مورای کامل، نه «ن»ی سبک.',
+          'شمارش ضربه را تمرین کردی: さん (۲)، せんせい (۴).',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
       },
@@ -1567,6 +1692,7 @@ export const KANA_STATIONS: Station[] = [
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -1639,6 +1765,25 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h12-lis-hira-he',
           'ex-kana-h12-lis-hira-ho',
         ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h12-step-byouin',
+        role: 'notice',
+        titleFa: 'جفت معروفِ کوچک/بزرگ',
+        bodyFa:
+          'حالا که ردیف は را داری، این جفت معروف را ببین: びょういん (بیمارستان) در برابر びよういん (آرایشگاه!) — یک نویسهٔ کوچک/بزرگ، دو جهان.',
+        word: { ja: 'びょういん', readingFa: 'بیووین', fa: 'بیمارستان', highlight: ['ょ'], beats: 4 },
+        ask: {
+          questionFa: '「びよういん» (با よ بزرگ) چه معنایی دارد؟',
+          options: [
+            { id: 'a', label: 'بیمارستان' },
+            { id: 'b', label: 'آرایشگاه' },
+          ],
+          correctOptionId: 'b',
+          revealFa:
+            'آرایشگاه! 「びょういن» (ょ کوچک) بیمارستان است و 「びよういن» (よ بزرگ) آرایشگاه — اندازهٔ یک نویسه معنا را عوض می‌کند.',
+        },
       },
       {
         kind: 'example-set',
@@ -1721,10 +1866,11 @@ export const KANA_STATIONS: Station[] = [
     prerequisites: ['stn-kana-h12'],
     lineRefs: [],
     objectiveCode: 'kana-hira-foundation',
-    estMinutes: 13,
+    estMinutes: 15,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -1732,56 +1878,79 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h13-warm-1', 'ex-kana-h13-warm-2', 'ex-kana-h13-warm-3'],
       },
       {
-        kind: 'rule-card',
-        id: 'blk-stn-kana-h13-rule-sokuon',
-        patternJa: 'がっこう = が·っ·こ·う (۴ مورا)',
-        titleFa: 'سوکوئون — مکثی که می‌نویسند',
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-h13-prereq',
+        titleFa: 'پیش‌نیازهای این قاعده',
+        items: [
+          { word: 'きょう', readingFa: 'کیو', noteFa: 'ょ کوچک و فشرده را یادت هست؟ (قاعدهٔ یُوئون)' },
+          { word: 'がくせい', readingFa: 'گاکوسِی', noteFa: '゛ را یادت هست؟ (قاعدهٔ داکوتن)' },
+        ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h13-step-gakkou',
+        role: 'notice',
+        bodyFa: '«مدرسه»: گَک — کو — اُو. وسط واژه یک っ کوچک نشسته: صدا ندارد، اما یک ضربهٔ کاملِ سکوت و فشار است.',
+        word: { ja: 'がっこう', readingFa: 'گَکّو', fa: 'مدرسه', highlight: ['っ'], beats: 4 },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-h13-contrast-gakkou',
+        titleFa: 'با っ و بدون っ',
+        a: { ja: 'がこう', readingFa: 'گاکو', fa: 'این شکل واژه نیست — っ حذف شده', highlight: [], beats: 3 },
+        b: { ja: 'がっこう', readingFa: 'گَکّو', fa: 'مدرسه', highlight: ['っ'], beats: 4 },
+        ask: {
+          questionFa: 'کدام چهار ضربه دارد؟',
+          options: [
+            { id: 'a', label: 'がこう' },
+            { id: 'b', label: 'がっこう' },
+          ],
+          correctOptionId: 'b',
+          revealFa: 'چهار ضربه: が — っ — こ — う. بدون っ، «گاکو» می‌ماند — واژه نیست.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h13-step-concept',
+        role: 'explain',
+        titleFa: 'سوکوئون っ — تشدیدِ ژاپنی',
         bodyFa:
-          'در املای عربیِ فارسی «حَقّ» را با تشدید می‌نویسیم: صامت را نگه می‌داریم و می‌فشاریم. ژاپنی همین فشار را با یک کانای کوچک نشان می‌دهد: っ. این っ صدا ندارد — یک ضربهٔ کاملِ سکوت و انسداد است: 「がっこう» چهار موراست (گَ-کْ-کو-و) و بدون っ یعنی هیچ («گاکو» واژه نیست).',
-        structureTable: {
+          'っ صامتِ بعدی را نگه می‌دارد و می‌فشارد — مثل «حقّ» در املای عربی. っ خودش صدا ندارد؛ یک مورای کامل است.',
+        miniTable: {
           headers: ['با っ (درست)', 'بدون っ (نادرست)', 'شنیدن'],
           rows: [
-            ['がっこう (مدرسه) — ۴ مورا', 'がこう (نادرست — واژه نیست)', 'گَک…کو — مکث وسط'],
-            ['ざっし (مجله) — ۳ مورا', 'ざし (نادرست — واژه نیست)', 'زَش…شی'],
-            ['ちょっと (کمی) — ۳ مورا', 'ちとも? معنای دیگر', 'چُو…تو'],
-            ['いっしょ (با هم) — ۴ مورا', 'いしょ (نادرست)', 'ایْ…شو'],
+            ['がっこう (مدرسه) — ۴ مورا', 'がこう (واژه نیست)', 'گَک…کو — مکث وسط'],
+            ['ざっし (مجله) — ۳ مورا', 'ざし (واژه نیست)', 'زَش…شی'],
           ],
         },
-        persianBridgeFa:
-          'تمرین فیزیکی: دست روی گلو، «گَک…کو» بگو — لحظه‌ای که هوا بند می‌آید، همان っ است. با «تشدیدِ درسیِ» فارسی یکی است؛ فقط اینجا آن تشدید خودش شکل دارد: っ.',
-        honestyLabelFa: 'تشدید عربیِ فارسی مقایسهٔ آموزشی است، نه ریشه‌شناسی — دو سازوکار مستقل با اثر شنیداری مشابه.',
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h13-step-zasshi',
+        role: 'notice',
+        bodyFa: '«مجله»: زَشّی — سه مورا: ざ (داکوتن) — っ (فشار) — し. چند قاعده در یک واژه واقعی.',
+        word: { ja: 'ざっし', readingFa: 'زَشّی', fa: 'مجله', highlight: ['っ'], beats: 3 },
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h13-guided',
+        exerciseIds: ['ex-kana-h13-prd-1', 'ex-kana-h13-clo-1'],
       },
       {
         kind: 'example-set',
-        id: 'blk-stn-kana-h13-ruleex',
+        id: 'blk-stn-kana-h13-apply',
         examples: [
           {
-            id: 'ex-stn-kana-h13-t0',
-            role: 'anchor',
-            ja: 'がっこう',
-            reading: 'گَکّو',
-            fa: 'مدرسه',
-            whyFa: 'が+っ+こ+う — سه قاعده در یک واژه: ゛، っ و کشش う.',
-          },
-          {
-            id: 'ex-stn-kana-h13-t1',
-            role: 'anchor',
-            ja: 'ざっし',
-            reading: 'زَشّی',
-            fa: 'مجله',
-            whyFa: 'ざ+っ+し — فشار قبل از «ش».',
-          },
-          {
-            id: 'ex-stn-kana-h13-t2',
-            role: 'anchor',
+            id: 'ex-stn-kana-h13-apply-0',
+            role: 'varied',
             ja: 'ちょっと',
             reading: 'چُوتّو',
             fa: 'کمی',
-            whyFa: 'ち+ょ+っ+と — ょ فشرده و っ فشار، پشت سر هم.',
+            whyFa: 'ょ فشرده + っ فشار، پشت سر هم — سه قاعده در یک واژه.',
           },
           {
-            id: 'ex-stn-kana-h13-t3',
-            role: 'anchor',
+            id: 'ex-stn-kana-h13-apply-1',
+            role: 'varied',
             ja: 'いっしょ',
             reading: 'ایْشّو',
             fa: 'با هم',
@@ -1791,41 +1960,31 @@ export const KANA_STATIONS: Station[] = [
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-h13-rule-drill',
-        exerciseIds: [
-          'ex-kana-h13-dec-1',
-          'ex-kana-h13-dec-2',
-          'ex-kana-h13-dec-3',
-          'ex-kana-h13-dec-4',
-          'ex-kana-h13-clo-1',
-        ],
+        id: 'blk-stn-kana-h13-apply-read',
+        exerciseIds: ['ex-kana-h13-dec-1', 'ex-kana-h13-dec-2', 'ex-kana-h13-dec-3', 'ex-kana-h13-dec-4'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-h13-independent',
-        exerciseIds: ['ex-kana-h13-lis-1', 'ex-kana-h13-lis-2', 'ex-kana-h13-prd-1'],
+        exerciseIds: ['ex-kana-h13-lis-1', 'ex-kana-h13-lis-2'],
       },
       {
-        kind: 'example-set',
-        id: 'blk-stn-kana-h13-reading',
-        examples: [
-          {
-            id: 'rd-stn-kana-h13-0',
-            role: 'reading',
-            ja: 'がっこう',
-            reading: 'گَکّو',
-            fa: 'مدرسه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-          {
-            id: 'rd-stn-kana-h13-1',
-            role: 'reading',
-            ja: 'いっしょ',
-            reading: 'ایْشّو',
-            fa: 'با هم',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-        ],
+        kind: 'rule-card',
+        id: 'blk-stn-kana-h13-rule-sokuon',
+        patternJa: 'がっこう = が·っ·こ·う (۴ مورا)',
+        titleFa: 'کارت مرجع: سوکوئون っ',
+        bodyFa:
+          'っ کوچک = یک مورای فشار/مکث قبل از صامت — حذفش واژه را نابود می‌کند. مثل تشدید عربیِ درسی، با این فرق که っ خودش شکل نوشتاری دارد.',
+        structureTable: {
+          headers: ['با っ (درست)', 'بدون っ (نادرست)', 'شنیدن'],
+          rows: [
+            ['がっこう (مدرسه) — ۴ مورا', 'がこう (نادرست — واژه نیست)', 'گَک…کو — مکث وسط'],
+            ['ざっし (مجله) — ۳ مورا', 'ざし (نادرست — واژه نیست)', 'زَش…شی'],
+            ['いっしょ (با هم) — ۳ مورا', 'いしょ (نادرست)', 'ایْ…شو'],
+          ],
+        },
+        persianBridgeFa: 'تمرین فیزیکی: دست روی گلو، «گَک…کو» بگو — لحظه‌ای که هوا بند می‌آید، همان っ است.',
+        honestyLabelFa: 'تشدید عربیِ فارسی مقایسهٔ آموزشی است، نه ریشه‌شناسی — دو سازوکار مستقل با اثر شنیداری مشابه.',
       },
       {
         kind: 'exercise',
@@ -1839,7 +1998,7 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           'قاعدهٔ تازه: っ کوچک = یک مورای فشار/مکث — حذفش واژه را نابود می‌کند.',
           'مکث را شنیدی و ساختی: がっこう، ざっし، ちょっと، いっしょ.',
-          '۱۷ واژهٔ واقعی تازه خواندنی شد — مجموع ۵۵۵ واژه از جزوهٔ N5.',
+          'واژه‌های ارزیابی تازه بودند: けっか، さっき — قاعده را به واژهٔ جدید منتقل کردی.',
         ],
       },
     ],
@@ -1953,10 +2112,11 @@ export const KANA_STATIONS: Station[] = [
     prerequisites: ['stn-kana-h14'],
     lineRefs: [],
     objectiveCode: 'kana-hira-mastery',
-    estMinutes: 12,
+    estMinutes: 16,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -1977,49 +2137,62 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-h15-rec-hira-wa', 'ex-kana-h15-rec-hira-wo'],
       },
       {
-        kind: 'rule-card',
-        id: 'blk-stn-kana-h15-rule-handakuten',
-        patternJa: 'は → ば (゛) → ぱ (゜)',
-        titleFa: 'هان‌داکوتن — دایره‌ای که «هـ» را «پ» می‌کند',
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-h15-prereq',
+        titleFa: 'پیش از شروع: ردیف は و ゛',
+        items: [
+          { glyph: 'は', readingFa: 'ها', noteFa: 'بی‌علامت = «هـ».' },
+          { word: 'でんわ', readingFa: 'دِنوا', noteFa: '゛ را یادت هست؟ (だ = た+゛) — تلفن.' },
+        ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h15-step-sanpo',
+        role: 'notice',
+        bodyFa: '«پیاده‌روی»: سامپو. ぽ = ほ+゜ — دایرهٔ کوچک بالای گلیف، نه دو خطِ ゛.',
+        word: { ja: 'さんぽ', readingFa: 'سامپو', fa: 'پیاده‌روی', highlight: ['ぽ'], beats: 3 },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-h15-contrast-ba-pa',
+        titleFa: 'دو خط در برابر دایره',
+        a: { ja: 'ば', readingFa: 'با', fa: 'با ゛ (دو خط) — صدای «ب»', highlight: [], beats: 1 },
+        b: { ja: 'ぱ', readingFa: 'پا', fa: 'با ゜ (دایره) — صدای «پ»', highlight: [], beats: 1 },
+        ask: {
+          questionFa: 'کدام «پ» است؟',
+          options: [
+            { id: 'a', label: 'ば' },
+            { id: 'b', label: 'ぱ' },
+          ],
+          correctOptionId: 'b',
+          revealFa: 'دایره ゜ = پ؛ دو خط ゛ = ب. فقط ردیف は این دایره را می‌گیرد.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h15-step-concept',
+        role: 'explain',
+        titleFa: 'هان‌داکوتن ゜',
         bodyFa:
-          'ردیف 「は» در ژاپنی سه حالت دارد: بی‌علامت (هـ)، با دو خطِ ゛ (ب)، و با دایرهٔ کوچک ゜ (پ) — دقیقاً مثل ه/ب/پ فارسی. دایره فقط برای همین ردیف است: 「ぱ» درست، «か゜» یا «さ゜» نداریم. خط رایجِ خطای فارسی‌زبان: ゛ و ゜ را قاطی کردن — «نان» با 「ぱ」 نوشته می‌شود نه 「ば」.',
-        structureTable: {
+          'ردیف は سه حالت دارد: بی‌علامت (هـ)، دو خط ゛ (ب)، دایرهٔ ゜ (پ) — مثل ه/ب/پ فارسی. دایره فقط برای همین ردیف است: «か゜» نداریم.',
+        miniTable: {
           headers: ['شکل', 'علامت', 'صدا', 'مثال'],
           rows: [
             ['は', 'بی‌علامت', 'هـ', 'ほん (کتاب)'],
             ['ば', '゛ دو خط', 'ب', '—'],
-            ['ぱ', '゜ دایره', 'پ', 'ぱん (نان)، さんぽ (قدم‌زدن)'],
+            ['ぱ', '゜ دایره', 'پ', 'さんぽ (پیاده‌روی)'],
           ],
         },
-        persianBridgeFa: 'سه‌گانهٔ ه/ب/پ را از فارسی می‌دانی — فقط یاد بگیر کدام علامت کدام است: دو خط = ب، دایره = پ.',
-        honestyLabelFa: '—',
-      },
-      {
-        kind: 'example-set',
-        id: 'blk-stn-kana-h15-ruleex',
-        examples: [
-          {
-            id: 'ex-stn-kana-h15-t0',
-            role: 'anchor',
-            ja: 'さんぽ',
-            reading: 'سامپو',
-            fa: 'قدم‌زدن',
-            whyFa: 'ぽ = は+゜. با 「さんぼ» (با ゛) اشتباه نشود.',
-          },
-          {
-            id: 'ex-stn-kana-h15-t1',
-            role: 'anchor',
-            ja: 'えんぴつ',
-            reading: 'اِمپیتسو',
-            fa: 'مداد',
-            whyFa: 'ぴ = ひ+゜ — دایره، نه دو خط.',
-          },
-        ],
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-h15-handakuten-practice',
-        exerciseIds: ['ex-kana-h15-lis-1', 'ex-kana-h15-lis-2', 'ex-kana-h15-asm-1', 'ex-kana-h15-asm-2'],
+        id: 'blk-stn-kana-h15-guided',
+        exerciseIds: ['ex-kana-h15-clo-1', 'ex-kana-h15-asm-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h15-independent',
+        exerciseIds: ['ex-kana-h15-lis-1', 'ex-kana-h15-lis-2'],
       },
       {
         kind: 'writing-practice',
@@ -2034,6 +2207,29 @@ export const KANA_STATIONS: Station[] = [
         kind: 'exercise',
         id: 'blk-stn-kana-h15-recall',
         exerciseIds: ['ex-kana-h15-rcl-hira-wa', 'ex-kana-h15-rcl-hira-wo'],
+      },
+      {
+        kind: 'rule-card',
+        id: 'blk-stn-kana-h15-rule-handakuten',
+        patternJa: 'は → ば (゛) → ぱ (゜)',
+        titleFa: 'کارت مرجع: هان‌داکوتن ゜',
+        bodyFa:
+          'ردیف 「は» سه حالت دارد: بی‌علامت (هـ)، با دو خطِ ゛ (ب)، و با دایرهٔ کوچک ゜ (پ) — دقیقاً مثل ه/ب/پ فارسی. خط رایجِ خطا: ゛ و ゜ را قاطی کردن.',
+        structureTable: {
+          headers: ['شکل', 'علامت', 'صدا', 'مثال'],
+          rows: [
+            ['は', 'بی‌علامت', 'هـ', 'ほん (کتاب)'],
+            ['ば', '゛ دو خط', 'ب', '—'],
+            ['ぱ', '゜ دایره', 'پ', 'ぱん (نان)، さんぽ (پیاده‌روی)'],
+          ],
+        },
+        persianBridgeFa: 'سه‌گانهٔ ه/ب/پ را از فارسی می‌دانی — فقط یاد بگیر کدام علامت کدام است: دو خط = ب، دایره = پ.',
+        honestyLabelFa: '—',
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-h15-assessment',
+        exerciseIds: ['ex-kana-h15-asm-2'],
       },
       {
         kind: 'exercise',
@@ -2065,7 +2261,7 @@ export const KANA_STATIONS: Station[] = [
             id: 'rd-stn-kana-h15-2',
             role: 'reading',
             ja: 'えんぴつ',
-            reading: 'اِنپیتسو',
+            reading: 'اِمپیتسو',
             pronFa: '«ن» نرم، بعد «پیتسو» — «تس» یک ضرب است، نه «تِسِ» جدا (pitsu).',
             fa: 'مداد',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
@@ -2074,7 +2270,7 @@ export const KANA_STATIONS: Station[] = [
             id: 'rd-stn-kana-h15-3',
             role: 'reading',
             ja: 'さんぽ',
-            reading: 'سانپو',
+            reading: 'سامپو',
             pronFa: '«ن» پیش از «پ» مثل «م» تلفظ می‌شود — لب‌ها بسته می‌شوند: «سامپو» (n→m).',
             fa: 'پیاده‌روی',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
@@ -2084,12 +2280,11 @@ export const KANA_STATIONS: Station[] = [
       {
         kind: 'wrap-up',
         id: 'blk-stn-kana-h15-wrapup',
-        titleFa: 'ردیف わ + قاعدهٔ هان‌داکوتن (゜) — جمع‌بندی',
+        titleFa: 'ردیف わ + قاعدهٔ هان‌داکوتن — جمع‌بندی',
         itemsFa: [
-          '2 کانای جدید: わ(وا)، を(اُ)',
-          'قاعدهٔ تازه: handakuten',
-          '29 واژهٔ واقعی تازه خواندنی شد — مجموع 635 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          '2 کانای جدید: わ(وا)، を(اُ) + قاعدهٔ ゜: دایره = پ (فقط ردیف は).',
+          'سه‌گانهٔ は/ば/ぱ را دیدی و شنیدی — ゛ و ゜ را دیگر قاطی نمی‌کنی.',
+          'واژه‌های تازهٔ خواندنی: わたし، えんぴつ، さんぽ.',
         ],
       },
     ],
@@ -2904,10 +3099,11 @@ export const KANA_STATIONS: Station[] = [
     prerequisites: ['stn-kana-k7'],
     lineRefs: [],
     objectiveCode: 'kana-hira-foundation',
-    estMinutes: 12,
+    estMinutes: 14,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -2915,74 +3111,102 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k8-warm-1', 'ex-kana-k8-warm-2', 'ex-kana-k8-warm-3'],
       },
       {
-        kind: 'rule-card',
-        id: 'blk-stn-kana-k8-rule-choonpu',
-        patternJa: 'コーヒー = コ·ー·ヒ·ー (۴ مورا)',
-        titleFa: 'کوچوئون‌پو — خطی که مصوت را می‌کشد',
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-k8-prereq',
+        titleFa: 'پیش از شروع: کشش در هیراگانا',
+        items: [
+          {
+            word: 'こうこう',
+            readingFa: 'کووکوو',
+            noteFa: 'در هیراگانا کشش را با تکرار مصوت نوشتیم: こ+う. کاتاکانا راه کوتاه‌تری دارد.',
+          },
+        ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-k8-step-kohi',
+        role: 'notice',
+        bodyFa: '«قهوه»: کوو — هیی. هر خطِ افقی ー یعنی: مصوتِ قبلی، یک ضربهٔ دیگر.',
+        word: { ja: 'コーヒー', readingFa: 'کووهی', fa: 'قهوه', highlight: ['ー'], beats: 4 },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-k8-contrast-kohi',
+        titleFa: 'با ー و بدون ー',
+        a: { ja: 'コヒー', readingFa: 'کوهی', fa: 'این شکل واژه نیست — کششِ اول حذف شده', highlight: [], beats: 3 },
+        b: { ja: 'コーヒー', readingFa: 'کووهی', fa: 'قهوه', highlight: ['ー'], beats: 4 },
+        ask: {
+          questionFa: 'کدام «قهوه» است؟',
+          options: [
+            { id: 'a', label: 'コヒー' },
+            { id: 'b', label: 'コーヒー' },
+          ],
+          correctOptionId: 'b',
+          revealFa: 'دو ー: بعد از コ و بعد از ヒ — «کووهی»، چهار ضربه.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-k8-step-concept',
+        role: 'explain',
+        titleFa: 'کوچوئون‌پو ー',
         bodyFa:
-          'در کاتاکانا، کششِ مصوت را با یک خط افقی می‌نویسند: ー. این خط یک کانا نیست — یعنی «همان مصوتِ قبل، یک ضربهٔ دیگر»: コー = «کوو» (دو مورا). یادت باشد در هیراگانا چنین خطی نداریم (آنجا با الگوهای あ段+あ می‌نویسیم)؛ ـ فقط مال کاتاکاناست.',
-        structureTable: {
+          'ー خطی است که مصوتِ قبل را تکرار می‌کند — یک مورا. فقط در کاتاکانا است؛ در هیراگانا چنین خطی نداریم (آنجا الگوهای تکرار مصوت را می‌نویسیم).',
+        miniTable: {
           headers: ['با ー (درست)', 'بدون ー (نادرست)', 'شنیدن'],
           rows: [
-            ['コーヒー (قهوه) — ۴ مورا', 'コヒー (نادرست)', 'کوو-هیی — دو کشش'],
-            ['ジュース (آب‌میوه) — ۳ مورا', 'ジュス (نادرست)', 'جوو-س'],
-            ['ボールペン (خودکار) — ۴ مورا', 'ボルペン (نادرست)', 'بوو-لِ-پِ-ن'],
-            ['ノート (دفتر) — ۳ مورا', 'ノト (نادرست)', 'نوو-تو'],
+            ['コーヒー (قهوه) — ۴ مورا', 'コヒー (واژه نیست)', 'کوو — هیی'],
+            ['ジュース (آب‌میوه) — ۳ مورا', 'ジュス (واژه نیست)', 'جوو — س'],
           ],
         },
-        persianBridgeFa:
-          'مثل کشیدنِ «آ» در خط فارسی: خودِ خط صدا ندارد، فقط مصوتِ قبل را کش می‌دهد. فرقش: در ژاپنی این کشش واجی است — بدون آن، واژه نیست.',
-        honestyLabelFa:
-          'در برخی وام‌واژه‌ها (مانند برخی تلفظ‌های فرانسوی‌گونه) ー رفتار متفاوت دارد — خارج از دامنهٔ N5.',
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-k8-predict-taxi',
+        role: 'notice',
+        bodyFa: 'این واژه «تاکسی» است. حدس بزن و جواب را ببین.',
+        word: { ja: 'タクシー', readingFa: 'تاکوشیی', fa: 'تاکسی', highlight: ['ー'], beats: 4 },
+        ask: {
+          questionFa: '「تاکسی» با چند ー نوشته می‌شود؟',
+          options: [
+            { id: 'a', label: 'بدون ー' },
+            { id: 'b', label: 'با یک ー (آخر)' },
+          ],
+          correctOptionId: 'b',
+          revealFa: 'タ・ク・シ・ー — کشش فقط آخر: «تاکوشیی». صدای «شی» خودش بلند می‌شود.',
+        },
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-k8-guided',
+        exerciseIds: ['ex-kana-k8-clo-1', 'ex-kana-k8-dec-1'],
       },
       {
         kind: 'example-set',
-        id: 'blk-stn-kana-k8-ruleex',
+        id: 'blk-stn-kana-k8-apply',
         examples: [
           {
-            id: 'ex-stn-kana-k8-t0',
-            role: 'anchor',
-            ja: 'コーヒー',
-            reading: 'کووهی',
-            fa: 'قهوه',
-            whyFa: 'دو ー: بعد از コ و بعد از ヒ — «کوو-هیی».',
-          },
-          {
-            id: 'ex-stn-kana-k8-t1',
-            role: 'anchor',
+            id: 'ex-stn-kana-k8-apply-0',
+            role: 'varied',
             ja: 'ジュース',
             reading: 'جووس',
             fa: 'آب‌میوه',
             whyFa: 'ジュ+ー+ス — کششِ «او».',
           },
           {
-            id: 'ex-stn-kana-k8-t2',
-            role: 'anchor',
-            ja: 'ノート',
-            reading: 'نووتو',
-            fa: 'دفتر',
-            whyFa: 'ノ+ー+ト — کشش فقط بعد از ノ.',
-          },
-          {
-            id: 'ex-stn-kana-k8-t3',
-            role: 'anchor',
+            id: 'ex-stn-kana-k8-apply-1',
+            role: 'varied',
             ja: 'ボールペン',
             reading: 'بوولپِن',
             fa: 'خودکار',
-            whyFa: 'ボ+ー+ル+ペ+ン — کشش فقط در «بوو»؛ «پِن» کوتاه.',
+            whyFa: 'کشش فقط در «بوو»؛ «پِن» کوتاه.',
           },
         ],
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-k8-rule-drill',
-        exerciseIds: [
-          'ex-kana-k8-dec-1',
-          'ex-kana-k8-dec-2',
-          'ex-kana-k8-dec-3',
-          'ex-kana-k8-dec-4',
-          'ex-kana-k8-clo-1',
-        ],
+        id: 'blk-stn-kana-k8-apply-read',
+        exerciseIds: ['ex-kana-k8-dec-2', 'ex-kana-k8-dec-3', 'ex-kana-k8-dec-4'],
       },
       {
         kind: 'exercise',
@@ -2990,18 +3214,23 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-k8-lis-1', 'ex-kana-k8-lis-2'],
       },
       {
-        kind: 'example-set',
-        id: 'blk-stn-kana-k8-reading',
-        examples: [
-          {
-            id: 'rd-stn-kana-k8-0',
-            role: 'reading',
-            ja: 'コーヒー',
-            reading: 'کووهی',
-            fa: 'قهوه',
-            whyFa: 'با کاتاکانایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-        ],
+        kind: 'rule-card',
+        id: 'blk-stn-kana-k8-rule-choonpu',
+        patternJa: 'コーヒー = コ·ー·ヒ·ー (۴ مورا)',
+        titleFa: 'کارت مرجع: کوچوئون‌پو ー',
+        bodyFa:
+          'ー = تکرار مصوتِ قبل (یک مورا) — فقط در کاتاکانا. در هیراگانا چنین خطی نداریم؛ آنجا با الگوهای تکرار مصوت می‌نویسیم.',
+        structureTable: {
+          headers: ['با ー (درست)', 'بدون ー (نادرست)', 'شنیدن'],
+          rows: [
+            ['コーヒー (قهوه) — ۴ مورا', 'コヒー (نادرست)', 'کوو — هیی'],
+            ['ジュース (آب‌میوه) — ۳ مورا', 'ジュス (نادرست)', 'جوو — س'],
+            ['タクシー (تاکسی) — ۴ مورا', 'タクシ (نادرست)', 'تا — کُو — شیی'],
+          ],
+        },
+        persianBridgeFa:
+          'مثل کشیدنِ «آ» در خط فارسی: خودِ خط صدا ندارد، فقط مصوتِ قبل را کش می‌دهد. فرقش: در ژاپنی این کشش واجی است.',
+        honestyLabelFa: 'در برخی وام‌واژه‌ها (تلفظ‌های فرانسوی‌گونه) ー رفتار متفاوت دارد — خارج از دامنهٔ N5.',
       },
       {
         kind: 'exercise',
@@ -3014,7 +3243,8 @@ export const KANA_STATIONS: Station[] = [
         titleFa: 'قاعدهٔ کوچوئون‌پو — جمع‌بندی',
         itemsFa: [
           'قاعدهٔ تازه: ー = تکرار مصوت قبل (یک مورا) — فقط در کاتاکانا.',
-          '۲۷ واژهٔ وامی تازه خواندنی شد — مجموع ۶۹۷ واژه از جزوهٔ N5.',
+          'جفت‌های با/بدون ー را دیدی و شنیدی: コーヒー، ジュース، タクシー.',
+          'واژه‌های ارزیابی تازه بودند: ケーキ، コーラ — قاعده را به وام‌واژهٔ جدید منتقل کردی.',
         ],
       },
     ],
@@ -3321,7 +3551,7 @@ export const KANA_STATIONS: Station[] = [
             id: 'rd-stn-kana-k11-1',
             role: 'reading',
             ja: 'ノート',
-            reading: 'نُوتو',
+            reading: 'نووتو',
             pronFa: '«نووتو» — «اُو» بلند و «اُو»ی آخر کوتاه و بی‌رنگ (nōto).',
             fa: 'دفترچه',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
@@ -3433,18 +3663,19 @@ export const KANA_STATIONS: Station[] = [
           {
             id: 'rd-stn-kana-k12-1',
             role: 'reading',
-            ja: 'パーティー',
-            reading: 'پاراتی',
-            pronFa: '«آ» کشیده و «تیی» کشیده: «پاآتیی» — هر خط «ـه» یک واکه را بلند می‌کند (pātī).',
-            fa: 'مهمانی',
+            ja: 'プレゼント',
+            reading: 'پورِزِنتو',
+            pronFa: 'چهار مورا — «پورِزِنتو» (purezento)؛ ゜ روی プ و ゛ روی ゼ، در یک واژه.',
+            fa: 'هدیه',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k12-2',
             role: 'reading',
-            ja: 'チェックイン',
-            reading: 'چِکّویء',
-            fa: 'پذیرش (هتل)',
+            ja: 'ラジオ',
+            reading: 'راجیو',
+            pronFa: 'سه مورای کوتاه — «راجیو» (rajio).',
+            fa: 'رادیو',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
@@ -3473,10 +3704,11 @@ export const KANA_STATIONS: Station[] = [
     prerequisites: ['stn-kana-k12'],
     lineRefs: [],
     objectiveCode: 'kana-two-script-use',
-    estMinutes: 12,
+    estMinutes: 13,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       { kind: 'exercise', id: 'blk-stn-kana-k13-warmup', exerciseIds: ['ex-kana-k13-warm-1', 'ex-kana-k13-warm-2'] },
       {
@@ -3485,6 +3717,46 @@ export const KANA_STATIONS: Station[] = [
         titleFa: 'آشتی دو خط + نامِ خودت',
         bodyFa:
           'حالا هر دو خط را بلدی. هیراگانا برای واژه‌های بومی و دستور زبان، کاتاکانا برای وام‌واژه‌ها و نام‌های خارجی — از جمله نام خودت!',
+      },
+      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-k13-prereq',
+        titleFa: 'دو خط، یک زبان',
+        items: [
+          { word: 'ねこ', readingFa: 'نِکو', noteFa: 'گربه — واژهٔ بومی → هیراگانا.' },
+          { word: 'コーヒー', readingFa: 'کووهی', noteFa: 'قهوه — وام‌واژه → کاتاکانا.' },
+        ],
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-k13-contrast-neko',
+        titleFa: 'یک واژه، دو خط',
+        a: { ja: 'ねこ', readingFa: 'نِکو', fa: 'گربه — صورت اصلیِ واژهٔ بومی: هیراگانا', highlight: [], beats: 2 },
+        b: {
+          ja: 'ネコ',
+          readingFa: 'نِکو',
+          fa: 'همان «گربه» — با کاتاکانا (تأکید/سبک نمایشی)',
+          highlight: [],
+          beats: 2,
+        },
+        ask: {
+          questionFa: 'وام‌واژه‌ها (مثل قهوه، تاکسی) با کدام خط نوشته می‌شوند؟',
+          options: [
+            { id: 'a', label: 'هیراگانا' },
+            { id: 'b', label: 'کاتاکانا' },
+          ],
+          correctOptionId: 'b',
+          revealFa:
+            'کاتاکانا — وام‌واژه‌ها، نام‌های خارجی و روی‌نوشت‌های آهنگین. نام خودت هم با کاتاکانا نوشته می‌شود.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-k13-step-script-rule',
+        role: 'explain',
+        titleFa: 'قاعدهٔ انتخاب خط',
+        bodyFa:
+          'واژه‌های بومی و پایانندهای دستوری → هیراگانا؛ وام‌واژه‌ها، نام‌های خارجی و تأکید → کاتاکانا. همین قاعده را در تمرین‌های بعدی روی واژه‌های واقعی پیاده می‌کنی.',
       },
       {
         kind: 'exercise',

@@ -17,6 +17,7 @@ import {
   BookOpenText,
   CheckCircle2,
   Ear,
+  Eye,
   MessageCircleQuestion,
   Mic,
   Play,
@@ -54,7 +55,7 @@ import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedEx
 import { ExampleAudioButton } from './example-audio-button';
 import { KANA_ITEMS_BY_ID, KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
 import { loadWritingCharData, writingAvailability } from '@/modules/writing';
-import { preloadAudio } from '@/modules/audio/client-cache';
+import { getCachedAudio, preloadAudio } from '@/modules/audio/client-cache';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
@@ -1390,6 +1391,126 @@ function BlockView({
         </section>
       );
 
+    case 'rule-prereq': {
+      /* TL-14 — prerequisites slide: reactivation/first-look, receptive, free next. */
+      return (
+        <section className="rounded-md border-2 border-ai/50 bg-card p-5" data-rule-prereq>
+          <h3 className="text-h3 font-bold">
+            <MixedFaJaText text={block.titleFa} />
+          </h3>
+          <div className="examples-grid mt-3">
+            {block.items.map((item, i) => {
+              const glyphKana = item.glyph ? KANA_ITEMS_BY_GLYPH[item.glyph] : undefined;
+              const urls = item.word
+                ? (exampleAudioByWord?.[item.word] ?? null)
+                : glyphKana
+                  ? (kanaAudioByKanaId?.[glyphKana.kanaId] ?? null)
+                  : null;
+              return (
+                <article
+                  key={i}
+                  className="rounded-md border border-ink-faint bg-card p-4"
+                  data-prereq-item={item.glyph ?? item.word}
+                  data-first-look={item.firstLook ? 'true' : undefined}
+                >
+                  {item.firstLook && (
+                    <span className="rounded-full border border-warning/50 bg-surface-warm px-3 py-1 text-caption text-ink">
+                      {fa.curriculum.rulePrereqFirstLook}
+                    </span>
+                  )}
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                    <JaBlock className="text-[clamp(2rem,9vw,3rem)] font-bold leading-snug text-ink">
+                      {item.glyph ?? item.word}
+                    </JaBlock>
+                    <ExampleAudioButton word={item.word ?? item.glyph ?? ''} urls={urls} />
+                  </div>
+                  <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+                    {item.readingFa}
+                  </p>
+                  {item.noteFa && (
+                    <p className="mt-2 text-small leading-[var(--leading-fa)] text-ink-soft">
+                      <MixedFaJaText text={item.noteFa} />
+                    </p>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      );
+    }
+
+    case 'rule-contrast':
+      /* TL-14 — the live pair slide (audio A→B + beats + optional micro-question). */
+      return (
+        <RuleContrastBlock
+          block={block}
+          chapterSlug={chapterSlug}
+          stationSlug={stationSlug}
+          exampleAudioByWord={exampleAudioByWord}
+        />
+      );
+
+    case 'rule-step': {
+      /* TL-14 — ONE concept per slide (notice/explain) with optional predict ask. */
+      const wordUrls = block.word ? (exampleAudioByWord?.[block.word.ja] ?? null) : null;
+      return (
+        <section
+          className="rounded-md border-2 border-indigo/60 bg-card p-5"
+          data-rule-step
+          data-step-role={block.role}
+        >
+          <p className="flex items-center gap-2 text-caption text-ink-soft">
+            {block.role === 'notice' ? (
+              <Eye aria-hidden className="size-4" />
+            ) : (
+              <BookOpenText aria-hidden className="size-4" />
+            )}
+            {block.role === 'notice' ? fa.curriculum.ruleStepNoticeLabel : fa.curriculum.ruleStepExplainLabel}
+          </p>
+          {block.titleFa && (
+            <h3 className="mt-2 text-h3 font-bold">
+              <MixedFaJaText text={block.titleFa} />
+            </h3>
+          )}
+          {block.word && (
+            <div className="mt-3 rounded-md bg-surface-warm p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <HighlightedJa
+                    ja={block.word.ja}
+                    highlight={block.word.highlight}
+                    className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink"
+                  />
+                  {block.word.beats != null && (
+                    <div className="mt-2">
+                      <BeatsDots beats={block.word.beats} label={fa.curriculum.ruleBeatsLabel} />
+                    </div>
+                  )}
+                </div>
+                <ExampleAudioButton word={block.word.ja} urls={wordUrls} />
+              </div>
+              <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+                {block.word.readingFa}
+              </p>
+              <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">
+                <MixedFaJaText text={block.word.fa} />
+              </p>
+            </div>
+          )}
+          <p className="mt-3 text-body leading-[var(--leading-fa)]">
+            <MixedFaJaText text={block.bodyFa} />
+          </p>
+          {block.miniTable && <RuleTableView table={block.miniTable} />}
+          {block.ask && (
+            <div className="mt-4">
+              <MicroAskPanel chapterSlug={chapterSlug} stationSlug={stationSlug} blockId={block.id} ask={block.ask} />
+            </div>
+          )}
+        </section>
+      );
+    }
+
     case 'writing-practice':
       /* TASK-LEARNING-07 (DD-105/DD-111): practice-layer block — the forward
        * button stays available; summaries are recorded best-effort (never a gate). */
@@ -1504,6 +1625,287 @@ function BlockView({
 }
 
 /* ---- guided discovery + structured input (server-graded choice) ---- */
+/* ---------------- TASK-LEARNING-14 — slide-by-slide rule teaching ---------------- */
+
+/** Mora beat dots — the visual analog of duration (research §۶: S11). */
+function BeatsDots({ beats, label }: { beats: number; label: string }) {
+  return (
+    <p className="flex items-center gap-2" data-beats={beats}>
+      <span className="flex items-center gap-1" aria-hidden>
+        {Array.from({ length: beats }, (_, i) => (
+          <span key={i} className="size-2.5 rounded-full bg-indigo" />
+        ))}
+      </span>
+      <span className="text-caption text-ink-soft">
+        {faNum(beats)} {label}
+      </span>
+    </p>
+  );
+}
+
+/** Japanese word with the rule-bearing substrings visually emphasized. */
+function HighlightedJa({ ja, highlight, className }: { ja: string; highlight: string[]; className?: string }) {
+  const parts: { text: string; hl: boolean }[] = [];
+  let rest = ja;
+  while (rest.length > 0) {
+    let best = -1;
+    let bestLen = 0;
+    for (const h of highlight) {
+      const idx = rest.indexOf(h);
+      if (idx >= 0 && (best === -1 || idx < best)) {
+        best = idx;
+        bestLen = h.length;
+      }
+    }
+    if (best === -1) {
+      parts.push({ text: rest, hl: false });
+      break;
+    }
+    if (best > 0) parts.push({ text: rest.slice(0, best), hl: false });
+    parts.push({ text: rest.slice(best, best + bestLen), hl: true });
+    rest = rest.slice(best + bestLen);
+  }
+  return (
+    <JaBlock className={className}>
+      {parts.map((p, i) =>
+        p.hl ? (
+          <span key={i} className="rounded-sm bg-indigo-wash px-0.5 font-bold text-shu" data-rule-highlight>
+            {p.text}
+          </span>
+        ) : (
+          <span key={i}>{p.text}</span>
+        ),
+      )}
+    </JaBlock>
+  );
+}
+
+/** Shared structure-table renderer (rule-card + rule-step miniTable). */
+function RuleTableView({ table }: { table: { headers: string[]; rows: string[][] } }) {
+  return (
+    <div className="mt-4 overflow-x-auto">
+      <table className="w-full border-collapse text-small">
+        <thead>
+          <tr className="border-b border-ink-faint text-ink-soft">
+            {table.headers.map((h) => (
+              <th key={h} className="px-3 py-2 text-start font-bold">
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.rows.map((row, i) => (
+            <tr key={i} className="border-b border-ink-faint/50">
+              {row.map((cell, j) => (
+                <td key={j} dir="auto" className="px-3 py-2">
+                  <MixedFaJaText text={cell} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/**
+ * TL-14 — play word A then word B back-to-back (the live contrast moment:
+ * the learner hears the pair as a pair, not as two isolated clicks).
+ * Uses the shared cached Audio elements (no re-download); unmount stops the chain.
+ */
+function useSequentialWordPlay() {
+  const [playing, setPlaying] = useState(false);
+  const stopRef = useRef(false);
+  // leaving the slide (walk moved on) breaks the A→B chain
+  useEffect(() => {
+    return () => {
+      stopRef.current = true;
+    };
+  }, []);
+  const playBoth = useCallback(
+    async (a: { opus: string; m4a: string } | null, b: { opus: string; m4a: string } | null) => {
+      if (!a || !b || stopRef.current) return;
+      stopRef.current = false;
+      setPlaying(true);
+      try {
+        const elA = getCachedAudio(a.opus);
+        if (elA) {
+          elA.currentTime = 0;
+          await elA.play().catch(() => undefined);
+          await new Promise<void>((resolve) => {
+            elA.onended = () => resolve();
+            setTimeout(resolve, 4000);
+          });
+        }
+        if (stopRef.current) return;
+        await new Promise((r) => setTimeout(r, 550));
+        if (stopRef.current) return;
+        const elB = getCachedAudio(b.opus);
+        if (elB) {
+          elB.currentTime = 0;
+          await elB.play().catch(() => undefined);
+          await new Promise<void>((resolve) => {
+            elB.onended = () => resolve();
+            setTimeout(resolve, 4000);
+          });
+        }
+      } finally {
+        if (!stopRef.current) setPlaying(false);
+      }
+    },
+    [],
+  );
+  return { playing, playBoth };
+}
+
+/** One side of a rule-contrast slide. */
+function ContrastPanel({
+  word,
+  urls,
+}: {
+  word: { ja: string; readingFa: string; fa: string; highlight: string[]; beats: number };
+  urls: { opus: string; m4a: string } | null;
+}) {
+  return (
+    <article
+      className="flex flex-col gap-2 rounded-md border border-ink-faint bg-card p-4"
+      data-contrast-word={word.ja}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <HighlightedJa
+          ja={word.ja}
+          highlight={word.highlight}
+          className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink"
+        />
+        <ExampleAudioButton word={word.ja} urls={urls} />
+      </div>
+      <BeatsDots beats={word.beats} label={fa.curriculum.ruleBeatsLabel} />
+      <p className="border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
+        {word.readingFa}
+      </p>
+      <p className="text-body leading-[var(--leading-fa)] text-ink-soft">
+        <MixedFaJaText text={word.fa} />
+      </p>
+    </article>
+  );
+}
+
+/**
+ * TL-14 — the unscored micro-question (predict / notice-check) on a rule slide.
+ * Same round-trip as DiscoveryBlock (grade-block, SKL-013); the reveal teaches
+ * in BOTH outcomes (pretesting — a wrong guess still primes learning).
+ */
+function MicroAskPanel({
+  chapterSlug,
+  stationSlug,
+  blockId,
+  ask,
+}: {
+  chapterSlug: string;
+  stationSlug: string;
+  blockId: string;
+  ask: { questionFa: string; options: { id: string; label: string }[] };
+}) {
+  const [picked, setPicked] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<{ correct: boolean; feedbackFa: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const answer = async (optionId: string) => {
+    setPicked(optionId);
+    setBusy(true);
+    const result = await gradeBlock({
+      chapterSlug,
+      stationSlug,
+      blockId,
+      answer: { kind: 'option', optionId },
+    });
+    setOutcome(result ?? { correct: false, feedbackFa: fa.curriculum.gradingUnavailable });
+    setBusy(false);
+  };
+
+  return (
+    <div className="rounded-md border border-ai/40 bg-surface-warm/60 p-4" data-micro-ask>
+      <p className="flex items-start gap-2 text-body font-bold">
+        <MessageCircleQuestion aria-hidden className="mt-1 size-4 shrink-0 text-ai" />
+        <MixedFaJaText text={ask.questionFa} />
+      </p>
+      <div role="radiogroup" className="mt-3 flex flex-col gap-2">
+        {ask.options.map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            role="radio"
+            aria-checked={picked === opt.id}
+            disabled={outcome !== null || busy}
+            onClick={() => void answer(opt.id)}
+            className={[
+              'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
+              picked === opt.id ? 'border-ai bg-indigo-wash font-bold' : 'border-ink-faint bg-card hover:border-ai',
+            ].join(' ')}
+          >
+            <span dir="auto">{opt.label}</span>
+          </button>
+        ))}
+      </div>
+      {outcome && (
+        <div role="status" aria-live="polite" className="mt-3 rounded-md bg-card p-3 text-body">
+          <p className={outcome.correct ? 'font-bold text-success' : 'font-bold text-ink'}>
+            {outcome.correct ? fa.curriculum.ruleAskGuessedCorrect : fa.curriculum.ruleAskGuessedWrong}
+          </p>
+          {outcome.feedbackFa && (
+            <p className="mt-1 leading-[var(--leading-fa)]">
+              <MixedFaJaText text={outcome.feedbackFa} />
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** TL-14 — the contrast slide block renderer. */
+function RuleContrastBlock({
+  block,
+  chapterSlug,
+  stationSlug,
+  exampleAudioByWord,
+}: {
+  block: Extract<ClientTeachingBlock, { kind: 'rule-contrast' }>;
+  chapterSlug: string;
+  stationSlug: string;
+  exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+}) {
+  const urlsA = exampleAudioByWord?.[block.a.ja] ?? null;
+  const urlsB = exampleAudioByWord?.[block.b.ja] ?? null;
+  const { playing, playBoth } = useSequentialWordPlay();
+  return (
+    <section className="flex flex-col gap-4" data-rule-contrast>
+      {block.titleFa && <h3 className="text-h3 font-bold">{block.titleFa}</h3>}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <ContrastPanel word={block.a} urls={urlsA} />
+        <ContrastPanel word={block.b} urls={urlsB} />
+      </div>
+      {urlsA && urlsB && (
+        <button
+          type="button"
+          onClick={() => void playBoth(urlsA, urlsB)}
+          disabled={playing}
+          className="flex h-11 w-fit items-center gap-2 rounded-md border-2 border-ai bg-card px-5 text-body font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-60"
+          data-play-both
+        >
+          <Play aria-hidden className="size-4" />
+          {playing ? fa.curriculum.ruleContrastPlaying : fa.curriculum.ruleContrastPlayBoth}
+        </button>
+      )}
+      {block.ask && (
+        <MicroAskPanel chapterSlug={chapterSlug} stationSlug={stationSlug} blockId={block.id} ask={block.ask} />
+      )}
+    </section>
+  );
+}
+
 function DiscoveryBlock({
   block,
   stationSlug,

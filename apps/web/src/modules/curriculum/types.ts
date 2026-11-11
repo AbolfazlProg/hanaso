@@ -317,6 +317,59 @@ export type TeachingBlock =
   | { kind: 'exercise'; id: string; exerciseIds: string[] }
   | {
       /**
+       * TASK-LEARNING-14 (slide-by-slide teaching — prerequisites slide):
+       * reactivates required prior knowledge (retrieval, not re-teaching) and/or
+       * gives a FIRST LOOK at glyphs this lesson needs visually (e.g. the big
+       * やゆよ forms before the small-kana rule). Purely receptive + playable;
+       * never scored, never a walk gate. Glyphs first SEEN here must be declared
+       * on Station.introducesGlyphs so the GLYPH-BUDGET gate stays honest.
+       */
+      kind: 'rule-prereq';
+      id: string;
+      titleFa: string;
+      items: {
+        /** A single glyph (registry kana) OR a real word (reading vessel). */
+        glyph?: string;
+        word?: string;
+        readingFa: string;
+        noteFa?: string;
+        /** True when this item is a FIRST LOOK (not previously taught) — honest badge. */
+        firstLook?: boolean;
+      }[];
+    }
+  | {
+      /**
+       * TASK-LEARNING-14 (slide-by-slide teaching — contrast slide): the minimal
+       * pair (or mark pair) side by side, each playable, with mora beat dots and
+       * the rule-bearing part highlighted. "Incorrect" forms carry an honest
+       * non-word label in `fa`. Optional unscored micro-question.
+       */
+      kind: 'rule-contrast';
+      id: string;
+      titleFa?: string;
+      a: ContrastWord;
+      b: ContrastWord;
+      ask?: MicroAsk;
+    }
+  | {
+      /**
+       * TASK-LEARNING-14 (slide-by-slide teaching — ONE-concept slide): the
+       * decomposed rule-card. `notice` shows the rule at work in a word (worked
+       * example); `explain` names the concept in Persian. bodyFa ≤ ~3 sentences;
+       * optional mini table (≤3 rows) and optional predict micro-question
+       * (guess BEFORE the full explanation — pretesting effect, unscored).
+       */
+      kind: 'rule-step';
+      id: string;
+      role: 'notice' | 'explain';
+      titleFa?: string;
+      bodyFa: string;
+      word?: { ja: string; readingFa: string; fa: string; highlight: string[]; beats?: number };
+      miniTable?: { headers: string[]; rows: string[][] };
+      ask?: MicroAsk;
+    }
+  | {
+      /**
        * TASK-LEARNING-07 (DD-111 / TB-WriteCanvas — owner-ordered capability):
        * handwriting practice block — REAL drawing with correctness evaluation
        * (modes: guided stroke animation / trace over the guide / free recall).
@@ -348,6 +401,56 @@ export type TeachingBlock =
       taskId: string;
     }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
+
+/* ------------------------------------------------------------------ rule slides (TASK-LEARNING-14) */
+
+/** One side of a rule-contrast slide (TL-14 — the live minimal-pair comparison). */
+export interface ContrastWord {
+  ja: string;
+  readingFa: string;
+  fa: string;
+  /** Substrings of `ja` to visually emphasize (the rule-bearing part). */
+  highlight: string[];
+  /** Mora count for the beat-dot visualization (the visual analog of duration). */
+  beats: number;
+}
+
+/**
+ * Unscored micro-question on a rule slide (TL-14 — pretesting / noticing).
+ * Graded server-side exactly like dialogue-player.prediction: the reveal is
+ * educational in BOTH outcomes and NEVER reaches the client up front (SKL-013).
+ */
+export interface MicroAsk {
+  questionFa: string;
+  options: { id: string; label: string }[];
+  correctOptionId: string;
+  revealFa: string;
+}
+
+/* ------------------------------------------------------------------ rule slides (TASK-LEARNING-14) */
+
+/** One side of a rule-contrast slide (TL-14 — the live minimal-pair comparison). */
+export interface ContrastWord {
+  ja: string;
+  readingFa: string;
+  fa: string;
+  /** Substrings of `ja` to visually emphasize (the rule-bearing part). */
+  highlight: string[];
+  /** Mora count for the beat-dot visualization (the visual analog of duration). */
+  beats: number;
+}
+
+/**
+ * Unscored micro-question on a rule slide (TL-14 — pretesting / noticing).
+ * Graded server-side exactly like dialogue-player.prediction: the reveal is
+ * educational in BOTH outcomes and NEVER reaches the client up front (SKL-013).
+ */
+export interface MicroAsk {
+  questionFa: string;
+  options: { id: string; label: string }[];
+  correctOptionId: string;
+  revealFa: string;
+}
 
 /** The INTEGRATE user reply spec (semi-free: template build / choice — L2 no-IME pattern). */
 export interface UserReplySpec {
@@ -415,6 +518,14 @@ export interface Station {
   completion: CompletionCriteria;
   /** Optional station mastery criterion (feeds FSRS/Test-Out — data for M2). */
   mastery?: { threshold: number };
+  /**
+   * TASK-LEARNING-14 (GLYPH-BUDGET gate): glyphs this station shows for the
+   * FIRST time (e.g. H6's first look at the big やゆよ forms inside its rule
+   * deck). They are legal inside THIS station's blocks from this point on —
+   * everything else must come from previously taught glyphs. Required (even
+   * as []) on stations that carry rule-* blocks.
+   */
+  introducesGlyphs?: string[];
   /** The teaching blocks rendered in order — the lesson engine walks this array. */
   blocks: TeachingBlock[];
   /** FSRS wave-1 cards enrolled by completing this station (engine = M2). */

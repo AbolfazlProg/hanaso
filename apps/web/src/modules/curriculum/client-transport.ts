@@ -7,7 +7,7 @@
  * crossing the RSC boundary — grading round-trips /api/curriculum/station, the
  * same as bank exercises (SKL-013: the answer key NEVER reaches the client).
  */
-import type { Station, TeachingBlock, UserReplySpec } from './types';
+import type { ContrastWord, Station, TeachingBlock, UserReplySpec } from './types';
 import type { ClientExercise } from './grading';
 import { toClientExercise } from './grading';
 
@@ -76,6 +76,39 @@ export type ClientTeachingBlock =
       questionFa: string;
       lineRef?: string;
       options: { id: string; label: string }[];
+    }
+  | {
+      /** TASK-LEARNING-14: prerequisites slide — receptive, no answer material. */
+      kind: 'rule-prereq';
+      id: string;
+      titleFa: string;
+      items: {
+        glyph?: string;
+        word?: string;
+        readingFa: string;
+        noteFa?: string;
+        firstLook?: boolean;
+      }[];
+    }
+  | {
+      /** TASK-LEARNING-14: contrast slide — `ask` answer material stripped (SKL-013). */
+      kind: 'rule-contrast';
+      id: string;
+      titleFa?: string;
+      a: ContrastWord;
+      b: ContrastWord;
+      ask?: { questionFa: string; options: { id: string; label: string }[] };
+    }
+  | {
+      /** TASK-LEARNING-14: one-concept slide — `ask` answer material stripped (SKL-013). */
+      kind: 'rule-step';
+      id: string;
+      role: 'notice' | 'explain';
+      titleFa?: string;
+      bodyFa: string;
+      word?: { ja: string; readingFa: string; fa: string; highlight: string[]; beats?: number };
+      miniTable?: { headers: string[]; rows: string[][] };
+      ask?: { questionFa: string; options: { id: string; label: string }[] };
     }
   | { kind: 'exercise'; id: string; exerciseIds: string[] }
   | {
@@ -151,6 +184,29 @@ function stripBlock(block: TeachingBlock): ClientTeachingBlock {
           ? { questionFa: block.prediction.questionFa, options: block.prediction.options }
           : undefined,
         reducedSupport: block.reducedSupport,
+      };
+    /* TASK-LEARNING-14: rule slides — strip ask.correctOptionId + ask.revealFa
+       (the SAME no-key rule as dialogue-player.prediction; reveal comes from
+       the server via grade-block in both outcomes). */
+    case 'rule-contrast':
+      return {
+        kind: 'rule-contrast',
+        id: block.id,
+        ...(block.titleFa ? { titleFa: block.titleFa } : {}),
+        a: block.a,
+        b: block.b,
+        ask: block.ask ? { questionFa: block.ask.questionFa, options: block.ask.options } : undefined,
+      };
+    case 'rule-step':
+      return {
+        kind: 'rule-step',
+        id: block.id,
+        role: block.role,
+        ...(block.titleFa ? { titleFa: block.titleFa } : {}),
+        bodyFa: block.bodyFa,
+        ...(block.word ? { word: block.word } : {}),
+        ...(block.miniTable ? { miniTable: block.miniTable } : {}),
+        ask: block.ask ? { questionFa: block.ask.questionFa, options: block.ask.options } : undefined,
       };
     case 'character-scene':
       return {
@@ -259,8 +315,30 @@ export function stripStationAnswerMaterial(station: Station): Station {
           })),
         } as TeachingBlock;
       }
+      if (block.kind === 'rule-contrast') {
+        return {
+          kind: 'rule-contrast',
+          id: block.id,
+          ...(block.titleFa ? { titleFa: block.titleFa } : {}),
+          a: block.a,
+          b: block.b,
+          ask: block.ask ? { questionFa: block.ask.questionFa, options: block.ask.options } : undefined,
+        } as unknown as TeachingBlock;
+      }
+      if (block.kind === 'rule-step') {
+        return {
+          kind: 'rule-step',
+          id: block.id,
+          role: block.role,
+          ...(block.titleFa ? { titleFa: block.titleFa } : {}),
+          bodyFa: block.bodyFa,
+          ...(block.word ? { word: block.word } : {}),
+          ...(block.miniTable ? { miniTable: block.miniTable } : {}),
+          ask: block.ask ? { questionFa: block.ask.questionFa, options: block.ask.options } : undefined,
+        } as unknown as TeachingBlock;
+      }
       // scene / vocab-card / expression-card / rule-card / example-set / exercise /
-      // listening-task / wrap-up carry no answer material — pass through unchanged.
+      // listening-task / wrap-up / rule-prereq carry no answer material — pass through unchanged.
       return block;
     }) as Station['blocks'],
   };
@@ -269,6 +347,7 @@ export function stripStationAnswerMaterial(station: Station): Station {
 /** Server-side lookup of a block answer (grading side — never sent to the client). */
 export type BlockAnswerKind =
   | { blockKind: 'guided-discovery' | 'structured-input' | 'prediction'; correctOptionId: string; explainFa: string }
+  | { blockKind: 'rule-slide-ask'; correctOptionId: string; explainFa: string }
   | { blockKind: 'userReply'; correctOptionId?: string; acceptedOrders?: string[][]; nameSlotChipId?: string }
   | null;
 
@@ -283,6 +362,15 @@ export function findBlockAnswer(station: Station, blockId: string, stepIndex?: n
         blockKind: 'prediction',
         correctOptionId: block.prediction.correctOptionId,
         explainFa: block.prediction.revealFa,
+      };
+    }
+    /* TASK-LEARNING-14: rule-slide micro-questions — prediction semantics (the
+       reveal is educational in BOTH outcomes; unscored warm-up). */
+    if ((block.kind === 'rule-contrast' || block.kind === 'rule-step') && block.ask) {
+      return {
+        blockKind: 'rule-slide-ask',
+        correctOptionId: block.ask.correctOptionId,
+        explainFa: block.ask.revealFa,
       };
     }
     if (block.kind === 'character-scene' && stepIndex !== undefined) {

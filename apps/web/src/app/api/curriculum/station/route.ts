@@ -298,10 +298,13 @@ export async function POST(req: Request) {
     // Predictions are unscored warm-ups (COMPOSITION §۳-۲): the reveal is
     // educational in BOTH outcomes, so return it regardless of correctness
     // (TASK-LEARNING-02 — anchor prediction now server-graded).
+    // TASK-LEARNING-14: rule-slide micro-questions (rule-step/rule-contrast ask)
+    // follow the SAME prediction semantics — pretesting guesses are never
+    // punished; the reveal teaches either way.
     const explainFa =
       found.blockKind === 'userReply'
         ? ''
-        : found.blockKind === 'prediction'
+        : found.blockKind === 'prediction' || found.blockKind === 'rule-slide-ask'
           ? found.explainFa
           : correct
             ? ''

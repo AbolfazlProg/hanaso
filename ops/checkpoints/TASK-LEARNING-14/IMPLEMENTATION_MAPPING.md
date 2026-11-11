@@ -5,18 +5,18 @@
 
 ## ۱) خلاصهٔ تصمیم‌های معماری
 
-| نیاز تحقیق | راه‌حل معماری | تغییر Schema؟ |
-| --- | --- | --- |
-| اسلاید = یک قدم یادگیری | هر اسلاید یک بلوک در `blocks[]` موجود — ریل/ناوبری/resume رایگان | خیر |
-| بازخوانی پیش‌نیاز + معرفی اولین‌نگاه | بلوک جدید **`rule-prereq`** | بله (add-only در TeachingBlock) |
-| مقایسهٔ زندهٔ جفت + beat dots | بلوک جدید **`rule-contrast`** | بله (add-only) |
-| اسلاید notice/explain/predict تک‌مفهومی | بلوک جدید **`rule-step`** (پیش‌بینی = فیلد `ask`) | بله (add-only) |
-| ریز-پرسش بدون نمره (پیش‌بینی/کدام تغییر کرد) | فیلد `ask` روی rule-step و rule-contrast — **دقیقاً الگوی `dialogue-player.prediction`**: نمره‌دهی سروری از مسیر `grade-block`، unscored، reveal در هر دو حالت | خیر (الگوی موجود) |
-| کاربرد ۱-۲ واژه | بلوک موجود `example-set` (کاهش تعداد قلم به ۱-۲) | خیر |
-| تمرین ۱-۲ سؤالی | بلوک موجود `exercise` (تجزیهٔ بلوک‌های ۳-۵تایی) | خیر |
-| کارت مرجع نهایی | بلوک موجود `rule-card` در انتهای deck (نقش: جمع‌بندی مرجع) | خیر |
-| اعلام گلیف‌های معرفی‌شده در درس | فیلد جدید اختیاری `Station.introducesGlyphs?: string[]` | بله (add-only) |
-| ممنوعیت محتوای آموزش‌نداده (مکانیکی) | ماژول خالص جدید `modules/curriculum/glyph-budget.ts` + گیت‌های §۵ | بله (فقط validation) |
+| نیاز تحقیق                                   | راه‌حل معماری                                                                                                                                                  | تغییر Schema؟                   |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| اسلاید = یک قدم یادگیری                      | هر اسلاید یک بلوک در `blocks[]` موجود — ریل/ناوبری/resume رایگان                                                                                               | خیر                             |
+| بازخوانی پیش‌نیاز + معرفی اولین‌نگاه         | بلوک جدید **`rule-prereq`**                                                                                                                                    | بله (add-only در TeachingBlock) |
+| مقایسهٔ زندهٔ جفت + beat dots                | بلوک جدید **`rule-contrast`**                                                                                                                                  | بله (add-only)                  |
+| اسلاید notice/explain/predict تک‌مفهومی      | بلوک جدید **`rule-step`** (پیش‌بینی = فیلد `ask`)                                                                                                              | بله (add-only)                  |
+| ریز-پرسش بدون نمره (پیش‌بینی/کدام تغییر کرد) | فیلد `ask` روی rule-step و rule-contrast — **دقیقاً الگوی `dialogue-player.prediction`**: نمره‌دهی سروری از مسیر `grade-block`، unscored، reveal در هر دو حالت | خیر (الگوی موجود)               |
+| کاربرد ۱-۲ واژه                              | بلوک موجود `example-set` (کاهش تعداد قلم به ۱-۲)                                                                                                               | خیر                             |
+| تمرین ۱-۲ سؤالی                              | بلوک موجود `exercise` (تجزیهٔ بلوک‌های ۳-۵تایی)                                                                                                                | خیر                             |
+| کارت مرجع نهایی                              | بلوک موجود `rule-card` در انتهای deck (نقش: جمع‌بندی مرجع)                                                                                                     | خیر                             |
+| اعلام گلیف‌های معرفی‌شده در درس              | فیلد جدید اختیاری `Station.introducesGlyphs?: string[]`                                                                                                        | بله (add-only)                  |
+| ممنوعیت محتوای آموزش‌نداده (مکانیکی)         | ماژول خالص جدید `modules/curriculum/glyph-budget.ts` + گیت‌های §۵                                                                                              | بله (فقط validation)            |
 
 ## ۲) نوع‌های بلوک جدید — شکل دادهٔ دقیق (types.ts)
 
@@ -48,21 +48,21 @@ interface MicroAsk { questionFa: string; options: { id: string; label: string }[
 
 ## ۳) نگاشت فایل‌به‌فایل
 
-| # | فایل | تغییر | ریز جزئیات |
-| --- | --- | --- | --- |
-| 1 | `src/modules/curriculum/types.ts` | افزودنی | ۳ نوع بلوک جدید در TeachingBlock + `Station.introducesGlyphs?` |
-| 2 | `src/modules/curriculum/client-transport.ts` | افزودنی | ClientTeachingBlock: انواع جدید **بدون** `ask.correctOptionId` و `ask.revealFa` (الگوی prediction موجود)؛ `findBlockAnswer` به‌روزرسانی: `rule-step`/`rule-contrast` → option-equality + reveal |
-| 3 | `src/app/api/curriculum/station/route.ts` | افزودنی | `grade-block`: شاخهٔ انواع جدید (unscored؛ بدون incrementAttempts — هم‌رفتار prediction) |
-| 4 | `src/components/curriculum/station-runner.tsx` | افزودنی | BlockView: سه case جدید + کامپوننت ریز `MicroAskPanel` (الگوی DiscoveryBlock: انتخاب → POST grade-block → reveal در هر دو حالت) + پخش دوتایی A~B در contrast (setTimeout ~۶۰۰ms، هر دو از exampleAudioByWord) |
-| 5 | `src/app/learn/[chapter]/journey/[station]/page.tsx` | جزئی | گذراندن `exampleAudioByWord` به بلوک‌های جدید (موجود — فقط مصرف جدید)؛ بدون تغییر منطق rule-listening |
-| 6 | `src/messages/fa.ts` | افزودنی | رشته‌ها: عنوان پیش‌نیاز، «پخش هر دو»، «ضربه»، برچسب نقش اسلاید (مشاهده/توضیح/پیش‌بینی)، پیام‌های reveal |
-| 7 | `src/modules/curriculum/glyph-budget.ts` | **جدید** | تابع خالص تجزیه: `decompose(word) → { base: string[], rules: RuleMark[] }` — داکوتن→پایه+H5 · هان‌داکوتن→پایه+H15 · ゃゅょ→H6 · っ→H13 · ー→K8 · ゔ/کوچک‌های خارجی→K12(پرچم موج دوم) + جدول گلیف‌پایه از KANA_ITEMS |
-| 8 | `src/modules/curriculum/validation.ts` | افزودنی | ۶ گیت §۵ (بر پایهٔ glyph-budget + دادهٔ ایستگاه‌ها) |
-| 9 | `src/modules/curriculum/content/chapter-kana01.stations.ts` | **بازنویسی ۸ ایستگاه** | H4/H5/H6/H7/H13/H15/K8: جایگزینی الگوی ۸بلوکی با deck اسلایدی (نقشهٔ کامل §۶) · K13: افزودن deck کاربرد دو خط · introducesGlyphs اعلام می‌شود |
-| 10 | `src/modules/curriculum/content/chapter-kana01.exercises.ts` | اصلاح + تعدیل | رفع Q1-Q4 ممیزی (فهرست §۷) + تقسیم به بلوک‌های ۱-۲تایی (در stations.ts) + حذف/جایگزینی سؤال‌های معیوب |
-| 11 | `tests/unit/curriculum-content.test.ts` | افزودنی + به‌روزرسانی | گیت‌های جدید سبز روی محتوای بازنویسی‌شده + کیس‌های نقض (گلیف آموزش‌نداده در گزینه → خطا؛ آوانگاسی ناسازگار → خطا؛ ۳ بلوک خواندنی پیاپی → خطا) |
-| 12 | `tests/unit/ui/rule-slides.test.tsx` | **جدید** | رندر استاتیک: contrast هر دو واژه + beat dots + دکمهٔ پخش · step با word و highlight · prereq با فهرست؛ تعامل: MicroAskPanel با fetch-stub (الگوی quiz-feedback-flow) |
-| 13 | `tests/unit/curriculum-content.test.ts` (کیفیت‌های موجود) | حفظ | شمار ایستگاه (۳۱) و ۹۲ کانا و جریان گیت تسلط تغییر نمی‌کند |
+| #   | فایل                                                         | تغییر                  | ریز جزئیات                                                                                                                                                                                                          |
+| --- | ------------------------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `src/modules/curriculum/types.ts`                            | افزودنی                | ۳ نوع بلوک جدید در TeachingBlock + `Station.introducesGlyphs?`                                                                                                                                                      |
+| 2   | `src/modules/curriculum/client-transport.ts`                 | افزودنی                | ClientTeachingBlock: انواع جدید **بدون** `ask.correctOptionId` و `ask.revealFa` (الگوی prediction موجود)؛ `findBlockAnswer` به‌روزرسانی: `rule-step`/`rule-contrast` → option-equality + reveal                     |
+| 3   | `src/app/api/curriculum/station/route.ts`                    | افزودنی                | `grade-block`: شاخهٔ انواع جدید (unscored؛ بدون incrementAttempts — هم‌رفتار prediction)                                                                                                                            |
+| 4   | `src/components/curriculum/station-runner.tsx`               | افزودنی                | BlockView: سه case جدید + کامپوننت ریز `MicroAskPanel` (الگوی DiscoveryBlock: انتخاب → POST grade-block → reveal در هر دو حالت) + پخش دوتایی A~B در contrast (setTimeout ~۶۰۰ms، هر دو از exampleAudioByWord)       |
+| 5   | `src/app/learn/[chapter]/journey/[station]/page.tsx`         | جزئی                   | گذراندن `exampleAudioByWord` به بلوک‌های جدید (موجود — فقط مصرف جدید)؛ بدون تغییر منطق rule-listening                                                                                                               |
+| 6   | `src/messages/fa.ts`                                         | افزودنی                | رشته‌ها: عنوان پیش‌نیاز، «پخش هر دو»، «ضربه»، برچسب نقش اسلاید (مشاهده/توضیح/پیش‌بینی)، پیام‌های reveal                                                                                                             |
+| 7   | `src/modules/curriculum/glyph-budget.ts`                     | **جدید**               | تابع خالص تجزیه: `decompose(word) → { base: string[], rules: RuleMark[] }` — داکوتن→پایه+H5 · هان‌داکوتن→پایه+H15 · ゃゅょ→H6 · っ→H13 · ー→K8 · ゔ/کوچک‌های خارجی→K12(پرچم موج دوم) + جدول گلیف‌پایه از KANA_ITEMS |
+| 8   | `src/modules/curriculum/validation.ts`                       | افزودنی                | ۶ گیت §۵ (بر پایهٔ glyph-budget + دادهٔ ایستگاه‌ها)                                                                                                                                                                 |
+| 9   | `src/modules/curriculum/content/chapter-kana01.stations.ts`  | **بازنویسی ۸ ایستگاه** | H4/H5/H6/H7/H13/H15/K8: جایگزینی الگوی ۸بلوکی با deck اسلایدی (نقشهٔ کامل §۶) · K13: افزودن deck کاربرد دو خط · introducesGlyphs اعلام می‌شود                                                                       |
+| 10  | `src/modules/curriculum/content/chapter-kana01.exercises.ts` | اصلاح + تعدیل          | رفع Q1-Q4 ممیزی (فهرست §۷) + تقسیم به بلوک‌های ۱-۲تایی (در stations.ts) + حذف/جایگزینی سؤال‌های معیوب                                                                                                               |
+| 11  | `tests/unit/curriculum-content.test.ts`                      | افزودنی + به‌روزرسانی  | گیت‌های جدید سبز روی محتوای بازنویسی‌شده + کیس‌های نقض (گلیف آموزش‌نداده در گزینه → خطا؛ آوانگاسی ناسازگار → خطا؛ ۳ بلوک خواندنی پیاپی → خطا)                                                                       |
+| 12  | `tests/unit/ui/rule-slides.test.tsx`                         | **جدید**               | رندر استاتیک: contrast هر دو واژه + beat dots + دکمهٔ پخش · step با word و highlight · prereq با فهرست؛ تعامل: MicroAskPanel با fetch-stub (الگوی quiz-feedback-flow)                                               |
+| 13  | `tests/unit/curriculum-content.test.ts` (کیفیت‌های موجود)    | حفظ                    | شمار ایستگاه (۳۱) و ۹۲ کانا و جریان گیت تسلط تغییر نمی‌کند                                                                                                                                                          |
 
 **بدون تغییر (قراردادهای حفظ‌اجباری):** ExerciseSession و نردبان F1-F3 و auto-next · walk-persistence (شمات v1 — بلوک‌ها داده‌اند؛ هیچ فیلد جدید لازم نیست) · progress-machine و رویدادها · FSRS (fsrsItems/kn-· not-integrated را جعل نکن) · journey-map و قفل فصل · رجیستری‌های صوتی و ExampleAudioButton و useAudioToggle · KanaCard و WritingEngine و AIZEN · گیت تسلط M-K1..K5 · SKL-013 (مسدودسازی کلید پاسخ در انتقال کلاینت — برای ask های جدید هم اعمال می‌شود).
 
@@ -78,14 +78,14 @@ interface MicroAsk { questionFa: string; options: { id: string; label: string }[
 
 ## ۵) گیت‌های اعتبارسنجی جدید (validation.ts)
 
-| گیت | منطق | چرا |
-| --- | --- | --- |
-| GLYPH-BUDGET-v2 | همهٔ سطوح متنی (patternJa · سلول‌های جدول rule-card/miniTable · example ja همهٔ نقش‌ها · promptJa · گزینه‌های کانایی · clozeTokens · chips · rule-prereq/contrast/step) → `decompose` → گلیف‌پایه ∈ تجمعی(تا این ایستگاه) ∪ introducesGlyphs این ایستگاه ∧ قاعدهٔ نشانه (H5/H15/H6/H13/K8) با order ≤ این ایستگاه | بند ۱۰ تحقیق؛ ریشه‌یابی U1-U3 |
-| TRANSCRIPT-CONSISTENT | نگاشت word→readingFa در سراسر فصل (example-set، promptJaReading، ContrastWord، rule-step.word) — هر واژه یک خوانش یکتا | رفع Q1 |
-| OPTION-GLYPH | زیرمجموعهٔ GLYPH-BUDGET روی گزینه‌ها/chips | رفع U1 در گزینه‌ها |
-| RULE-LISTENING-SHAPE | rule-listening دقیقاً ۲ گزینهٔ کانایی + promptJa دارای دارایی نیست لازم نیست (دارایی در page حل می‌شود) — فقط شکل | شکاف MCQ-THREE |
-| PASSIVE-RUN | حداکثر ۲ بلوک پیاپی از {scene, rule-card, example-set, wrap-up, rule-step, rule-prereq} | اجرای مکانیکی قاعدهٔ KB |
-| PREREQ-DATA | ایستگاه دارای هر بلوک rule-* باید introducesGlyphs اعلام کند | دادهٔ گیت ۱ |
+| گیت                   | منطق                                                                                                                                                                                                                                                                                                              | چرا                           |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| GLYPH-BUDGET-v2       | همهٔ سطوح متنی (patternJa · سلول‌های جدول rule-card/miniTable · example ja همهٔ نقش‌ها · promptJa · گزینه‌های کانایی · clozeTokens · chips · rule-prereq/contrast/step) → `decompose` → گلیف‌پایه ∈ تجمعی(تا این ایستگاه) ∪ introducesGlyphs این ایستگاه ∧ قاعدهٔ نشانه (H5/H15/H6/H13/K8) با order ≤ این ایستگاه | بند ۱۰ تحقیق؛ ریشه‌یابی U1-U3 |
+| TRANSCRIPT-CONSISTENT | نگاشت word→readingFa در سراسر فصل (example-set، promptJaReading، ContrastWord، rule-step.word) — هر واژه یک خوانش یکتا                                                                                                                                                                                            | رفع Q1                        |
+| OPTION-GLYPH          | زیرمجموعهٔ GLYPH-BUDGET روی گزینه‌ها/chips                                                                                                                                                                                                                                                                        | رفع U1 در گزینه‌ها            |
+| RULE-LISTENING-SHAPE  | rule-listening دقیقاً ۲ گزینهٔ کانایی + promptJa دارای دارایی نیست لازم نیست (دارایی در page حل می‌شود) — فقط شکل                                                                                                                                                                                                 | شکاف MCQ-THREE                |
+| PASSIVE-RUN           | حداکثر ۲ بلوک پیاپی از {scene, rule-card, example-set, wrap-up, rule-step, rule-prereq}                                                                                                                                                                                                                           | اجرای مکانیکی قاعدهٔ KB       |
+| PREREQ-DATA           | ایستگاه دارای هر بلوک rule-* باید introducesGlyphs اعلام کند                                                                                                                                                                                                                                                      | دادهٔ گیت ۱                   |
 
 ## ۶) نقشهٔ بازنویسی محتوا (CP-04) — هر ایستگاه
 
@@ -107,24 +107,24 @@ interface MicroAsk { questionFa: string; options: { id: string; label: string }[
 
 ## ۷) اصلاح‌های سؤال (CP-06) — فهرست عملیاتی
 
-| شناسه | ایراد (ممیزی) | اصلاح |
-| --- | --- | --- |
-| ex-kana-h4-dec-1..4 | پاسخ درست با خوانش آموزشی تناقض (کوکو↔کووکوو)؛ تفکیک با اعراب | گزینه‌ها با قرارداد یکتا: درست «کووکوو» / خطا «کوکو» (حذف کشش) / خطا «گووکوو» (داکوتن) — promptJaReading هم‌قانون |
-| ex-kana-h4-asm-1 | گزینهٔ مرده «آساا» | جایگزینی با خطای نوع‌شناسی (کوتاه‌سازی هر دو مصوت) |
-| ex-kana-h4-asm-2، dec-2، dec-4 | آوانگاسی ناسازگار | هم‌قانون‌سازی با مثال‌ها (کووکی/اووکیی/اووساکا) |
-| ex-kana-h6-clo-1 | گزینه‌های よ/や آموزش‌نداده | پس از معرفی やゆよ در prereq اسلایدی H6 قانونی می‌شود؛ rationale گزینه-c از «ردیف دیگری» به «اندازه» تغییر می‌کند |
-| جدول H6 (بلوک) | ردیف びょういん (ひ/ん/よ آموزش‌نداده) | حذف از H6؛ انتقال مثال به خواندنِ H12 |
-| برچسب صداقت H6/H7 | متن خراب/گنگ | بازنویسی |
-| سایر dec/asm کانایی | بازبینی همه علیه قرارداد آوانگاسی | اسکن مکانیکی با گیت TRANSCRIPT-CONSISTENT |
+| شناسه                          | ایراد (ممیزی)                                                 | اصلاح                                                                                                             |
+| ------------------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| ex-kana-h4-dec-1..4            | پاسخ درست با خوانش آموزشی تناقض (کوکو↔کووکوو)؛ تفکیک با اعراب | گزینه‌ها با قرارداد یکتا: درست «کووکوو» / خطا «کوکو» (حذف کشش) / خطا «گووکوو» (داکوتن) — promptJaReading هم‌قانون |
+| ex-kana-h4-asm-1               | گزینهٔ مرده «آساا»                                            | جایگزینی با خطای نوع‌شناسی (کوتاه‌سازی هر دو مصوت)                                                                |
+| ex-kana-h4-asm-2، dec-2، dec-4 | آوانگاسی ناسازگار                                             | هم‌قانون‌سازی با مثال‌ها (کووکی/اووکیی/اووساکا)                                                                   |
+| ex-kana-h6-clo-1               | گزینه‌های よ/や آموزش‌نداده                                   | پس از معرفی やゆよ در prereq اسلایدی H6 قانونی می‌شود؛ rationale گزینه-c از «ردیف دیگری» به «اندازه» تغییر می‌کند |
+| جدول H6 (بلوک)                 | ردیف びょういん (ひ/ん/よ آموزش‌نداده)                        | حذف از H6؛ انتقال مثال به خواندنِ H12                                                                             |
+| برچسب صداقت H6/H7              | متن خراب/گنگ                                                  | بازنویسی                                                                                                          |
+| سایر dec/asm کانایی            | بازبینی همه علیه قرارداد آوانگاسی                             | اسکن مکانیکی با گیت TRANSCRIPT-CONSISTENT                                                                         |
 
 ## ۸) ریسک‌ها و برنامهٔ اجرا
 
-| ریسک | کاهش |
-| --- | --- |
-| شکستن تست‌های شمارشی موجود (شمار بلوک/تمرین) | به‌روزرسانی همان تست‌ها در همان تغییر؛ اجرای vitest پس از هر موج محتوا |
-| loadChapterBundle fail-fast: گیت جدید = سرور بالاآمدنی تا محتوا سبز شود | گیت + محتوا در همان کامیت (قاعدهٔ موجود پروژه) |
-| SKL-013 برای ask های جدید | تست نشت کلید (الگوی موجود 267-276 curriculum-content.test.ts) برای انواع جدید گسترش می‌یابد |
-| گلیف ー در محتوای هیراگانایی قدیمی (نباید باشد) | GLYPH-BUDGET خودش می‌گیرد؛ اسکن اولیه قبل از بازنویسی |
-| K13 بدون تغییر type ایستگاه (integrate) | بلوک‌های جدید مستقل از type اند؛ PREREQ-DATA فقط با وجود بلوک rule-* فعال می‌شود |
+| ریسک                                                                    | کاهش                                                                                        |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| شکستن تست‌های شمارشی موجود (شمار بلوک/تمرین)                            | به‌روزرسانی همان تست‌ها در همان تغییر؛ اجرای vitest پس از هر موج محتوا                      |
+| loadChapterBundle fail-fast: گیت جدید = سرور بالاآمدنی تا محتوا سبز شود | گیت + محتوا در همان کامیت (قاعدهٔ موجود پروژه)                                              |
+| SKL-013 برای ask های جدید                                               | تست نشت کلید (الگوی موجود 267-276 curriculum-content.test.ts) برای انواع جدید گسترش می‌یابد |
+| گلیف ー در محتوای هیراگانایی قدیمی (نباید باشد)                         | GLYPH-BUDGET خودش می‌گیرد؛ اسکن اولیه قبل از بازنویسی                                       |
+| K13 بدون تغییر type ایستگاه (integrate)                                 | بلوک‌های جدید مستقل از type اند؛ PREREQ-DATA فقط با وجود بلوک rule-* فعال می‌شود            |
 
 **ترتیب اجرای CP-04..CP-06 (یک موج پیوسته):** موتور (§۳ ردیف‌های ۱-۸) → محتوای H4 به‌عنوان نمونهٔ مرجع + تست‌های UI → بقیهٔ ۷ ایستگاه → اصلاح تمرین‌ها → گیت‌ها + کیس‌های نقض → vitest/tsc/eslint/prettier/EQA کامل → CP-07 (مرورگر ۳۹۰/۱۴۴۰ + اسکرین‌شات) → CP-08.

@@ -8,9 +8,10 @@
  *
  * Each rule id maps to its KB source; a failing rule = the chapter cannot ship.
  */
-import type { Chapter, Exercise, LevelPolicy } from './types';
+import type { Chapter, Exercise, LevelPolicy, TeachingBlock } from './types';
 import { orderedStations } from './journey';
 import { KANA_ITEMS, KANA_ITEMS_BY_ID } from './content/kana-items';
+import { RULE_MARK_STATION, decomposeJa, type RuleMark } from './glyph-budget';
 
 export interface ContentViolation {
   rule: string;
@@ -48,6 +49,18 @@ const RULES = {
    */
   blockIdUnique: 'BLOCK-ID-UNIQUE (TL-13 A-4 — block ids unique within a station)',
   exerciseIdUnique: 'EXERCISE-ID-UNIQUE (TL-13 A-5 — exercise ids unique in the bank)',
+  /*
+   * TASK-LEARNING-14 — the golden rule made mechanical: «no question or example
+   * may depend on untaught knowledge». The TL-13 audit proved the old
+   * CONTENT-105 scope (kana-decode promptJa + reading examples only) let
+   * untaught glyphs ship inside rule-card tables, option labels and slide words
+   * (U1-U3). These gates check EVERY kana surface of the kana chapter.
+   */
+  glyphBudget: 'GLYPH-BUDGET (TL-14 — every kana surface uses only taught glyphs + taught rule marks)',
+  transcriptConsistent: 'TRANSCRIPT-CONSISTENT (TL-14 — one Persian reading per word, chapter-wide)',
+  ruleListeningShape: 'RULE-LISTENING-SHAPE (TL-14 — minimal-pair listening carries exactly 2 options)',
+  passiveRun: 'PASSIVE-RUN (TL-14 — at most 2 consecutive receptive slides in a deck)',
+  prereqData: 'PREREQ-DATA (TL-14 — rule-deck stations declare introducesGlyphs)',
 } as const;
 
 /** Validate one chapter against its level policy. Returns [] when shippable. */
@@ -174,6 +187,9 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
   /* ---- TASK-LEARNING-06: kana rules (CONTENT-103/105/106, machine-checkable core) ---- */
   validateKanaContent(chapter, v);
 
+  /* ---- TASK-LEARNING-14: rule-teaching golden-rule gates (kana chapter) ---- */
+  validateRuleTeaching(chapter, v);
+
   /* ---- mastery pool wiring ---- */
   for (const id of practiceIdsInBlocks) {
     const ex = chapter.exercises[id];
@@ -241,10 +257,12 @@ function validateExercise(
     'kana-recognition',
     'kana-recall',
     'kana-decode',
+    // TASK-LEARNING-14: minimal-pair word listening (2 options — the pair).
+    'rule-listening',
   ].includes(ex.type);
   if (usesOptions) {
     const count = ex.options?.length ?? 0;
-    const allowed = ex.type === 'listen-minimal-pair' ? [2, 3] : [3];
+    const allowed = ex.type === 'listen-minimal-pair' ? [2, 3] : ex.type === 'rule-listening' ? [2] : [3];
     if (!allowed.includes(count)) {
       v.push({ rule: RULES.mcqThree, message: `${slug}/${ex.id}: ${count} options (allowed ${allowed.join('/')})` });
     }
@@ -331,7 +349,9 @@ function validateKanaContent(chapter: Chapter, v: ContentViolation[]): void {
   const hasKanaCards = chapter.stations.some((s) => s.blocks.some((b) => b.kind === 'kana-card'));
   if (!hasKanaCards) return; // non-kana chapters: nothing to check
 
-  // cumulative glyph set by station order
+  // cumulative glyph set by station order — a station's own introducesGlyphs
+  // (TL-14 first-look declarations) are available to that station from its
+  // position onward, exactly like its kana-cards.
   const ordered = [...chapter.stations].sort((a, b) => a.order - b.order);
   const cumulative = new Set<string>();
   const cumulativeBySlug = new Map<string, Set<string>>();
@@ -349,6 +369,7 @@ function validateKanaContent(chapter: Chapter, v: ContentViolation[]): void {
         cumulative.add(item.glyph);
       }
     }
+    for (const g of s.introducesGlyphs ?? []) cumulative.add(g);
     cumulativeBySlug.set(s.slug, new Set(cumulative));
   }
 
@@ -400,6 +421,193 @@ function validateKanaContent(chapter: Chapter, v: ContentViolation[]): void {
               });
             }
           }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * TASK-LEARNING-14 — the rule-teaching golden-rule gates (kana chapter only —
+ * the same scope guard as validateKanaContent):
+ *
+ * - GLYPH-BUDGET: EVERY kana surface of every station (rule-card patternJa +
+ *   table cells, ALL example roles, exercise promptJa/options/cloze/chips, and
+ *   the new rule-prereq/rule-contrast/rule-step surfaces) decomposes into base
+ *   glyphs taught by then (cumulative ∪ the station's introducesGlyphs) + rule
+ *   marks (dakuten/handakuten/small-kana/sokuon/chōonpu) whose TEACHING unit
+ *   has order ≤ this station. Foreign smalls (ファ/ティ/ヴ) are wave-2 — any
+ *   use today is a violation.
+ * - TRANSCRIPT-CONSISTENT: one Persian reading per Japanese word, chapter-wide
+ *   (catches the H4 audit's کووکوو↔کوکو drift between example and exercise).
+ * - PREREQ-DATA: rule-deck stations declare introducesGlyphs (even []).
+ * - PASSIVE-RUN: at most 2 consecutive receptive slides in a station deck.
+ */
+function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
+  const hasKanaCards = chapter.stations.some((s) => s.blocks.some((b) => b.kind === 'kana-card'));
+  if (!hasKanaCards) return; // non-kana chapters: glyph teaching is the kana chapter's contract
+
+  const ordered = [...chapter.stations].sort((a, b) => a.order - b.order);
+  const orderOfSlug = new Map(ordered.map((s) => [s.slug, s.order] as const));
+
+  // rule-mark availability: the order of the unit that teaches each mark
+  // (null = never taught in this chapter → any use is a violation).
+  const markFrom: Partial<Record<RuleMark, number | null>> = {};
+  for (const mark of Object.keys(RULE_MARK_STATION) as RuleMark[]) {
+    const slug = RULE_MARK_STATION[mark];
+    markFrom[mark] = orderOfSlug.has(slug) ? (orderOfSlug.get(slug) as number) : null;
+  }
+
+  /* ---- GLYPH-BUDGET: walk stations in order. A station's OWN teaching (its
+     kana-cards + its introducesGlyphs first-looks) is available to its own
+     surfaces (the packet rule: cards come before the exercises that use them);
+     everything earlier is cumulative; everything later is a violation. */
+  const cumulative = new Set<string>();
+  for (const s of ordered) {
+    for (const b of s.blocks) {
+      if (b.kind === 'kana-card') {
+        const item = KANA_ITEMS_BY_ID[b.kanaId];
+        if (item) cumulative.add(item.glyph);
+      }
+    }
+    const local = new Set(s.introducesGlyphs ?? []);
+    const checkSurface = (surface: string, where: string): void => {
+      const req = decomposeJa(surface);
+      const unknownBase = req.base.filter((g) => !cumulative.has(g) && !local.has(g));
+      if (unknownBase.length > 0) {
+        v.push({
+          rule: RULES.glyphBudget,
+          message: `${s.slug}/${where}: uses untaught glyph(s) ${unknownBase.join('')} — legal set = glyphs taught by this point ∪ introducesGlyphs`,
+        });
+      }
+      const earlyMarks = req.marks.filter((m) => {
+        const from = markFrom[m];
+        return from == null || from > s.order;
+      });
+      if (earlyMarks.length > 0) {
+        v.push({
+          rule: RULES.glyphBudget,
+          message: `${s.slug}/${where}: uses rule mark(s) ${earlyMarks.join(', ')} before its teaching unit (${earlyMarks
+            .map((m) => RULE_MARK_STATION[m])
+            .join(', ')})`,
+        });
+      }
+    };
+
+    for (const b of s.blocks) {
+      if (b.kind === 'rule-card') {
+        checkSurface(b.patternJa, b.id);
+        if (b.structureTable) {
+          b.structureTable.rows.forEach((row, i) => row.forEach((cell) => checkSurface(cell, `${b.id}/table-r${i}`)));
+        }
+      }
+      if (b.kind === 'example-set') {
+        for (const ex of b.examples) checkSurface(ex.ja, ex.id);
+      }
+      if (b.kind === 'rule-prereq') {
+        for (const item of b.items) {
+          if (item.glyph) checkSurface(item.glyph, `${b.id}/prereq`);
+          if (item.word) checkSurface(item.word, `${b.id}/prereq`);
+        }
+      }
+      if (b.kind === 'rule-contrast') {
+        checkSurface(b.a.ja, `${b.id}/a`);
+        checkSurface(b.b.ja, `${b.id}/b`);
+      }
+      if (b.kind === 'rule-step') {
+        if (b.word) checkSurface(b.word.ja, b.id);
+        if (b.miniTable) {
+          b.miniTable.rows.forEach((row, i) => row.forEach((cell) => checkSurface(cell, `${b.id}/table-r${i}`)));
+        }
+      }
+      if (b.kind === 'exercise') {
+        for (const id of b.exerciseIds) {
+          const ex = chapter.exercises[id];
+          if (!ex) continue;
+          if (ex.promptJa) checkSurface(ex.promptJa, ex.id);
+          for (const opt of ex.options ?? []) checkSurface(opt.label, `${ex.id}/opt-${opt.id}`);
+          for (const tok of ex.clozeTokens ?? []) if (tok) checkSurface(tok, `${ex.id}/cloze`);
+          for (const chip of ex.chips ?? []) checkSurface(chip.ja, `${ex.id}/chip-${chip.id}`);
+        }
+      }
+    }
+
+    // fold this station's introduces for LATER stations (its cards were folded above)
+    for (const g of s.introducesGlyphs ?? []) cumulative.add(g);
+  }
+
+  /* ---- PREREQ-DATA: rule-deck stations declare their glyph introductions. */
+  for (const s of chapter.stations) {
+    const hasRuleSlides = s.blocks.some(
+      (b) => b.kind === 'rule-prereq' || b.kind === 'rule-contrast' || b.kind === 'rule-step',
+    );
+    if (hasRuleSlides && !Array.isArray(s.introducesGlyphs)) {
+      v.push({
+        rule: RULES.prereqData,
+        message: `${s.slug}: carries rule-* slides but no introducesGlyphs declaration (use [] when nothing is new)`,
+      });
+    }
+  }
+
+  /* ---- PASSIVE-RUN: ≤ 2 consecutive receptive slides in a station deck.
+     Receptive = scene / rule-card / example-set / wrap-up / rule-prereq /
+     rule-step WITHOUT a micro-question (an ask makes the slide interactive). */
+  const isPassive = (b: TeachingBlock): boolean =>
+    ['scene', 'rule-card', 'example-set', 'wrap-up', 'rule-prereq'].includes(b.kind) ||
+    (b.kind === 'rule-step' && !b.ask);
+  for (const s of chapter.stations) {
+    let run = 0;
+    let runStart = -1;
+    s.blocks.forEach((b, i) => {
+      if (isPassive(b)) {
+        if (run === 0) runStart = i;
+        run += 1;
+        if (run === 3) {
+          v.push({
+            rule: RULES.passiveRun,
+            message: `${s.slug}: 3+ consecutive receptive blocks from #${runStart} (${b.kind} at #${i}) — split with an interactive slide`,
+          });
+        }
+      } else {
+        run = 0;
+      }
+    });
+  }
+
+  /* ---- TRANSCRIPT-CONSISTENT: one Persian reading per word, chapter-wide.
+     rule-listening promptJaReadings legitimately append the meaning in
+     parentheses for the reveal («اییه (نه)») — compare the reading part only. */
+  const readings = new Map<string, string>();
+  const normReading = (r: string): string => r.replace(/\s*\([^)]*\)\s*$/, '');
+  const noteReading = (word: string, reading: string, where: string): void => {
+    const next = normReading(reading);
+    const prev = readings.get(word);
+    if (prev !== undefined && prev !== next) {
+      v.push({
+        rule: RULES.transcriptConsistent,
+        message: `word ${word} has two Persian readings: «${prev}» vs «${reading}» (at ${where})`,
+      });
+    } else {
+      readings.set(word, next);
+    }
+  };
+  for (const s of chapter.stations) {
+    for (const b of s.blocks) {
+      if (b.kind === 'example-set') {
+        for (const ex of b.examples) noteReading(ex.ja, ex.reading, `${s.slug}/${ex.id}`);
+      }
+      if (b.kind === 'rule-contrast') {
+        noteReading(b.a.ja, b.a.readingFa, `${s.slug}/${b.id}/a`);
+        noteReading(b.b.ja, b.b.readingFa, `${s.slug}/${b.id}/b`);
+      }
+      if (b.kind === 'rule-step' && b.word) noteReading(b.word.ja, b.word.readingFa, `${s.slug}/${b.id}`);
+      if (b.kind === 'rule-prereq') {
+        for (const item of b.items) if (item.word) noteReading(item.word, item.readingFa, `${s.slug}/${b.id}`);
+      }
+      if (b.kind === 'exercise') {
+        for (const id of b.exerciseIds) {
+          const ex = chapter.exercises[id];
+          if (ex?.promptJa && ex.promptJaReading) noteReading(ex.promptJa, ex.promptJaReading, ex.id);
         }
       }
     }

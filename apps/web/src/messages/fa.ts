@@ -278,6 +278,15 @@ export const fa = {
     masteryStationNote: 'آزمون فهم (دروازهٔ D) در صفحهٔ جدا اجرا می‌شود.',
     prevQuestion: 'قبلی',
     examplesTitle: 'مثال‌ها',
+    /* ---- TASK-LEARNING-14 (slide-by-slide rule teaching) ---- */
+    rulePrereqFirstLook: 'اولین نگاه',
+    ruleContrastPlayBoth: 'پخش هر دو پشت‌سرهم',
+    ruleContrastPlaying: 'در حال پخش…',
+    ruleBeatsLabel: 'ضربه',
+    ruleStepNoticeLabel: 'نگاه کن',
+    ruleStepExplainLabel: 'توضیح',
+    ruleAskGuessedCorrect: 'حدست درست بود!',
+    ruleAskGuessedWrong: 'حدست الان مهم نبود — این را ببین:',
     /* writing practice (TASK-LEARNING-07 / DD-105/DD-111) */
     writingBlockTitle: 'نوشتن با دست',
     writingPickChar: 'نویسهٔ تمرین:',

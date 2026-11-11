@@ -1,15 +1,15 @@
 # CHECKPOINT_LOG — TASK-LEARNING-14
 
-| CP | عنوان | وضعیت | تاریخ | شاهد |
-| --- | --- | --- | --- | --- |
+| CP    | عنوان                                 | وضعیت   | تاریخ      | شاهد                                                                           |
+| ----- | ------------------------------------- | ------- | ---------- | ------------------------------------------------------------------------------ |
 | CP-01 | بازیابی وضعیت + ممیزی محتوا و سؤال‌ها | ✅ کامل | ۲۰۲۶-۱۱-۱۱ | `CONTENT_AND_QUESTION_AUDIT.md` + `CURRENT_STATE.md` (این فایل) — کامیت این CP |
-| CP-02 | تحقیق آموزشی + طراحی Slide-by-Slide | ⏳ | — | `FOUNDATIONS_TEACHING_RESEARCH.md` |
-| CP-03 | معماری + Implementation Mapping | ⬜ | — | `IMPLEMENTATION_MAPPING.md` |
-| CP-04 | بازطراحی محتوای قواعد | ⬜ | — | بلوک‌های جدید در chapter-kana01.stations.ts |
-| CP-05 | پیاده‌سازی Slide-by-Slide | ⬜ | — | کامپوننت‌ها + داده + گیت‌ها |
-| CP-06 | اصلاح/اعتبارسنجی سؤال‌ها | ⬜ | — | تمرین‌های اصلاح‌شده + گیت CI جدید |
-| CP-07 | تست مرورگر + CI + Regression | ⬜ | — | `TEST_REPORT.md` + اسکرین‌شات‌ها |
-| CP-08 | نهایی‌سازی و انتشار | ⬜ | — | `IMPLEMENTATION_REPORT.md` + گزارش فارسی + یک‌خطی v8 |
+| CP-02 | تحقیق آموزشی + طراحی Slide-by-Slide   | ⏳      | —          | `FOUNDATIONS_TEACHING_RESEARCH.md`                                             |
+| CP-03 | معماری + Implementation Mapping       | ⬜      | —          | `IMPLEMENTATION_MAPPING.md`                                                    |
+| CP-04 | بازطراحی محتوای قواعد                 | ⬜      | —          | بلوک‌های جدید در chapter-kana01.stations.ts                                    |
+| CP-05 | پیاده‌سازی Slide-by-Slide             | ⬜      | —          | کامپوننت‌ها + داده + گیت‌ها                                                    |
+| CP-06 | اصلاح/اعتبارسنجی سؤال‌ها              | ⬜      | —          | تمرین‌های اصلاح‌شده + گیت CI جدید                                              |
+| CP-07 | تست مرورگر + CI + Regression          | ⬜      | —          | `TEST_REPORT.md` + اسکرین‌شات‌ها                                               |
+| CP-08 | نهایی‌سازی و انتشار                   | ⬜      | —          | `IMPLEMENTATION_REPORT.md` + گزارش فارسی + یک‌خطی v8                           |
 
 ## یادداشت‌های اجرایی
 
