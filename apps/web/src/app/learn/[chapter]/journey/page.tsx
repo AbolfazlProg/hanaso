@@ -1,20 +1,34 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { loadChapterBundle, LEVELS_BY_CODE, chapterAccessStatus } from '@/modules/curriculum/server';
-import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
+import { loadChapterBundle, chapterAccessStatus, resolveLearnerJourney } from '@/modules/curriculum/server';
 import { resolveLearnerId } from '@/lib/learner/server';
-import { resolveJourney, nextStation } from '@/modules/curriculum';
-import { JourneyMap } from '@/components/curriculum/journey-map';
-import { fa } from '@/messages/fa';
+import { JourneyHome } from '@/components/curriculum/journey-home';
+import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 
 /**
- * /learn/[chapter]/journey — TASK-LEARNING-01 page 3: the ISLAND MAP.
- * Server-resolved journey (order from data) + the live island (focus refresh).
+ * /learn/[chapter]/journey — TASK-HANASO-16: the one-section-at-a-time journey
+ * of ONE chapter. This is the deep-linked target of the station runner's
+ * «ادامهٔ مسیر» CTA and of the archive review links. The old long vertical
+ * island trail was replaced by the section panel on purpose (owner direction):
+ * one section visible at a time, prev/next buttons between sections, honest
+ * locked rows for what is not yet reachable — the walk order and every
+ * availability still come 100% from the data-driven resolver.
+ *
+ * Deep links: `?s=<sectionSlug>` opens a specific section (server-validated —
+ * an unknown slug falls back to the learner's active section). A locked
+ * chapter renders the same honest notice as every other chapter route (#94).
  */
 export const dynamic = 'force-dynamic';
 
-export default async function JourneyPage({ params }: { params: Promise<{ chapter: string }> }) {
+export default async function JourneyPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ chapter: string }>;
+  searchParams: Promise<{ s?: string }>;
+}) {
   const { chapter: slug } = await params;
+  const { s } = await searchParams;
+
   let bundle;
   try {
     bundle = loadChapterBundle(slug);
@@ -22,75 +36,45 @@ export default async function JourneyPage({ params }: { params: Promise<{ chapte
     notFound();
   }
   const chapter = bundle!.chapter;
-  const level = LEVELS_BY_CODE[chapter.levelCode]!;
 
   const learnerId = await resolveLearnerId();
-  const stationStates = await getStationProgressStore().listForUnit(
-    learnerId,
-    chapter.stations.map((s) => s.slug),
-  );
-  const chapterState = await getChapterProgressStore().get(learnerId, chapter.slug);
-  const journey = resolveJourney(chapter, level, stationStates, chapterState);
-  const next = nextStation(journey);
-  // TASK-LEARNING-06: chapter-level soft lock (e.g. Ch02 needs the kana gate G1).
-  const access = await chapterAccessStatus(chapter, learnerId);
 
+  // #94: the chapter soft lock gates this route exactly like the station page.
+  const access = await chapterAccessStatus(chapter, learnerId);
   if (access.locked) {
     return (
-      <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-4 py-12">
-        <header className="flex flex-col gap-2">
-          <p className="text-caption text-ink-soft">{chapter.titleFa}</p>
-          <h1 className="text-h1 font-black text-indigo">{fa.curriculum.chapterLockedTitle}</h1>
-        </header>
-        <section className="rounded-md border border-ink-faint bg-card p-6">
-          <p className="text-body leading-[var(--leading-fa)] text-ink">{fa.curriculum.chapterLockedBody}</p>
-          {access.prerequisiteSlug ? (
-            <Link
-              href={`/learn/${access.prerequisiteSlug}`}
-              className="mt-4 inline-flex items-center gap-2 rounded-md border border-ai px-4 py-2 text-body font-bold text-ai"
-            >
-              {fa.curriculum.goPrerequisite} — {access.prerequisiteTitleFa}
-            </Link>
-          ) : null}
-        </section>
-      </main>
+      <ChapterLockedNotice
+        chapterTitleFa={chapter.titleFa}
+        prerequisiteSlug={access.prerequisiteSlug}
+        prerequisiteTitleFa={access.prerequisiteTitleFa}
+      />
     );
   }
 
-  return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-4 py-12">
-      <header className="flex flex-col gap-2">
-        <p className="text-caption text-ink-soft">{chapter.titleFa}</p>
-        <h1 className="text-h1 font-black text-indigo">{fa.curriculum.journeyTitle}</h1>
-        <p className="text-lead text-ink-soft">{fa.curriculum.journeyLead}</p>
-      </header>
+  const home = await resolveLearnerJourney(learnerId, slug);
+  const nextStationTitle =
+    home.nextStationSlug !== null
+      ? (chapter.stations.find((st) => st.slug === home.nextStationSlug)?.titleFa ?? null)
+      : null;
 
-      <JourneyMap
-        chapterSlug={chapter.slug}
-        initial={{
-          nodes: journey.nodes.map((n) => ({
-            slug: n.station.slug,
-            type: n.station.type,
-            titleFa: n.station.titleFa,
-            objectiveFa: n.station.objectiveFa,
-            core: n.station.core,
-            estMinutes: n.station.estMinutes,
-            availability: n.availability,
-            blockedBy: n.blockedBy,
-            href: `/learn/${chapter.slug}/journey/${n.station.slug}`,
-          })),
-          coreCompleted: journey.coreCompleted,
-          coreTotal: journey.coreTotal,
-          chapterStatus: chapterState?.status ?? null,
-          nextStationSlug: next?.slug ?? null,
-          units: journey.unitGroups?.map((g) => ({
-            slug: g.unit.slug,
-            titleFa: g.unit.titleFa,
-            summaryFa: g.unit.summaryFa,
-            stationSlugs: g.unit.stationSlugs,
-          })),
-        }}
-      />
-    </main>
+  return (
+    <JourneyHome
+      chapterSlug={home.chapter.slug}
+      chapterTitleFa={home.chapter.titleFa}
+      chapterCanDoFa={home.chapter.canDoFa}
+      chapterEstMinutes={home.chapter.estMinutes}
+      levelCode={home.chapter.levelCode}
+      isReview={home.isReview}
+      chapterUnderstood={home.chapterState?.status === 'understood'}
+      coreCompleted={home.coreCompleted}
+      coreTotal={home.coreTotal}
+      corePathComplete={home.corePathComplete}
+      nextStationSlug={home.nextStationSlug}
+      nextStationTitleFa={nextStationTitle}
+      sections={home.sections}
+      activeSectionIndex={home.activeSectionIndex}
+      initialSectionSlug={s}
+      reveal={{ archive: home.reveal.archive, teaser: home.isReview ? null : home.reveal.teaser }}
+    />
   );
 }

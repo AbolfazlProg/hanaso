@@ -3,12 +3,22 @@ import { fail, ok } from '@/modules/shared';
 import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
 import { resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle, LEVELS_BY_CODE, chapterAccessStatus } from '@/modules/curriculum/server';
-import { resolveJourney, nextStation, type JourneyNode } from '@/modules/curriculum';
+import {
+  resolveJourney,
+  nextStation,
+  resolveSections,
+  type JourneyNode,
+  type SectionRowAction,
+} from '@/modules/curriculum';
 
 /**
- * GET /api/curriculum/journey?chapter= — the live island journey (client island
- * refresh for the map + «ادامه از همین‌جا» CTA). Node order comes from the
- * resolver (data-driven) — this route never reshapes it.
+ * GET /api/curriculum/journey?chapter= — the live journey (client island
+ * refresh for the section panel + «ادامه از همین‌جا» CTA). Node order comes
+ * from the resolver (data-driven) — this route never reshapes it.
+ *
+ * TASK-HANASO-16: the response now carries the derived SECTIONS view (one
+ * ChapterUnit per section, rows with row-action CTAs) so the one-section
+ * panel refreshes live exactly like the old map did.
  */
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +51,7 @@ export async function GET(req: Request) {
   const journey = resolveJourney(chapter, level, states, chapterState);
   const next = nextStation(journey);
   const access = await chapterAccessStatus(chapter, userId);
+  const { sections, activeIndex } = resolveSections(journey);
 
   const nodes: (JourneyNode & { href: string })[] = journey.nodes.map((n) => ({
     ...n,
@@ -68,6 +79,28 @@ export async function GET(req: Request) {
         coreCompleted: g.coreCompleted,
         coreTotal: g.coreTotal,
       })),
+      // TASK-HANASO-16 — the one-section-at-a-time panel view (derived).
+      sections: sections.map((s) => ({
+        slug: s.slug,
+        titleFa: s.titleFa,
+        goalFa: s.goalFa,
+        status: s.status,
+        coreCompleted: s.coreCompleted,
+        coreTotal: s.coreTotal,
+        isFocus: s.isFocus,
+        rows: s.rows.map((r) => ({
+          slug: r.node.station.slug,
+          type: r.node.station.type,
+          titleFa: r.node.station.titleFa,
+          objectiveFa: r.node.station.objectiveFa,
+          core: r.node.station.core,
+          estMinutes: r.node.station.estMinutes,
+          availability: r.node.availability,
+          action: r.action as SectionRowAction,
+          href: `/learn/${chapter.slug}/journey/${r.node.station.slug}`,
+        })),
+      })),
+      activeSectionIndex: activeIndex,
       nodes: nodes.map((n) => ({
         slug: n.station.slug,
         type: n.station.type,

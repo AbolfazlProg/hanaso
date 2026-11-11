@@ -157,3 +157,129 @@ export function corePathComplete(journey: Journey): boolean {
 export function masteryStation(chapter: Chapter): Station | null {
   return chapter.stations.find((s) => s.type === 'mastery' && s.core) ?? null;
 }
+
+/* ------------------------------------------------------------------ sections */
+/*
+ * TASK-HANASO-16 — the one-section-at-a-time Learning Journey panel.
+ *
+ * A «Section» IS the chapter's existing `units[]` island/story grouping
+ * (DD-123/T-79 — grouping only, never a walk gate). Everything below is
+ * DERIVED from the same JourneyNode availabilities the map used: no new
+ * stored state, no new walk semantics, no data-model level. Chapters without
+ * units[] resolve to ONE implicit section (all stations, in walk order).
+ */
+
+/** Derived (never stored) status of one section. */
+export type SectionStatus = 'completed' | 'in_progress' | 'locked';
+
+/** What the row's CTA should do (derived from the row node's availability). */
+export type SectionRowAction = 'start' | 'continue' | 'review' | 'locked';
+
+/** One station row inside the active section panel. */
+export interface SectionRow {
+  node: JourneyNode;
+  action: SectionRowAction;
+}
+
+/** One section of the panel (ChapterUnit when the chapter declares units[]). */
+export interface SectionView {
+  slug: string;
+  titleFa: string;
+  /** The section's short goal (ChapterUnit.summaryFa). */
+  goalFa?: string;
+  status: SectionStatus;
+  rows: SectionRow[];
+  coreCompleted: number;
+  coreTotal: number;
+  /** True when this section holds the learner's next actionable station. */
+  isFocus: boolean;
+}
+
+/** The chapter's sections in data order + the default active panel index. */
+export interface SectionsView {
+  sections: SectionView[];
+  /** Default panel: the section holding the next actionable station (else the
+   * last section for review, else the first). */
+  activeIndex: number;
+}
+
+const DONE: ReadonlySet<string> = new Set(['completed', 'skipped', 'needs_retry']);
+
+function rowAction(availability: StationAvailability): SectionRowAction {
+  switch (availability) {
+    case 'completed':
+    case 'skipped':
+      return 'review';
+    case 'in_progress':
+    case 'needs_retry': // soft-pass (island §۹) — the learner returns to improve
+      return 'continue';
+    case 'available':
+      return 'start';
+    default:
+      return 'locked';
+  }
+}
+
+/**
+ * Resolve the section panel view of a journey. Pure: same inputs → same output;
+ * order comes ONLY from the chapter's authored units[]/station order (the
+ * resolver's unitGroups when present, else one implicit section).
+ */
+export function resolveSections(journey: Journey): SectionsView {
+  const focus = nextStation(journey)?.slug ?? null;
+
+  const groups: { slug: string; titleFa: string; goalFa?: string; nodes: JourneyNode[] }[] =
+    journey.unitGroups && journey.unitGroups.length > 0
+      ? journey.unitGroups.map((g) => ({
+          slug: g.unit.slug,
+          titleFa: g.unit.titleFa,
+          goalFa: g.unit.summaryFa,
+          nodes: g.nodes,
+        }))
+      : [
+          {
+            slug: `${journey.chapter.slug}--all`,
+            titleFa: journey.chapter.titleFa,
+            goalFa: journey.chapter.summaryFa,
+            nodes: journey.nodes,
+          },
+        ];
+
+  const sections: SectionView[] = groups.map((g) => {
+    const core = g.nodes.filter((n) => n.station.core);
+    const coreCompleted = core.filter((n) => DONE.has(n.availability)).length;
+    const rows: SectionRow[] = g.nodes.map((node) => ({ node, action: rowAction(node.availability) }));
+    const hasLive = g.nodes.some(
+      (n) => n.availability === 'in_progress' || n.availability === 'needs_retry',
+    );
+    const isFocus = focus !== null && g.nodes.some((n) => n.station.slug === focus);
+    const allLocked = g.nodes.every((n) => n.availability === 'locked');
+    const status: SectionStatus =
+      core.length > 0 && coreCompleted === core.length
+        ? 'completed'
+        : isFocus || hasLive || coreCompleted > 0
+          ? 'in_progress'
+          : allLocked
+            ? 'locked'
+            : 'in_progress'; // non-locked, nothing done yet → the current frontier
+    return {
+      slug: g.slug,
+      titleFa: g.titleFa,
+      goalFa: g.goalFa,
+      status,
+      rows,
+      coreCompleted,
+      coreTotal: core.length,
+      isFocus,
+    };
+  });
+
+  let activeIndex = sections.findIndex((s) => s.isFocus);
+  if (activeIndex < 0) {
+    activeIndex = sections.findIndex((s) => s.status === 'in_progress');
+  }
+  if (activeIndex < 0) {
+    activeIndex = sections.length - 1; // everything completed → review the last section
+  }
+  return { sections, activeIndex };
+}

@@ -4,6 +4,7 @@
  */
 export * from './types';
 export * from './journey';
+export * from './reveal';
 export * from './validation';
 export * from './grading';
 export * from './progress-machine';

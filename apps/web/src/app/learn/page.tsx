@@ -1,85 +1,52 @@
-import { listChapters } from '@/modules/curriculum/content';
-import { chapterAccessStatus } from '@/modules/curriculum/server';
-import { getChapterProgressStore } from '@/lib/poc/stores';
 import { resolveLearnerId } from '@/lib/learner/server';
-import { fa } from '@/messages/fa';
+import { resolveLearnerJourney } from '@/modules/curriculum/server';
+import { JourneyHome } from '@/components/curriculum/journey-home';
 
 /**
- * /learn — the learning entry point (TASK-SLICE-01 → TASK-LEARNING-06).
+ * /learn — the LEARNING JOURNEY home (TASK-HANASO-16).
  *
- * The chapter path: Ch01 kana foundation (L1) → the conversation chapter (L2) →
- * … A chapter declaring a prerequisite shows its soft-lock state honestly
- * (locked ≠ hidden: the goal stays visible — DD-114 honest representation).
+ * One chapter at a time, extracted FROM PROGRESS (never a frontend constant,
+ * never a chapter list): a brand-new learner lands on the first chapter; a
+ * learner mid-chapter lands exactly there; a learner who passed a gate lands
+ * on the next chapter automatically. Refresh keeps the same place (server
+ * resolves the same state). The chapter's content shows ONE SECTION at a time
+ * (the SectionJourney panel); future chapters are never listed — only a late
+ * teaser (≥75% through) and the understood-chapter archive appear below.
  *
- * TASK-LEARNING-07 / Issue #101: the PoC unit card (LearnCard → /poc/dialogue) was
- * REMOVED — product pages must never link into the dev-only /poc/* routes; the
- * /poc routes themselves stay alive for engineering.
+ * TASK-LEARNING-07 / Issue #101 still holds: no links into /poc/* from product
+ * pages. The old full chapter list (learnIndex*) was removed on purpose —
+ * progressive reveal is the owner's direction (HANASO-16 §۳).
  */
-/** Progress-aware (station/chapter stores) — dynamic render. */
 export const dynamic = 'force-dynamic';
 
-export default async function LearnPage() {
+export default async function LearnPage({ searchParams }: { searchParams: Promise<{ s?: string }> }) {
+  const { s } = await searchParams;
   const learnerId = await resolveLearnerId();
-  const chapters = listChapters();
-  const chapterStore = getChapterProgressStore();
-  const cards = await Promise.all(
-    chapters.map(async (chapter) => ({
-      chapter,
-      access: await chapterAccessStatus(chapter, learnerId),
-      state: await chapterStore.get(learnerId, chapter.slug),
-    })),
-  );
+  const home = await resolveLearnerJourney(learnerId);
+
+  const nextStationTitle =
+    home.nextStationSlug !== null
+      ? (home.chapter.stations.find((st) => st.slug === home.nextStationSlug)?.titleFa ?? null)
+      : null;
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-4 py-14">
-      <header className="flex flex-col gap-2">
-        <p className="text-caption text-ink-soft">هاناسو · مسیر یادگیری</p>
-        <h1 className="text-h1 font-black text-indigo">{fa.curriculum.learnIndexTitle}</h1>
-        <p className="text-lead text-ink-soft">{fa.curriculum.learnIndexLead}</p>
-      </header>
-
-      {cards.map(({ chapter, access, state }, index) => (
-        <article
-          key={chapter.slug}
-          className="relative overflow-hidden rounded-md border-2 border-indigo bg-card p-6 shadow-[var(--shadow-card)]"
-        >
-          <span
-            aria-hidden
-            className="pointer-events-none absolute -top-4 -end-4 grid size-24 place-items-center rounded-full bg-indigo text-2xl font-black text-indigo-mist"
-          >
-            {new Intl.NumberFormat('fa-IR').format(index + 1)}
-          </span>
-          <p className="text-caption text-ink-soft">
-            {fa.curriculum.chapterBadge} · {fa.curriculum.levelLabel} {chapter.levelCode}
-            {state?.status === 'understood' ? ' · مکالمهٔ فهمیده‌شده' : ''}
-          </p>
-          <h2 className="mt-1 text-h2 font-black text-indigo">{chapter.titleFa}</h2>
-          <p className="mt-2 text-body text-ink-soft">{chapter.summaryFa}</p>
-          <p className="mt-3 text-small text-ink-soft">
-            ~{new Intl.NumberFormat('fa-IR').format(chapter.estMinutes)} {fa.curriculum.minutes} ·{' '}
-            {new Intl.NumberFormat('fa-IR').format(chapter.stations.filter((s) => s.core).length)}{' '}
-            {fa.curriculum.stations} · {chapter.estLoad === 'medium' ? 'بار متوسط' : 'بار سبک'}
-          </p>
-          {access.locked && access.prerequisiteTitleFa ? (
-            <p className="mt-4 rounded-md border border-amber-600/40 bg-amber-50 px-4 py-3 text-small text-amber-800">
-              {fa.curriculum.chapterLockedBody} ({access.prerequisiteTitleFa})
-            </p>
-          ) : null}
-          <a
-            href={`/learn/${chapter.slug}`}
-            className="mt-5 flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-          >
-            {state && state.status !== 'started' ? fa.curriculum.continueChapter : fa.curriculum.startChapter}
-          </a>
-        </article>
-      ))}
-
-      <footer className="mt-auto border-t border-ink-faint pt-4 text-caption text-ink-soft">
-        <p>
-          هر فصل با مکالمه شروع می‌شود، در ایستگاه‌های جزیره‌ای یاد می‌گیری و فهمش فقط با قبولی در دروازهٔ فهم
-          (understood) ثبت می‌شود — «تمام کرد» با «فهمیدم» فرق دارد.
-        </p>
-      </footer>
-    </main>
+    <JourneyHome
+      chapterSlug={home.chapter.slug}
+      chapterTitleFa={home.chapter.titleFa}
+      chapterCanDoFa={home.chapter.canDoFa}
+      chapterEstMinutes={home.chapter.estMinutes}
+      levelCode={home.chapter.levelCode}
+      isReview={home.isReview}
+      chapterUnderstood={home.chapterState?.status === 'understood'}
+      coreCompleted={home.coreCompleted}
+      coreTotal={home.coreTotal}
+      corePathComplete={home.corePathComplete}
+      nextStationSlug={home.nextStationSlug}
+      nextStationTitleFa={nextStationTitle}
+      sections={home.sections}
+      activeSectionIndex={home.activeSectionIndex}
+      initialSectionSlug={s}
+      reveal={{ archive: home.reveal.archive, teaser: home.isReview ? null : home.reveal.teaser }}
+    />
   );
 }

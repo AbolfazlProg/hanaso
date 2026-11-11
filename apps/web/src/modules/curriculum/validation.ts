@@ -12,6 +12,7 @@ import type { Chapter, Exercise, LevelPolicy, TeachingBlock } from './types';
 import { orderedStations } from './journey';
 import { KANA_ITEMS, KANA_ITEMS_BY_ID } from './content/kana-items';
 import { RULE_MARK_STATION, decomposeJa, type RuleMark } from './glyph-budget';
+import { LEVELS_BY_CODE } from './content/levels';
 
 export interface ContentViolation {
   rule: string;
@@ -61,6 +62,14 @@ const RULES = {
   ruleListeningShape: 'RULE-LISTENING-SHAPE (TL-14 — minimal-pair listening carries exactly 2 options)',
   passiveRun: 'PASSIVE-RUN (TL-14 — at most 2 consecutive receptive slides in a deck)',
   prereqData: 'PREREQ-DATA (TL-14 — rule-deck stations declare introducesGlyphs)',
+  /*
+   * TASK-HANASO-16 — progressive-reveal honesty, made mechanical: the learning
+   * home shows ONLY the active chapter (+ understood archive + a late teaser).
+   * A future chapter without a declared prerequisiteChapterSlug would be a
+   * hidden-but-enterable chapter — the reveal promise would be fake. Every
+   * chapter after the first MUST chain to a real earlier chapter.
+   */
+  chapterChain: 'CHAPTER-CHAIN (HANASO-16 — every chapter after the first declares a prerequisite)',
 } as const;
 
 /** Validate one chapter against its level policy. Returns [] when shippable. */
@@ -612,4 +621,40 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
       }
     }
   }
+}
+
+/*
+ * TASK-HANASO-16 — course-chain validation (progressive-reveal honesty).
+ * Pure: validates the WHOLE chapter registry, not one chapter. Called once per
+ * process by loadChapterBundle (fail fast) and pinned by unit tests.
+ */
+export function validateCourseChain(chapters: Chapter[]): ContentViolation[] {
+  const v: ContentViolation[] = [];
+  const byslug = new Set(chapters.map((c) => c.slug));
+  const ordered = [...chapters].sort((a, b) => {
+    const la = LEVELS_BY_CODE[a.levelCode]?.orderInCourse ?? 0;
+    const lb = LEVELS_BY_CODE[b.levelCode]?.orderInCourse ?? 0;
+    return la !== lb ? la - lb : a.orderInLevel - b.orderInLevel;
+  });
+  ordered.forEach((chapter, index) => {
+    if (index === 0) return; // the first chapter is the entry — no prerequisite
+    if (!chapter.prerequisiteChapterSlug) {
+      v.push({
+        rule: RULES.chapterChain,
+        message: `${chapter.slug}: no prerequisiteChapterSlug — a later chapter without a prerequisite would break progressive reveal (hidden but enterable)`,
+      });
+      return;
+    }
+    if (chapter.prerequisiteChapterSlug === chapter.slug) {
+      v.push({ rule: RULES.chapterChain, message: `${chapter.slug}: prerequisite is itself` });
+      return;
+    }
+    if (!byslug.has(chapter.prerequisiteChapterSlug)) {
+      v.push({
+        rule: RULES.chapterChain,
+        message: `${chapter.slug}: prerequisite ${chapter.prerequisiteChapterSlug} is not a bundled chapter`,
+      });
+    }
+  });
+  return v;
 }
