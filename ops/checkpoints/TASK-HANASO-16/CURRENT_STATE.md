@@ -14,6 +14,12 @@
 | بخش ۸ — اصلاح Installer سه‌سطحی + انتشار معوق              | ✅ CP-05 — updater v3.0 + ۱۴۰/۱۴۰ سندباکس — `DEPLOYMENT_GATE_FIX.md`            |
 | بخش ۱۰-۱۲ — Release، Bundle، گزارش نهایی                   | ✅ CP-06 — `RELEASE_MANIFEST.md` + OWNER-COMMAND v9 + راهنمای فارسی v9 + Bundle |
 
+## وضعیت نهایی تحویل (CP-06 بسته شد)
+
+- شاخهٔ `hanaso16-learning-journey`: **۱۲ کامیت** روی `9a466644` · tip = `4245cf8` · همهٔ گیت‌ها سبز (۶۵۱ واحد · EQA ۳۷ · tsc/eslint/prettier ✓ · build ✓ · deploy04 ۱۴۰/۱۴۰ · deploy05 ۹۰/۹۰).
+- Bundle تحویلی: `download/hanaso-hanaso16.bundle` (تاریخچهٔ کامل + شاخه؛ راستی‌آزمایی fetch شد).
+- Push از سندباکس ممکن نیست (توکن حذف شده) — دستور دقیق Push مالک در RELEASE_MANIFEST §۷.
+
 ## پین‌های نهایی
 
 هدف: `1.0.0-hanaso16-r01` @ `840b993` · ابزار: `ee29578` · bootstrap sha256: `7e45d4f9…` · **شرط انتشار: تعمیر خط مقدم VPS توسط مالک** (هر دو دامنه فعلاً برای دنیا قطعند — شواهد در DEPLOYMENT_FAILURE_ANALYSIS §۲).
