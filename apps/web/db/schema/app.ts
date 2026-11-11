@@ -105,6 +105,14 @@ export const stationProgress = app.table(
     currentBlock: text('current_block'),
     startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
     completedAt: timestamp('completed_at', { withTimezone: true }),
+    /**
+     * TASK-HANASO-17 (§۸ — resume expiration): time of the last MEANINGFUL
+     * activity (block advanced / exercise answered / station completed /
+     * writing practice / FIRST entry). NOT bumped by a plain re-enter of an
+     * in-progress station — entering the page must not extend the 7-day resume
+     * deadline. `updated_at` stays the plain row-write clock.
+     */
+    lastActivityAt: timestamp('last_activity_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.stationId] }), index('station_progress_user_idx').on(t.userId)],

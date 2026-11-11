@@ -81,7 +81,15 @@ export function JourneyHome(props: JourneyHomeProps) {
       estMinutes: r.node.station.estMinutes,
       availability: r.node.availability,
       action: r.action,
-      href: `/learn/${chapterSlug}/journey/${r.node.station.slug}`,
+      /*
+       * TASK-HANASO-17 §۶: a COMPLETED station's row opens the lesson in
+       * REPLAY mode — from the top, never the «already completed» wall (the
+       * owner's core complaint). All other rows enter the normal walk.
+       */
+      href:
+        r.action === 'review'
+          ? `/learn/${chapterSlug}/journey/${r.node.station.slug}?mode=review`
+          : `/learn/${chapterSlug}/journey/${r.node.station.slug}`,
     })),
   }));
 
@@ -93,7 +101,7 @@ export function JourneyHome(props: JourneyHomeProps) {
       : null;
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-6 px-4 py-10 sm:py-12">
+    <main className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col gap-6 px-4 pb-28 pt-10 sm:pt-12 md:pb-12">
       {/* ---- page header ---- */}
       <header className="flex flex-col gap-2">
         <p className="text-caption text-ink-soft">

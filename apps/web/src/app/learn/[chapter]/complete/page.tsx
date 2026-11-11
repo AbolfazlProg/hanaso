@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, CircleCheck } from 'lucide-react';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
+import { listChapterCards } from '@/modules/fsrs/integration';
+
+const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 import { resolveLearnerId } from '@/lib/learner/server';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
@@ -65,24 +68,30 @@ export default async function ChapterCompletePage({ params }: { params: Promise<
             </li>
           ))}
         </ul>
+        {/* TASK-HANASO-17 — the card count is computed from the chapter's REAL
+            FSRS inventory (listChapterCards), never a hardcoded number. */}
         <p className="mt-4 text-caption text-ink-soft">
-          کارت‌های مرور این فصل (۲۳ کارت) در صف FSRS ثبت شدند — صف مرور با موتور M2 فعال می‌شود.
+          کارت‌های مرور این فصل ({faNum(listChapterCards(chapter).length)} کارت) در صف FSRS ثبت شدند — صف مرور با موتور
+          M2 فعال می‌شود.
         </p>
       </section>
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Link
           href="/learn"
-          className="flex h-12 items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
-        >
-          {fa.curriculum.backToChapters}
-          <ArrowLeft aria-hidden className="size-4" />
-        </Link>
-        <Link
-          href={`/learn/${chapter.slug}/journey`}
           className="flex h-12 items-center gap-2 rounded-md border border-ai px-6 text-body font-bold text-ai transition-colors hover:bg-indigo-wash"
         >
+          {fa.curriculum.backToChapters}
+        </Link>
+        {/* TASK-HANASO-17 §7 — the ONE primary CTA of the chapter-completion
+            moment: back to the map (the next chapter auto-becomes active there
+            — the learner chooses what opens next, nothing auto-advances). */}
+        <Link
+          href={`/learn/${chapter.slug}/journey`}
+          className="flex h-12 items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+        >
           {fa.curriculum.backToJourney}
+          <ArrowLeft aria-hidden className="size-4" />
         </Link>
       </div>
     </main>

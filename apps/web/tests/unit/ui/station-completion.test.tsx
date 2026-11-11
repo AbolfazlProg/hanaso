@@ -19,6 +19,13 @@
  *
  * Drives the REAL StationRunner with the REAL chapter content (stn-kana-h0 —
  * the anchor station: scene → dialogue-player → wrap-up, completion 'viewed').
+ *
+ * TASK-HANASO-17 §۷ (2026-11-12) — the CTA contract changed on the owner's
+ * order: the completion CTA now ALWAYS returns to the map SECTION of this
+ * station («پایان درس و بازگشت به مسیر» → /learn/<chapter>/journey?s=<unit>)
+ * and the next lesson is a TEXT caption («درس بعدی: …») — never auto-opened,
+ * never a deep-link CTA. «بعد از پایان Lesson نباید بدون اقدام کاربر، درس
+ * بعدی باز شود.»
  */
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -91,12 +98,16 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+/** The map deep-link the station page computes for stn-kana-h0 (§۷ — ?s=). */
+const MAP_HREF = '/learn/kana-foundation-01/journey?s=island-1-hira-voice';
+
 function renderStation(opts?: { nextCoreStation?: { slug: string; titleFa: string } | null }) {
   return render(
     <StationRunner
       chapterSlug="kana-foundation-01"
       station={toClientStation(station)}
       chapter={{ words: chapter.words, expressions: chapter.expressions }}
+      mapHref={MAP_HREF}
       nextCoreStation={
         opts?.nextCoreStation === undefined
           ? nextCore
@@ -147,12 +158,13 @@ describe('StationRunner — TASK-LEARNING-10 §6 station completion flow', () =>
       // (1) the success moment is a NON-INTERACTIVE message
       const msg = screen.getByText('این ایستگاه را با موفقیت پشت سر گذشتی!');
       expect(msg.tagName).toBe('P');
-      // (2) exactly ONE primary CTA, labeled by its real destination
-      const cta = screen.getByRole('button', { name: 'رفتن به ایستگاه بعدی' });
+      // (2) exactly ONE primary CTA — back to the map section (HANASO-17 §۷)
+      const cta = screen.getByRole('button', { name: 'پایان درس و بازگشت به مسیر' });
       expect(cta.className).toContain('bg-indigo');
       expect(cta.className).not.toContain('bg-shu');
-      // the destination caption names the next station from the real map data
-      expect(screen.getByText(nextCore!.titleFa)).toBeTruthy();
+      // the next lesson is a TEXT caption, never a CTA and never auto-opened
+      expect(screen.getByText(`درس بعدی: ${nextCore!.titleFa}`)).toBeTruthy();
+      expect(screen.queryByRole('button', { name: 'رفتن به ایستگاه بعدی' })).toBeNull();
       // (3) the old second follow-up button is GONE
       expect(screen.queryByRole('button', { name: 'بازگشت به نقشه' })).toBeNull();
       // (4) the completion registered exactly once (server idempotent anyway)
@@ -167,23 +179,26 @@ describe('StationRunner — TASK-LEARNING-10 §6 station completion flow', () =>
     renderStation();
     await waitFor(() => expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeTruthy());
     await walkToCompletion();
-    const cta = screen.getByRole('button', { name: 'رفتن به ایستگاه بعدی' });
+    const cta = screen.getByRole('button', { name: 'پایان درس و بازگشت به مسیر' });
     fireEvent.click(cta);
     fireEvent.click(cta); // the same tick — the latch must swallow it
     expect(pushMock).toHaveBeenCalledTimes(1);
-    expect(pushMock).toHaveBeenCalledWith('/learn/kana-foundation-01/journey/stn-kana-h1');
+    // HANASO-17 §۷: the destination is the map SECTION of this station
+    expect(pushMock).toHaveBeenCalledWith(MAP_HREF);
   });
 
   it(
-    'the last core station of the chapter gets «ادامهٔ مسیر» to the island map (not a station deep link)',
+    'the last core station of the chapter gets the SAME map CTA — no «درس بعدی» caption (HANASO-17)',
     { timeout: 20000 },
     async () => {
       renderStation({ nextCoreStation: null });
       await waitFor(() => expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeTruthy());
       await walkToCompletion();
-      const cta = screen.getByRole('button', { name: 'ادامهٔ مسیر' });
+      // ONE CTA, same label — the map (where the mastery gate has opened)
+      const cta = screen.getByRole('button', { name: 'پایان درس و بازگشت به مسیر' });
+      expect(screen.queryByText(/^درس بعدی:/)).toBeNull(); // no next-lesson caption
       fireEvent.click(cta);
-      expect(pushMock).toHaveBeenCalledWith('/learn/kana-foundation-01/journey');
+      expect(pushMock).toHaveBeenCalledWith(MAP_HREF);
     },
   );
 
@@ -205,7 +220,7 @@ describe('StationRunner — TASK-LEARNING-10 §6 station completion flow', () =>
       // the walk did NOT restart: no block content is interactive, and the CTA
       // is already there without a single «ادامه» click
       expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeNull();
-      expect(screen.getByRole('button', { name: 'رفتن به ایستگاه بعدی' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'پایان درس و بازگشت به مسیر' })).toBeTruthy();
     },
   );
 
@@ -262,7 +277,7 @@ describe('StationRunner — TASK-LEARNING-10 §6 station completion flow', () =>
       renderStation();
       await waitFor(() => expect(screen.getByText('این ایستگاه را با موفقیت پشت سر گذشتی!')).toBeTruthy());
       expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeNull();
-      expect(screen.getByRole('button', { name: 'رفتن به ایستگاه بعدی' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'پایان درس و بازگشت به مسیر' })).toBeTruthy();
     },
   );
 

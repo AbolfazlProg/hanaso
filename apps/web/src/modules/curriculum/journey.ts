@@ -158,6 +158,18 @@ export function masteryStation(chapter: Chapter): Station | null {
   return chapter.stations.find((s) => s.type === 'mastery' && s.core) ?? null;
 }
 
+/**
+ * TASK-HANASO-17 (§۷): the section (ChapterUnit) that holds a station — the
+ * «بازگشت به همان مسیر و Section» deep-link target after a lesson ends.
+ * Pure data lookup (units[] grouping — DD-123). Returns null when the chapter
+ * declares no units[] (the implicit single-section case: the map link carries
+ * no ?s= parameter).
+ */
+export function sectionOfStation(chapter: Chapter, stationSlug: string): string | null {
+  if (!chapter.units || chapter.units.length === 0) return null;
+  return chapter.units.find((u) => u.stationSlugs.includes(stationSlug))?.slug ?? null;
+}
+
 /* ------------------------------------------------------------------ sections */
 /*
  * TASK-HANASO-16 — the one-section-at-a-time Learning Journey panel.

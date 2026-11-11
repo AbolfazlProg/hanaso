@@ -13,6 +13,48 @@ export const fa = {
     loading: 'در حال بارگذاری…',
     openMenu: 'باز کردن منو',
   },
+  /*
+   * TASK-HANASO-17 — Home dashboard + main navigation. PG-01 (DD-053):
+   * «سلام کوتاه» (بدون نام — دادهٔ نام معتبر وجود ندارد)، کارت قدم بعدی با
+   * CTA یگانه، مرور صادقانه، لینک کم‌وزن مسیر. بدون عدد ساختگی.
+   */
+  nav: {
+    home: 'خانه',
+    journey: 'مسیر یادگیری',
+    ariaLabel: 'ناوبری اصلی',
+  },
+  home: {
+    greeting: 'سلام!',
+    lead: 'قدم بعدیِ امروز آماده است.',
+    /* کارت قدم بعدی — ۶ حالت (HOME_INFORMATION_ARCHITECTURE §۲) */
+    primaryTitle: 'قدم بعدی',
+    primaryStart: 'شروع یادگیری',
+    primaryResume: 'ادامهٔ درس',
+    primaryRestart: 'شروع دوبارهٔ درس',
+    primaryNext: 'شروع درس بعدی',
+    primaryGate: 'دروازهٔ فهم مکالمه',
+    primaryReviewCourse: 'مرور مسیر یادگیری',
+    primaryResumeExpiredNote:
+      'چند روزی به این درس نرسیدی؛ از ابتدای همان درس شروع می‌کنیم — پیشرفت‌های قبلی‌ات سرجایشان هستند.',
+    minutesLine: (m: number) => `~${new Intl.NumberFormat('fa-IR').format(m)} دقیقه`,
+    /* کارت درس بعدی (ثانویه — فقط وقتی متفاوت از قدم بعدی) */
+    nextLessonTitle: 'درس بعدی',
+    nextLessonBody: 'اگر ترجیح می‌دهی درس جدیدی را شروع کنی، از این‌جا.',
+    nextLessonCta: 'شروع این درس',
+    /* مرور — همیشه صادقانه (موتور FSRS هنوز فعال نشده) */
+    reviewQueuePending: 'کارت‌های مرورِ آنچه یاد گرفته‌ای ثبت شده‌اند — صف مرور هوشمند به‌زودی فعال می‌شود.',
+    reviewDue: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} کارت برای مرور امروز`,
+    reviewEmpty: 'امروز مروری نداری — درس بدهی یا بخوانی؟',
+    reviewCta: 'شروع مرور',
+    /* خط مسیر */
+    pathLink: 'مشاهدهٔ مسیر یادگیری',
+    pathCurrentChapter: (title: string) => `فصل جاری: ${title}`,
+    pathCoreDone: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} ایستگاه این فصل انجام شد`,
+    /* آمار خلاصهٔ صادقانه */
+    statsStations: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} ایستگاه یادگیری را کامل کرده‌ای`,
+    statsChapters: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} فصل را فهمیده‌ای`,
+    footerHealth: 'سلامت سرویس',
+  },
   audio: {
     playSentence: 'پخش صدای این جمله',
     replay: 'پخش دوباره',
@@ -290,11 +332,28 @@ export const fa = {
     stationDone: 'ایستگاه کامل شد',
     backToJourney: 'بازگشت به مسیر',
     /* ---- TASK-LEARNING-10 §6 — station completion flow (status = message,
-     * ONE main CTA labeled by its real destination; never a second red button) */
+     * ONE main CTA labeled by its real destination; never a second red button)
+     * ---- TASK-HANASO-17 §۷: the CTA now goes back to the map section of THIS
+     * station («پایان درس و بازگشت به مسیر») and the next lesson is a TEXT
+     * line — never auto-opened. The old «رفتن به ایستگاه بعدی» deep-link CTA
+     * is gone on purpose (owner §7: «بعد از پایان Lesson نباید بدون اقدام
+     * کاربر، درس بعدی باز شود»). */
     stationCompletedMessage: 'این ایستگاه را با موفقیت پشت سر گذشتی!',
-    ctaNextStation: 'رفتن به ایستگاه بعدی',
+    ctaFinishStation: 'پایان درس و بازگشت به مسیر',
+    nextStationShown: (title: string) => `درس بعدی: ${title}`,
     ctaContinuePath: 'ادامهٔ مسیر',
     reviewStationAgain: 'مرور دوبارهٔ این ایستگاه',
+    /* ---- TASK-HANASO-17 §۶ — Lesson Replay mode (completed lessons always
+     * reviewable from the top; no re-completion, no duplicate rewards). */
+    replayModeBadge: 'حالت مرور',
+    replayEndedMessage: 'مرور این درس تمام شد — هر وقت خواستی دوباره از همین‌جا.',
+    replayEndedNote: 'این مرور دوباره چیزی را تغییر نداد؛ ثبت اولیهٔ تکمیل همین درس سرجایش است.',
+    replayAgain: 'یک بار دیگر از اول',
+    /* ---- TASK-HANASO-17 §۸ — neutral restart notice (behavioral-UX §۴:
+     * no absence-shaming, no red numbers). */
+    walkRestartedTitle: 'از ابتدای درس شروع می‌کنیم',
+    walkRestartedBody:
+      'چند روزی به این درس نرسیدی؛ برای اینکه هیچ ناآشنایی جا نماند، از همان اول با هم جلو می‌رویم — پیشرفت‌ها و تاریخچه‌ات دست‌نخورده‌اند.',
     /* ---- TASK-LEARNING-13 (A-3) — honest completion-failure notice + retry
      * (a failed/aborted complete POST was previously silent) */
     completionFailedTitle: 'ثبت پایان ایستگاه ناموفق بود',

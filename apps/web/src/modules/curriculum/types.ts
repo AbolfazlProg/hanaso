@@ -689,7 +689,23 @@ export interface StationState {
   status: 'in_progress' | 'completed' | 'needs_retry' | 'skipped';
   bestScore: number | null;
   attemptCount: number;
-  currentBlock?: string;
+  /**
+   * Resume anchor: last teaching-block id the user reached.
+   * HANASO-17 write semantics (both repository twins): `string` → set ·
+   * `null` → CLEAR · absent/undefined → PRESERVE the stored value (a plain
+   * re-enter must not drop the anchor; only an explicit null or the walk
+   * finishing clears it).
+   */
+  currentBlock?: string | null;
+  /**
+   * TASK-HANASO-17 (§۸): ISO time of the last MEANINGFUL activity at this
+   * station (block advanced / exercise answered / completed / writing practice
+   * / first entry) — the clock of the 7-day resume-expiration policy. Absent
+   * in a write payload → PRESERVED (a re-enter/refresh must not extend the
+   * deadline); absent on a legacy read → treated as `unknown` (fresh — see
+   * resume-policy.ts).
+   */
+  lastActivityAt?: string;
 }
 
 /** Stored chapter A→D state (app.chapter_progress mirror). */

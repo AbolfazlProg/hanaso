@@ -98,8 +98,17 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
     expect(state.bestScore ?? null).toBeNull();
   });
 
-  it('an unknown anchor block id is never stored (honest anchor)', async () => {
-    await postStation(post({ action: 'enter', chapterSlug: CH, stationSlug: STN, stepIndex: 0 }));
+  it('an unknown anchor block id is never stored (honest anchor — TASK-HANASO-17: the last VALID anchor is preserved)', async () => {
+    // seed a known-good anchor first
+    await postStation(
+      post({
+        action: 'progress',
+        chapterSlug: CH,
+        stationSlug: STN,
+        currentBlockId: 'blk-stn-kana-h1-card-hira-a',
+        stepIndex: 1,
+      }),
+    );
     const res = await postStation(
       post({
         action: 'progress',
@@ -111,7 +120,9 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
     );
     expect(res.status).toBe(200);
     const state = await stateOf(res);
-    expect(state.currentBlock ?? null).toBeNull();
+    // the unknown id is never stored; the merge semantics keep the last valid
+    // anchor (a mid-walk sync with stale content must not drop the resume).
+    expect(state.currentBlock).toBe('blk-stn-kana-h1-card-hira-a');
   });
 
   it('learner cookies isolate progress stores (#109 — no shared poc-user)', async () => {

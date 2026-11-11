@@ -1,0 +1,11 @@
+--> TASK-HANASO-17 (§۸ — Resume expiration policy): station_progress needs the
+--> time of the last MEANINGFUL activity (block advanced / exercise answered /
+--> station completed / writing practice / FIRST entry). A plain re-enter or
+--> page refresh must NOT extend the 7-day resume deadline, so this clock is a
+--> separate column from updated_at (which every row-write bumps).
+--> Additive + expand-only (SKL-006): NOT NULL with DEFAULT now() so existing
+--> production rows inherit an honest "recent" baseline (resumeFreshness treats
+--> legacy/unknown timestamps as fresh — an upgrade never throws a learner back
+--> to block 0 out of nowhere). No drops, no rewrites, idempotent for fresh DBs
+--> via the normal journal bookkeeping.
+ALTER TABLE "app"."station_progress" ADD COLUMN "last_activity_at" timestamp with time zone DEFAULT now() NOT NULL;

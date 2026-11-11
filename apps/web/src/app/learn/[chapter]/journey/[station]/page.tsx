@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Repeat2 } from 'lucide-react';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
+import { sectionOfStation } from '@/modules/curriculum/journey';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
@@ -21,12 +22,28 @@ import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
  *
  * Issue #94 (Wave 3): deep links respect the chapter soft lock — a locked chapter
  * renders the SAME notice as the journey page (chapterAccessStatus, DD-117/120).
+ *
+ * TASK-HANASO-17:
+ * - `?mode=review` — LESSON REPLAY (§۶): a completed lesson re-opens from the
+ *   TOP with the full content (audio, exercises) and re-registers NOTHING —
+ *   the map's «مرور» rows deep-link here.
+ * - `?restart=1` — expired-resume restart (§۸): the walk starts from block 0
+ *   with the neutral notice (the 7-day policy dropped the old anchor).
+ * - the header's back link and the completion CTA both return to the map
+ *   SECTION of this station (`?s=` — §۷ «بازگشت به همان مسیر و Section»).
  */
 /** Progress-aware (chapter access store) — dynamic render. */
 export const dynamic = 'force-dynamic';
 
-export default async function StationPage({ params }: { params: Promise<{ chapter: string; station: string }> }) {
+export default async function StationPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ chapter: string; station: string }>;
+  searchParams: Promise<{ mode?: string; restart?: string }>;
+}) {
   const { chapter: chapterSlug, station: stationSlug } = await params;
+  const { mode, restart } = await searchParams;
   let bundle;
   try {
     bundle = loadChapterBundle(chapterSlug);
@@ -63,6 +80,16 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
       .slice()
       .sort((a, b) => a.order - b.order)
       .find((s) => s.core && s.order > station.order) ?? null;
+
+  /*
+   * TASK-HANASO-17: every exit from this lesson returns to the map SECTION
+   * that holds this station (?s= deep-link) and the next core station is
+   * passed to the runner as TEXT ONLY (never auto-opened).
+   */
+  const sectionSlug = sectionOfStation(chapter, stationSlug);
+  const mapHref = sectionSlug ? `/learn/${chapterSlug}/journey?s=${sectionSlug}` : `/learn/${chapterSlug}/journey`;
+  const replayMode = mode === 'review';
+  const restartRequested = restart === '1';
 
   // client-safe exercise payloads (no answers/feedback)
   const clientExercises: Record<string, ClientExercise> = {};
@@ -168,7 +195,7 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-6 md:max-w-[50rem] lg:max-w-[64rem] xl:max-w-[72rem]">
       <header className="sticky top-0 z-10 -mx-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-ink-faint bg-paper/95 px-4 py-3 backdrop-blur">
         <Link
-          href={`/learn/${chapterSlug}/journey`}
+          href={mapHref}
           className="flex h-11 items-center gap-1 rounded-md border border-ink-faint px-3 text-small font-bold text-ink transition-colors hover:bg-surface-warm"
         >
           <ArrowRight aria-hidden className="size-4" />
@@ -180,11 +207,17 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
           </h1>
           <p className="truncate text-caption text-ink-soft">{chapter.titleFa}</p>
         </div>
-        {!station.core && (
+        {replayMode ? (
+          /* TASK-HANASO-17 replay badge: full content, nothing re-registered. */
+          <p className="flex items-center gap-1.5 rounded-full border-2 border-ink bg-ink px-3 py-1 text-caption font-bold text-paper">
+            <Repeat2 aria-hidden className="size-3.5" />
+            {fa.curriculum.replayModeBadge}
+          </p>
+        ) : !station.core ? (
           <p className="rounded-full border border-ai px-3 py-1 text-caption text-ai">
             {fa.curriculum.stationOptional}
           </p>
-        )}
+        ) : null}
       </header>
       <div className="my-auto flex flex-col gap-6 py-8">
         <div className="flex flex-col gap-1">
@@ -215,6 +248,9 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
           hostWordAudioByKanaId={hostWordAudioByKanaId}
           exampleAudioByWord={exampleAudioByWord}
           nextCoreStation={nextCoreStation ? { slug: nextCoreStation.slug, titleFa: nextCoreStation.titleFa } : null}
+          replayMode={replayMode}
+          restartRequested={restartRequested}
+          mapHref={mapHref}
         />
       </div>
     </main>

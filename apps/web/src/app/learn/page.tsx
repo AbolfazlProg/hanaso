@@ -1,6 +1,7 @@
 import { resolveLearnerId } from '@/lib/learner/server';
 import { resolveLearnerJourney } from '@/modules/curriculum/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
+import { SiteNav } from '@/components/site-nav';
 
 /**
  * /learn — the LEARNING JOURNEY home (TASK-HANASO-16).
@@ -16,6 +17,9 @@ import { JourneyHome } from '@/components/curriculum/journey-home';
  * TASK-LEARNING-07 / Issue #101 still holds: no links into /poc/* from product
  * pages. The old full chapter list (learnIndex*) was removed on purpose —
  * progressive reveal is the owner's direction (HANASO-16 §۳).
+ *
+ * TASK-HANASO-17 §۴: top-level page → the site nav renders (the lesson pages
+ * stay immersive).
  */
 export const dynamic = 'force-dynamic';
 
@@ -30,23 +34,26 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
       : null;
 
   return (
-    <JourneyHome
-      chapterSlug={home.chapter.slug}
-      chapterTitleFa={home.chapter.titleFa}
-      chapterCanDoFa={home.chapter.canDoFa}
-      chapterEstMinutes={home.chapter.estMinutes}
-      levelCode={home.chapter.levelCode}
-      isReview={home.isReview}
-      chapterUnderstood={home.chapterState?.status === 'understood'}
-      coreCompleted={home.coreCompleted}
-      coreTotal={home.coreTotal}
-      corePathComplete={home.corePathComplete}
-      nextStationSlug={home.nextStationSlug}
-      nextStationTitleFa={nextStationTitle}
-      sections={home.sections}
-      activeSectionIndex={home.activeSectionIndex}
-      initialSectionSlug={s}
-      reveal={{ archive: home.reveal.archive, teaser: home.isReview ? null : home.reveal.teaser }}
-    />
+    <>
+      <SiteNav active="learn" />
+      <JourneyHome
+        chapterSlug={home.chapter.slug}
+        chapterTitleFa={home.chapter.titleFa}
+        chapterCanDoFa={home.chapter.canDoFa}
+        chapterEstMinutes={home.chapter.estMinutes}
+        levelCode={home.chapter.levelCode}
+        isReview={home.isReview}
+        chapterUnderstood={home.chapterState?.status === 'understood'}
+        coreCompleted={home.coreCompleted}
+        coreTotal={home.coreTotal}
+        corePathComplete={home.corePathComplete}
+        nextStationSlug={home.nextStationSlug}
+        nextStationTitleFa={nextStationTitle}
+        sections={home.sections}
+        activeSectionIndex={home.activeSectionIndex}
+        initialSectionSlug={s}
+        reveal={{ archive: home.reveal.archive, teaser: home.isReview ? null : home.reveal.teaser }}
+      />
+    </>
   );
 }

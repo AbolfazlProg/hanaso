@@ -12,7 +12,7 @@
  *   is terminal (completed/needs_retry/skipped) — computed HERE from the seed's
  *   station list, not from the client.
  */
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import type { ChapterState, StationState } from '@/modules/curriculum/types';
 import type { StationProgressRepository, ChapterProgressRepository } from '@/modules/curriculum/repository';
 import { chapterProgress, lessons, stationProgress } from '../../../db/schema';
@@ -29,6 +29,7 @@ const stationColumns = {
   currentBlock: stationProgress.currentBlock,
   startedAt: stationProgress.startedAt,
   completedAt: stationProgress.completedAt,
+  lastActivityAt: stationProgress.lastActivityAt,
   updatedAt: stationProgress.updatedAt,
 };
 
@@ -41,6 +42,7 @@ type StationRow = {
   currentBlock: string | null;
   startedAt: Date;
   completedAt: Date | null;
+  lastActivityAt: Date;
   updatedAt: Date;
 };
 
@@ -59,6 +61,17 @@ export class PgStationProgressRepository implements StationProgressRepository {
 
   async upsert(userId: string, stationSlug: string, state: StationState): Promise<StationState> {
     const stationId = stationProgressId(stationSlug);
+    /* HANASO-17 §۸ write semantics (identical to the in-memory twin):
+     *   currentBlock:   string → set · null → CLEAR · undefined → PRESERVE
+     *                   (self-reference keeps the stored column on conflict);
+     *   lastActivityAt: given → move the resume-TTL clock · undefined → PRESERVE
+     *                   (a plain re-enter of an in-progress station never
+     *                   extends the 7-day deadline). First insert stamps now().
+     * `updated_at` remains the plain row-write clock (always now()). */
+    const now = new Date();
+    const setBlock =
+      state.currentBlock === undefined ? sql`${stationProgress.currentBlock}` : (state.currentBlock ?? null);
+    const setActivity = state.lastActivityAt ? new Date(state.lastActivityAt) : sql`${stationProgress.lastActivityAt}`;
     const [row] = await this.client.db
       .insert(stationProgress)
       .values({
@@ -68,8 +81,9 @@ export class PgStationProgressRepository implements StationProgressRepository {
         bestScore: state.bestScore,
         attemptCount: state.attemptCount,
         currentBlock: state.currentBlock ?? null,
-        completedAt: state.status === 'completed' ? new Date() : null,
-        updatedAt: new Date(),
+        completedAt: state.status === 'completed' ? now : null,
+        lastActivityAt: state.lastActivityAt ? new Date(state.lastActivityAt) : now,
+        updatedAt: now,
       })
       .onConflictDoUpdate({
         target: [stationProgress.userId, stationProgress.stationId],
@@ -77,9 +91,10 @@ export class PgStationProgressRepository implements StationProgressRepository {
           status: state.status,
           bestScore: state.bestScore,
           attemptCount: state.attemptCount,
-          currentBlock: state.currentBlock ?? null,
-          completedAt: state.status === 'completed' ? new Date() : null,
-          updatedAt: new Date(),
+          currentBlock: setBlock,
+          completedAt: state.status === 'completed' ? now : null,
+          lastActivityAt: setActivity,
+          updatedAt: now,
         },
       })
       .returning(stationColumns);
@@ -115,6 +130,7 @@ export class PgStationProgressRepository implements StationProgressRepository {
       .where(and(eq(stationProgress.userId, userId), eq(stationProgress.stationId, stationId)))
       .limit(1);
     const next = (existing?.attemptCount ?? 0) + 1;
+    const now = new Date();
     await this.client.db
       .insert(stationProgress)
       .values({
@@ -122,11 +138,12 @@ export class PgStationProgressRepository implements StationProgressRepository {
         stationId,
         status: 'in_progress',
         attemptCount: next,
-        updatedAt: new Date(),
+        lastActivityAt: now, // a graded answer IS meaningful activity (HANASO-17 §۸)
+        updatedAt: now,
       })
       .onConflictDoUpdate({
         target: [stationProgress.userId, stationProgress.stationId],
-        set: { attemptCount: next, updatedAt: new Date() },
+        set: { attemptCount: next, lastActivityAt: now, updatedAt: now },
       });
     return next;
   }
@@ -139,6 +156,8 @@ function stationRowToState(row: StationRow): StationState {
     bestScore: row.bestScore,
     attemptCount: row.attemptCount,
     currentBlock: row.currentBlock ?? undefined,
+    // HANASO-17 §۸: the resume-TTL clock crosses the boundary (ISO).
+    lastActivityAt: row.lastActivityAt instanceof Date ? row.lastActivityAt.toISOString() : undefined,
   };
 }
 

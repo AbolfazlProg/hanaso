@@ -15,6 +15,7 @@ import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
 import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { recordLearningEvent } from '@/modules/curriculum/events';
+import { resumeFreshness, parseActivityAt } from '@/modules/curriculum/resume-policy';
 import type { StationState } from '@/modules/curriculum/types';
 import type { Chapter } from '@/modules/curriculum/types';
 
@@ -180,12 +181,30 @@ export async function POST(req: Request) {
     const anchorValid =
       anchorBlockId !== undefined && station.blocks.some((b) => b.id === anchorBlockId) ? anchorBlockId : undefined;
     const base = next ?? current;
+    /*
+     * TASK-HANASO-17 (§۸ — resume expiration, server-authoritative):
+     * - a RE-enter of an existing in_progress row is NOT meaningful activity —
+     *   no lastActivityAt in the payload (the repository PRESERVES the stored
+     *   clock) so a refresh never extends the 7-day resume deadline;
+     * - the FIRST entry of a row IS meaningful (the walk truly started);
+     * - `progress` (a block transition) is always meaningful;
+     * - an EXPIRED anchor is dropped HERE (idempotently — every device then
+     *   sees the same honest state) and the response carries resumeExpired so
+     *   the runner starts the walk from the top with the neutral notice.
+     */
+    const isFirstEntry = current === null;
+    const resumeExpired =
+      current?.status === 'in_progress' &&
+      resumeFreshness(parseActivityAt(current.lastActivityAt), Date.now()) === 'expired';
+    const nowIso = new Date().toISOString();
     const state = await store.upsert(userId, station.slug, {
       stationSlug: station.slug,
       status: base?.status ?? 'in_progress',
       bestScore: base?.bestScore ?? null,
       attemptCount: base?.attemptCount ?? 0,
-      ...(base?.status === 'in_progress' && anchorValid ? { currentBlock: anchorValid } : {}),
+      ...(base?.status === 'in_progress' && anchorValid && !resumeExpired ? { currentBlock: anchorValid } : {}),
+      ...(resumeExpired ? { currentBlock: null } : {}),
+      ...(payload.action === 'progress' || isFirstEntry ? { lastActivityAt: nowIso } : {}),
     });
     if (payload.action === 'enter') {
       recordLearningEvent(
@@ -198,7 +217,10 @@ export async function POST(req: Request) {
         userId,
       );
     }
-    return NextResponse.json(ok({ stationSlug: station.slug, state }), { headers: { 'cache-control': 'no-store' } });
+    return NextResponse.json(
+      ok({ stationSlug: station.slug, state, ...(resumeExpired ? { resumeExpired: true } : {}) }),
+      { headers: { 'cache-control': 'no-store' } },
+    );
   }
 
   if (payload.action === 'grade') {
@@ -399,7 +421,8 @@ export async function POST(req: Request) {
     status: 'completed',
     bestScore: score,
     attemptCount: current?.attemptCount ?? 0,
-    currentBlock: undefined, // walk finished — no stale resume anchor
+    currentBlock: null, // walk finished — no stale resume anchor
+    lastActivityAt: new Date().toISOString(), // completion IS meaningful activity (HANASO-17 §۸)
   });
 
   // TASK-LEARNING-06: analytics contract — completion + FSRS enrollment data
@@ -474,5 +497,11 @@ export async function GET(req: Request) {
   }
   const userId = resolveLearnerIdFromRequest(req);
   const state: StationState | null = await getStationProgressStore().get(userId, stationSlug);
-  return NextResponse.json(ok({ stationSlug, state }), { headers: { 'cache-control': 'no-store' } });
+  /* TASK-HANASO-17 §۸: the server is the source of truth for resume expiry —
+   * the client never decides alone (multi-device consistency, §10). */
+  const resumeExpired =
+    state?.status === 'in_progress' && resumeFreshness(parseActivityAt(state.lastActivityAt), Date.now()) === 'expired';
+  return NextResponse.json(ok({ stationSlug, state, ...(resumeExpired ? { resumeExpired: true } : {}) }), {
+    headers: { 'cache-control': 'no-store' },
+  });
 }

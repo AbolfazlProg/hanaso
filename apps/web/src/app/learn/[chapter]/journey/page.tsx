@@ -3,6 +3,7 @@ import { loadChapterBundle, chapterAccessStatus, resolveLearnerJourney } from '@
 import { resolveLearnerId } from '@/lib/learner/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
+import { SiteNav } from '@/components/site-nav';
 
 /**
  * /learn/[chapter]/journey — TASK-HANASO-16: the one-section-at-a-time journey
@@ -43,11 +44,14 @@ export default async function JourneyPage({
   const access = await chapterAccessStatus(chapter, learnerId);
   if (access.locked) {
     return (
-      <ChapterLockedNotice
-        chapterTitleFa={chapter.titleFa}
-        prerequisiteSlug={access.prerequisiteSlug}
-        prerequisiteTitleFa={access.prerequisiteTitleFa}
-      />
+      <>
+        <SiteNav active="learn" />
+        <ChapterLockedNotice
+          chapterTitleFa={chapter.titleFa}
+          prerequisiteSlug={access.prerequisiteSlug}
+          prerequisiteTitleFa={access.prerequisiteTitleFa}
+        />
+      </>
     );
   }
 
@@ -58,23 +62,29 @@ export default async function JourneyPage({
       : null;
 
   return (
-    <JourneyHome
-      chapterSlug={home.chapter.slug}
-      chapterTitleFa={home.chapter.titleFa}
-      chapterCanDoFa={home.chapter.canDoFa}
-      chapterEstMinutes={home.chapter.estMinutes}
-      levelCode={home.chapter.levelCode}
-      isReview={home.isReview}
-      chapterUnderstood={home.chapterState?.status === 'understood'}
-      coreCompleted={home.coreCompleted}
-      coreTotal={home.coreTotal}
-      corePathComplete={home.corePathComplete}
-      nextStationSlug={home.nextStationSlug}
-      nextStationTitleFa={nextStationTitle}
-      sections={home.sections}
-      activeSectionIndex={home.activeSectionIndex}
-      initialSectionSlug={s}
-      reveal={{ archive: home.reveal.archive, teaser: home.isReview ? null : home.reveal.teaser }}
-    />
+    <>
+      {/* TASK-HANASO-17 §۴: the chapter MAP is a top-level page — the site nav
+       * renders here (desktop bar + mobile bottom tabs). The station pages
+       * stay immersive (nav never renders inside a lesson). */}
+      <SiteNav active="learn" />
+      <JourneyHome
+        chapterSlug={home.chapter.slug}
+        chapterTitleFa={home.chapter.titleFa}
+        chapterCanDoFa={home.chapter.canDoFa}
+        chapterEstMinutes={home.chapter.estMinutes}
+        levelCode={home.chapter.levelCode}
+        isReview={home.isReview}
+        chapterUnderstood={home.chapterState?.status === 'understood'}
+        coreCompleted={home.coreCompleted}
+        coreTotal={home.coreTotal}
+        corePathComplete={home.corePathComplete}
+        nextStationSlug={home.nextStationSlug}
+        nextStationTitleFa={nextStationTitle}
+        sections={home.sections}
+        activeSectionIndex={home.activeSectionIndex}
+        initialSectionSlug={s}
+        reveal={{ archive: home.reveal.archive, teaser: home.isReview ? null : home.reveal.teaser }}
+      />
+    </>
   );
 }

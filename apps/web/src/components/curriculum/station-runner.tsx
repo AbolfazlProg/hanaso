@@ -45,6 +45,9 @@ import {
   type ExerciseBlockProgress,
   type StationWalkSnapshot,
 } from '@/modules/curriculum/walk-persistence';
+/* TASK-HANASO-17 §۸ — the same 7-day policy clocks the LOCAL walk snapshot
+ * (never only localStorage AND never only the server — both layers agree). */
+import { resumeFreshness } from '@/modules/curriculum/resume-policy';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
@@ -80,6 +83,25 @@ export interface StationRunnerProps {
    * no map context — the map CTA is the safe fallback.
    */
   nextCoreStation?: { slug: string; titleFa: string } | null;
+  /**
+   * TASK-HANASO-17 §۶ — LESSON REPLAY (`?mode=review`): the completed lesson
+   * re-opens from the TOP with all content (slides, audio, exercises); the
+   * runner re-registers NOTHING (no `complete` POST, no enrollment, no
+   * rewards) — the completion record stays exactly as first earned.
+   */
+  replayMode?: boolean;
+  /**
+   * TASK-HANASO-17 §۸ — expired-resume restart (`?restart=1`, from the Home
+   * «شروع دوبارهٔ درس» CTA): any local/server resume pointer is dropped and
+   * the walk starts at block 0 with the neutral notice.
+   */
+  restartRequested?: boolean;
+  /**
+   * TASK-HANASO-17 §۷ — the map deep-link (carries this station's `?s=`
+   * section). Every exit (header back + the completion CTA) returns to the
+   * SAME map section. Absent = the plain chapter map.
+   */
+  mapHref?: string;
   clientExercises: Record<string, ClientExercise>;
   dialogue: {
     lines: Line[];
@@ -149,16 +171,22 @@ async function gradeBlock(payload: {
  * silently restarting the walk — the owner's protection «از دست رفتن وضعیت
  * ایستگاه پس از Refresh».
  */
-type ServerResume = { kind: 'anchor'; blockId: string } | { kind: 'completed' } | null;
+type ServerResume = { kind: 'anchor'; blockId: string } | { kind: 'completed' } | { kind: 'expired' } | null;
 async function fetchServerResume(chapterSlug: string, stationSlug: string): Promise<ServerResume> {
   try {
     const res = await fetch(
       `/api/curriculum/station?chapter=${encodeURIComponent(chapterSlug)}&station=${encodeURIComponent(stationSlug)}`,
       { cache: 'no-store' },
     );
-    const json = (await res.json()) as { data?: { state?: { status?: string; currentBlock?: string | null } | null } };
+    const json = (await res.json()) as {
+      data?: { state?: { status?: string; currentBlock?: string | null } | null; resumeExpired?: boolean };
+    };
     const state = json.data?.state;
     if (state?.status === 'completed') return { kind: 'completed' };
+    /* TASK-HANASO-17 §۸: the SERVER computed the 7-day expiry (source of
+     * truth — multi-device consistent, §10). An expired anchor restores
+     * NOTHING; the walk restarts from the top with the neutral notice. */
+    if (json.data?.resumeExpired) return { kind: 'expired' };
     if (state && state.status === 'in_progress' && state.currentBlock) {
       return { kind: 'anchor', blockId: state.currentBlock };
     }
@@ -225,6 +253,9 @@ export function StationRunner(props: StationRunnerProps) {
     station,
     chapter,
     nextCoreStation,
+    replayMode = false,
+    restartRequested = false,
+    mapHref,
     clientExercises,
     dialogue,
     audioByLine,
@@ -260,6 +291,25 @@ export function StationRunner(props: StationRunnerProps) {
   const [sessionScore, setSessionScore] = useState<number | null>(null);
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(false);
+  /**
+   * TASK-HANASO-17 §۶ — the replay walk reached its end: a NON-interactive
+   * end panel (message + ONE CTA back to the map section). Nothing was
+   * POSTed; the panel is purely informational.
+   */
+  const [replayEnded, setReplayEnded] = useState(false);
+  /**
+   * TASK-HANASO-17 §۶ — «مرور دوباره» after the completion panel: the walk
+   * re-runs locally in replay semantics (no second `complete` POST even when
+   * the server row is already completed).
+   */
+  const [localReplay, setLocalReplay] = useState(false);
+  /**
+   * TASK-HANASO-17 §۸ — the neutral restart notice («از ابتدای درس شروع
+   * می‌کنیم») shown when the 7-day policy dropped the resume pointer or the
+   * Home CTA explicitly restarted the lesson. Behavioral-UX §۴: neutral tone,
+   * no absence-shaming, no red numbers.
+   */
+  const [restartNotice, setRestartNotice] = useState(false);
   /**
    * TL-13 (A-3): an honest completion-failure notice + retry. The old flow
    * swallowed a failed/aborted `complete` POST (silent dead button + unhandled
@@ -345,11 +395,45 @@ export function StationRunner(props: StationRunnerProps) {
     }
   }, [nextExampleBlock, exampleAudioByWord]);
 
-  /* ---------------- WP-5: restore the persisted walk (once, after mount) ---- */
+  /* ---------------- WP-5: restore the persisted walk (once, after mount) ----
+   *
+   * TASK-HANASO-17 §۶/§۸ adds two honest pre-branches BEFORE any restore:
+   *   · `restartRequested` (?restart=1, from the Home restart CTA): the local
+   *     snapshot is DROPPED and the server anchor is IGNORED — the walk starts
+   *     at block 0 with the neutral notice (the 7-day policy already dropped
+   *     the anchor server-side; this enter re-clears it idempotently).
+   *   · `replayMode` (?mode=review, from the map's review rows): a completed
+   *     lesson re-opens from the TOP — a local snapshot WITH earned progress
+   *     still restores (a deliberately half-finished REPLAY continues), but
+   *     the server's `completed` record never walls the walk off.
+   * Everything else is the exact TL-08/TL-10 behavior (snapshot first, then
+   * the server anchor/completion as fallback and authority). */
   useEffect(() => {
     if (restoreChecked) return;
     setRestoreChecked(true);
-    const snapshot = loadWalkSnapshot(chapterSlug, station.slug);
+    if (restartRequested) {
+      // §۸ — the expired walk pointer is deliberately dropped, history intact.
+      clearWalkSnapshot(chapterSlug, station.slug);
+      setRestartNotice(true);
+      window.setTimeout(() => setRestartNotice(false), 6000);
+      void fetchServerResume(chapterSlug, station.slug)
+        .then((resume) => {
+          // only the server's completion record still matters after a restart
+          // (the station may have been finished on another device meanwhile)
+          if (resume?.kind === 'completed') setCompleted(true);
+        })
+        .finally(() => setResumeSettled(true));
+      return;
+    }
+    let snapshot = loadWalkSnapshot(chapterSlug, station.slug);
+    /* TASK-HANASO-17 §۸ — the LOCAL snapshot obeys the same 7-day TTL: an
+     * expired snapshot restores nothing (neutral restart), even offline. */
+    if (snapshot && resumeFreshness(snapshot.updatedAt, Date.now()) === 'expired') {
+      clearWalkSnapshot(chapterSlug, station.slug);
+      snapshot = null;
+      setRestartNotice(true);
+      window.setTimeout(() => setRestartNotice(false), 6000);
+    }
     if (snapshot) {
       const restored = clampStepIndex(snapshot.stepIndex, blocks.length);
       setStep(restored);
@@ -392,6 +476,28 @@ export function StationRunner(props: StationRunnerProps) {
             Object.keys(snapshot.blockResults ?? {}).length === 0 &&
             Object.keys(snapshot.exerciseProgress ?? {}).length === 0 &&
             Object.keys(snapshot.kanaCardStages ?? {}).length === 0);
+        /* TASK-HANASO-17 §۶ — replay mode: the server's completion record is
+         * expected here and must NOT wall off the replay walk; only a restart
+         * or an EXPIRED anchor redirects the walk to block 0. */
+        if (resume.kind === 'completed' && replayMode) {
+          return;
+        }
+        if (resume.kind === 'expired') {
+          /* §۸ — server-authoritative expiry: drop the local snapshot too and
+           * restart from the top with the neutral notice (a snapshot that is
+           * itself older than the TTL restores nothing). */
+          const stale = !snapshot || resumeFreshness(snapshot.updatedAt, Date.now()) !== 'fresh' ? true : false;
+          if (stale) {
+            clearWalkSnapshot(chapterSlug, station.slug);
+            setStep(0);
+            setBlockResults({});
+            setExerciseProgress({});
+            setKanaCardStages({});
+            setRestartNotice(true);
+            window.setTimeout(() => setRestartNotice(false), 6000);
+          }
+          return;
+        }
         if (resume.kind === 'completed') {
           if (emptyWalk) {
             setCompleted(true);
@@ -415,8 +521,10 @@ export function StationRunner(props: StationRunnerProps) {
         }
       })
       .finally(() => setResumeSettled(true));
-    // restore + fallback run exactly once per mount (deps limited on purpose)
-  }, []);
+    // restore + fallback run exactly once per mount (deps limited on purpose;
+    // replayMode/restartRequested are per-mount URL props — stable for the
+    // mount, and restoreChecked already guarantees a single execution).
+  }, [replayMode, restartRequested]);
 
   /* ---------------- WP-5: persist + sync on every meaningful transition ------ */
   const persistedRef = useRef<StationWalkSnapshot | null>(null);
@@ -427,7 +535,7 @@ export function StationRunner(props: StationRunnerProps) {
      * settled (see resumeSettled) — this race planted the step-0 snapshot that
      * made the NEXT refresh of a completed station restart the walk. */
     if (!resumeSettled) return;
-    if (completed || !block) return;
+    if (completed || replayEnded || !block) return;
     const snapshot = {
       chapterSlug,
       stationSlug: station.slug,
@@ -461,6 +569,17 @@ export function StationRunner(props: StationRunnerProps) {
     async (score: number | null, taskCompleted = false) => {
       setSessionScore(score);
       lastCompletionRef.current = { score, taskCompleted };
+      /*
+       * TASK-HANASO-17 §۶ — REPLAY never re-registers: in replay mode (or a
+       * local re-walk after the completion panel) the end is a NON-interactive
+       * panel; the completion record, enrollments and rewards stay exactly as
+       * first earned (the mission rule: «Completion اصلی دوباره ثبت نمی‌شود»).
+       */
+      if (replayMode || localReplay) {
+        setReplayEnded(true);
+        clearWalkSnapshot(chapterSlug, station.slug);
+        return;
+      }
       setCompleting(true);
       // TL-13 (A-3): a retry clears the failure state up-front; it re-arms if
       // this attempt fails again.
@@ -495,7 +614,7 @@ export function StationRunner(props: StationRunnerProps) {
         setCompleting(false);
       }
     },
-    [chapterSlug, station.slug],
+    [chapterSlug, station.slug, replayMode, localReplay],
   );
 
   /** TL-13 (A-3): the retry button re-submits the last earned payload. */
@@ -542,24 +661,19 @@ export function StationRunner(props: StationRunnerProps) {
   );
 
   /*
-   * TASK-LEARNING-10 §6 — the completion CTA's REAL destination, derived from
-   * the learning-map structure itself: the host page resolves the next core
-   * station server-side (same ordering the island map uses) and passes it in.
-   * Present → deep-linked directly («رفتن به ایستگاه بعدی»); absent → the island
-   * map, where the mastery gate has just opened («ادامهٔ مسیر»). The label
-   * always names the destination — the owner's rule — and it is ONE CTA, never
-   * a second follow-up button.
+   * TASK-HANASO-17 §۷ — the completion CTA is now ONE action with ONE
+   * destination: «پایان درس و بازگشت به مسیر» back to the map SECTION that
+   * holds this station (?s= deep-link from the host page). The next lesson is
+   * SHOWN as a text line under the CTA («درس بعدی: …») — never auto-opened,
+   * never a second CTA (owner §7: the learner decides whether to continue).
    */
-  const completionTarget = useMemo(() => {
-    if (nextCoreStation) {
-      return {
-        href: `/learn/${chapterSlug}/journey/${nextCoreStation.slug}`,
-        label: fa.curriculum.ctaNextStation,
-        stationTitleFa: nextCoreStation.titleFa as string | null,
-      };
-    }
-    return { href: `/learn/${chapterSlug}/journey`, label: fa.curriculum.ctaContinuePath, stationTitleFa: null };
-  }, [nextCoreStation, chapterSlug]);
+  const completionTarget = useMemo(
+    () => ({
+      href: mapHref ?? `/learn/${chapterSlug}/journey`,
+      label: fa.curriculum.ctaFinishStation,
+    }),
+    [mapHref, chapterSlug],
+  );
 
   /* TL-10 §6: rapid double-click on the CTA navigates exactly once. */
   const navLatchRef = useRef(false);
@@ -570,13 +684,16 @@ export function StationRunner(props: StationRunnerProps) {
   }, [completionTarget.href, router]);
 
   /*
-   * TL-10 §6: «مرور دوباره» — the tertiary text action that preserves the
-   * pre-TL-10 capability of re-walking a completed station for practice. It
-   * restarts the LOCAL walk only; the server's completion record and rewards
-   * stay exactly as registered (the API is idempotent — `already: true`).
+   * TL-10 §6 + TASK-HANASO-17 §۶: «مرور دوباره» — the tertiary text action
+   * that re-walks a completed station from the top for practice. It restarts
+   * the LOCAL walk only and flips the runner into REPLAY semantics: no
+   * `complete` POST fires again (the server's completion record and rewards
+   * stay exactly as first registered — `already: true` was never even needed).
    */
   const reviewWalkAgain = useCallback(() => {
     setCompleted(false);
+    setReplayEnded(false);
+    setLocalReplay(true);
     setStep(0);
     setBlockResults({});
     setExerciseProgress({});
@@ -600,6 +717,22 @@ export function StationRunner(props: StationRunnerProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* TASK-HANASO-17 §۸ — the neutral restart notice (behavioral-UX §۴:
+           no absence-shaming, no red numbers; the history is intact). */}
+      {restartNotice && (
+        <p
+          role="status"
+          className="flex items-start gap-2 rounded-md border border-ink-faint bg-surface-warm px-4 py-2 text-small leading-[var(--leading-fa)] text-ink"
+          data-walk-restarted
+        >
+          <RotateCcw aria-hidden className="mt-0.5 size-4 shrink-0 text-ink-soft" />
+          <span>
+            <b>{fa.curriculum.walkRestartedTitle}. </b>
+            {fa.curriculum.walkRestartedBody}
+          </span>
+        </p>
+      )}
+
       {/* WP-5 (owner feedback E): honest resume notice — the walk came back. */}
       {resumedNotice && (
         <p
@@ -639,7 +772,7 @@ export function StationRunner(props: StationRunnerProps) {
        * half-alive walk buttons next to it (the «مرور دوباره» link brings the
        * walk back for practice).
        */}
-      {!completed && block && (
+      {!completed && !replayEnded && block && (
         <BlockView
           block={block}
           stationSlug={station.slug}
@@ -718,6 +851,7 @@ export function StationRunner(props: StationRunnerProps) {
        * and auto-advances via onKanaWritingDone).
        */}
       {!completed &&
+        !replayEnded &&
         (step > 0 ||
           (block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card')) && (
           <div className="flex items-center gap-3">
@@ -757,8 +891,13 @@ export function StationRunner(props: StationRunnerProps) {
        * The replay/review tertiary action stays a quiet text link (never a
        * second primary CTA), and the color is Aizen's primary indigo — red is
        * reserved for errors only (TL-10 §7 rule 9).
+       *
+       * TASK-HANASO-17 §۷ — the CTA now ALWAYS returns to the map section of
+       * THIS station («پایان درس و بازگشت به مسیر» + ?s=) and the NEXT lesson
+       * is a caption TEXT line under it — shown, never auto-opened, never a
+       * second CTA (the old «رفتن به ایستگاه بعدی» deep-link is gone).
        */}
-      {completed && (
+      {completed && !replayEnded && (
         <div
           role="status"
           aria-live="polite"
@@ -772,14 +911,14 @@ export function StationRunner(props: StationRunnerProps) {
           <button
             type="button"
             onClick={goCompletionDestination}
-            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {completionTarget.label}
             <ArrowLeft aria-hidden className="size-4" />
           </button>
-          {completionTarget.stationTitleFa && (
-            <p className="text-caption text-ink-soft">{completionTarget.stationTitleFa}</p>
-          )}
+          {nextCoreStation ? (
+            <p className="text-caption text-ink-soft">{fa.curriculum.nextStationShown(nextCoreStation.titleFa)}</p>
+          ) : null}
           <button
             type="button"
             onClick={reviewWalkAgain}
@@ -787,6 +926,43 @@ export function StationRunner(props: StationRunnerProps) {
           >
             <RotateCcw aria-hidden className="size-4" />
             {fa.curriculum.reviewStationAgain}
+          </button>
+        </div>
+      )}
+
+      {/*
+       * TASK-HANASO-17 §۶ — the REPLAY end panel: the re-walk finished.
+       * NON-interactive status + ONE CTA back to the same map section; a quiet
+       * note explains that nothing was re-registered. A tertiary text link
+       * replays the lesson once more from the top.
+       */}
+      {replayEnded && (
+        <div
+          role="status"
+          aria-live="polite"
+          data-replay-ended
+          className="flex flex-col gap-3 rounded-md border-2 border-ink bg-card p-5"
+        >
+          <p className="flex items-center gap-2 text-body font-bold text-ink">
+            <CheckCircle2 aria-hidden className="size-5" />
+            {fa.curriculum.replayEndedMessage}
+          </p>
+          <p className="text-small leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.replayEndedNote}</p>
+          <button
+            type="button"
+            onClick={goCompletionDestination}
+            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+          >
+            {completionTarget.label}
+            <ArrowLeft aria-hidden className="size-4" />
+          </button>
+          <button
+            type="button"
+            onClick={reviewWalkAgain}
+            className="flex w-fit items-center gap-1 text-small text-ai underline underline-offset-4"
+          >
+            <RotateCcw aria-hidden className="size-4" />
+            {fa.curriculum.replayAgain}
           </button>
         </div>
       )}

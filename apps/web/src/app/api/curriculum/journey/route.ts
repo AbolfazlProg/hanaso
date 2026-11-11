@@ -55,7 +55,11 @@ export async function GET(req: Request) {
 
   const nodes: (JourneyNode & { href: string })[] = journey.nodes.map((n) => ({
     ...n,
-    href: `/learn/${chapter.slug}/journey/${n.station.slug}`,
+    // TASK-HANASO-17 §۶: completed nodes deep-link into REPLAY mode (from the top).
+    href:
+      n.availability === 'completed' || n.availability === 'skipped'
+        ? `/learn/${chapter.slug}/journey/${n.station.slug}?mode=review`
+        : `/learn/${chapter.slug}/journey/${n.station.slug}`,
   }));
 
   return NextResponse.json(
@@ -97,7 +101,11 @@ export async function GET(req: Request) {
           estMinutes: r.node.station.estMinutes,
           availability: r.node.availability,
           action: r.action as SectionRowAction,
-          href: `/learn/${chapter.slug}/journey/${r.node.station.slug}`,
+          // TASK-HANASO-17 §۶: review rows open REPLAY mode (lesson from the top).
+          href:
+            r.action === 'review'
+              ? `/learn/${chapter.slug}/journey/${r.node.station.slug}?mode=review`
+              : `/learn/${chapter.slug}/journey/${r.node.station.slug}`,
         })),
       })),
       activeSectionIndex: activeIndex,
