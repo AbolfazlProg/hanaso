@@ -16,21 +16,24 @@
 ## ۲) کامیت‌های این انتشار
 
 **کامیت هدف (Release target) — image از این ساخته می‌شود:**
-`840b99335b0c23888d92e0e780b5988f12d06709` — HANASO-16 CP-05 (آخرین کامیت محتوای کامل: کد + Installer v3 + CHANGELOG + همهٔ اسناد Checkpoint)
+`777fb2b61afdc9021090d60ad23986c93c7d4d66` — HANASO-16 CP-05 (آخرین کامیت محتوای کامل: کد + Installer v3 + CHANGELOG + همهٔ اسناد Checkpoint)
 
 **کامیت ابزار استقرار (Deploy tooling — یک‌خطی از این دانلود می‌کند):**
-`ee29578e43fe04647800dd769f186c31ff71ac2b` — pin updater/bootstrap به `1.0.0-hanaso16-r01` @ `840b993`
+`df50431d123b7d2e71b6c9269828d0a181967fb4` — pin updater/bootstrap به `1.0.0-hanaso16-r01` @ `840b993`
 
-**زنجیرهٔ کامل شاخه (۶ کامیت جدید روی `9a466644`):**
+**زنجیرهٔ کامل شاخه (۹ کامیت جدید روی `9a466644`):**
 
-| کامیت     | شرح                                                                                                  |
-| --------- | ---------------------------------------------------------------------------------------------------- |
-| `190f300` | CP-01 — بازیابی وضعیت + ممیزی مسیر یادگیری + تحلیل شکست انتشار (شواهد ۵ کشور)                        |
-| `679b7fd` | CP-02 — طراحی IA (مدل B اصلاح‌شده) + نگاشت Progress                                                  |
-| `1edd43f` | CP-03 — پیاده‌سازی کامل Chapter→Section→Rows→Lessons (Resolverها + پنل + /learn + گیت CHAPTER-CHAIN) |
-| `fe5908d` | CP-04 — QA مرورگر + رفع باگ RSC learner-id + پوشش قفل در همهٔ مسیرها                                 |
-| `840b993` | CP-05 — Installer v3.0 سه‌سطحی + سندباکس G1-G6 + TEST_REPORT + CHANGELOG                             |
-| `ee29578` | پین انتشار (updater/bootstrap → hanaso16)                                                            |
+| کامیت      | شرح                                                                                          |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| `190f300`  | CP-01 — بازیابی وضعیت + ممیزی مسیر یادگیری + تحلیل شکست انتشار (شواهد ۵ کشور)                |
+| `679b7fd`  | CP-02 — طراحی IA (مدل B اصلاح‌شده) + نگاشت Progress                                          |
+| `1edd43f`  | CP-03 — پیاده‌سازی کامل Chapter→Section→Rows→Lessons                                         |
+| `fe5908d`  | CP-04 — QA مرورگر + رفع باگ RSC learner-id + پوشش قفل                                        |
+| `840b993`  | CP-05 — Installer v3.0 سه‌سطحی + سندباکس G1-G6 + TEST_REPORT + CHANGELOG                     |
+| `ee29578`  | پین انتشار اولیه (updater/bootstrap → hanaso16)                                              |
+| `777fb2b`  | **کامیت هدف نهایی** — فرمت Prettier کل شاخه (گیت CI؛ صفر تغییر معنایی؛ bootstrap دست‌نخورده) |
+| `df50431`  | **کامیت ابزار نهایی** — پین مجدد updater/bootstrap به target نهایی                           |
+| `e1a01cb`+ | اسناد نهایی (OWNER-COMMAND v9 · راهنمای فارسی v9 · همین Manifest)                            |
 
 ## ۳) تغییرات آموزشی و فنی موجود در نسخهٔ نهایی
 
@@ -49,10 +52,10 @@
 | پین                   | مقدار                                                                                                         |
 | --------------------- | ------------------------------------------------------------------------------------------------------------- |
 | نسخهٔ هدف             | `1.0.0-hanaso16-r01`                                                                                          |
-| کامیت هدف             | `840b99335b0c23888d92e0e780b5988f12d06709`                                                                    |
-| کامیت ابزار (R)       | `ee29578e43fe04647800dd769f186c31ff71ac2b`                                                                    |
-| SHA-256 bootstrap (W) | `7e45d4f931c13354f0c6400591eb3765bebca23feb60213943530cf4202838ae`                                            |
-| Image                 | `ghcr.io/abolfazlprog/hanaso:840b99335b0c23888d92e0e780b5988f12d06709` (build محلی روی VPS از کامیت Pin‌شده)  |
+| کامیت هدف             | `777fb2b61afdc9021090d60ad23986c93c7d4d66`                                                                    |
+| کامیت ابزار (R)       | `df50431d123b7d2e71b6c9269828d0a181967fb4`                                                                    |
+| SHA-256 bootstrap (W) | `35ca97429dfdc509fd8dd0b09eb5667e1fb1af3fd0be318c8d8a0dcda4572452`                                            |
+| Image                 | `ghcr.io/abolfazlprog/hanaso:777fb2b61afdc9021090d60ad23986c93c7d4d66` (build محلی روی VPS از کامیت Pin‌شده)  |
 | Rollback target       | Image ثبت‌شده در `PREV_IMAGE` آخرین رکورد `update-history` (اگر اجرا از tl13-r01 باشد → `ghcr.io/…:4d0827a…`) |
 
 ## ۶) شرط انتشار و ترتیب اجرا (مهم)
@@ -71,7 +74,7 @@
   git fetch /path/to/hanaso-hanaso16.bundle hanaso16-learning-journey:hanaso16-learning-journey
   # راستی‌آزمایی SHAها با §۲ همین سند:
   git rev-parse hanaso16-learning-journey
-  # انتظار: ee29578e43fe04647800dd769f186c31ff71ac2b
+  # انتظار: df50431d123b7d2e71b6c9269828d0a181967fb4
   git push origin hanaso16-learning-journey
   ```
 - بعد از Push، همهٔ Pinهای §۵ بدون هیچ تغییری معتبرند (کامیت‌ها تغییرناپذیرند) و یک‌خطی v9 عیناً قابل اجراست.
