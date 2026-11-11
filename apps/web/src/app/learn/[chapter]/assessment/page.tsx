@@ -1,13 +1,19 @@
 import { notFound } from 'next/navigation';
-import { loadChapterBundle } from '@/modules/curriculum/server';
+import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
 import { toClientExercise } from '@/modules/curriculum';
 import { MasteryGate } from '@/components/curriculum/mastery-gate';
+import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
+import { resolveLearnerId } from '@/lib/learner/server';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 
 /**
  * /learn/[chapter]/assessment — TASK-LEARNING-01 page 6: the mastery gate (stage D).
  * Bank payloads stripped of answers; grading is a server round-trip.
+ *
+ * TASK-HANASO-16: the chapter soft lock gates this route too — a locked
+ * chapter's gate is not reachable by direct URL (#94 parity with every other
+ * chapter route).
  */
 export default async function AssessmentPage({ params }: { params: Promise<{ chapter: string }> }) {
   const { chapter: slug } = await params;
@@ -18,6 +24,19 @@ export default async function AssessmentPage({ params }: { params: Promise<{ cha
     notFound();
   }
   const chapter = bundle!.chapter;
+
+  const learnerId = await resolveLearnerId();
+  const access = await chapterAccessStatus(chapter, learnerId);
+  if (access.locked) {
+    return (
+      <ChapterLockedNotice
+        chapterTitleFa={chapter.titleFa}
+        prerequisiteSlug={access.prerequisiteSlug}
+        prerequisiteTitleFa={access.prerequisiteTitleFa}
+      />
+    );
+  }
+
   const gate = Object.values(chapter.exercises)
     .filter((e) => e.assessmentRole.startsWith('mastery_'))
     .map(toClientExercise);

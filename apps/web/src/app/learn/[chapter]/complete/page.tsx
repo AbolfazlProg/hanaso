@@ -1,13 +1,18 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, CircleCheck } from 'lucide-react';
-import { loadChapterBundle } from '@/modules/curriculum/server';
+import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
+import { resolveLearnerId } from '@/lib/learner/server';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
+import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 
 /**
  * /learn/[chapter]/complete — TASK-LEARNING-01 page 7: chapter completion.
  * Qualitative mastery verdict (AC-947 — no raw %), the 「理解」 seal, and what's next.
+ *
+ * TASK-HANASO-16: chapter soft-lock parity — a locked chapter's completion
+ * page is not reachable by direct URL (#94).
  */
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +25,18 @@ export default async function ChapterCompletePage({ params }: { params: Promise<
     notFound();
   }
   const chapter = bundle!.chapter;
+
+  const learnerId = await resolveLearnerId();
+  const access = await chapterAccessStatus(chapter, learnerId);
+  if (access.locked) {
+    return (
+      <ChapterLockedNotice
+        chapterTitleFa={chapter.titleFa}
+        prerequisiteSlug={access.prerequisiteSlug}
+        prerequisiteTitleFa={access.prerequisiteTitleFa}
+      />
+    );
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col items-center gap-8 px-4 py-16 text-center">

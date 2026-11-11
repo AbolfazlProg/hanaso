@@ -288,7 +288,7 @@ export const fa = {
     incorrect: 'نادرست',
     showHint: 'سرنخ',
     stationDone: 'ایستگاه کامل شد',
-    backToJourney: 'بازگشت به نقشه',
+    backToJourney: 'بازگشت به مسیر',
     /* ---- TASK-LEARNING-10 §6 — station completion flow (status = message,
      * ONE main CTA labeled by its real destination; never a second red button) */
     stationCompletedMessage: 'این ایستگاه را با موفقیت پشت سر گذشتی!',

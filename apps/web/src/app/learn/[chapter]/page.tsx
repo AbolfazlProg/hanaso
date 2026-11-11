@@ -1,13 +1,19 @@
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Clock3, Map, Sparkles } from 'lucide-react';
-import { loadChapterBundle } from '@/modules/curriculum/server';
+import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
+import { resolveLearnerId } from '@/lib/learner/server';
 import { fa } from '@/messages/fa';
+import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 
 /**
  * /learn/[chapter] — TASK-LEARNING-01 page 1: chapter intro.
  *
  * The can-do goal card BEFORE the anchor dialogue (COMPOSITION §۳-۲ «کشف‌پذیری» —
  * the goals are announced, the vocabulary never). RSC + cache — content is static.
+ *
+ * TASK-HANASO-16: secondary route now (the journey home /learn is the entry);
+ * reachable from the section panel's «معرفی فصل» link. The chapter soft lock
+ * gates this route like every other chapter URL (#94 parity).
  */
 export default async function ChapterIntroPage({ params }: { params: Promise<{ chapter: string }> }) {
   const { chapter: slug } = await params;
@@ -18,6 +24,18 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
     notFound();
   }
   const { chapter, bundle: dialogue } = bundle!;
+
+  const learnerId = await resolveLearnerId();
+  const access = await chapterAccessStatus(chapter, learnerId);
+  if (access.locked) {
+    return (
+      <ChapterLockedNotice
+        chapterTitleFa={chapter.titleFa}
+        prerequisiteSlug={access.prerequisiteSlug}
+        prerequisiteTitleFa={access.prerequisiteTitleFa}
+      />
+    );
+  }
   const speakers = Object.fromEntries(dialogue.characters.map((c) => [c.id, c.nameFa]));
 
   return (

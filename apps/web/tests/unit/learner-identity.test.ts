@@ -5,7 +5,7 @@
  * a progress key (all visitors collapsing into one store is exactly the bug
  * being fixed) — it degrades to the documented poc-user fallback instead.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { isLearnerId } from '@/lib/learner/identity';
 import { LEARNER_COOKIE_NAME, resolveLearnerIdFromRequest } from '@/lib/learner/server';
@@ -60,5 +60,44 @@ describe('resolveLearnerIdFromRequest', () => {
   it('falls back on a MALFORMED learner cookie (never trusts it as a key)', () => {
     expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=not-a-uuid`))).toBe(POC_DEFAULT_USER_ID);
     expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=`))).toBe(POC_DEFAULT_USER_ID);
+  });
+});
+
+/*
+ * TASK-HANASO-16 — regression: the RSC seam (resolveLearnerId via next/headers
+ * cookies) used to feed the cookie VALUE into the header-string regex helper,
+ * silently collapsing every server-rendered page onto POC_DEFAULT_USER_ID
+ * while the API routes resolved the real per-browser learner (server HTML ≠
+ * client refresh). The next/headers jar is mocked (unit-level — no request
+ * scope in vitest); vi.hoisted keeps the mutable jar available to the factory.
+ */
+const jar = vi.hoisted(() => ({ value: undefined as string | undefined }));
+vi.mock('next/headers', () => ({
+  cookies: async () => ({
+    get: (name: string) => (name === 'hanaso_lid' && jar.value !== undefined ? { name, value: jar.value } : undefined),
+  }),
+}));
+
+describe('resolveLearnerId (RSC seam — next/headers jar)', () => {
+  it('resolves the REAL cookie value, not the poc-user fallback (HANASO-16 regression)', async () => {
+    jar.value = VALID;
+    const { resolveLearnerId } = await import('@/lib/learner/server');
+    const id = await resolveLearnerId();
+    expect(id).toBe(VALID);
+    expect(id).not.toBe(POC_DEFAULT_USER_ID);
+    jar.value = undefined;
+  });
+
+  it('falls back to poc-user only when the cookie is absent', async () => {
+    jar.value = undefined;
+    const { resolveLearnerId } = await import('@/lib/learner/server');
+    expect(await resolveLearnerId()).toBe(POC_DEFAULT_USER_ID);
+  });
+
+  it('falls back to poc-user on a malformed cookie value (never trusts it as a key)', async () => {
+    jar.value = 'not-a-uuid';
+    const { resolveLearnerId } = await import('@/lib/learner/server');
+    expect(await resolveLearnerId()).toBe(POC_DEFAULT_USER_ID);
+    jar.value = undefined;
   });
 });

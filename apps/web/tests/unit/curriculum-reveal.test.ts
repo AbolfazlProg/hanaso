@@ -22,15 +22,10 @@
  */
 import { describe, expect, it } from 'vitest';
 import { getChapter, listChapters, LEVELS_BY_CODE } from '@/modules/curriculum/content';
-import {
-  resolveJourney,
-  resolveSections,
-  nextStation,
-  type StationState,
-} from '@/modules/curriculum/journey';
+import { resolveJourney, resolveSections, nextStation } from '@/modules/curriculum/journey';
 import { courseOrder, resolveRevealPlan } from '@/modules/curriculum/reveal';
 import { validateCourseChain } from '@/modules/curriculum/validation';
-import type { Chapter, ChapterState } from '@/modules/curriculum/types';
+import type { Chapter, ChapterState, StationState } from '@/modules/curriculum/types';
 
 const KANA = 'kana-foundation-01';
 const FM = 'first-meeting-01';

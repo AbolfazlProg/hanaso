@@ -28,10 +28,17 @@ function cookieValueFromHeader(header: string): string {
 
 /**
  * The learner id for an RSC render (cookie-resolved via next/headers).
+ *
+ * TASK-HANASO-16 (bug found by the browser QA of the new /learn): the cookie
+ * VALUE must go through isLearnerId directly — it is NOT a header string, so
+ * the old `cookieValueFromHeader(value)` never matched its `name=value` regex
+ * and EVERY RSC page silently fell back to POC_DEFAULT_USER_ID while the API
+ * routes resolved the real per-browser learner (server HTML ≠ client refresh).
  */
 export async function resolveLearnerId(): Promise<string> {
   const jar = await cookies();
-  return cookieValueFromHeader(jar.get(LEARNER_COOKIE_NAME)?.value ?? '');
+  const raw = decodeURIComponent(jar.get(LEARNER_COOKIE_NAME)?.value ?? '');
+  return isLearnerId(raw) ? raw : POC_DEFAULT_USER_ID;
 }
 
 /**
