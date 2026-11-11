@@ -99,6 +99,8 @@ function isCorrect(ex: Exercise, answer: ExerciseAnswerPayload): boolean {
     case 'kana-decode':
     // TASK-LEARNING-08 Addendum-5 §3: the kana SOUND → glyph (option-based).
     case 'kana-listening':
+    // TASK-LEARNING-13 (T1 auditory discrimination): word sound → written form.
+    case 'rule-listening':
       return answer.kind === 'option' && answer.optionId === ex.correctOptionId;
     case 'word-order':
     case 'dialogue-order':

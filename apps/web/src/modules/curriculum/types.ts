@@ -135,7 +135,17 @@ export type ExerciseType =
   | 'kana-decode'
   /** TASK-LEARNING-08 Addendum-5 §3: the kana SOUND is the question (auto-plays
    *  at question start; replayable) → pick the glyph. Option-based. */
-  | 'kana-listening';
+  | 'kana-listening'
+  /**
+   * TASK-LEARNING-13 (Japanese foundations — exercise type T1, auditory
+   * discrimination): a committed WORD recording is the question; the learner
+   * picks the written form they heard. `promptJa` carries the word whose
+   * PRE-GENERATED asset (hostwords registry — DD-081) plays; the word itself
+   * is NEVER rendered before answering (the sound IS the question — same
+   * no-leak rule as kana-listening). Used for minimal-pair listening:
+   * いえ/いいえ، ここ/ごご، せんせい/せんせ✗، がっこう/がこう✗…
+   */
+  | 'rule-listening';
 
 export type TargetSkill = 'vocab' | 'grammar' | 'listening' | 'expression' | 'production' | 'structure';
 

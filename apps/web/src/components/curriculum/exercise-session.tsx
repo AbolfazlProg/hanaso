@@ -545,8 +545,10 @@ export function ExerciseSession({
    * at question start (the sound IS the question — the owner's rule). Warms
    * the shared cache then plays once per question; the visible control always
    * offers replay. Recognition questions NEVER auto-play (the kana sound is
-   * the ANSWER there — playing it would leak it «ناخواسته»). */
-  const listenPrompt = ex?.type === 'kana-listening' ? (ex.promptAudio ?? null) : null;
+   * the ANSWER there — playing it would leak it «ناخواسته»).
+   * TASK-LEARNING-13: rule-listening (word-level minimal-pair discrimination)
+   * shares the exact same behavior — the WORD recording is the question. */
+  const listenPrompt = ex?.type === 'kana-listening' || ex?.type === 'rule-listening' ? (ex.promptAudio ?? null) : null;
   useEffect(() => {
     if (!listenPrompt) return;
     let cancelled = false;
@@ -600,8 +602,12 @@ export function ExerciseSession({
       {/* Addendum-5 §3 — a LISTENING question: the sound IS the question. It
           auto-plays at question start (see the effect above) and the replay
           control is always visible. No glyph is shown — the shapes live in the
-          options. */}
-      {ex.type === 'kana-listening' && ex.promptAudio ? (
+          options.
+          TASK-LEARNING-13: rule-listening (word-level discrimination) shares
+          the same panel — the WORD recording is the question, the written word
+          is the answer and never renders pre-answer (the station page strips
+          promptJa for this type). */}
+      {(ex.type === 'kana-listening' || ex.type === 'rule-listening') && ex.promptAudio ? (
         <div
           className="flex flex-wrap items-center gap-3 rounded-md border border-ai/40 bg-indigo-wash/30 p-4"
           data-listen-question
@@ -986,7 +992,10 @@ export interface OptionRowProps {
  * and Persian labels keep the uniform radio look (SKL-004 §۶).
  */
 const KANA_OPTION_RE = /^[\u3040-\u30ff\u31f0-\u31ff]+$/;
-const isKanaGlyphOption = (label: string): boolean => KANA_OPTION_RE.test(label) && label.length <= 4;
+/* TL-13: word-length options (rule-listening pairs like おばあさん/いえ/いいえ —
+ * up to 6 kana) render as big glyphs too: the SHAPE is what the learner is
+ * discriminating; body text would hide the very difference being taught. */
+const isKanaGlyphOption = (label: string): boolean => KANA_OPTION_RE.test(label) && label.length <= 6;
 
 /** The select row — uniform radios (SKL-004 §۶) with #106 F2 elimination states.
  *  TASK-LEARNING-09 §۸: the options flow into TWO columns once the card has

@@ -78,9 +78,23 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
        *  - kana-recall — the prompt reading's own sound (the visible Persian
        *    prompt in audio form; it cannot reveal WHICH GLYPH is correct).
        * NEVER for kana-recognition/kana-decode — there the sound equals the
-       * answer and would leak it before answering (owner rule §3). */
+       * answer and would leak it before answering (owner rule §3).
+       *
+       * TASK-LEARNING-13 (T1 auditory discrimination): rule-listening plays the
+       * WORD's own committed recording (hostwords registry — DD-081). A missing
+       * asset resolves to null and the client degrades honestly (visual-only) —
+       * never a neighboring word's sound, never a dead button. */
       if (ex.type === 'kana-listening' || ex.type === 'kana-recall') {
         ce.promptAudio = kanaAudioUrls(`kn-${ex.targetConcept}`);
+      }
+      if (ex.type === 'rule-listening' && ex.promptJa) {
+        ce.promptAudio = hostWordAudioUrls(ex.promptJa);
+        /* SKL-013 (answer key never crosses the boundary): for rule-listening
+         * the WRITTEN word IS the answer — the sound is the question. The word
+         * text never reaches the client pre-answer; the server's outcome
+         * carries it (correctReading) at reveal time. */
+        ce.promptJa = undefined;
+        ce.promptJaReading = undefined;
       }
       clientExercises[id] = ce;
     }

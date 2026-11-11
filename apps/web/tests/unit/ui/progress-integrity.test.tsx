@@ -82,10 +82,7 @@ beforeEach(() => {
         );
       }
       // grade / enter / progress / writing-practice
-      const outcome =
-        body.action === 'grade'
-          ? { outcome: { correct: true, level: 1, feedbackFa: 'درست!' } }
-          : {};
+      const outcome = body.action === 'grade' ? { outcome: { correct: true, level: 1, feedbackFa: 'درست!' } } : {};
       return new Response(JSON.stringify({ data: outcome }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
@@ -119,7 +116,7 @@ function renderStation() {
       nextCoreStation={{ slug: nextCore.slug, titleFa: nextCore.titleFa }}
       clientExercises={clientExercises}
       dialogue={{ lines: [], speakers: {} }}
-      audioByLine={{} }
+      audioByLine={{}}
       audioAvailable={false}
     />,
   );
@@ -236,9 +233,7 @@ describe('TL-13 A-6/A-7/A-8 — restored in-flight attempts, Persian digits, res
     fireEvent.click(screen.getAllByRole('radio')[0]!);
     fireEvent.click(screen.getByRole('button', { name: 'بررسی پاسخ' }));
     await waitFor(() => expect(gradeCalls).toBe(1));
-    const bodies = (fetch as unknown as ReturnType<typeof vi.fn>).mock.calls as unknown as Array<
-      [string, RequestInit]
-    >;
+    const bodies = (fetch as unknown as ReturnType<typeof vi.fn>).mock.calls as unknown as Array<[string, RequestInit]>;
     const gradeBody = bodies
       .map(([, init]) => init?.body as string | undefined)
       .filter((b): b is string => !!b && b.includes('"grade"'))

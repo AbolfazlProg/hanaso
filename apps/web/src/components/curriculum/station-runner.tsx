@@ -356,13 +356,15 @@ export function StationRunner(props: StationRunnerProps) {
       setExerciseProgress(snapshot.exerciseProgress ?? {});
       setKanaCardStages(snapshot.kanaCardStages ?? {});
       if (typeof snapshot.sessionScore === 'number') setSessionScore(snapshot.sessionScore);
-      if (snapshot.stepIndex > 0 ||
+      if (
+        snapshot.stepIndex > 0 ||
         Object.keys(snapshot.blockResults ?? {}).length > 0 ||
         // TL-13 (A-8): in-flight exercise/kana progress is ALSO real resumed
         // work — the notice fired only for block-level moves before, leaving a
         // mid-question restore silent.
         Object.keys(snapshot.exerciseProgress ?? {}).length > 0 ||
-        Object.keys(snapshot.kanaCardStages ?? {}).length > 0) {
+        Object.keys(snapshot.kanaCardStages ?? {}).length > 0
+      ) {
         setResumedNotice(true);
         window.setTimeout(() => setResumedNotice(false), 4000);
       }
@@ -802,9 +804,7 @@ export function StationRunner(props: StationRunnerProps) {
           className="flex flex-col gap-2 rounded-md border border-error bg-card p-4"
         >
           <p className="text-body font-bold text-error">{fa.curriculum.completionFailedTitle}</p>
-          <p className="text-small leading-[var(--leading-fa)] text-ink-soft">
-            {fa.curriculum.completionFailedBody}
-          </p>
+          <p className="text-small leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.completionFailedBody}</p>
           <button
             type="button"
             onClick={retryCompletion}
