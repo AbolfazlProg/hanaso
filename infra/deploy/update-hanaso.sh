@@ -68,7 +68,7 @@
 # PINNED TARGET (do NOT drift to "latest"):
 set -euo pipefail
 
-TARGET_SHA="${HANASO_TARGET_SHA:-840b99335b0c23888d92e0e780b5988f12d06709}"
+TARGET_SHA="${HANASO_TARGET_SHA:-777fb2b61afdc9021090d60ad23986c93c7d4d66}"
 TARGET_VERSION="${HANASO_TARGET_VERSION:-1.0.0-hanaso16-r01}"
 TARGET_BRANCH="${HANASO_TARGET_BRANCH:-hanaso16-learning-journey}"
 REPO_URL="${HANASO_REPO_URL:-https://github.com/AbolfazlProg/hanaso.git}"
