@@ -42,6 +42,20 @@
 - `db/migrations/…` — ستون `last_activity_at` (افزودنی، idempotent)
 - `src/app/api/curriculum/station/route.ts` — انقضای Resume سمت سرور + bump فقط با فعالیت معنادار
 
-## ۴) قدم بعدی
+## ۴) وضعیت انتشار (CP-08)
 
-هیچ — مأموریت به نقطهٔ تحویل رسیده (گزارش نهایی + Manifest + یک‌خطی v10 در همین Checkpoint).
+| قلم | مقدار |
+|---|---|
+| نسخهٔ هدف | `1.0.0-hanaso17-r01` |
+| کامیت هدف (Release target) | `3f41f6ee510e28914934ddc83375a0e1d49405a3` |
+| کامیت ابزار (Tooling) | `aaa5fea45f43175e4de9772bce6b354c0e0126d2` |
+| SHA-256 bootstrap | `03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035` |
+| Migration | فقط 0003 (افزودنی `last_activity_at`) — بدون Seed جدید |
+| شاخه | `hanaso17-home-dashboard` — Push شده |
+| یک‌خطی | OWNER-COMMAND.txt (v10 — heredock کوتاه، هم‌الگوی v9.1 سالم) |
+| تست | ۶۹۲/۶۹۲ + مرورگر ۱۰/۱۰ |
+
+## ۵) قدم بعدی
+
+- اجرای بلوک v10 روی VPS توسط مالک (راهنمای فارسی §۱) — سپس راستی‌آزمایی `/api/health` → `1.0.0-hanaso17-r01 @ 3f41f6ee`.
+- آیندهٔ مستند (Research Gaps): فعال‌سازی FSRS (M2) → کارت مرور عدد حقیقی + مقصد «مرور» در ناوبری · auth (M1) → سلام با نام + حساب کاربری · مترهای مهارت/هفتهٔ فعال پس از M6.

@@ -1,75 +1,90 @@
-HANASO — OWNER ONE-COMMAND UPDATE (v9)
-TASK-HANASO-16 · 2026-11-11 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
+HANASO — OWNER ONE-COMMAND UPDATE (v10)
+TASK-HANASO-17 · 2026-11-12 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
 
 WHAT THIS IS
   The single copy-paste command that installs or updates HANASO on the VPS
   (run as root). No GitHub Token, no password, no Deploy Key — the repository
   is public and everything arrives over anonymous HTTPS.
 
-WHAT'S NEW IN v9 (HANASO-16)
-  1. The release bundles EVERYTHING pending from tl14-r01 (the slide-by-slide
-     rule-teaching redesign — it rolled back and never shipped) PLUS the new
-     progressive learning journey: /learn now auto-selects the ACTIVE chapter
-     from real progress, shows exactly ONE section at a time (Chapter →
-     Section → Rows → Lessons) with explicit «بخش قبلی/بخش بعدی» buttons,
-     hides all future chapters (a small teaser appears only at ≥75% of the
-     current chapter), archives understood chapters for review, and gets the
-     learner into the real lesson with ONE click.
-  2. The updater is v3.0 — the THREE-TIER HEALTH GATE that fixes the
-     tl14-r01 mis-rollback: it now distinguishes (a) application failures
-     [rollback], (b) deploy-caused public-path breakage [rollback], (c) a
-     PRE-EXISTING broken front line [stop BEFORE any change, nothing rolled
-     back, clear repair instructions] and (d) hairpin/self-probe artifacts
-     [release stands, status EXTERNAL_UNVERIFIED]. Statuses are recorded in
-     the update history file (PUBLIC_CLASSIFICATION).
-
-IMPORTANT — READ BEFORE THE FIRST RUN
-  As of 2026-11-11 the PUBLIC endpoint of BOTH learn.kotodama.ir AND
-  kotodama.ir is verifiably broken WORLDWIDE (verified from 5 countries: TLS
-  completes with a valid certificate, then the connection is closed with an
-  empty reply; port 80 refused). This is a PRE-EXISTING front-line (host
-  HAProxy/nginx) outage — NOT the HANASO application. The v3 updater will
-  detect this in its PREFLIGHT and STOP BEFORE CHANGING ANYTHING, printing
-  INGRESS_PREEXISTING_BROKEN with repair hints (systemctl status haproxy
-  nginx; ss -tlnp | grep -E ':80|:443'; docker ps). FIX THE FRONT LINE
-  FIRST, then run the same one-liner — it will then deploy and verify
-  normally. To deploy anyway despite the unverified public path, prefix the
-  env:  HANASO_ALLOW_UNVERIFIED_INGRESS=1  (the app itself is still fully
-  gated locally: health, version, migration, smoke).
+WHAT'S NEW IN v10 (HANASO-17)
+  1. The release bundles EVERYTHING from 1.0.0-hanaso16-r01 (the progressive
+     learning journey, live in production since 2026-11-11) PLUS the new
+     unified daily experience: / is now a real LEARNER HOME — a quiet,
+     professional dashboard that answers "what do I do today?" with ONE
+     primary CTA resolved from real progress (start / continue / restart-after-
+     absence / next lesson / mastery gate), a secondary "next new lesson" card,
+     an honest review line (NO fake counts — the FSRS engine is honestly not
+     integrated yet), and a compact link to the learning map.
+  2. MAIN NAVIGATION: desktop top bar + mobile bottom tab bar (خانه · مسیر
+     یادگیری) on top-level pages only — lessons/assessments stay immersive.
+  3. COMPLETED LESSONS ARE ALWAYS REPLAYABLE: clicking a completed row in the
+     map opens the lesson FROM THE TOP in review mode (?mode=review) — no more
+     "completed" wall. Nothing re-registers: no duplicate completion, no
+     duplicate rewards, mastery/FSRS untouched.
+  4. LESSON END, FIXED: exactly ONE CTA — «پایان درس و بازگشت به مسیر» —
+     back to the SAME map section (?s=). The next lesson is shown as a text
+     line, never auto-opened.
+  5. TIME-BOXED RESUME: a half-finished lesson's resume pointer expires after
+     7 days without meaningful activity (a plain refresh does NOT extend it);
+     the CTA becomes «شروع دوبارهٔ درس» with a neutral notice. Only the walk
+     POSITION expires — completed lessons, history, mastery, FSRS data are
+     never touched. One additive migration (0003: station_progress.
+     last_activity_at); no seed change; full backward compatibility.
 
 PINS (immutable — never drift to "latest")
-  target release : 1.0.0-hanaso16-r01 @ commit 777fb2b61afdc9021090d60ad23986c93c7d4d66
-                   (TASK-HANASO-16 — the progressive learning journey
-                   Chapter→Section→Rows→Lessons: progress-driven active
-                   chapter, one-section-at-a-time panel, prev/next section
-                   buttons, future chapters never listed (teaser only ≥75%,
-                   no total counts), understood-chapter archive, one-click
-                   lesson entry + ALL pending TL-14 changes: the 8 rule
-                   stations as 12-19-step slide decks, 6 content gates that
-                   found and fixed 102 real violations, and the RSC
-                   learner-id bugfix found by this task's browser QA;
-                   651/651 unit tests, 37/37 EQA, 140/140 deploy-sandbox
-                   assertions, 9/9 browser scenarios at 390/768/1440)
-  deploy tooling : commit df50431d123b7d2e71b6c9269828d0a181967fb4 (branch hanaso16-learning-journey)
+  target release : 1.0.0-hanaso17-r01 @ commit 3f41f6ee510e28914934ddc83375a0e1d49405a3
+                   (TASK-HANASO-17 — home dashboard, unified navigation,
+                   lesson replay, one-CTA completion, 7-day resume expiration;
+                   692/692 tests, browser QA 10/10 at 390/768/1440;
+                   includes ALL pending changes: HANASO-16 + TL-14 + TL-13)
+  deploy tooling : commit aaa5fea45f43175e4de9772bce6b354c0e0126d2 (branch hanaso17-home-dashboard)
   bootstrap file : infra/deploy/bootstrap-hanaso.sh
-                   sha256 35ca97429dfdc509fd8dd0b09eb5667e1fb1af3fd0be318c8d8a0dcda4572452
+                   sha256 03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
 
 DOWNLOAD PATHS (tried in this order — the design follows the owner's live VPS
 evidence of 2026-11-08: github.com git OK · api.github.com 200 · codeload 200 ·
 raw 200 only on 185.199.108.133, SSL timeouts on the other three raw IPs):
-  1/4  api.github.com       contents API at the pinned commit (tiny payload;
-                            an anonymous rate-limit 403 just falls through)
-  2/4  codeload.github.com  tarball of the pinned commit, single-file extract
-  3/4  raw.githubusercontent.com pinned to 185.199.108.133 via curl --resolve
-                            (TLS certificate verification stays fully ON)
-  4/4  raw.githubusercontent.com via DNS (last resort)
+  1/2  api.github.com       contents API at the pinned tooling commit (tiny
+                            payload; an anonymous rate-limit 403 just falls
+                            through)
+  2/2  codeload.github.com  tarball of the pinned tooling commit, single-file
+                            extract
   The bootstrap's REAL SHA-256 is checked against the pin above BEFORE
   anything is executed — a corrupted or proxy-mangled download can never run.
   curl errors are printed verbatim; nothing is hidden.
 
-THE COMMAND — copy this ONE line and run it on the VPS as root:
+THE COMMAND — copy this block and paste it whole into the VPS shell as root
+(it is a multi-line heredoc — safe against SSH paste line-breaking, unlike the
+old 2.7KB single-line bash -c):
 
-bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=df50431d123b7d2e71b6c9269828d0a181967fb4; W=35ca97429dfdc509fd8dd0b09eb5667e1fb1af3fd0be318c8d8a0dcda4572452; P=infra/deploy/bootstrap-hanaso.sh; command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found — install once: apt-get install -y curl" >&2; exit 1; }; command -v sha256sum >/dev/null 2>&1 || { echo "ERROR: sha256sum not found (coreutils)" >&2; exit 1; }; T="$(mktemp /tmp/hanaso-bootstrap.XXXXXX.sh)"; X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"; trap "rm -f \"$T\"; rm -rf \"$X\"" EXIT; GOT=""; echo "anaso] pinned bootstrap commit ${R:0:12} — download paths: api.github.com -> codeload.github.com -> raw(pinned IP 185.199.108.133) -> raw(dns)"; if curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/${H}/contents/${P}?ref=${R}" -o "$T"; then GOT="api.github.com"; else echo "anaso] 1/4 api.github.com FAILED (real curl error above) — trying codeload" >&2; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/${H}/tar.gz/${R}" -o "$X/src.tgz"; then if tar -xzf "$X/src.tgz" -C "$X" --strip-components=1 "hanaso-${R}/${P}" 2>/dev/null; then mv "$X/${P}" "$T"; GOT="codeload.github.com"; elif tar -xzf "$X/src.tgz" -C "$X"; then mv "$X/hanaso-${R}/${P}" "$T"; GOT="codeload.github.com"; else echo "anaso] codeload tarball fetched but extraction FAILED (tar error above)" >&2; fi; else echo "anaso] 2/4 codeload.github.com FAILED (real curl error above) — trying raw with the pinned IP" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --resolve raw.githubusercontent.com:443:185.199.108.133 --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via pinned IP 185.199.108.133"; else echo "anaso] 3/4 raw(pinned IP) FAILED (real curl error above) — trying raw via DNS" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via DNS"; else echo "anaso] 4/4 raw(dns) FAILED (real curl error above)" >&2; fi; fi; [ -n "$GOT" ] || { echo "ERROR: ALL bootstrap download paths failed — the real errors are printed above; NOTHING was executed or changed" >&2; exit 1; }; A="$(sha256sum "$T" | cut -d" " -f1)"; if [ "$A" != "$W" ]; then echo "ERROR: bootstrap SHA-256 MISMATCH — got ${A}, want ${W} (via ${GOT}). NOTHING was executed; nothing was changed" >&2; exit 1; fi; echo "anaso] bootstrap verified — sha256 ${A:0:16} OK (via ${GOT}) — starting pinned installer"; HANASO_DEPLOY_SHA="$R" bash "$T" "$@"' hanaso-updater
+bash <<'HANASO-V10'
+set -euo pipefail
+H=AbolfazlProg/hanaso
+P=infra/deploy/bootstrap-hanaso.sh
+R=aaa5fea45f43175e4de9772bce6b354c0e0126d2
+W=03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
+D=3f41f6ee510e28914934ddc83375a0e1d49405a3
+T=/tmp/hanaso-bootstrap-v10.sh
+
+echo "[hanaso] 1/3  download bootstrap (ref $R) via api.github.com"
+if ! curl -fsSL --connect-timeout 10 --max-time 60 \
+        -H "Accept: application/vnd.github.raw" \
+        "https://api.github.com/repos/$H/contents/$P?ref=$R" -o "$T"; then
+  echo "[hanaso]    api.github.com failed (real curl error above) — trying codeload.github.com"
+  X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"
+  curl -fsSL --connect-timeout 10 --max-time 300 \
+       "https://codeload.github.com/$H/tar.gz/$R" -o "$X/src.tgz"
+  tar -xzf "$X/src.tgz" -C "$X" "hanaso-$R/$P"
+  mv "$X/hanaso-$R/$P" "$T"
+  rm -rf "$X"
+fi
+
+echo "[hanaso] 2/3  verify SHA-256 — nothing runs unless it matches"
+echo "$W  $T" | sha256sum -c -
+
+echo "[hanaso] 3/3  start installer — deploy target: $D (1.0.0-hanaso17-r01)"
+HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"
+HANASO-V10
 
 OPTIONAL SUBCOMMANDS (append after "hanaso-updater" at the end of the line):
   # read-only status report:      … hanaso-updater status
@@ -77,7 +92,7 @@ OPTIONAL SUBCOMMANDS (append after "hanaso-updater" at the end of the line):
 
 VERIFY AFTER THE RUN
   curl -sS https://learn.kotodama.ir/api/health
-  expected: {"ok":true,...,"version":"1.0.0-hanaso16-r01","commit":"840b993..."}
+  expected: {"ok":true,...,"version":"1.0.0-hanaso17-r01","commit":"3f41f6ee..."}
 
 FULL OWNER GUIDE (Persian, same branch)
   docs/deployment/OWNER-ONE-COMMAND-UPDATE.fa.md

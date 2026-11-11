@@ -1,0 +1,55 @@
+# RELEASE_MANIFEST — TASK-HANASO-17
+
+> ۲۰۲۶-۱۱-۱۲ · نسخهٔ نهایی: **`1.0.0-hanaso17-r01`** · شاخهٔ `hanaso17-home-dashboard` · وضعیت: آمادهٔ Deploy (خط مقدم Production سالم است — Health زنده تأیید شد)
+
+## ۱) وضعیت Production و مبنای انتشار
+
+| قلم | مقدار |
+|---|---|
+| نسخهٔ فعلی Production (زنده و سالم) | `1.0.0-hanaso16-r01` @ `777fb2b61afdc9021090d60ad23986c93c7d4d66` — راستی‌آزمایی زندهٔ `/api/health` در CP-01 |
+| مبنای شاخهٔ HANASO-17 | `ffb747d0` (tip شاخهٔ hanaso16-learning-journey) — بدون حذف حتی یک کامیت |
+| خط مقدم (Nginx) | سالم — مالک تعمیر و از کامپیوتر شخصی HTTP 200 هر دو دامنه را تأیید کرده |
+
+## ۲) کامیت‌های این انتشار
+
+| کامیت | شرح |
+|---|---|
+| `62e8d5d` | CP-01..CP-03 — اسناد Checkpoint + ماتریس تحقیقات + تصمیم‌های طراحی |
+| `ae8be9b` | CP-04..CP-06 — کل پیاده‌سازی (Home/Nav/Resume/Replay/Completion) + Migration 0003 + تست‌ها |
+| **`3f41f6e`** | **کامیت هدف نهایی (Release target)** — CP-07: TEST_REPORT + IMPLEMENTATION_REPORT + CHANGELOG + فیکس QA ناوبری موبایل — آخرین کامیت محتوای کامل |
+| `aaa5fea` | **کامیت ابزار (Deploy tooling)** — پین updater/bootstrap به target نهایی + هم‌گامی فیکسچر deploy05 |
+| (پس از ابزار) | اسناد تحویل نهایی (OWNER-COMMAND v10 + همین Manifest + بستن Checkpoint) — بدون اثر بر target |
+
+## ۳) پین‌های نهایی یک‌خطی v10
+
+| پین | مقدار |
+|---|---|
+| نسخهٔ هدف | `1.0.0-hanaso17-r01` |
+| کامیت هدف (D) | `3f41f6ee510e28914934ddc83375a0e1d49405a3` |
+| کامیت ابزار (R) | `aaa5fea45f43175e4de9772bce6b354c0e0126d2` |
+| SHA-256 bootstrap (W) | `03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035` |
+| Image | `ghcr.io/abolfazlprog/hanaso:3f41f6ee510e28914934ddc83375a0e1d49405a3` (build محلی روی VPS از کامیت پین‌شده) |
+| Rollback target | Image ثبت‌شده در `PREV_IMAGE` آخرین رکورد update-history (اگر اجرا از hanaso16-r01 باشد → `ghcr.io/…:777fb2b6…`) |
+
+**تفاوت معنایی v10 نسبت به v9.1:** `HANASO_DEPLOY_SHA` حالا کامیت ابزار R است (نه target) — یعنی updater از همان کامیتی اجرا می‌شود که پین‌های صحیح را دارد؛ بررسی integrity بایت‌به‌بایت پاس می‌شود (بدون هشدار ناسازگاری bootstrap که در v9.1 دیده می‌شد) و `HANASO_TARGET_SHA="$D"` هدف انتشار را صریح قفل می‌کند. Image همان‌طور از کامیت هدف D ساخته می‌شود.
+
+## ۴) Migration و Seed
+
+- **Migration جدید: `0003_station_last_activity`** — یک ستون افزودنی `app.station_progress.last_activity_at timestamptz NOT NULL DEFAULT now()`. Idempotent (journal drizzle)؛ ردیف‌های موجود مبنای صادقانهٔ «تازه» می‌گیرند؛ بدون حذف/بازنویسی.
+- **Seed جدید: هیچ** (seedهای موجود idempotentاند).
+- سازگاری کامل با دیتابیس موجود production (hanaso16-r01).
+
+## ۵) شامل چه چیزهایی است
+
+- **کل HANASO-16 + TL-14 + TL-13** (میراث کامل شاخه — راستی‌آزمایی ancestry در CP-01).
+- **جدید HANASO-17**: داشبورد خانه ۶-حالته + ناوبری دسکتاپ/موبایل + Replay درس تکمیل‌شده + تک‌CTA پایان درس با بازگشت به همان Section + انقضای ۷روزهٔ Resume سرور-محور + کارت مرور صادقانه + شمار واقعی کارت FSRS در صفحهٔ اتمام فصل.
+
+## ۶) گیت‌های کیفیت (همه سبز)
+
+۶۹۲/۶۹۲ تست واحد/اینتریگیشن (+۴۱ جدید) · TypeScript ✓ · ESLint ۰ ✓ · Prettier ✓ · Build production ✓ · مرورگر واقعی ۱۰/۱۰ سناریو در ۳۹۰/۷۶۸/۱۴۴۰ با اسکرین‌شات (`agent-ctx/hanaso17-shots/`).
+
+## ۷) ترتیب اجرا
+
+1. Push شاخه (انجام شد — سشن فعال).
+2. اجرای بلوک v10 از `OWNER-COMMAND.txt` / راهنمای فارسی §۱ روی VPS به‌عنوان root. (خط مقدم سالم است؛ Preflight سه‌سطحی پاس می‌شود.)
+3. راستی‌آزمایی: `curl -sS https://learn.kotodama.ir/api/health` → `{"ok":true,"version":"1.0.0-hanaso17-r01","commit":"3f41f6ee…"}` + سلامت KOTODAMA (شاهد داخل رکورد انتشار) + باز کردن `/` و دیدن داشبورد خانه.

@@ -55,7 +55,9 @@
 
 ## CP-08 — Release و تحویل (۲۰۲۶-۱۱-۱۲)
 
-- شاخه Push شد؛ RELEASE_MANIFEST.md (نسخهٔ `1.0.0-hanaso17-r01`، کامیت هدف، بدون Migration تخریبی، seed لازم ندارد).
-- Installer/Bootstrap پین مجدد + OWNER-COMMAND v10 (همان الگوی v9.1 سالم — heredock، SHA-256 gate).
-- گزارش نهایی فارسی + TEST_REPORT + IMPLEMENTATION_REPORT.
-- **Commit:** نهایی — پیام در CURRENT_STATE.
+- کامیت هدف (Release target): **`3f41f6ee`** (CP-07 — آخرین کامیت محتوای کامل: پیاده‌سازی + تست + اسناد کیفیت).
+- کامیت ابزار (Tooling): **`aaa5fea4`** — پین updater/bootstrap به `1.0.0-hanaso17-r01 @ 3f41f6ee` + هم‌گامی فیکسچر deploy05. SHA-256 bootstrap در این کامیت: `03ee6e74…`.
+- OWNER-COMMAND v10 + راهنمای فارسی v10 — بلوک heredock کوتاه (ضد شکستن خط در Paste)، R=کامیت ابزار (integrity بایت‌به‌بایت پاس، بدون هشدار v9.1)، `HANASO_TARGET_SHA` صریح روی کامیت هدف.
+- RELEASE_MANIFEST.md (§۳ پین‌ها، §۴ تنها Migration افزودنی 0003، §۵ میراث کامل، §۶ گیت‌ها، §۷ ترتیب اجرا).
+- شاخه به GitHub Push شد؛ یک‌خطی v10 با `bash -n` + اجرای واقعی در سندباکس راستی‌آزمایی شد.
+- **Commit:** اسناد تحویل نهایی (این فایل + CURRENT_STATE + Manifest + OWNER-COMMAND + راهنما).

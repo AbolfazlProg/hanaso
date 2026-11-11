@@ -1,25 +1,57 @@
-# دستور واحد به‌روزرسانی HANASO روی VPS — نسخهٔ ۹ (انتشار HANASO-16)
+# دستور واحد به‌روزرسانی HANASO روی VPS — نسخهٔ ۱۰ (انتشار HANASO-17)
 
-**تاریخ:** ۲۰۲۶-۱۱-۱۱ · **مأموریت:** TASK-HANASO-16 (مسیر یادگیری تدریجی + بازیابی انتشار)
+**تاریخ:** ۲۰۲۶-۱۱-۱۲ · **مأموریت:** TASK-HANASO-17 (داشبورد خانه، ناوبری یکپارچه، مرور درس، انقضای Resume)
 **Repository:** `https://github.com/AbolfazlProg/hanaso` — **عمومی (Public)**؛ دریافت کد با HTTPS ناشناس و **بدون هیچ GitHub Token / Password / Deploy Key**
-**نسخهٔ هدف (Pin شده):** `1.0.0-hanaso16-r01` @ کامیت `777fb2b61afdc9021090d60ad23986c93c7d4d66` (شاخهٔ `hanaso16-learning-journey`) — بدون تأیید مالک عوض نمی‌شود
-**کامیت ابزار استقرار (Pin شده):** `df50431d123b7d2e71b6c9269828d0a181967fb4` (شاخهٔ `hanaso16-learning-journey`)
-**SHA-256 فایل bootstrap (Pin شده):** `35ca97429dfdc509fd8dd0b09eb5667e1fb1af3fd0be318c8d8a0dcda4572452`
+**نسخهٔ هدف (Pin شده):** `1.0.0-hanaso17-r01` @ کامیت `3f41f6ee510e28914934ddc83375a0e1d49405a3` (شاخهٔ `hanaso17-home-dashboard`) — بدون تأیید مالک عوض نمی‌شود
+**کامیت ابزار استقرار (Pin شده):** `aaa5fea45f43175e4de9772bce6b354c0e0126d2` (شاخهٔ `hanaso17-home-dashboard`)
+**SHA-256 فایل bootstrap (Pin شده):** `03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035`
 
 > **⚠️ حتماً قبل از اولین اجرا بخوانید — وضعیت فعلی خط مقدم:** در تاریخ ۲۰۲۶-۱۱-۱۱ مسیر عمومی **هر دو** دامنهٔ `learn.kotodama.ir` و `kotodama.ir` برای کل دنیا قطع است (راستی‌آزمایی از ۵ کشور: TLS با گواهی معتبر کامل می‌شود ولی سرور بدون پاسخ HTTP اتصال را می‌بندد؛ پورت ۸۰ هم refused). این خرابی **از قبل موجود** و مربوط به خط مقدم مشترک (HAProxy/nginx میزبان) است، **نه HANASO و نه این انتشار**. updater نسخهٔ ۹ این را در Preflight تشخیص می‌دهد، **قبل از هر تغییری** با پیام `INGRESS_PREEXISTING_BROKEN` متوقف می‌شود و دستورات تعمیر را چاپ می‌کند. **اول خط مقدم را تعمیر کنید، بعد همان دستور را اجرا کنید.** (اگر می‌خواهید به‌هرحال منتشر کنید: `HANASO_ALLOW_UNVERIFIED_INGRESS=1` را به‌صورت پیشوند env اضافه کنید — گیت‌های محلی App همچنان کامل برقرارند.)
 
-نسخهٔ ۹ راهنما است. مکانیزم دریافت همان نسخهٔ ۳ است (چهار مسیر + گیت SHA-256 واقعی)؛ **مکانیزم سلامت به گیت سه‌سطحی v3.0 ارتقا یافت** و Pinها به انتشار TASK-HANASO-16 منتقل شدند. این انتشار شامل:
+نسخهٔ ۱۰ راهنما است. مکانیزم دریافت (api.github.com → codeload + گیت SHA-256 واقعی) و گیت سلامت سه‌سطحی v3.0 بدون تغییر از نسخهٔ ۹؛ Pinها به انتشار TASK-HANASO-17 منتقل شدند و **دستور از خطِ تک‌خطیِ ۲.۷KB به بلوک heredock کوتاه تبدیل شد** (خطای syntax ناشی از شکستن خط هنگام Paste در SSH را ریشه‌کن می‌کند — تجربهٔ مالک با v9). این انتشار شامل:
 
-- **تمام تغییرات معوق TL-14** (که در انتشار ناموفق قبلی رول‌بک شد و هرگز live نشد): دک‌های اسلایدی ۱۲-۱۹ مرحله‌ای ۸ ایستگاه قواعد + ۶ گیت محتوایی + رفع ۱۰۲ تخلف واقعی.
-- **مسیر یادگیری تدریجی جدید (Chapter → Section → Rows → Lessons):** `/learn` فصل فعال را از Progress واقعی انتخاب می‌کند (نه از Frontend)؛ در هر لحظه فقط یک بخش در پنل خودش دیده می‌شود؛ جابه‌جایی بین بخش‌ها فقط با دکمه‌های «بخش قبلی/بخش بعدی»؛ فصل‌های آینده هرگز فهرست نمی‌شوند (فقط از ۷۵٪ پیشرفت، یک کارت پیش‌نمایش کوچک از فصل بعدی)؛ تعداد کل فصل‌ها/بخش‌ها هیچ‌جا نمایش داده نمی‌شود؛ فصل‌های فهمیده‌شده در آرشیو قابل مرورند؛ کاربر جدید و بازگشتی با **۱ کلیک** داخل محتوای واقعی درس می‌روند.
-- **رفع باگ واقعی learner-id در صفحات سرور** (همهٔ صفحات SSR بی‌صدا روی کاربر پیش‌فرض رندر می‌شدند) + مسدود شدن کامل دیپ‌لینک فصل قفل (معرفی/گیت/اتمام هم اکنون گیت دارند).
+- **داشبورد خانه (`/`)**: سلام کوتاه + کارت «قدم بعدی» با تنها CTA اصلی (۶ حالت از Progress واقعی: شروع/ادامه/شروع دوباره پس از غیبت/درس بعدی/دروازهٔ فهم/مرور مسیر) + کارت «درس بعدی» فقط وقتی متفاوت است + خط صادقانهٔ مرور (بدون عدد ساختگی تا فعال‌شدن موتور FSRS) + لینک کم‌حجم مسیر. کاربر جدید و بازگشتی با **۱ کلیک** داخل محتوای واقعی درس می‌روند.
+- **ناوبری اصلی**: نوار بالای دسکتاپ + تب‌بار پایین موبایل (خانه · مسیر یادگیری) فقط در صفحات سطح‌بالا — جلسات درس/آزمون غوطه‌ور می‌مانند. فقط مقصدهای واقعی؛ بدون لینک مرده.
+- **مرور درس‌های تکمیل‌شده (`?mode=review`)**: کلیک روی ردیف «مرور» در نقشه، درس را از ابتدا باز می‌کند — دیگه پیام Completed مانع نمی‌شود. هیچ ثبت/پاداش تکراری انجام نمی‌شود.
+- **پایان درس**: یک CTA «پایان درس و بازگشت به مسیر» → همان Section نقشه (`?s=`)؛ درس بعدی فقط متن است و هرگز خودکار باز نمی‌شود.
+- **انقضای ۷روزهٔ Resume**: فقط با «فعالیت معنادار» تمدید می‌شود (Refresh تمدید نمی‌کند)؛ منبع حقیقت سروری است (`last_activity_at` — تنها Migration این انتشار، افزودنی)؛ هیچ‌چیز جز موقعیت walk حذف نمی‌شود.
+- **میراث کامل**: همهٔ HANASO-16 (مسیر تدریجی Chapter→Section→Rows→Lessons + گیت سه‌سطحی installer) و TL-14/TL-13 (دک‌های اسلایدی ۸ ایستگاه قواعد، ۶ گیت محتوایی، رفع ۱۰۲ تخلف، رفع باگ learner-id).
 
 ## ۱) دستور واحد
 
 این **یک خط** را در ترمینال **سرور** (به‌عنوان root) کپی و اجرا کنید — همین:
 
 ```bash
-bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=df50431d123b7d2e71b6c9269828d0a181967fb4; W=35ca97429dfdc509fd8dd0b09eb5667e1fb1af3fd0be318c8d8a0dcda4572452; P=infra/deploy/bootstrap-hanaso.sh; command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found — install once: apt-get install -y curl" >&2; exit 1; }; command -v sha256sum >/dev/null 2>&1 || { echo "ERROR: sha256sum not found (coreutils)" >&2; exit 1; }; T="$(mktemp /tmp/hanaso-bootstrap.XXXXXX.sh)"; X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"; trap "rm -f \"$T\"; rm -rf \"$X\"" EXIT; GOT=""; echo "[hanaso] pinned bootstrap commit ${R:0:12} — download paths: api.github.com -> codeload.github.com -> raw(pinned IP 185.199.108.133) -> raw(dns)"; if curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/${H}/contents/${P}?ref=${R}" -o "$T"; then GOT="api.github.com"; else echo "[hanaso] 1/4 api.github.com FAILED (real curl error above) — trying codeload" >&2; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/${H}/tar.gz/${R}" -o "$X/src.tgz"; then if tar -xzf "$X/src.tgz" -C "$X" --strip-components=1 "hanaso-${R}/${P}" 2>/dev/null; then mv "$X/${P}" "$T"; GOT="codeload.github.com"; elif tar -xzf "$X/src.tgz" -C "$X"; then mv "$X/hanaso-${R}/${P}" "$T"; GOT="codeload.github.com"; else echo "[hanaso] codeload tarball fetched but extraction FAILED (tar error above)" >&2; fi; else echo "[hanaso] 2/4 codeload.github.com FAILED (real curl error above) — trying raw with the pinned IP" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --resolve raw.githubusercontent.com:443:185.199.108.133 --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via pinned IP 185.199.108.133"; else echo "[hanaso] 3/4 raw(pinned IP) FAILED (real curl error above) — trying raw via DNS" >&2; fi; fi; if [ -z "$GOT" ]; then if curl -fsSL --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/${H}/${R}/${P}" -o "$T"; then GOT="raw.githubusercontent.com via DNS"; else echo "[hanaso] 4/4 raw(dns) FAILED (real curl error above)" >&2; fi; fi; [ -n "$GOT" ] || { echo "ERROR: ALL bootstrap download paths failed — the real errors are printed above; NOTHING was executed or changed" >&2; exit 1; }; A="$(sha256sum "$T" | cut -d" " -f1)"; if [ "$A" != "$W" ]; then echo "ERROR: bootstrap SHA-256 MISMATCH — got ${A}, want ${W} (via ${GOT}). NOTHING was executed; nothing was changed" >&2; exit 1; fi; echo "[hanaso] bootstrap verified — sha256 ${A:0:16} OK (via ${GOT}) — starting pinned installer"; HANASO_DEPLOY_SHA="$R" bash "$T" "$@"' hanaso-updater
+```bash
+bash <<'HANASO-V10'
+set -euo pipefail
+H=AbolfazlProg/hanaso
+P=infra/deploy/bootstrap-hanaso.sh
+R=aaa5fea45f43175e4de9772bce6b354c0e0126d2
+W=03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
+D=3f41f6ee510e28914934ddc83375a0e1d49405a3
+T=/tmp/hanaso-bootstrap-v10.sh
+
+echo "[hanaso] 1/3  download bootstrap (ref $R) via api.github.com"
+if ! curl -fsSL --connect-timeout 10 --max-time 60 \
+        -H "Accept: application/vnd.github.raw" \
+        "https://api.github.com/repos/$H/contents/$P?ref=$R" -o "$T"; then
+  echo "[hanaso]    api.github.com failed (real curl error above) — trying codeload.github.com"
+  X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"
+  curl -fsSL --connect-timeout 10 --max-time 300 \
+       "https://codeload.github.com/$H/tar.gz/$R" -o "$X/src.tgz"
+  tar -xzf "$X/src.tgz" -C "$X" "hanaso-$R/$P"
+  mv "$X/hanaso-$R/$P" "$T"
+  rm -rf "$X"
+fi
+
+echo "[hanaso] 2/3  verify SHA-256 — nothing runs unless it matches"
+echo "$W  $T" | sha256sum -c -
+
+echo "[hanaso] 3/3  start installer — deploy target: $D (1.0.0-hanaso17-r01)"
+HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"
+HANASO-V10
+```
 ```
 
 - همین دستور در `OWNER-COMMAND.txt` (ریشهٔ Repository) هم هست — کپی از هر دو یکسان است.
@@ -63,7 +95,7 @@ bash -c 'set -euo pipefail; H=AbolfazlProg/hanaso; R=df50431d123b7d2e71b6c926982
 | راستی‌آزمایی Pin | کامیت هدف `840b993` و کامیت ابزار `ee29578e`؛ اجرای updater از worktree ایزوله روی همان کامیت + SHA-256 bootstrap | ضد drift                                             |
 | Preflight        | همهٔ بررسی‌های قبلی + **Baseline عمومی سه‌سطحی جدید** (قبل از هر تغییری) + شاهد kotodama.ir                       | خرابی ازپیش‌موجود = توقف بدون هیچ تغییری             |
 | Backup           | `.env` زمان‌دار + بکاپ واقعی دیتابیس (`pg_dump -Fc` با تأیید)                                                     | بدون بکاپ، هیچ تغییری انجام نمی‌شود                  |
-| Build            | ساخت image روی خود VPS از کامیت Pin‌شده (`1.0.0-hanaso16-r01`)                                                    | بدون Registry/Token                                  |
+| Build            | ساخت image روی خود VPS از کامیت Pin‌شده (`1.0.0-hanaso17-r01`)                                                    | بدون Registry/Token                                  |
 | Update مرحله‌ای  | تعویض image → postgres → pgbouncer → migrate یک‌بارمصرف idempotent → `up -d web worker`                           | ترتیب استاندارد                                      |
 | Health gate      | Tier 1 محلی (کامیت+نسخه) → Tier 2a/2b/3 عمومی طبقه‌بندی‌شده → smoke روی سالم‌ترین مسیر → اسکن لاگ                 | رول‌بک فقط برای شکست واقعی                           |
 | KOTODAMA         | فقط شاهد HTTP قبل/بعد — باید دقیقاً همان باشد                                                                     | هرگز لمس نمی‌شود                                     |
@@ -85,7 +117,7 @@ python3 --version || apt-get install -y python3   # برای راستی‌آزم
 
 ```bash
 curl -sS https://learn.kotodama.ir/api/health
-# انتظار: {"ok":true, "version":"1.0.0-hanaso16-r01", "commit":"840b993…"}
+# انتظار: {"ok":true, "version":"1.0.0-hanaso17-r01", "commit":"3f41f6ee…"}
 ```
 
 ## ۷) اگر مشکلی پیش آمد
@@ -106,5 +138,5 @@ curl -sS https://learn.kotodama.ir/api/health
 
 - **رگرسیون updater (`run-deploy04.sh`): ۱۴۰/۱۴۰ ادعا PASS** (۱۱۰ موجود + ۳۰ جدید گیت سه‌سطحی G1-G6 — از جمله بازتولید دقیق حادثهٔ tl14-r01: توقف قبل از هر تغییر، بدون رول‌بک بی‌فایده).
 - **محصول:** ۶۵۱/۶۵۱ تست واحد · EQA ۳۷/۳۷ · tsc/eslint ✓ · Build تولیدی ✓ · ۹/۹ سناریوی مرورگر واقعی (۳۹۰/۷۶۸/۱۴۴۰، قبل/بعد).
-- **تحویل این نسخه به GitHub:** سشن توسعه به توکن Push دسترسی نداشت (توکن با بازیافت سندباکس حذف شد) — شاخهٔ کامل `hanaso16-learning-journey` در **Git Bundle** کنار همین راهنما تحویل شده است (`hanaso-hanaso16.bundle` + دستور دقیق Push). Pinهای بالا بعد از Push بدون هیچ تغییری معتبرند (کامیت‌ها تغییرناپذیرند).
+- **تحویل به GitHub:** شاخهٔ `hanaso17-home-dashboard` مستقیماً Push شده است (توکن در سشن فعال بود). Pinهای بالا همین الان روی GitHub معتبرند؛ هیچ Bundleای لازم نیست.
 - **محدودیت صادقانه:** Docker واقعی و VPS در سندباکس نیست؛ استقرار واقعی طبق طراحی با اجرای همین یک دستور توسط شما انجام می‌شود و تا پیش از تعمیر خط مقدم، به‌درستی متوقف خواهد شد.
