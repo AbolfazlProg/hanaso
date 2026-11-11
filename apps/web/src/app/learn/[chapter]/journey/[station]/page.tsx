@@ -142,6 +142,21 @@ export default async function StationPage({ params }: { params: Promise<{ chapte
     if (block.kind === 'example-set') {
       for (const ex of block.examples) exampleAudioByWord[ex.ja] = hostWordAudioUrls(ex.ja);
     }
+    // TASK-LEARNING-14: the rule-slide words join the same registry — the
+    // contrast/notice/prereq slides resolve their play controls (and the
+    // contrast pair's «پخش هر دو») through the exact same per-word contract.
+    if (block.kind === 'rule-prereq') {
+      for (const item of block.items) {
+        if (item.word) exampleAudioByWord[item.word] = hostWordAudioUrls(item.word);
+      }
+    }
+    if (block.kind === 'rule-contrast') {
+      exampleAudioByWord[block.a.ja] = hostWordAudioUrls(block.a.ja);
+      exampleAudioByWord[block.b.ja] = hostWordAudioUrls(block.b.ja);
+    }
+    if (block.kind === 'rule-step' && block.word) {
+      exampleAudioByWord[block.word.ja] = hostWordAudioUrls(block.word.ja);
+    }
   }
 
   return (
