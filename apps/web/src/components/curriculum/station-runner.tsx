@@ -427,12 +427,15 @@ export function StationRunner(props: StationRunnerProps) {
     }
     let snapshot = loadWalkSnapshot(chapterSlug, station.slug);
     /* TASK-HANASO-17 §۸ — the LOCAL snapshot obeys the same 7-day TTL: an
-     * expired snapshot restores nothing (neutral restart), even offline. */
+     * expired snapshot restores nothing. The restart NOTICE is deferred until
+     * the server resume settles: a FRESH server anchor (the learner was
+     * active on another device) restores the walk instead — only a server
+     * that agrees on the expiry (or has no anchor at all) shows the notice. */
+    let localExpired = false;
     if (snapshot && resumeFreshness(snapshot.updatedAt, Date.now()) === 'expired') {
       clearWalkSnapshot(chapterSlug, station.slug);
       snapshot = null;
-      setRestartNotice(true);
-      window.setTimeout(() => setRestartNotice(false), 6000);
+      localExpired = true;
     }
     if (snapshot) {
       const restored = clampStepIndex(snapshot.stepIndex, blocks.length);
@@ -471,6 +474,7 @@ export function StationRunner(props: StationRunnerProps) {
       .then((resume) => {
         if (!resume) return;
         const emptyWalk =
+          localExpired ||
           !snapshot ||
           (snapshot.stepIndex === 0 &&
             Object.keys(snapshot.blockResults ?? {}).length === 0 &&
@@ -518,6 +522,13 @@ export function StationRunner(props: StationRunnerProps) {
           setStep(target);
           setResumedNotice(true);
           window.setTimeout(() => setResumedNotice(false), 4000);
+          return;
+        }
+        if (localExpired) {
+          // §۸: the local snapshot expired AND the server holds no usable
+          // anchor — the neutral restart notice is now honest.
+          setRestartNotice(true);
+          window.setTimeout(() => setRestartNotice(false), 6000);
         }
       })
       .finally(() => setResumeSettled(true));

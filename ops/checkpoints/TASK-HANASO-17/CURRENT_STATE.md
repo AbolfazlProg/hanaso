@@ -4,29 +4,29 @@
 
 ## ۱) مبنای شروع (CP-01 — بازیابی‌شده و راستی‌آزمایی‌شده)
 
-| قلم | مقدار واقعی | منبع راستی‌آزمایی |
-|---|---|---|
-| Production زنده | `1.0.0-hanaso16-r01` @ `777fb2b61afdc9021090d60ad23986c93c7d4d66` · `ok:true` | `curl https://learn.kotodama.ir/api/health` (2026-11-11 17:00 UTC) |
-| KOTODAMA | زنده (HTTP 200، HTML) | `curl https://kotodama.ir` |
-| آخرین شاخهٔ معتبر GitHub | `origin/hanaso16-learning-journey` @ `ffb747d0ecea7ccf26e9be33181c7ffd7a0bc2b1` | `git fetch origin && git ls-remote` |
-| `origin/main` | `16db1dc` — قدیمی (عصر TASK-LEARNING-04)؛ شاخهٔ HANASO-16 هنوز Merge نشده | `git log origin/main` |
-| مبنای HANASO-17 | `ffb747d0` → شاخهٔ `hanaso17-home-dashboard` | `git checkout -b` محلی |
-| تغییرات Local | فقط تغییرِ file-mode (644→755) — صفر تغییر محتوا؛ حفظ و Commit نشد | `git diff --stat` (۱۵۴۶ فایل، 0 insertions/deletions) |
+| قلم                      | مقدار واقعی                                                                     | منبع راستی‌آزمایی                                                  |
+| ------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Production زنده          | `1.0.0-hanaso16-r01` @ `777fb2b61afdc9021090d60ad23986c93c7d4d66` · `ok:true`   | `curl https://learn.kotodama.ir/api/health` (2026-11-11 17:00 UTC) |
+| KOTODAMA                 | زنده (HTTP 200، HTML)                                                           | `curl https://kotodama.ir`                                         |
+| آخرین شاخهٔ معتبر GitHub | `origin/hanaso16-learning-journey` @ `ffb747d0ecea7ccf26e9be33181c7ffd7a0bc2b1` | `git fetch origin && git ls-remote`                                |
+| `origin/main`            | `16db1dc` — قدیمی (عصر TASK-LEARNING-04)؛ شاخهٔ HANASO-16 هنوز Merge نشده       | `git log origin/main`                                              |
+| مبنای HANASO-17          | `ffb747d0` → شاخهٔ `hanaso17-home-dashboard`                                    | `git checkout -b` محلی                                             |
+| تغییرات Local            | فقط تغییرِ file-mode (644→755) — صفر تغییر محتوا؛ حفظ و Commit نشد              | `git diff --stat` (۱۵۴۶ فایل، 0 insertions/deletions)              |
 
 **نتیجه:** یک‌خطی v9.1 توسط مالک اجرا شده و HANASO-16 روی Production فعال است. خط مقدم (Nginx) توسط مالک تعمیر شده است. فرض «خرابی Ingress» دیگر معتبر نیست.
 
 ## ۲) وضعیت پیاده‌سازی (به‌ترتیب CP)
 
-| CP | عنوان | وضعیت |
-|---|---|---|
-| CP-01 | بازیابی نسخهٔ GitHub و Research Context | ✅ کامل (§۱ بالا) |
-| CP-02 | مطالعه و ثبت تحقیقات (`RESEARCH_CONSUMPTION_MATRIX.md`) | ✅ کامل |
-| CP-03 | DESIGN_DECISIONS + IA + NAVIGATION_FLOW + RESUME_EXPIRATION_POLICY + LESSON_REPLAY_AND_COMPLETION | ✅ کامل |
-| CP-04 | پیاده‌سازی Home و Navigation | ✅ کامل |
-| CP-05 | Resume انقضا + مسیر ورود به درس | ✅ کامل |
-| CP-06 | Replay درس + جریان پایان | ✅ کامل |
-| CP-07 | تست جامع + Regression + مرورگر | ✅ کامل (۸۱۳ تست واحد سبز؛ مرورگر ۱۰/۱۰) |
-| CP-08 | Release، Manifest، یک‌خطی v10، Push | ✅ کامل |
+| CP    | عنوان                                                                                             | وضعیت                                    |
+| ----- | ------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| CP-01 | بازیابی نسخهٔ GitHub و Research Context                                                           | ✅ کامل (§۱ بالا)                        |
+| CP-02 | مطالعه و ثبت تحقیقات (`RESEARCH_CONSUMPTION_MATRIX.md`)                                           | ✅ کامل                                  |
+| CP-03 | DESIGN_DECISIONS + IA + NAVIGATION_FLOW + RESUME_EXPIRATION_POLICY + LESSON_REPLAY_AND_COMPLETION | ✅ کامل                                  |
+| CP-04 | پیاده‌سازی Home و Navigation                                                                      | ✅ کامل                                  |
+| CP-05 | Resume انقضا + مسیر ورود به درس                                                                   | ✅ کامل                                  |
+| CP-06 | Replay درس + جریان پایان                                                                          | ✅ کامل                                  |
+| CP-07 | تست جامع + Regression + مرورگر                                                                    | ✅ کامل (۸۱۳ تست واحد سبز؛ مرورگر ۱۰/۱۰) |
+| CP-08 | Release، Manifest، یک‌خطی v10، Push                                                               | ✅ کامل                                  |
 
 ## ۳) فایل‌های کلیدی ایجاد/تغییرشده
 
@@ -44,16 +44,16 @@
 
 ## ۴) وضعیت انتشار (CP-08)
 
-| قلم | مقدار |
-|---|---|
-| نسخهٔ هدف | `1.0.0-hanaso17-r01` |
-| کامیت هدف (Release target) | `3f41f6ee510e28914934ddc83375a0e1d49405a3` |
-| کامیت ابزار (Tooling) | `aaa5fea45f43175e4de9772bce6b354c0e0126d2` |
-| SHA-256 bootstrap | `03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035` |
-| Migration | فقط 0003 (افزودنی `last_activity_at`) — بدون Seed جدید |
-| شاخه | `hanaso17-home-dashboard` — Push شده |
-| یک‌خطی | OWNER-COMMAND.txt (v10 — heredock کوتاه، هم‌الگوی v9.1 سالم) |
-| تست | ۶۹۲/۶۹۲ + مرورگر ۱۰/۱۰ |
+| قلم                        | مقدار                                                              |
+| -------------------------- | ------------------------------------------------------------------ |
+| نسخهٔ هدف                  | `1.0.0-hanaso17-r01`                                               |
+| کامیت هدف (Release target) | `3f41f6ee510e28914934ddc83375a0e1d49405a3`                         |
+| کامیت ابزار (Tooling)      | `aaa5fea45f43175e4de9772bce6b354c0e0126d2`                         |
+| SHA-256 bootstrap          | `03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035` |
+| Migration                  | فقط 0003 (افزودنی `last_activity_at`) — بدون Seed جدید             |
+| شاخه                       | `hanaso17-home-dashboard` — Push شده                               |
+| یک‌خطی                     | OWNER-COMMAND.txt (v10 — heredock کوتاه، هم‌الگوی v9.1 سالم)       |
+| تست                        | ۶۹۲/۶۹۲ + مرورگر ۱۰/۱۰                                             |
 
 ## ۵) قدم بعدی
 

@@ -21,7 +21,7 @@
 
 این **یک خط** را در ترمینال **سرور** (به‌عنوان root) کپی و اجرا کنید — همین:
 
-```bash
+````bash
 ```bash
 bash <<'HANASO-V10'
 set -euo pipefail
@@ -51,8 +51,9 @@ echo "$W  $T" | sha256sum -c -
 echo "[hanaso] 3/3  start installer — deploy target: $D (1.0.0-hanaso17-r01)"
 HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"
 HANASO-V10
-```
-```
+````
+
+````
 
 - همین دستور در `OWNER-COMMAND.txt` (ریشهٔ Repository) هم هست — کپی از هر دو یکسان است.
 - اگر با کاربر غیر root هستید، به‌جای `bash -c` از `sudo bash -c` استفاده کنید.
@@ -63,7 +64,7 @@ HANASO-V10
 ```bash
 …(دستور بخش ۱)… hanaso-updater status     # گزارش فقط-خواندنی (حالا با هر سه سطح سلامت)
 …(دستور بخش ۱)… hanaso-updater rollback   # بازگشت به image قبلی (دیتابیس دست‌نخورده)
-```
+````
 
 ## ۲) زنجیرهٔ دریافت — چهار مسیر مستقل + گیت SHA-256 (بدون تغییر از نسخهٔ ۳)
 
