@@ -58,7 +58,7 @@ KEEP=0
 # real production constants (fixture mirrors them)
 OLD_SHA="4d0827ad7d4fdf87fd920b238f542629371e7288"
 OLD_VERSION="1.0.0-tl13-r01"
-TARGET_SHA_REAL="840b99335b0c23888d92e0e780b5988f12d06709"
+TARGET_SHA_REAL="777fb2b61afdc9021090d60ad23986c93c7d4d66"
 TARGET_VERSION_REAL="1.0.0-hanaso16-r01"
 OLD_IMAGE="ghcr.io/abolfazlprog/hanaso:${OLD_SHA}"
 NEW_IMAGE="ghcr.io/abolfazlprog/hanaso:${TARGET_SHA_REAL}"
