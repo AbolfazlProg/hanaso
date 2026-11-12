@@ -44,7 +44,7 @@ PINS (immutable — never drift to "latest")
                    31/31 responsive; includes everything from HANASO-17)
   deploy tooling : commit 9d75279009b64542a7c440e6b54af8739433ebb4 (branch fix/TASK-HANASO-20-onboarding)
   bootstrap file : infra/deploy/bootstrap-hanaso.sh
-                   sha256 03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
+                   sha256 d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073
 
 DOWNLOAD PATHS (tried in this order — the design follows the owner's live VPS
 evidence of 2026-11-08: github.com git OK · api.github.com 200 · codeload 200 ·
@@ -66,8 +66,8 @@ bash -s -- <<'HANASO-V11'
 set -euo pipefail
 H=AbolfazlProg/hanaso
 P=infra/deploy/bootstrap-hanaso.sh
-R=9d75279009b64542a7c440e6b54af8739433ebb4
-W=03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
+R=5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10
+W=d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073
 D=2574788c36521cec6ac0673488b769e77a8ab982
 T=/tmp/hanaso-bootstrap-v11.sh
 
