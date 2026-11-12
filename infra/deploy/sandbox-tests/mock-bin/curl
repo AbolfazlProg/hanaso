@@ -178,7 +178,16 @@ body() {
       echo "__HTTP_CODE__${code}"; return 0
       ;;
     */|*)
-      printf '<!doctype html><html dir="rtl" lang="ja"><body>sim</body></html>\n'
+      # mirrors the REAL home page by app generation (TASK-HANASO-18):
+      #   APPGEN=new      → the HANASO-17+ learner home: Persian RTL dashboard
+      #                     with the «قدم بعدی» primary card and the /learn CTA
+      #                     (the bilingual landing with lang="ja" is retired)
+      #   APPGEN=original → the previous generation's landing (lang="ja")
+      if [ "${APPGEN:-original}" = "new" ]; then
+        printf '<!doctype html><html dir="rtl"><body>sim <h2>قدم بعدی</h2> <a href="/learn">sim-cta</a></body></html>\n'
+      else
+        printf '<!doctype html><html dir="rtl" lang="ja"><body>sim-old-landing</body></html>\n'
+      fi
       ;;
   esac
 }

@@ -68,6 +68,13 @@ TARGET_SHA_REAL="3f41f6ee510e28914934ddc83375a0e1d49405a3"
 TARGET_VERSION_REAL="1.0.0-hanaso17-r01"
 OLD_IMAGE="ghcr.io/abolfazlprog/hanaso:${OLD_SHA}"
 NEW_IMAGE="ghcr.io/abolfazlprog/hanaso:${TARGET_SHA_REAL}"
+# The REAL smoke.sh that sits in the owner's deploy dir today (/opt/hanaso):
+# the HANASO-16-era artifact (installed before v9.1) whose home-page check
+# expects the retired bilingual landing's lang="ja" block. Every scenario's
+# deploy dir gets THIS file — exactly like the real VPS — so the suite proves
+# the updater's C9 gate can no longer be broken by a stale deploy-dir smoke
+# (the TASK-HANASO-18 mis-rollback bug found by the real CI smoke failure).
+STALE_DEPLOY_SMOKE_REF="df50431d123b7d2e71b6c9269828d0a181967fb4:scripts/smoke.sh"
 
 ROOT="$(mktemp -d /tmp/hanaso-deploy05.XXXXXX)"
 PASS=0; FAIL=0
@@ -142,7 +149,9 @@ POSTGRES_USER=hanaso
 POSTGRES_PASSWORD=sim-not-a-real-secret
 POSTGRES_DB=hanaso
 EOF
-  cp "${REPO_ROOT}/scripts/smoke.sh" "${d}/deploy/smoke.sh"
+  # the deploy dir keeps the ORIGINAL-INSTALL smoke (HANASO-16-era, stale) —
+  # exactly what the real VPS has; the updater must NOT let it gate the update
+  git -C "${REPO_ROOT}" show "${STALE_DEPLOY_SMOKE_REF}" > "${d}/deploy/smoke.sh"
   cat > "${d}/sim/config.env" <<EOF
 SIM_DISK_MB=20000
 SIM_PREV_VERSION=${OLD_VERSION}
@@ -152,6 +161,7 @@ CURRENT_IMAGE=${OLD_IMAGE}
 CURRENT_COMMIT=${OLD_SHA}
 CURRENT_VERSION=${OLD_VERSION}
 PHASE=before
+APPGEN=original
 EOF
   touch "${d}/sim/calls.log"
   echo "${d}"
@@ -240,6 +250,26 @@ if git -C "${REPO_ROOT}" show "${R}:infra/deploy/update-hanaso.sh" 2>/dev/null |
 else
   bad "P0 updater at ${R:0:12} does not pin ${TARGET_VERSION_REAL}"
 fi
+# TASK-HANASO-18 — tooling-generation coherence (the stale-smoke mis-rollback bug):
+# the smoke bundled at the TOOLING commit must match the TARGET commit's app
+# generation, and the updater at R must prefer that worktree smoke over the
+# (possibly generations-old) deploy-dir artifact.
+TOOLING_SMOKE="$(git -C "${REPO_ROOT}" show "${R}:scripts/smoke.sh" 2>/dev/null)"
+if printf '%s\n' "${TOOLING_SMOKE}" | grep -qF -- 'قدم بعدی'; then
+  ok "P0 smoke at the tooling commit checks the learner-home dashboard («قدم بعدی») — matches the target app"
+else
+  bad "P0 smoke at ${R:0:12} does not check the learner-home dashboard (stale contract)"
+fi
+if printf '%s\n' "${TOOLING_SMOKE}" | grep -qF -- 'lang="ja"'; then
+  bad "P0 smoke at the tooling commit still expects the retired lang=\"ja\" landing (would mis-rollback)"
+else
+  ok "P0 smoke at the tooling commit has no retired lang=\"ja\" home check"
+fi
+if git -C "${REPO_ROOT}" show "${R}:infra/deploy/update-hanaso.sh" 2>/dev/null | grep -qF -- 'worktree_smoke'; then
+  ok "P0 updater at the tooling commit prefers the pinned worktree smoke over the deploy-dir artifact (C9)"
+else
+  bad "P0 updater at ${R:0:12} still lets the stale deploy-dir smoke gate updates (C9 not fixed)"
+fi
 for frag in "api.github.com/repos/" "codeload.github.com/"; do
   if printf '%s\n' "${CMD}" | grep -qF -- "${frag}"; then ok "P0 delivery path present: ${frag}"; else bad "P0 delivery path MISSING: ${frag}"; fi
 done
@@ -284,9 +314,14 @@ assert_called "${D}" "docker build" "P1 image built from the pinned commit"
 assert_called "${D}" "compose run --rm migrate" "P1 one-shot migrate ran"
 assert_out "${D}" "UPDATE COMPLETE — HANASO ${TARGET_VERSION_REAL}" "P1 success banner with the real version"
 assert_out "${D}" "${TARGET_VERSION_REAL}" "P1 health gate matched the real pinned version"
-assert_out "${D}" "smoke: ALL GREEN" "P1 smoke passed"
+assert_out "${D}" "smoke: ALL GREEN" "P1 smoke passed (the PINNED worktree smoke — not the stale deploy-dir copy)"
 assert_out "${D}" "KOTODAMA" "P1 KOTODAMA witness reported"
 assert_not_called "${D}" "https://codeload.github.com/" "P1 no fallback needed (api served first)"
+if out_has "${D}" "home page missing Japanese LTR block"; then
+  bad "P1 the STALE deploy-dir smoke gated the update — mis-rollback bug NOT fixed"
+else
+  ok "P1 the stale deploy-dir smoke (present in the fixture, exactly like the real VPS) did NOT gate the update"
+fi
 
 # =============================================================================
 section "P2 — api 403 (rate limit, the sandbox's own live condition) → codeload"
@@ -394,6 +429,11 @@ run_ol "${D}" rollback
 assert_exit 0 "$(exit_of "${D}")" "P10 rollback subcommand exits 0"
 assert_env_image "${D}/deploy" "${OLD_IMAGE}" "P10 .env restored to the previous (production) image"
 assert_out "${D}" "ROLLBACK app image" "P10 rollback banner"
+if out_has "${D}" "smoke after rollback failed"; then
+  bad "P10 rollback smoke failed (the rolled-back app should satisfy the original-install smoke)"
+else
+  ok "P10 rollback smoke green against the rolled-back (previous-generation) app"
+fi
 run_ol "${D}"
 assert_exit 0 "$(exit_of "${D}")" "P10 re-update after rollback exits 0"
 assert_env_image "${D}/deploy" "${NEW_IMAGE}" "P10 .env back at the new image"

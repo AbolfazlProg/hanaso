@@ -269,7 +269,7 @@ cmd_rollback() {
   [ "${healthy}" = 1 ] || die "rollback health gate FAILED — inspect: ${COMPOSE} logs web --tail 100"
   curl -fsS -m 10 "${LOCAL_HEALTH}"; echo
   HANASO_BASE_URL="${PUBLIC_BASE}" bash "${DEPLOY_DIR}/smoke.sh" 2>/dev/null \
-    || bash "$(dirname "$0")/../scripts/smoke.sh" || warn "smoke after rollback failed — investigate"
+    || bash "$(dirname "$0")/../../scripts/smoke.sh" || warn "smoke after rollback failed — investigate"
   curl -fsS -m 15 -o /dev/null -w "kotodama.ir: HTTP %{http_code}\n" "${KOTODAMA_URL}" || warn "kotodama.ir not 200"
   echo "── rollback complete: ${target} ──"
 }
@@ -643,16 +643,25 @@ EOF
   #     was already verified by tier 2a; running smoke against a KNOWN-broken
   #     public path would contradict the C7 classification and mis-rollback).
   ${COMPOSE} ps
-  log "smoke (real endpoints, RTL + Japanese checks)"
+  log "smoke (real endpoints, learner-home checks)"
   local smoke_base="${PUBLIC_BASE}"
   if ! echo "${pub_self:-}" | grep -q "\"${TARGET_VERSION}\""; then
     smoke_base="${LOCAL_HEALTH%/api/health}"
     warn "smoke runs against ${smoke_base} (the public path is broken/unverified — see the C7 classification above)"
   fi
-  if [ -f "${DEPLOY_DIR}/smoke.sh" ]; then
-    HANASO_BASE_URL="${smoke_base}" bash "${DEPLOY_DIR}/smoke.sh"
+  # TASK-HANASO-18: prefer the smoke bundled with THIS pinned tooling worktree —
+  # it matches the app generation being deployed. The deploy-dir copy is the
+  # ORIGINAL-INSTALL artifact and can be generations stale (on the real VPS it
+  # still expected the retired bilingual landing's lang="ja" block, which would
+  # have failed the healthy hanaso17 learner home and mis-rolled it back).
+  # Rollback verification (app back on the old image) keeps preferring the
+  # deploy-dir artifact — see the rollback smoke below.
+  local worktree_smoke
+  worktree_smoke="$(dirname "$0")/../../scripts/smoke.sh"
+  if [ -f "${worktree_smoke}" ]; then
+    HANASO_BASE_URL="${smoke_base}" bash "${worktree_smoke}"
   else
-    HANASO_BASE_URL="${smoke_base}" bash "$(dirname "$0")/../scripts/smoke.sh"
+    HANASO_BASE_URL="${smoke_base}" bash "${DEPLOY_DIR}/smoke.sh"
   fi
 
   # C10) KOTODAMA witness — must be exactly what it was before

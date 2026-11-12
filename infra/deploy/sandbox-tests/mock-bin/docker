@@ -131,6 +131,15 @@ case "${arg}" in
             set_state CURRENT_COMMIT "$(tag_of "${newimg}")"
             set_state CURRENT_VERSION "$(image_version "${newimg}")"
             set_state PHASE updated
+            # TASK-HANASO-18: track the app GENERATION — an image tag that was
+            # BUILT in this simulation (= the pinned release being deployed)
+            # serves the new learner home; anything else (the original install,
+            # or after a rollback) serves the previous generation's pages.
+            if grep -qF "$(printf '%s\t' "$(tag_of "${newimg}")")" "${SIM}/images.list" 2>/dev/null; then
+              set_state APPGEN new
+            else
+              set_state APPGEN original
+            fi
           fi
         fi
         echo "sim: services up"

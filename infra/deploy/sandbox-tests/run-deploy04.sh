@@ -108,7 +108,11 @@ POSTGRES_USER=hanaso
 POSTGRES_PASSWORD=sim-not-a-real-secret
 POSTGRES_DB=hanaso
 EOF
-  cp "${REPO_ROOT}/scripts/smoke.sh" "${d}/deploy/smoke.sh"
+  # the deploy dir keeps the ORIGINAL-INSTALL smoke (HANASO-16-era artifact —
+  # exactly what the real VPS has; TASK-HANASO-18: the updater must prefer the
+  # pinned worktree smoke for forward updates, and this stale copy must only
+  # matter for rollback verification, where it matches the rolled-back app)
+  git -C "${REPO_ROOT}" show "df50431d123b7d2e71b6c9269828d0a181967fb4:scripts/smoke.sh" > "${d}/deploy/smoke.sh"
   cat > "${d}/sim/config.env" <<EOF
 SIM_DISK_MB=20000
 SIM_PREV_VERSION=1.0.0-sim-prev
@@ -118,6 +122,7 @@ CURRENT_IMAGE=${OLD_IMAGE}
 CURRENT_COMMIT=${BASE_SHA}
 CURRENT_VERSION=1.0.0-sim-prev
 PHASE=before
+APPGEN=original
 EOF
   touch "${d}/sim/calls.log"
   echo "${d}"

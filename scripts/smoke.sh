@@ -21,9 +21,14 @@ ready=$(curl -fsS "${BASE}/api/ready" || fail "/api/ready unreachable")
 echo "ready: ${ready}"
 echo "${ready}" | grep -q '"ok":true' || fail "/api/ready not ok"
 
-# 3) home page renders (Persian RTL shell)
+# 3) home page renders — the LEARNER HOME dashboard (TASK-HANASO-17; smoke
+#    invariant updated in TASK-HANASO-18: the old bilingual landing with its
+#    lang="ja" sample block was replaced ON PURPOSE by the quiet Persian
+#    dashboard — Japanese content pipelines are covered by unit/EQA/browser
+#    gates, not by the home smoke)
 page=$(curl -fsS "${BASE}/" || fail "home page unreachable")
 echo "${page}" | grep -q 'dir="rtl"' || fail "home page missing RTL shell"
-echo "${page}" | grep -q 'lang="ja"' || fail "home page missing Japanese LTR block"
+echo "${page}" | grep -q 'قدم بعدی' || fail "home page missing the primary «قدم بعدی» card (learner dashboard)"
+echo "${page}" | grep -q 'href="/learn' || fail "home page missing the one-click /learn CTA"
 
 echo "== smoke: ALL GREEN =="
