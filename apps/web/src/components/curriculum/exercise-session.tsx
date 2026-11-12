@@ -84,6 +84,9 @@ interface GradeResponse {
     /** TASK-LEARNING-10 §3 — the correct answer's reading for the integrated
      *  answer card (glyph + Persian reading + Latin romaji). */
     correctReading?: { glyph: string; fa: string; latin: string };
+    /** TASK-HANASO-20 (BUG-007): the authored rationale for the learner's own
+     *  wrong pick — why *this* choice is wrong (level 1+ of the ladder). */
+    distractorRationaleFa?: string;
   };
 }
 
@@ -866,6 +869,13 @@ export function ExerciseSession({
               server's first-try correct copy is exactly «درست!») */}
           {feedback.feedbackFa !== fa.curriculum.correct && (
             <p className="text-body leading-[var(--leading-fa)]">{feedback.feedbackFa}</p>
+          )}
+          {/* TASK-HANASO-20 (BUG-007): the picked distractor's OWN rationale —
+              why *this* choice is wrong, straight under the ladder line. */}
+          {feedback.distractorRationaleFa && (
+            <p data-distractor-rationale className="text-small leading-[var(--leading-fa)] text-ink-soft">
+              {feedback.distractorRationaleFa}
+            </p>
           )}
           {feedback.reveal && (
             <p className="text-body text-ink-soft" dir="auto">

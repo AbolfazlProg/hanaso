@@ -55,6 +55,15 @@ export interface GradeOutcome {
    * Set by the grading ROUTE; attached only to an ANSWERED outcome.
    */
   correctReading?: { glyph: string; fa: string; latin: string };
+  /**
+   * TASK-HANASO-20 (BUG-007 — audit DD-096/Hattie deviation): the authored
+   * rationale for THE distractor the learner actually picked — attached by the
+   * shared grading path on every WRONG option answer, so the feedback explains
+   * why *this* choice is wrong (never the generic template). Attached only to
+   * an ANSWERED outcome — a rationale never crosses to the client pre-answer
+   * (it would leak which options are wrong).
+   */
+  distractorRationaleFa?: string;
 }
 
 /** Grade one answer at a given attempt number (1-based) against the ladder. */
@@ -79,7 +88,14 @@ export function gradeExerciseAnswer(ex: Exercise, answer: ExerciseAnswerPayload,
   }
   // F4 (#106): return-to-teaching pointer once the ladder is exhausted.
   const referenceBlockId = level >= 3 ? ex.referenceBlockId : undefined;
-  return { correct: false, level, feedbackFa, reveal, eliminateOptionIds, referenceBlockId };
+  /*
+   * TASK-HANASO-20 (BUG-007): surface the authored rationale for the learner's
+   * OWN wrong pick (every wrong level — F1 benefits the most). Never a leak:
+   * it rides the same ANSWERED outcome back, never the pre-answer payload.
+   */
+  const distractorRationaleFa =
+    !correct && answer.kind === 'option' ? ex.distractorRationaleFa?.[answer.optionId] : undefined;
+  return { correct: false, level, feedbackFa, reveal, eliminateOptionIds, referenceBlockId, distractorRationaleFa };
 }
 
 function isCorrect(ex: Exercise, answer: ExerciseAnswerPayload): boolean {
