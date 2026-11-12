@@ -213,7 +213,7 @@ async function generateAll() {
   writeFileSync(path.join(KANA_DIR, 'manifest.json'), JSON.stringify(kanaManifest, null, 2) + '\n');
 
   // 2. host words + example words — ONE per-word registry
-  const words = [...new Set([...hostWords(), ...exampleWords()])].sort();
+  const words = [...new Set([...hostWords(), ...exampleWords(), ...FOREIGN_COMBO_WORDS])].sort();
   const hostManifest = { generatedBy: GENERATED_BY, format: 'voicevox-opus-m4a', entries: {} };
   for (const word of words) {
     const wav = normTo(master(await synth(word)));
