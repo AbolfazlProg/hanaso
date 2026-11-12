@@ -1,0 +1,170 @@
+
+====================================================================================================
+CHAPTER: kana01 (فصل کانا — L1)
+====================================================================================================
+Stations: 31
+Total glyph-introduction events: 123 + firstLook 3
+
+VIOLATIONS (assessment surface uses glyph never taught there or earlier): 16
+
+  ✗ order  6 stn-kana-h5 «قاعدهٔ داکوتن (゛)» → glyph «ぜ» ×1 at ex-kana-h5-ind-1.promptJa[exercise]
+  ✗ order 13 stn-kana-h12 «ردیف は» → glyph «ぶ» ×1 at blk-stn-kana-h12-reading.example[example-set]
+  ✗ order 16 stn-kana-h15 «ردیف わ + قاعدهٔ هان‌داکوتن (゜)» → glyph «で» ×1 at blk-stn-kana-h15-reading.example[example-set]
+  ✗ order 16 stn-kana-h15 «ردیف わ + قاعدهٔ هان‌داکوتن (゜)» → glyph «ぴ» ×5 at ex-kana-h15-lis-2.promptJa[exercise]; ex-kana-h15-lis-2.opt[exercise]; ex-kana-h15-asm-2.opt[exercise]
+  ✗ order 16 stn-kana-h15 «ردیف わ + قاعدهٔ هان‌داکوتن (゜)» → glyph «ぼ» ×2 at ex-kana-h15-clo-1.opt[exercise]; ex-kana-h15-lis-1.opt[exercise]
+  ✗ order 21 stn-kana-k5 «ردیف ハ» → glyph «ザ» ×1 at blk-stn-kana-k5-reading.example[example-set]
+  ✗ order 21 stn-kana-k5 «ردیف ハ» → glyph «ビ» ×1 at blk-stn-kana-k5-reading.example[example-set]
+  ✗ order 21 stn-kana-k5 «ردیف ハ» → glyph «ピ» ×1 at blk-stn-kana-k5-reading.example[example-set]
+  ✗ order 22 stn-kana-k6 «ン» → glyph «ゼ» ×1 at blk-stn-kana-k6-reading.example[example-set]
+  ✗ order 22 stn-kana-k6 «ン» → glyph «ャ» ×1 at blk-stn-kana-k6-reading.example[example-set]
+  ✗ order 24 stn-kana-k8 «قاعدهٔ کوچوئون‌پو (ー)» → glyph «ペ» ×5 at blk-stn-kana-k8-apply.example[example-set]; ex-kana-k8-dec-3.promptJa[exercise]; ex-kana-k8-asm-2.opt[exercise]
+  ✗ order 24 stn-kana-k8 «قاعدهٔ کوچوئون‌پو (ー)» → glyph «ボ» ×5 at blk-stn-kana-k8-apply.example[example-set]; ex-kana-k8-dec-3.promptJa[exercise]; ex-kana-k8-asm-2.opt[exercise]
+  ✗ order 28 stn-kana-k12 «ردیف ワ + ترکیب خارجی (ファ/ティ/ヴ…)» → glyph «ァ» ×1 at blk-stn-kana-k12-wrapup.title[wrap-up]
+  ✗ order 28 stn-kana-k12 «ردیف ワ + ترکیب خارجی (ファ/ティ/ヴ…)» → glyph «ィ» ×1 at blk-stn-kana-k12-wrapup.title[wrap-up]
+  ✗ order 28 stn-kana-k12 «ردیف ワ + ترکیب خارجی (ファ/ティ/ヴ…)» → glyph «ゼ» ×1 at blk-stn-kana-k12-reading.example[example-set]
+  ✗ order 28 stn-kana-k12 «ردیف ワ + ترکیب خارجی (ファ/ティ/ヴ…)» → glyph «ヴ» ×1 at blk-stn-kana-k12-wrapup.title[wrap-up]
+
+INTRODUCTION MAP:
+  order  1 stn-kana-h0            خوش‌آمد و سه خط ژاپنی
+  order  2 stn-kana-h1            ردیف あ
+  order  3 stn-kana-h2            ردیف か
+  order  4 stn-kana-h3            ردیف さ
+  order  5 stn-kana-h4            قاعدهٔ طول مصوت
+  order  6 stn-kana-h5            قاعدهٔ داکوتن (゛)
+  order  7 stn-kana-h6            قاعدهٔ یُوئون (ゃゅょ)
+        introducesGlyphs: やゆよ
+        firstLook: ゃ や ゅ ゆ ょ よ
+  order  8 stn-kana-h7            ん
+  order  9 stn-kana-h8            ردیف な
+  order 10 stn-kana-h9            ردیف た
+  order 11 stn-kana-h10           ردیف ま
+  order 12 stn-kana-h11           ردیف ら
+  order 13 stn-kana-h12           ردیف は
+  order 14 stn-kana-h13           قاعدهٔ سوکوئون (っ)
+  order 15 stn-kana-h14           ردیف や
+  order 16 stn-kana-h15           ردیف わ + قاعدهٔ هان‌داکوتن (゜)
+  order 17 stn-kana-k1            ردیف ア + طرحوارهٔ قرینه‌گری
+  order 18 stn-kana-k2            ردیف タ
+  order 19 stn-kana-k3            ردیف ラ
+  order 20 stn-kana-k4            ردیف サ
+  order 21 stn-kana-k5            ردیف ハ
+  order 22 stn-kana-k6            ン
+  order 23 stn-kana-k7            ردیف カ
+  order 24 stn-kana-k8            قاعدهٔ کوچوئون‌پو (ー)
+  order 25 stn-kana-k9            ردیف マ
+  order 26 stn-kana-k10           ردیف ヤ
+  order 27 stn-kana-k11           ردیف ナ
+  order 28 stn-kana-k12           ردیف ワ + ترکیب خارجی (ファ/ティ/ヴ…)
+  order 29 stn-kana-k13           آشتی دو خط + نامِ خودت
+  order 30 stn-kana-opt-r-h9      مرور ایستگاه‌های فاز ۱ (اختیاری)
+  order 31 stn-kana-opt-drill     دریل آزاد کانا (اختیاری)
+
+====================================================================================================
+CHAPTER: fm01 (فصل اولین مکالمه — L2)
+====================================================================================================
+Stations: 22
+Total glyph-introduction events: 39 + firstLook 0
+
+VIOLATIONS (assessment surface uses glyph never taught there or earlier): 77
+
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «あ» ×1 at blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «い» ×4 at ex-fm01-v1-p2-txt-1.promptJa[exercise]; ex-fm01-v1-p2-txt-1.promptFa[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «う» ×2 at ex-fm01-v1-p3-match-1.opt[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «か» ×2 at ex-fm01-v1-p3-match-1.opt[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «が» ×3 at ex-fm01-v1-p2-txt-1.promptJa[exercise]; ex-fm01-v1-p2-txt-1.promptFa[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «く» ×6 at ex-fm01-v1-p2-txt-1.promptJa[exercise]; ex-fm01-v1-p2-txt-1.promptFa[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «こ» ×3 at ex-fm01-v1-p2-txt-1.promptFa[exercise]; ex-fm01-v1-p2-txt-1.promptFa[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «ご» ×2 at ex-fm01-v1-p3-match-1.opt[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «さ» ×1 at blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «し» ×1 at blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «じ» ×7 at ex-fm01-v1-p3-match-1.promptJa[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «せ» ×2 at blk-v1-wrap.itemsFa[wrap-up]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «た» ×2 at blk-v1-wrap.itemsFa[wrap-up]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «だ» ×3 at ex-fm01-v1-p2-txt-1.promptJa[exercise]; ex-fm01-v1-p2-txt-1.promptFa[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «ち» ×2 at ex-fm01-v1-p3-match-1.opt[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «と» ×1 at ex-fm01-v1-p2-txt-1.promptFa[exercise]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «な» ×1 at ex-fm01-v1-p2-txt-1.promptFa[exercise]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «に» ×2 at ex-fm01-v1-p2-txt-1.promptFa[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «の» ×2 at ex-fm01-v1-p2-txt-1.promptFa[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «は» ×1 at ex-fm01-v1-p2-txt-1.promptFa[exercise]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «ば» ×1 at ex-fm01-v1-p2-txt-1.promptFa[exercise]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «ほ» ×1 at blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «ゅ» ×2 at ex-fm01-v1-p3-match-1.opt[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «わ» ×1 at blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «ん» ×11 at ex-fm01-v1-p3-match-1.promptJa[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «イ» ×3 at ex-fm01-v1-p3-match-1.promptJa[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «ラ» ×3 at ex-fm01-v1-p3-match-1.promptJa[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  2 stn-fm01-02-vocab «واژه‌های هویت» → glyph «ン» ×3 at ex-fm01-v1-p3-match-1.promptJa[exercise]; ex-fm01-v1-p3-match-1.opt[exercise]; blk-v1-wrap.itemsFa[wrap-up]
+  ✗ order  3 stn-fm01-03-grammar-desu «الگوی «X هست Y» — AはBです» → glyph «か» ×1 at ex-fm01-g1-cloze-1.opt[exercise]
+  ✗ order  3 stn-fm01-03-grammar-desu «الگوی «X هست Y» — AはBです» → glyph «ね» ×1 at ex-fm01-g1-cloze-1.opt[exercise]
+  ✗ order  3 stn-fm01-03-grammar-desu «الگوی «X هست Y» — AはBです» → glyph «イ» ×2 at blk-g1-examples.example[example-set]; blk-g1-examples.example.why[example-set]
+  ✗ order  3 stn-fm01-03-grammar-desu «الگوی «X هست Y» — AはBです» → glyph «ン» ×2 at blk-g1-examples.example[example-set]; blk-g1-examples.example.why[example-set]
+  ✗ order  5 stn-fm01-05-grammar-qa «پرسش ですか و تأیید ですね» → glyph «あ» ×1 at blk-g2-examples.example[example-set]
+  ✗ order  5 stn-fm01-05-grammar-qa «پرسش ですか و تأیید ですね» → glyph «ど» ×1 at blk-g2-examples.example[example-set]
+  ✗ order  5 stn-fm01-05-grammar-qa «پرسش ですか و تأیید ですね» → glyph «な» ×1 at blk-g2-examples.example[example-set]
+  ✗ order  5 stn-fm01-05-grammar-qa «پرسش ですか و تأیید ですね» → glyph «も» ×1 at ex-fm01-g2-prod-2.promptFa[exercise]
+  ✗ order  6 stn-fm01-06-expression «آیین آشنایی — سه فرمول + پرسش مؤدبانه» → glyph «お» ×3 at ex-fm01-e1-resp-1.opt[exercise]; ex-fm01-e1-resp-2.opt[exercise]; blk-e1-wrap.itemsFa[wrap-up]
+  ✗ order  6 stn-fm01-06-expression «آیین آشنایی — سه فرمول + پرسش مؤدبانه» → glyph «こ» ×2 at ex-fm01-e1-resp-1.opt[exercise]; blk-e1-wrap.itemsFa[wrap-up]
+  ✗ order  6 stn-fm01-06-expression «آیین آشنایی — سه فرمول + پرسش مؤدبانه» → glyph «そ» ×1 at ex-fm01-e1-resp-2.opt[exercise]
+  ✗ order  6 stn-fm01-06-expression «آیین آشنایی — سه فرمول + پرسش مؤدبانه» → glyph «よ» ×3 at ex-fm01-e1-resp-1.opt[exercise]; ex-fm01-e1-resp-2.opt[exercise]; blk-e1-wrap.itemsFa[wrap-up]
+  ✗ order  6 stn-fm01-06-expression «آیین آشنایی — سه فرمول + پرسش مؤدبانه» → glyph «ろ» ×3 at ex-fm01-e1-resp-1.opt[exercise]; ex-fm01-e1-resp-2.opt[exercise]; blk-e1-wrap.itemsFa[wrap-up]
+  ✗ order  7 stn-fm01-07-listen «گوشِ اول — طول واکه و آهنگ» → glyph «え» ×1 at ex-fm01-l1-mp-1.opt[exercise]
+  ✗ order  8 stn-fm01-08-practice «تمرین — تثبیت واحد اول» → glyph «あ» ×1 at ex-fm01-p1-c2-cloze-1.promptJa[exercise]
+  ✗ order  8 stn-fm01-08-practice «تمرین — تثبیت واحد اول» → glyph «ど» ×1 at ex-fm01-p1-c2-cloze-1.promptJa[exercise]
+  ✗ order  8 stn-fm01-08-practice «تمرین — تثبیت واحد اول» → glyph «な» ×1 at ex-fm01-p1-c2-cloze-1.promptJa[exercise]
+  ✗ order  9 stn-fm01-09-integrate «معرفی خودت — با میکی» → glyph «お» ×1 at blk-i1-wrap.itemsFa[wrap-up]
+  ✗ order  9 stn-fm01-09-integrate «معرفی خودت — با میکی» → glyph «よ» ×1 at blk-i1-wrap.itemsFa[wrap-up]
+  ✗ order  9 stn-fm01-09-integrate «معرفی خودت — با میکی» → glyph «ろ» ×1 at blk-i1-wrap.itemsFa[wrap-up]
+  ✗ order 11 stn-fm01-11-vocab2 «واژه‌های واحد دوم» → glyph «き» ×3 at ex-fm01-v2-txt-1.promptJa[exercise]; ex-fm01-v2-txt-1.promptFa[exercise]; blk-v2-wrap.itemsFa[wrap-up]
+  ✗ order 11 stn-fm01-11-vocab2 «واژه‌های واحد دوم» → glyph «こ» ×1 at blk-v2-wrap.itemsFa[wrap-up]
+  ✗ order 11 stn-fm01-11-vocab2 «واژه‌های واحد دوم» → glyph «ら» ×2 at ex-fm01-v2-aud-2.promptFa[exercise]; blk-v2-wrap.itemsFa[wrap-up]
+  ✗ order 13 stn-fm01-13-grammar-dewa «نفی مؤدبانه — では ありません» → glyph «イ» ×1 at blk-g4-examples.example[example-set]
+  ✗ order 13 stn-fm01-13-grammar-dewa «نفی مؤدبانه — では ありません» → glyph «ン» ×1 at blk-g4-examples.example[example-set]
+  ✗ order 14 stn-fm01-14-expression «واکنش‌ها — نه، آه‌می‌فهمم، فهمیدم» → glyph «え» ×1 at ex-fm01-e2-resp-1.opt[exercise]
+  ✗ order 14 stn-fm01-14-expression «واکنش‌ها — نه، آه‌می‌فهمم، فهمیدم» → glyph «お» ×1 at ex-fm01-e2-resp-2.opt[exercise]
+  ✗ order 14 stn-fm01-14-expression «واکنش‌ها — نه، آه‌می‌فهمم، فهمیدم» → glyph «そ» ×2 at ex-fm01-e2-resp-1.opt[exercise]; ex-fm01-e2-resp-2.opt[exercise]
+  ✗ order 14 stn-fm01-14-expression «واکنش‌ها — نه، آه‌می‌فهمم، فهمیدم» → glyph «よ» ×1 at ex-fm01-e2-resp-2.opt[exercise]
+  ✗ order 14 stn-fm01-14-expression «واکنش‌ها — نه، آه‌می‌فهمم، فهمیدم» → glyph «ろ» ×1 at ex-fm01-e2-resp-2.opt[exercise]
+  ✗ order 16 stn-fm01-16-grammar-kara «خاستگاه — 〜から きました» → glyph «と» ×1 at blk-g5-examples.example[example-set]
+  ✗ order 16 stn-fm01-16-grammar-kara «خاستگاه — 〜から きました» → glyph «ょ» ×1 at blk-g5-examples.example[example-set]
+  ✗ order 16 stn-fm01-16-grammar-kara «خاستگاه — 〜から きました» → glyph «イ» ×1 at blk-g5-examples.example[example-set]
+  ✗ order 16 stn-fm01-16-grammar-kara «خاستگاه — 〜から きました» → glyph «ン» ×1 at blk-g5-examples.example[example-set]
+  ✗ order 17 stn-fm01-17-practice «تمرین — درهم‌آمیزی دو واحد» → glyph «と» ×1 at ex-fm01-p2-c3-cloze-1.promptFa[exercise]
+  ✗ order 17 stn-fm01-17-practice «تمرین — درهم‌آمیزی دو واحد» → glyph «イ» ×2 at ex-fm01-p2-c2-cloze-1.promptJa[exercise]; ex-fm01-p2-c3-cloze-2.promptJa[exercise]
+  ✗ order 17 stn-fm01-17-practice «تمرین — درهم‌آمیزی دو واحد» → glyph «ン» ×2 at ex-fm01-p2-c2-cloze-1.promptJa[exercise]; ex-fm01-p2-c3-cloze-2.promptJa[exercise]
+  ✗ order 18 stn-fm01-18-integrate «کاربرد کامل — ردّ فرض و معرفی با خاستگاه» → glyph «え» ×1 at blk-i2-wrap.itemsFa[wrap-up]
+  ✗ order 18 stn-fm01-18-integrate «کاربرد کامل — ردّ فرض و معرفی با خاستگاه» → glyph «イ» ×2 at blk-i2-wrap.itemsFa[wrap-up]; blk-i2-wrap.itemsFa[wrap-up]
+  ✗ order 18 stn-fm01-18-integrate «کاربرد کامل — ردّ فرض و معرفی با خاستگاه» → glyph «ン» ×2 at blk-i2-wrap.itemsFa[wrap-up]; blk-i2-wrap.itemsFa[wrap-up]
+  ✗ order 19 stn-fm01-opt-countries «کشورها و زبان‌ها (اختیاری)» → glyph «カ» ×4 at blk-od1-table.example[example-set]; ex-fm01-od1-resp-1.opt[exercise]; ex-fm01-od1-resp-1.opt[exercise]
+  ✗ order 19 stn-fm01-opt-countries «کشورها و زبان‌ها (اختیاری)» → glyph «メ» ×4 at blk-od1-table.example[example-set]; ex-fm01-od1-resp-1.opt[exercise]; ex-fm01-od1-resp-1.opt[exercise]
+  ✗ order 20 stn-fm01-opt-review-desu «مثال‌های محوشوندهٔ は+です (اختیاری)» → glyph «ミ» ×1 at blk-or1-faded.example[example-set]
+  ✗ order 21 stn-fm01-opt-jobs «شغل‌ها (اختیاری)» → glyph «ゃ» ×4 at blk-od2-jobs.example[example-set]; blk-od2-jobs.example.why[example-set]; blk-od2-jobs.example[example-set]
+  ✗ order 21 stn-fm01-opt-jobs «شغل‌ها (اختیاری)» → glyph «エ» ×2 at blk-od2-jobs.example[example-set]; ex-fm01-od2-resp-1.promptFa[exercise]
+  ✗ order 21 stn-fm01-opt-jobs «شغل‌ها (اختیاری)» → glyph «ジ» ×2 at blk-od2-jobs.example[example-set]; ex-fm01-od2-resp-1.promptFa[exercise]
+  ✗ order 21 stn-fm01-opt-jobs «شغل‌ها (اختیاری)» → glyph «ニ» ×2 at blk-od2-jobs.example[example-set]; ex-fm01-od2-resp-1.promptFa[exercise]
+  ✗ order 21 stn-fm01-opt-jobs «شغل‌ها (اختیاری)» → glyph «ン» ×2 at blk-od2-jobs.example[example-set]; ex-fm01-od2-resp-1.promptFa[exercise]
+  ✗ order 22 stn-fm01-opt-drill «دریل تمایزی (اختیاری)» → glyph «え» ×1 at ex-fm01-or2-mp-1.opt[exercise]
+
+INTRODUCTION MAP:
+  order  1 stn-fm01-01-anchor     اولین مواجهه — کل مکالمه
+  order  2 stn-fm01-02-vocab      واژه‌های هویت
+  order  3 stn-fm01-03-grammar-desu الگوی «X هست Y» — AはBです
+  order  4 stn-fm01-04-structure  ترتیب ژاپنی و پل فارسی
+  order  5 stn-fm01-05-grammar-qa پرسش ですか و تأیید ですね
+  order  6 stn-fm01-06-expression آیین آشنایی — سه فرمول + پرسش مؤدبانه
+  order  7 stn-fm01-07-listen     گوشِ اول — طول واکه و آهنگ
+  order  8 stn-fm01-08-practice   تمرین — تثبیت واحد اول
+  order  9 stn-fm01-09-integrate  معرفی خودت — با میکی
+  order 10 stn-fm01-10-reconnect  بازگشت به مکالمه — این‌بار به کیم گوش کن
+  order 11 stn-fm01-11-vocab2     واژه‌های واحد دوم
+  order 12 stn-fm01-12-grammar-mo 「هم» — も
+  order 13 stn-fm01-13-grammar-dewa نفی مؤدبانه — では ありません
+  order 14 stn-fm01-14-expression واکنش‌ها — نه، آه‌می‌فهمم، فهمیدم
+  order 15 stn-fm01-15-listen     گوشِ دوم — ん خیشومی و آهنگ ردّ مؤدب
+  order 16 stn-fm01-16-grammar-kara خاستگاه — 〜から きました
+  order 17 stn-fm01-17-practice   تمرین — درهم‌آمیزی دو واحد
+  order 18 stn-fm01-18-integrate  کاربرد کامل — ردّ فرض و معرفی با خاستگاه
+  order 19 stn-fm01-opt-countries کشورها و زبان‌ها (اختیاری)
+  order 20 stn-fm01-opt-review-desu مثال‌های محوشوندهٔ は+です (اختیاری)
+  order 21 stn-fm01-opt-jobs      شغل‌ها (اختیاری)
+  order 22 stn-fm01-opt-drill     دریل تمایزی (اختیاری)
