@@ -1,0 +1,132 @@
+
+── fixture — bare mirror of the real repository (anonymous origin) ──────────────────────────────────────────
+  origin mirror : file:///tmp/hanaso-deploy05.ctOhyV/origin-mirror.git
+  tooling pin   : aaa5fea45f43175e4de9772bce6b354c0e0126d2
+  bootstrap sha : 03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
+  target pin    : 3f41f6ee510e28914934ddc83375a0e1d49405a3
+
+── P0 — static safety of the production command block (no execution) ──────────────────────────────────────────
+      ✔ P0 invocation is the subcommand-capable heredoc (bash -s -- <<'HANASO-V10')
+      ✔ P0 executes the verified bootstrap with pinned SHAs and subcommand passthrough ("$@")
+      ✔ P0 tooling SHA pin present (aaa5fea45f43)
+      ✔ P0 bootstrap SHA-256 pin present (03ee6e740db0)
+      ✔ P0 target SHA pin present (3f41f6ee510e)
+      ✔ P0 target pin is the REAL release target 1.0.0-hanaso17-r01
+      ✔ P0 tooling pin and target pin are distinct commits
+      ✔ P0 pinned tooling commit exists in the repository
+      ✔ P0 pinned target commit exists in the repository
+      ✔ P0 bootstrap SHA-256 pin matches the real blob at the pinned commit
+      ✔ P0 bootstrap at the tooling commit defaults to the same target pin (anti-drift)
+      ✔ P0 updater at the tooling commit pins version 1.0.0-hanaso17-r01
+      ✔ P0 delivery path present: api.github.com/repos/
+      ✔ P0 delivery path present: codeload.github.com/
+      ✔ P0 v9 fragment correctly absent: raw.githubusercontent.com
+      ✔ P0 v9 fragment correctly absent: --resolve
+      ✔ P0 real SHA-256 verification before execution (sha256sum -c -)
+      ✔ P0 strict mode (set -euo pipefail) at the top of the block
+      ✔ P0 no TLS-weakening / latest / token / wget fragments in the command
+      ✔ P0 no TLS-weakening flags in bootstrap/updater/mock sources
+
+── P1 — happy path via api.github.com → full update to the REAL pin ──────────────────────────────────────────
+      ✔ P1 command block exits 0 (exit=0)
+      ✔ P1 bootstrap delivered by path 1 (api) — path reported (output has: bootstrap delivered via api.github.com)
+      ✔ P1 real SHA-256 gate reached (output has: [hanaso] 2/3  verify SHA-256)
+      ✔ P1 source workspace created (anonymous clone of the mirror)
+      ✔ P1 the REAL pinned target commit verified (output has: target commit verified   : 3f41f6ee510e28914934ddc83375a0e1d49405a3)
+      ✔ P1 bootstrap byte-identical to the pinned tooling commit (output has: integrity OK)
+      ✔ P1 .env switched to the real target image
+      ✔ P1 image built from the pinned commit
+      ✔ P1 one-shot migrate ran
+      ✔ P1 success banner with the real version (output has: UPDATE COMPLETE — HANASO 1.0.0-hanaso17-r01)
+      ✔ P1 health gate matched the real pinned version (output has: 1.0.0-hanaso17-r01)
+      ✔ P1 smoke passed (output has: smoke: ALL GREEN)
+      ✔ P1 KOTODAMA witness reported (output has: KOTODAMA)
+      ✔ P1 no fallback needed (api served first)
+
+── P2 — api 403 (rate limit, the sandbox's own live condition) → codeload ──────────────────────────────────────────
+      ✔ P2 command block exits 0 despite api 403 (exit=0)
+      ✔ P2 api failure noticed honestly (output has: api.github.com failed (real curl error above) — trying codeload.github.com)
+      ✔ P2 the REAL curl error text is shown (not hidden) (output has: The requested URL returned error: 403)
+      ✔ P2 bootstrap delivered by path 2 (codeload) (output has: bootstrap delivered via codeload.github.com)
+      ✔ P2 api tried BEFORE codeload (call order ok)
+      ✔ P2 update completed via the fallback path
+      ✔ P2 success banner (output has: UPDATE COMPLETE — HANASO 1.0.0-hanaso17-r01)
+
+── P3 — api TLS-blocked → codeload fallback ──────────────────────────────────────────
+      ✔ P3 command block exits 0 via codeload (exit=0)
+      ✔ P3 bootstrap delivered by path 2 (codeload) (output has: bootstrap delivered via codeload.github.com)
+      ✔ P3 success banner (output has: UPDATE COMPLETE — HANASO 1.0.0-hanaso17-r01)
+      ✔ P3 update completed via the fallback path
+
+── P4 — api + codeload BOTH down → honest abort, NOTHING executed ──────────────────────────────────────────
+      ✔ P4 command block fails (exit=1)
+      ✔ P4 honest all-paths-failed error (output has: ALL bootstrap download paths failed (api.github.com and codeload.github.com))
+      ✔ P4 real api error text visible (output has: The requested URL returned error: 403)
+      ✔ P4 real codeload error text visible (output has: The requested URL returned error: 500)
+      ✔ P4 explicit nothing-executed promise (output has: NOTHING was executed or changed)
+      ✔ P4 source workspace NOT created
+      ✔ P4 .env untouched (server state untouched)
+      ✔ P4 nothing executed on the 'server'
+
+── P5 — api down + codeload serves a CORRUPT tarball → extraction abort ──────────────────────────────────────────
+      ✔ P5 command block fails (exit=1)
+      ✔ P5 explicit extraction-failure error (output has: codeload tarball fetched but extraction FAILED)
+      ✔ P5 explicit nothing-executed promise (output has: NOTHING was executed or changed)
+      ✔ P5 source workspace NOT created
+      ✔ P5 .env untouched (server state untouched)
+      ✔ P5 no docker call at all
+
+── P6 — tampered bootstrap content → REAL SHA-256 gate rejects it ──────────────────────────────────────────
+      ✔ P6 command block fails (exit=1)
+      ✔ P6 SHA-256 mismatch reported by sha256sum -c (output has: FAILED)
+      ✔ P6 source workspace NOT created
+      ✔ P6 .env untouched (server state untouched)
+      ✔ P6 no docker call at all
+
+── P7 — HTML error page instead of the script → SHA-256 gate rejects it ──────────────────────────────────────────
+      ✔ P7 command block fails (exit=1)
+      ✔ P7 proxy/gateway page rejected by the hash gate (output has: FAILED)
+      ✔ P7 nothing created
+      ✔ P7 .env untouched (server state untouched)
+
+── P8 — idempotent re-run of the same command block (no-op) ──────────────────────────────────────────
+      ✔ P8 first run exits 0 (exit=0)
+      ✔ P8 first run updated
+      ✔ P8 second run exits 0 (exit=0)
+      ✔ P8 second run is a no-op at the pinned target (output has: already running target commit)
+      ✔ P8 no rebuild on re-run
+      ✔ P8 no migrate re-run
+      ✔ P8 no container changes on re-run
+
+── P9 — subcommand passthrough via first line: 'status' is read-only ──────────────────────────────────────────
+      ✔ P9 status exits 0 (exit=0)
+      ✔ P9 reports the current (production) version (output has: 1.0.0-hanaso16-r01)
+      ✔ P9 reports the pinned target version (output has: 1.0.0-hanaso17-r01)
+      ✔ P9 no mutations
+      ✔ P9 no mutations (migrate)
+      ✔ P9 .env untouched (server state untouched)
+      ✔ P9 source workspace created (needed to run the pinned updater)
+
+── P10 — update → rollback → update round-trip through the command block ──────────────────────────────────────────
+      ✔ P10 update exits 0 (exit=0)
+      ✔ P10 .env at the new image
+      ✔ P10 rollback subcommand exits 0 (exit=0)
+      ✔ P10 .env restored to the previous (production) image
+      ✔ P10 rollback banner (output has: ROLLBACK app image)
+      ✔ P10 re-update after rollback exits 0 (exit=0)
+      ✔ P10 .env back at the new image
+
+── P11 — migrate failure after the swap → automatic rollback ──────────────────────────────────────────
+      ✔ P11 command block fails (exit=1)
+      ✔ P11 automatic rollback fired (output has: rolling the APP back)
+      ✔ P11 .env restored to the previous image
+      ✔ P11 rollback health gate passed (output has: rolled back)
+      ✔ P11 DB backup still recorded (data protected) (output has: Database backup from this run)
+
+── P12 — GLOBAL sweep: KOTODAMA / isolation / TLS / no-raw across ALL scenarios ──────────────────────────────────────────
+      ✔ no compose down, no non-hanaso containers, no global docker mutations, no rm -rf, no TLS weakening, no raw path / no --resolve anywhere (the v10 contract)
+
+══════════════════════════════════════════════
+  DEPLOY-05 DELIVERY TESTS: 95 passed, 0 failed
+  work dir: /tmp/hanaso-deploy05.ctOhyV
+  (work dir cleaned)

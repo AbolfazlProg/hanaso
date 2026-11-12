@@ -1,0 +1,203 @@
+
+── fixture setup — bare origin (stands in for public GitHub) ──────────────────────────────────────────
+  origin: file:///tmp/hanaso-deploy04.Ttbr1D/fixture-origin.git
+  BASE=75bee652 TARGET=d7a7a2e7 DEPLOY=bf37e589
+
+── S1 — fresh install: NO workspace yet → anonymous clone + full update ──────────────────────────────────────────
+      ✔ S1 no source workspace beforehand
+      ✔ S1 bootstrap+updater exit 0 (exit=0)
+      ✔ S1 source workspace created (anonymous clone)
+      ✔ S1 .env switched to the new image
+      ✔ S1 image built from the pinned commit
+      ✔ S1 one-shot migrate ran (idempotent)
+      ✔ S1 web+worker recreated
+      ✔ S1 DB backup taken BEFORE the swap
+      ✔ S1 success banner (output has: UPDATE COMPLETE)
+      ✔ S1 update-history dir created
+      ✔ S1 health gate matched the pinned version (output has: 1.0.0-sim-target)
+      ✔ S1 smoke passed (output has: smoke: ALL GREEN)
+      ✔ S1 KOTODAMA witness reported (output has: KOTODAMA)
+      ✔ S1 updater executed at the pinned commit (output has: updater pinned at commit)
+      ✔ S1 bootstrap byte-identical to the pinned commit (output has: integrity OK)
+      ✔ S1 .env backup kept (data never deleted)
+
+── S2 — update from a previous version + rollback subcommand round-trip ──────────────────────────────────────────
+      ✔ S2 update exits 0 (exit=0)
+      ✔ S2 .env at the new image
+      ✔ S2 previous image recorded as rollback target (output has: ghcr.io/abolfazlprog/hanaso:75bee652774cf91dd4e9940b7cbb804609da91a0)
+      ✔ S2 rollback subcommand exits 0 (exit=0)
+      ✔ S2 .env restored to the previous image
+      ✔ S2 rollback recreated web+worker
+      ✔ S2 re-update after rollback exits 0 (exit=0)
+      ✔ S2 .env back at the new image
+
+── S3 — workspace already exists → fetch (no re-clone), idempotent update ──────────────────────────────────────────
+      ✔ S3 first run (clone path) exits 0 (exit=0)
+      ✔ S3 second run exits 0 (exit=0)
+      ✔ S3 second run FETCHED (no re-clone) (output has: existing clone found — fetching)
+      ✔ S3 no-op: already at the pinned target (output has: already running target commit)
+      ✔ S3 no rebuild on re-run
+      ✔ S3 no migrate re-run
+      ✔ S3 no container changes on re-run
+
+── S4 — docker missing → updater preflight fails, server unchanged ──────────────────────────────────────────
+      ✔ S4 bootstrap fails (updater preflight) (exit=1)
+      ✔ S4 .env untouched (server state untouched)
+      ✔ S4 no build attempted
+      ✔ S4 no migrate attempted
+      ✔ S4 no DB backup attempted
+
+── S5 — GitHub unreachable → REAL git error shown, nothing created ──────────────────────────────────────────
+      ✔ S5 bootstrap fails (exit=1)
+      ✔ S5 honest anonymous-access failure header (output has: Anonymous access to)
+      ✔ S5 guidance: visibility / network, NO credential setup (output has: no longer public)
+      ✔ S5 REAL git error shown verbatim (not swallowed) (output has: does not appear to be a git repository)
+      ✔ S5 explicit no-change promise (output has: nothing was changed)
+      ✔ S5 source workspace NOT created
+      ✔ S5 .env untouched (server state untouched)
+      ✔ S5 no build attempted
+
+── S6 — SRC dir exists but is NOT a git clone → refused, not deleted ──────────────────────────────────────────
+      ✔ S6 bootstrap fails (exit=1)
+      ✔ S6 honest refusal (output has: NOT a git clone — refusing to delete or overwrite)
+      ✔ S6 existing files preserved (nothing deleted)
+      ✔ S6 .env untouched (server state untouched)
+      ✔ S6 no build attempted
+
+── S7 — deploy dir not found → honest per-path diagnostics, nothing touched ──────────────────────────────────────────
+      ✔ S7 bootstrap fails (updater deploy-dir detection) (exit=1)
+      ✔ S7 honest deploy-dir failure (output has: deploy dir not found)
+      ✔ S7 per-path findings reported (output has: docker-compose.yml=no)
+      ✔ S7 existing dirs explicitly not touched (output has: NOT touched)
+      ✔ S7 source workspace itself was still created (harmless)
+
+── S8 — deploy dir exists but wrong stack signature → not selected ──────────────────────────────────────────
+      ✔ S8 bootstrap fails (exit=1)
+      ✔ S8 wrong-signature dir rejected (output has: deploy dir not found)
+      ✔ S8 signature mismatch reported (output has: compose-signature=NO)
+      ✔ S8 .env untouched (server state untouched)
+      ✔ S8 foreign deploy dir contents preserved
+
+── S9 — low disk → preflight fails, nothing changes ──────────────────────────────────────────
+      ✔ S9 updater fails (exit=1)
+      ✔ S9 clear disk error message (output has: not enough disk)
+      ✔ S9 .env untouched (server state untouched)
+      ✔ S9 no build attempted
+
+── S10 — build failure → aborts BEFORE the swap (server unchanged) ──────────────────────────────────────────
+      ✔ S10 updater fails (exit=1)
+      ✔ S10 honest abort message (output has: docker build FAILED — nothing was changed)
+      ✔ S10 .env untouched (no swap happened) (server state untouched)
+      ✔ S10 no migrate attempted
+      ✔ S10 web never recreated
+
+── S11 — migration failure AFTER the swap → automatic rollback ──────────────────────────────────────────
+      ✔ S11 updater fails (exit=1)
+      ✔ S11 automatic rollback fired (output has: rolling the APP back)
+      ✔ S11 .env restored to the previous image
+      ✔ S11 rollback recreated web+worker
+      ✔ S11 rollback health gate passed (output has: rolled back)
+
+── S12 — health gate failure (new web never serves) → automatic rollback ──────────────────────────────────────────
+      ✔ S12 updater fails (exit=1)
+      ✔ S12 health-gate failure reported (output has: health gate failed)
+      ✔ S12 automatic rollback fired (output has: rolling the APP back)
+      ✔ S12 .env restored to the previous image
+
+── S13 — DB backup failure → aborts BEFORE any change ──────────────────────────────────────────
+      ✔ S13 updater fails (exit=1)
+      ✔ S13 honest abort (output has: database backup FAILED — aborting BEFORE any change)
+      ✔ S13 .env untouched (server state untouched)
+
+── S14 — KOTODAMA witness degrades after the swap → rollback + INVESTIGATE ──────────────────────────────────────────
+      ✔ S14 updater fails (exit=1)
+      ✔ S14 KOTODAMA change reported (output has: INVESTIGATE)
+      ✔ S14 automatic rollback fired (output has: rolling the APP back)
+      ✔ S14 .env restored
+
+── S15 — status subcommand is read-only ──────────────────────────────────────────
+      ✔ S15 status exits 0 (exit=0)
+      ✔ S15 reports the current version (output has: 1.0.0-sim-prev)
+      ✔ S15 no mutations
+      ✔ S15 no mutations (migrate)
+      ✔ S15 .env untouched (server state untouched)
+
+── S16 — ghost pinned target commit → bootstrap honest abort ──────────────────────────────────────────
+      ✔ S16 bootstrap fails (exit=1)
+      ✔ S16 pinned-commit verification fired (output has: not found in the repository)
+      ✔ S16 .env untouched (server state untouched)
+      ✔ S16 no build attempted
+
+── S17 — modified bootstrap file → integrity warning, updater still pinned ──────────────────────────────────────────
+      ✔ S17 modified bootstrap still completes (updater pinned) (exit=0)
+      ✔ S17 integrity WARNING printed (output has: differs from)
+      ✔ S17 update still ran from the pinned updater
+
+── S18 — one-liner integrity guard (REAL SHA-256) rejects a corrupted download ──────────────────────────────────────────
+      ✔ S18 corrupted download rejected by the SHA-256 gate (exit=1)
+      ✔ S18 genuine bootstrap passes the SHA-256 gate (exit=0)
+      ✔ S18 nothing executed — server untouched (server state untouched)
+
+── S19 — updater invoked directly with a broken remote → honest guidance ──────────────────────────────────────────
+      ✔ S19 updater fails (exit=1)
+      ✔ S19 anonymous/public guidance (no credential advice) (output has: ANONYMOUS HTTPS)
+      ✔ S19 visibility guidance (output has: re-privatized)
+      ✔ S19 .env untouched (server state untouched)
+      ✔ S19 no build attempted
+
+── S20 — SRC_DIR pointed at the deploy dir → refused (separation guard) ──────────────────────────────────────────
+      ✔ S20 bootstrap fails (exit=1)
+      ✔ S20 separation guard fired (deploy dir not a clone → refused) (output has: refusing to delete or overwrite)
+      ✔ S20 deploy dir untouched
+      ✔ S20 deploy .env untouched
+      ✔ S20 no build attempted
+
+── G1 — HANASO-16 three-tier gate: PRE-EXISTING public outage (the TL-14 incident) → ABORT before any change ──────────────────────────────────────────
+      ✔ G1 updater aborts (public endpoint verifiably broken at baseline) (exit=1)
+      ✔ G1 explicit pre-existing-front-line diagnosis (output has: INGRESS_PREEXISTING_BROKEN)
+      ✔ G1 nothing-changed guarantee stated (output has: aborting BEFORE any change)
+      ✔ G1 independent tier-3 evidence recorded (output has: tier 3 independent verdict (baseline): BROKEN)
+      ✔ G1 .env untouched (server state untouched)
+      ✔ G1 no build attempted
+      ✔ G1 no migrate ran
+      ✔ G1 no backup needed (nothing will change)
+
+── G2 — escape hatch: ALLOW_UNVERIFIED_INGRESS=1 deploys anyway; gate classifies, smoke goes local ──────────────────────────────────────────
+      ✔ G2 escape-hatch deploy completes (exit=0)
+      ✔ G2 escape hatch acknowledged (output has: deploying DESPITE the broken/unverifiable public path)
+      ✔ G2 gate keeps the healthy release (no pointless rollback) (output has: Keeping the release)
+      ✔ G2 smoke rerouted to the local app plane (output has: smoke runs against http://127.0.0.1:3100)
+      ✔ G2 final classification recorded (output has: INGRESS_PREEXISTING_BROKEN_PUBLIC_DOWN)
+      ✔ G2 release actually deployed
+
+── G3 — hairpin artifact: public self-probe fails, independent tier 3 says the world CAN reach it → release stands ──────────────────────────────────────────
+      ✔ G3 hairpin-artifact deploy completes (exit=0)
+      ✔ G3 artifact correctly identified (output has: hairpin/self-probe network artifact)
+      ✔ G3 classification recorded (output has: PUBLIC_OK_SELF_PROBE_ARTIFACT)
+      ✔ G3 release deployed (no rollback)
+
+── G4 — tier 3 unavailable (check-host API down) → honest EXTERNAL_UNVERIFIED, no rollback ──────────────────────────────────────────
+      ✔ G4 unverified-external deploy completes (exit=0)
+      ✔ G4 status recorded explicitly (output has: EXTERNAL_UNVERIFIED)
+      ✔ G4 owner follow-up hint printed (output has: verify from a phone/other network)
+      ✔ G4 release deployed (no rollback)
+
+── G5 — healthy baseline, public path BREAKS in the deploy window → REAL rollback ──────────────────────────────────────────
+      ✔ G5 updater fails (deploy broke the public path) (exit=1)
+      ✔ G5 deploy-caused breakage identified (output has: this deploy window broke the public path)
+      ✔ G5 app rolled back (output has: rolling the APP back)
+      ✔ G5 .env restored to the previous image (server state untouched)
+
+── G6 — tier 2a (ingress-direct) broken at baseline with tier 3 unverifiable → abort before any change ──────────────────────────────────────────
+      ✔ G6 updater aborts (proxy broken on the host) (exit=1)
+      ✔ G6 local ingress diagnosis (output has: tier 2a ingress-direct broken at baseline)
+      ✔ G6 .env untouched (server state untouched)
+      ✔ G6 no build attempted
+
+── GLOBAL — KOTODAMA / isolation invariants across ALL scenarios ──────────────────────────────────────────
+      ✔ no 'compose down', no non-hanaso containers, no global docker mutations, no rm -rf in any scenario
+
+══════════════════════════════════════════════
+  DEPLOY-04 SANDBOX TESTS: 140 passed, 0 failed
+  work dir: /tmp/hanaso-deploy04.Ttbr1D
+  (work dir cleaned)

@@ -90,6 +90,13 @@ case "${url}" in
     exit 0 ;;
   "https://codeload.github.com/"*"/tar.gz/"*)
     log_call
+    if [ "${SIM_DL_CODELOAD:-200}" = "corrupt" ]; then
+      # v10.1 (TASK-HANASO-18): a 200 response whose body is NOT a tarball —
+      # exercises the one-liner's explicit extraction-failure abort.
+      printf 'corrupt-not-a-tarball-sim\n' > "${out:-/dev/null}"
+      if wants_code; then printf '200\n'; fi
+      exit 0
+    fi
     dl_gate "${SIM_DL_CODELOAD:-200}"
     ref="${url##*/tar.gz/}"
     gh_tarball "${ref}"

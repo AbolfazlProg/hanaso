@@ -1,0 +1,13 @@
+# REAL-PATH VERIFICATION (no mocks) — 2026-11-12 17:00 UTC
+# Exactly what the owner's VPS will experience: anonymous HTTPS, public repo.
+
+## $ curl -fsSL -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=aaa5fea45f43175e4de9772bce6b354c0e0126d2"
+HTTP 403 · 278 bytes
+  → this sandbox IP has spent its anonymous api.github.com quota (anonymous core quota exhausted) — exactly scenario P2: the block falls through to codeload.
+
+## $ curl -fsSL "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/aaa5fea45f43175e4de9772bce6b354c0e0126d2"
+HTTP 200 · 26875229 bytes · 2.806713s
+
+## $ sha256sum of the extracted bootstrap vs the pin W=03ee6e74…
+03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035  /tmp/real-ex/hanaso-aaa5fea45f43175e4de9772bce6b354c0e0126d2/infra/deploy/bootstrap-hanaso.sh
+03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035  <- PIN (expected)
