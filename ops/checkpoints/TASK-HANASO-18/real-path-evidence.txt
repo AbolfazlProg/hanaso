@@ -11,3 +11,13 @@ HTTP 200 · 26875229 bytes · 2.806713s
 ## $ sha256sum of the extracted bootstrap vs the pin W=03ee6e74…
 03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035  /tmp/real-ex/hanaso-aaa5fea45f43175e4de9772bce6b354c0e0126d2/infra/deploy/bootstrap-hanaso.sh
 03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035  <- PIN (expected)
+
+## RE-PIN VERIFICATION — final tooling commit 1a34414f (post bug-2 fix, 2026-11-12 ~17:40 UTC)
+## $ curl -fsSL "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/1a34414f4ff8f9cdbfb00b17bf70119deb6142f6"
+HTTP 200 · 26896538 bytes · 2.7s
+## $ sha256sum of the extracted bootstrap vs the pin W=03ee6e74…
+03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035  (extracted)
+03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035  <- PIN (expected) — MATCH
+## tooling-generation checks at 1a34414f:
+scripts/smoke.sh contains «قدم بعدی» (new home contract): 1
+infra/deploy/update-hanaso.sh contains worktree_smoke (C9 fix): 4

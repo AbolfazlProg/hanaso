@@ -37,7 +37,7 @@ PINS (immutable — never drift to "latest")
                    lesson replay, one-CTA completion, 7-day resume expiration;
                    692/692 tests, browser QA 10/10 at 390/768/1440;
                    includes ALL pending changes: HANASO-16 + TL-14 + TL-13)
-  deploy tooling : commit aaa5fea45f43175e4de9772bce6b354c0e0126d2 (branch hanaso17-home-dashboard)
+  deploy tooling : commit 1a34414f4ff8f9cdbfb00b17bf70119deb6142f6 (branch hanaso17-home-dashboard)
   bootstrap file : infra/deploy/bootstrap-hanaso.sh
                    sha256 03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
 
@@ -61,7 +61,7 @@ bash -s -- <<'HANASO-V10'
 set -euo pipefail
 H=AbolfazlProg/hanaso
 P=infra/deploy/bootstrap-hanaso.sh
-R=aaa5fea45f43175e4de9772bce6b354c0e0126d2
+R=1a34414f4ff8f9cdbfb00b17bf70119deb6142f6
 W=03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
 D=3f41f6ee510e28914934ddc83375a0e1d49405a3
 T=/tmp/hanaso-bootstrap-v10.sh

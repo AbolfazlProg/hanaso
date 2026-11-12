@@ -235,17 +235,20 @@ else
   bad "P0 pinned target commit ${D} NOT in the repository"
 fi
 PIN_SHA="$(git -C "${REPO_ROOT}" show "${R}:infra/deploy/bootstrap-hanaso.sh" 2>/dev/null | sha256sum | cut -d' ' -f1)"
+TOOLING_BOOTSTRAP="$(git -C "${REPO_ROOT}" show "${R}:infra/deploy/bootstrap-hanaso.sh" 2>/dev/null)"
+TOOLING_UPDATER="$(git -C "${REPO_ROOT}" show "${R}:infra/deploy/update-hanaso.sh" 2>/dev/null)"
+TOOLING_SMOKE="$(git -C "${REPO_ROOT}" show "${R}:scripts/smoke.sh" 2>/dev/null)"
 if [ -n "${W}" ] && [ "${PIN_SHA}" = "${W}" ]; then
   ok "P0 bootstrap SHA-256 pin matches the real blob at the pinned commit"
 else
   bad "P0 bootstrap SHA-256 pin mismatch: command pins ${W:0:16}, blob is ${PIN_SHA:0:16}"
 fi
-if git -C "${REPO_ROOT}" show "${R}:infra/deploy/bootstrap-hanaso.sh" 2>/dev/null | grep -qF -- "${D}"; then
+if printf '%s\n' "${TOOLING_BOOTSTRAP}" | grep -qF -- "${D}"; then
   ok "P0 bootstrap at the tooling commit defaults to the same target pin (anti-drift)"
 else
   bad "P0 bootstrap at ${R:0:12} does not reference target ${D:0:12}"
 fi
-if git -C "${REPO_ROOT}" show "${R}:infra/deploy/update-hanaso.sh" 2>/dev/null | grep -qF -- "${TARGET_VERSION_REAL}"; then
+if [ -n "${TOOLING_UPDATER}" ] && printf '%s\n' "${TOOLING_UPDATER}" | grep -qF -- "${TARGET_VERSION_REAL}"; then
   ok "P0 updater at the tooling commit pins version ${TARGET_VERSION_REAL}"
 else
   bad "P0 updater at ${R:0:12} does not pin ${TARGET_VERSION_REAL}"
@@ -254,18 +257,19 @@ fi
 # the smoke bundled at the TOOLING commit must match the TARGET commit's app
 # generation, and the updater at R must prefer that worktree smoke over the
 # (possibly generations-old) deploy-dir artifact.
-TOOLING_SMOKE="$(git -C "${REPO_ROOT}" show "${R}:scripts/smoke.sh" 2>/dev/null)"
+# NOTE: assertions grep the CAPTURED blobs (never `git show | grep -q` directly —
+# under `set -o pipefail` the early-exiting grep races git into SIGPIPE/141).
 if printf '%s\n' "${TOOLING_SMOKE}" | grep -qF -- 'قدم بعدی'; then
   ok "P0 smoke at the tooling commit checks the learner-home dashboard («قدم بعدی») — matches the target app"
 else
   bad "P0 smoke at ${R:0:12} does not check the learner-home dashboard (stale contract)"
 fi
-if printf '%s\n' "${TOOLING_SMOKE}" | grep -qF -- 'lang="ja"'; then
-  bad "P0 smoke at the tooling commit still expects the retired lang=\"ja\" landing (would mis-rollback)"
+if printf '%s\n' "${TOOLING_SMOKE}" | grep -qF -- "grep -q 'lang=\"ja\"'"; then
+  bad "P0 smoke at the tooling commit still runs the retired lang=\"ja\" home check (would mis-rollback)"
 else
-  ok "P0 smoke at the tooling commit has no retired lang=\"ja\" home check"
+  ok "P0 smoke at the tooling commit runs no retired lang=\"ja\" home check"
 fi
-if git -C "${REPO_ROOT}" show "${R}:infra/deploy/update-hanaso.sh" 2>/dev/null | grep -qF -- 'worktree_smoke'; then
+if printf '%s\n' "${TOOLING_UPDATER}" | grep -qF -- 'worktree_smoke'; then
   ok "P0 updater at the tooling commit prefers the pinned worktree smoke over the deploy-dir artifact (C9)"
 else
   bad "P0 updater at ${R:0:12} still lets the stale deploy-dir smoke gate updates (C9 not fixed)"

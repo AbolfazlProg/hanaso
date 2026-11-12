@@ -1,7 +1,7 @@
 
 ── fixture setup — bare origin (stands in for public GitHub) ──────────────────────────────────────────
-  origin: file:///tmp/hanaso-deploy04.Ttbr1D/fixture-origin.git
-  BASE=75bee652 TARGET=d7a7a2e7 DEPLOY=bf37e589
+  origin: file:///tmp/hanaso-deploy04.1PyELc/fixture-origin.git
+  BASE=a776b1d6 TARGET=ee933db0 DEPLOY=49b8e580
 
 ── S1 — fresh install: NO workspace yet → anonymous clone + full update ──────────────────────────────────────────
       ✔ S1 no source workspace beforehand
@@ -24,7 +24,7 @@
 ── S2 — update from a previous version + rollback subcommand round-trip ──────────────────────────────────────────
       ✔ S2 update exits 0 (exit=0)
       ✔ S2 .env at the new image
-      ✔ S2 previous image recorded as rollback target (output has: ghcr.io/abolfazlprog/hanaso:75bee652774cf91dd4e9940b7cbb804609da91a0)
+      ✔ S2 previous image recorded as rollback target (output has: ghcr.io/abolfazlprog/hanaso:a776b1d611a72fc53bf3ee74c0d13cd6b2ad0c43)
       ✔ S2 rollback subcommand exits 0 (exit=0)
       ✔ S2 .env restored to the previous image
       ✔ S2 rollback recreated web+worker
@@ -199,5 +199,5 @@
 
 ══════════════════════════════════════════════
   DEPLOY-04 SANDBOX TESTS: 140 passed, 0 failed
-  work dir: /tmp/hanaso-deploy04.Ttbr1D
+  work dir: /tmp/hanaso-deploy04.1PyELc
   (work dir cleaned)
