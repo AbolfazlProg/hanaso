@@ -11,7 +11,7 @@
 import type { Chapter, Exercise, LevelPolicy, TeachingBlock } from './types';
 import { orderedStations } from './journey';
 import { KANA_ITEMS, KANA_ITEMS_BY_ID } from './content/kana-items';
-import { RULE_MARK_STATION, decomposeJa, type RuleMark } from './glyph-budget';
+import { RULE_MARK_STATION, decomposeJa, derivedFormsIn, type RuleMark } from './glyph-budget';
 import { LEVELS_BY_CODE } from './content/levels';
 
 export interface ContentViolation {
@@ -59,6 +59,16 @@ const RULES = {
    */
   glyphBudget: 'GLYPH-BUDGET (TL-14 — every kana surface uses only taught glyphs + taught rule marks)',
   transcriptConsistent: 'TRANSCRIPT-CONSISTENT (TL-14 — one Persian reading per word, chapter-wide)',
+  /*
+   * TASK-HANASO-20 (audit UNTAUGHT_CONTENT_AUDIT — 16 shipped violations):
+   * GLYPH-BUDGET checks the rule MARKS (゛゜ゃュョ…) against their teaching
+   * units, but a hiragana-taught mark does not show the KATAKANA derived form
+   * (バ ピ ャ …) — those shipped in examples and assessments for 9 katakana
+   * cases + ぜ/ば/で/ぴ/ぼ/ぽ/じ. This gate requires every derived form to be
+   * DISPLAYED in a teaching block (prereq first-look / table / word) BEFORE its
+   * first example or assessment use — in deck order.
+   */
+  derivedGlyphShown: 'DERIVED-GLYPH-SHOWN (HANASO-20 — every derived form is displayed in a prior teaching block before any example/assessment use)',
   ruleListeningShape: 'RULE-LISTENING-SHAPE (TL-14 — minimal-pair listening carries exactly 2 options)',
   passiveRun: 'PASSIVE-RUN (TL-14 — at most 2 consecutive receptive slides in a deck)',
   prereqData: 'PREREQ-DATA (TL-14 — rule-deck stations declare introducesGlyphs)',
@@ -470,7 +480,33 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
   /* ---- GLYPH-BUDGET: walk stations in order. A station's OWN teaching (its
      kana-cards + its introducesGlyphs first-looks) is available to its own
      surfaces (the packet rule: cards come before the exercises that use them);
-     everything earlier is cumulative; everything later is a violation. */
+     everything earlier is cumulative; everything later is a violation.
+
+     TASK-HANASO-20 — DERIVED-GLYPH-SHOWN rides the SAME walk, in deck order:
+     `shownDerived` accumulates derived forms (dakuten/handakuten/yoon/foreign
+     smalls) displayed in TEACHING blocks (prereq items, cards' tables/words/
+     contrasts — the rule stations' own decks ARE the introduction). EXAMPLE
+     sets and EXERCISES are USE surfaces: every derived form they contain must
+     already be established by a teaching display at that point in the deck —
+     a hiragana-taught rule mark never substitutes for showing the script-
+     specific form (the audit's 9 katakana cases + ぜ/ば/で/ぴ/ぼ/ぽ/じ). */
+  const shownDerived = new Set<string>();
+  const reportedDerived = new Set<string>();
+  const checkDerived = (surface: string, where: string, slug: string): void => {
+    for (const ch of derivedFormsIn(surface)) {
+      if (shownDerived.has(ch)) continue;
+      const key = `${slug}/${where}/${ch}`;
+      if (reportedDerived.has(key)) continue;
+      reportedDerived.add(key);
+      v.push({
+        rule: RULES.derivedGlyphShown,
+        message: `${slug}/${where}: derived form ${ch} used before any teaching display of it — add an explicit introduction (prereq first-look / table row) earlier in the deck`,
+      });
+    }
+  };
+  const foldDerived = (surface: string): void => {
+    for (const ch of derivedFormsIn(surface)) shownDerived.add(ch);
+  };
   const cumulative = new Set<string>();
   for (const s of ordered) {
     for (const b of s.blocks) {
@@ -509,25 +545,43 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
         if (b.structureTable) {
           b.structureTable.rows.forEach((row, i) => row.forEach((cell) => checkSurface(cell, `${b.id}/table-r${i}`)));
         }
+        if (b.structureTable) {
+          b.structureTable.rows.forEach((row, i) =>
+            row.forEach((cell) => checkDerived(cell, `${b.id}/table-r${i}`, s.slug)),
+          );
+        }
+        foldDerived(b.patternJa);
+        if (b.structureTable) b.structureTable.rows.forEach((row) => row.forEach(foldDerived));
       }
       if (b.kind === 'example-set') {
-        for (const ex of b.examples) checkSurface(ex.ja, ex.id);
+        for (const ex of b.examples) {
+          checkSurface(ex.ja, ex.id);
+          /* examples are USE surfaces — checked, never folded. */
+          checkDerived(ex.ja, `${ex.id}/example`, s.slug);
+        }
       }
       if (b.kind === 'rule-prereq') {
         for (const item of b.items) {
           if (item.glyph) checkSurface(item.glyph, `${b.id}/prereq`);
           if (item.word) checkSurface(item.word, `${b.id}/prereq`);
+          /* prereq items are the most EXPLICIT introduction form — they fold. */
+          if (item.glyph) foldDerived(item.glyph);
+          if (item.word) foldDerived(item.word);
         }
       }
       if (b.kind === 'rule-contrast') {
         checkSurface(b.a.ja, `${b.id}/a`);
         checkSurface(b.b.ja, `${b.id}/b`);
+        foldDerived(b.a.ja);
+        foldDerived(b.b.ja);
       }
       if (b.kind === 'rule-step') {
         if (b.word) checkSurface(b.word.ja, b.id);
         if (b.miniTable) {
           b.miniTable.rows.forEach((row, i) => row.forEach((cell) => checkSurface(cell, `${b.id}/table-r${i}`)));
         }
+        if (b.word) foldDerived(b.word.ja);
+        if (b.miniTable) b.miniTable.rows.forEach((row) => row.forEach(foldDerived));
       }
       if (b.kind === 'exercise') {
         for (const id of b.exerciseIds) {
@@ -537,6 +591,11 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
           for (const opt of ex.options ?? []) checkSurface(opt.label, `${ex.id}/opt-${opt.id}`);
           for (const tok of ex.clozeTokens ?? []) if (tok) checkSurface(tok, `${ex.id}/cloze`);
           for (const chip of ex.chips ?? []) checkSurface(chip.ja, `${ex.id}/chip-${chip.id}`);
+          /* exercises are USE surfaces — checked, never folded. */
+          if (ex.promptJa) checkDerived(ex.promptJa, `${ex.id}/prompt`, s.slug);
+          for (const opt of ex.options ?? []) checkDerived(opt.label, `${ex.id}/opt-${opt.id}`, s.slug);
+          for (const tok of ex.clozeTokens ?? []) if (tok) checkDerived(tok, `${ex.id}/cloze`, s.slug);
+          for (const chip of ex.chips ?? []) checkDerived(chip.ja, `${ex.id}/chip-${chip.id}`, s.slug);
         }
       }
     }

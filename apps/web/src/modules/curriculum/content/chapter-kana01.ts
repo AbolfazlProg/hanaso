@@ -50,7 +50,7 @@ const KANA_ISLANDS: Chapter['units'] = [
   {
     slug: 'island-3-kata-loanwords',
     titleFa: 'کاتاکانا — زبانِ وام‌واژه‌ها',
-    summaryFa: 'منو، برند و وام‌واژه‌ها را می‌خوانی (K1..K12)',
+    summaryFa: 'منو، برند و وام‌واژه‌ها را می‌خوانی (K1..K12 + ترکیب خارجی)',
     stationSlugs: [
       'stn-kana-k1',
       'stn-kana-k2',
@@ -64,6 +64,7 @@ const KANA_ISLANDS: Chapter['units'] = [
       'stn-kana-k10',
       'stn-kana-k11',
       'stn-kana-k12',
+      'stn-kana-k12-foreign',
     ],
   },
   {
@@ -80,10 +81,10 @@ export const CHAPTER_KANA_FOUNDATION: Chapter = {
   titleFa: 'فصل ۰۱ — مبانی نوشتار: هیراگانا و کاتاکانا',
   canDoFa: 'در پایان این فصل هر دو خط کانای ژاپنی را می‌خوانی و واژه‌های سادهٔ واقعی را رمزگشایی می‌کنی.',
   summaryFa:
-    'مسیر کامل کانا برای مبتدی مطلق: ۴ جزیره، ۳۱ ایستگاه، ۹۲ شکل — با یادسپارهای فارسی، واژه‌های واقعیِ همان لحظه و گیت فهم در پایان.',
+    'مسیر کامل کانا برای مبتدی مطلق: ۴ جزیره، ۳۲ ایستگاه، ۹۲ شکل — با یادسپارهای فارسی، واژه‌های واقعیِ همان لحظه و گیت فهم در پایان.',
   dialogueSlug: 'kana-welcome-01',
   orderInLevel: 1,
-  estMinutes: 338,
+  estMinutes: 348,
   estLoad: 'medium',
   bandArc: 'kana-foundation',
   sceneFa:

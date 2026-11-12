@@ -26,8 +26,9 @@ export const RULE_MARK_STATION: Record<RuleMark, string> = {
   'yoon-small': 'stn-kana-h6',
   sokuon: 'stn-kana-h13',
   choonpu: 'stn-kana-k8',
-  /* wave-2 (registered, untaught): ファ/ティ/ヴ-style foreign smalls — using one
-     today is a content violation until K12 teaches them. */
+  /* TASK-HANASO-20: taught by stn-kana-k12-foreign (the real foreign-combination
+     station — BUG-005 remediation). Before that station existed these were a
+     registered wave-2 violation. */
   'foreign-small': 'stn-kana-k12-foreign',
 };
 
@@ -116,6 +117,30 @@ const FOREIGN_SMALL = new Set([
   'ヹ',
   'ヺ',
 ]);
+
+
+/**
+ * TASK-HANASO-20 (audit UNTAUGHT_CONTENT_AUDIT): every precomposed/combining
+ * DERIVED form — dakuten + handakuten (both scripts), the yōon smalls (both
+ * scripts) and the foreign smalls. DERIVED-GLYPH-SHOWN (validation.ts) requires
+ * each of these to be DISPLAYED in a prior teaching block before it may appear
+ * in an example or assessment surface: the rule mark being taught (h5/h6/h15…)
+ * is necessary but NOT sufficient — the script-specific derived form must have
+ * been shown (generalization without display = removed scaffolding).
+ */
+export const DERIVED_FORMS: ReadonlySet<string> = new Set<string>([
+  ...Object.keys(DAKUTEN_BASE),
+  ...Object.keys(HANDAKUTEN_BASE),
+  ...YOON_SMALL,
+  ...FOREIGN_SMALL,
+]);
+
+/** The derived forms contained in a text (empty when none). */
+export function derivedFormsIn(text: string): string[] {
+  const out: string[] = [];
+  for (const ch of text) if (DERIVED_FORMS.has(ch)) out.push(ch);
+  return out;
+}
 
 const BASE_GLYPHS = new Set(KANA_ITEMS.map((k) => k.glyph));
 

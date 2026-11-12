@@ -56,9 +56,9 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     expect(violations).toEqual([]);
   });
 
-  it('carries the 05A blueprint numbers: 31 stations (29 core + 2 optional), 4 islands, zero vocab/grammar', () => {
-    expect(chapter.stations).toHaveLength(31);
-    expect(chapter.stations.filter((s) => s.core)).toHaveLength(29);
+  it('carries the 05A blueprint numbers: 32 stations (30 core + 2 optional), 4 islands, zero vocab/grammar', () => {
+    expect(chapter.stations).toHaveLength(32);
+    expect(chapter.stations.filter((s) => s.core)).toHaveLength(30);
     expect(chapter.stations.filter((s) => !s.core)).toHaveLength(2);
     expect(chapter.units?.map((u) => u.slug)).toEqual([
       'island-1-hira-voice',
@@ -97,7 +97,7 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     const journey = resolveJourney(chapter, level, [], null);
     expect(journey.unitGroups?.length).toBe(4);
     const grouped = journey.unitGroups!.flatMap((g) => g.nodes.map((n) => n.station.slug));
-    expect(new Set(grouped).size).toBe(31);
+    expect(new Set(grouped).size).toBe(32);
   });
 });
 

@@ -69,6 +69,14 @@ function exampleWords() {
   return [...set];
 }
 
+/*
+ * TASK-HANASO-20 (BUG-005 remediation): the k12-foreign station teaches
+ * ファ/ティ/ヴ with these words. No assets exist yet (they cannot be synthesized
+ * here — VOICEVOX runs on the VPS only), so the UI honestly hides their play
+ * controls until THIS list is regenerated with the next VPS run.
+ */
+const FOREIGN_COMBO_WORDS = ['ファイル', 'ティッシュ', 'ヴァイオリン', 'パーティー'];
+
 // ---------------------------------------------------------------- voicevox + ffmpeg
 async function synth(text) {
   const q = new URLSearchParams({ text, speaker: String(SPEAKER) });

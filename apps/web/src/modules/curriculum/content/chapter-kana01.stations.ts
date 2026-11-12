@@ -714,6 +714,8 @@ export const KANA_STATIONS: Station[] = [
             ['か (کا)', 'が (گا)', 'ک / گ'],
             ['さ (سا)', 'ざ (زا)', 'س / ز'],
             ['き (کی)', 'ぎ (گی)', 'ک / گ'],
+            ['せ (سه)', 'ぜ (زه)', 'س / ز'],
+            ['し (شی)', 'じ (جی)', 'ش / ج'],
           ],
         },
       },
@@ -1250,6 +1252,7 @@ export const KANA_STATIONS: Station[] = [
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -1302,6 +1305,12 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h9-rcl-hira-te',
           'ex-kana-h9-rcl-hira-to',
         ],
+      },
+      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-h9-prereq-derived',
+        titleFa: 'پیش از خواندن: داکوتنِ ردیف た',
+        items: [{ glyph: 'だ', readingFa: 'دا', noteFa: 'た+゛ — در だいがく (دانشگاه).' }],
       },
       {
         kind: 'exercise',
@@ -1388,6 +1397,7 @@ export const KANA_STATIONS: Station[] = [
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -1437,7 +1447,16 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-h10-rcl-hira-me',
           'ex-kana-h10-rcl-hira-mo',
         ],
+      },      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-h10-prereq-derived',
+        titleFa: 'پیش از خواندن: یادآوری مشتقات',
+        items: [
+          { glyph: 'だ', readingFa: 'دا', noteFa: 'た+゛ — در ともだち (دوست).' },
+          { glyph: 'ず', readingFa: 'زُ', noteFa: 'す+゛ — در みず (آب).' },
+        ],
       },
+
       {
         kind: 'exercise',
         id: 'blk-stn-kana-h10-listening',
@@ -1774,6 +1793,14 @@ export const KANA_STATIONS: Station[] = [
         bodyFa:
           'حالا که ردیف は را داری، این جفت معروف را ببین: びょういん (بیمارستان) در برابر びよういん (آرایشگاه!) — یک نویسهٔ کوچک/بزرگ، دو جهان.',
         word: { ja: 'びょういん', readingFa: 'بیووین', fa: 'بیمارستان', highlight: ['ょ'], beats: 4 },
+        miniTable: {
+          headers: ['شکل', 'صدا', 'واژه'],
+          rows: [
+            ['は+゛ = ば', 'ب', 'かばん — کیف'],
+            ['ひ+゛ = び', 'ب', 'びょういん — بیمارستان'],
+            ['ふ+゛ = ぶ', 'ب', 'しんぶん — روزنامه'],
+          ],
+        },
         ask: {
           questionFa: '「びよういん» (با よ بزرگ) چه معنایی دارد؟',
           options: [
@@ -1891,14 +1918,14 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h13-step-gakkou',
         role: 'notice',
         bodyFa: '«مدرسه»: گَک — کو — اُو. وسط واژه یک っ کوچک نشسته: صدا ندارد، اما یک ضربهٔ کاملِ سکوت و فشار است.',
-        word: { ja: 'がっこう', readingFa: 'گَکّو', fa: 'مدرسه', highlight: ['っ'], beats: 4 },
+        word: { ja: 'がっこう', readingFa: 'گَکّوو', fa: 'مدرسه', highlight: ['っ'], beats: 4 },
       },
       {
         kind: 'rule-contrast',
         id: 'blk-stn-kana-h13-contrast-gakkou',
         titleFa: 'با っ و بدون っ',
         a: { ja: 'がこう', readingFa: 'گاکو', fa: 'این شکل واژه نیست — っ حذف شده', highlight: [], beats: 3 },
-        b: { ja: 'がっこう', readingFa: 'گَکّو', fa: 'مدرسه', highlight: ['っ'], beats: 4 },
+        b: { ja: 'がっこう', readingFa: 'گَکّوو', fa: 'مدرسه', highlight: ['っ'], beats: 4 },
         ask: {
           questionFa: 'کدام چهار ضربه دارد؟',
           options: [
@@ -2142,7 +2169,10 @@ export const KANA_STATIONS: Station[] = [
         titleFa: 'پیش از شروع: ردیف は و ゛',
         items: [
           { glyph: 'は', readingFa: 'ها', noteFa: 'بی‌علامت = «هـ».' },
-          { word: 'でんわ', readingFa: 'دِنوا', noteFa: '゛ را یادت هست؟ (だ = た+゛) — تلفن.' },
+          { word: 'でんわ', readingFa: 'دِنوا', noteFa: '゛ را یادت هست؟ (で = て+゛) — تلفن.' },
+          { glyph: 'ぴ', readingFa: 'پی', noteFa: 'ひ+゜ — در えんぴつ (مداد).' },
+          { glyph: 'ぼ', readingFa: 'بُ', noteFa: 'ほ+゛ — صدای «ب»، جفت کمینه‌ای با ぽ.' },
+          { glyph: 'ぽ', readingFa: 'پُ', noteFa: 'ほ+゜ — در さんぽ (پیاده‌روی).' },
         ],
       },
       {
@@ -2384,6 +2414,7 @@ export const KANA_STATIONS: Station[] = [
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -2434,6 +2465,14 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k2-rcl-kata-tsu',
           'ex-kana-k2-rcl-kata-te',
           'ex-kana-k2-rcl-kata-to',
+        ],
+      },
+      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-k2-prereq-dakuten',
+        titleFa: 'پیش از خواندن: اولین داکوتنِ کاتاکانا',
+        items: [
+          { glyph: 'ド', readingFa: 'دُ', noteFa: 'ト+゛ — همان قاعدهٔ H5، این‌بار در خط دوم: ド (در ドイツ و ドア).' },
         ],
       },
       {
@@ -2613,6 +2652,7 @@ export const KANA_STATIONS: Station[] = [
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -2664,6 +2704,15 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k4-rcl-kata-su',
           'ex-kana-k4-rcl-kata-se',
           'ex-kana-k4-rcl-kata-so',
+        ],
+      },
+      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-k4-prereq-derived',
+        titleFa: 'پیش از خواندن: داکوتنِ ردیف サ',
+        items: [
+          { glyph: 'ジ', readingFa: 'جی', noteFa: 'シ+゛ — در ラジオ (رادیو) و アジア (آسیا).' },
+          { glyph: 'ズ', readingFa: 'زُ', noteFa: 'ス+゛ — در サイズ (اندازه).' },
         ],
       },
       {
@@ -2750,6 +2799,7 @@ export const KANA_STATIONS: Station[] = [
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -2794,6 +2844,17 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k5-rcl-kata-fu',
           'ex-kana-k5-rcl-kata-he',
           'ex-kana-k5-rcl-kata-ho',
+        ],
+      },
+      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-k5-prereq-derived',
+        titleFa: 'پیش از خواندن: مشتقات کاتاکانا',
+        items: [
+          { glyph: 'バ', readingFa: 'با', noteFa: 'ハ+゛ — در バス (اتوبوس).' },
+          { glyph: 'ビ', readingFa: 'بی', noteFa: 'ヒ+゛ — در ビル (برج).' },
+          { glyph: 'ピ', readingFa: 'پی', noteFa: 'ヒ+゜ — هان‌داکوتنِ کاتاکانا: در ピザ (پیتزا).' },
+          { glyph: 'ザ', readingFa: 'زا', noteFa: 'サ+゛ — همان ザ که در ピザ می‌بینی.' },
         ],
       },
       {
@@ -2881,6 +2942,7 @@ export const KANA_STATIONS: Station[] = [
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -2904,6 +2966,19 @@ export const KANA_STATIONS: Station[] = [
       },
       { kind: 'exercise', id: 'blk-stn-kana-k6-retrieval-1', exerciseIds: ['ex-kana-k6-rec-kata-n'] },
       { kind: 'exercise', id: 'blk-stn-kana-k6-recall', exerciseIds: ['ex-kana-k6-rcl-kata-n'] },
+      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-k6-prereq-derived',
+        titleFa: 'پیش از خواندن: یُوئون و مشتقاتِ کاتاکانا',
+        items: [
+          { glyph: 'ャ', readingFa: 'یای کوچک (کاتاکانا)', noteFa: 'کاتاکانا هم یُوئون دارد — ジ+ャ = «جا»: ジャパン.' },
+          { glyph: 'ュ', readingFa: 'یوی کوچک (کاتاکانا)', noteFa: 'بعداً در ジュース.' },
+          { glyph: 'ョ', readingFa: 'یوی گردِ کوچک (کاتاکانا)', noteFa: 'کامل‌کنندهٔ خانواده — مثل ひرای گانای ゃゅょ.' },
+          { glyph: 'ゼ', readingFa: 'زه', noteFa: 'セ+゛ — در プレゼント (هدیه).' },
+          { glyph: 'プ', readingFa: 'پُ', noteFa: 'フ+゜ — در プレゼント.' },
+          { glyph: 'パ', readingFa: 'پا', noteFa: 'ハ+゜ — در ジャパン (پْا).' },
+        ],
+      },
       { kind: 'exercise', id: 'blk-stn-kana-k6-listening', exerciseIds: ['ex-kana-k6-lis-kata-n'] },
       {
         kind: 'example-set',
@@ -3120,6 +3195,8 @@ export const KANA_STATIONS: Station[] = [
             readingFa: 'کووکوو',
             noteFa: 'در هیراگانا کشش را با تکرار مصوت نوشتیم: こ+う. کاتاکانا راه کوتاه‌تری دارد.',
           },
+          { glyph: 'ボ', readingFa: 'بُ', noteFa: 'ホ+゛ — در ボールペン (خودکار).' },
+          { glyph: 'ペ', readingFa: 'پِ', noteFa: 'ヘ+゛ — در ボールペن.' },
         ],
       },
       {
@@ -3468,6 +3545,7 @@ export const KANA_STATIONS: Station[] = [
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
     mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
     blocks: [
       {
         kind: 'exercise',
@@ -3523,6 +3601,12 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-k11-rcl-kata-ne',
           'ex-kana-k11-rcl-kata-no',
         ],
+      },
+      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-k11-prereq-derived',
+        titleFa: 'پیش از خواندن: داکوتنِ ردیف タ در واژه‌ها',
+        items: [{ glyph: 'デ', readingFa: 'دِ', noteFa: 'テ+゛ — در デザイナー (طراح).' }],
       },
       {
         kind: 'exercise',
@@ -3599,8 +3683,8 @@ export const KANA_STATIONS: Station[] = [
   {
     slug: 'stn-kana-k12',
     type: 'kana',
-    titleFa: 'ردیف ワ + ترکیب خارجی (ファ/ティ/ヴ…)',
-    objectiveFa: 'تنها واحد فاز K با روماجی روشن (استثنای CONTENT-107)',
+    titleFa: 'ردیف ワ/ヲ',
+    objectiveFa: 'دو کارت آخرِ کاتاکانا: ワ و ヲ — با روماجی روشن (استثنای CONTENT-107)',
     core: true,
     order: 28,
     prerequisites: ['stn-kana-k11'],
@@ -3683,10 +3767,10 @@ export const KANA_STATIONS: Station[] = [
       {
         kind: 'wrap-up',
         id: 'blk-stn-kana-k12-wrapup',
-        titleFa: 'ردیف ワ + ترکیب خارجی (ファ/ティ/ヴ…) — جمع‌بندی',
+        titleFa: 'ردیف ワ/ヲ — جمع‌بندی',
         itemsFa: [
           '2 کانای جدید: ワ(وا)، ヲ(اُ)',
-          'قاعدهٔ تازه: foreigncombo',
+          'ترکیب خارجی (ファ/ティ/ヴ) در ایستگاه بعدی آموزش داده می‌شود — اینجا فقط ردیف ワ.',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 721 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
@@ -3695,13 +3779,124 @@ export const KANA_STATIONS: Station[] = [
     fsrsItems: ['kn-rec-kata-wa', 'kn-rec-kata-wo', 'kn-disc-kata-wa-fu'],
   },
   {
+    slug: 'stn-kana-k12-foreign',
+    type: 'kana',
+    titleFa: 'ترکیب خارجی (ファ/ティ/ヴ)',
+    objectiveFa: 'ترکیب خارجی: صداهای بیرونی با مصوتِ کوچک — ファ، ティ، ヴ',
+    core: true,
+    order: 29,
+    prerequisites: ['stn-kana-k12'],
+    lineRefs: [],
+    objectiveCode: 'kana-katakana',
+    estMinutes: 10,
+    estLoad: 'light',
+    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    mastery: { threshold: 0.7 },
+    introducesGlyphs: [],
+    blocks: [
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-kf-warmup',
+        exerciseIds: ['ex-kana-kf-warm-1', 'ex-kana-kf-warm-2'],
+      },
+      {
+        kind: 'rule-prereq',
+        id: 'blk-stn-kana-kf-prereq',
+        titleFa: 'پیش از شروع: صداهایی که کانا ندارد',
+        items: [
+          { glyph: 'ァ', readingFa: 'آی کوچک', noteFa: 'مصوت کوچک — به صدای قبل می‌چسبد؛ مثل ゃ کوچک، ولی برای صداهای بیرونی.' },
+          { glyph: 'ィ', readingFa: 'ای کوچک', noteFa: 'همان قاعده با مصوت i.' },
+          { glyph: 'ヴ', readingFa: 'وُ (vu)', noteFa: 'ウ+゛ — نزدیک‌ترین صدای ژاپنی به «v».' },
+        ],
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-kf-step-fa',
+        role: 'notice',
+        bodyFa: '«فایل»: ژاپنی «ف»ی جدا ندارد — フ + アِ کوچک آن را می‌سازد: ファ.',
+        word: { ja: 'ファイル', readingFa: 'فایل', fa: 'فایل', highlight: ['ァ'], beats: 3 },
+      },
+      {
+        kind: 'rule-contrast',
+        id: 'blk-stn-kana-kf-contrast-fa',
+        titleFa: 'کوچک = چسبیده، بزرگ = جدا',
+        a: { ja: 'ファイル', readingFa: 'فایل', fa: 'با ァ کوچک — یک ضربهٔ «فا»', highlight: ['ァ'], beats: 3 },
+        b: {
+          ja: 'フアイル',
+          readingFa: 'فُو-آ-ی-رُ',
+          fa: 'این شکل واژه نیست — ア بزرگ جدا مانده (۴ ضربه)',
+          highlight: ['ア'],
+          beats: 4,
+        },
+        ask: {
+          questionFa: 'کدام «فایل» است؟',
+          options: [
+            { id: 'a', label: 'ファイル (با ァ کوچک)' },
+            { id: 'b', label: 'フアイル (با ア بزرگ)' },
+          ],
+          correctOptionId: 'a',
+          revealFa: '「ファ» یک ضربه است؛ 「フア» دو ضربهٔ جدا — همان قاعدهٔ یُوئون، این‌بار برای صداهای بیرونی.',
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-kf-step-ti',
+        role: 'notice',
+        bodyFa: '«تیشّو»: «تی» در خط کانا نیست — テ + ィ کوچک آن را می‌سازد.',
+        word: { ja: 'ティッシュ', readingFa: 'تیشّو', fa: 'دستمال کاغذی', highlight: ['ィ'], beats: 3 },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-kf-step-vu',
+        role: 'notice',
+        bodyFa: '«ویولین»: ヴ (ウ+゛) + アِ کوچک = ヴァ — نزدیک‌ترین ساختنی به «va».',
+        word: { ja: 'ヴァイオリン', readingFa: 'وایولین', fa: 'ویولین', highlight: ['ヴ'], beats: 5 },
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-kf-guided',
+        exerciseIds: ['ex-kana-kf-dec-1', 'ex-kana-kf-lis-1'],
+      },
+      {
+        kind: 'rule-card',
+        id: 'blk-stn-kana-kf-rule-foreign',
+        patternJa: 'ファ (۱ مورا) ≠ フア (۲ مورا)',
+        titleFa: 'کارت مرجع: ترکیب خارجی',
+        bodyFa:
+          'صداهایی که کانا ندارد (f / ti / v) با مصوتِ کوچک ساخته می‌شوند: ファ・ティ・ヴァ. اندازهٔ کوچک همان فشردگی یُوئون است — این‌بار برای صداهای بیرونی.',
+        structureTable: {
+          headers: ['ترکیب', 'خوانش', 'واژه'],
+          rows: [
+            ['ファ', 'فا', 'ファイル (فایل)'],
+            ['ティ', 'تی', 'ティッシュ (دستمال کاغذی)'],
+            ['ヴァ', 'وا', 'ヴァイオリン (ویولین)'],
+          ],
+        },
+        persianBridgeFa:
+          'مثل فارسی که صداهای بیرونی را با همان حروف می‌نویسد، ژاپنی هم صدای بیرونی را با مصوتِ کوچک به کانای قبل می‌چسباند.',
+        honestyLabelFa: 'ヴ کم‌رواج است — معادل رایج‌تر バイオリン (با «ب») است.',
+      },
+      {
+        kind: 'wrap-up',
+        id: 'blk-stn-kana-kf-wrapup',
+        titleFa: 'ترکیب خارجی — جمع‌بندی',
+        itemsFa: [
+          'قاعدهٔ تازه: صدای بیرونی = مصوتِ کوچک (ァ ィ ゥ ェ ォ) + ヴ.',
+          'ファ ≠ フア — کوچک یعنی چسبیده، همانند یُوئون.',
+          'واژه‌های تازهٔ خواندنی: ファイル، ティッシュ، ヴァイオリン.',
+        ],
+      },
+    ],
+    fsrsItems: [],
+  },
+  {
     slug: 'stn-kana-k13',
     type: 'integrate',
     titleFa: 'آشتی دو خط + نامِ خودت',
     objectiveFa: 'تمرین تمایز هیراگانا و کاتاکانا + نوشتن نام خود به کاتاکانا',
     core: true,
-    order: 29,
-    prerequisites: ['stn-kana-k12'],
+    order: 30,
+    prerequisites: ['stn-kana-k12-foreign'],
     lineRefs: [],
     objectiveCode: 'kana-two-script-use',
     estMinutes: 13,
@@ -3808,7 +4003,7 @@ export const KANA_STATIONS: Station[] = [
     titleFa: 'مرور ایستگاه‌های فاز ۱ (اختیاری)',
     objectiveFa: 'شاخهٔ اختیاری از H9 — آویخته، هرگز گیت نمی‌شود (spec §3)',
     core: false,
-    order: 30,
+    order: 31,
     prerequisites: ['stn-kana-h9'],
     lineRefs: [],
     objectiveCode: 'kana-opt-review',
@@ -3850,7 +4045,7 @@ export const KANA_STATIONS: Station[] = [
     titleFa: 'دریل آزاد کانا (اختیاری)',
     objectiveFa: 'FEAT-158 — تمرین بازشناسی با فیلتر ردیف/خط، خارج از مسیر اصلی',
     core: false,
-    order: 31,
+    order: 32,
     prerequisites: [],
     lineRefs: [],
     objectiveCode: 'kana-opt-drill',

@@ -135,6 +135,86 @@ describe('TL-14 gates — the golden rule is mechanical (mutation fixtures)', ()
     expect(v.some((x) => x.includes('MCQ-THREE') && x.includes('ex-kana-h4-lis-1'))).toBe(true);
   });
 
+  /*
+   * TASK-HANASO-20 (PHASE 3.6) — DERIVED-GLYPH-SHOWN mutation fixtures: the
+   * audit's untaught-form findings (katakana derivatives, ぴ/ぼ, the k12 foreign
+   * promise) must be mechanically reproducible. Each mutation below re-creates
+   * the PRE-fix content by deleting the introduction block/items this branch
+   * added; the gate must then flag the audit's exact findings.
+   */
+  it('DERIVED-GLYPH-SHOWN: deleting the katakana-small intro flags ジャパン/プレゼント uses (audit items 10/11)', () => {
+    const v = violationsOf(
+      mutatedChapter((ch) => {
+        const k6 = ch.stations.find((s) => s.slug === 'stn-kana-k6')!;
+        k6.blocks = k6.blocks.filter((b) => b.id !== 'blk-stn-kana-k6-prereq-derived');
+      }),
+    );
+    // ジャパン (rd-stn-kana-k6-3) uses ャ + パ; プレゼント (rd-stn-kana-k6-1) uses ゼ + プ
+    expect(v.some((x) => x.includes('DERIVED-GLYPH-SHOWN') && x.includes('rd-stn-kana-k6-3'))).toBe(true);
+    expect(v.some((x) => x.includes('DERIVED-GLYPH-SHOWN') && x.includes('rd-stn-kana-k6-1'))).toBe(true);
+    expect(v.some((x) => x.includes('derived form ャ'))).toBe(true);
+    expect(v.some((x) => x.includes('derived form パ'))).toBe(true);
+    expect(v.some((x) => x.includes('derived form ゼ'))).toBe(true);
+    expect(v.some((x) => x.includes('derived form プ'))).toBe(true);
+  });
+
+  it('DERIVED-GLYPH-SHOWN: deleting the k5 derived intro flags バス/ビル/ピザ uses (audit items 7-9)', () => {
+    const v = violationsOf(
+      mutatedChapter((ch) => {
+        const k5 = ch.stations.find((s) => s.slug === 'stn-kana-k5')!;
+        k5.blocks = k5.blocks.filter((b) => b.id !== 'blk-stn-kana-k5-prereq-derived');
+      }),
+    );
+    expect(v.some((x) => x.includes('DERIVED-GLYPH-SHOWN') && x.includes('rd-stn-kana-k5-0'))).toBe(true);
+    expect(v.some((x) => x.includes('DERIVED-GLYPH-SHOWN') && x.includes('rd-stn-kana-k5-4'))).toBe(true);
+    expect(v.some((x) => x.includes('derived form バ'))).toBe(true);
+    expect(v.some((x) => x.includes('derived form ビ'))).toBe(true);
+    expect(v.some((x) => x.includes('derived form ピ'))).toBe(true);
+    expect(v.some((x) => x.includes('derived form ザ'))).toBe(true);
+  });
+
+  it('DERIVED-GLYPH-SHOWN: deleting the h15 ぴ/ぼ first-look flags the listening distractors (audit items 4/5)', () => {
+    const v = violationsOf(
+      mutatedChapter((ch) => {
+        const h15 = ch.stations.find((s) => s.slug === 'stn-kana-h15')!;
+        const prereq = h15.blocks.find((b) => b.id === 'blk-stn-kana-h15-prereq');
+        if (prereq?.kind !== 'rule-prereq') throw new Error('fixture block missing');
+        prereq.items = prereq.items.filter((it) => !it.glyph || !['ぴ', 'ぼ', 'ぽ'].includes(it.glyph));
+      }),
+    );
+    expect(v.some((x) => x.includes('DERIVED-GLYPH-SHOWN') && x.includes('derived form ぴ'))).toBe(true);
+    expect(v.some((x) => x.includes('DERIVED-GLYPH-SHOWN') && x.includes('derived form ぼ'))).toBe(true);
+  });
+
+  it('DERIVED-GLYPH-SHOWN: a foreign-small use before the k12-foreign station is flagged (BUG-005 regression)', () => {
+    const v = violationsOf(
+      mutatedChapter((ch) => {
+        // simulate the pre-fix k12: an example word using ァ before any introduction
+        const k12 = ch.stations.find((s) => s.slug === 'stn-kana-k12')!;
+        k12.blocks = k12.blocks.filter((b) => b.id !== 'blk-stn-kana-k12-foreign' && b.id !== 'blk-stn-kana-kf-warmup');
+        // and drop the k12-foreign station entirely (the audit's shipped state)
+        ch.stations = ch.stations.filter((s) => s.slug !== 'stn-kana-k12-foreign');
+        // put a foreign-combo example into k12 like the old hollow content
+        const reading = k12.blocks.find((b) => b.id === 'blk-stn-kana-k12-reading');
+        if (reading?.kind !== 'example-set') throw new Error('fixture example-set missing');
+        reading.examples.push({
+          id: 'rd-stn-kana-k12-foreign-mut',
+          role: 'reading',
+          ja: 'ファイル',
+          reading: 'فایل',
+          fa: 'فایل',
+          whyFa: 'mutation fixture',
+        });
+      }),
+    );
+    expect(v.some((x) => x.includes('DERIVED-GLYPH-SHOWN') && x.includes('derived form ァ') && x.includes('rd-stn-kana-k12-foreign-mut'))).toBe(true);
+  });
+
+  it('DERIVED-GLYPH-SHOWN: the REAL chapter is clean (positive fixture — all 16 audit findings fixed)', () => {
+    const v = violationsOf(chapter);
+    expect(v.filter((x) => x.includes('DERIVED-GLYPH-SHOWN'))).toEqual([]);
+  });
+
   it('PASSIVE-RUN: three consecutive receptive slides are rejected (audit S1/S4)', () => {
     const v = violationsOf(
       mutatedChapter((ch) => {
