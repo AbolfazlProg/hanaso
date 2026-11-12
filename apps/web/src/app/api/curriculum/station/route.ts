@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fail, ok } from '@/modules/shared';
 import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
-import { resolveLearnerIdFromRequest } from '@/lib/learner/server';
+import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import {
   applyStationEvent,
@@ -30,8 +30,10 @@ import type { Chapter } from '@/modules/curriculum/types';
  *   (viewed / task / threshold) before flipping, then folds the chapter aggregate.
  *
  * DEV-ONLY auth note: userId resolves to the per-browser learner id
- * (hanaso_lid cookie — TASK-LEARNING-08/#109); poc-user remains only as the
- * no-cookie fallback until better-auth (M1).
+ * (hanaso_lid cookie — TASK-LEARNING-08/#109; minted by src/middleware.ts on
+ * the first response, TASK-HANASO-20). A request with NO valid cookie resolves
+ * to the read-only GUEST scope: every state-changing action below rejects it
+ * (401 learner/no_identity) — never a shared account, never a silent write.
  */
 export const dynamic = 'force-dynamic';
 
@@ -153,6 +155,22 @@ export async function POST(req: Request) {
   }
   const payload = parsed.data;
   const userId = resolveLearnerIdFromRequest(req);
+  /*
+   * TASK-HANASO-20 (BUG-001 remediation): a cookie-less client must never
+   * write into a shared store. With the middleware every real request carries
+   * a per-browser id; the GUEST scope only survives for bypassed paths and
+   * direct handler calls — all POST actions here are state-changing, so a
+   * uniform 401 with the Persian cause is the honest answer.
+   */
+  if (userId === GUEST_LEARNER_ID) {
+    return NextResponse.json(
+      fail({
+        code: 'learner/no_identity',
+        message: 'شناسهٔ زبان‌آموز یافت نشد — کوکی «hanaso_lid» باید توسط مرورگر پذیرفته شود.',
+      }),
+      { status: 401, headers: { 'cache-control': 'no-store' } },
+    );
+  }
 
   let bundle;
   try {
@@ -398,12 +416,28 @@ export async function POST(req: Request) {
       (slug) => !prereqStates.has(slug) || prereqStates.get(slug)!.status === 'in_progress',
     );
     if (unsatisfied.length > 0) {
+      /*
+       * TASK-HANASO-20 (BUG-004 remediation): the 409 now TELLS the learner what
+       * is missing, in Persian, with the ordered prerequisite list (slug +
+       * titleFa) in `details.prerequisites` so the client can link straight to
+       * the first unmet lesson — never a bare "try again" dead end again.
+       */
+      const prerequisites = unsatisfied
+        .map((slug) => {
+          const st = bundle.chapter.stations.find((s) => s.slug === slug);
+          return { slug, titleFa: st?.titleFa ?? slug, order: st?.order ?? Number.MAX_SAFE_INTEGER };
+        })
+        .sort((a, b) => a.order - b.order)
+        .map(({ slug, titleFa }) => ({ slug, titleFa }));
       return NextResponse.json(
         fail({
           code: 'station/prerequisites_not_met',
-          message: `station prerequisites not walked: ${unsatisfied.join(', ')}`,
+          message: `برای ثبت این درس، ابتدا باید این درس‌ها کامل شوند: ${prerequisites
+            .map((p) => `«${p.titleFa}»`)
+            .join(' و ')}`,
+          details: { prerequisites },
         }),
-        { status: 409 },
+        { status: 409, headers: { 'cache-control': 'no-store' } },
       );
     }
   }

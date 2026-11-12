@@ -1,14 +1,16 @@
 /**
- * HANASO — Learner identity tests (TASK-LEARNING-08 / WP-5 — #109).
+ * HANASO — Learner identity tests (TASK-LEARNING-08 / WP-5 — #109;
+ * TASK-HANASO-20 — the poc-user fallback is retired).
  *
- * The identity seam must be strict: a malformed cookie value must NEVER become
- * a progress key (all visitors collapsing into one store is exactly the bug
- * being fixed) — it degrades to the documented poc-user fallback instead.
+ * The identity seam must be strict: a malformed or absent cookie value must
+ * NEVER become a progress key and never resolve another visitor's store —
+ * it degrades to the read-only GUEST scope instead (empty honest state,
+ * writes rejected 401 at the API seam).
  */
 import { describe, expect, it, vi } from 'vitest';
 
 import { isLearnerId } from '@/lib/learner/identity';
-import { LEARNER_COOKIE_NAME, resolveLearnerIdFromRequest } from '@/lib/learner/server';
+import { GUEST_LEARNER_ID, LEARNER_COOKIE_NAME, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
 
 const VALID = '11111111-2222-3333-4444-555555555555';
@@ -52,14 +54,17 @@ describe('resolveLearnerIdFromRequest', () => {
     expect(id).toBe(VALID);
   });
 
-  it('falls back to the documented poc-user when the cookie is absent', () => {
-    expect(resolveLearnerIdFromRequest(reqWithCookie(null))).toBe(POC_DEFAULT_USER_ID);
-    expect(resolveLearnerIdFromRequest(reqWithCookie('other=thing'))).toBe(POC_DEFAULT_USER_ID);
+  it('degrades to the GUEST scope when the cookie is absent — never the shared poc-user (TASK-HANASO-20 / BUG-001)', () => {
+    expect(resolveLearnerIdFromRequest(reqWithCookie(null))).toBe(GUEST_LEARNER_ID);
+    expect(resolveLearnerIdFromRequest(reqWithCookie(null))).not.toBe(POC_DEFAULT_USER_ID);
+    expect(resolveLearnerIdFromRequest(reqWithCookie('other=thing'))).toBe(GUEST_LEARNER_ID);
   });
 
-  it('falls back on a MALFORMED learner cookie (never trusts it as a key)', () => {
-    expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=not-a-uuid`))).toBe(POC_DEFAULT_USER_ID);
-    expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=`))).toBe(POC_DEFAULT_USER_ID);
+  it('degrades to the GUEST scope on a MALFORMED learner cookie (never trusts it as a key)', () => {
+    expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=not-a-uuid`))).toBe(GUEST_LEARNER_ID);
+    expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=`))).toBe(GUEST_LEARNER_ID);
+    // the retired shared id must never resurface through any path
+    expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=poc-user`))).toBe(GUEST_LEARNER_ID);
   });
 });
 
@@ -79,25 +84,27 @@ vi.mock('next/headers', () => ({
 }));
 
 describe('resolveLearnerId (RSC seam — next/headers jar)', () => {
-  it('resolves the REAL cookie value, not the poc-user fallback (HANASO-16 regression)', async () => {
+  it('resolves the REAL cookie value, not the guest scope (HANASO-16 regression)', async () => {
     jar.value = VALID;
     const { resolveLearnerId } = await import('@/lib/learner/server');
     const id = await resolveLearnerId();
     expect(id).toBe(VALID);
-    expect(id).not.toBe(POC_DEFAULT_USER_ID);
+    expect(id).not.toBe(GUEST_LEARNER_ID);
     jar.value = undefined;
   });
 
-  it('falls back to poc-user only when the cookie is absent', async () => {
+  it('degrades to the GUEST scope only when the cookie is absent — never poc-user (TASK-HANASO-20 / BUG-001)', async () => {
     jar.value = undefined;
     const { resolveLearnerId } = await import('@/lib/learner/server');
-    expect(await resolveLearnerId()).toBe(POC_DEFAULT_USER_ID);
+    const id = await resolveLearnerId();
+    expect(id).toBe(GUEST_LEARNER_ID);
+    expect(id).not.toBe(POC_DEFAULT_USER_ID);
   });
 
-  it('falls back to poc-user on a malformed cookie value (never trusts it as a key)', async () => {
+  it('degrades to the GUEST scope on a malformed cookie value (never trusts it as a key)', async () => {
     jar.value = 'not-a-uuid';
     const { resolveLearnerId } = await import('@/lib/learner/server');
-    expect(await resolveLearnerId()).toBe(POC_DEFAULT_USER_ID);
+    expect(await resolveLearnerId()).toBe(GUEST_LEARNER_ID);
     jar.value = undefined;
   });
 });

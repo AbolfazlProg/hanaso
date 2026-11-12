@@ -360,6 +360,13 @@ export const fa = {
     completionFailedBody:
       'پیشرفت تو از دست نرفته — فقط ثبتِ پایانی روی سرور انجام نشد. اتصال اینترنت را بررسی کن و دوباره تلاش کن.',
     completionRetry: 'تلاش دوباره برای ثبت',
+    /* ---- TASK-HANASO-20 (BUG-004) — the 409 now explains itself: the server
+     * says WHICH prerequisites are missing; the runner links straight to the
+     * first unmet lesson instead of a dead retry loop. */
+    completionPrereqTitle: 'این درس هنوز قابل ثبت نیست',
+    completionPrereqBody:
+      'برای ثبت این درس، ابتدا باید درس‌های پیش‌نیازش کامل شوند — ترتیب یادگیری حفظ می‌شود.',
+    completionPrereqGo: 'رفتن به درس پیش‌نیاز',
     /* ---- TASK-LEARNING-10 §5 — honest short note when the sound is unavailable */
     audioUnavailableShort: 'صوت در دسترس نیست',
     playLine: 'پخش صدای این خط',

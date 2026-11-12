@@ -315,9 +315,19 @@ export function StationRunner(props: StationRunnerProps) {
    * swallowed a failed/aborted `complete` POST (silent dead button + unhandled
    * rejection — live-reproduced by aborting the network). The score of the
    * failed attempt is kept so the retry re-submits exactly what was earned.
+   *
+   * TASK-HANASO-20 (BUG-004): when the server rejects with 409
+   * `station/prerequisites_not_met` the failure is STRUCTURED — the learner
+   * sees WHICH lessons must be completed first and gets a direct link to the
+   * first unmet one. The generic retry stays only for network/5xx failures
+   * (retrying a 409 without walking the prerequisites would loop forever).
    */
   const [completionFailed, setCompletionFailed] = useState(false);
   const completionFailedRef = useRef(false);
+  const [completionFailure, setCompletionFailure] = useState<{
+    kind: 'prerequisites';
+    prerequisites: { slug: string; titleFa: string }[];
+  } | null>(null);
   /**
    * Issue #102: earned exercise results per block id — they live OUTSIDE the
    * current step, so stepping back (and forward again) never loses them. A
@@ -610,12 +620,38 @@ export function StationRunner(props: StationRunnerProps) {
         setCompleted(res.ok);
         if (res.ok) {
           setCompletionFailed(false);
+          setCompletionFailure(null);
           clearWalkSnapshot(chapterSlug, station.slug); // walk done — no stale resume
         } else {
           // TL-13 (A-3): honest failure (409 criterion/prereq, 5xx, offline) — the
           // learner sees WHY nothing happened and can retry in place.
+          // TASK-HANASO-20 (BUG-004): a 409 prerequisites rejection carries the
+          // ordered prerequisite list in `error.details.prerequisites` — surface
+          // it structurally so the panel links to the first unmet lesson.
           completionFailedRef.current = true;
           setCompletionFailed(true);
+          setCompletionFailure(null);
+          try {
+            const body = (await res.clone().json()) as {
+              error?: { code?: string; details?: { prerequisites?: { slug: string; titleFa?: string }[] } };
+            };
+            if (
+              res.status === 409 &&
+              body?.error?.code === 'station/prerequisites_not_met' &&
+              Array.isArray(body.error.details?.prerequisites) &&
+              body.error.details.prerequisites.length > 0
+            ) {
+              setCompletionFailure({
+                kind: 'prerequisites',
+                prerequisites: body.error.details.prerequisites.map((p) => ({
+                  slug: p.slug,
+                  titleFa: p.titleFa ?? p.slug,
+                })),
+              });
+            }
+          } catch {
+            /* unparseable body → generic failure path (retry) */
+          }
         }
       } catch {
         // network error / abort — same honest path (never an unhandled rejection)
@@ -985,7 +1021,31 @@ export function StationRunner(props: StationRunnerProps) {
        * lost (local + server anchors keep it), but the learner must know and
        * must have a one-click retry. Never a silent dead button again.
        */}
-      {completionFailed && !completed && !completing && (
+      {completionFailed && !completed && !completing && completionFailure?.kind === 'prerequisites' && (
+        <div
+          role="alert"
+          data-completion-failed="prerequisites"
+          className="flex flex-col gap-2 rounded-md border border-error bg-card p-4"
+        >
+          <p className="text-body font-bold text-error">{fa.curriculum.completionPrereqTitle}</p>
+          <p className="text-small leading-[var(--leading-fa)] text-ink-soft">
+            {fa.curriculum.completionPrereqBody}{' '}
+            {completionFailure.prerequisites.map((p) => `«${p.titleFa}»`).join(' و ')}
+          </p>
+          {/* the FIRST unmet prerequisite in walk order — the recovery path out of
+              the 409 (never a dead retry: retrying cannot walk the prerequisite).
+              A NORMAL entry, not ?mode=review — the prerequisite must actually be
+              walked and registered for the chain to unlock. */}
+          <Link
+            href={`/learn/${chapterSlug}/journey/${completionFailure.prerequisites[0]!.slug}`}
+            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+          >
+            {fa.curriculum.completionPrereqGo}: «{completionFailure.prerequisites[0]!.titleFa}»
+            <ArrowLeft aria-hidden className="size-4" />
+          </Link>
+        </div>
+      )}
+      {completionFailed && !completed && !completing && !completionFailure && (
         <div
           role="alert"
           data-completion-failed
