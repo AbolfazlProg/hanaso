@@ -252,6 +252,18 @@ export type TeachingBlock =
       titleFa: string;
       bodyFa: string;
       structureTable?: { headers: string[]; rows: string[][] };
+      /*
+       * TASK-HANASO-20 (BUG-008): per-row audible representative for the
+       * listening column — a word (usually the compact side of the pair) whose
+       * committed hostword asset plays for that row. Index-aligned with
+       * structureTable.rows; null = no audio for that row yet (the control
+       * hides honestly, never a dead button, never another word's sound).
+       */
+      listenWords?: (string | null)[];
+      /** TASK-HANASO-20 (BUG-008): the honest note when parts of the pair set
+       * have no committed audio yet (e.g. the separate-form clips pending a
+       * VOICEVOX run). */
+      listenNoteFa?: string;
       persianBridgeFa?: string;
       /** Honesty label — the SOV-bridge is our prediction, not proven (station-design §۳). */
       honestyLabelFa?: string;

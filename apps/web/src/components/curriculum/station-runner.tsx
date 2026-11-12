@@ -1558,6 +1558,28 @@ function BlockView({
               </table>
             </div>
           )}
+          {/* TASK-HANASO-20 (BUG-008): the listening column gets REAL audio —
+              per-row play controls from the committed hostword registry; a row
+              with no asset renders NO control (honest — the audit found this
+              column text-only although the rule is inherently perceptual). */}
+          {block.listenWords && block.listenWords.length > 0 && (
+            <div data-rule-card-listen className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-small font-bold text-ink-soft">{fa.curriculum.listenColumnLabel}:</span>
+              {block.listenWords.map((word, i) => {
+                if (!word) return null;
+                const urls = exampleAudioByWord?.[word] ?? null;
+                if (!urls) return null;
+                return (
+                  <WordPlayChip key={`${block.id}-listen-${i}`} word={word} urls={urls} />
+                );
+              })}
+              {block.listenNoteFa && (
+                <span className="text-caption text-ink-faint">
+                  <MixedFaJaText text={block.listenNoteFa} />
+                </span>
+              )}
+            </div>
+          )}
           {block.persianBridgeFa && (
             <p className="mt-4 flex items-start gap-2 rounded-md border-s-2 border-s-ai bg-surface-warm p-3 text-body">
               <Sparkles aria-hidden className="mt-0.5 size-4 shrink-0 text-ai" />
@@ -1954,6 +1976,47 @@ function RuleTableView({ table }: { table: { headers: string[]; rows: string[][]
         </tbody>
       </table>
     </div>
+  );
+}
+
+/**
+ * TASK-HANASO-20 (BUG-008) — one row's audible representative in the rule-card
+ * listening column: a compact play chip bound to THAT word's committed asset
+ * (never another word's sound). Renders only when the caller has a resolved
+ * URL pair — hiding is the honest state, decided by the caller.
+ */
+function WordPlayChip({ word, urls }: { word: string; urls: { opus: string; m4a: string } }) {
+  const [playing, setPlaying] = useState(false);
+  const play = useCallback(() => {
+    const el = getCachedAudio(urls.opus);
+    if (!el) return;
+    try {
+      el.pause();
+      el.playbackRate = 1;
+      el.currentTime = 0;
+      el.onended = () => setPlaying(false);
+      el.onerror = () => setPlaying(false);
+      void el
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => setPlaying(false));
+    } catch {
+      setPlaying(false);
+    }
+  }, [urls.opus]);
+  return (
+    <button
+      type="button"
+      onClick={play}
+      disabled={playing}
+      data-rule-card-listen-chip={word}
+      className="flex h-9 items-center gap-1.5 rounded-md border border-ink-faint bg-card px-3 text-small font-bold text-ink transition-colors hover:bg-surface-warm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-60"
+    >
+      <Play aria-hidden className="size-3.5 text-ai" />
+      <span dir="ltr" lang="ja">
+        {word}
+      </span>
+    </button>
   );
 }
 

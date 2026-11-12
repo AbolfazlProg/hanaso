@@ -77,6 +77,17 @@ function exampleWords() {
  */
 const FOREIGN_COMBO_WORDS = ['ファイル', 'ティッシュ', 'ヴァイオリン', 'パーティー'];
 
+/*
+ * TASK-HANASO-20 (BUG-008): the Yōon rule-card listening column needs the
+ * SEPARATE-form clips for the live compact/separate contrast. They are
+ * non-words (teaching artifacts) — synthesized as standalone texts on the
+ * next VPS run; until then the UI plays the compact side only (honest).
+ */
+const YOON_SEPARATE_FORMS = ['きよう', 'しや', 'きや'];
+
+/* TASK-HANASO-20: the k8 chōonpu card's third row (タクシー) — pending asset. */
+const PENDING_CARD_WORDS = ['タクシー'];
+
 // ---------------------------------------------------------------- voicevox + ffmpeg
 async function synth(text) {
   const q = new URLSearchParams({ text, speaker: String(SPEAKER) });
@@ -213,7 +224,7 @@ async function generateAll() {
   writeFileSync(path.join(KANA_DIR, 'manifest.json'), JSON.stringify(kanaManifest, null, 2) + '\n');
 
   // 2. host words + example words — ONE per-word registry
-  const words = [...new Set([...hostWords(), ...exampleWords(), ...FOREIGN_COMBO_WORDS])].sort();
+  const words = [...new Set([...hostWords(), ...exampleWords(), ...FOREIGN_COMBO_WORDS, ...YOON_SEPARATE_FORMS, ...PENDING_CARD_WORDS])].sort();
   const hostManifest = { generatedBy: GENERATED_BY, format: 'voicevox-opus-m4a', entries: {} };
   for (const word of words) {
     const wav = normTo(master(await synth(word)));

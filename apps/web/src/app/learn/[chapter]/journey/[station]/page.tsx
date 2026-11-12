@@ -184,6 +184,16 @@ export default async function StationPage({
     if (block.kind === 'rule-step' && block.word) {
       exampleAudioByWord[block.word.ja] = hostWordAudioUrls(block.word.ja);
     }
+    /*
+     * TASK-HANASO-20 (BUG-008): the rule-card listening column gets REAL audio —
+     * each row's audible representative resolves through the same per-word
+     * registry (null row = no control, honest).
+     */
+    if (block.kind === 'rule-card' && block.listenWords) {
+      for (const w of block.listenWords) {
+        if (w) exampleAudioByWord[w] = hostWordAudioUrls(w);
+      }
+    }
   }
 
   return (

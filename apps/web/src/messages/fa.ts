@@ -367,6 +367,8 @@ export const fa = {
     completionPrereqBody:
       'برای ثبت این درس، ابتدا باید درس‌های پیش‌نیازش کامل شوند — ترتیب یادگیری حفظ می‌شود.',
     completionPrereqGo: 'رفتن به درس پیش‌نیاز',
+    /* TASK-HANASO-20 (BUG-008) — the rule-card listening column label. */
+    listenColumnLabel: 'شنیدن',
     /* ---- TASK-LEARNING-10 §5 — honest short note when the sound is unavailable */
     audioUnavailableShort: 'صوت در دسترس نیست',
     playLine: 'پخش صدای این خط',

@@ -47,6 +47,9 @@ export type ClientTeachingBlock =
       titleFa: string;
       bodyFa: string;
       structureTable?: { headers: string[]; rows: string[][] };
+      /* TASK-HANASO-20 (BUG-008) — the listening column's per-row audio binding. */
+      listenWords?: (string | null)[];
+      listenNoteFa?: string;
       persianBridgeFa?: string;
       honestyLabelFa?: string;
     }
