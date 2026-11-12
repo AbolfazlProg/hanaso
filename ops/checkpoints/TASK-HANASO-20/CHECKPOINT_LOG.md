@@ -47,7 +47,7 @@ Payload فارسی + `details.prerequisites` مرتب + پنل ساختاریا�
 
 - پین updater → 1.0.0-hanaso20-r01 @ 2574788c (branch fix/TASK-HANASO-20-onboarding).
 - deploy05 fixture به هدف واقعی همگام شد؛ drill اجرا شد (نتیجه در RELEASE_VALIDATION).
-- OWNER-COMMAND v11: R=SHA کامییت ابزار (الگوی self-pin با کامییت بعدی، طبق HANASO-18)، W=03ee6e74… (bootstrap دست‌نخورده)، D=2574788c.
+- OWNER-COMMAND v11: R=5870eaf3، W=d4736bd8… (bootstrap defaults هم به هدف v11 پیوست — P0 drill همین را گرفت و رفع شد)، D=2574788c. **drill deploy05: 100/100.**
 - **Deploy واقعی: انجام نشد** — دستور مالک روی VPS (دسترسی/حقوق این Sandbox کافی نیست و قواعد حفاظت زیرساخت ممنوعش می‌کند). Bundle لازم نیست (repo public؛ شاخه پوش شد).
 
 ## PHASE 8 — همین فایل + ۱۳ سند دیگر + شواهد ✅

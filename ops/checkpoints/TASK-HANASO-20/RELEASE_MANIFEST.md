@@ -8,8 +8,8 @@
 | --- | --- |
 | Target release | `1.0.0-hanaso20-r01` @ `2574788c36521cec6ac0673488b769e77a8ab982` |
 | Target branch | `fix/TASK-HANASO-20-onboarding` (pushed to origin) |
-| Deploy tooling | this commit (see OWNER-COMMAND v11 `R=` — the self-referential pin; verified by the deploy05 P0 gate) |
-| Bootstrap | `infra/deploy/bootstrap-hanaso.sh` — sha256 `03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035` (unchanged from v10 — file byte-identical) |
+| Deploy tooling | `5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10` (bootstrap default pins joined the v11 target; verified by deploy05 P0 — OWNER-COMMAND v11 `R=` points here) |
+| Bootstrap | `infra/deploy/bootstrap-hanaso.sh` — sha256 `d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073` (default pins joined the v11 target — content change, hash re-pinned everywhere) |
 | Smoke | `scripts/smoke.sh` at the tooling commit must match the target's app expectations (deploy05 P0 checks this) |
 
 ## Commit chain (code)
@@ -23,7 +23,9 @@ f0d6d4d feat(curriculum): P1 — every derived form taught; real k12-foreign sta
 23669b2 feat(audio): P1 — rule-card listening audio (BUG-008)
 d64c810 feat(ux): P2 — Persian 404 (BUG-010)
 2574788 test(e2e): PHASE 5+6 verification — 22/22 E2E + 31/31 responsive  ← TARGET
-(this)   release pin + sandbox drill + OWNER-COMMAND v11                  ← TOOLING
+9d75279 docs(ops)+deploy: release pin v11 + sandbox drill sync + full checkpoint
+5870eaf fix(deploy): bootstrap default pins join the v11 target (drill P0)  ← TOOLING R
+(this)   re-pin R/W in OWNER-COMMAND (self-referential pattern, as HANASO-18)
 ```
 
 ## Verification at the target
@@ -32,6 +34,7 @@ d64c810 feat(ux): P2 — Persian 404 (BUG-010)
 - 22/22 browser E2E (local QA instance, in-memory stores) — `screenshots/e2e/`
 - 31/31 responsive + 0 JS errors — `screenshots/responsive/`
 - Production image build OK (middleware registered); served + verified on :3111
+- **Installer sandbox drill: DEPLOY-05 100/100** (P0..P12 + KOTODAMA/TLS/isolation sweep)
 
 ## Deliberate scope notes
 
