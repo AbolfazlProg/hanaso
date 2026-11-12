@@ -1,43 +1,48 @@
-HANASO — OWNER ONE-COMMAND UPDATE (v10)
-TASK-HANASO-17 · 2026-11-12 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
+HANASO — OWNER ONE-COMMAND UPDATE (v11)
+TASK-HANASO-20 · 2026-11-13 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
 
 WHAT THIS IS
   The single copy-paste command that installs or updates HANASO on the VPS
   (run as root). No GitHub Token, no password, no Deploy Key — the repository
   is public and everything arrives over anonymous HTTPS.
 
-WHAT'S NEW IN v10 (HANASO-17)
-  1. The release bundles EVERYTHING from 1.0.0-hanaso16-r01 (the progressive
-     learning journey, live in production since 2026-11-11) PLUS the new
-     unified daily experience: / is now a real LEARNER HOME — a quiet,
-     professional dashboard that answers "what do I do today?" with ONE
-     primary CTA resolved from real progress (start / continue / restart-after-
-     absence / next lesson / mastery gate), a secondary "next new lesson" card,
-     an honest review line (NO fake counts — the FSRS engine is honestly not
-     integrated yet), and a compact link to the learning map.
-  2. MAIN NAVIGATION: desktop top bar + mobile bottom tab bar (خانه · مسیر
-     یادگیری) on top-level pages only — lessons/assessments stay immersive.
-  3. COMPLETED LESSONS ARE ALWAYS REPLAYABLE: clicking a completed row in the
-     map opens the lesson FROM THE TOP in review mode (?mode=review) — no more
-     "completed" wall. Nothing re-registers: no duplicate completion, no
-     duplicate rewards, mastery/FSRS untouched.
-  4. LESSON END, FIXED: exactly ONE CTA — «پایان درس و بازگشت به مسیر» —
-     back to the SAME map section (?s=). The next lesson is shown as a text
-     line, never auto-opened.
-  5. TIME-BOXED RESUME: a half-finished lesson's resume pointer expires after
-     7 days without meaningful activity (a plain refresh does NOT extend it);
-     the CTA becomes «شروع دوبارهٔ درس» with a neutral notice. Only the walk
-     POSITION expires — completed lessons, history, mastery, FSRS data are
-     never touched. One additive migration (0003: station_progress.
-     last_activity_at); no seed change; full backward compatibility.
+WHAT'S NEW IN v11 (HANASO-20)
+  The onboarding-recovery release — every fix from the TASK-HANASO-19 audit
+  (branch audit/TASK-HANASO-19) turned into real code, tests and browser
+  verification:
+  1. FIRST-VISIT FIXED (audit BUG-001/002, Critical/High): the server never
+     renders another visitor's progress again. A Next.js middleware mints the
+     per-browser learner id on the VERY FIRST response (Set-Cookie + the same
+     render resolves it); a cookie-less request degrades to a read-only GUEST
+     scope (honest empty state) and every state-changing API call rejects it
+     (401) — the shared poc-user fallback is retired. The first CTA now goes
+     to the FIRST lesson (h0), completion registers, refresh keeps it.
+  2. THE 409 EXPLAINS ITSELF (BUG-004): a rejected completion now shows WHY in
+     Persian — «برای ثبت این درس، ابتدا باید این درس‌ها کامل شوند» — plus a
+     one-click link to the first unmet prerequisite (ordered), never a dead
+     retry. The API payload carries details.prerequisites.
+  3. KANA CONTENT: きょう standardized to «کیوو» (+ おおさか/えき/がくせい/
+     がっこう) with the TRANSCRIPT gate now comparing the correct-option label;
+     every katakana derived form (バ ビ ピ ザ ジ ャ ュ ゼ プ パ ボ ペ デ だ ず ぶ …)
+     is explicitly taught before first use (DERIVED-GLYPH-SHOWN CI gate); the
+     k12 foreign-combination station now REALLY teaches ファ/ティ/ヴ (new
+     station stn-kana-k12-foreign — 32 stations); 23 decode exercises carry
+     differentiated first feedback + per-distractor rationales (rendered in
+     the UI); the Yōon rule-card listening column plays real committed audio;
+     the 404 page is Persian.
+  4. VERIFICATION: 718/718 unit+integration (was 692 — nothing deleted or
+     weakened), EQA 37/37, 22/22 browser E2E on the local QA instance, 31/31
+     responsive (8 viewports × 3 routes + stations + the writing surface at
+     360), zero console errors. Evidence: ops/checkpoints/TASK-HANASO-20/.
 
 PINS (immutable — never drift to "latest")
-  target release : 1.0.0-hanaso17-r01 @ commit 3f41f6ee510e28914934ddc83375a0e1d49405a3
-                   (TASK-HANASO-17 — home dashboard, unified navigation,
-                   lesson replay, one-CTA completion, 7-day resume expiration;
-                   692/692 tests, browser QA 10/10 at 390/768/1440;
-                   includes ALL pending changes: HANASO-16 + TL-14 + TL-13)
-  deploy tooling : commit 1a34414f4ff8f9cdbfb00b17bf70119deb6142f6 (branch hanaso17-home-dashboard)
+  target release : 1.0.0-hanaso20-r01 @ commit 2574788c36521cec6ac0673488b769e77a8ab982
+                   (TASK-HANASO-20 — onboarding recovery + user isolation,
+                   the 409 recovery path, katakana derived-form teaching,
+                   the real k12 foreign station, differentiated feedback,
+                   rule-card audio, Persian 404; 718/718 tests, 22/22 E2E,
+                   31/31 responsive; includes everything from HANASO-17)
+  deploy tooling : commit TOOLING_SHA_PLACEHOLDER_0000000000000000000000000000000000000000 (branch fix/TASK-HANASO-20-onboarding)
   bootstrap file : infra/deploy/bootstrap-hanaso.sh
                    sha256 03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
 
@@ -55,16 +60,16 @@ raw 200 only on 185.199.108.133, SSL timeouts on the other three raw IPs):
 
 THE COMMAND — copy this block and paste it whole into the VPS shell as root
 (it is a multi-line heredoc — safe against SSH paste line-breaking, unlike the
-old 2.7KB single-line bash -c; paste it INCLUDING the closing HANASO-V10 line):
+old 2.7KB single-line bash -c; paste it INCLUDING the closing HANASO-V11 line):
 
-bash -s -- <<'HANASO-V10'
+bash -s -- <<'HANASO-V11'
 set -euo pipefail
 H=AbolfazlProg/hanaso
 P=infra/deploy/bootstrap-hanaso.sh
-R=1a34414f4ff8f9cdbfb00b17bf70119deb6142f6
+R=TOOLING_SHA_PLACEHOLDER_0000000000000000000000000000000000000000
 W=03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
-D=3f41f6ee510e28914934ddc83375a0e1d49405a3
-T=/tmp/hanaso-bootstrap-v10.sh
+D=2574788c36521cec6ac0673488b769e77a8ab982
+T=/tmp/hanaso-bootstrap-v11.sh
 
 echo "[hanaso] 1/3  download bootstrap (ref $R) via api.github.com"
 GOT=""
@@ -94,18 +99,18 @@ echo "[hanaso]    bootstrap delivered via ${GOT}"
 echo "[hanaso] 2/3  verify SHA-256 — nothing runs unless it matches"
 echo "$W  $T" | sha256sum -c -
 
-echo "[hanaso] 3/3  start installer — deploy target: $D (1.0.0-hanaso17-r01)"
+echo "[hanaso] 3/3  start installer — deploy target: $D (1.0.0-hanaso20-r01)"
 HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T" "$@"
-HANASO-V10
+HANASO-V11
 
 OPTIONAL SUBCOMMANDS (add the word to the FIRST line of the same block):
-  bash -s -- status <<'HANASO-V10'     # read-only status report (all three health tiers)
-  bash -s -- rollback <<'HANASO-V10'   # roll back to the previous image (DB untouched)
-  (as root; with sudo prefix the whole first line: sudo bash -s -- status <<'HANASO-V10')
+  bash -s -- status <<'HANASO-V11'     # read-only status report (all three health tiers)
+  bash -s -- rollback <<'HANASO-V11'   # roll back to the previous image (DB untouched)
+  (as root; with sudo prefix the whole first line: sudo bash -s -- status <<'HANASO-V11')
 
 VERIFY AFTER THE RUN
   curl -sS https://learn.kotodama.ir/api/health
-  expected: {"ok":true,...,"version":"1.0.0-hanaso17-r01","commit":"3f41f6ee..."}
+  expected: {"ok":true,...,"version":"1.0.0-hanaso20-r01","commit":"2574788..."}
 
 FULL OWNER GUIDE (Persian, same branch)
   docs/deployment/OWNER-ONE-COMMAND-UPDATE.fa.md

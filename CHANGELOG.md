@@ -307,3 +307,18 @@
 ### شناخته‌شده/محدودیت‌ها
 
 - VPS در دسترس نیست (BLOCKER-F02) · DNS `hanaso.ir` از محیط Agent قابل‌راستی‌آزمایی نبود (BLOCKER-F04) · محافظت شاخهٔ main نیازمند GitHub Pro است (BLOCKER-F07). نکتهٔ مثبت: Actions اجرا و job «verify» کاملاً سبز شد (رن 41286578531) — نگرانی بیلینگ برای این ریپو برقرار نبود و پس از اصلاح، هر دو job (verify + image→GHCR) در رن‌های 41287442815 و 41289890549 سبز شدند.
+
+## 2026-11-13 — TASK-HANASO-20 · v11 · 1.0.0-hanaso20-r01 @ 2574788c3652
+
+The onboarding-recovery release (audit TASK-HANASO-19 → real fixes):
+- P0 first-visit identity: learner-id middleware (first-response mint),
+  read-only GUEST scope, shared poc-user fallback retired; cookie-less writes 401
+- P0 409 recovery: Persian cause + ordered prerequisite link + details payload
+- きょう→کیوو (+ 4 more words) with the TRANSCRIPT gate comparing option labels
+- katakana derived forms taught before first use (DERIVED-GLYPH-SHOWN gate);
+  NEW station stn-kana-k12-foreign (real ファ/ティ/ヴ teaching; 32 stations)
+- differentiated decode feedback + per-distractor rationales (server+UI)
+- rule-card listening column: real audio chips (honest nulls where no asset)
+- Persian 404; YOON_SEPARATE_FORMS/PENDING_CARD_WORDS in the VOICEVOX gen list
+- 718/718 tests (+26), EQA 37/37, 22/22 E2E, 31/31 responsive — evidence in
+  ops/checkpoints/TASK-HANASO-20/

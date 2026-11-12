@@ -20,11 +20,12 @@
 #     - docker/curl/df are the mock-bin stubs (run-deploy04.sh mechanics), so the
 #       updater runs its REAL control flow against a simulated shared-VPS stack
 #       whose fixture mirrors the REAL production state: live image
-#       ghcr.io/abolfazlprog/hanaso:777fb2b6… (1.0.0-hanaso16-r01 — verified
-#       live via /api/health on 2026-11-12) → target 1.0.0-hanaso17-r01 @
-#       3f41f6ee… (TASK-HANASO-17: home dashboard, unified navigation, lesson
-#       replay, one-CTA completion, 7-day resume expiration — the actual
-#       planned update).
+#       ghcr.io/abolfazlprog/hanaso:3f41f6ee… (1.0.0-hanaso17-r01 — verified
+#       live via /api/health) → target 1.0.0-hanaso20-r01 @
+#       2574788c… (TASK-HANASO-20: onboarding recovery + isolation, the 409
+#       recovery path, katakana derived-form teaching, the real k12 foreign
+#       station, differentiated feedback, rule-card audio, Persian 404 — the
+#       actual planned update).
 #   It never touches real Docker, the real GitHub, the VPS, or KOTODAMA.
 #
 # Scenario map (delivery layer — the updater mechanics are covered by
@@ -62,10 +63,10 @@ KEEP=0
 [ "${1:-}" = "--keep" ] && KEEP=1
 
 # real production constants (fixture mirrors them — verified live 2026-11-12)
-OLD_SHA="777fb2b61afdc9021090d60ad23986c93c7d4d66"
-OLD_VERSION="1.0.0-hanaso16-r01"
-TARGET_SHA_REAL="3f41f6ee510e28914934ddc83375a0e1d49405a3"
-TARGET_VERSION_REAL="1.0.0-hanaso17-r01"
+OLD_SHA="3f41f6ee510e28914934ddc83375a0e1d49405a3"
+OLD_VERSION="1.0.0-hanaso17-r01"
+TARGET_SHA_REAL="2574788c36521cec6ac0673488b769e77a8ab982"
+TARGET_VERSION_REAL="1.0.0-hanaso20-r01"
 OLD_IMAGE="ghcr.io/abolfazlprog/hanaso:${OLD_SHA}"
 NEW_IMAGE="ghcr.io/abolfazlprog/hanaso:${TARGET_SHA_REAL}"
 # The REAL smoke.sh that sits in the owner's deploy dir today (/opt/hanaso):
