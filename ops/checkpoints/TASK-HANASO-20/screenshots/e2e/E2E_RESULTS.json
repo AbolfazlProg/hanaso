@@ -1,0 +1,102 @@
+{
+  "passed": 22,
+  "failed": 0,
+  "results": [
+    {
+      "step": "S1.1 first visit shows the START state",
+      "ok": true
+    },
+    {
+      "step": "S1.1b NO other user’s progress (BUG-001)",
+      "ok": true
+    },
+    {
+      "step": "S1.1c middleware minted a per-browser id",
+      "ok": true,
+      "detail": "8ef4e775-f6f6-4fc0-bf06-c7bbc2d7bd0b"
+    },
+    {
+      "step": "S1.2 CTA targets the FIRST lesson (h0)",
+      "ok": true,
+      "detail": "/learn/kana-foundation-01/journey/stn-kana-h0"
+    },
+    {
+      "step": "S1.3 first lesson walked & completed with NO unjustified error",
+      "ok": true,
+      "detail": "no 4xx/5xx"
+    },
+    {
+      "step": "S1.4 home reflects the user’s OWN progress",
+      "ok": true
+    },
+    {
+      "step": "S1.5 progress survives refresh (same identity)",
+      "ok": true
+    },
+    {
+      "step": "S2.1 QA A sees own progress",
+      "ok": true
+    },
+    {
+      "step": "S2.2 QA B sees NONE of A’s data",
+      "ok": true
+    },
+    {
+      "step": "S2.3 B’s own progress after own walk",
+      "ok": true
+    },
+    {
+      "step": "S2.4 identity switch shows only THAT identity’s data (A≠2 stations)",
+      "ok": true,
+      "detail": "A=9a0dcf12 B=62fcdd5d"
+    },
+    {
+      "step": "S2.5 back on B’s identity → B’s data only",
+      "ok": true
+    },
+    {
+      "step": "S3.1 direct-entry completion rejected with the STRUCTURED panel (the 409 path — [data-station-complete] must NOT appear)",
+      "ok": true
+    },
+    {
+      "step": "S3.2 Persian cause + recovery link shown",
+      "ok": true
+    },
+    {
+      "step": "S3.3 the link targets the FIRST unmet prerequisite (h5)",
+      "ok": true,
+      "detail": "/learn/kana-foundation-01/journey/stn-kana-h5"
+    },
+    {
+      "step": "S3.4 the API 409 carries the Persian message + ordered prerequisites",
+      "ok": true
+    },
+    {
+      "step": "S4.2 differentiated rationale for the picked distractor (BUG-007)",
+      "ok": true,
+      "detail": "«ن» در واژه نیست."
+    },
+    {
+      "step": "S4.1 きょう: «کیو» wrong, «کیوو» correct (BUG-003 — answer-as-taught)",
+      "ok": true
+    },
+    {
+      "step": "S4.3 chips render (headless autoplay may defer the request — render accepted)",
+      "ok": true,
+      "detail": "2 chips"
+    },
+    {
+      "step": "S4.4 k12-foreign actually teaches the foreign combinations (BUG-005)",
+      "ok": true
+    },
+    {
+      "step": "S4.5 Persian 404 (BUG-010)",
+      "ok": true
+    },
+    {
+      "step": "S5.1 zero console/page errors (the deliberate 404-page + 409-test responses excluded)",
+      "ok": true
+    }
+  ],
+  "consoleErrors": []
+}
