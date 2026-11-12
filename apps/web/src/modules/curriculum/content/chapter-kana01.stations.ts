@@ -829,14 +829,14 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h6-step-kyou',
         role: 'notice',
         bodyFa:
-          '«امروز»: «کیو». ょ کوچک به き چسبیده و با آن «یک ضربه» شده است — نوشتنِ این واژه را بعدها می‌آموزی؛ الان فقط اندازه را ببین.',
-        word: { ja: 'きょう', readingFa: 'کیو', fa: 'امروز', highlight: ['ょ'], beats: 2 },
+          '«امروز»: «کیوو». ょ کوچک به き چسبیده و با آن «یک ضربه» شده است — نوشتنِ این واژه را بعدها می‌آموزی؛ الان فقط اندازه را ببین.',
+        word: { ja: 'きょう', readingFa: 'کیوو', fa: 'امروز', highlight: ['ょ'], beats: 2 },
       },
       {
         kind: 'rule-contrast',
         id: 'blk-stn-kana-h6-contrast-kyou',
         titleFa: 'کوچک = فشرده، بزرگ = جدا',
-        a: { ja: 'きょう', readingFa: 'کیو', fa: 'امروز (۲ ضربه)', highlight: ['ょ'], beats: 2 },
+        a: { ja: 'きょう', readingFa: 'کیوو', fa: 'امروز (۲ ضربه)', highlight: ['ょ'], beats: 2 },
         b: {
           ja: 'きよう',
           readingFa: 'کی‌یو',
@@ -851,7 +851,7 @@ export const KANA_STATIONS: Station[] = [
             { id: 'b', label: 'きよう (با よ بزرگ)' },
           ],
           correctOptionId: 'a',
-          revealFa: '«کیو» دو ضربه است (کیو — اُو)؛ «کی‌یو» سه ضربه (کی — یو — اُو). اندازهٔ ゃゅょ همان فشردگی است.',
+          revealFa: '«کیوو» دو ضربه است (کیو — اُو)؛ «کی‌یو» سه ضربه (کی — یو — اُو). اندازهٔ ゃゅょ همان فشردگی است.',
         },
       },
       {
@@ -926,7 +926,7 @@ export const KANA_STATIONS: Station[] = [
           rows: [
             ['きゃ = کیا', 'きや = کی‌یا', 'فشرده: یک ضربه'],
             ['しゃ = شا', 'しや = شی‌یا', 'فشرده: یک ضربه'],
-            ['きょう (امروز) = کیو', 'きよう = کی‌یو', 'معنا فقط در فشرده است'],
+            ['きょう (امروز) = کیوو', 'きよう = کی‌یو', 'معنا فقط در فشرده است'],
           ],
         },
         persianBridgeFa:
@@ -1882,7 +1882,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h13-prereq',
         titleFa: 'پیش‌نیازهای این قاعده',
         items: [
-          { word: 'きょう', readingFa: 'کیو', noteFa: 'ょ کوچک و فشرده را یادت هست؟ (قاعدهٔ یُوئون)' },
+          { word: 'きょう', readingFa: 'کیوو', noteFa: 'ょ کوچک و فشرده را یادت هست؟ (قاعدهٔ یُوئون)' },
           { word: 'がくせい', readingFa: 'گاکوسِی', noteFa: '゛ را یادت هست؟ (قاعدهٔ داکوتن)' },
         ],
       },

@@ -89,6 +89,41 @@ describe('TL-14 gates — the golden rule is mechanical (mutation fixtures)', ()
     expect(v.some((x) => x.includes('TRANSCRIPT-CONSISTENT') && x.includes('いえ'))).toBe(true);
   });
 
+  /*
+   * TASK-HANASO-20 (BUG-003): the shipped きょう contradiction — three teaching
+   * blocks + promptJaReading said «کیو» while the ONLY accepted decode answer
+   * was «کیوو» (answer-as-taught = wrong). The gate now compares the correct
+   * OPTION LABEL with every taught reading, so this class can never ship again.
+   */
+  it('TRANSCRIPT-CONSISTENT: a decode option label disagreeing with the taught reading is rejected (BUG-003)', () => {
+    const v = violationsOf(
+      mutatedChapter((ch) => {
+        const ex = ch.exercises['ex-kana-h6-dec-3']!;
+        // flip the taught reading to the OLD contradictory value
+        if (ex.promptJaReading === undefined) throw new Error('fixture exercise missing');
+        ex.promptJaReading = 'کیو'; // taught/canonical now says کیوو elsewhere + option says کیوو
+      }),
+    );
+    expect(v.some((x) => x.includes('TRANSCRIPT-CONSISTENT') && x.includes('きょう') && x.includes('ex-kana-h6-dec-3'))).toBe(
+      true,
+    );
+  });
+
+  it('TRANSCRIPT-CONSISTENT: the correct-option label of a decode is itself a compared reading (BUG-003, direct)', () => {
+    const v = violationsOf(
+      mutatedChapter((ch) => {
+        const ex = ch.exercises['ex-kana-h6-dec-3']!;
+        if (!ex.options) throw new Error('no options');
+        // swap the correct option label to a DIFFERENT reading — the exercise
+        // key now disagrees with the taught reading of きょう (کیوو)
+        const correct = ex.options.find((o) => o.id === ex.correctOptionId);
+        if (!correct) throw new Error('no correct option');
+        correct.label = '«کیو»';
+      }),
+    );
+    expect(v.some((x) => x.includes('TRANSCRIPT-CONSISTENT') && x.includes('きょう'))).toBe(true);
+  });
+
   it('RULE-LISTENING-SHAPE: a 3-option rule-listening pair is rejected (MCQ gap closed)', () => {
     const v = violationsOf(
       mutatedChapter((ch) => {

@@ -617,6 +617,20 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
         for (const id of b.exerciseIds) {
           const ex = chapter.exercises[id];
           if (ex?.promptJa && ex.promptJaReading) noteReading(ex.promptJa, ex.promptJaReading, ex.id);
+          /*
+           * TASK-HANASO-20 (BUG-003 — the きょう کیو/کیوو contradiction): the
+           * correct OPTION LABEL of a kana-decode exercise is an authored Persian
+           * reading of promptJa — the gate must compare it with every taught
+           * reading of the same word. The old check only looked at
+           * promptJaReading, so a decode option could silently disagree with
+           * three teaching blocks on the same page (answer-as-taught = wrong).
+           * «»-stripped like the persianReadingByKana convention (route.ts).
+           */
+          if (ex && ex.type === 'kana-decode' && ex.promptJa) {
+            const correct = ex.options?.find((o) => o.id === ex.correctOptionId);
+            const label = correct?.label?.replace(/[«»]/g, '').trim();
+            if (label) noteReading(ex.promptJa, label, `${ex.id}/correct-option`);
+          }
         }
       }
     }

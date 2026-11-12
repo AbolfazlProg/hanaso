@@ -984,7 +984,7 @@ export const KANA_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'این واژه را بخوان — راهنمایی: امروز',
     promptJa: 'きょう',
-    promptJaReading: 'کیو',
+    promptJaReading: 'کیوو',
     options: [
       { id: 'a', label: '«کیوون»' },
       { id: 'b', label: '«کیو»' },
@@ -10079,13 +10079,13 @@ export const KANA_EXERCISES: Exercise[] = [
     ],
     correctOptionId: 'a',
     distractorRationaleFa: {
-      b: '「よ» بزرگ است = دو مورا (کی‌یو). برای «کیو» کوچک لازم است.',
+      b: '「よ» بزرگ است = دو مورا (کی‌یو). واژهٔ «امروز» فشرده است — ゃゅょ کوچک لازم است.',
       c: '「や» ردیف دیگری است.',
     },
     feedback: {
-      f1Fa: '«کیو» یک ضربه است؛ کانا باید کوچک باشد.',
+      f1Fa: '«کیوو» با ょ کوچک نوشته می‌شود — «کیو» بخشِ اولش یک ضربه است.',
       f2HintFa: 'شکل کوچکِ «یو» کدام است؟',
-      f3ExplainFa: '「きょう」 = き+ょ+う — ゃゅょ کوچک = یک مورا.',
+      f3ExplainFa: '「きょう」 = きょ+う — ゃゅょ کوچک = یک مورا.',
     },
     assessmentRole: 'practice',
   },
@@ -10106,8 +10106,8 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'این دوتکه است: کی-یو. واژهٔ شنیده‌شده یک‌تکه است.' },
     feedback: {
       f1Fa: '「きょ» و 「きよ» را بلند بگو — فرق در فشردگی است.',
-      f2HintFa: 'شنیده‌شده فشرده است: کیو.',
-      f3ExplainFa: '「きょう」 = «کیو» (امروز) — ゃ/ゅ/ょ کوچک، یک مورا.',
+      f2HintFa: 'شنیده‌شده فشرده است: کیوو.',
+      f3ExplainFa: '「きょう」 = «کیوو» (امروز) — ゃ/ゅ/ょ کوچک، یک مورا.',
     },
     assessmentRole: 'practice',
   },
@@ -10149,7 +10149,7 @@ export const KANA_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'ترتیب را بررسی کن: اول き، بعد ょ کوچک، آخر う.',
       f2HintFa: 'اول き، بعد ょ کوچک، آخر う.',
-      f3ExplainFa: '「きょう」 = き+ょ+う (۳ مورا).',
+      f3ExplainFa: '「きょう」 = きょ+う (۲ مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -10216,13 +10216,13 @@ export const KANA_EXERCISES: Exercise[] = [
     ],
     correctOptionId: 'b',
     distractorRationaleFa: {
-      a: '「よ» بزرگ است — «کی‌یو» می‌شود، «کیو» نه.',
+      a: '「よ» بزرگ است — «کی‌یو» می‌شود، «کیوو» نه.',
       c: 'این فقط «کیو» است — 「う» آخر جا افتاده.',
     },
     feedback: {
       f1Fa: 'به اندازهٔ «یو» نگاه کن: کوچک یا بزرگ؟',
       f2HintFa: 'کوچک = فشرده.',
-      f3ExplainFa: '「きょう» = امروز (۳ مورا).',
+      f3ExplainFa: '「きょう» = امروز (۲ مورا).',
     },
     assessmentRole: 'practice',
   },
