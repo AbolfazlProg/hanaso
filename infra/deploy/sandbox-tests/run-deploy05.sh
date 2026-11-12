@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # =============================================================================
 # run-deploy05.sh — sandbox test driver for the ONE-COMMAND DELIVERY layer (v2)
-# TASK-HANASO-DEPLOY-05 §4 (2026-11-08) · v2 harness for the v10.1 heredoc
+# TASK-HANASO-DEPLOY-05 §4 (2026-11-08) · v2 harness for the v11.1 heredoc
 # block (TASK-HANASO-18, 2026-11-12)
 # =============================================================================
 # WHAT THIS TESTS (and how it stays honest):
 #   The EXACT production command block is extracted from OWNER-COMMAND.txt at
-#   the repository root (the multi-line `bash -s -- <<'HANASO-V10'` heredoc)
+#   the repository root (the multi-line `bash -s -- <<'HANASO-V11'` heredoc)
 #   and executed UNMODIFIED (only its environment is redirected):
 #     - the GitHub download URLs (api.github.com / codeload.github.com — the
-#       two v10 paths; raw was dropped in v10) are served by mock-bin/curl from
+#       two v11 paths; raw was dropped in v10) are served by mock-bin/curl from
 #       the REAL git blobs of a local BARE MIRROR of this repository
 #       (HANASO_SIM_ORIGIN) — so the bootstrap SHA-256 pinned in the command
 #       matches byte-for-byte and the pinned tooling commit resolves;
@@ -32,7 +32,7 @@
 # run-deploy04.sh; here the entrypoint is always the REAL command block):
 #   P0  static safety of the command text (heredoc invocation `bash -s --` +
 #       QUOTED delimiter, R/W/D pins present & repo-consistent, subcommand
-#       passthrough "$@", both v10 paths present, raw paths absent, TLS never
+#       passthrough "$@", both v11 paths present, raw paths absent, TLS never
 #       weakened, no latest/token)
 #   P1  happy path via api.github.com (full end-to-end update to the real pin)
 #   P2  api 403 (rate limit) → codeload fallback (ordering asserted)
@@ -119,10 +119,10 @@ if [ ! -f "${OWNER_CMD_FILE}" ]; then
   echo "FATAL: ${OWNER_CMD_FILE} not found — run from a checkout that includes the DEPLOY-05 docs (branch tip)." >&2
   exit 1
 fi
-# The v10.1 production block: the whole heredoc, first line to delimiter line.
-CMD="$(sed -n "/^bash -s -- <<'HANASO-V10'$/,/^HANASO-V10\$/p" "${OWNER_CMD_FILE}")"
+# The v11.1 production block: the whole heredoc, first line to delimiter line.
+CMD="$(sed -n "/^bash -s -- <<'HANASO-V11'$/,/^HANASO-V11\$/p" "${OWNER_CMD_FILE}")"
 if [ -z "${CMD}" ]; then
-  echo "FATAL: v10.1 heredoc block (bash -s -- <<'HANASO-V10' … HANASO-V10) not found in ${OWNER_CMD_FILE}" >&2
+  echo "FATAL: v11.1 heredoc block (bash -s -- <<'HANASO-V11' … HANASO-V11) not found in ${OWNER_CMD_FILE}" >&2
   exit 1
 fi
 R="$(printf '%s\n' "${CMD}" | grep -oE '^R=[0-9a-f]{40}$' | cut -d= -f2)"
@@ -171,7 +171,7 @@ EOF
 run_ol() { # scenario-dir [subcommand] — run the REAL command block, env redirected.
              # A subcommand (status/rollback) is injected into the FIRST line
              # exactly the way the owner is told to do it in OWNER-COMMAND.txt:
-             #   bash -s -- status <<'HANASO-V10'
+             #   bash -s -- status <<'HANASO-V11'
   local d="$1"; shift
   local sub="${1:-}"
   local runner="${CMD}"
@@ -202,10 +202,10 @@ exit_of() { cat "$1/exit.code" 2>/dev/null || echo 199; }
 # =============================================================================
 section "P0 — static safety of the production command block (no execution)"
 FIRST_LINE="$(printf '%s\n' "${CMD}" | head -1)"
-if [ "${FIRST_LINE}" = "bash -s -- <<'HANASO-V10'" ]; then
-  ok "P0 invocation is the subcommand-capable heredoc (bash -s -- <<'HANASO-V10')"
+if [ "${FIRST_LINE}" = "bash -s -- <<'HANASO-V11'" ]; then
+  ok "P0 invocation is the subcommand-capable heredoc (bash -s -- <<'HANASO-V11')"
 else
-  bad "P0 first line is '${FIRST_LINE}' — want bash -s -- <<'HANASO-V10'"
+  bad "P0 first line is '${FIRST_LINE}' — want bash -s -- <<'HANASO-V11'"
 fi
 if printf '%s\n' "${CMD}" | grep -qF -- 'HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T" "$@"'; then
   ok "P0 executes the verified bootstrap with pinned SHAs and subcommand passthrough (\"\$@\")"

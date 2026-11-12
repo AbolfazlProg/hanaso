@@ -42,7 +42,7 @@ PINS (immutable — never drift to "latest")
                    the real k12 foreign station, differentiated feedback,
                    rule-card audio, Persian 404; 718/718 tests, 22/22 E2E,
                    31/31 responsive; includes everything from HANASO-17)
-  deploy tooling : commit TOOLING_SHA_PLACEHOLDER_0000000000000000000000000000000000000000 (branch fix/TASK-HANASO-20-onboarding)
+  deploy tooling : commit 9d75279009b64542a7c440e6b54af8739433ebb4 (branch fix/TASK-HANASO-20-onboarding)
   bootstrap file : infra/deploy/bootstrap-hanaso.sh
                    sha256 03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
 
@@ -66,7 +66,7 @@ bash -s -- <<'HANASO-V11'
 set -euo pipefail
 H=AbolfazlProg/hanaso
 P=infra/deploy/bootstrap-hanaso.sh
-R=TOOLING_SHA_PLACEHOLDER_0000000000000000000000000000000000000000
+R=9d75279009b64542a7c440e6b54af8739433ebb4
 W=03ee6e740db0860dd1149ca689ea2d84b9634becfc8f6a8e30632bb660770035
 D=2574788c36521cec6ac0673488b769e77a8ab982
 T=/tmp/hanaso-bootstrap-v11.sh
