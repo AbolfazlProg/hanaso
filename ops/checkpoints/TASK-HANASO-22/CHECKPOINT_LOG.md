@@ -5,7 +5,8 @@ Push discipline: after every phase, commit + push to
 
 | CP | Phase | Commit (SHA) | Pushed | Note |
 | --- | --- | --- | --- | --- |
-| CP-00 | Phase 0 audit + branch + initial checkpoints | (pending) | ⬜ | audit findings in CURRENT_STATE.md |
+| CP-00 | Phase 0 audit + branch + initial checkpoints | f523975 | ✅ | audit findings in CURRENT_STATE.md |
+| CP-01 | Phase 1 research (4 docs + KB reuse) | 0d38f49 | ✅ | docs/research/*.md + RESEARCH_PROGRESS.md |
 
 ## CP-00 — Phase 0 audit (2026-11-13)
 
