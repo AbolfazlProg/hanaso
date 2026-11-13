@@ -124,15 +124,27 @@ describe('TL-14 gates — the golden rule is mechanical (mutation fixtures)', ()
     expect(v.some((x) => x.includes('TRANSCRIPT-CONSISTENT') && x.includes('きょう'))).toBe(true);
   });
 
-  it('RULE-LISTENING-SHAPE: a 3-option rule-listening pair is rejected (MCQ gap closed)', () => {
+  /*
+   * TASK-HANASO-21 (BUG-009): the two-alternative (2AFC) shape is RETIRED —
+   * every rule-listening pair now carries a THIRD option from its documented
+   * error family (chance guess 50% → 33%). The conversion test flips: a
+   * 3-option pair is the SHIPPED shape; a 4-option pair (and a 1-option one)
+   * stays rejected — the gate still bounds the shape.
+   */
+  it('RULE-LISTENING-SHAPE: a 4-option rule-listening pair is rejected (HANASO-21/BUG-009 bounds)', () => {
     const v = violationsOf(
       mutatedChapter((ch) => {
         const ex = ch.exercises['ex-kana-h4-lis-1']!;
         if (!ex.options) throw new Error('no options');
-        ex.options.push({ id: 'c', label: 'いえいえ' });
+        ex.options.push({ id: 'd', label: 'いいええ' });
       }),
     );
     expect(v.some((x) => x.includes('MCQ-THREE') && x.includes('ex-kana-h4-lis-1'))).toBe(true);
+  });
+
+  it('RULE-LISTENING-SHAPE: the shipped 3-option pairs validate (the third is from the documented error family)', () => {
+    const v = violationsOf(mutatedChapter(() => {}));
+    expect(v.some((x) => x.includes('MCQ-THREE') && x.includes('lis'))).toBe(false);
   });
 
   /*

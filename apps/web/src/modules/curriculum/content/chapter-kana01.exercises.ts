@@ -9737,9 +9737,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'いえ' },
       { id: 'b', label: 'いいえ' },
-    ],
+      { id: 'c', label: 'いえい' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: '«ایه» بود — دو مورا بدون کشش؛ واژهٔ شنیده‌شده سه موراست.' },
+    distractorRationaleFa: { a: '«ایه» بود — دو مورا بدون کشش؛ واژهٔ شنیده‌شده سه موراست.', c: '«ای-اِ-ی» بود — سه مورا اما با چیدمان دیگر؛ واژهٔ شنیده‌شده «ای-ای-اِ» است.' },
     feedback: {
       f1Fa: 'دوباره پخش کن: آیِ اول کوتاه است یا کشیده؟',
       f2HintFa: 'با انگشت بشمار: سه ضربه = ای-ی-هِ نه، ای-ه.',
@@ -9759,9 +9760,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'いえ' },
       { id: 'b', label: 'いいえ' },
-    ],
+      { id: 'c', label: 'いえい' },
+      ],
     correctOptionId: 'a',
-    distractorRationaleFa: { b: 'این کشیده بود؛ واژهٔ شنیده‌شده کوتاه است.' },
+    distractorRationaleFa: { b: 'این کشیده بود؛ واژهٔ شنیده‌شده کوتاه است.', c: 'سه مورا بود؛ واژهٔ شنیده‌شده دو موراست: «ای-اِ».' },
     feedback: {
       f1Fa: 'دو ضربه یا سه ضربه؟',
       f2HintFa: 'با انگشت همراه بشمار.',
@@ -9894,9 +9896,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'ここ' },
       { id: 'b', label: 'ごご' },
-    ],
+      { id: 'c', label: 'こご' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'این «کوکو» بود — بی‌واک. واژهٔ شنیده‌شده واک‌دار است.' },
+    distractorRationaleFa: { a: 'این «کوکو» بود — بی‌واک. واژهٔ شنیده‌شده واک‌دار است.', c: 'فقط «گو» اول واک‌دار بود؛ واژهٔ شنیده‌شده هر دو واک‌دار است.' },
     feedback: {
       f1Fa: 'دست روی گلو: صامت اول می‌لرزد یا نه؟',
       f2HintFa: 'صدای اول واک‌دار است (گ).',
@@ -9916,9 +9919,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'ここ' },
       { id: 'b', label: 'ごご' },
-    ],
+      { id: 'c', label: 'ごこ' },
+      ],
     correctOptionId: 'a',
-    distractorRationaleFa: { b: 'این واک‌دار بود؛ واژهٔ شنیده‌شده بی‌واک است.' },
+    distractorRationaleFa: { b: 'این واک‌دار بود؛ واژهٔ شنیده‌شده بی‌واک است.', c: '«گو-کو» بود — فقط اولش واک‌دار؛ واژهٔ شنیده‌شده هر دو بی‌واک است.' },
     feedback: {
       f1Fa: 'لرزش گلوی: دارد یا ندارد؟',
       f2HintFa: 'بدون لرزش = か.',
@@ -10098,9 +10102,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'きよう' },
       { id: 'b', label: 'きょう' },
-    ],
+      { id: 'c', label: 'きょ' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'این دوتکه است: کی-یو. واژهٔ شنیده‌شده یک‌تکه است.' },
+    distractorRationaleFa: { a: 'این دوتکه است: کی-یو. واژهٔ شنیده‌شده یک‌تکه است.', c: 'کوتاه بود — فقط «کیو»؛ واژهٔ شنیده‌شده کشیده است: «کیو-اُو».' },
     feedback: {
       f1Fa: '「きょ» و 「きよ» را بلند بگو — فرق در فشردگی است.',
       f2HintFa: 'شنیده‌شده فشرده است: کیوو.',
@@ -10120,9 +10125,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'いしや' },
       { id: 'b', label: 'いしゃ' },
-    ],
+      { id: 'c', label: 'しゃい' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'سه‌تکه است: ای-شی-یا. واژهٔ شنیده‌شده دو موراست.' },
+    distractorRationaleFa: { a: 'سه‌تکه است: ای-شی-یا. واژهٔ شنیده‌شده دو موراست.', c: 'چیدمان برعکس بود: «شا-ای»؛ واژهٔ شنیده‌شده «ای-شا» است.' },
     feedback: {
       f1Fa: 'بشمار: دو ضربه یا سه ضربه؟',
       f2HintFa: 'ای-شا.',
@@ -10256,9 +10262,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'せんせ' },
       { id: 'b', label: 'せんせい' },
-    ],
+      { id: 'c', label: 'せんせえ' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'یک مورای آخر کم دارد — «سِنسِ» واژهٔ ژاپنی نیست.' },
+    distractorRationaleFa: { a: 'یک مورای آخر کم دارد — «سِنسِ» واژهٔ ژاپنی نیست.', c: 'کشش با «اِ» نوشته شد؛ در این واژه کشش با «ی» نوشته می‌شود (え+い).' },
     feedback: {
       f1Fa: 'چهار ضربه بشمار: سِ-ن-سِ-ی.',
       f2HintFa: 'پایان واژه کشیده است.',
@@ -10369,9 +10376,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'がこう' },
       { id: 'b', label: 'がっこう' },
-    ],
+      { id: 'c', label: 'がっこ' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'بدون مکث بود — «گاکو» واژهٔ ژاپنی نیست.' },
+    distractorRationaleFa: { a: 'بدون مکث بود — «گاکو» واژهٔ ژاپنی نیست.', c: 'مورای آخر («اُو») جا افتاده؛ واژهٔ شنیده‌شده چهار موراست.' },
     feedback: {
       f1Fa: 'وسط واژه سکوت/فشار کوتاهی هست یا نیست؟',
       f2HintFa: 'گَک…کو: انسداد را بشنو.',
@@ -10391,9 +10399,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'ざし' },
       { id: 'b', label: 'ざっし' },
-    ],
+      { id: 'c', label: 'さっし' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'بدون فشار بود؛ واژهٔ شنیده‌شده فشار دارد.' },
+    distractorRationaleFa: { a: 'بدون فشار بود؛ واژهٔ شنیده‌شده فشار دارد.', c: 'شروعش بی‌واک بود («ساشّی»)؛ واژهٔ شنیده‌شده واک‌دار است («زاشّی»).' },
     feedback: {
       f1Fa: 'زَش…شی — فشار وسط را بشنو.',
       f2HintFa: 'یک مورای فشار بین دو بخش است.',
@@ -10525,9 +10534,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'さんぼ' },
       { id: 'b', label: 'さんぽ' },
-    ],
+      { id: 'c', label: 'さんほ' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'این «ب» بود (゛). واژهٔ شنیده‌شده «پ» است (゜).' },
+    distractorRationaleFa: { a: 'این «ب» بود (゛). واژهٔ شنیده‌شده «پ» است (゜).', c: 'بدون ゜: «سان-هُ»؛ واژهٔ شنیده‌شده «پ» است.' },
     feedback: {
       f1Fa: '«ب» یا «پ»؟ هر دو را بگو و فرق گوش را ببین.',
       f2HintFa: 'صدای آخر بی‌واکِ محسوس است: پ.',
@@ -10547,9 +10557,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'えんびつ' },
       { id: 'b', label: 'えんぴつ' },
-    ],
+      { id: 'c', label: 'えんひつ' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: '「び» با ゛ است؛ واژهٔ شنیده‌شده ゜ دارد.' },
+    distractorRationaleFa: { a: '「び» با ゛ است؛ واژهٔ شنیده‌شده ゜ دارد.', c: 'بدون ゜: «اِن-هی»؛ واژهٔ شنیده‌شده «پی» است.' },
     feedback: {
       f1Fa: 'وسط واژه: ب یا پ؟',
       f2HintFa: 'اِن-پی-تسو.',
@@ -10616,9 +10627,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'コヒー' },
       { id: 'b', label: 'コーヒー' },
-    ],
+      { id: 'c', label: 'コーヒ' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'کشش اول جا افتاده — «کوهی» نادرست است.' },
+    distractorRationaleFa: { a: 'کشش اول جا افتاده — «کوهی» نادرست است.', c: 'کشش آخر جا افتاده؛ واژهٔ شنیده‌شده دو کشش دارد: «کوو-هیی».' },
     feedback: {
       f1Fa: 'دو جا کشش می‌شنوی یا یک جا؟',
       f2HintFa: 'کوو-هیی.',
@@ -10638,9 +10650,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'ジュス' },
       { id: 'b', label: 'ジュース' },
-    ],
+      { id: 'c', label: 'ジュー' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'بدون کشش بود؛ واژهٔ شنیده‌شده کشیده است.' },
+    distractorRationaleFa: { a: 'بدون کشش بود؛ واژهٔ شنیده‌شده کشیده است.', c: 'مورای آخر («سو») جا افتاده؛ واژهٔ شنیده‌شده سه موراست.' },
     feedback: {
       f1Fa: 'جوو-س: یک ضربهٔ اضافه برای «او».',
       f2HintFa: 'کشش = ー.',
@@ -10875,9 +10888,10 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'フアイル' },
       { id: 'b', label: 'ファイル' },
-    ],
+      { id: 'c', label: 'ヴァイル' },
+      ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: '「ア» بزرگ یعنی جدا — فُو/آ/ی/رُ (۴ ضربه). شنیده‌شده فشرده بود: ファ یک ضربه.' },
+    distractorRationaleFa: { a: '「ア» بزرگ یعنی جدا — فُو/آ/ی/رُ (۴ ضربه). شنیده‌شده فشرده بود: ファ یک ضربه.', c: 'با «وُ» شروع شد (ヴァ — همان درس)؛ واژهٔ شنیده‌شده با «فُ» است (ファ).' },
     feedback: {
       f1Fa: '「ファ» و 「フア» را بلند بگو — فرق در فشردگی است.',
       f2HintFa: 'شنیده‌شده فشرده است: فا.',

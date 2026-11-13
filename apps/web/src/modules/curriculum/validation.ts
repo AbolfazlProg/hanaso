@@ -29,7 +29,7 @@ const RULES = {
   prereqOrder: 'PREREQ-ORDER (island O1 — prerequisites precede dependents)',
   duplicateSlug: 'SLUG-UNIQUE',
   optionalNoGate: 'OPTIONAL-NO-GATE (island §۷-۱ — optional never a prerequisite of core)',
-  mcqThree: 'MCQ-THREE (QUESTION §۲-۳ — exactly 3 options; minimal-pair 2 allowed)',
+  mcqThree: 'MCQ-THREE (QUESTION §۲-۳ — exactly 3 options; minimal-pair 2..3 allowed)',
   feedbackLadder: 'FEEDBACK-LADDER (QUESTION §۴ — F1/F2/F3 copy required)',
   answerShape: 'ANSWER-SHAPE (QUESTION §۵ — per-type answer + acceptance fields)',
   masteryPool: 'MASTERY-POOL (QUESTION §۵-۱ — mastery items never in practice blocks)',
@@ -69,7 +69,7 @@ const RULES = {
    * first example or assessment use — in deck order.
    */
   derivedGlyphShown: 'DERIVED-GLYPH-SHOWN (HANASO-20 — every derived form is displayed in a prior teaching block before any example/assessment use)',
-  ruleListeningShape: 'RULE-LISTENING-SHAPE (TL-14 — minimal-pair listening carries exactly 2 options)',
+  ruleListeningShape: 'RULE-LISTENING-SHAPE (TL-14 — minimal-pair listening carries 2..3 options; the third must come from the documented error family — HANASO-21/BUG-009)',
   passiveRun: 'PASSIVE-RUN (TL-14 — at most 2 consecutive receptive slides in a deck)',
   prereqData: 'PREREQ-DATA (TL-14 — rule-deck stations declare introducesGlyphs)',
   /*
@@ -281,7 +281,8 @@ function validateExercise(
   ].includes(ex.type);
   if (usesOptions) {
     const count = ex.options?.length ?? 0;
-    const allowed = ex.type === 'listen-minimal-pair' ? [2, 3] : ex.type === 'rule-listening' ? [2] : [3];
+    const allowed =
+      ex.type === 'listen-minimal-pair' || ex.type === 'rule-listening' ? [2, 3] : [3];
     if (!allowed.includes(count)) {
       v.push({ rule: RULES.mcqThree, message: `${slug}/${ex.id}: ${count} options (allowed ${allowed.join('/')})` });
     }
