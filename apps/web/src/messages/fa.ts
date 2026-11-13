@@ -60,7 +60,6 @@ export const fa = {
     /* آمار خلاصهٔ صادقانه */
     statsStations: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} ایستگاه یادگیری را کامل کرده‌ای`,
     statsChapters: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} فصل را فهمیده‌ای`,
-    footerHealth: 'سلامت سرویس',
   },
   audio: {
     playSentence: 'پخش صدای این جمله',

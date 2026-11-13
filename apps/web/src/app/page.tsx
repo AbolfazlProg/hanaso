@@ -4,7 +4,6 @@ import { resolveLearnerId } from '@/lib/learner/server';
 import { resolveHome } from '@/modules/home/server';
 import { SiteNav } from '@/components/site-nav';
 import { fa } from '@/messages/fa';
-import { buildInfo } from '@/lib/build-info';
 
 /**
  * / — the LEARNER HOME (TASK-HANASO-17).
@@ -30,7 +29,6 @@ export const dynamic = 'force-dynamic';
 export default async function HomePage() {
   const learnerId = await resolveLearnerId();
   const { view, dateLine } = await resolveHome(learnerId);
-  const info = buildInfo();
 
   const primaryLabel =
     view.primary.state === 'resume'
@@ -167,17 +165,12 @@ export default async function HomePage() {
         ) : null}
       </main>
 
-      {/* ---- tiny ops footer (the old landing's version card, compressed) ---- */}
-      <footer className="border-t border-ink-faint px-4 pb-24 pt-4 md:pb-6">
-        <p className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-3 gap-y-1 text-caption text-ink-faint">
-          <span>
-            {fa.home.footerHealth}: <code>{info.version}</code>
-          </span>
-          <a className="text-ai underline underline-offset-4" href="/api/health">
-            /api/health
-          </a>
-        </p>
-      </footer>
+      {/*
+       * TASK-HANASO-21 (OBS-010): the dev footer (/api/health + version) is
+       * GONE from the learner-facing Home — operators read /api/health
+       * directly; end users saw internal plumbing. No replacement needed:
+       * the page ends with the honest progress summary above.
+       */}
     </div>
   );
 }

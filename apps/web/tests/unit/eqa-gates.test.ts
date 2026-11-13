@@ -290,8 +290,16 @@ describe('EQA-4 (served position balance) — mutations MUST be rejected', () =>
 describe('EQA-5 (objective coverage) — mutations MUST be rejected', () => {
   it('rejects an objective whose stations lost every practice opportunity', () => {
     const ch = cloneChapter();
-    const stn = ch.stations.find((s) => s.slug === 'stn-fm01-06-expression')!;
-    stn.blocks = stn.blocks.filter((b) => b.kind !== 'exercise');
+    /*
+     * TASK-HANASO-21 (OBS-001): the anchors now carry their own comprehension
+     * checks, so the objective 'greet-first-meeting' has THREE stations with
+     * practice (01-anchor, 06-expression, 10-reconnect). The mutation must
+     * strip EVERY one of them before the objective truly loses its last
+     * practice opportunity.
+     */
+    for (const stn of ch.stations.filter((s) => s.objectiveCode === 'greet-first-meeting')) {
+      stn.blocks = stn.blocks.filter((b) => b.kind !== 'exercise');
+    }
     const findings = gateEqa5(ch).filter((f) => f.subject === 'greet-first-meeting');
     expect(findings.some((f) => f.rule === 'no-practice' && f.severity === 'error')).toBe(true);
   });

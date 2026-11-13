@@ -1494,7 +1494,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'せんせい', 'せんせ', 'せんせえ', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: 'مورای آخر («ای») جا افتاده — «سِنسِ» واژهٔ ژاپنی نیست.',
+      c: 'کشش با «اِ» نوشته شد (せんせえ)؛ در این واژه کشش با «ی» نوشته می‌شود (え+い).',
+    },
     feedback: {
       f1Fa: 'واکهٔ پایانی بلند است: sen-see.',
       f2HintFa: 'せ+ん+せ+い — چهار مورا.',
@@ -1836,4 +1839,169 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     assessmentRole: 'practice',
   },
+  /* ════════════════════════ TASK-HANASO-21 (OBS-001) — anchor comprehension checks ════════════════════════
+     No CORE station completes by viewing alone (audit P1-5, owner-decided).
+     Each anchor closes with a 3-question SCENE-comprehension check — the
+     questions are answerable from the viewing itself (the Persian glosses +
+     the prediction reveals the learner just saw), never from language items
+     that the chapter has not taught yet (EQA-1 S-1: no assessment before
+     teaching — the gate stays intact, no line-level linguistic checks). */
+  {
+    id: 'ex-fm01-a1-gist-1',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'greet-first-meeting',
+    assessesConcepts: ['greet-first-meeting'],
+    difficulty: 1,
+    promptFa: 'کل مکالمه را دیدی — این داستان کجا می‌گذرد؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'در یک کافه', 'در کلاس درس', 'در کتابخانه', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'کلاس درس نیست — میکی و یامادا در کافه با هم سلام و احوال‌پرسی می‌کنند.',
+      c: 'کتابخانه نیست — صحنهٔ داستان کافهٔ یاماداست.',
+    },
+    feedback: {
+      f1Fa: 'به صحنهٔ ابتدای درس برگرد: میکی وارد کافهٔ یامادا می‌شود.',
+      f2HintFa: 'سلام آقای یامادا — صاحب کافه.',
+      f3ExplainFa: 'صحنهٔ فصل: کافه‌ای کوچک نزدیک دانشگاه در توکیو.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-a1-gist-2',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'greet-first-meeting',
+    assessesConcepts: ['greet-first-meeting'],
+    difficulty: 1,
+    promptFa: 'به پیش‌بینی وسط مکالمه برگرد — سورا اهل کجاست؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'چین', 'کره', 'ژاپن', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'کره خاستگاه کیم است، نه سورا — این دو را جا نگیر.',
+      c: 'سورا ژاپنی نیست — او مهمان تازهٔ کافه است.',
+    },
+    feedback: {
+      f1Fa: 'پاسخ پرسش ملیت را دیدی: سورا چینی است.',
+      f2HintFa: 'فرمول مکالمه: نام + ملیت.',
+      f3ExplainFa: 'سورا در همان ابتدا می‌گوید: «من چینی‌ام» — پیش‌بینی همین را نشان داد.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-a1-gist-3',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'greet-first-meeting',
+    assessesConcepts: ['greet-first-meeting'],
+    difficulty: 1,
+    promptFa: 'در پایان این نیمهٔ مکالمه چه اتفاقی افتاد؟',
+    ...(() => {
+      const { options, correctOptionId } = o3(
+        'x',
+        'مهمان تازه‌ای وارد شد و خودش را معرفی کرد',
+        'کافه تعطیل شد و همه رفتند',
+        'یامادا از میکی معذرت‌خواهی کرد',
+        0,
+      );
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'تعطیلی در کار نیست — مکالمه با ورود کیم گرم‌تر می‌شود.',
+      c: 'معذرت‌خواهی نمی‌بینی — یک آشنایی تازه شروع می‌شود.',
+    },
+    feedback: {
+      f1Fa: 'یک صدای تازه در پایان بود.',
+      f2HintFa: 'آداب آشنایی — مثل شروع مکالمه.',
+      f3ExplainFa: 'کیم وارد کافه شد و خودش را معرفی کرد — نیمهٔ دوم فصل دربارهٔ اوست.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-a2-gist-1',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'greet-first-meeting',
+    assessesConcepts: ['greet-first-meeting'],
+    difficulty: 1,
+    promptFa: 'به پیش‌بینی همین درس برگرد — کیم اهل کجاست؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'کره', 'چین', 'ژاپن', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'چین خاستگاه سوراست — یامادا دقیقاً همین را اشتباه گرفت.',
+      c: 'کیم ژاپنی نیست — او هم مثل سورا مهمان تازه است.',
+    },
+    feedback: {
+      f1Fa: 'پیش‌بینی همین را نشان داد.',
+      f2HintFa: 'کشوری غیر از چین — کشوری که یامادا گمانش را نکرد.',
+      f3ExplainFa: 'کیم می‌گوید: «از کره آمده‌ام» — ردّ مؤدبانهٔ فرض یامادا.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-a2-gist-2',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'greet-first-meeting',
+    assessesConcepts: ['greet-first-meeting'],
+    difficulty: 1,
+    promptFa: 'یامادا در این نیمه ابتدا چه گمانی دربارهٔ کیم داشت؟',
+    ...(() => {
+      const { options, correctOptionId } = o3(
+        'x',
+        'اینکه او هم مثل سورا چینی است',
+        'اینکه او کره‌ای است',
+        'اینکه او ژاپنی است',
+        0,
+      );
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'گمان اولیه همین بود که غلط از آب درآمد — پاسخ درست گمانِ غلطِ یاماداست.',
+      c: 'یامادا کیم را ژاپنی نمی‌پندارد — او کیم را به سورا شبیه می‌داند.',
+    },
+    feedback: {
+      f1Fa: 'ترجمهٔ فارسی جملهٔ یامادا را دوباره بخوان: «خانم کیم هم چینی است؟»',
+      f2HintFa: 'واژهٔ «هم» — شبیه دانستن به سورا.',
+      f3ExplainFa: 'یامادا با «هم» گمان کرد کیم هم چینی است — و سورا اصلاحش کرد.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-a2-gist-3',
+    type: 'gist-select',
+    targetSkill: 'listening',
+    targetConcept: 'greet-first-meeting',
+    assessesConcepts: ['greet-first-meeting'],
+    difficulty: 1,
+    promptFa: 'سورا فرض غلط یامادا را چگونه رد کرد؟',
+    ...(() => {
+      const { options, correctOptionId } = o3(
+        'x',
+        'مؤدبانه گفت نه — و گفت کیم کره‌ای است',
+        'سکوت کرد و بحث را عوض کرد',
+        'تأیید کرد که بله، چینی است',
+        0,
+      );
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'سکوت نبود — یک ردّ کامل با «نه» دیدی.',
+      c: 'تأیید نبود — پاسخ با «نه» شروع شد.',
+    },
+    feedback: {
+      f1Fa: 'اولین واژهٔ پاسخ سورا را به یاد بیاور: «نه».',
+      f2HintFa: 'نه + اصلاح + واقعیت.',
+      f3ExplainFa: 'سورا گفت: «نه، خانم کیم چینی نیست؛ کره‌ای است.»',
+    },
+    assessmentRole: 'practice',
+  },
 ];
+
+

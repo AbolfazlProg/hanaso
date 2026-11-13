@@ -80,6 +80,12 @@ const RULES = {
    * chapter after the first MUST chain to a real earlier chapter.
    */
   chapterChain: 'CHAPTER-CHAIN (HANASO-16 — every chapter after the first declares a prerequisite)',
+  /*
+   * TASK-HANASO-21 (OBS-003): the declared chapter estMinutes must equal the
+   * honest station sum — the audit caught a +22% underestimate and content
+   * drift since; this pins the declared number to reality forever.
+   */
+  estMinutes: 'EST-MINUTES (HANASO-21 — declared chapter estMinutes equals the sum of station estMinutes)',
 } as const;
 
 /** Validate one chapter against its level policy. Returns [] when shippable. */
@@ -241,6 +247,15 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
         v.push({ rule: RULES.gateThreshold, message: `weakPointMap ${measure} → unknown station ${stationSlug}` });
       }
     }
+  }
+
+  /* ---- TASK-HANASO-21 (OBS-003) — the honest chapter time budget ---- */
+  const estSum = chapter.stations.reduce((acc, st) => acc + st.estMinutes, 0);
+  if (estSum !== chapter.estMinutes) {
+    v.push({
+      rule: RULES.estMinutes,
+      message: `${chapter.slug}: declared estMinutes ${chapter.estMinutes} ≠ station sum ${estSum}`,
+    });
   }
 
   return v;

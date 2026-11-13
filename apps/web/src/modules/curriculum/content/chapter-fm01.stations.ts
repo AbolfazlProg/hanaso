@@ -23,6 +23,7 @@ const ex = (id: string, exerciseIds: string[]): TeachingBlock => ({ kind: 'exerc
 
 export const FM01_STATIONS: Station[] = [
   /* ═════════════════ UNIT 02-1 «最初のあいさつ» — turns L1..L8 ═════════════════ */
+
   {
     slug: 'stn-fm01-01-anchor',
     type: 'anchor',
@@ -33,9 +34,10 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: [],
     lineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(9), L(10), L(11), L(12)],
     objectiveCode: 'greet-first-meeting',
-    estMinutes: 3,
+    estMinutes: 4,
     estLoad: 'light',
-    completion: { kind: 'viewed' },
+    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    mastery: { threshold: 0.6 },
     blocks: [
       {
         kind: 'scene',
@@ -60,6 +62,7 @@ export const FM01_STATIONS: Station[] = [
             'سورا با «はい» تأیید می‌کند و می‌گوید: わたしは ちゅうごくじんです — در راه این فصل همهٔ این جمله را می‌سازی.',
         },
       },
+      ex('blk-a1-check', ['ex-fm01-a1-gist-1', 'ex-fm01-a1-gist-2', 'ex-fm01-a1-gist-3']),
     ],
     fsrsItems: [],
   },
@@ -76,7 +79,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 4,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'vocab-card', id: 'blk-v1-card-watashi', wordId: 'voc-watashi' },
       { kind: 'vocab-card', id: 'blk-v1-card-san', wordId: 'voc-san' },
       { kind: 'vocab-card', id: 'blk-v1-card-nihonjin', wordId: 'voc-nihonjin' },
@@ -130,7 +133,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 4,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'dialogue-player', id: 'blk-g1-dialogue', focusLineRefs: [L(3), L(6)] },
       {
         kind: 'guided-discovery',
@@ -236,7 +239,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 2,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       {
         kind: 'rule-card',
         id: 'blk-st-rule',
@@ -293,7 +296,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 4,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'dialogue-player', id: 'blk-g2-dialogue', focusLineRefs: [L(5), L(7)] },
       {
         kind: 'guided-discovery',
@@ -368,7 +371,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'expression-card', id: 'blk-e1-card-konnichiwa', expressionId: 'chrk-konnichiwa' },
       { kind: 'expression-card', id: 'blk-e1-card-hajimemashite', expressionId: 'chrk-hajimemashite' },
       ex('blk-e1-ret-1', ['ex-fm01-e1-resp-1']),
@@ -408,7 +411,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'listening-task', id: 'blk-l1-task', taskId: 'listen-1' },
       ex('blk-l1-drill-1', ['ex-fm01-l1-gist-1', 'ex-fm01-l1-who-1']),
       ex('blk-l1-drill-2', ['ex-fm01-l1-mp-1', 'ex-fm01-l1-mp-2']),
@@ -434,7 +437,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 4,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
-    blocks: [
+    mastery: { threshold: 0.7 },    blocks: [
       ex('blk-p1-c1', ['ex-fm01-p1-c1-aud-1', 'ex-fm01-p1-c1-aud-2']),
       ex('blk-p1-c2', [
         'ex-fm01-p1-c2-order-1',
@@ -522,9 +525,10 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-09-integrate'],
     lineRefs: [L(9), L(9), L(10), L(11), L(12)],
     objectiveCode: 'greet-first-meeting',
-    estMinutes: 2,
+    estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'viewed' },
+    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    mastery: { threshold: 0.6 },
     blocks: [
       {
         kind: 'scene',
@@ -549,6 +553,7 @@ export const FM01_STATIONS: Station[] = [
             'کیم می‌گوید: かんこくから きました — «از کره آمده‌ام». در این واحد می‌آموزی همین را دربارهٔ خودت بگویی: イランから きました。',
         },
       },
+      ex('blk-a2-check', ['ex-fm01-a2-gist-1', 'ex-fm01-a2-gist-2', 'ex-fm01-a2-gist-3']),
     ],
     fsrsItems: [],
   },
@@ -565,7 +570,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       ex('blk-v2-recycle', ['ex-fm01-v2-dec-1', 'ex-fm01-v2-dec-2']),
       { kind: 'vocab-card', id: 'blk-v2-card-kankokujin', wordId: 'voc-kankokujin' },
       { kind: 'vocab-card', id: 'blk-v2-card-kara', wordId: 'voc-kara' },
@@ -600,7 +605,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'dialogue-player', id: 'blk-g3-dialogue', focusLineRefs: [L(9)] },
       {
         kind: 'guided-discovery',
@@ -683,7 +688,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 4,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'dialogue-player', id: 'blk-g4-dialogue', focusLineRefs: [L(10)] },
       {
         kind: 'guided-discovery',
@@ -765,7 +770,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'expression-card', id: 'blk-e2-card-iie', expressionId: 'chrk-iie' },
       ex('blk-e2-ret-1', ['ex-fm01-e2-resp-1']),
       { kind: 'expression-card', id: 'blk-e2-card-soodesuka', expressionId: 'chrk-soodesuka' },
@@ -789,7 +794,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       { kind: 'listening-task', id: 'blk-l2-task', taskId: 'listen-2' },
       ex('blk-l2-drill-1', ['ex-fm01-l2-aud-1']),
       ex('blk-l2-drill-2', ['ex-fm01-l2-mp-1', 'ex-fm01-l2-who-1']),
@@ -809,7 +814,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       {
         kind: 'dialogue-player',
         id: 'blk-g5-dialogue',
@@ -892,7 +897,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 4,
     estLoad: 'medium',
     completion: { kind: 'exercise_threshold', threshold: 0.7 },
-    blocks: [
+    mastery: { threshold: 0.7 },    blocks: [
       ex('blk-p2-c1', ['ex-fm01-p2-c1-decode-1', 'ex-fm01-p2-c1-decode-2']),
       ex('blk-p2-c2', ['ex-fm01-p2-c2-cloze-1', 'ex-fm01-p2-c2-prod-1', 'ex-fm01-p2-c2-prod-2']),
       ex('blk-p2-c3', ['ex-fm01-p2-c3-cloze-1', 'ex-fm01-p2-c3-cloze-2', 'ex-fm01-p2-c3-order-1']),
@@ -983,7 +988,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       {
         kind: 'example-set',
         id: 'blk-od1-table',
@@ -1100,7 +1105,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [
+    mastery: { threshold: 0.6 },    blocks: [
       {
         kind: 'example-set',
         id: 'blk-od2-jobs',
@@ -1174,7 +1179,7 @@ export const FM01_STATIONS: Station[] = [
     estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'exercise_threshold', threshold: 0.6 },
-    blocks: [ex('blk-or2-drill', ['ex-fm01-or2-mp-1', 'ex-fm01-or2-cloze-1', 'ex-fm01-or2-cloze-2'])],
+    mastery: { threshold: 0.6 },    blocks: [ex('blk-or2-drill', ['ex-fm01-or2-mp-1', 'ex-fm01-or2-cloze-1', 'ex-fm01-or2-cloze-2'])],
     fsrsItems: [],
   },
 ];

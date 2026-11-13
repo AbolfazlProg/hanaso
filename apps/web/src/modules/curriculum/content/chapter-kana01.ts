@@ -84,7 +84,7 @@ export const CHAPTER_KANA_FOUNDATION: Chapter = {
     'مسیر کامل کانا برای مبتدی مطلق: ۴ جزیره، ۳۲ ایستگاه، ۹۲ شکل — با یادسپارهای فارسی، واژه‌های واقعیِ همان لحظه و گیت فهم در پایان.',
   dialogueSlug: 'kana-welcome-01',
   orderInLevel: 1,
-  estMinutes: 348,
+  estMinutes: 386,
   estLoad: 'medium',
   bandArc: 'kana-foundation',
   sceneFa:

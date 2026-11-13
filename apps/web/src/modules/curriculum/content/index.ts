@@ -22,7 +22,7 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
     'میکی دوستش سورا را به کافهٔ یامادا می‌آورد؛ کنار پنجره علی کتاب می‌خواند و کمی بعد کیم — همکلاسی کره‌ای سورا — وارد می‌شود. یک مکالمه، دو واحد داستانی، و در پایان گیت فهم.',
   dialogueSlug: 'first-meeting-01',
   orderInLevel: 1,
-  estMinutes: 45,
+  estMinutes: 71,
   estLoad: 'medium',
   bandArc: 'cafe-intro',
   sceneFa:
@@ -80,6 +80,13 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
         'stn-fm01-16-grammar-kara',
         'stn-fm01-17-practice',
         'stn-fm01-18-integrate',
+        // TASK-HANASO-21 (OBS-004): the optionals join their natural unit
+        // (kana01's pattern — an optional lives in a real island, never
+        // the __rest__ group).
+        'stn-fm01-opt-countries',
+        'stn-fm01-opt-review-desu',
+        'stn-fm01-opt-jobs',
+        'stn-fm01-opt-drill',
       ],
     },
   ],

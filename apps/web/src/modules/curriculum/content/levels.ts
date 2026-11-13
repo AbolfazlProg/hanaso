@@ -52,7 +52,15 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
       vocabCore: [4, 11],
       grammarClusters: [1, 5],
       stationsCore: [8, 20],
-      chapterMinutes: [35, 55],
+      /*
+       * TASK-HANASO-21 (OBS-003): the cap is raised to the honest budget of
+       * the owner-approved 05B two-unit architecture (18 core stations, ~71').
+       * The old 55' cap only "held" because the declared chapter estMinutes
+       * was the dishonest 45' — exactly what the audit caught. The S3
+       * over-target exception stays documented; the time budget no longer
+       * lies to keep it.
+       */
+      chapterMinutes: [35, 75],
       dialogueLines: [6, 14],
       listeningSpeed: 0.9,
       furigana: 'all',
