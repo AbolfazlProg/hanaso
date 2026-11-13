@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fail, ok } from '@/modules/shared';
-import { getStationProgressStore, getChapterProgressStore } from '@/lib/poc/stores';
+import { getStationProgressStore } from '@/lib/poc/stores';
 import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import {
@@ -16,6 +16,7 @@ import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { recordLearningEvent } from '@/modules/curriculum/events';
 import { resumeFreshness, parseActivityAt } from '@/modules/curriculum/resume-policy';
+import { completeStationWalk } from '@/lib/poc/completions';
 import type { StationState } from '@/modules/curriculum/types';
 import type { Chapter } from '@/modules/curriculum/types';
 
@@ -478,13 +479,24 @@ export async function POST(req: Request) {
       { status: 409, headers: { 'cache-control': 'no-store' } },
     );
   }
-  const state = await store.upsert(userId, station.slug, {
+  /*
+   * TASK-HANASO-24 (BUG-036): station upsert + chapter-aggregate fold = ONE
+   * transaction on Postgres — a mid-failure can no longer leave the station
+   * completed while the chapter aggregate never flips to stations_complete.
+   */
+  const { station: state, chapter: chapterState } = await completeStationWalk({
+    userId,
+    chapterSlug: payload.chapterSlug,
     stationSlug: station.slug,
-    status: 'completed',
-    bestScore: score,
-    attemptCount: current?.attemptCount ?? 0,
-    currentBlock: null, // walk finished — no stale resume anchor
-    lastActivityAt: new Date().toISOString(), // completion IS meaningful activity (HANASO-17 §۸)
+    stationState: {
+      stationSlug: station.slug,
+      status: 'completed',
+      bestScore: score,
+      attemptCount: current?.attemptCount ?? 0,
+      currentBlock: null, // walk finished — no stale resume anchor
+      lastActivityAt: new Date().toISOString(), // completion IS meaningful activity (HANASO-17 §۸)
+    },
+    coreSlugs: bundle.chapter.stations.filter((s) => s.core).map((s) => s.slug),
   });
 
   // TASK-LEARNING-06: analytics contract — completion + FSRS enrollment data
@@ -526,21 +538,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // chapter aggregate: all core stations terminal → stations_complete
-  const chapterStore = getChapterProgressStore();
-  const coreSlugs = bundle.chapter.stations.filter((s) => s.core).map((s) => s.slug);
-  const states = new Map((await store.listForUnit(userId, coreSlugs)).map((s) => [s.stationSlug, s]));
-  const allDone = coreSlugs.every((slug) => states.has(slug) && states.get(slug)!.status !== 'in_progress');
-  let chapterState = await chapterStore.get(userId, payload.chapterSlug);
-  if (allDone && (!chapterState || chapterState.status === 'started')) {
-    chapterState = {
-      status: 'stations_complete',
-      bestWeighted: chapterState?.bestWeighted ?? null,
-      bestMeasures: chapterState?.bestMeasures ?? null,
-      remediationCount: chapterState?.remediationCount ?? 0,
-    };
-    await chapterStore.upsert(userId, payload.chapterSlug, chapterState);
-  }
+  /* The chapter fold itself runs INSIDE the service transaction. */
 
   return NextResponse.json(ok({ stationSlug: station.slug, state, chapterState }), {
     headers: { 'cache-control': 'no-store' },

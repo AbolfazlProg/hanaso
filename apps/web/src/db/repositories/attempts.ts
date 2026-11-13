@@ -27,7 +27,8 @@ import type { MasteryScoresJson, WeakPointsJson } from '../../../db/schema/app';
  * silently never matches — the retry loop was dead code until the forced-collision
  * integration test proved it).
  */
-function isUniqueViolation(err: unknown): boolean {
+/** Exported for transaction-aware callers (TASK-HANASO-24 completions). */
+export function isUniqueViolation(err: unknown): boolean {
   let current: unknown = err;
   for (let depth = 0; current !== null && current !== undefined && depth < 5; depth += 1) {
     if (typeof current === 'object' && 'code' in current && (current as { code?: string }).code === '23505') {

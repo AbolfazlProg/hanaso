@@ -24,12 +24,13 @@ import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/ser
 import { getLearningObjectStore, getPracticeSessionStore, getStationProgressStore } from '@/lib/poc/stores';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
-import { foldItemResult, isWeakObject, seedRecord } from '@/modules/practice/evidence';
+import { isWeakObject } from '@/modules/practice/evidence';
 import { generateKanaSession } from '@/modules/practice/kana/generator';
 import { glyphsIntroducedByStation } from '@/modules/practice/kana/items';
 import { PRACTICE_POLICY } from '@/modules/practice/kana/policy';
 import { isKanaDimension, KANA_DIMENSION_LABELS_FA } from '@/modules/practice/kana/dimensions';
 import { toClientItem, type PracticeItemResult, type StoredPracticeSession } from '@/modules/practice/session';
+import { completePracticeSession } from '@/lib/poc/completions';
 import { newSessionId, type InFlightSession } from '@/modules/practice/repository';
 
 export const dynamic = 'force-dynamic';
@@ -307,34 +308,31 @@ export async function POST(req: Request) {
     startedAt: new Date(session.startedAtMs).toISOString(),
     completedAt: new Date().toISOString(),
   };
-  await getPracticeSessionStore().recordCompleted(stored);
-
-  /* Fold evidence into Learning Object states (idempotent, honest). */
-  const loStore = getLearningObjectStore();
-  let newlyEligible = 0;
+  /* Fold inputs grouped per object (the service folds ATOMICALLY). */
   const byObject = new Map<string, PracticeItemResult[]>();
   for (const r of results) {
     const list = byObject.get(r.objectId) ?? [];
     list.push(r);
     byObject.set(r.objectId, list);
   }
-  for (const [objectId, list] of byObject) {
-    const existing = await loStore.get(userId, objectId);
-    let record = existing ?? seedRecord(userId, objectId, 'kana');
-    const before = record.state;
-    for (const r of list) record = foldItemResult(record, r);
-    await loStore.upsert(record);
-    if (before !== 'eligible_for_review' && record.state === 'eligible_for_review') newlyEligible += 1;
-  }
+  const groups = [...byObject.entries()].map(([objectId, list]) => ({ objectId, results: list }));
+
+  /*
+   * TASK-HANASO-24 (BUG-036): session insert + evidence fold = ONE transaction
+   * on Postgres (tx-bound repositories, per-user advisory lock, idempotent
+   * replay: a duplicate complete resolves 'already' and never double-folds).
+   */
+  const outcome = await completePracticeSession(stored, groups);
 
   const firstTry = results.filter((r) => r.firstTryCorrect).length;
   return NextResponse.json(
     ok({
       recorded: true,
+      ...(outcome.status === 'already' ? { already: true } : {}),
       items: results.length,
       firstTryCorrect: firstTry,
       objectsPracticed: byObject.size,
-      newlyEligible,
+      newlyEligible: outcome.newlyEligible,
       reviewEngineNoteFa: 'کارت‌های واجد مرور ثبت شدند؛ صف مرور با موتور زمان‌بندی فعال می‌شود (هنوز فعال نیست).',
     }),
     { headers: { 'cache-control': 'no-store' } },

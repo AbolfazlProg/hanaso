@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fail, ok } from '@/modules/shared';
-import { getChapterProgressStore, getAttemptStore, getStationProgressStore } from '@/lib/poc/stores';
+import { getStationProgressStore } from '@/lib/poc/stores';
 import { loadChapterBundle } from '@/modules/curriculum/server';
-import { applyChapterEvent, gradeMasterySubmission, type ExerciseAnswerPayload } from '@/modules/curriculum';
+import { gradeMasterySubmission, type ExerciseAnswerPayload } from '@/modules/curriculum';
 import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
 import { recordLearningEvent } from '@/modules/curriculum/events';
 import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
+import { submitMasteryWithFold } from '@/lib/poc/completions';
 
 /**
  * POST /api/curriculum/mastery — the chapter gate (stage D — TASK-LEARNING-01).
@@ -114,9 +115,17 @@ export async function POST(req: Request) {
   }
   const graded = gradeMasterySubmission(chapter, answers as Record<string, ExerciseAnswerPayload>, level);
 
-  // persist the attempt via the SAME store as the PoC (app.dialogue_mastery_attempts with PG)
-  const attempt = await getAttemptStore().create(
-    {
+  /*
+   * TASK-HANASO-24 (BUG-036): attempt insert + chapter fold = ONE transaction
+   * on Postgres (per-(user,dialogue) advisory lock makes MAX+1 race-free and
+   * serializes double-submits; a mid-failure rolls the attempt back with the
+   * fold — no attempt row without its aggregate).
+   */
+  const { attempt, chapterState } = await submitMasteryWithFold({
+    userId,
+    chapterSlug,
+    dialogueId: bundle.bundle.dialogue.id,
+    input: {
       dialogueId: bundle.bundle.dialogue.id,
       userId,
       scores: {
@@ -134,16 +143,8 @@ export async function POST(req: Request) {
         })),
       ),
     },
-    graded.outcome,
-  );
-
-  // fold the chapter aggregate (understood only from passed — DD-048)
-  const chapterStore = getChapterProgressStore();
-  const current = await chapterStore.get(userId, chapterSlug);
-  const next = applyChapterEvent(
-    current ?? undefined,
-    {
-      type: 'gate_attempted',
+    outcome: graded.outcome,
+    gate: {
       passed: graded.outcome === 'passed',
       weighted: graded.weightedScore,
       measures: {
@@ -153,15 +154,13 @@ export async function POST(req: Request) {
         M4: graded.scores.M4,
         M5: graded.scores.M5,
       },
-      attemptId: attempt.id,
     },
-    LEVELS_BY_CODE[chapter.levelCode]?.caps.maxRemediationLoops ?? 3,
-  );
-  const chapterState = next ? await chapterStore.upsert(userId, chapterSlug, next, attempt.id) : current!;
+    maxRemediationLoops: LEVELS_BY_CODE[chapter.levelCode]?.caps.maxRemediationLoops ?? 3,
+  });
+  const attemptLoop = chapterState.remediationCount;
 
   // TASK-LEARNING-06: analytics contract — per-measure gate outcomes (threshold
   // calibration input — OQ-052/056), remediation triggers and the chapter verdict.
-  const attemptLoop = chapterState.remediationCount;
   for (const [measure, score] of Object.entries(graded.scores)) {
     if (score === null) continue;
     recordLearningEvent(

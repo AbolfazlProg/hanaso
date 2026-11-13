@@ -1,6 +1,6 @@
 # TASK-HANASO-24 — CURRENT STATE
 
-> آخرین به‌روزرسانی: **CP-03**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
+> آخرین به‌روزرسانی: **CP-04**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
 
 ## مأموریت
 
@@ -41,7 +41,7 @@
 - [x] **CP-01**: SECURITY_ROOT_CAUSE.md — سرشماری کامل ۱۰ مسیر API + ۶ صفحهٔ /poc + ۳ صفحهٔ محصول؛ تأیید line-level؛ طراحی راه‌حل هر فاز (توکن Session امضاشده، GET-only minting، حذف userId از schemaها، dev-only برای /poc، transaction-aware completion)
 - [x] **CP-02**: رفع IDOR + hardening اعتبار/session/cookie (تست‌های ۶۳ فایل/۷۴۵ + PG ۲۹ همه سبز) → IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md
 - [x] **CP-03**: رفع افشای Answer Key — گیت dev/test-only هر ۶ صفحهٔ /poc (پروداکشن ۴۰۴)؛ اثبات با curl + Browser واقعی (404، بدون کلید در HTML/RSC/Network، کوکی httpOnly+Secure امضاشده) → ANSWER_KEY_EXPOSURE_FIX.md
-- [ ] **CP-04**: Transaction و Idempotency → DATABASE_TRANSACTION_FIX.md
+- [x] **CP-04**: Transaction و Idempotency — سرویس‌های اتمیک (db/transactions.ts + lib/poc/completions.ts)؛ idempotent replay؛ advisory lock ضد lost-update/race؛ تست‌های جدید (3 in-memory + 5 PG)؛ 64 فایل/748 + PG 34 همه سبز → DATABASE_TRANSACTION_FIX.md
 - [ ] **CP-05**: تست امنیتی واقعی QA (دو حساب A/B + مرورگر ناشناس، ۱۲ سناریوی اجباری) → SECURITY_TEST_RESULTS.md
 - [ ] **CP-06**: سه ساب‌ایجنت مستقل → SUBAGENT_REVIEW_{A,B,C}.md
 - [ ] **CP-07**: رفع اختلاف‌ها + تست مجدد + Verification نهایی → FINAL_INDEPENDENT_VERIFICATION.md
@@ -50,12 +50,11 @@
 
 ## اقدام بعدی
 
-CP-04 — Database Transaction و Idempotency طبق §5 SECURITY_ROOT_CAUSE.md:
-1. سرویس تراکنشی برای practice-complete: `recordCompleted` + fold شواهد داخل یک `db.transaction` (PG)؛ Idempotent replay با onConflict + بازخوانی؛ Unique (user, objectId) با retry در برخورد.
-2. station-complete: دو upsert (station + chapter aggregate) داخل یک tx.
-3. mastery gate: attempt insert + chapter fold داخل یک tx.
-4. حالت in-memory: همان ترتیب متوالی (single-thread) — بدون تغییر semantics.
-5. تست‌های Concurrency/Idempotency جدید + اجرای مجدد کل سوئیت‌ها؛ DATABASE_TRANSACTION_FIX.md؛ commit + push.
+CP-05 — تست امنیتی واقعی QA روی سرور standalone (build موجود همین branch):
+- سرور QA با PostgreSQL واقعی (127.0.0.1:54329، DB اختصاصی hanaso_qa) + HANASO_SESSION_SECRET تصادفی؛ پورت 3124.
+- دو حساب مستقل A و B (کوکی‌های امضاشدهٔ مستقل) + Browser Context ناشناس؛ Playwright واقعی.
+- ۱۲ سناریوی اجباری مأموریت §۵ (A/B isolation، جعل کوکی، session نامعتبر، guest بدون write، logout/login، failure اتمیک، تکراری/هم‌زمان، عدم افشای Answer Key).
+- خروجی: SECURITY_TEST_RESULTS.md با شواهد؛ commit + push.
 
 ## قوانین فعال
 

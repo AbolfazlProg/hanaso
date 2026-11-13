@@ -62,18 +62,28 @@ export class PgPracticeSessionRepository implements PracticeSessionRepository {
     return this.inFlight.get(sessionId) ?? null;
   }
 
-  async recordCompleted(session: StoredPracticeSession): Promise<void> {
+  /**
+   * TASK-HANASO-24: IDEMPOTENT append. ON CONFLICT DO NOTHING — a concurrent
+   * duplicate complete (both callers raced past the in-flight check) resolves
+   * as 'already' instead of a raw 23505/500; the caller then skips the fold.
+   */
+  async recordCompleted(session: StoredPracticeSession): Promise<'recorded' | 'already'> {
     this.inFlight.delete(session.id);
-    await this.client.db.insert(practiceSessions).values({
-      id: session.id,
-      userId: session.userId,
-      skill: session.skill,
-      kind: session.kind,
-      scopeKey: session.scopeKey,
-      itemResults: session.itemResults,
-      startedAt: new Date(session.startedAt),
-      completedAt: session.completedAt ? new Date(session.completedAt) : new Date(),
-    });
+    const rows = await this.client.db
+      .insert(practiceSessions)
+      .values({
+        id: session.id,
+        userId: session.userId,
+        skill: session.skill,
+        kind: session.kind,
+        scopeKey: session.scopeKey,
+        itemResults: session.itemResults,
+        startedAt: new Date(session.startedAt),
+        completedAt: session.completedAt ? new Date(session.completedAt) : new Date(),
+      })
+      .onConflictDoNothing({ target: practiceSessions.id })
+      .returning({ id: practiceSessions.id });
+    return rows.length > 0 ? 'recorded' : 'already';
   }
 
   async listForUser(userId: string, limit = 20): Promise<StoredPracticeSession[]> {

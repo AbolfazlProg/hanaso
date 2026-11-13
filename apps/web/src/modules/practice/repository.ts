@@ -32,8 +32,11 @@ export interface InFlightSession {
 export interface PracticeSessionRepository {
   create(session: InFlightSession): Promise<void>;
   get(sessionId: string): Promise<InFlightSession | null>;
-  /** Persist a completed session (append-only log). */
-  recordCompleted(session: StoredPracticeSession): Promise<void>;
+  /**
+   * Persist a completed session (append-only log). TASK-HANASO-24: IDEMPOTENT —
+   * a replayed/duplicate completion returns 'already' and writes nothing.
+   */
+  recordCompleted(session: StoredPracticeSession): Promise<'recorded' | 'already'>;
   listForUser(userId: string, limit?: number): Promise<StoredPracticeSession[]>;
   /** Test/maintenance hook: drop sessions older than the TTL. */
   sweepExpired(nowMs: number): Promise<number>;
@@ -53,9 +56,11 @@ export class InMemoryPracticeSessionRepository implements PracticeSessionReposit
     return this.inFlight.get(sessionId) ?? null;
   }
 
-  async recordCompleted(session: StoredPracticeSession): Promise<void> {
+  async recordCompleted(session: StoredPracticeSession): Promise<'recorded' | 'already'> {
     this.inFlight.delete(session.id);
+    if (this.completed.some((s) => s.id === session.id)) return 'already';
     this.completed.push(session);
+    return 'recorded';
   }
 
   async listForUser(userId: string, limit = 20): Promise<StoredPracticeSession[]> {
