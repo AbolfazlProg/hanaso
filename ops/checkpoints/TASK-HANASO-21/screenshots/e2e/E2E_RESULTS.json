@@ -1,0 +1,209 @@
+{
+  "passed": 46,
+  "failed": 0,
+  "results": [
+    {
+      "step": "S1.1 first visit: middleware mints the per-browser learner id",
+      "ok": true
+    },
+    {
+      "step": "S1.2 the start CTA targets the FIRST lesson (stn-kana-h0)",
+      "ok": true,
+      "detail": "/learn/kana-foundation-01/journey/stn-kana-h0"
+    },
+    {
+      "step": "S1.3 h0 walked & completed with NO error panel",
+      "ok": true
+    },
+    {
+      "step": "S1.4 the AIZEN seal appears with the FRESH ceremony (data-animate)",
+      "ok": true
+    },
+    {
+      "step": "S1.5 exactly ONE complete request for the walk",
+      "ok": true,
+      "detail": "complete=1"
+    },
+    {
+      "step": "S1.6 zero 4xx/5xx on the station API during the walk",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "step": "S1.7 the completion CTA navigates back to the map section",
+      "ok": true,
+      "detail": "http://127.0.0.1:3123/learn/kana-foundation-01/journey?s=island-1-hira-voice"
+    },
+    {
+      "step": "S1.8 the map reflects the completed station (section rows-done line)",
+      "ok": true
+    },
+    {
+      "step": "S1.9 home after completion shows the NEXT lesson (own progress kept)",
+      "ok": true,
+      "detail": "{\"label\":\"شروع درس بعدی\",\"href\":\"/learn/kana-foundation-01/journey/stn-kana-h1\"}"
+    },
+    {
+      "step": "S1.10 revisit of the completed station: seal present, SETTLED (no re-animation)",
+      "ok": true
+    },
+    {
+      "step": "S1.11 revisit fires NO new complete request",
+      "ok": true
+    },
+    {
+      "step": "S2.1 honest API fast-forward of prerequisites h0..k7 (all 200)",
+      "ok": true,
+      "detail": "23 stations"
+    },
+    {
+      "step": "S2.2 PERFECT walk of stn-kana-k8 completes (the owner-bug regression: stale auto-next scored 2/3 → 409 forever)",
+      "ok": true,
+      "detail": "{\"grade\":13,\"enter\":1,\"progress\":12,\"complete\":1}"
+    },
+    {
+      "step": "S2.3 NO 409 / failure panel on the k8 walk",
+      "ok": true
+    },
+    {
+      "step": "S2.4 the k8 seal stamped with the fresh ceremony",
+      "ok": true
+    },
+    {
+      "step": "S2.5 zero 4xx/5xx during the k8 walk",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "step": "S2.6 no console errors during the k8 walk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "step": "S3.1 PERFECT walk of stn-kana-k12-foreign completes (the 1/2-trap regression)",
+      "ok": true
+    },
+    {
+      "step": "S3.2 the k12-foreign seal ceremony",
+      "ok": true
+    },
+    {
+      "step": "S4.0 the kana mastery gate passed via real API (fm01 unlocked)",
+      "ok": true,
+      "detail": "{\"status\":201,\"outcome\":\"passed\"}"
+    },
+    {
+      "step": "S4.1 stn-fm01-01-anchor (viewed→0.6 check, OBS-001) completes on a perfect walk",
+      "ok": true,
+      "detail": "{\"progress\":2,\"grade\":3,\"complete\":1}"
+    },
+    {
+      "step": "S4.2 the fm01 anchor seal ceremony",
+      "ok": true
+    },
+    {
+      "step": "S4.3 seal visible at 360px (mobile) — settled on revisit",
+      "ok": true
+    },
+    {
+      "step": "S4.4 seal renders at 1440px (desktop) too",
+      "ok": true
+    },
+    {
+      "step": "S5.1a a below-threshold final block shows the CRITERION 409 panel (not a generic error)",
+      "ok": true
+    },
+    {
+      "step": "S5.1b the criterion panel keeps prior progress (no data-loss panel)",
+      "ok": true
+    },
+    {
+      "step": "S5.1c the panel offers the redo-final-exercise action",
+      "ok": true
+    },
+    {
+      "step": "S5.1d after a correct redo the station COMPLETES (no full re-walk needed)",
+      "ok": true,
+      "detail": "{\"grade\":2,\"progress\":2,\"complete\":1}"
+    },
+    {
+      "step": "S5.2a an aborted completion shows the honest failure panel (no fake success)",
+      "ok": true
+    },
+    {
+      "step": "S5.2b the in-place retry («تلاش دوباره برای ثبت») recovers the completion",
+      "ok": true
+    },
+    {
+      "step": "S5.2c after navigate-away + back the completion persists (settled seal)",
+      "ok": true
+    },
+    {
+      "step": "S5.3a walk parked on the final block (resume anchor armed, no complete yet)",
+      "ok": true,
+      "detail": "{\"grade\":13,\"enter\":1,\"progress\":12}"
+    },
+    {
+      "step": "S5.3b after refresh the walk RESUMES from the saved position",
+      "ok": true
+    },
+    {
+      "step": "S5.3c the resumed walk completes — no progress lost",
+      "ok": true,
+      "detail": "{\"complete\":1}"
+    },
+    {
+      "step": "S5.4 double-click on the final advance fires exactly ONE complete (single-flight)",
+      "ok": true,
+      "detail": "complete=1"
+    },
+    {
+      "step": "S5.4b exactly one seal (no duplicate stamps)",
+      "ok": true
+    },
+    {
+      "step": "S5.5a completing a prereq-locked station returns the structured 409",
+      "ok": true,
+      "detail": "{\"status\":409,\"code\":\"station/prerequisites_not_met\",\"msg\":\"برای ثبت این درس، ابتدا باید این درس‌ها کامل شوند: «ردیف あ»\",\"prereqs\":[\"stn-kana-h1\"]}"
+    },
+    {
+      "step": "S5.5b the Persian message names the unmet lesson and the payload is ordered",
+      "ok": true,
+      "detail": "[\"stn-kana-h1\"]"
+    },
+    {
+      "step": "S5.6a replay mode opens the completed station with the review badge",
+      "ok": true
+    },
+    {
+      "step": "S5.6b the replay end shows the honest \"nothing changed\" panel",
+      "ok": true
+    },
+    {
+      "step": "S5.6c replay fires NO complete request and stamps NO new seal",
+      "ok": true
+    },
+    {
+      "step": "S5.7 a repeated complete is idempotent (200 + already:true)",
+      "ok": true,
+      "detail": "{\"first\":{\"status\":200},\"second\":{\"status\":200,\"already\":true}}"
+    },
+    {
+      "step": "S5.8a the SAME identity in a fresh context keeps its progress (next-lesson state, not start)",
+      "ok": true,
+      "detail": "شروع درس بعدی"
+    },
+    {
+      "step": "S5.8b a cookie-less GUEST sees the clean empty state (no other user's progress)",
+      "ok": true
+    },
+    {
+      "step": "S6.1 home smoke: 200",
+      "ok": true
+    },
+    {
+      "step": "S6.2 the learning map renders for the progressing user",
+      "ok": true
+    }
+  ]
+}

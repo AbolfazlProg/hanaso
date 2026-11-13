@@ -32,8 +32,11 @@ export interface DialogueRef {
   slug: string;
   /** `content.dialogues.id` uuid. */
   dialogueUuid: string;
-  /** The anchor `content.lessons.id` uuid (A→D unit record needs it — KB §۳). */
-  lessonUuid: string;
+  /** The anchor `content.lessons.id` uuid (A→D unit record needs it — KB §۳).
+   * NULL for CHAPTER dialogues — they carry no B_lesson anchor by design
+   * (TASK-LEARNING-01); TASK-HANASO-21 made them resolvable anyway (LEFT JOIN)
+   * because the chapter mastery gate persists attempts against the dialogue. */
+  lessonUuid: string | null;
 }
 
 const bySlug = new Map<string, DialogueRef>();
@@ -56,6 +59,14 @@ export async function refreshContentMap(): Promise<void> {
   // anchor lesson ONLY (unitStage='B_lesson'): when the full content schema attaches
   // multiple lessons to one dialogue, a bare join would let a non-anchor row win
   // (PR #74 review r1/S3) — lessonUuid must always be the A→D unit anchor.
+  //
+  // TASK-HANASO-21: LEFT JOIN. CHAPTER dialogues (kana-welcome-01, first-meeting-01)
+  // deliberately carry NO B_lesson anchor (TASK-LEARNING-01: stations are the
+  // chapter's lessons) — the old INNER JOIN made them unresolvable, so the kana
+  // chapter's MASTERY GATE 500'd on PostgreSQL (ContentNotSeededError while
+  // persisting the gate attempt). A chapter dialogue now resolves with
+  // lessonUuid = null; the only consumer that needs a real anchor (the PoC
+  // A→D lesson_progress upsert) guards against it explicitly.
   const rows = await db
     .select({
       dialogueUuid: dialogues.id,
@@ -63,7 +74,7 @@ export async function refreshContentMap(): Promise<void> {
       lessonUuid: lessons.id,
     })
     .from(dialogues)
-    .innerJoin(lessons, and(eq(lessons.dialogueId, dialogues.id), eq(lessons.unitStage, 'B_lesson')));
+    .leftJoin(lessons, and(eq(lessons.dialogueId, dialogues.id), eq(lessons.unitStage, 'B_lesson')));
 
   bySlug.clear();
   byDialogueUuid.clear();

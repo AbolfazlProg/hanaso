@@ -65,6 +65,15 @@ export class PgProgressRepository implements ProgressRepository {
 
   async upsert(progress: UnitProgress): Promise<UnitProgress> {
     const ref = await resolveDialogue(progress.dialogueId);
+    if (!ref.lessonUuid) {
+      /* TASK-HANASO-21: CHAPTER dialogues resolve with a NULL anchor (no
+       * B_lesson row by design). The PoC A→D unit progress only exists for
+       * anchor-bearing dialogues (cafe-morning-01) — a chapter dialogue here
+       * is a programming error, said clearly instead of a NULL-FK crash. */
+      throw new Error(
+        `dialogue ${ref.slug} has no B_lesson anchor — the A→D unit progress upsert does not apply to chapter dialogues`,
+      );
+    }
     const [row] = await this.client.db
       .insert(lessonProgress)
       .values({
