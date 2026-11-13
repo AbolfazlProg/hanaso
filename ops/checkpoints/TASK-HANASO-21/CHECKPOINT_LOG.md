@@ -73,3 +73,36 @@ decision and incident gets an entry HERE as soon as it happens.
 - Commit: `test+style: TASK-HANASO-21 — integration suite re-pinned…`
 - NEXT: real-browser E2E (dev server + Playwright): completion walk, AIZEN
   seal ceremony/persistence/replay, error scenarios, responsive matrix.
+
+## CP-04 · 2026-11-13 ~10:15 — Browser E2E 46/46 GREEN + a REAL production bug fixed
+
+- Staged full E2E env: production build (`next build`), real PG 18.7
+  (hanaso_e2e db, migrate+seed+seed:curriculum), `next start -p 3123`,
+  real Chromium 143 via playwright-core + the cached ms-playwright.
+- Built `scripts/h21-e2e/run.mjs` (committed) + the permanent answer-key
+  integrity test `tests/unit/h21-e2e-key.test.ts` (54 stations / 520
+  exercises walker-answerable; dumps the key + mastery gate bank).
+- **E2E RESULT: 46/46 PASS** — including:
+  - S2.2 the owner-observed bug regression (stn-kana-k8 PERFECT walk via
+    the auto-next path completes; was 409-forever before commit 5204883);
+  - S4.1 OBS-001 fm01 anchor completes (after honest mastery-gate unlock);
+  - the full error matrix (criterion 409 + redo, abort + retry, refresh
+    resume, double-click single-flight, prereq 409, replay, idempotency,
+    identity, GUEST).
+- **REAL BUG FOUND & FIXED (production-affecting):** the kana chapter
+  mastery gate 500'd on PostgreSQL — chapter dialogues have no B_lesson
+  anchor by design, so the content map's INNER JOIN could not resolve
+  kana-welcome-01 and the gate attempt persistence crashed
+  (ContentNotSeededError). Fix: content-map LEFT JOIN (lessonUuid
+  nullable) + guard in the PoC progress upsert. Regression test:
+  tests/integration-pg/mastery-chapter.spec.ts (201 passed + understood;
+  was 500). The VPS is affected the same way → this fix is part of the
+  TASK-21 release.
+- VLM design verification of the seal screenshots: vermilion hanko with
+  藍染 tategaki relief, ink-skip texture, halo; clean at 360px and 1440px;
+  criterion panel shows the Persian explanation + redo-only-final-exercise
+  CTA + progress-kept reassurance.
+- Commits: `fix(db)+test(e2e): TASK-HANASO-21 — chapter mastery gate
+  un-500'd + the 46/46 browser E2E suite`.
+- NEXT: re-run full unit suite (content-map change), then the 12 remaining
+  checkpoint docs, push, release prep + one-liner sandbox validation.
