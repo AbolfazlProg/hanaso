@@ -119,6 +119,15 @@ if [ ! -f "${OWNER_CMD_FILE}" ]; then
   echo "FATAL: ${OWNER_CMD_FILE} not found — run from a checkout that includes the DEPLOY-05 docs (branch tip)." >&2
   exit 1
 fi
+# TASK-HANASO-21 note: the v11 heredoc block was RETIRED with the v12
+# one-liner (OWNER-COMMAND.txt now carries a single bash -c line). This v11
+# drill is the historical TASK-HANASO-20 evidence; the CURRENT delivery-layer
+# drill is run-h21.sh (same mechanics, new entrypoint). Exit 0 with a notice
+# so suites that still call this script stay green.
+if ! grep -q "^bash -s -- <<'HANASO-V11'" "${OWNER_CMD_FILE}"; then
+  echo "SKIP (v11 retired): OWNER-COMMAND.txt no longer carries the v11 heredoc — run infra/deploy/sandbox-tests/run-h21.sh for the current one-liner drill."
+  exit 0
+fi
 # The v11.1 production block: the whole heredoc, first line to delimiter line.
 CMD="$(sed -n "/^bash -s -- <<'HANASO-V11'$/,/^HANASO-V11\$/p" "${OWNER_CMD_FILE}")"
 if [ -z "${CMD}" ]; then
