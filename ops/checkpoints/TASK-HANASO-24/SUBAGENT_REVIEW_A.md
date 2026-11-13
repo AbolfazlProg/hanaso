@@ -104,3 +104,43 @@ legacy re-issue bounded and fail-closed). The lead's claims were accurate but in
 3. A-03: align the route-handler regex to last-wins (match Next's jar) + regression tests for duplicates.
 4. A-04/A-05: bound and register-check event props; require identity for events GET.
 5. A-09: port the live probe cases (duplicate cookies, %-malformed, Secure-in-production, OPTIONS) into the unit/integration suites.
+
+---
+
+## FINAL VERIFICATION (round 2, commit 14d9d3a)
+
+Independent re-verification of every round-1 finding on the remediation commit. Method: source read of the full CP-07a diff, direct execution of the new `getSessionSecret` (esbuild-bundled, NODE_ENV=production), fresh standalone build at 14d9d3a live-probed on port 3131 (own DB `hanaso_qa_a2`) plus a second no-secret instance on 3132, both suites re-run. No production access; no files modified beyond this report.
+
+### Verdict table
+
+| Finding | Verdict | Evidence |
+|---|---|---|
+| A-01 secret gate [High] | **FIXED** | (a) `session.ts:52-61`: production + missing env → `throw` — **proven by direct execution**: transpiled module run with NODE_ENV=production and no env → throws `"[hanaso/session] HANASO_SESSION_SECRET is required in production…"`; dev fallback intact; env-set returns it. (b) `update-hanaso.sh:308` loop now requires `HANASO_SESSION_SECRET HANASO_LEGACY_TOKEN_CUTOFF` (read at lines 303-309). (c) timing: the throw is **first-use, not import-time** — the process boots and serves POST-401s until a cookie-less GET hits the mint path; acceptable because the Docker HEALTHCHECK (`wget /api/health`, cookie-less GET) lands exactly on that path — **proven live**: no-secret instance → `/api/health` = **500**, `/learn` = 500 → container never healthy → the three-tier deploy gate fails the release. (d) shared-vps compose passes `env_file: .env` into the web container (compose lines 36, 53-56). See informational A-10. |
+| A-02 decode 500s [Medium] | **FIXED** | `server.ts:50-56` `safeDecode` at both resolvers + `middleware.ts:69-77` try/catch. **Live**: POST `/api/progress` with `hanaso_lid=%`, `abc%2`, `%25`, `%E0%A4%A`, `x%zz` → all **401 `learner/no_identity`** (was 500); GET variants → 200 (mint), no URIError in the server log. |
+| A-03 duplicate-cookie disagreement [Medium] | **FIXED** | `server.ts:81-87` now `matchAll` last-wins. **Live, both orders agree with the middleware's last-wins jar**: valid-first+garbage-last POST → 401, no mint (middleware also saw garbage-last); garbage-first+valid-last POST → 200 write under the VALID identity (read-back proves it) with no Set-Cookie; GET valid-first+garbage-last → middleware mints fresh AND the resolver follows the minted identity (proven on a station where the first-position identity had `in_progress`: response showed null, not the first identity's data — no divergence). **The round-1 re-key PoC is defeated**: attacker-token-first + victim-token-last now writes to the victim (attacker's later read: null; victim's: in_progress). Unit test `learner-identity.test.ts:92-113` covers all three orders and passes. |
+| A-04 unbounded events props [Medium] | **FIXED** | `event-store.ts:17-23`: ≤16 keys, key ≤64 chars, ≤4KB serialized. **Live**: 2 MB props → **400 `events/validation_failed`**; 17 keys → 400. Regression test `mastery-api.spec.ts:183-197` (17-key, 8KB, legit-pass) green. |
+| A-05 (events GET exposure) | **FIXED** | `events/route.ts:62-84`: identity required + caller-scoped filter on `props.user_id` + `user_id` stripped from the response; POST stamps the caller's `user_id` **after** the spread (`{ ...props, user_id: userId }`) so a client cannot poison the scoping key. **Live**: A posts `probe_a_event` → A's GET sees it, B's GET does not (B total: 0); server-emitted `station_entered` still visible to its own user; no `user_id` key in any returned event. See informational A-11 for the over-HTTP nuance. |
+| A-06 (cutoff/secret ops wiring) | **FIXED** | `.env.example:23-31` documents both vars with `openssl rand -hex 32` + NOW+14d guidance; `AUTH_SESSION_HARDENING.md:86-96` updated and accurate; deploy A3 gate enforces both keys (see A-01b). |
+| A-07 guest-scope reads on station/journey GETs [Low] | **NOT FIXED (deferred)** | No diff to those routes. Re-confirmed harmless: no write path can target `'guest'` (all POST actions 401 first; all 14 `recordLearningEvent` call sites still pass `userId` — re-verified per site). |
+| A-08 `isLearnerId` case-insensitivity + dormant unscoped `list()` [Low] | **NOT FIXED (deferred)** | `identity.ts` unchanged; unscoped `list()` still on the interfaces but still has zero route callers. |
+| A-09 test gaps [Low] | **FIXED (core cases)** | New `learner-identity.test.ts:86-113` (A-02 % variants incl. `%25`; A-03 three duplicate orders), `mastery-api.spec.ts:183-213` (A-04 bounds + B-05 scoping/401), `learning-slice.spec.ts` updated for the events GET identity requirement. Still missing (accepted): HTTP-level OPTIONS/HEAD matrix and production-`Secure` assertion. |
+
+### Original five fixes — re-verified on 14d9d3a (live)
+
+1. Signed-token shape & cross-runtime verify: minted token matches `uuid.base64url(43)` and validates under an independent node HMAC (same secret) — ✔.
+2. Mint on GET/HEAD only: cookie-less POST → 401 with **no Set-Cookie** — ✔.
+3. IDOR closed: `?userId=<A>` as B ignored (server resolves B); attempts GET as B → 0 rows; practice status as B → own data only — ✔.
+4. Guest 401s: raw-uuid POST → 401, tampered-signature POST → 401, no-cookie POST → 401 — ✔.
+5. Legacy cutoff fail-closed: `middleware.ts:58-64` unchanged (missing/malformed/expired cutoff → no re-issue); unit-test matrix still green — ✔.
+
+Suites on 14d9d3a: in-memory **755/755** (64 files), PG integration **35 passed + 8 skipped** (8 files) — matches expectations. Cross-domain CP-07a changes (C-01 in-flight lifecycle, C-02 25P02 retry, C-04 attemptCount-in-tx, C-05 `runInTx` nesting guard, B-06 `correctOptionId` removal) reviewed for isolation regressions: all remain keyed by the server-resolved `userId`; no nesting path reaches `runInTx` inside `runInTx` from any route; no new client-supplied identity input.
+
+### NEW findings introduced/exposed by the fixes (all Low/informational — none block)
+
+- **A-10 — Fail-closed secret throw is first-use, not boot-time** [Low, informational] [CONFIRMED] — `session.ts:52` throws when `getSessionSecret()` is first called (middleware mint path / first parseable-token verify), not at module import. The process starts and can answer POST-401s before any throw. Acceptable in practice: the Docker HEALTHCHECK request is a cookie-less GET → always 500 without the secret (proven live), so the container never turns healthy and the three-tier deploy gate refuses the release; the A3 env gate blocks earlier still. Suggested (optional): assert the secret eagerly in `instrumentation.ts` so the process exits at boot.
+- **A-11 — "GET requires identity" is route-level, not HTTP-level (mint-on-GET design)** [Low, informational] [CONFIRMED] — Over HTTP a cookie-less `GET /api/events` returns **200**, not 401: the middleware mints a fresh identity on the same request, so the resolver sees a valid token. Live-verified: the response is **own-scoped and empty** (total 0) — no cross-learner disclosure; the 401 only manifests when the middleware is bypassed (direct handler calls / matcher-excluded paths). Same applies to the other identity-gated GETs. No action required; worth a doc note.
+- **A-12 — Double-decode nuance at the resolvers** [Low, informational] [CONFIRMED] — `safeDecode` decodes a value the Next jar has already decoded once (RSC seam) or decodes the raw header once (route seam). A *doubly*-percent-encoded valid token is accepted by the middleware (valid after its decode) but degrades to guest in the route resolver (still encoded after one decode) → self-inflicted 401 only; no cross-account impact (verified by reasoning over both seams; single-encoded tokens agree everywhere, live-retested). Optional hardening: canonicalize the cookie once (decode in exactly one place).
+
+### DOMAIN VERDICT: PASS
+
+Every High/Medium finding from round 1 (A-01, A-02, A-03, A-04, A-05/A-06 ops wiring) is verified fixed from source and by live probe on the remediation commit; the two deferred Lows (A-07, A-08) were known and carry no write-path exposure; the three new informational Lows (A-10..A-12) do not affect isolation, forgeability, or availability. The original five TASK-HANASO-24 fixes still hold in full on 14d9d3a.

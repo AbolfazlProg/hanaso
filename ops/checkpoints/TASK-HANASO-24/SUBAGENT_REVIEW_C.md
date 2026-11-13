@@ -223,3 +223,54 @@ all writes went to `hanaso_qa_c`, created and dropped by me).
 **Cleanup:** QA server killed, `hanaso_qa_c` dropped, `/tmp/hanaso24C` removed.
 Worktree: only this report added (`SUBAGENT_REVIEW_C.md`). Note:
 `SUBAGENT_REVIEW_A.md` (parallel subagent's report) was already untracked before this audit.
+
+---
+
+## FINAL VERIFICATION (round 2, commit 14d9d3a)
+
+Independent re-verification of the remediation. Runs: PG suite **35 passed + 8 documented
+skips** (was 34+1 new sequential-replay test), in-memory **755 passed / 64 files** — both
+match the updated doc exactly. Live probe on own port 3133 + own DB `hanaso_qa_c2`
+(created from `hanaso_test`, dropped after). Experiments in `/tmp/hanaso24C2` (removed).
+`git diff 4216426..14d9d3a -- apps/web/db/` is empty — still zero schema/migration changes.
+
+### Per-finding verdicts
+
+| ID | Verdict | Evidence (all verified by me, round 2) |
+| --- | --- | --- |
+| C-01 High — in-flight leak + answered-after-complete | **FIXED** | Source: `deleteInFlight` on the interface + both impls (`modules/practice/repository.ts:88-91`, `db/repositories/practice.ts:113-115`); PG `recordCompleted` no longer touches the map; service calls `getPracticeSessionStore().deleteInFlight(stored.id)` AFTER commit (`completions.ts:86`); `sweepExpired(Date.now())` on every generate (`api/practice/route.ts:206-212`) — also grepped present in the compiled standalone chunks. **Live probe:** answer-after-complete → **404** (round 1: 200); sequential replay → **404** (round 1: 200 `recorded:true,already:true`) — PROD now matches DEV semantics; 200× generate spam → 200/200 OK, server healthy; DB consistent (1 session row, 10 eligible objects, fold exactly once). Residual (bounded, documented in the doc): abandoned sessions of a learner who never generates again persist until restart — heap bounded by the 24h window of active users. |
+| C-02 Medium — in-tx 23505 → 25P02 → unhandled 500 | **FIXED** | Source: `isRetryableTxError` (23505 \| 25P02, cause-chain aware, `attempts.ts:76-89`) wired in BOTH service loops (`completions.ts:89,239`). **Deterministic experiment through the REAL service** (one-line hook after the MAX select, /tmp copy only): unlocked writer commits attempt_no mid-tx → 23505 → `create`'s `continue` → 25P02 on the aborted tx → predicate TRUE → whole-unit retry → fresh MAX read → attempt 3 inserted → chapter `understood` → **resolved, no unhandled error** (final attempts [1,2,3]). Predicate separately proven to see 25P02 through drizzle's cause-chain wrapping. A first flawed run (hook non-idempotent) incidentally proved the retry genuinely fires. |
+| C-03 Medium — PROD replay path untested | **FIXED** | New PG test `SEQUENTIAL replay (PROD path, subagent C-03)` (`transaction-concurrency.spec.ts:107-125`): service-level replay → `'already'`, `newlyEligible: 0`, fold count exactly one (`K1.seen=1`) — passes in my run. Route-level sequential replay now 404s (live-probed; consistent with DEV). Nuance: the route-level 404 replay behavior has no automated test (verified live by me only) — minor gap, not blocking. |
+| C-04 Low — attemptCount lost updates | **PARTIALLY FIXED (acceptably bounded)** | Source: fresh in-tx `stationRepo.get` and `attemptCount: fresh.attemptCount` (`completions.ts:149-153`) — the route's stale pre-tx value is discarded. **Honest remaining window:** under READ COMMITTED, a concurrent committed `incrementAttempts` between the in-tx read and the upsert is still lost (no `FOR UPDATE`, no row lock; `incrementAttempts` itself remains an unlocked RMW). Window narrowed from the whole request span to a sub-ms in-tx span; the counter is display/telemetry only (no gating consumer) → acceptable. Full closure = `SELECT … FOR UPDATE` in the unit or an atomic SQL increment. |
+| C-05 Low — runInTx nesting guard | **FIXED** | ALS guard (`transactions.ts:26,45-51`). Experiment (/tmp copy): nested `runInTx` **throws**; two concurrent independent calls **both succeed**; 8 interleaved-by-await units all succeed — the guard distinguishes nesting from concurrency. Service-level whole-unit retries call `runInTx` from OUTSIDE the previous ALS context → unaffected (the C-02 experiment exercised exactly this). |
+| C-07 Low — practice retry dead code | **FIXED** | `isRetryableTxError` wired at `completions.ts:89`; a mid-unit statement failure followed by continued use of the aborted tx (25P02) is now a real, recognized trigger; predicate proven by experiment. |
+| C-08 Low — doc inaccuracies | **FIXED** | `DATABASE_TRANSACTION_FIX.md` now: TTL "actually ENFORCED" + zero-caller history stated; the /api/attempts unlocked-writer caveat + bounded retry stated; counts **755 / 35+8 skips** (match my runs exactly); lock-removal experiment noted. |
+| C-06, C-09 Low — accepted residuals | N/A (no action requested) | Lock-key collision / per-chapter lock domain — unchanged, still benign under the 1:1 model; correctly left as-is. |
+
+### Original guarantees re-verified on new tip
+
+Rollback machinery, advisory-lock lost-update, MAX+1 race, station convergence — all green
+in the 35-pass PG run; in-memory 755 green; no schema/migration change in 14d9d3a.
+
+### NEW findings (introduced-by-fix hunt)
+
+- **C-10 — Nesting guard has NO automated test [SEVERITY: Low] [STATUS: CONFIRMED]**
+  Location: `src/db/transactions.ts:45-51`; `tests/` grep — zero references. My /tmp
+  experiment was the only exercise of the guard; a regression (guard removed or ALS scoping
+  broken) would pass CI. Also cosmetic: the guard's error message reads `'anaso/tx] …'`
+  (missing the opening `[h`). Suggested fix: port my 3-case experiment
+  (nested-throws / concurrent-both-succeed / 8-interleaved) into
+  `tests/integration-pg/transaction-concurrency.spec.ts`.
+- **C-11 — Sweep piggybacks on generate only [SEVERITY: Low] [STATUS: CONFIRMED (bounded, documented)]**
+  Location: `src/app/api/practice/route.ts:206-212`. Sessions abandoned by a learner who
+  never generates again persist until restart. The heap is now bounded by the 24h window of
+  active generators — acceptable for the PoC and honestly documented; no action needed this
+  mission.
+- **C-12 — Cross-domain fixes touching my audit surface reviewed, no regression [STATUS: CONFIRMED, informational]**
+  events route caller-scoping (B-05) + props bounding (A-04), assessment-bank key removal
+  (B-06), learner identity LAST-wins/safeDecode (A-02/A-03), fail-closed session secret
+  (A-01): all reviewed from the 4216426..14d9d3a diff — no DB/transaction integrity impact;
+  server-side emitters stamp `user_id` (`modules/curriculum/events.ts:105`) so the
+  caller-scoped event listing stays complete for the caller.
+
+DOMAIN VERDICT: PASS

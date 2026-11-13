@@ -1,6 +1,6 @@
 # TASK-HANASO-24 — CURRENT STATE
 
-> آخرین به‌روزرسانی: **CP-07 (fixes done — awaiting final verification)**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
+> آخرین به‌روزرسانی: **CP-07 کامل**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
 
 ## مأموریت
 
@@ -44,7 +44,7 @@
 - [x] **CP-04**: Transaction و Idempotency — سرویس‌های اتمیک (db/transactions.ts + lib/poc/completions.ts)؛ idempotent replay؛ advisory lock ضد lost-update/race؛ تست‌های جدید (3 in-memory + 5 PG)؛ 64 فایل/748 + PG 34 همه سبز → DATABASE_TRANSACTION_FIX.md
 - [x] **CP-05**: تست امنیتی واقعی QA — ۱۲/۱۲ سناریو و ۵۱/۵۱ چک سبز (سرور standalone + PG واقعی + Chromium). یافتهٔ زندهٔ S5 (oracle بازامضای raw uuid) با HANASO_LEGACY_TOKEN_CUTOFF بسته شد → SECURITY_TEST_RESULTS.md
 - [x] **CP-06**: سه ساب‌ایجنت مستقل هم‌زمان (A=Auth/IDOR، B=API/Exposure، C=DB/Transaction) — هر سه با یافتهٔ مستقل و شواهد زنده (نه تأیید صِرف): A: 1H+3M+4L (A-01 نبود گیت secret، A-02 decode 500، A-03 duplicate-cookie first/last، A-04 events props بی‌کران) · B: 1C+1H+4M+6L (B-03 BUG-001 gate audio، B-05 events GET بی‌هویت، B-06 perQuestion key harvest) · C: 1H+2M+5L (C-01 درایو in-flight در tx-instance، C-02 25P02 در tx، C-04 attemptCount) → SUBAGENT_REVIEW_{A,B,C}.md
-- [x] (بخش ۱) CP-07: همهٔ ایرادات تأییدشدهٔ در-scope رفع شد: A-01 (fail-closed secret + گیت deploy + .env.example)، A-02 (گارد decode)، A-03 (last-wins)، A-04/B-05 (events: هویت GET + فیلتر caller + bound props + user_id stamp)، B-06 (حذف key از perQuestion)، C-01 (deleteInFlight روی singleton + sweep-on-generate)، C-02 (isRetryableTxError 25P02)، C-04 (attemptCount داخل tx)، C-05 (nesting guard AsyncLocalStorage)؛ تست‌های جدید؛ 755+35 سبز؛ QA زندهٔ ۱۲/۱۲ دوباره سبز. DEFER: B-01 (deploy)، B-03=BUG-001/B-04=BUG-029 (content)، B-02 behavior=BUG-031، rate-limit کامل.
+- [x] **CP-07**: رفع موج ایرادات (commit 14d9d3a) + Verification نهایی با همان ۳ ساب‌ایجنت: **هر سه DOMAIN VERDICT: PASS** (A: همهٔ High/Medium FIXED؛ B: B-06/B-05 FIXED + deferralهای موثق؛ C: C-01/C-02/C-03 FIXED با آزمایش زنده)؛ تست nesting-guard جدید (۳ تست)؛ ادعای «typo» C-10 نمایشی بود (سورس درست بود)؛ شواهد QA تازه‌سازی شد → FINAL_INDEPENDENT_VERIFICATION.md
 - [ ] **CP-08**: Regression کامل (TS/ESLint/Unit/Integration/E2E مسیر Kana/Home/Progress)
 - [ ] **CP-09**: RELEASE_CANDIDATE.md + مستندات انتشار (بدون deploy)
 

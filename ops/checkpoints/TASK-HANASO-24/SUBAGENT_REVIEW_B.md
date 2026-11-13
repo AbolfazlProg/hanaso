@@ -229,3 +229,60 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
 
 Top items for the lead: **B-03** (gate listening questions have no audio — live-learn defect), **B-01** (deploy!), **B-05**,
 **B-06**, **B-11**.
+
+---
+
+## FINAL VERIFICATION (round 2, commit 14d9d3a)
+
+Re-verified independently on the new tip: fresh `pnpm build` (exit 0), standalone server on 127.0.0.1:3132 with
+dedicated DB `hanaso_qa_b2` (createdb -T hanaso_test), live probes + full 12-scenario QA script re-run (prod GET
+patched out — my single production GET budget spent on the direct probe below). Suites re-run by me on 14d9d3a:
+unit **755/755** (64 files) and PG integration **35 passed / 8 skipped** — both match the lead's claims.
+
+### Per-finding verdicts
+
+| Finding | Verdict | Evidence |
+|---|---|---|
+| B-06 attempts perQuestion key harvest | **FIXED** (one Low residual, B-13) | Source: `assessment-bank.ts` `GradedAssessment.perQuestion` now `{questionId, measure, correct}` — `correctOptionId` removed from type AND `gradeAssessment` push; client `assessment-form.tsx` updated (`isCorrectReveal = false`); test asserts `JSON.stringify(perQuestion)` lacks `correctOptionId` (mastery-api.spec.ts). Live: two garbage POSTs (201, 201) — raw response JSON contains ZERO `correctOptionId` in ALL of perQuestion/attempt/weakPoints/scoring; per-question booleans all-false for garbage run (legitimate); attemptNo 1→2 works. |
+| B-05 events GET unauth + cross-learner + unbounded props | **FIXED** | Source: GET resolves identity (401 guest), listing filters `props.user_id === caller` and strips it; POST stamps server-side `user_id` (overrides client-supplied); props bounded 16 keys/4KB (`.refine`). Live: identity-A posts marker event → identity-B listing `total:0`, marker absent; A sees own (`total:1`, marker present); server-emitted events stamped (events.ts:105) and visible to their own caller only (identity C: 8 own events, `user_id` stripped from all); 2MB props POST → **400**; 17-keys POST → **400**; legit POST → 201; injected `user_id:"FAKE-ID"` overwritten (not visible to B, not in A's output). |
+| B-02 write `character` pre-answer (BUG-031) | **DEFERRED-OK** (doc honesty delivered, behavior unchanged as agreed) | Source: `session.ts` server-shape comment now states explicitly: client projection DOES carry `character`, local writing engine needs it, evidence-only, never gates/FSRS, server-side stroke grading is the follow-up; client-shape comment references BUG-031. Live: generate still returns write items with `character` and NOTHING new (write keys: `character/kind/promptAudio/promptFa`; choice keys unchanged, no `correctOptionId`/`revealFa`). Deferral recorded in CURRENT_STATE.md:55 («B-02 behavior=BUG-031 (تصمیم محصول)»). |
+| B-04 (BUG-029 f1Fa) + B-03 (BUG-001 gate audio) | **DEFERRED-OK** | Explicitly carried: CURRENT_STATE.md:47 and :55 record `B-03=BUG-001 / B-04=BUG-029 (content track)` as reasoned deferrals, not silently dropped. (No FINAL_INDEPENDENT_VERIFICATION.md exists yet — CURRENT_STATE CP-09 row is still unchecked; deferrals must survive into RELEASE_CANDIDATE.md when written.) |
+| B-11 test gaps (RSC flight + network scans) | **PARTIALLY → acceptable for this mission** | `scripts/h24_security_qa.mjs` S12 now asserts: direct GET 404, RSC flight of /poc/practice grep-clean (KEY_RE), real-Chromium network capture clean; S6 (line 276) asserts practice generate payload has no keys. I re-ran the full script on the new build: **12/12 scenarios, 51/51 checks PASSED** (evidence `/tmp/h24qa/security_qa_results.json` @23:44, base :3132). Note: qa-evidence/ files in-repo are still the CP-05 run (23:11, pre-14d9d3a) — the re-pass is verified by me but the committed evidence predates the fix commit. Remaining gap: no in-repo CI test greps learn-page RSC flights or client chunks — acceptable for this mission given the QA script + my clean re-scan (below), but it should land as an automated test next track. |
+| B-01 production on pre-fix build | **DEFERRED-OK (deploy = the blocker)** | No deploy commits anywhere in git log since 23:00 (checked `--all`). My ONE read-only production GET: `/poc/practice` → **HTTP 200, 32,693 bytes, `correctOptionId` present** — production is still the pre-24 build and still leaking. CURRENT_STATE.md:47/55 mark deploy as the blocker («B-01 deploy blocker — در RC», CP-09 = release docs without deploy); `infra/deploy/update-hanaso.sh` now dies unless `.env` carries HANASO_SESSION_SECRET + HANASO_LEGACY_TOKEN_CUTOFF (verified lines 303-311). |
+
+### Spot-check re-verification on 14d9d3a (all clean)
+
+- All six /poc pages + `/poc` root: **404×7** on the fresh standalone build.
+- Learn RSC flights (RSC:1): `/`, `/learn`, `/learn/[chapter]`, `/learn/[chapter]/journey`,
+  `/learn/[chapter]/journey/stn-kana-h0`, `/practice`, `/learn/[chapter]/assessment`,
+  `/learn/[chapter]/dialogue` — **zero hits** for all 13 key-field patterns (ALL CLEAN).
+- /api/attempts full-response grep (both garbage runs): no `correctOptionId` anywhere
+  (perQuestion/attempt/weakPoints/scoring); /api/practice generate: 14 items, keys absent.
+- QA script S1-S12 all PASSED on my server (51/51 checks).
+
+### NEW findings from the fixes
+
+- **B-13 — Residual harvest oracle on /api/attempts via per-question correctness [SEVERITY: Low] [STATUS: CONFIRMED]**
+  Location: `src/lib/poc/assessment-bank.ts` (perQuestion keeps `correct`), fixed 3-option bank, unlimited retakes.
+  Evidence: live garbage run `all-a` returns per-question booleans (`q-m3-wo:true`, `q-m5-speaker:true`, rest false) —
+  two more targeted submissions fully reconstruct the key (try `b` on the wrong ones; else `c`). The lead's fix removed
+  the ONE-SUBMISSION harvest; the oracle makes it a 2-3 submission harvest. Impact bounded: PoC-era endpoint, feeds
+  dialogue progress records only — the chapter gate path (/api/curriculum/mastery) never returns per-question data
+  (re-verified: it returns only wrongByMeasure/scores).
+  Suggested fix (content/next track): cap retakes per dialogue per learner, or drop per-question correctness on
+  non-final attempts, or rotate the bank. Not a blocker for this mission.
+- **B-14 — Events GET "anonymous → 401" claim is handler-level only; over HTTP the middleware mints on GET [SEVERITY: Info] [STATUS: CONFIRMED]**
+  Location: `src/app/api/events/route.ts` GET guard vs `src/middleware.ts` `shouldMint` (GET/HEAD always mint).
+  Evidence: cookie-less `curl GET /api/events` → **200** with `set-cookie` (fresh minted identity) and
+  `{"total":0,"events":[]}` — the 401 is only observable when middleware is bypassed (as in the unit test). Not a
+  security hole: the minted identity sees only its own (empty) scope, and cross-learner isolation is verified closed
+  (B-05 probes). Same pattern as every other GET route. Recording so the release notes state the behavior accurately.
+
+### Final assessment
+
+Both of my Medium findings that were in-scope to fix (B-05, B-06) are fixed and live-verified; B-02/B-03/B-04 are
+correctly deferred with the deferral documented (B-02 with honest code comments); B-01 remains the known deploy
+blocker, correctly tracked; B-11's remaining gap is acceptable for this mission. New findings from the fixes: B-13
+(Low, bounded oracle), B-14 (Info, documentation nuance) — no new High/Medium.
+
+DOMAIN VERDICT: PASS

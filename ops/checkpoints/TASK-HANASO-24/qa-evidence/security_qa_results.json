@@ -1,6 +1,6 @@
 {
-  "base": "http://127.0.0.1:3124",
-  "at": "2026-11-13T23:11:37.315Z",
+  "base": "http://127.0.0.1:3132",
+  "at": "2026-11-13T23:44:43.321Z",
   "scenarios": [
     {
       "no": 1,
@@ -19,7 +19,7 @@
         {
           "name": "A GET /api/progress → 200 with A-own record",
           "ok": true,
-          "detail": "userId=b2f83f53-807a-43e5-a242-06af7d80bbf2 stage=A_selfcheck"
+          "detail": "userId=7ad28827-8e78-47d0-a332-71b68b283b2a stage=A_selfcheck"
         },
         {
           "name": "A GET station state → 200, in_progress, owned row",
@@ -41,7 +41,7 @@
         {
           "name": "A GET ?userId=B → sees ONLY her own record (param ignored)",
           "ok": true,
-          "detail": "server resolved userId=b2f83f53-807a-43e5-a242-06af7d80bbf2"
+          "detail": "server resolved userId=7ad28827-8e78-47d0-a332-71b68b283b2a"
         },
         {
           "name": "A POST body userId=B → applies to A ONLY (B untouched)",
@@ -58,7 +58,7 @@
         {
           "name": "A POST /api/attempts with body userId=B → recorded under A",
           "ok": true,
-          "detail": "attempt.userId=b2f83f53-807a-43e5-a242-06af7d80bbf2"
+          "detail": "attempt.userId=7ad28827-8e78-47d0-a332-71b68b283b2a"
         },
         {
           "name": "A GET /api/attempts lists ONLY A-owned rows",
@@ -85,7 +85,7 @@
         {
           "name": "B GET ?userId=A → B sees only her own record",
           "ok": true,
-          "detail": "resolved=b8a9c4ad-f274-4aa7-a391-7f004d9fe680"
+          "detail": "resolved=b325e50c-4799-4318-ba22-8088609bb480"
         },
         {
           "name": "B GET station h0 → honest EMPTY (not A's in_progress)",
@@ -107,7 +107,7 @@
         {
           "name": "RAW B uuid on GET → fresh identity, NEVER B",
           "ok": true,
-          "detail": "resolved=c89818e0 progress=null"
+          "detail": "resolved=47c471dd progress=null"
         },
         {
           "name": "RAW B uuid on POST → 401 (no mint-and-proceed)",
@@ -117,7 +117,7 @@
         {
           "name": "tampered signature on GET → fresh identity, never the forged one",
           "ok": true,
-          "detail": "resolved=15fe2286"
+          "detail": "resolved=ed00ba27"
         },
         {
           "name": "tampered signature on POST → 401",
@@ -127,7 +127,7 @@
         {
           "name": "garbage on GET → fresh identity + empty (never the garbage value)",
           "ok": true,
-          "detail": "resolved=21c739c8"
+          "detail": "resolved=e9b97fea"
         },
         {
           "name": "garbage on POST → 401",
@@ -154,7 +154,7 @@
         {
           "name": "no-cookie GET /api/progress → fresh identity, EMPTY (not A/B data)",
           "ok": true,
-          "detail": "resolved=13ac833c"
+          "detail": "resolved=d7b30333"
         },
         {
           "name": "no-cookie GET /api/attempts → fresh identity, lists NOTHING of others",
@@ -218,7 +218,7 @@
         {
           "name": "after cookie loss a FRESH identity is minted (≠ old A)",
           "ok": true,
-          "detail": "old=b2f83f53 new=b80f3fd7"
+          "detail": "old=7ad28827 new=9c72f57b"
         },
         {
           "name": "fresh identity sees NONE of A's old data (honest empty)",
@@ -336,7 +336,7 @@
         {
           "name": "production check (read-only, no mutation)",
           "ok": true,
-          "detail": "prod still serves the pre-24 build (status 200, keys present: true) — closed by THIS branch upon deploy"
+          "detail": "skipped (subB single-prod-GET budget already used)"
         }
       ],
       "status": "passed"
