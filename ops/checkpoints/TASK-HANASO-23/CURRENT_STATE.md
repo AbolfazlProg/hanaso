@@ -34,11 +34,11 @@ deploy. Deliverables: 16 report files under `ops/checkpoints/TASK-HANASO-23/`
 | C1 | 3 subagents (A: Japanese master/curriculum, B: assessment/questions, C: learner experience/feedback) — full first pass | ✅ (bd348a8) |
 | C2 | same 3, adversarial second pass (hunt what C1 missed) | ✅ (84ec60e) |
 | C3 | verification pass (source + browser evidence; confirm/reject C1+C2 findings; validate positives) | ✅ (this commit — completed across the infra failure; 66/67 stand, B-05 split) |
-| T1 | 3 subagents (A: frontend/browser, B: backend/db/security, C: architecture/perf/QA) | ⬜ |
-| T2 | adversarial technical pass | ⬜ |
-| T3 | technical verification (tests run, browser, API probes) | ⬜ |
-| Browser matrix | 360/390/430/768/1024/1440 px, 12 flows, screenshots + index | ⬜ |
-| Synthesis | BUG_REGISTER, CONTENT_QUALITY_REPORT, QUESTION_AND_FEEDBACK_AUDIT, SECURITY_AUDIT, PERFORMANCE_AUDIT, BROWSER_TEST_RESULTS, SCREENSHOT_INDEX, FINDINGS_VERIFICATION, REMEDIATION_ROADMAP + final 10 answers | ⬜ |
+| T1 | 3 subagents (A: frontend/browser, B: backend/db/security, C: architecture/perf/QA) | ✅ (A salvaged after death + lead completion; B+C complete) |
+| T2 | adversarial technical pass | ✅ (3 complete runs) |
+| T3 | technical verification (tests run, browser, API probes) | ✅ (single-verifier deviation documented) |
+| Browser matrix | 360/390/430/768/1024/1440 px, 12 flows, screenshots + index | ✅ (75 PNGs; 0 console errors) |
+| Synthesis | BUG_REGISTER, CONTENT_QUALITY_REPORT, QUESTION_AND_FEEDBACK_AUDIT, SECURITY_AUDIT, PERFORMANCE_AUDIT, BROWSER_TEST_RESULTS, SCREENSHOT_INDEX, FINDINGS_VERIFICATION, REMEDIATION_ROADMAP + final 10 answers | ✅ (this commit) |
 
 Rules in force: max 3 concurrent subagents; commit+push after EVERY round;
 findings evidence-based with CONFIRMED/HYPOTHESIS split; production
