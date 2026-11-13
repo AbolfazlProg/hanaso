@@ -51,3 +51,25 @@ decision and incident gets an entry HERE as soon as it happens.
 - Commit: `c25dba7` (fix(audio): TASK-HANASO-21 — complete hostword gen
   surface + the honesty gate).
 - NEXT: Phase 5 full regression (unit/EQA/tsc/eslint), then real-browser E2E.
+
+## CP-03 · 2026-11-13 ~09:10 — Phase 5 static+DB regression GREEN (commit pending push)
+
+- Unit suite: **736/736** (62 files) — includes the new audio honesty gate.
+- Integration suite ran for the FIRST time since TASK-HANASO-20: staged a
+  portable PostgreSQL **18.7** in the sandbox (PGDG debs extracted user-space:
+  postgresql-18 + client-18 + libpq5 + liburing2 2.15; `pg_ctl` on
+  127.0.0.1:5433, trust auth, isolated data dir /tmp/h21pg18). Result after
+  re-pinning two stale expectations: **35 passed + 1 conditional skip (6/6
+  files)** — incl. the live pg_dump/pg_restore drill (99,421B archive, 187
+  entries, per-table counts equal, 0.128s restore).
+  - Stale expectation 1: content.lessons 54→55 — TASK-HANASO-20's
+    stn-kana-k12-foreign (32nd Ch01 station) was never re-pinned because the
+    suite could not run in that sandbox.
+  - Stale expectation 2: unit est_minutes 45→71 — TASK-HANASO-21 OBS-003.
+  Both are intended product states; tests re-pinned, no product change.
+- tsc --noEmit: clean (one strict-null fix in the new gate test).
+- eslint: clean. stylelint: 2 errors in the AIZEN seal CSS (physical
+  width/height) fixed → logical inline-size/block-size. Fonts budget: green.
+- Commit: `test+style: TASK-HANASO-21 — integration suite re-pinned…`
+- NEXT: real-browser E2E (dev server + Playwright): completion walk, AIZEN
+  seal ceremony/persistence/replay, error scenarios, responsive matrix.
