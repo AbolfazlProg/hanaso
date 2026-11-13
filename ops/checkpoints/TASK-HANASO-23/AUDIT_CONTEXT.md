@@ -31,7 +31,7 @@
 | Item | Value |
 | --- | --- |
 | Repo | https://github.com/AbolfazlProg/hanaso (public) |
-| Audit worktree | `/home/z/my-project/hanaso23` — branch `audit/TASK-HANASO-23`, tip `af49535` |
+| Audit worktree | `/home/z/my-project/hanaso23` — branch `audit/TASK-HANASO-23`, tip `84ec60e` (re-added from origin 2026-11-13 after a sandbox recycle deleted the worktrees; base repo /home/z/my-project/hanaso16) |
 | Product code under audit | identical to commit `3d8b8ccd` (branch tip is docs-only on top; production runs it) |
 | Live production | https://learn.kotodama.ir · 1.0.0-hanaso22-r01 @ 3d8b8ccd (uptime fresh 2026-11-13) |
 | Research KB | `/home/z/my-project/japanese-learning-kb` (tip `8b8627c`) — `docs/knowledge-base/` holds EV-numbered evidence the content cites |
@@ -115,13 +115,19 @@ All content is CONTENT-AS-CODE under
    the manifest (`modules/audio`), etc.
 3. **Local production server (side effects allowed here, NOT on prod)** —
    a ready standalone build identical to the audited code exists at
-   `/home/z/my-project/hanaso22/apps/web/.next/standalone/` (same product
-   commit; the branch tip is docs-only). Run it like the E2E does, in ONE
-   bash command (background processes die when the command ends):
-   `cd /home/z/my-project/hanaso22/apps/web/.next/standalone && env -u DATABASE_URL PORT=3123 HOSTNAME=127.0.0.1 node apps/web/server.js` —
-   serve it, curl/inspect it, or drive it with playwright-core
-   (`scripts/h22-e2e/run.mjs` shows the exact pattern; browser Chromium is
-   installed). In-memory stores: sessions reset on restart.
+   `/home/z/my-project/hanaso23/apps/web/.next/standalone/` (built from THIS
+   worktree: product code identical to 3d8b8ccd — the audit branch is
+   docs-only on top). Run it in ONE bash command (background processes die
+   when the command ends), server + your script in the SAME call:
+   `(cd /home/z/my-project/hanaso23/apps/web/.next/standalone && env -u DATABASE_URL PORT=31XX HOSTNAME=127.0.0.1 node apps/web/server.js & echo $! > /tmp/srv.pid); sleep 3; node /tmp/<you>/script.mjs; kill $(cat /tmp/srv.pid) 2>/dev/null`.
+   In-memory stores: sessions reset on restart. In Node scripts:
+   `const {createRequire}=require('module'); const {chromium}=createRequire('/tmp/h22e2e/node_modules/playwright-core')` —
+   playwright-core 1.57.0 lives at /tmp/h22e2e (reinstalled after the
+   sandbox recycle; Chromium at ~/.cache/ms-playwright). To import the TS
+   content files in node, write a small ESM loader (`--loader`) that maps
+   '.ts' imports (the C2 agents did this; see rounds/c2 reports for what
+   they imported). Reference E2E with auth/walk/answer-key patterns:
+   `scripts/h22-e2e/run.mjs` in this worktree.
 4. **Live production (READ-ONLY)** — open pages on
    https://learn.kotodama.ir, check console/network via playwright-core,
    verify static assets; NEVER submit forms that mutate other users' data;
