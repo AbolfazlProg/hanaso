@@ -1,6 +1,6 @@
 # TASK-HANASO-24 — CURRENT STATE
 
-> آخرین به‌روزرسانی: **CP-00**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
+> آخرین به‌روزرسانی: **CP-01**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
 
 ## مأموریت
 
@@ -38,7 +38,7 @@
 ## فازها
 
 - [x] **CP-00**: اعتبارسنجی Git + ساخت شاخهٔ fix از خط محصول + CURRENT_STATE + CHECKPOINT_LOG + Push
-- [ ] **CP-01**: SECURITY_ROOT_CAUSE.md — خواندن کد af49535، تأیید line-level همهٔ یافته‌ها، نقشهٔ کامل همهٔ endpointها (نه فقط دو مسیر گزارش‌شده)
+- [x] **CP-01**: SECURITY_ROOT_CAUSE.md — سرشماری کامل ۱۰ مسیر API + ۶ صفحهٔ /poc + ۳ صفحهٔ محصول؛ تأیید line-level؛ طراحی راه‌حل هر فاز (توکن Session امضاشده، GET-only minting، حذف userId از schemaها، dev-only برای /poc، transaction-aware completion)
 - [ ] **CP-02**: رفع IDOR + hardening اعتبار/session/cookie → IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md
 - [ ] **CP-03**: رفع افشای Answer Key → ANSWER_KEY_EXPOSURE_FIX.md
 - [ ] **CP-04**: Transaction و Idempotency → DATABASE_TRANSACTION_FIX.md
@@ -50,7 +50,15 @@
 
 ## اقدام بعدی
 
-CP-01 — خواندن کد در `apps/web/src` (identity/server/bootstrap، api/progress، api/attempts، poc/*، modules/practice، middleware، prisma schema)؛ تأیید هر یافته با شمارهٔ خط واقعی؛ جست‌وجوی همهٔ endpointهای مشابه؛ نوشتن SECURITY_ROOT_CAUSE.md؛ commit + push.
+CP-02 — پیاده‌سازی طبق §5 SECURITY_ROOT_CAUSE.md:
+1. `lib/learner/session.ts` جدید: امضا/اعتبارسنجی HMAC (WebCrypto در middleware، node:crypto در resolverها)؛ `HANASO_SESSION_SECRET`.
+2. `middleware.ts`: mint فقط برای GET/HEAD؛ re-issue امضاشده با همان uuid برای کوکی‌های raw معتبر؛ httpOnly+Secure(آگاه از https)+lax.
+3. `lib/learner/identity.ts`: حذف writeCookieId (کوکی فقط سمت سرور)؛ حفظ localStorage برای namespacing عکس‌های walk.
+4. `api/progress` + `api/attempts`: هویت فقط از کوکی؛ حذف userId از `progressInputSchema`/`attemptSubmissionSchema`؛ GET attempts با `listForUser(userId)`؛ حذف fallback poc-user از مسیر درخواست.
+5. `api/events`: GET بدون `user_id`.
+6. `api/curriculum/mastery`: guest 401 صریح.
+7. به‌روزرسانی تست‌های existing (learning-slice, mastery-api, routes.spec, unit) با کوکی معتبر — بدون حذف/تضعیف هیچ ادعایی؛ تست‌های جدید IDOR/isolation.
+8. IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md؛ commit + push.
 
 ## قوانین فعال
 
