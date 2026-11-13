@@ -100,3 +100,37 @@ Content changes (all additive, validation-clean):
 
 Journey UI: content-type icons (right side identity, locked keeps identity), left access
 state, locked-row click feedback (shake/pulse/vermilion + reason), button feedback audit.
+
+## Milestone 4 — Journey icons + locked feedback (DONE, tests green)
+
+- `section-journey.tsx`: the RIGHT tile is now the row's CONTENT IDENTITY
+  (13 kinds: anchor/kana/milestone/vocab/grammar/structure/expression/listen/
+  practice/integrate/mastery/review/deepdive → lucide icons + Persian labels),
+  recognizable even when locked (dimmed, dashed — never a faceless lock). The
+  LEFT marker keeps the access state. The duplicate right-side Lock is GONE.
+- Locked rows are now BUTTONS: click → short shake (hanaso-locked-shake) +
+  vermilion flash on the access marker (hanaso-locked-flash) + a Persian
+  notice naming the FIRST unmet prerequisite (blockedByTitlesFa) — role=status,
+  aria-live, auto-dismiss 3.6s, reduced-motion safe (color flash survives).
+- `journey-home.tsx` derives contentKind + blockedByTitlesFa server-side from
+  the station data (milestone = objectiveCode 'kana-realworld-reading').
+- The live tab-focus refresh merges fresh availability onto the static
+  identity fields (no data loss, no flash).
+
+## Milestone 5 — AIZEN seal ceremony upgrade + licensed sound + achievements (DONE)
+
+- `aizen-seal.tsx`: same identity (owner satisfied) + rotating ink ring (dashed
+  orbit, 64s/turn, settles when not animating) + one-pass shimmer sweep over
+  the carved face (animate only) — both die under prefers-reduced-motion.
+- `station-runner.tsx` completion panel: seal frame size-28/32 → **size-40/44**
+  with breathing room; the lesson's honest ACHIEVEMENTS (max 3 chips, derived
+  pure from station blocks: «با N شکل جدید آشنا شدی» / «N دور تمرین» /
+  «نوشتن دستی» / milestone line — Introduced/Practiced only, never mastery).
+- **Sound**: `public/audio/sfx/aizen-stamp.{opus,m4a}` — CC0 (rubberduck,
+  opengameart 75-CC0-hit-sfx, bfh1_hit_09; trimmed 0.32s, loudnorm -18 LUFS,
+  dual-format, 1.6KB+2.3KB). Plays ONCE at the fresh ceremony's press moment
+  (~600ms), never on revisit/replay, never before server confirmation;
+  persisted mute toggle beside the seal (localStorage hanaso.sfx.seal-muted).
+  Source/license/processing documented in `docs/research/AUDIO_CREDITS.md`.
+
+Verified: pnpm test 737/737 · tsc clean.

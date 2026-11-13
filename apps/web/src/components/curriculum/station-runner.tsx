@@ -11,20 +11,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  ArrowRight,
-  BookOpenText,
-  CheckCircle2,
-  Ear,
-  Eye,
-  MessageCircleQuestion,
-  Mic,
-  Play,
-  PlayCircle,
-  RotateCcw,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, Award, BookOpenText, CheckCircle2, Ear, Eye, MessageCircleQuestion, Mic, Play, PlayCircle, RotateCcw, Sparkles, Volume2, VolumeX } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { AizenSeal } from '@/components/curriculum/aizen-seal';
 import type { ClientExercise } from '@/modules/curriculum/grading';
@@ -249,6 +236,86 @@ async function recordWritingPractice(payload: {
   }
 }
 
+/* ------------------------------------------------------------------ TASK-HANASO-22 */
+
+/**
+ * The lesson's honest achievements (max 3) — pure function of the station data
+ * (exported for unit tests). Labels say what ACTUALLY happened (Introduced /
+ * Practiced); nothing claims mastery.
+ */
+export function lessonAchievementsOf(station: { blocks: readonly { kind: string }[]; type: string; objectiveCode?: string }): string[] {
+  const out: string[] = [];
+  const blocks = station.blocks as readonly { kind: string }[];
+  const kanaCards = blocks.filter((b) => b.kind === 'kana-card').length;
+  const exercises = blocks.filter((b) => b.kind === 'exercise').length;
+  const writing = blocks.filter((b) => b.kind === 'writing-practice').length;
+  if ((station as { objectiveCode?: string }).objectiveCode === 'kana-realworld-reading') {
+    out.push('واژه‌های واقعیِ ژاپنی را با دانش خودت خواندی');
+  }
+  if (kanaCards > 0) {
+    out.push(`با ${faNum(kanaCards)} شکل جدید آشنا شدی`);
+  }
+  if (exercises > 0) {
+    out.push(`${faNum(exercises)} دور تمرین یادگیری را کامل کردی`);
+  }
+  if (writing > 0) {
+    out.push('نوشتن دستی را تمرین کردی');
+  }
+  return out.slice(0, 3);
+}
+
+/** The persisted seal-sound mute (mission §7.3 — the effect can be silenced). */
+const SEAL_SFX_KEY = 'hanaso.sfx.seal-muted';
+
+function readSealSfxMuted(): boolean {
+  try {
+    return window.localStorage.getItem(SEAL_SFX_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/** The muted-aware stamp sound (docs/research/AUDIO_CREDITS.md — CC0). */
+function playSealStampSound() {
+  try {
+    if (readSealSfxMuted()) return;
+    const el = new Audio('/audio/sfx/aizen-stamp.m4a');
+    el.volume = 0.8;
+    const p = el.play();
+    if (p && typeof p.then === 'function') p.catch(() => {});
+  } catch {
+    /* autoplay policy/offline — the ceremony is visual anyway */
+  }
+}
+
+/** A tiny quiet toggle beside the seal: silence the stamp sound (persisted). */
+function SealSoundToggle() {
+  const [muted, setMuted] = useState<boolean>(false);
+  useEffect(() => {
+    setMuted(readSealSfxMuted());
+  }, []);
+  const toggle = useCallback(() => {
+    const next = !muted;
+    setMuted(next);
+    try {
+      window.localStorage.setItem(SEAL_SFX_KEY, next ? '1' : '0');
+    } catch {
+      /* storage unavailable — the in-memory toggle still works this session */
+    }
+  }, [muted]);
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      data-testid="seal-sound-toggle"
+      aria-label={muted ? 'پخش صدای مهر' : 'قطع صدای مهر'}
+      className="absolute bottom-0 end-0 grid size-8 place-items-center rounded-full border border-ink-faint bg-card text-ink-soft transition-colors hover:border-ai hover:text-ai focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+    >
+      {muted ? <VolumeX aria-hidden className="size-4" /> : <Volume2 aria-hidden className="size-4" />}
+    </button>
+  );
+}
+
 export function StationRunner(props: StationRunnerProps) {
   const {
     station,
@@ -301,6 +368,26 @@ export function StationRunner(props: StationRunnerProps) {
    * idempotency rule: «تازه‌سازی/مرور/تکرار = بدون انیمیشن دوباره».
    */
   const [freshCompletion, setFreshCompletion] = useState(false);
+
+  /*
+   * TASK-HANASO-22 — the lesson's HONEST achievements (max 3, derived from the
+   * station's own blocks; labels stay Introduced/Practiced — completion is
+   * never a mastery claim). Pure function of the station data, exported for
+   * tests via lessonAchievementsOf below.
+   */
+  const lessonAchievements = useMemo(() => lessonAchievementsOf(station), [station]);
+
+  /*
+   * TASK-HANASO-22 — the stamp sound: ONLY on a FRESH completion (the seal's
+   * own rule — a revisit/refresh/replay never re-stamps and never re-sounds),
+   * timed to the ceremony's press moment (~42% of the stamp sequence), and
+   * silenced by the persisted mute.
+   */
+  useEffect(() => {
+    if (!freshCompletion) return;
+    const t = setTimeout(() => playSealStampSound(), 600);
+    return () => clearTimeout(t);
+  }, [freshCompletion]);
   /**
    * TASK-HANASO-17 §۶ — the replay walk reached its end: a NON-interactive
    * end panel (message + ONE CTA back to the map section). Nothing was
@@ -1070,13 +1157,33 @@ export function StationRunner(props: StationRunnerProps) {
            * reserved for errors in controls; this is an impression, not a
            * button). Centered above the message: the fact lands first.
            */}
-          <span className="mx-auto block size-28 md:size-32" data-aizen-seal-frame>
+          {/*
+           * TASK-HANASO-22 — the celebration stage: the seal is the CENTER of
+           * attention (bigger frame + breathing room), with the lesson's honest
+           * achievements as quiet chips beside the message — never a long dry
+           * list, never a mastery claim (Introduced/Practiced only). The
+           * licensed stamp sound (docs/research/AUDIO_CREDITS.md) fires ONCE
+           * with the fresh ceremony's press moment and can be muted (persisted).
+           */}
+          <span className="relative mx-auto block size-40 p-2 md:size-44" data-aizen-seal-frame>
             <AizenSeal animate={freshCompletion} label={fa.curriculum.sealLabel} className="h-full w-full" />
+            <SealSoundToggle />
           </span>
           <p className="flex items-center justify-center gap-2 text-body font-bold text-success">
             <CheckCircle2 aria-hidden className="size-5" />
             {fa.curriculum.stationCompletedMessage}
           </p>
+          <ul className="flex flex-wrap items-center justify-center gap-2" data-lesson-achievements>
+            {lessonAchievements.map((a) => (
+              <li
+                key={a}
+                className="flex items-center gap-1.5 rounded-full border border-shu/50 bg-surface-warm px-3 py-1 text-small text-ink"
+              >
+                <Award aria-hidden className="size-3.5 text-shu" />
+                {a}
+              </li>
+            ))}
+          </ul>
           <button
             type="button"
             onClick={goCompletionDestination}

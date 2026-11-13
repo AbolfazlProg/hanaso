@@ -142,6 +142,45 @@ body {
   animation: hanaso-feedback-in var(--dur-fast, 200ms) var(--ease-out-soft, ease-out) both;
 }
 
+/*
+ * TASK-HANASO-22 — the locked-row click feedback (journey §10.3): a short
+ * shake + a vermilion pulse on the row's access marker — the click ALWAYS
+ * answers, never dead. Reduced-motion collapses to the color flash only.
+ */
+@keyframes hanaso-locked-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-2px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+.locked-shake {
+  animation: hanaso-locked-shake 320ms var(--ease-out-soft, ease-out) both;
+}
+@keyframes hanaso-locked-flash {
+  0% {
+    border-color: var(--color-shu);
+    color: var(--color-shu);
+  }
+  100% {
+    border-color: var(--color-ink-faint);
+    color: var(--color-ink-faint);
+  }
+}
+.locked-flash {
+  animation: hanaso-locked-flash 900ms var(--ease-out-soft, ease-out) both;
+}
+
 /* -- JaBlock — جزیرهٔ LTR برای هر متن ژاپنی (KB components.css) ------------- */
 .ja-block {
   direction: ltr;
@@ -371,6 +410,53 @@ body {
 }
 .aizen-seal-halo:not(.aizen-seal-halo-idle) {
   animation: aizen-seal-ink-halo calc(var(--dur-ceremonial) + 520ms) ease-out both;
+}
+/*
+ * TASK-HANASO-22 — the rotating ink ring + shimmer sweep (seal upgrade).
+ * The ring turns slowly around the settled impression (60s/turn — ceremonial,
+ * never busy); a short arc rides ahead of it. Under reduced-motion both stop.
+ */
+@keyframes aizen-seal-ring-turn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.aizen-seal-ring {
+  position: absolute;
+  inset: -13%;
+  animation: aizen-seal-ring-turn 64s linear infinite;
+}
+.aizen-seal-ring-settled {
+  animation: none;
+}
+@keyframes aizen-seal-shimmer-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-130px);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(200px);
+  }
+}
+.aizen-seal-shimmer {
+  animation: aizen-seal-shimmer-sweep 1.6s ease-in-out 0.9s 2 both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aizen-seal-ring,
+  .aizen-seal-ring-settled {
+    animation: none;
+  }
+  .aizen-seal-shimmer {
+    animation: none;
+    opacity: 0;
+  }
 }
 .aizen-seal-halo-idle {
   opacity: 0;

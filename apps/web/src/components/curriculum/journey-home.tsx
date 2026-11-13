@@ -18,7 +18,35 @@
  */
 import Link from 'next/link';
 import { ArrowLeft, BookOpenText, CircleCheck, Clock3, Compass, LibraryBig, Sparkles } from 'lucide-react';
-import { SectionJourney, type SectionDto } from './section-journey';
+import { SectionJourney, type SectionDto, type StationContentKind } from './section-journey';
+import type { Station } from '@/modules/curriculum/types';
+
+/**
+ * TASK-HANASO-22 — the row's CONTENT IDENTITY (mission §10.1): computed from the
+ * station data (never guessable from the locked state). The milestone kind is the
+ * objectiveCode marker shared by the two real-world stations; every other kind is
+ * the station's own type.
+ */
+function contentKindOf(station: Station): StationContentKind {
+  if (station.objectiveCode === 'kana-realworld-reading') return 'milestone';
+  switch (station.type) {
+    case 'anchor':
+    case 'kana':
+    case 'vocab':
+    case 'grammar':
+    case 'structure':
+    case 'expression':
+    case 'listen':
+    case 'practice':
+    case 'integrate':
+    case 'mastery':
+    case 'review':
+    case 'deepdive':
+      return station.type;
+    default:
+      return 'practice';
+  }
+}
 import { fa } from '@/messages/fa';
 import type { SectionView } from '@/modules/curriculum/journey';
 import type { ArchiveChapterCard, RevealTeaser } from '@/modules/curriculum/reveal';
@@ -64,6 +92,11 @@ export function JourneyHome(props: JourneyHomeProps) {
   } = props;
 
   // flatten the pure SectionView (with Station objects) into the client DTO
+  /* prerequisite titles for the locked-row click notice (first unmet = the
+   * recovery target the notice names). */
+  const titleBySlug = new Map<string, string>();
+  for (const sec of sections) for (const r of sec.rows) titleBySlug.set(r.node.station.slug, r.node.station.titleFa);
+
   const sectionDtos: SectionDto[] = sections.map((s) => ({
     slug: s.slug,
     titleFa: s.titleFa,
@@ -75,6 +108,8 @@ export function JourneyHome(props: JourneyHomeProps) {
     rows: s.rows.map((r) => ({
       slug: r.node.station.slug,
       type: r.node.station.type,
+      contentKind: contentKindOf(r.node.station),
+      blockedByTitlesFa: r.node.blockedBy.map((slug) => titleBySlug.get(slug) ?? slug),
       titleFa: r.node.station.titleFa,
       objectiveFa: r.node.station.objectiveFa,
       core: r.node.station.core,

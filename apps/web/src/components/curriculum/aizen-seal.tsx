@@ -1,5 +1,9 @@
 /**
  * HANASO — TASK-HANASO-21 — the AIZEN completion seal (Aizen no inkan).
+ * TASK-HANASO-22 — presentation upgrade (owner direction: keep the identity,
+ * raise the ceremony): a larger stage, a slowly ROTATING INK RING around the
+ * impression, a subtle SHIMMER sweep over the carved face, and the licensed
+ * stamp sound (fired by the host, never inside the art).
  *
  * A hand-carved vermilion hanko (落款) that stamps the moment a lesson is
  * REALLY completed — the server-confirmed completion moment only:
@@ -15,7 +19,8 @@
  *    (enter → descend → press → squash → ink halo spread → settle) is built
  *    from --dur-ceremonial semantics in globals.css; under
  *    prefers-reduced-motion the whole sequence collapses to the simple fade
- *    the token file promises («seal → simple fade»).
+ *    the token file promises («seal → simple fade») — and the rotating ring +
+ *    shimmer stop dead (they are pure flourish, never information).
  *  - Color: tokens only (--color-shu / --color-shu-deep / --color-paper) —
  *    shu is the design system's dedicated seal accent (DD-084).
  */
@@ -49,6 +54,38 @@ export function AizenSeal({ animate, label, className }: AizenSealProps) {
         data-aizen-seal-halo
         className={animate ? 'aizen-seal-halo' : 'aizen-seal-halo aizen-seal-halo-idle'}
       />
+      {/*
+       * TASK-HANASO-22 — the rotating ink ring: a carved-dash orbit that
+       * slowly turns around the impression, the way a wet seal's outer ring
+       * reads on paper. It runs only while the ceremony plays (and settles
+       * into a static ring afterwards); reduced-motion keeps it still.
+       */}
+      <span aria-hidden data-aizen-seal-ring className={animate ? 'aizen-seal-ring' : 'aizen-seal-ring aizen-seal-ring-settled'}>
+        <svg viewBox="0 0 160 160" className="h-full w-full">
+          <circle
+            cx="80"
+            cy="80"
+            r="76"
+            fill="none"
+            stroke="var(--color-shu)"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeDasharray="1 7.5"
+            opacity="0.75"
+          />
+          <circle
+            cx="80"
+            cy="80"
+            r="71.5"
+            fill="none"
+            stroke="var(--color-shu)"
+            strokeWidth="1"
+            strokeDasharray="14 210"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
+        </svg>
+      </span>
       <svg
         viewBox="0 0 120 120"
         role="img"
@@ -61,6 +98,19 @@ export function AizenSeal({ animate, label, className }: AizenSealProps) {
             <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="noise" />
             <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.98  0 0 0 0 0.97  0 0 0 0 0.94  0 0 0 0.35 0" />
           </filter>
+          {/*
+           * TASK-HANASO-22 — the shimmer sweep: a light-warm gradient bar that
+           * crosses the carved face once after the stamp settles (a paper
+           * sheen, not a sparkle). Masked to the seal circle via CSS.
+           */}
+          <linearGradient id="aizen-seal-shimmer" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="var(--color-paper)" stopOpacity="0" />
+            <stop offset="0.5" stopColor="var(--color-paper)" stopOpacity="0.34" />
+            <stop offset="1" stopColor="var(--color-paper)" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id="aizen-seal-clip">
+            <circle cx="60" cy="60" r="55" />
+          </clipPath>
         </defs>
         {/* the vermilion field — shu, the seal color of the design system */}
         <circle cx="60" cy="60" r="55" fill="var(--color-shu)" />
@@ -97,6 +147,18 @@ export function AizenSeal({ animate, label, className }: AizenSealProps) {
         <circle cx="52" cy="108" r="1.3" fill="var(--color-paper)" opacity="0.7" />
         {/* grain over the whole impression (progressive enhancement) */}
         <circle cx="60" cy="60" r="55" filter="url(#aizen-seal-grain)" opacity="0.5" />
+        {/* the shimmer sweep (one pass, after the press — animate only) */}
+        {animate ? (
+          <rect
+            x="-70"
+            y="-20"
+            width="70"
+            height="160"
+            fill="url(#aizen-seal-shimmer)"
+            clipPath="url(#aizen-seal-clip)"
+            className="aizen-seal-shimmer"
+          />
+        ) : null}
       </svg>
     </span>
   );
