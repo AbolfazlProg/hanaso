@@ -2,6 +2,7 @@ import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import { resolveSpeaker } from '@/modules/character';
 import { generateExercises } from '@/modules/practice';
 import { PracticeRunner } from './practice-runner';
+import { guardPocPage } from '@/lib/poc/page-guard';
 
 /**
  * /poc/practice — TASK-SLICE-01 stage C: the deterministic exercise set generated
@@ -9,6 +10,8 @@ import { PracticeRunner } from './practice-runner';
  * fill-token — FEAT-096..099), run interactively in the client island.
  */
 export default function PracticePage() {
+  guardPocPage(); // TASK-HANASO-24: dev/test-only legacy page — 404 in production
+
   const bundle = loadDialogueBundle('cafe-morning-01');
   const { dialogue, characters, audio } = bundle;
 

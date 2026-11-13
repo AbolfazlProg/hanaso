@@ -4,6 +4,7 @@ import { loadDialogue } from '@/modules/dialogue/server';
 import { JpLine } from '../jp-text';
 import { LessonPracticeButton } from './lesson-practice-button';
 import { POC_SCENE_CSS } from '../jp-text';
+import { guardPocPage } from '@/lib/poc/page-guard';
 
 /**
  * /poc/lesson — TASK-DLG-POC-01 / T6 + TASK-SLICE-01 stage B: vocabulary & grammar
@@ -12,6 +13,8 @@ import { POC_SCENE_CSS } from '../jp-text';
  * T6 wiring). «تمرین‌ها» records the B→C transition.
  */
 export default function LessonPage() {
+  guardPocPage(); // TASK-HANASO-24: dev/test-only legacy page — 404 in production
+
   const dialogue = loadDialogue('cafe-morning-01');
   const lesson = buildLessonFromDialogue(dialogue);
   const linesById = new Map(dialogue.lines.map((l) => [l.id, l]));

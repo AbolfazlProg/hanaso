@@ -1,6 +1,6 @@
 # TASK-HANASO-24 — CURRENT STATE
 
-> آخرین به‌روزرسانی: **CP-02**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
+> آخرین به‌روزرسانی: **CP-03**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
 
 ## مأموریت
 
@@ -40,7 +40,7 @@
 - [x] **CP-00**: اعتبارسنجی Git + ساخت شاخهٔ fix از خط محصول + CURRENT_STATE + CHECKPOINT_LOG + Push
 - [x] **CP-01**: SECURITY_ROOT_CAUSE.md — سرشماری کامل ۱۰ مسیر API + ۶ صفحهٔ /poc + ۳ صفحهٔ محصول؛ تأیید line-level؛ طراحی راه‌حل هر فاز (توکن Session امضاشده، GET-only minting، حذف userId از schemaها، dev-only برای /poc، transaction-aware completion)
 - [x] **CP-02**: رفع IDOR + hardening اعتبار/session/cookie (تست‌های ۶۳ فایل/۷۴۵ + PG ۲۹ همه سبز) → IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md
-- [ ] **CP-03**: رفع افشای Answer Key → ANSWER_KEY_EXPOSURE_FIX.md
+- [x] **CP-03**: رفع افشای Answer Key — گیت dev/test-only هر ۶ صفحهٔ /poc (پروداکشن ۴۰۴)؛ اثبات با curl + Browser واقعی (404، بدون کلید در HTML/RSC/Network، کوکی httpOnly+Secure امضاشده) → ANSWER_KEY_EXPOSURE_FIX.md
 - [ ] **CP-04**: Transaction و Idempotency → DATABASE_TRANSACTION_FIX.md
 - [ ] **CP-05**: تست امنیتی واقعی QA (دو حساب A/B + مرورگر ناشناس، ۱۲ سناریوی اجباری) → SECURITY_TEST_RESULTS.md
 - [ ] **CP-06**: سه ساب‌ایجنت مستقل → SUBAGENT_REVIEW_{A,B,C}.md
@@ -50,11 +50,12 @@
 
 ## اقدام بعدی
 
-CP-03 — حذف افشای Answer Key طبق §5 SECURITY_ROOT_CAUSE.md:
-1. گیت dev/test-only برای هر ۶ صفحهٔ `/poc/*` (در Production → notFound/404؛ RSC Payload اصلاً رندر نمی‌شود).
-2. تأیید با GET مستقیم (curl) و تست Browser روی سرور QA.
-3. ANSWER_KEY_EXPOSURE_FIX.md؛ commit + push.
-سپس CP-04 — Transaction: سرویس completion تراکنشی برای practice-complete (idempotent + fold داخل tx)، station-complete (2 upsert در یک tx)، mastery gate؛ با تست هم‌زمانی/Idempotency.
+CP-04 — Database Transaction و Idempotency طبق §5 SECURITY_ROOT_CAUSE.md:
+1. سرویس تراکنشی برای practice-complete: `recordCompleted` + fold شواهد داخل یک `db.transaction` (PG)؛ Idempotent replay با onConflict + بازخوانی؛ Unique (user, objectId) با retry در برخورد.
+2. station-complete: دو upsert (station + chapter aggregate) داخل یک tx.
+3. mastery gate: attempt insert + chapter fold داخل یک tx.
+4. حالت in-memory: همان ترتیب متوالی (single-thread) — بدون تغییر semantics.
+5. تست‌های Concurrency/Idempotency جدید + اجرای مجدد کل سوئیت‌ها؛ DATABASE_TRANSACTION_FIX.md؛ commit + push.
 
 ## قوانین فعال
 

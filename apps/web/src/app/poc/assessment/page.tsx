@@ -1,6 +1,7 @@
 import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import { buildAssessmentQuestions, toClientQuestions } from '@/lib/poc/assessment-bank';
 import { AssessmentForm } from './assessment-form';
+import { guardPocPage } from '@/lib/poc/page-guard';
 
 /**
  * /poc/assessment — TASK-SLICE-01 stage D: 5 comprehension questions covering ALL
@@ -10,6 +11,8 @@ import { AssessmentForm } from './assessment-form';
  * (separate from the C exercises — AC-952); this is the slice's sample of that bank.
  */
 export default function AssessmentPage() {
+  guardPocPage(); // TASK-HANASO-24: dev/test-only legacy page — 404 in production
+
   const bundle = loadDialogueBundle('cafe-morning-01');
 
   // Server-only: the answer key stays here — the client receives the secret-free projection.

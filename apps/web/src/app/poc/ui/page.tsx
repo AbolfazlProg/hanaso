@@ -41,6 +41,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { fa } from '@/messages/fa';
+import { guardPocPage } from '@/lib/poc/page-guard';
 
 /* جزیره‌ها: فقط متن ژاپنی — فارسی هرگز داخل island نمی‌رود (spike §۶-۳-۲) */
 const greetingTokens = parseFuriganaDsl('おはよう[おはよう]ございます');
@@ -52,6 +53,8 @@ const sentenceTokens = parseFuriganaDsl('コーヒーを お願い[おねがい]
 const darkCardTokens = parseFuriganaDsl('今日[きょう]は 暑[あつ]いですね。冷[つめ]たい 水[みず]を どうぞ。');
 
 export default function UiSamplePage() {
+  guardPocPage(); // TASK-HANASO-24: dev/test-only legacy page — 404 in production
+
   const [audioState, setAudioState] = useState<'idle' | 'loading' | 'playing'>('idle');
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">

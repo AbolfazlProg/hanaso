@@ -1,5 +1,6 @@
 import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import { DialogueScene } from './dialogue-scene';
+import { guardPocPage } from '@/lib/poc/page-guard';
 
 /**
  * /poc/dialogue — TASK-DLG-POC-01 scene: 3 placeholder characters, active-line highlight,
@@ -7,6 +8,8 @@ import { DialogueScene } from './dialogue-scene';
  * RSC loads the bundle server-side; the client island owns playback.
  */
 export default async function DialoguePage({ searchParams }: { searchParams: Promise<{ line?: string }> }) {
+  guardPocPage(); // TASK-HANASO-24: dev/test-only legacy page — 404 in production
+
   const { line } = await searchParams;
   const bundle = loadDialogueBundle('cafe-morning-01');
 
