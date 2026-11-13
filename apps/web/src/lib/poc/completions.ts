@@ -22,7 +22,7 @@ import { runInTx, usingDbTransactions } from '@/db/transactions';
 import { PgLearningObjectRepository, PgPracticeSessionRepository } from '@/db/repositories/practice';
 import { PgAttemptRepository } from '@/db/repositories/attempts';
 import { PgChapterProgressRepository, PgStationProgressRepository } from '@/db/repositories/curriculum';
-import { isUniqueViolation } from '@/db/repositories/attempts';
+import { isRetryableTxError } from '@/db/repositories/attempts';
 import { getAttemptStore, getChapterProgressStore, getLearningObjectStore, getPracticeSessionStore, getStationProgressStore } from '@/lib/poc/stores';
 import { foldItemResult, seedRecord } from '@/modules/practice/evidence';
 import type { LearningObjectRecord, PracticeItemResult } from '@/modules/practice/session';
@@ -65,19 +65,28 @@ export async function completePracticeSession(
     const outcome = await completePracticeSequence(stored, groups);
     return outcome;
   }
-  // PG: one transaction for session insert + every fold. One bounded retry
-  // around the whole unit for the (advisory-lock) unique-violation corner.
+  /*
+   * PG: one transaction for session insert + every fold. One bounded retry
+   * around the whole unit (subagent C-02: retry on unique-violation OR on a
+   * statement that ran on an aborted tx — 25P02 — e.g. the create() loop
+   * racing an unlocked writer; a fresh unit re-runs cleanly).
+   *
+   * Subagent C-01: the in-flight lifecycle is the SINGLETON's — freed AFTER
+   * the unit commits (never by the throwaway tx-bound instance).
+   */
   for (let attempt = 0; ; attempt += 1) {
     try {
-      return await runInTx(async (tx) => {
+      const outcome = await runInTx(async (tx) => {
         await advisoryXactLock(tx, `lo:${stored.userId}`); // serialize this user's folds
         return completePracticeSequence(stored, groups, {
           sessionRepo: new PgPracticeSessionRepository(tx),
           loRepo: new PgLearningObjectRepository(tx),
         });
       });
+      getPracticeSessionStore().deleteInFlight(stored.id);
+      return outcome;
     } catch (err) {
-      if (attempt < 1 && isUniqueViolation(err)) continue; // one retry
+      if (attempt < 1 && isRetryableTxError(err)) continue; // one bounded retry
       throw err;
     }
   }
@@ -128,12 +137,20 @@ export async function completeStationWalk(params: {
   coreSlugs: string[];
 }): Promise<CompleteStationOutcome> {
   const run = async (repos?: {
-    stationRepo: Pick<PgStationProgressRepository, 'upsert' | 'listForUnit'>;
+    stationRepo: Pick<PgStationProgressRepository, 'get' | 'upsert' | 'listForUnit'>;
     chapterRepo: Pick<PgChapterProgressRepository, 'get' | 'upsert'>;
   }) => {
     const stationRepo = repos?.stationRepo ?? getStationProgressStore();
     const chapterRepo = repos?.chapterRepo ?? getChapterProgressStore();
-    const station = await stationRepo.upsert(params.userId, params.stationSlug, params.stationState);
+    /*
+     * Subagent C-04: attemptCount is read FRESH inside the unit — the pre-tx
+     * read lost concurrent grade increments (read-modify-write on the counter).
+     */
+    const fresh = await stationRepo.get(params.userId, params.stationSlug);
+    const state = fresh
+      ? { ...params.stationState, attemptCount: fresh.attemptCount }
+      : params.stationState;
+    const station = await stationRepo.upsert(params.userId, params.stationSlug, state);
     // The aggregate precondition is evaluated INSIDE the unit — the same
     // statement scope sees the station write above (old code read it after
     // the upsert too; now both live or die together).
@@ -219,7 +236,7 @@ export async function submitMasteryWithFold(params: {
         });
       });
     } catch (err) {
-      if (attempt < 1 && isUniqueViolation(err)) continue;
+      if (attempt < 1 && isRetryableTxError(err)) continue; // subagent C-02: 23505 | 25P02
       throw err;
     }
   }

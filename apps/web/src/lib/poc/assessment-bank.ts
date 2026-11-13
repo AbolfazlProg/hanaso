@@ -116,8 +116,15 @@ export function buildAssessmentQuestions(bundle: DialogueBundle): AssessmentQues
 export interface GradedAssessment {
   scores: { M1: number | null; M2: number | null; M3: number | null; M4: number | null; M5: number | null };
   weakPoints: AssessmentQuestion['weakPoint'][];
-  /** Revealed only AFTER grading — safe to send back for feedback. */
-  perQuestion: { questionId: string; measure: string; correct: boolean; correctOptionId: string }[];
+  /**
+   * Revealed only AFTER grading — safe to send back for feedback.
+   * TASK-HANASO-24 (subagent B-06): `correctOptionId` is REMOVED from the
+   * response — a fixed retake-allowed bank made the post-submission reveal a
+   * harvest channel (submit garbage, read the keys, resubmit perfect). The
+   * per-question CORRECTNESS flag stays (honest feedback); the key itself
+   * never crosses back.
+   */
+  perQuestion: { questionId: string; measure: string; correct: boolean }[];
 }
 
 /** Grade raw answers server-side (never trust client-computed scores). */
@@ -130,7 +137,7 @@ export function gradeAssessment(questions: AssessmentQuestion[], answers: Record
     const correct = given === q.correctOptionId;
     scores[q.measure] = correct ? 1 : 0;
     if (!correct) weakPoints.push(q.weakPoint);
-    perQuestion.push({ questionId: q.id, measure: q.measure, correct, correctOptionId: q.correctOptionId });
+    perQuestion.push({ questionId: q.id, measure: q.measure, correct });
   }
   return { scores, weakPoints, perQuestion };
 }

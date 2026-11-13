@@ -83,6 +83,33 @@ describe('resolveLearnerIdFromRequest', () => {
     expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=${forged}`))).toBe(GUEST_LEARNER_ID);
   });
 
+  it('TASK-HANASO-24 (A-02): a URI-undecodable value degrades to GUEST — never a 500', () => {
+    for (const bad of ['%', 'abc%2', '%25', '%C3', 'a%zzb']) {
+      expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=${bad}`))).toBe(GUEST_LEARNER_ID);
+    }
+  });
+
+  it('TASK-HANASO-24 (A-03): DUPLICATE hanaso_lid cookies resolve LAST-wins (like the middleware/RSC)', () => {
+    const garbage = 'not-a-uuid';
+    // garbage FIRST, valid signed token LAST → the signed identity wins
+    const lastGood = resolveLearnerIdFromRequest(
+      reqWithCookie(`other=1; ${LEARNER_COOKIE_NAME}=${garbage}; ${LEARNER_COOKIE_NAME}=${SIGNED}; b=2`),
+    );
+    expect(lastGood).toBe(VALID);
+    // valid signed token FIRST, garbage LAST → the garbage wins (consistent with
+    // the middleware's last-wins) — the caller cannot keep a stale first value
+    const lastBad = resolveLearnerIdFromRequest(
+      reqWithCookie(`other=1; ${LEARNER_COOKIE_NAME}=${SIGNED}; ${LEARNER_COOKIE_NAME}=${garbage}; b=2`),
+    );
+    expect(lastBad).toBe(GUEST_LEARNER_ID);
+    // attacker-injected first-position token cannot shadow a later planted one
+    const other = signSessionTokenSync('99999999-8888-4777-8666-555555555555');
+    const lastOther = resolveLearnerIdFromRequest(
+      reqWithCookie(`${LEARNER_COOKIE_NAME}=${SIGNED}; ${LEARNER_COOKIE_NAME}=${other}`),
+    );
+    expect(lastOther).toBe('99999999-8888-4777-8666-555555555555');
+  });
+
   it('TASK-HANASO-24: sign/verify round-trips across the node + web crypto twins', async () => {
     const { verifySessionTokenWeb } = await import('@/lib/learner/session-web');
     expect(await verifySessionTokenWeb(SIGNED)).toBe(VALID);

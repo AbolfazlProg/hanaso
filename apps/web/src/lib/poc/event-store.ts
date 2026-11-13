@@ -9,7 +9,18 @@ import { z } from 'zod';
 export const pocEventSchema = z.object({
   /** object_action naming per ADR-016 events.yaml (e.g. 'dialogue_line_replayed'). */
   name: z.string().regex(/^[a-z][a-z0-9]*(_[a-z0-9]+)+$/, 'event name must be object_action snake_case'),
-  props: z.record(z.string(), z.unknown()).default({}),
+  /**
+   * TASK-HANASO-24 (subagent A-04): BOUNDED — the pre-24 record accepted
+   * unbounded props (a 2MB body was accepted live) → heap-exhaustion DoS on
+   * the shared ring. ≤ 16 keys, ≤ 4KB serialized.
+   */
+  props: z
+    .record(z.string().max(64), z.unknown())
+    .refine(
+      (p: Record<string, unknown>) => Object.keys(p).length <= 16 && JSON.stringify(p).length <= 4096,
+      'props too large (max 16 keys / 4KB serialized)',
+    )
+    .default({}),
 });
 
 export interface PocEvent {

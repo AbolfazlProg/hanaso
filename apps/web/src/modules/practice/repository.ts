@@ -40,6 +40,14 @@ export interface PracticeSessionRepository {
   listForUser(userId: string, limit?: number): Promise<StoredPracticeSession[]>;
   /** Test/maintenance hook: drop sessions older than the TTL. */
   sweepExpired(nowMs: number): Promise<number>;
+  /**
+   * TASK-HANASO-24 (subagent C-01): explicit in-flight lifecycle control — the
+   * SERVICE deletes the entry on the SINGLETON after the transaction commits.
+   * The pre-24 code deleted it inside recordCompleted, which on Postgres ran
+   * on the throwaway tx-bound instance and never freed the singleton's map
+   * (unbounded heap growth + answered-after-complete).
+   */
+  deleteInFlight(sessionId: string): void;
 }
 
 export const IN_FLIGHT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -79,6 +87,10 @@ export class InMemoryPracticeSessionRepository implements PracticeSessionReposit
       }
     }
     return dropped;
+  }
+
+  deleteInFlight(sessionId: string): void {
+    this.inFlight.delete(sessionId);
   }
 }
 

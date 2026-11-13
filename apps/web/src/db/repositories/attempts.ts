@@ -63,6 +63,28 @@ export function attemptRowToDomain(row: {
   };
 }
 
+/**
+ * TASK-HANASO-24 (subagent C-02): a statement that ran on an ABORTED
+ * transaction (25P02) surfaces when code inside a failed tx tries to continue
+ * (e.g. the create() 23505 retry loop racing an unlocked writer). Retrying
+ * the WHOLE unit is the only correct response — one bounded retry at the
+ * service boundary.
+ */
+export function isRetryableTxError(err: unknown): boolean {
+  return isUniqueViolation(err) || hasPgErrorCode(err, '25P02');
+}
+
+function hasPgErrorCode(err: unknown, code: string): boolean {
+  let current: unknown = err;
+  for (let depth = 0; current !== null && current !== undefined && depth < 5; depth += 1) {
+    if (typeof current === 'object' && 'code' in current && (current as { code?: string }).code === code) {
+      return true;
+    }
+    current = (current as { cause?: unknown }).cause;
+  }
+  return false;
+}
+
 export class PgAttemptRepository implements AttemptRepository {
   constructor(private readonly client: DbClient) {}
 

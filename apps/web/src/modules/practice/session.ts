@@ -56,7 +56,14 @@ export interface KeyedPracticeItem {
         promptFa: string;
         /** The character to write (server strips it — the prompt is audio/romaji). */
         promptAudio?: { opus: string; m4a: string };
-        /** SERVER-ONLY: the target glyph. */
+        /**
+         * SERVER-HONEST (subagent B-02): the target glyph. NOTE — the CLIENT
+         * projection of write items DOES carry `character` (the local writing
+         * engine needs it to judge strokes — lesson parity). This is the
+         * known BUG-031 trade-off, DEFERRED by product decision: write-item
+         * answers are client-judged; evidence-only, never gates, never FSRS.
+         * Server-side stroke grading is the follow-up that removes it.
+         */
         character: string;
         /** SERVER-ONLY: romaji shown in the reveal. */
         revealFa: string;
@@ -79,7 +86,7 @@ export interface ClientPracticeItem {
         kind: 'write';
         promptFa: string;
         promptAudio?: { opus: string; m4a: string };
-        /** Target glyph — the writing engine judges locally (lesson parity). */
+        /** Target glyph — the local writing engine judges strokes (BUG-031 deferred trade-off, see server shape). */
         character: string;
       };
 }

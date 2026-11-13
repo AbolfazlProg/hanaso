@@ -104,6 +104,25 @@ describe('practice completion — idempotency + concurrency (BUG-036)', () => {
     expect(rows.filter((r) => r.id === stored.id)).toHaveLength(1);
   });
 
+  it('SEQUENTIAL replay (PROD path, subagent C-03): the second call is already — never a second fold', async () => {
+    const results: PracticeItemResult[] = [
+      { itemId: 'i1', objectId: 'kn-rec-hira-c', dimension: 'K1', firstTryCorrect: true, attempts: 1, ms: 100 },
+    ];
+    const stored = storedSession('44444444-4444-4444-8444-444444444444', QA, results);
+    const groups = [{ objectId: 'kn-rec-hira-c', results }];
+    const first = await completePracticeSession(stored, groups);
+    expect(first.status).toBe('recorded');
+    // SEQUENTIAL replay at the service level (the in-flight entry is gone →
+    // the route 404s; callers that still hold the session replay HERE):
+    const second = await completePracticeSession(stored, groups);
+    expect(second.status).toBe('already');
+    expect(second.newlyEligible).toBe(0);
+    // and the fold count is still exactly ONE
+    const [row] = await getDbClient().db.select().from(learningObjectStates).where(sql`${learningObjectStates.objectId} = 'kn-rec-hira-c'`);
+    const stats = row!.dimensionStats as Record<string, { seen: number }>;
+    expect(stats.K1?.seen).toBe(1);
+  });
+
   it('concurrent DIFFERENT sessions on the SAME object: no lost update', async () => {
     const mk = (itemId: string, dim: 'K1' | 'K3'): PracticeItemResult[] => [
       { itemId, objectId: 'kn-rec-hira-b', dimension: dim, firstTryCorrect: true, attempts: 1, ms: 100 },

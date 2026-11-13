@@ -79,16 +79,21 @@ takes precedence; guest progress merges — documented in identity.ts).
   per-browser identity — the old one's rows are untouched and invisible to the
   new one. Proven in CP-05.
 
-### Transition residual risk (stated honestly)
+### Transition residual risk (stated honestly — UPDATED after live QA S5 + subagent A)
 
-During the one-time re-issue window, a RAW uuid presented by its holder gets
-signed. A pre-24 attacker who had ALREADY stolen a victim's raw uuid and races
-the victim's browser can obtain a valid signed token for it (once; the victim's
-own first GET after that changes nothing — same uuid, same signature). This
-affects only identities compromised BEFORE this deploy; new theft is closed by
-httpOnly+Secure. With the young production user base and no known exfiltration
-channel (the audit found no XSS in the learn path), this is accepted and
-recorded; the RELEASE_CANDIDATE notes it.
+The first QA run exposed the raw-uuid re-issue as a PERMANENT re-signing oracle
+(any holder of a pre-24 raw value could get it re-signed forever). CLOSED:
+`HANASO_LEGACY_TOKEN_CUTOFF` (an ISO datetime generated at deploy, recommended
+deploy+14d) bounds the grace by wall clock; without the variable production is
+FAIL-CLOSED (raw values are never re-signed). Within the grace, a pre-24
+attacker who ALREADY stole a victim's raw uuid and races the victim's browser
+can still obtain a valid signed token for it once — this window is 14 days by
+recommendation, affects only identities compromised BEFORE the deploy, and new
+theft is closed by httpOnly+Secure. With no known exfiltration channel (the
+audit found no XSS in the learn path), accepted and recorded; the
+RELEASE_CANDIDATE carries the cutoff in the deploy gate
+(infra/deploy/update-hanaso.sh, env keys HANASO_SESSION_SECRET +
+HANASO_LEGACY_TOKEN_CUTOFF are REQUIRED) and .env.example documents both.
 
 ## 3. In-flight session volatility (documented per mission §4)
 

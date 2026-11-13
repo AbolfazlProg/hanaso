@@ -206,6 +206,13 @@ export async function POST(req: Request) {
       );
     }
 
+    /*
+     * Subagent C-01: the in-flight TTL finally has a production caller — every
+     * generate sweeps expired sessions (bounds the heap between deploys; the
+     * map can only hold sessions from the last 24h).
+     */
+    await getPracticeSessionStore().sweepExpired(Date.now());
+
     const session: InFlightSession = {
       id: newSessionId(),
       userId,

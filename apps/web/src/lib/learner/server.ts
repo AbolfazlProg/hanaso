@@ -44,13 +44,25 @@ export { signSessionTokenSync, verifySessionTokenSync } from './session-node';
 export const GUEST_LEARNER_ID = 'guest';
 
 /**
+ * TASK-HANASO-24 (subagent A-02): a cookie value that fails URI decoding
+ * (e.g. `hanaso_lid=%`) degrades to GUEST — never a 500 on every route.
+ */
+function safeDecode(raw: string): string {
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return '';
+  }
+}
+
+/**
  * The learner id for an RSC render (cookie-resolved via next/headers).
  * Absent/invalid/unsigned cookie → GUEST_LEARNER_ID (empty honest state),
  * NEVER the shared poc-user.
  */
 export async function resolveLearnerId(): Promise<string> {
   const jar = await cookies();
-  return resolveSessionTokenValue(decodeURIComponent(jar.get(LEARNER_COOKIE_NAME)?.value ?? ''));
+  return resolveSessionTokenValue(safeDecode(jar.get(LEARNER_COOKIE_NAME)?.value ?? ''));
 }
 
 /**
@@ -59,11 +71,19 @@ export async function resolveLearnerId(): Promise<string> {
  * Absent/invalid/unsigned cookie → GUEST_LEARNER_ID; write actions must
  * reject it (401 learner/no_identity) — see the station API route for the
  * guard pattern every state-changing route follows.
+ *
+ * TASK-HANASO-24 (subagent A-03): with DUPLICATE `hanaso_lid` cookies the
+ * middleware and the RSC jar effectively take the LAST occurrence — this
+ * parser now does the same (LAST-wins everywhere). A first-position planted
+ * value (sibling-subdomain cookie injection) can no longer diverge from what
+ * the middleware resolved for the very same request.
  */
 export function resolveLearnerIdFromRequest(req: Request): string {
   const header = req.headers.get('cookie') ?? '';
-  const match = header.match(new RegExp(`(?:^|;\\s*)${LEARNER_COOKIE_NAME}=([^;]+)`));
-  return resolveSessionTokenValue(match?.[1] ? decodeURIComponent(match[1]) : null);
+  const re = new RegExp(`(?:^|;\\s*)${LEARNER_COOKIE_NAME}=([^;]+)`, 'g');
+  let last: string | null = null;
+  for (const m of header.matchAll(re)) last = m[1] ?? null;
+  return resolveSessionTokenValue(last ? safeDecode(last) : null);
 }
 
 /** Shared policy: verify the signature (constant-time) → uuid | guest. */

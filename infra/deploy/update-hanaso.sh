@@ -299,8 +299,15 @@ preflight() {
     || die "not enough available memory: ${mem_avail}MB (need ≥ ${MIN_MEM_MB}MB for the Next build)."
 
   # A3) required .env keys — NAMES only, values are never printed
+  # TASK-HANASO-24: HANASO_SESSION_SECRET is REQUIRED (the app refuses to boot
+  # on the public dev fallback — forgeable session tokens).
+  # HANASO_LEGACY_TOKEN_CUTOFF is REQUIRED for this update's image: it bounds
+  # the pre-24 raw-cookie → signed-token re-issue grace (see
+  # ops/checkpoints/TASK-HANASO-24/AUTH_SESSION_HARDENING.md). Without a cutoff
+  # the raw values are simply never re-signed (fail-closed) — setting it to
+  # NOW+14d gives existing learners two weeks to keep their progress linked.
   local key
-  for key in HANASO_WEB_IMAGE POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB; do
+  for key in HANASO_WEB_IMAGE POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB HANASO_SESSION_SECRET HANASO_LEGACY_TOKEN_CUTOFF; do
     grep -qE "^${key}=..*" "${DEPLOY_DIR}/.env" || die "required key ${key} missing/empty in ${DEPLOY_DIR}/.env"
   done
 

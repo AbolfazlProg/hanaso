@@ -64,8 +64,17 @@ function legacyReissueAllowed(): boolean {
 }
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
+  // TASK-HANASO-24 (subagent A-02): a value that fails URI decoding is treated
+  // as absent — never a 500 on every route.
   const raw = request.cookies.get(LEARNER_COOKIE_NAME)?.value ?? '';
-  const existing = raw ? decodeURIComponent(raw) : '';
+  let existing = '';
+  if (raw) {
+    try {
+      existing = decodeURIComponent(raw);
+    } catch {
+      existing = '';
+    }
+  }
 
   // 1. already a valid signed token — nothing to do
   if (existing && (await verifySessionTokenWeb(existing)) !== null) {

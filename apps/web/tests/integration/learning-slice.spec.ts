@@ -171,7 +171,9 @@ describe('learning slice — full A→D cycle through the API surface', () => {
     expect(reread.progress!.status).toBe('understood');
 
     // the whole journey is visible in the event sink (ADR-016 object_verb names)
-    const events = await json<{ events: { name: string }[] }>(await getEvents());
+    const events = await json<{ events: { name: string }[] }>(
+      await getEvents(new Request(`${BASE}/events`, { headers: { cookie: SLICE_COOKIE } })),
+    );
     const names = events.events.map((e) => e.name);
     for (const expected of [
       'unit_started',

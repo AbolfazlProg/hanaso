@@ -61,7 +61,7 @@ describe('POST /api/attempts', () => {
           weakPoints: unknown[];
         };
         scoring: { weightedScore: number; outcome: string; weakMeasures: string[] };
-        perQuestion: { questionId: string; correct: boolean; correctOptionId: string }[];
+        perQuestion: { questionId: string; correct: boolean }[];
       };
     };
     expect(body.ok).toBe(true);
@@ -71,6 +71,8 @@ describe('POST /api/attempts', () => {
     expect(body.data.attempt.weakPoints).toHaveLength(0);
     expect(body.data.perQuestion).toHaveLength(5);
     expect(body.data.perQuestion.every((p) => p.correct)).toBe(true);
+    // TASK-HANASO-24 (B-06): the answer key itself never crosses back — only correctness
+    expect(JSON.stringify(body.data.perQuestion)).not.toContain('correctOptionId');
   });
 
   it('grades a missed listening question as remediate (M4 below floor)', async () => {
@@ -172,9 +174,38 @@ describe('POST/GET /api/events (PoC analytics sink)', () => {
     const badBody = (await bad.json()) as { error: { code: string } };
     expect(badBody.error.code).toBe('events/validation_failed');
 
-    const list = await getEvents();
+    const list = await getEvents(new Request(`${BASE}/events`, { headers: { cookie: QA_COOKIE } }));
     const listBody = (await list.json()) as { data: { total: number; events: { name: string }[] } };
     expect(listBody.data.total).toBeGreaterThanOrEqual(1);
     expect(listBody.data.events.some((e) => e.name === 'dialogue_line_replayed')).toBe(true);
+  });
+
+  it('TASK-HANASO-24 (A-04): event props are BOUNDED — oversized payloads are rejected', async () => {
+    // 17 keys > the 16-key bound
+    const tooManyKeys: Record<string, unknown> = {};
+    for (let i = 0; i < 17; i += 1) tooManyKeys[`k${i}`] = 'x';
+    const many = await postEvent(post(`${BASE}/events`, { name: 'dialogue_line_replayed', props: tooManyKeys }));
+    expect(many.status).toBe(400);
+
+    // > 4KB serialized in a single value
+    const huge = await postEvent(post(`${BASE}/events`, { name: 'dialogue_line_replayed', props: { blob: 'x'.repeat(8192) } }));
+    expect(huge.status).toBe(400);
+
+    // the legit shape still passes (17-key/4KB bounds are far above real events)
+    const ok2 = await postEvent(post(`${BASE}/events`, { name: 'line_replayed', props: { line_index: 1 } }));
+    expect(ok2.status).toBe(201);
+  });
+
+  it('TASK-HANASO-24 (B-05): events GET requires an identity and lists ONLY the caller-own events', async () => {
+    const anon = await getEvents(new Request(`${BASE}/events`));
+    expect(anon.status).toBe(401);
+    expect(((await anon.json()) as { error: { code: string } }).error.code).toBe('learner/no_identity');
+
+    // caller-scoped listing: the ring carries THIS caller's events, never others'
+    const own = await getEvents(new Request(`${BASE}/events`, { headers: { cookie: QA_COOKIE } }));
+    expect(own.status).toBe(200);
+    const ownBody = (await own.json()) as { data: { events: { name: string; props: Record<string, unknown> }[] } };
+    expect(ownBody.data.events.length).toBeGreaterThan(0);
+    expect(ownBody.data.events.every((e) => !('user_id' in e.props))).toBe(true);
   });
 });

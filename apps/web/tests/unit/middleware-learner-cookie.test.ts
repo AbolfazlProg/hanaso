@@ -13,7 +13,7 @@
  *     route guards answer 401 (the pre-24 mint-and-proceed hole, BUG-039);
  *  5. a garbage/tampered value is never trusted as an identity.
  */
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 import { middleware } from '@/middleware';

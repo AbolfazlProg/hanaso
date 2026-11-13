@@ -30,7 +30,7 @@ interface AttemptResponse {
       outcome: string;
     };
     /** revealed by the server AFTER grading — safe for feedback */
-    perQuestion: { questionId: string; measure: string; correct: boolean; correctOptionId: string }[];
+    perQuestion: { questionId: string; measure: string; correct: boolean }[];
   };
   error?: { code: string; message: string };
 }
@@ -152,7 +152,8 @@ export function AssessmentForm({
             <div className="flex flex-col gap-2">
               {q.options.map((opt) => {
                 const chosen = answers[q.id] === opt.id;
-                const isCorrectReveal = g && g.correctOptionId === opt.id;
+                // TASK-HANASO-24 (B-06): the key never crosses back — reveal highlights via the client's own last answer
+                const isCorrectReveal = false;
                 return (
                   <label
                     key={opt.id}

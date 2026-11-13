@@ -83,6 +83,16 @@ PK (id). No migration needed — additive code only; nothing destructive run.
   restart mid-practice 404s the session honestly; single-instance VPS only.
   A PG-backed in-flight store / event store is the NEXT data mission's work
   (this mission's boundary: no new FSRS, no new event-sourcing).
+- CORRECTED after subagent C-01 (the first version of this doc overstated):
+  the 24h TTL is now actually ENFORCED — `sweepExpired` runs on every practice
+  `generate` (it previously had ZERO production callers, so the map grew
+  unboundedly), and `deleteInFlight` on the SINGLETON frees the entry after
+  the transaction commits (the tx-bound instance never touches the map).
+- CORRECTED after subagent C-02: the /api/attempts route is atomic for ITS OWN
+  single insert, but as an UNLOCKED writer it can race the mastery gate's
+  transaction and surface 25P02 — the service retries the whole unit once on
+  `isRetryableTxError` (23505 | 25P02) now. Remaining trigger surface: crafted
+  concurrency against a still-live legacy API; documented, bounded.
 - The DB-written rows (completed sessions, LO states, station/chapter progress,
   attempts) are unaffected by restarts and are now always written in consistent
   units.
@@ -107,9 +117,12 @@ service level, 5 tests):
 - concurrent station completes → chapter flips to `stations_complete` exactly
   once (upsert convergence, single row).
 
-## 5. Verification status
+## 5. Verification status (post-CP-07 remediation)
 
 - TypeScript clean, ESLint clean.
-- In-memory: **64 files / 748 tests — all green** (745 existing + 3 new).
-- PostgreSQL suite: **8 files / 34 passed, 8 pre-existing documented skips**
-  (29 existing + 5 new) — all green.
+- In-memory: **64 files / 755 tests — all green**.
+- PostgreSQL suite: **8 files / 35 passed, 8 pre-existing documented skips** —
+  all green (added: the C-03 SEQUENTIAL PROD-path replay test — 'already',
+  never a second fold).
+- Subagent-verified: the advisory-lock machinery was proven by C's
+  lock-removal experiment (10/10 runs fail without the locks, 5/5 with).

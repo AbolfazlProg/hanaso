@@ -66,9 +66,12 @@ export class PgPracticeSessionRepository implements PracticeSessionRepository {
    * TASK-HANASO-24: IDEMPOTENT append. ON CONFLICT DO NOTHING — a concurrent
    * duplicate complete (both callers raced past the in-flight check) resolves
    * as 'already' instead of a raw 23505/500; the caller then skips the fold.
+   *
+   * Subagent C-01: this method is DB-ONLY — the in-flight map lifecycle is
+   * owned by the SINGLETON (deleteInFlight, called by the service AFTER the
+   * transaction commits). A tx-bound instance must never touch the map.
    */
   async recordCompleted(session: StoredPracticeSession): Promise<'recorded' | 'already'> {
-    this.inFlight.delete(session.id);
     const rows = await this.client.db
       .insert(practiceSessions)
       .values({
@@ -106,6 +109,10 @@ export class PgPracticeSessionRepository implements PracticeSessionRepository {
       }
     }
     return dropped;
+  }
+
+  deleteInFlight(sessionId: string): void {
+    this.inFlight.delete(sessionId);
   }
 }
 

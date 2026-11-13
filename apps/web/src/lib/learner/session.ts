@@ -11,17 +11,20 @@
  *   middleware.ts); a client cannot invent a valid (uuid, signature) pair;
  * - resolvers verify the signature (constant-time) before accepting the uuid
  *   as an identity — a stolen/forged RAW uuid (no signature) is guest;
- * - a legacy raw-uuid cookie is re-issued SIGNED with the SAME uuid on the
- *   first GET (one-time transition — no re-keying, no orphaned progress);
+ * - a legacy raw-uuid cookie is re-issued SIGNED with the SAME uuid — but ONLY
+ *   inside the bounded HANASO_LEGACY_TOKEN_CUTOFF grace (wall clock; see
+ *   middleware.ts). Outside it the raw value is garbage like any other
+ *   malformed cookie — never a permanent re-signing oracle (live QA S5).
  * - the module is PURE (no crypto import): the HMAC itself has two thin
  *   runtime wrappers — `./session-node` (node:crypto, sync — resolvers/tests)
  *   and `./session-web` (WebCrypto, async — the edge middleware). Both
  *   produce identical bytes over the same secret + message.
  *
  * Secret: HANASO_SESSION_SECRET (≥ 32 random chars in production — see
- * RELEASE_CANDIDATE). Without it a fixed DEV fallback is used so dev/test
- * stay deterministic; the fallback is loudly inert because dev never serves
- * production learners.
+ * RELEASE_CANDIDATE + infra/deploy/update-hanaso.sh which refuses to deploy
+ * without it). Without it dev/test use a fixed DEV fallback for determinism;
+ * in PRODUCTION a missing secret is a BOOT ERROR (fail-closed — subagent A-01:
+ * shipping the public fallback would make every token forgeable).
  */
 import { isLearnerId, LEARNER_COOKIE_NAME } from './identity';
 
@@ -36,19 +39,23 @@ const SESSION_SIGNATURE_LENGTH = 43;
 /** Insecure but deterministic fallback — dev/test only (no HANASO_SESSION_SECRET). */
 const DEV_SESSION_SECRET = 'hanaso-dev-session-secret-v1-do-not-use-in-production';
 
-let warnedMissingSecret = false;
-
-/** The HMAC key for this process (env first; deterministic dev fallback). */
+/**
+ * The HMAC key for this process (env first; deterministic dev fallback).
+ *
+ * TASK-HANASO-24 (subagent A-01 — the release gate now FAILS CLOSED): in
+ * production a missing HANASO_SESSION_SECRET is a BOOT ERROR, not a warning —
+ * shipping the source-committed public dev fallback would let anyone forge
+ * any learner's session token. The deploy runbook (RELEASE_CANDIDATE.md) and
+ * .env.example carry the variable; the deploy tooling refuses to start the
+ * container without it.
+ */
 export function getSessionSecret(): string {
   const fromEnv = process.env.HANASO_SESSION_SECRET;
   if (typeof fromEnv === 'string' && fromEnv.length > 0) return fromEnv;
-  if (!warnedMissingSecret) {
-    warnedMissingSecret = true;
-    if (process.env.NODE_ENV === 'production') {
-      // No throw: booting must stay possible; the token is still unforgeable to
-      // outsiders who don't know the source. The release gate refuses to ship.
-      console.warn('[hanaso/session] HANASO_SESSION_SECRET is not set — using the public dev fallback. Set a real secret before serving real learners.');
-    }
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      '[hanaso/session] HANASO_SESSION_SECRET is required in production — refusing to boot on the public dev fallback (forgeable session tokens).',
+    );
   }
   return DEV_SESSION_SECRET;
 }
