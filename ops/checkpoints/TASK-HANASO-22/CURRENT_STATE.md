@@ -119,10 +119,21 @@ from Learn.
 
 ## Next action (exact)
 
-MISSION COMPLETE — all 10 phases delivered, tested, and pushed (tip `0b80617`).
-Recovery for any future session: this file + CHECKPOINT_LOG.md + TEST_RESULTS.md.
-Remaining for the OWNER: review the branch; deploy when ready (the deploy
-one-liner pipeline is TASK-21's — a new release tag is cut at deploy time).
+MISSION COMPLETE — all 10 phases delivered, tested, and pushed, PLUS the
+delivery layer (CP-04): OWNER-COMMAND.txt **v13** cut for THIS release.
+Recovery for any future session: this file + CHECKPOINT_LOG.md + TEST_RESULTS.md
++ RELEASE_VALIDATION.md.
+Delivery layer state (2026-11-13): product target D = `3d8b8cc` (docs-only
+commits after it never touch product code), version `1.0.0-hanaso22-r01`,
+R/W unchanged (5870eaf3 / d4736bd8…). Live production verified at
+1.0.0-hanaso21-r01 @ 33304b1f (the owner ran the v12 line ~4h earlier), so the
+v13 line jumps n21→n22. The exact one-liner was drilled: run-h22.sh 92/92
+(the line executed verbatim), run-h21/run-deploy05 retired with SKIP,
+run-deploy04 regression 140/140, and the REAL-network codeload download at R
+hash-matched the pin (api.github.com honestly 403 from this sandbox IP).
+Remaining for the OWNER: review the branch; run the v13 line from
+OWNER-COMMAND.txt when ready (root, one paste; `status`/`rollback` optional
+subcommands inside the quotes).
 Out-of-scope leftovers (deliberate): FSRS M2 engine, Library, Vocabulary/Grammar/
 Kanji/Speaking content (researched + architected only), PG integration re-run,
 VOICEVOX hostword generation on the VPS.

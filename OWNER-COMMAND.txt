@@ -1,5 +1,5 @@
-HANASO — OWNER ONE-COMMAND UPDATE (v12 — TRUE ONE-LINER)
-TASK-HANASO-21 · 2026-11-13 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
+HANASO — OWNER ONE-COMMAND UPDATE (v13 — TRUE ONE-LINER)
+TASK-HANASO-22 · 2026-11-13 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
 
 WHAT THIS IS
   ONE single line that installs or updates HANASO on the VPS (run as root).
@@ -7,48 +7,47 @@ WHAT THIS IS
   everything arrives over anonymous HTTPS. Paste it as ONE line (it is a
   single line on purpose; do not let your SSH client wrap it into several).
 
-WHAT'S NEW IN v12 (HANASO-21 — final bug remediation, completion
-reliability & the AIZEN seal)
-  1. THE OWNER-OBSERVED COMPLETION BUG IS FIXED: a stale auto-next closure
-     under-scored a PERFECT walk on short-deck stations (stn-kana-k8 scored
-     2/3 and stn-kana-k12-foreign 1/2 against the 0.7 bar) → 409 forever,
-     with a dead generic retry. Now: a synchronous first-try mirror + a
-     late-bound advance (the score can never go stale), a bounded
-     pre-completion progress sync, a single-flight guard (double-click = ONE
-     complete request), and a STRUCTURED 409 that explains itself in Persian
-     and offers «انجام دوبارهٔ تمرین پایانی» — redo ONLY the final exercise,
-     never a full re-walk. Verified in a real browser on the exact stations
-     (46/46 E2E, production build + real PostgreSQL 18.7).
-  2. THE AIZEN SEAL (Aizen no inkan): a real vermilion hanko — 藍染 carved
-     relief-negative in tategaki, carved inner ring, ink-skip chips, −8°
-     tilt, carved-stone grain — with the full ceremony (descend → press →
-     squash → ink halo → settle) ONLY on a fresh server-confirmed
-     completion. Refresh/revisit shows it settled (never re-animated),
-     replay stamps nothing, re-completes are idempotent (one seal).
-  3. THE CHAPTER MASTERY GATE UN-500'D (found by the new E2E): chapter
-     dialogues have no B_lesson anchor by design, so the content map could
-     not resolve kana-welcome-01 and the kana gate crashed (500) while
-     persisting the attempt — a learner could NEVER open the second chapter.
-     Fixed (LEFT JOIN, nullable anchor) + an integration regression test.
-  4. TASK-HANASO-20 leftovers: BUG-009 (every rule-listening pair carries a
-     third option from its own documented error family — 2AFC retired),
-     BUG-011 (the commit-hygiene CI gate: docs/style commits touching
-     apps/web/src fail CI, with an auditable waiver trailer), OBS-001..010
-     all adjudicated (fm01 anchor/reconnect now carry a real 0.6 check,
-     honest estMinutes pinned by a new EST-MINUTES gate, the /complete FSRS
-     line honest, the dev footer gone from Home, …), and the audio surface
-     completed + pinned by a permanent honesty gate (29 pending words join
-     the next VPS VOICEVOX run — see
-     ops/checkpoints/TASK-HANASO-21/AUDIO_REMEDIATION.md).
+WHAT'S NEW IN v13 (HANASO-22 — learning experience evolution)
+  1. HONEST SCORING, PUNISHMENT RETIRED: the 0.7 exercise gate that could
+     freeze a finished walk (409 forever) is gone from the station flow —
+     every walk now completes (task contract) with an honest station score,
+     and a wrong answer no longer ships its own correctReading/correctAudio:
+     the answer key now arrives only with a correct answer or at review
+     level. Verified in a real browser (44/44 H21 regression + 25/25 H22
+     E2E, production build).
+  2. A REAL PRACTICE MODULE (KANA ONLY, HONEST): /practice — the third nav
+     tab — Focused sessions over the 92-glyph registry (writing canvas,
+     reading, listening); sessions persist server-side
+     (app.practice_sessions + app.learning_object_states — additive
+     migration 0004); the answer key NEVER reaches the client; completion
+     lands honestly in the Review surface (no fake FSRS — documented).
+  3. CHAPTER 01 RESTRUCTURED INTO TWO SECTIONS (hiragana → katakana) with
+     two REAL-WORLD milestone stations built ONLY from taught hostwords
+     (すしねこいぬえきみずともだち · ドア エアコン カラオケ パソコン テスト ラジオ) —
+     katakana is unreachable until hiragana is finished.
+  4. THE AIZEN SEAL CEREMONY, UPGRADED: a larger stage (size-40/44), a
+     rotating ink ring that settles, a one-pass shimmer, and a licensed
+     CC0 stamp sound (public/audio/sfx/aizen-stamp — opengameart
+     rubberduck bfh1_hit_09, credits in docs/research/AUDIO_CREDITS.md)
+     that plays only on a fresh completion, with a PERSISTENT mute
+     (hanaso.sfx.seal-muted) — plus HONEST end-of-lesson achievements (at
+     most 3 chips, only what actually happened).
+  5. JOURNEY LEGIBILITY: every station row carries a content-identity icon
+     (13 types — kana, milestone, vocab, …), recognizable even when locked;
+     a locked row now answers a click with a shake, a vermilion flash and
+     the PERSIAN reason (which prerequisite is missing) — the dead silent
+     lock is gone.
+  All of TASK-HANASO-21's fixes travel inside this release too (the v12
+  line was run by the owner; this is the next release on top of it).
 
 PINS (two INDEPENDENT values — never confuse them)
-  Tooling ref   (bootstrap+updater source)  5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10
+  Tooling ref   (bootstrap+updater source)  5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10   (unchanged since HANASO-20 — audited again for v13)
   Bootstrap SHA-256 (of that exact file)    d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073
-  Product target commit (the release)       33304b1f2b402d70c3090f447d44e2139adcc6b7
-  Release version                           1.0.0-hanaso21-r01
-  Branch                                    fix/TASK-HANASO-21-completion-seal
+  Product target commit (the release)       3d8b8ccd201dd503e403a6e5912351f68556d6e5
+  Release version                           1.0.0-hanaso22-r01
+  Branch                                    feat/TASK-HANASO-22-learning-experience
 
-DELIVERY PATHS (same evidence-based order as v11: api.github.com first,
+DELIVERY PATHS (same evidence-based order as v12: api.github.com first,
 codeload.github.com as the fallback; raw was dropped in v10 — its IPs are
 unreliable from this VPS):
   1/2  api.github.com       contents API at the pinned tooling commit
@@ -60,9 +59,9 @@ unreliable from this VPS):
   aborts having changed NOTHING.
 
 THE COMMAND — ONE line, copy it WHOLE (this exact line is also the one the
-sandbox drill infra/deploy/sandbox-tests/run-h21.sh executes):
+sandbox drill infra/deploy/sandbox-tests/run-h22.sh executes):
 
-bash -c 'R=5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10; W=d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073; D=33304b1f2b402d70c3090f447d44e2139adcc6b7; T=/tmp/hanaso-bootstrap-h21.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso21-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
+bash -c 'R=5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10; W=d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073; D=3d8b8ccd201dd503e403a6e5912351f68556d6e5; T=/tmp/hanaso-bootstrap-h22.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso22-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
 
   (If you are NOT root, start the line with: sudo bash -c ' … ' — the whole
   single-quoted payload stays exactly the same.)
@@ -91,11 +90,15 @@ final closing quote:
 
 HONESTY
   - This exact line was executed by the sandbox drill
-    (infra/deploy/sandbox-tests/run-h21.sh — 18/18 checks, see
-    ops/checkpoints/TASK-HANASO-21/RELEASE_VALIDATION.md): both download
-    paths, the hash gate, the end-to-end update, idempotent re-run, status,
-    rollback, migrate-failure auto-rollback and the KOTODAMA isolation
-    sweep.
+    (infra/deploy/sandbox-tests/run-h22.sh — the fixture mirrors the REAL
+    production state, verified live 2026-11-13T14:47Z: the owner HAS run
+    the v12 line, learn.kotodama.ir serves 1.0.0-hanaso21-r01 @ 33304b1f…,
+    so this update jumps n21→n22): both download paths, the hash gate, the
+    end-to-end update, idempotent re-run, status, rollback, migrate-failure
+    auto-rollback and the KOTODAMA isolation sweep — see
+    ops/checkpoints/TASK-HANASO-22/RELEASE_VALIDATION.md.
+  - The drill result numbers are written AFTER the run, never before.
   - Production is NOT auto-deployed by this file: the owner runs the line.
   - The VPS audio run (VOICEVOX) is a SEPARATE optional step — see
-    ops/checkpoints/TASK-HANASO-21/AUDIO_REMEDIATION.md.
+    ops/checkpoints/TASK-HANASO-21/AUDIO_REMEDIATION.md (the 29 pending
+    words noted there join the next run).

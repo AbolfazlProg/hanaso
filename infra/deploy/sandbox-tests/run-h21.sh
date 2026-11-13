@@ -103,6 +103,14 @@ CMD="$(grep -m1 "^bash -c 'R=" "${OWNER_CMD_FILE}")"
 if [ -z "${CMD}" ]; then
   echo "FATAL: v12 one-liner (bash -c 'R=…') not found in ${OWNER_CMD_FILE}" >&2; exit 1
 fi
+# TASK-HANASO-22: the v12 one-liner this drill pins has been superseded by
+# v13 (OWNER-COMMAND.txt now targets the H22 release). Retire gracefully —
+# same contract as run-deploy05.sh — so suites that still call this script
+# stay green; the CURRENT one-liner drill is run-h22.sh.
+if ! printf '%s\n' "${CMD}" | grep -qF 'HANASO_TARGET_VERSION="1.0.0-hanaso21-r01"'; then
+  echo "SKIP (v12 retired): OWNER-COMMAND.txt now pins a newer one-liner — run infra/deploy/sandbox-tests/run-h22.sh for the current delivery drill."
+  exit 0
+fi
 R="$(printf '%s\n' "${CMD}" | grep -oE "R=[0-9a-f]{40}" | head -1 | cut -d= -f2)"
 W="$(printf '%s\n' "${CMD}" | grep -oE "W=[0-9a-f]{64}" | head -1 | cut -d= -f2)"
 D="$(printf '%s\n' "${CMD}" | grep -oE "D=[0-9a-f]{40}" | head -1 | cut -d= -f2)"
