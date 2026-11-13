@@ -1,6 +1,6 @@
 # TASK-HANASO-24 — CURRENT STATE
 
-> آخرین به‌روزرسانی: **CP-04**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
+> آخرین به‌روزرسانی: **CP-05**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
 
 ## مأموریت
 
@@ -42,7 +42,7 @@
 - [x] **CP-02**: رفع IDOR + hardening اعتبار/session/cookie (تست‌های ۶۳ فایل/۷۴۵ + PG ۲۹ همه سبز) → IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md
 - [x] **CP-03**: رفع افشای Answer Key — گیت dev/test-only هر ۶ صفحهٔ /poc (پروداکشن ۴۰۴)؛ اثبات با curl + Browser واقعی (404، بدون کلید در HTML/RSC/Network، کوکی httpOnly+Secure امضاشده) → ANSWER_KEY_EXPOSURE_FIX.md
 - [x] **CP-04**: Transaction و Idempotency — سرویس‌های اتمیک (db/transactions.ts + lib/poc/completions.ts)؛ idempotent replay؛ advisory lock ضد lost-update/race؛ تست‌های جدید (3 in-memory + 5 PG)؛ 64 فایل/748 + PG 34 همه سبز → DATABASE_TRANSACTION_FIX.md
-- [ ] **CP-05**: تست امنیتی واقعی QA (دو حساب A/B + مرورگر ناشناس، ۱۲ سناریوی اجباری) → SECURITY_TEST_RESULTS.md
+- [x] **CP-05**: تست امنیتی واقعی QA — ۱۲/۱۲ سناریو و ۵۱/۵۱ چک سبز (سرور standalone + PG واقعی + Chromium). یافتهٔ زندهٔ S5 (oracle بازامضای raw uuid) با HANASO_LEGACY_TOKEN_CUTOFF بسته شد → SECURITY_TEST_RESULTS.md
 - [ ] **CP-06**: سه ساب‌ایجنت مستقل → SUBAGENT_REVIEW_{A,B,C}.md
 - [ ] **CP-07**: رفع اختلاف‌ها + تست مجدد + Verification نهایی → FINAL_INDEPENDENT_VERIFICATION.md
 - [ ] **CP-08**: Regression کامل (TS/ESLint/Unit/Integration/E2E مسیر Kana/Home/Progress)
@@ -50,11 +50,11 @@
 
 ## اقدام بعدی
 
-CP-05 — تست امنیتی واقعی QA روی سرور standalone (build موجود همین branch):
-- سرور QA با PostgreSQL واقعی (127.0.0.1:54329، DB اختصاصی hanaso_qa) + HANASO_SESSION_SECRET تصادفی؛ پورت 3124.
-- دو حساب مستقل A و B (کوکی‌های امضاشدهٔ مستقل) + Browser Context ناشناس؛ Playwright واقعی.
-- ۱۲ سناریوی اجباری مأموریت §۵ (A/B isolation، جعل کوکی، session نامعتبر، guest بدون write، logout/login، failure اتمیک، تکراری/هم‌زمان، عدم افشای Answer Key).
-- خروجی: SECURITY_TEST_RESULTS.md با شواهد؛ commit + push.
+CP-06 — ممیزی مستقل با دقیقاً ۳ ساب‌ایجنت هم‌زمان (طبق مأموریت §۶):
+- A = Authentication & IDOR Auditor (Session/Cookie/AuthZ/Isolation + تلاش‌های کنترل‌شدهٔ بین دو حساب QA)
+- B = API & Data Exposure Auditor (Payloadها، /poc، Answer Key، افشای Client)
+- C = Database & Transaction Auditor (Write/Rollback/Idempotency/Race/یکپارچگی)
+- قواعد: کد و Git را مستقلاً بخوانند؛ تست واقعی اجرا کنند؛ صرفاً تأیید گزارش اصلی ممنوع؛ بدون تغییر Product Code؛ هرکدام گزارش مستقل SUBAGENT_REVIEW_{A,B,C}.md؛ commit + push.
 
 ## قوانین فعال
 

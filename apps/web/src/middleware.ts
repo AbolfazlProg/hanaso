@@ -42,6 +42,27 @@ function secureCookie(request: NextRequest): boolean {
   return process.env.NODE_ENV === 'production';
 }
 
+/**
+ * TASK-HANASO-24 hardening (live QA S5 finding): the raw-uuid → signed
+ * re-issue must not be a PERMANENT forgery oracle (anyone holding a pre-24
+ * raw value could otherwise get it re-signed forever). It is bounded by a
+ * wall clock:
+ *
+ *  - dev/test (NODE_ENV !== 'production'): always allowed (no real learners);
+ *  - production WITHOUT HANASO_LEGACY_TOKEN_CUTOFF: DISABLED — fail-closed;
+ *  - production WITH it (an ISO datetime, set at deploy to deploy+grace):
+ *    allowed only while now < cutoff. After the grace passes, raw values are
+ *    garbage like any other malformed cookie (fresh mint on GET, 401 on
+ *    writes). The deploy runbook (RELEASE_CANDIDATE) generates the value.
+ */
+function legacyReissueAllowed(): boolean {
+  if (process.env.NODE_ENV !== 'production') return true;
+  const cutoff = process.env.HANASO_LEGACY_TOKEN_CUTOFF;
+  if (typeof cutoff !== 'string' || cutoff.length === 0) return false;
+  const t = Date.parse(cutoff);
+  return Number.isFinite(t) ? Date.now() < t : false;
+}
+
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   const raw = request.cookies.get(LEARNER_COOKIE_NAME)?.value ?? '';
   const existing = raw ? decodeURIComponent(raw) : '';
@@ -51,10 +72,13 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     return NextResponse.next();
   }
 
-  // 2. legacy RAW uuid → re-issue SIGNED, same uuid (one-time transition)
+  // 2. legacy RAW uuid → re-issue SIGNED, same uuid — but ONLY inside the
+  //    bounded grace window (legacyReissueAllowed); outside it the raw value
+  //    is just garbage (fresh identity on GET, guest on writes).
   // 4. state-changing request without any identity → do NOT mint (401 at the
   //    route guards); a garbage/foreign value on such a request likewise.
-  const legacyUuid = existing && isRawLegacyLearnerValue(existing) ? existing : null;
+  const legacyUuid =
+    existing && isRawLegacyLearnerValue(existing) && legacyReissueAllowed() ? existing : null;
   if (!legacyUuid && !shouldMint(request)) {
     return NextResponse.next();
   }

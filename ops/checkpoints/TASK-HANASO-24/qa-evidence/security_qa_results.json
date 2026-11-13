@@ -1,0 +1,345 @@
+{
+  "base": "http://127.0.0.1:3124",
+  "at": "2026-11-13T23:11:37.315Z",
+  "scenarios": [
+    {
+      "no": 1,
+      "title": "A فقط اطلاعات خودش را دریافت کند",
+      "checks": [
+        {
+          "name": "A POST /api/progress unit_started → 201",
+          "ok": true,
+          "detail": "status=201"
+        },
+        {
+          "name": "A POST station enter → 200",
+          "ok": true,
+          "detail": "status=200"
+        },
+        {
+          "name": "A GET /api/progress → 200 with A-own record",
+          "ok": true,
+          "detail": "userId=b2f83f53-807a-43e5-a242-06af7d80bbf2 stage=A_selfcheck"
+        },
+        {
+          "name": "A GET station state → 200, in_progress, owned row",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 2,
+      "title": "A با ارسال userId=B نتواند Progress کاربر B را بخواند یا تغییر دهد",
+      "checks": [
+        {
+          "name": "B POST /api/progress unit_started → 201 (setup)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "A GET ?userId=B → sees ONLY her own record (param ignored)",
+          "ok": true,
+          "detail": "server resolved userId=b2f83f53-807a-43e5-a242-06af7d80bbf2"
+        },
+        {
+          "name": "A POST body userId=B → applies to A ONLY (B untouched)",
+          "ok": true,
+          "detail": "B stage=A_selfcheck (A advanced to B_lesson)"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 3,
+      "title": "A نتواند Attempt متعلق به B ثبت کند",
+      "checks": [
+        {
+          "name": "A POST /api/attempts with body userId=B → recorded under A",
+          "ok": true,
+          "detail": "attempt.userId=b2f83f53-807a-43e5-a242-06af7d80bbf2"
+        },
+        {
+          "name": "A GET /api/attempts lists ONLY A-owned rows",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "B GET /api/attempts → no A/B cross rows (B sees only hers)",
+          "ok": true,
+          "detail": "count=0"
+        },
+        {
+          "name": "mastery_passed accepts only the CALLER-OWNED passed attempt",
+          "ok": true,
+          "detail": "status=active"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 4,
+      "title": "B نتواند اطلاعات A را مشاهده کند",
+      "checks": [
+        {
+          "name": "B GET ?userId=A → B sees only her own record",
+          "ok": true,
+          "detail": "resolved=b8a9c4ad-f274-4aa7-a391-7f004d9fe680"
+        },
+        {
+          "name": "B GET station h0 → honest EMPTY (not A's in_progress)",
+          "ok": true,
+          "detail": "state=null"
+        },
+        {
+          "name": "B GET journey → 200 (own scoped view)",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 5,
+      "title": "دست‌کاری Cookie باعث جعل هویت نشود",
+      "checks": [
+        {
+          "name": "RAW B uuid on GET → fresh identity, NEVER B",
+          "ok": true,
+          "detail": "resolved=c89818e0 progress=null"
+        },
+        {
+          "name": "RAW B uuid on POST → 401 (no mint-and-proceed)",
+          "ok": true,
+          "detail": "status=401"
+        },
+        {
+          "name": "tampered signature on GET → fresh identity, never the forged one",
+          "ok": true,
+          "detail": "resolved=15fe2286"
+        },
+        {
+          "name": "tampered signature on POST → 401",
+          "ok": true,
+          "detail": "status=401"
+        },
+        {
+          "name": "garbage on GET → fresh identity + empty (never the garbage value)",
+          "ok": true,
+          "detail": "resolved=21c739c8"
+        },
+        {
+          "name": "garbage on POST → 401",
+          "ok": true,
+          "detail": "status=401"
+        },
+        {
+          "name": "live cookie flags: httpOnly+Secure+Lax",
+          "ok": true,
+          "detail": "httpOnly=true secure=true sameSite=Lax"
+        },
+        {
+          "name": "page JS cannot read the identity (httpOnly)",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 6,
+      "title": "درخواست بدون Session معتبر به اطلاعات خصوصی دسترسی نداشته باشد",
+      "checks": [
+        {
+          "name": "no-cookie GET /api/progress → fresh identity, EMPTY (not A/B data)",
+          "ok": true,
+          "detail": "resolved=13ac833c"
+        },
+        {
+          "name": "no-cookie GET /api/attempts → fresh identity, lists NOTHING of others",
+          "ok": true,
+          "detail": "count=0"
+        },
+        {
+          "name": "no-cookie station GET → honest empty state",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "anonymous browser GET / → 200 (mints fresh identity on the SAFE request)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "anonymous visit got a server-minted SIGNED token",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 7,
+      "title": "Guest نتواند عملیات Write غیرمجاز انجام دهد",
+      "checks": [
+        {
+          "name": "guest POST station enter → 401",
+          "ok": true,
+          "detail": "status=401"
+        },
+        {
+          "name": "guest POST /api/events → 401 (anonymous ring spam closed)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "guest POST /api/practice generate → 401",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "guest POST /api/progress → 401 (no mint-and-proceed)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "guest POST /api/attempts → 401",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 8,
+      "title": "Logout/Login باعث باقی ماندن اطلاعات حساب قبلی نشود",
+      "checks": [
+        {
+          "name": "after cookie loss a FRESH identity is minted (≠ old A)",
+          "ok": true,
+          "detail": "old=b2f83f53 new=b80f3fd7"
+        },
+        {
+          "name": "fresh identity sees NONE of A's old data (honest empty)",
+          "ok": true,
+          "detail": "progress=null"
+        },
+        {
+          "name": "old A rows persist in DB but are unreachable by the new identity",
+          "ok": true,
+          "detail": "lesson_progress rows for old A=1"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 9,
+      "title": "Session نامعتبر پاسخ مناسب دریافت کند",
+      "checks": [
+        {
+          "name": "invalid session on a WRITE → 401 + typed Persian envelope",
+          "ok": true,
+          "detail": "code=learner/no_identity"
+        },
+        {
+          "name": "invalid session on a READ → replaced by a fresh identity (never trusted)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "pages still render 200 with the honest empty state",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 10,
+      "title": "عملیات چندمرحله‌ای در صورت Failure هیچ دادهٔ ناقصی باقی نگذارد",
+      "checks": [
+        {
+          "name": "A walked h0+h1 (setup for practice)",
+          "ok": true,
+          "detail": "h1 complete=200"
+        },
+        {
+          "name": "practice generate → session with stripped items only",
+          "ok": true,
+          "detail": "14 items, keys absent: true"
+        },
+        {
+          "name": "concurrent duplicate completes → no 500, at most one already",
+          "ok": true,
+          "detail": "statuses=200/200 already=1"
+        },
+        {
+          "name": "DB: session row written exactly once",
+          "ok": true,
+          "detail": "rows=1"
+        },
+        {
+          "name": "DB: evidence equals exactly ONE fold (no partial/double)",
+          "ok": true,
+          "detail": "seenSum=14 items=14"
+        },
+        {
+          "name": "rollback machinery covered by CP-04 PG suite (5/5 green)",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 11,
+      "title": "درخواست‌های تکراری و هم‌زمان دادهٔ ناسازگار تولید نکنند",
+      "checks": [
+        {
+          "name": "concurrent identical machine events → no contradiction (201/400, single row)",
+          "ok": true,
+          "detail": "statuses=201/201"
+        },
+        {
+          "name": "DB: exactly one lesson_progress row for A",
+          "ok": true,
+          "detail": "rows=1"
+        },
+        {
+          "name": "concurrent attempts → distinct sequential attemptNos (no race)",
+          "ok": true,
+          "detail": "attemptNos=2,3"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "no": 12,
+      "title": "/poc/practice دیگر Answer Key را افشا نکند",
+      "checks": [
+        {
+          "name": "direct GET /poc/practice → 404 in production build",
+          "ok": true,
+          "detail": "status=404"
+        },
+        {
+          "name": "RSC flight of /poc/practice carries no key material",
+          "ok": true,
+          "detail": "status=404 keys=false"
+        },
+        {
+          "name": "browser /poc/practice → 404, DOM + network clean",
+          "ok": true,
+          "detail": "status=404 domLeak=false netLeaks=0"
+        },
+        {
+          "name": "production check (read-only, no mutation)",
+          "ok": true,
+          "detail": "prod still serves the pre-24 build (status 200, keys present: true) — closed by THIS branch upon deploy"
+        }
+      ],
+      "status": "passed"
+    }
+  ]
+}

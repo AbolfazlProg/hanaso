@@ -13,7 +13,7 @@
  *     route guards answer 401 (the pre-24 mint-and-proceed hole, BUG-039);
  *  5. a garbage/tampered value is never trusted as an identity.
  */
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 import { middleware } from '@/middleware';
@@ -96,6 +96,50 @@ describe('middleware — first-visit session token minting (HANASO-20 + HANASO-2
     const post = req('http://localhost/api/progress', `${LEARNER_COOKIE_NAME}=not-a-uuid`, 'POST');
     const response = await middleware(post);
     expect(response.headers.get('set-cookie')).toBeNull();
+  });
+
+  it('TASK-HANASO-24 (live QA S5): in production WITHOUT a cutoff, a raw uuid is NEVER re-signed', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('HANASO_SESSION_SECRET', 'test-secret-not-the-dev-fallback');
+    try {
+      const request = req('http://localhost/', `${LEARNER_COOKIE_NAME}=${VALID}`);
+      const response = await middleware(request);
+      const token = request.cookies.get(LEARNER_COOKIE_NAME)?.value ?? '';
+      // a FRESH identity was minted — the presented raw uuid did not survive
+      expect(verifySessionTokenSync(token)).not.toBe(VALID);
+      expect(verifySessionTokenSync(token)).toBeTruthy();
+      expect((response.headers.get('set-cookie') ?? '').toLowerCase()).toContain('httponly');
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('TASK-HANASO-24: within the cutoff grace a raw uuid IS re-signed with the SAME uuid', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('HANASO_SESSION_SECRET', 'test-secret-not-the-dev-fallback');
+    vi.stubEnv('HANASO_LEGACY_TOKEN_CUTOFF', new Date(Date.now() + 14 * 24 * 3600 * 1000).toISOString());
+    try {
+      const request = req('http://localhost/learn', `${LEARNER_COOKIE_NAME}=${VALID}`);
+      await middleware(request);
+      const token = request.cookies.get(LEARNER_COOKIE_NAME)?.value ?? '';
+      expect(verifySessionTokenSync(token)).toBe(VALID); // same learner — no re-keying
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('TASK-HANASO-24: an EXPIRED cutoff stops re-signing (fail-closed, fresh mint)', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('HANASO_SESSION_SECRET', 'test-secret-not-the-dev-fallback');
+    vi.stubEnv('HANASO_LEGACY_TOKEN_CUTOFF', new Date(Date.now() - 1000).toISOString());
+    try {
+      const request = req('http://localhost/', `${LEARNER_COOKIE_NAME}=${VALID}`);
+      await middleware(request);
+      const token = request.cookies.get(LEARNER_COOKIE_NAME)?.value ?? '';
+      expect(verifySessionTokenSync(token)).not.toBe(VALID);
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it('two cookie-less GETs mint two DIFFERENT identities (per-browser, not shared)', async () => {
