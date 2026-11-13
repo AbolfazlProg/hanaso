@@ -70,6 +70,47 @@ function exampleWords() {
 }
 
 /*
+ * TASK-HANASO-21 — the COMPLETE audio surface. The owner-observed completion
+ * bug proved the cost of an incomplete registry (kana-decode outcomes without
+ * committed word audio took the no-audio auto-next path). This extractor
+ * sweeps every remaining content surface that can offer playback:
+ *  - rule-step / rule-contrast WORDS and their a/b pair sides (teaching
+ *    artifacts included — the contrast needs BOTH sides hearable);
+ *  - the kana-decode / rule-listening exercise promptJa words (the question
+ *    itself is audio; the server attaches the word's committed asset as
+ *    correctAudio on the reveal).
+ * Template scaffolds are excluded — same rule as exampleWords().
+ */
+function contrastAndExerciseWords() {
+  const set = new Set();
+  // the BASIC 92 kana glyphs own their registry entries (kn-*) — a length-1
+  // text is skipped ONLY when it is one of them; derived single glyphs
+  // (ば/ぱ — the dakuten/handakuten contrast sides) have no kana asset and
+  // DO need a hostword clip for their contrast play button.
+  const basicKana = new Set(kanaEntries().map((k) => k.text));
+  const stationsDir = path.join(WEB, 'src', 'modules', 'curriculum', 'content');
+  for (const file of ['chapter-kana01.stations.ts', 'chapter-fm01.stations.ts']) {
+    const src = readFileSync(path.join(stationsDir, file), 'utf8');
+    for (const m of src.matchAll(/\bja:\s*'([^']+)'/g)) {
+      const ja = m[1];
+      if (/___|NAME|…/.test(ja)) continue;
+      if (basicKana.has(ja)) continue;
+      if (/[\u3040-\u30ff]/.test(ja)) set.add(ja);
+    }
+  }
+  for (const file of ['chapter-kana01.exercises.ts', 'chapter-fm01.exercises.ts']) {
+    const src = readFileSync(path.join(stationsDir, file), 'utf8');
+    // promptJa on decode/rule-listening items (the audible question/word)
+    for (const m of src.matchAll(/promptJa:\s*'([^']+)'/g)) {
+      const ja = m[1];
+      if (/___|NAME|…/.test(ja)) continue;
+      set.add(ja);
+    }
+  }
+  return [...set];
+}
+
+/*
  * TASK-HANASO-20 (BUG-005 remediation): the k12-foreign station teaches
  * ファ/ティ/ヴ with these words. No assets exist yet (they cannot be synthesized
  * here — VOICEVOX runs on the VPS only), so the UI honestly hides their play
@@ -224,7 +265,7 @@ async function generateAll() {
   writeFileSync(path.join(KANA_DIR, 'manifest.json'), JSON.stringify(kanaManifest, null, 2) + '\n');
 
   // 2. host words + example words — ONE per-word registry
-  const words = [...new Set([...hostWords(), ...exampleWords(), ...FOREIGN_COMBO_WORDS, ...YOON_SEPARATE_FORMS, ...PENDING_CARD_WORDS])].sort();
+  const words = wordSurface(); // TASK-HANASO-21: single source — --list and the real run can never drift
   const hostManifest = { generatedBy: GENERATED_BY, format: 'voicevox-opus-m4a', entries: {} };
   for (const word of words) {
     const wav = normTo(master(await synth(word)));
@@ -249,7 +290,29 @@ async function generateAll() {
   console.log(`\ndone: 92 kana + ${words.length} words (host + example, one registry) — voice ${CREDIT}`);
 }
 
-generateAll().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+/* TASK-HANASO-21 — `--list`: print the COMPLETE hostword generation surface as
+ * one JSON array and exit. No VOICEVOX, no writes. Purpose: the audio-honesty
+ * unit test (tests/unit/h21-audio-inventory.test.ts) and the operator staging
+ * a VPS run can verify WHAT the next regeneration would cover without
+ * synthesizing anything. The committed registry stays the runtime truth. */
+function wordSurface() {
+  return [
+    ...new Set([
+      ...hostWords(),
+      ...exampleWords(),
+      ...contrastAndExerciseWords(),
+      ...FOREIGN_COMBO_WORDS,
+      ...YOON_SEPARATE_FORMS,
+      ...PENDING_CARD_WORDS,
+    ]),
+  ].sort();
+}
+
+if (process.argv.includes('--list')) {
+  process.stdout.write(JSON.stringify(wordSurface()) + '\n');
+} else {
+  generateAll().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}
