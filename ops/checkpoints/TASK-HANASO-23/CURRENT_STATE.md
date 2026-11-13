@@ -33,7 +33,7 @@ deploy. Deliverables: 16 report files under `ops/checkpoints/TASK-HANASO-23/`
 | 0 | Setup: worktree, branch, context pack, this file | ✅ done (12e41d4) |
 | C1 | 3 subagents (A: Japanese master/curriculum, B: assessment/questions, C: learner experience/feedback) — full first pass | ✅ (bd348a8) |
 | C2 | same 3, adversarial second pass (hunt what C1 missed) | ✅ (84ec60e) |
-| C3 | verification pass (source + browser evidence; confirm/reject C1+C2 findings; validate positives) | 🔴 LOST — redo (see incident) |
+| C3 | verification pass (source + browser evidence; confirm/reject C1+C2 findings; validate positives) | ✅ (this commit — completed across the infra failure; 66/67 stand, B-05 split) |
 | T1 | 3 subagents (A: frontend/browser, B: backend/db/security, C: architecture/perf/QA) | ⬜ |
 | T2 | adversarial technical pass | ⬜ |
 | T3 | technical verification (tests run, browser, API probes) | ⬜ |
