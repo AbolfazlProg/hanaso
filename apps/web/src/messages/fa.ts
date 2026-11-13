@@ -382,6 +382,9 @@ export const fa = {
     completionCriterionBody:
       'همهٔ پیشرفت این درس محفوظ است — فقط نمرهٔ تمرین پایانی به حد نصاب نرسید. با یک‌بار انجام دوبارهٔ همان تمرین پایانی می‌توانی نمره را بالا ببری و درس را ثبت کنی؛ لازم نیست کل درس را از اول بگذرانی.',
     completionCriterionRedo: 'انجام دوبارهٔ تمرین پایانی',
+    /* ---- TASK-HANASO-21 — the AIZEN completion seal's accessible name (the
+     * seal is art; screen readers get the FACT it stamps). */
+    sealLabel: 'مهر ایچن — این درس کامل شد',
     /* TASK-HANASO-20 (BUG-008) — the rule-card listening column label. */
     listenColumnLabel: 'شنیدن',
     /* ---- TASK-LEARNING-10 §5 — honest short note when the sound is unavailable */

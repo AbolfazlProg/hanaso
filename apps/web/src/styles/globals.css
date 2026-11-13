@@ -286,3 +286,81 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 19.5rem), 1fr));
   gap: 0.75rem;
 }
+
+/* -- TASK-HANASO-21 — مهر تکمیل ایچن (Aizen completion seal) ------------------
+   لحظهٔ Ceremonial ثبت واقعی درس: ورود → فرود و چرخش → فشار مهر → اسکواش →
+   پخش‌شدن هالهٔ مرکب → نشست نهایی. کل توالی از توکن --dur-ceremonial
+   (۱۲۰۰ms — «comprehension seal — once») تغذیه می‌شود؛ زیر prefers-reduced-motion
+   کل توالی به همان «simple fade»ی که قرارداد توکن‌ها وعده داده فرو می‌ریزد
+   (توکن‌ها صفرند → ظهور بی‌حرکت). مهر فقط با پاسخ تازهٔ سرور می‌زند — نه در
+   رفرش ایستگاه کامل‌شده، نه در پایان مرور (هیچ‌چیز دوباره ثبت نمی‌شود). */
+@keyframes aizen-seal-stamp {
+  0% {
+    opacity: 0;
+    transform: translateY(-1.75rem) scale(1.6) rotate(-26deg);
+  }
+  32% {
+    opacity: 1;
+    transform: translateY(0) scale(1.02) rotate(-8deg);
+  }
+  /* برخورد مهر با کاغذ */
+  42% {
+    transform: scale(0.92) rotate(-8deg);
+  }
+  /* اسکواشِ مرکبِ زیر فشار */
+  54% {
+    transform: scale(1.05, 0.95) rotate(-8deg);
+  }
+  68% {
+    transform: scale(0.985, 1.015) rotate(-8deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-8deg);
+  }
+}
+@keyframes aizen-seal-ink-halo {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  38% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+.aizen-seal-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: rotate(-8deg); /* امضای طبیعی مهر — حتی در حالت ساکن */
+}
+.aizen-seal-stamp {
+  animation: aizen-seal-stamp calc(var(--dur-ceremonial) + 320ms) cubic-bezier(0.22, 0.61, 0.21, 1) both;
+}
+.aizen-seal-halo {
+  position: absolute;
+  inset: -12%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--color-shu) 0%, color-mix(in srgb, var(--color-shu) 42%, transparent) 46%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+}
+.aizen-seal-halo:not(.aizen-seal-halo-idle) {
+  animation: aizen-seal-ink-halo calc(var(--dur-ceremonial) + 520ms) ease-out both;
+}
+.aizen-seal-halo-idle {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aizen-seal-stamp {
+    animation: hanaso-fade-in var(--dur-fast) both;
+  }
+  .aizen-seal-halo:not(.aizen-seal-halo-idle) {
+    animation: none;
+    opacity: 0;
+  }
+}

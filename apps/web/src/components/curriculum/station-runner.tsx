@@ -26,6 +26,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { fa } from '@/messages/fa';
+import { AizenSeal } from '@/components/curriculum/aizen-seal';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import type { ClientStation, ClientTeachingBlock } from '@/modules/curriculum/client-transport';
 import type { Chapter, Station } from '@/modules/curriculum/types';
@@ -291,6 +292,15 @@ export function StationRunner(props: StationRunnerProps) {
   const [sessionScore, setSessionScore] = useState<number | null>(null);
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(false);
+  /**
+   * TASK-HANASO-21 — the AIZEN seal's ceremonial stamp plays ONLY for a FRESH
+   * completion response (200, not `already`). A revisit/refresh of a completed
+   * station (the resume path sets `completed` without this flag) and a replay
+   * end (no re-registration) render the seal SETTLED — the completion is a
+   * persisted fact, never a re-run animation. This is the mission's seal
+   * idempotency rule: «تازه‌سازی/مرور/تکرار = بدون انیمیشن دوباره».
+   */
+  const [freshCompletion, setFreshCompletion] = useState(false);
   /**
    * TASK-HANASO-17 §۶ — the replay walk reached its end: a NON-interactive
    * end panel (message + ONE CTA back to the map section). Nothing was
@@ -648,6 +658,17 @@ export function StationRunner(props: StationRunnerProps) {
           setCompletionFailed(false);
           setCompletionFailure(null);
           clearWalkSnapshot(chapterSlug, station.slug); // walk done — no stale resume
+          /* TASK-HANASO-21 — the seal's ceremonial stamp fires ONLY on a FRESH
+           * completion: an `already: true` (idempotent re-complete) settles the
+           * seal without re-stamping — the completion is a persisted fact. */
+          let already = false;
+          try {
+            const body = (await res.clone().json()) as { data?: { already?: boolean } };
+            already = body?.data?.already === true;
+          } catch {
+            /* unparseable success body → treat as fresh (the 200 is the fact) */
+          }
+          setFreshCompletion(!already);
         } else {
           // TL-13 (A-3): honest failure (409 criterion/prereq, 5xx, offline) — the
           // learner sees WHY nothing happened and can recover in place.
@@ -1034,7 +1055,19 @@ export function StationRunner(props: StationRunnerProps) {
           data-station-complete
           className="flex flex-col gap-3 rounded-md border border-success bg-card p-5"
         >
-          <p className="flex items-center gap-2 text-body font-bold text-success">
+          {/*
+           * TASK-HANASO-21 — the AIZEN completion seal. The ceremonial stamp
+           * (enter → descend → press → squash → ink halo → settle) plays ONLY
+           * for a FRESH completion; a revisit/refresh renders it settled. It is
+           * celebratory ART on paper — shu vermilion, the design system's
+           * dedicated seal accent — never an interactive control (red stays
+           * reserved for errors in controls; this is an impression, not a
+           * button). Centered above the message: the fact lands first.
+           */}
+          <span className="mx-auto block size-28 md:size-32" data-aizen-seal-frame>
+            <AizenSeal animate={freshCompletion} label={fa.curriculum.sealLabel} className="h-full w-full" />
+          </span>
+          <p className="flex items-center justify-center gap-2 text-body font-bold text-success">
             <CheckCircle2 aria-hidden className="size-5" />
             {fa.curriculum.stationCompletedMessage}
           </p>
