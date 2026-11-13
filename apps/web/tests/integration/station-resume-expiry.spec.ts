@@ -16,6 +16,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 
 import { GET as getStation, POST as postStation } from '@/app/api/curriculum/station/route';
 import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
+import { signSessionTokenSync } from '@/lib/learner/session-node';
 import { resetStoresForTests, getStationProgressStore } from '@/lib/poc/stores';
 import { RESUME_TTL_MS } from '@/modules/curriculum/resume-policy';
 
@@ -27,14 +28,14 @@ const L1 = '11111111-2222-3333-4444-555555555555';
 function post(body: unknown, learner: string = L1): Request {
   return new Request(BASE, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', cookie: `${LEARNER_COOKIE_NAME}=${learner}` },
+    headers: { 'content-type': 'application/json', cookie: `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(learner)}` },
     body: JSON.stringify(body),
   });
 }
 
 function get(stationSlug: string, learner: string = L1): Request {
   return new Request(`${BASE}?chapter=${CH}&station=${stationSlug}`, {
-    headers: { cookie: `${LEARNER_COOKIE_NAME}=${learner}` },
+    headers: { cookie: `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(learner)}` },
   });
 }
 

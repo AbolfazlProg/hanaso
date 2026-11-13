@@ -21,13 +21,14 @@ import { ensureTestDatabase } from './helpers';
 import { getChapter } from '@/modules/curriculum/content';
 import { applyStationEvent } from '@/modules/curriculum/progress-machine';
 import { orderedStations } from '@/modules/curriculum';
+import { signSessionTokenSync } from '@/lib/learner/session-node';
 
 const LEARNER = '11111111-1111-4111-8111-111111111111';
 
 function masteryRequest(answers: Record<string, unknown>): Request {
   return new Request('http://localhost/api/curriculum/mastery', {
     method: 'POST',
-    headers: { 'content-type': 'application/json', cookie: `hanaso_lid=${LEARNER}` },
+    headers: { 'content-type': 'application/json', cookie: `hanaso_lid=${signSessionTokenSync(LEARNER)}` },
     body: JSON.stringify({ chapterSlug: 'kana-foundation-01', answers }),
   });
 }

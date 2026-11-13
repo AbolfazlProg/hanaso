@@ -3,21 +3,37 @@ import { fail, ok } from '@/modules/shared';
 import { ProgressTransitionError, applyProgressEvent } from '@/modules/progress';
 import { progressInputSchema } from '@/modules/progress';
 import { getAttemptStore, getProgressStore } from '@/lib/poc/stores';
-import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
+import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 
 /**
  * GET/POST /api/progress — the A→D unit cycle (TASK-SLICE-01 / Issue #40
  * → Postgres persistence in TASK-M0-10).
  *
- * GET  ?dialogueId=… (&userId=…) → the unit record (or null — null means "stage A, not started").
- * POST { dialogueId, userId?, event } → machine-validated transition. `mastery_passed`
- *      additionally verifies the referenced attempt EXISTS and its outcome is 'passed'
- *      (the D→understood gate, DD-048) before the machine flips the status.
+ * GET  ?dialogueId=… → the CALLER's unit record (or null — null means "stage A,
+ *      not started"). The caller is the signed `hanaso_lid` session token —
+ *      never a query/body-supplied userId.
+ * POST { dialogueId, event } → machine-validated transition on the CALLER's
+ *      record. `mastery_passed` additionally verifies the referenced attempt
+ *      EXISTS, belongs to the CALLER and this dialogue scope, and carries
+ *      outcome='passed' (the D→understood gate, DD-048) before the machine
+ *      flips the status.
  *
- * // DEV-ONLY — no auth in the slice: userId defaults to 'poc-user' until better-auth
- * // lands (M1); storage is in-memory without DATABASE_URL, app.lesson_progress with it.
+ * TASK-HANASO-24 (RC-1 — audit BUG-011/033, the IDOR pair): pre-24 this route
+ * trusted `userId` from the query/body (defaulting to the SHARED poc-user) —
+ * a 5-request takeover chain wrote any victim's status and let any third
+ * cookie read it. Ownership now resolves ONLY from the server-signed session
+ * token; a request without one is guest and gets 401 on this state-changing
+ * surface. A client-supplied `userId` (query or body) is IGNORED — it can
+ * never select anyone else's store.
  */
 export const dynamic = 'force-dynamic';
+
+function noIdentity(): NextResponse {
+  return NextResponse.json(
+    fail({ code: 'learner/no_identity', message: 'شناسهٔ زبان‌آموز یافت نشد — کوکی «hanaso_lid» باید توسط مرورگر پذیرفته شود.' }),
+    { status: 401, headers: { 'cache-control': 'no-store' } },
+  );
+}
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -27,7 +43,8 @@ export async function GET(req: Request) {
       status: 400,
     });
   }
-  const userId = url.searchParams.get('userId') ?? POC_DEFAULT_USER_ID;
+  const userId = resolveLearnerIdFromRequest(req);
+  if (userId === GUEST_LEARNER_ID) return noIdentity();
   const progress = await getProgressStore().get(userId, dialogueId);
   return NextResponse.json(ok({ userId, dialogueId, progress }), {
     headers: { 'cache-control': 'no-store' },
@@ -51,18 +68,21 @@ export async function POST(req: Request) {
     });
   }
 
+  const userId = resolveLearnerIdFromRequest(req);
+  if (userId === GUEST_LEARNER_ID) return noIdentity();
+
   const { dialogueId, event } = parsed.data;
-  const userId = parsed.data.userId ?? POC_DEFAULT_USER_ID;
   const store = getProgressStore();
   const current = await store.get(userId, dialogueId);
 
-  // D→understood gate: the referenced attempt must exist, belong to this dialogue/user
-  // scope, and carry outcome='passed' (verified server-side, never trusted from the client).
+  // D→understood gate: the referenced attempt must exist, belong to this
+  // dialogue, and belong to THE CALLER (server-resolved on both sides — the
+  // pre-24 chain matched two client-supplied values against each other).
   // Direct find() — never a bounded list scan (PR #74 review r1/S2).
   let attemptOutcome: 'passed' | 'remediate' | 'incomplete' | undefined;
   if (event.type === 'mastery_passed') {
     const attempt = await getAttemptStore().find(event.attemptId);
-    if (!attempt || attempt.dialogueId !== dialogueId || (attempt.userId ?? POC_DEFAULT_USER_ID) !== userId) {
+    if (!attempt || attempt.dialogueId !== dialogueId || attempt.userId !== userId) {
       return NextResponse.json(
         fail({
           code: 'progress/attempt_not_found',

@@ -11,6 +11,12 @@ import type { AttemptInput, DialogueMasteryAttempt } from './types';
 export interface AttemptRepository {
   create(input: AttemptInput, outcome: DialogueMasteryAttempt['outcome']): Promise<DialogueMasteryAttempt>;
   list(dialogueId?: string): Promise<DialogueMasteryAttempt[]>;
+  /**
+   * TASK-HANASO-24 (audit BUG-030): caller-scoped listing — the ONLY shape the
+   * /api/attempts GET is allowed to serve. Returns the CALLER's attempts only;
+   * cross-user reads are impossible by construction.
+   */
+  listForUser(userId: string, dialogueId?: string): Promise<DialogueMasteryAttempt[]>;
   /** Single-row lookup by stored attempt id — the D→understood gate uses this instead
    * of list()+find (PR #74 review r1: a list is LIMIT-bounded and the wrong shape). */
   find(attemptId: string): Promise<DialogueMasteryAttempt | null>;
@@ -38,6 +44,10 @@ export class InMemoryAttemptRepository implements AttemptRepository {
 
   async list(dialogueId?: string): Promise<DialogueMasteryAttempt[]> {
     return dialogueId ? this.attempts.filter((a) => a.dialogueId === dialogueId) : [...this.attempts];
+  }
+
+  async listForUser(userId: string, dialogueId?: string): Promise<DialogueMasteryAttempt[]> {
+    return this.attempts.filter((a) => a.userId === userId && (!dialogueId || a.dialogueId === dialogueId));
   }
 
   async find(attemptId: string): Promise<DialogueMasteryAttempt | null> {

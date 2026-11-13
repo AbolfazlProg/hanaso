@@ -11,15 +11,29 @@ import { GET as getAttempts, POST as postAttempt } from '@/app/api/attempts/rout
 import { GET as getEvents, POST as postEvent } from '@/app/api/events/route';
 import { computeMastery, MASTERY_WEIGHTS } from '@/modules/mastery';
 import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
+import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
+import { signSessionTokenSync } from '@/lib/learner/session-node';
+
+/*
+ * TASK-HANASO-24: the attempts/events routes now resolve identity from the
+ * SIGNED hanaso_lid session token (IDOR fix) — every request carries one
+ * (assertions unchanged; only the identity transport changed).
+ */
+const QA_UUID = '33333333-4444-5555-6666-777777777777';
+const QA_COOKIE = `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(QA_UUID)}`;
 
 const BASE = 'http://localhost/api';
 
 function post(url: string, body: unknown, raw = false): Request {
   return new Request(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', cookie: QA_COOKIE },
     body: raw ? (body as string) : JSON.stringify(body),
   });
+}
+
+function get(url: string): Request {
+  return new Request(url, { headers: { cookie: QA_COOKIE } });
 }
 
 /** The 5-question cafe bank (answers the SERVER grades against — client never sees these). */
@@ -116,7 +130,7 @@ describe('POST /api/attempts', () => {
 
 describe('GET /api/attempts', () => {
   it('lists stored attempts (optionally filtered by dialogueId)', async () => {
-    const res = await getAttempts(new Request(`${BASE}/attempts?dialogueId=dlg-cafe-morning-01`));
+    const res = await getAttempts(get(`${BASE}/attempts?dialogueId=dlg-cafe-morning-01`));
     expect(res.status).toBe(200);
     const body = (await res.json()) as { ok: boolean; data: { attempts: { attemptNo: number; dialogueId: string }[] } };
     expect(body.ok).toBe(true);
@@ -124,7 +138,7 @@ describe('GET /api/attempts', () => {
     expect(body.data.attempts.map((a) => a.attemptNo)).toEqual([1, 2]); // insertion order (in-memory PoC repo)
     expect(body.data.attempts.every((a) => a.dialogueId === 'dlg-cafe-morning-01')).toBe(true);
 
-    const other = await getAttempts(new Request(`${BASE}/attempts?dialogueId=dlg-none`));
+    const other = await getAttempts(get(`${BASE}/attempts?dialogueId=dlg-none`));
     const otherBody = (await other.json()) as { data: { attempts: unknown[] } };
     expect(otherBody.data.attempts).toHaveLength(0);
   });

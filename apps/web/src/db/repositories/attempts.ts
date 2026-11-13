@@ -12,14 +12,13 @@
  *   post-fetch filter after LIMIT would silently truncate once >500 rows exist);
  * - rows map back to the engine-shaped `DialogueMasteryAttempt` (dialogueId=`dlg-<slug>`).
  */
-import { desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import type { AttemptRepository } from '../../modules/mastery/repository';
 import type { AttemptInput, DialogueMasteryAttempt, WeakPoint } from '../../modules/mastery/types';
 import { dialogueMasteryAttempts, dialogues } from '../../../db/schema';
 import type { DbClient } from '../client';
 import { newRuntimeId } from '../ids';
 import { ContentNotSeededError, resolveDialogue, resolveDialogueByUuid } from '../content-map';
-import { POC_DEFAULT_USER_ID } from '../../lib/poc/principal';
 import type { MasteryScoresJson, WeakPointsJson } from '../../../db/schema/app';
 
 /**
@@ -68,7 +67,13 @@ export class PgAttemptRepository implements AttemptRepository {
 
   async create(input: AttemptInput, outcome: DialogueMasteryAttempt['outcome']): Promise<DialogueMasteryAttempt> {
     const ref = await resolveDialogue(input.dialogueId);
-    const userId = input.userId ?? POC_DEFAULT_USER_ID;
+    /*
+     * TASK-HANASO-24: userId is REQUIRED (server-resolved session identity) — the
+     * poc-user fallback on NULL is gone. A NULL userId is a caller bug and now
+     * fails loudly at the DB NOT NULL constraint instead of silently poisoning
+     * the legacy shared store.
+     */
+    const userId = input.userId;
 
     for (let attempt = 0; attempt < 3; attempt += 1) {
       const [maxRow] = await this.client.db
@@ -106,6 +111,18 @@ export class PgAttemptRepository implements AttemptRepository {
   }
 
   async list(dialogueId?: string): Promise<DialogueMasteryAttempt[]> {
+    return this.listImpl(undefined, dialogueId);
+  }
+
+  /**
+   * TASK-HANASO-24 (audit BUG-030): caller-scoped listing — the only shape the
+   * /api/attempts GET serves. Never returns another learner's rows.
+   */
+  async listForUser(userId: string, dialogueId?: string): Promise<DialogueMasteryAttempt[]> {
+    return this.listImpl(userId, dialogueId);
+  }
+
+  private async listImpl(userId: string | undefined, dialogueId?: string): Promise<DialogueMasteryAttempt[]> {
     // Unknown dialogue → empty list (matches the in-memory contract), NOT an error.
     let dialogueUuid: string | null = null;
     if (dialogueId) {
@@ -130,7 +147,15 @@ export class PgAttemptRepository implements AttemptRepository {
       })
       .from(dialogueMasteryAttempts)
       .leftJoin(dialogues, eq(dialogues.id, dialogueMasteryAttempts.dialogueId))
-      .where(dialogueUuid ? eq(dialogueMasteryAttempts.dialogueId, dialogueUuid) : undefined)
+      .where(
+        userId && dialogueUuid
+          ? and(eq(dialogueMasteryAttempts.userId, userId), eq(dialogueMasteryAttempts.dialogueId, dialogueUuid))
+          : userId
+            ? eq(dialogueMasteryAttempts.userId, userId)
+            : dialogueUuid
+              ? eq(dialogueMasteryAttempts.dialogueId, dialogueUuid)
+              : undefined,
+      )
       .orderBy(desc(dialogueMasteryAttempts.createdAt))
       .limit(500);
     return rows.map(attemptRowToDomain);

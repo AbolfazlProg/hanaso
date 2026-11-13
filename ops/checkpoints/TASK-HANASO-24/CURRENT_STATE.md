@@ -1,6 +1,6 @@
 # TASK-HANASO-24 — CURRENT STATE
 
-> آخرین به‌روزرسانی: **CP-01**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
+> آخرین به‌روزرسانی: **CP-02**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
 
 ## مأموریت
 
@@ -39,7 +39,7 @@
 
 - [x] **CP-00**: اعتبارسنجی Git + ساخت شاخهٔ fix از خط محصول + CURRENT_STATE + CHECKPOINT_LOG + Push
 - [x] **CP-01**: SECURITY_ROOT_CAUSE.md — سرشماری کامل ۱۰ مسیر API + ۶ صفحهٔ /poc + ۳ صفحهٔ محصول؛ تأیید line-level؛ طراحی راه‌حل هر فاز (توکن Session امضاشده، GET-only minting، حذف userId از schemaها، dev-only برای /poc، transaction-aware completion)
-- [ ] **CP-02**: رفع IDOR + hardening اعتبار/session/cookie → IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md
+- [x] **CP-02**: رفع IDOR + hardening اعتبار/session/cookie (تست‌های ۶۳ فایل/۷۴۵ + PG ۲۹ همه سبز) → IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md
 - [ ] **CP-03**: رفع افشای Answer Key → ANSWER_KEY_EXPOSURE_FIX.md
 - [ ] **CP-04**: Transaction و Idempotency → DATABASE_TRANSACTION_FIX.md
 - [ ] **CP-05**: تست امنیتی واقعی QA (دو حساب A/B + مرورگر ناشناس، ۱۲ سناریوی اجباری) → SECURITY_TEST_RESULTS.md
@@ -50,15 +50,11 @@
 
 ## اقدام بعدی
 
-CP-02 — پیاده‌سازی طبق §5 SECURITY_ROOT_CAUSE.md:
-1. `lib/learner/session.ts` جدید: امضا/اعتبارسنجی HMAC (WebCrypto در middleware، node:crypto در resolverها)؛ `HANASO_SESSION_SECRET`.
-2. `middleware.ts`: mint فقط برای GET/HEAD؛ re-issue امضاشده با همان uuid برای کوکی‌های raw معتبر؛ httpOnly+Secure(آگاه از https)+lax.
-3. `lib/learner/identity.ts`: حذف writeCookieId (کوکی فقط سمت سرور)؛ حفظ localStorage برای namespacing عکس‌های walk.
-4. `api/progress` + `api/attempts`: هویت فقط از کوکی؛ حذف userId از `progressInputSchema`/`attemptSubmissionSchema`؛ GET attempts با `listForUser(userId)`؛ حذف fallback poc-user از مسیر درخواست.
-5. `api/events`: GET بدون `user_id`.
-6. `api/curriculum/mastery`: guest 401 صریح.
-7. به‌روزرسانی تست‌های existing (learning-slice, mastery-api, routes.spec, unit) با کوکی معتبر — بدون حذف/تضعیف هیچ ادعایی؛ تست‌های جدید IDOR/isolation.
-8. IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md؛ commit + push.
+CP-03 — حذف افشای Answer Key طبق §5 SECURITY_ROOT_CAUSE.md:
+1. گیت dev/test-only برای هر ۶ صفحهٔ `/poc/*` (در Production → notFound/404؛ RSC Payload اصلاً رندر نمی‌شود).
+2. تأیید با GET مستقیم (curl) و تست Browser روی سرور QA.
+3. ANSWER_KEY_EXPOSURE_FIX.md؛ commit + push.
+سپس CP-04 — Transaction: سرویس completion تراکنشی برای practice-complete (idempotent + fold داخل tx)، station-complete (2 upsert در یک tx)، mastery gate؛ با تست هم‌زمانی/Idempotency.
 
 ## قوانین فعال
 

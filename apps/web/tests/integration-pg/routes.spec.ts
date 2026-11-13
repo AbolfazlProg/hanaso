@@ -14,6 +14,12 @@ import { resetStoresForTests } from '@/lib/poc/stores';
 import { resetDbClientForTests } from '@/db/client';
 import { refreshContentMap } from '@/db/content-map';
 import { ensureTestDatabase } from './helpers';
+import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
+import { signSessionTokenSync } from '@/lib/learner/session-node';
+
+/* TASK-HANASO-24: signed session identity on every request (IDOR fix). */
+const QA_UUID = '44444444-5555-6666-7777-888888888888';
+const QA_COOKIE = `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(QA_UUID)}`;
 
 const BASE = 'http://localhost/api';
 const DLG = 'dlg-cafe-morning-01';
@@ -31,7 +37,7 @@ const WEAK_M4: Record<string, string> = { ...ALL_CORRECT, 'q-m4-blind': 'a' };
 function post(url: string, body: unknown): Request {
   return new Request(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', cookie: QA_COOKIE },
     body: JSON.stringify(body),
   });
 }
@@ -107,16 +113,15 @@ describe('POST /api/attempts → app.dialogue_mastery_attempts', () => {
     expect(body.data.attempt.outcome).toBe('remediate');
 
     const list = await json<{ data: { attempts: unknown[] } }>(
-      await getAttempts(new Request(`${BASE}/attempts?dialogueId=${DLG}`)),
+      await getAttempts(new Request(`${BASE}/attempts?dialogueId=${DLG}`, { headers: { cookie: QA_COOKIE } })),
     );
     expect(list.data.attempts).toHaveLength(2);
   });
 });
 
 describe('POST /api/progress → app.lesson_progress (A→D over Postgres)', () => {
-  it('walks A→B→C→D and gates understood on a passed attempt', async () => {
-    const userId = 'route-user';
-    const step = async (event: unknown) => postProgress(post(`${BASE}/progress`, { dialogueId: DLG, userId, event }));
+  it('walks A→B→C→D and gates understood on a passed attempt (identity = the signed cookie, never a body userId — TASK-HANASO-24)', async () => {
+    const step = async (event: unknown) => postProgress(post(`${BASE}/progress`, { dialogueId: DLG, event }));
 
     expect((await step({ type: 'unit_started' })).status).toBe(201);
     expect((await step({ type: 'dialogue_watched' })).status).toBe(201);
@@ -125,19 +130,21 @@ describe('POST /api/progress → app.lesson_progress (A→D over Postgres)', () 
 
     // the gate: a remediate attempt must NOT open understood (DD-048)
     const weakAttempt = await json<{ data: { attempt: { id: string } } }>(
-      await postAttempt(post(`${BASE}/attempts`, { dialogueId: DLG, userId, answers: WEAK_M4 })),
+      await postAttempt(post(`${BASE}/attempts`, { dialogueId: DLG, answers: WEAK_M4 })),
     );
     const refused = await step({ type: 'mastery_passed', attemptId: weakAttempt.data.attempt.id });
     expect(refused.status).toBe(400);
 
     const goodAttempt = await json<{ data: { attempt: { id: string } } }>(
-      await postAttempt(post(`${BASE}/attempts`, { dialogueId: DLG, userId, answers: ALL_CORRECT })),
+      await postAttempt(post(`${BASE}/attempts`, { dialogueId: DLG, answers: ALL_CORRECT })),
     );
     const done = await step({ type: 'mastery_passed', attemptId: goodAttempt.data.attempt.id });
     expect(done.status).toBe(201);
 
+    // TASK-HANASO-24: no userId param — the caller's own record (a body/query
+    // userId can never select anyone else's store anymore)
     const reread = await json<{ data: { progress: { status: string; masteryAttemptId: string } | null } }>(
-      await getProgress(new Request(`${BASE}/progress?dialogueId=${DLG}&userId=${userId}`)),
+      await getProgress(new Request(`${BASE}/progress?dialogueId=${DLG}`, { headers: { cookie: QA_COOKIE } })),
     );
     expect(reread.data.progress?.status).toBe('understood');
     expect(reread.data.progress?.masteryAttemptId).toBe(goodAttempt.data.attempt.id);

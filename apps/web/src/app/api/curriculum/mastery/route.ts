@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fail, ok } from '@/modules/shared';
 import { getChapterProgressStore, getAttemptStore, getStationProgressStore } from '@/lib/poc/stores';
-import { resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import { applyChapterEvent, gradeMasterySubmission, type ExerciseAnswerPayload } from '@/modules/curriculum';
 import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
 import { recordLearningEvent } from '@/modules/curriculum/events';
+import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 
 /**
  * POST /api/curriculum/mastery — the chapter gate (stage D — TASK-LEARNING-01).
@@ -16,6 +16,10 @@ import { recordLearningEvent } from '@/modules/curriculum/events';
  * (M1..M5) → pass/remediate → persists the attempt (app.dialogue_mastery_attempts)
  * and folds the chapter aggregate (app.chapter_progress): `understood` is ONLY
  * set from a passed attempt (DD-048).
+ *
+ * TASK-HANASO-24: explicit guest 401 at the top (consistency with every other
+ * state-changing route — pre-24 the gate's 409 happened to block guests first,
+ * but the guard was implicit and one refactor away from a guest write).
  */
 export const dynamic = 'force-dynamic';
 
@@ -49,6 +53,15 @@ export async function POST(req: Request) {
   }
   const { chapterSlug, answers } = parsed.data;
   const userId = resolveLearnerIdFromRequest(req);
+  if (userId === GUEST_LEARNER_ID) {
+    return NextResponse.json(
+      fail({
+        code: 'learner/no_identity',
+        message: 'شناسهٔ زبان‌آموز یافت نشد — کوکی «hanaso_lid» باید توسط مرورگر پذیرفته شود.',
+      }),
+      { status: 401, headers: { 'cache-control': 'no-store' } },
+    );
+  }
 
   let bundle;
   try {

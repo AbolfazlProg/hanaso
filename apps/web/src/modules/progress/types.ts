@@ -42,10 +42,11 @@ export const progressEventSchema = z.discriminatedUnion('type', [
 ]);
 export type ProgressEvent = z.infer<typeof progressEventSchema>;
 
-/** POST /api/progress payload. */
+/** POST /api/progress payload — TASK-HANASO-24: `userId` is GONE; ownership is
+ *  the server-signed `hanaso_lid` session token resolved at the route (a stale
+ *  client-supplied userId field is stripped by zod, never trusted). */
 export const progressInputSchema = z.object({
   dialogueId: z.string().min(1),
-  userId: z.string().min(1).optional(),
   event: progressEventSchema,
 });
 export type ProgressInput = z.infer<typeof progressInputSchema>;

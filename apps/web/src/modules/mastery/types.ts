@@ -45,10 +45,12 @@ export interface DialogueMasteryAttempt {
   createdAt: string;
 }
 
-/** POST payload (server assigns id/attemptNo/createdAt/outcome). */
+/** POST payload (server assigns id/attemptNo/createdAt/outcome). TASK-HANASO-24:
+ *  `userId` is REQUIRED and server-supplied (the signed session identity) — the
+ *  repositories no longer fall back to the shared poc-user on NULL. */
 export const attemptInputSchema = z.object({
   dialogueId: z.string().min(1),
-  userId: z.string().min(1).optional(),
+  userId: z.string().min(1),
   scores: z.object({
     M1: z.number().min(0).max(1).nullable(),
     M2: z.number().min(0).max(1).nullable(),
@@ -61,14 +63,14 @@ export const attemptInputSchema = z.object({
 export type AttemptInput = z.infer<typeof attemptInputSchema>;
 
 /**
- * TASK-SLICE-01 remediation (review F1/S1): the PUBLIC submission schema.
+ * TASK-SLICE-01 remediation + TASK-HANASO-24: the PUBLIC submission schema.
  * Clients submit RAW ANSWERS only (questionId → optionId); per-question grading
  * happens server-side (KB dialogue-mastery-model §۱ — the answer key never
- * reaches the client). `attemptInputSchema` stays for internal/server grading.
+ * reaches the client), and ownership is the signed session identity resolved
+ * at the route — a client-supplied `userId` field is stripped, never trusted.
  */
 export const attemptSubmissionSchema = z.object({
   dialogueId: z.string().min(1),
-  userId: z.string().min(1).optional(),
   answers: z.record(z.string().min(1), z.string().min(1)),
 });
 export type AttemptSubmission = z.infer<typeof attemptSubmissionSchema>;

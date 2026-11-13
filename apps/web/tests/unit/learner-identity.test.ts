@@ -1,19 +1,23 @@
 /**
  * HANASO — Learner identity tests (TASK-LEARNING-08 / WP-5 — #109;
- * TASK-HANASO-20 — the poc-user fallback is retired).
+ * TASK-HANASO-20 — the poc-user fallback is retired;
+ * TASK-HANASO-24 — the cookie must carry a valid SERVER SIGNATURE).
  *
- * The identity seam must be strict: a malformed or absent cookie value must
- * NEVER become a progress key and never resolve another visitor's store —
- * it degrades to the read-only GUEST scope instead (empty honest state,
- * writes rejected 401 at the API seam).
+ * The identity seam must be strict: a malformed, absent, UNSIGNED (legacy
+ * raw uuid) or wrongly-signed cookie value must NEVER become a progress key
+ * and never resolve another visitor's store — it degrades to the read-only
+ * GUEST scope instead (empty honest state, writes rejected 401 at the API
+ * seam).
  */
 import { describe, expect, it, vi } from 'vitest';
 
 import { isLearnerId } from '@/lib/learner/identity';
 import { GUEST_LEARNER_ID, LEARNER_COOKIE_NAME, resolveLearnerIdFromRequest } from '@/lib/learner/server';
+import { signSessionTokenSync } from '@/lib/learner/session-node';
 import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
 
 const VALID = '11111111-2222-3333-4444-555555555555';
+const SIGNED = signSessionTokenSync(VALID);
 
 function reqWithCookie(cookie: string | null): Request {
   return new Request('http://localhost/x', {
@@ -42,14 +46,14 @@ describe('isLearnerId', () => {
 });
 
 describe('resolveLearnerIdFromRequest', () => {
-  it('reads the learner cookie from a raw Request', () => {
-    const id = resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=${VALID}`));
+  it('reads a SIGNED learner token from a raw Request', () => {
+    const id = resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=${SIGNED}`));
     expect(id).toBe(VALID);
   });
 
   it('parses among other cookies and tolerates URI encoding', () => {
     const id = resolveLearnerIdFromRequest(
-      reqWithCookie(`a=1; ${LEARNER_COOKIE_NAME}=${encodeURIComponent(VALID)}; b=2`),
+      reqWithCookie(`a=1; ${LEARNER_COOKIE_NAME}=${encodeURIComponent(SIGNED)}; b=2`),
     );
     expect(id).toBe(VALID);
   });
@@ -65,6 +69,25 @@ describe('resolveLearnerIdFromRequest', () => {
     expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=`))).toBe(GUEST_LEARNER_ID);
     // the retired shared id must never resurface through any path
     expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=poc-user`))).toBe(GUEST_LEARNER_ID);
+  });
+
+  it('TASK-HANASO-24: a legacy RAW uuid (no signature) is GUEST — forged values never become identities', () => {
+    expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=${VALID}`))).toBe(GUEST_LEARNER_ID);
+    expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=${VALID.toUpperCase()}`))).toBe(
+      GUEST_LEARNER_ID,
+    );
+  });
+
+  it('TASK-HANASO-24: a WRONG SIGNATURE (valid uuid, attacker-forged signature) is GUEST', () => {
+    const forged = `${VALID}.${'A'.repeat(43)}`;
+    expect(resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=${forged}`))).toBe(GUEST_LEARNER_ID);
+  });
+
+  it('TASK-HANASO-24: sign/verify round-trips across the node + web crypto twins', async () => {
+    const { verifySessionTokenWeb } = await import('@/lib/learner/session-web');
+    expect(await verifySessionTokenWeb(SIGNED)).toBe(VALID);
+    expect(await verifySessionTokenWeb(`${VALID}`)).toBeNull();
+    expect(await verifySessionTokenWeb(`${VALID}.${'A'.repeat(43)}`)).toBeNull();
   });
 });
 
@@ -84,8 +107,8 @@ vi.mock('next/headers', () => ({
 }));
 
 describe('resolveLearnerId (RSC seam — next/headers jar)', () => {
-  it('resolves the REAL cookie value, not the guest scope (HANASO-16 regression)', async () => {
-    jar.value = VALID;
+  it('resolves the REAL signed token, not the guest scope (HANASO-16 regression)', async () => {
+    jar.value = SIGNED;
     const { resolveLearnerId } = await import('@/lib/learner/server');
     const id = await resolveLearnerId();
     expect(id).toBe(VALID);
@@ -103,6 +126,13 @@ describe('resolveLearnerId (RSC seam — next/headers jar)', () => {
 
   it('degrades to the GUEST scope on a malformed cookie value (never trusts it as a key)', async () => {
     jar.value = 'not-a-uuid';
+    const { resolveLearnerId } = await import('@/lib/learner/server');
+    expect(await resolveLearnerId()).toBe(GUEST_LEARNER_ID);
+    jar.value = undefined;
+  });
+
+  it('TASK-HANASO-24: an UNSIGNED raw uuid in the RSC jar is GUEST (forgery dead at both seams)', async () => {
+    jar.value = VALID;
     const { resolveLearnerId } = await import('@/lib/learner/server');
     expect(await resolveLearnerId()).toBe(GUEST_LEARNER_ID);
     jar.value = undefined;

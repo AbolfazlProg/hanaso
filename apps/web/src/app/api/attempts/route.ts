@@ -6,6 +6,7 @@ import { getAttemptStore } from '@/lib/poc/stores';
 import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import { buildAssessmentQuestions, gradeAssessment } from '@/lib/poc/assessment-bank';
 import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
+import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 
 /**
  * GET/POST /api/attempts — dialogue mastery attempts (TASK-DLG-POC-01 + TASK-SLICE-01
@@ -14,13 +15,31 @@ import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
  * (KB dialogue-mastery-model §۱ — the answer key never reaches the client), then
  * computeMastery applies weights/floors and the repository persists the attempt
  * (in-memory DEV-ONLY, or app.dialogue_mastery_attempts when DATABASE_URL is set).
+ *
+ * TASK-HANASO-24 (RC-1 — audit BUG-011/030): ownership is the signed `hanaso_lid`
+ * session token. GET lists the CALLER's attempts only (listForUser — pre-24 it
+ * listed EVERY learner's attempts); POST records under the CALLER's identity —
+ * a body-supplied `userId` is stripped by the schema, never trusted (pre-24 it
+ * allowed arbitrary/NULL ids and the shared poc-user default).
  */
 export const dynamic = 'force-dynamic';
 
+function noIdentity(): NextResponse {
+  return NextResponse.json(
+    fail({
+      code: 'learner/no_identity',
+      message: 'شناسهٔ زبان‌آموز یافت نشد — کوکی «hanaso_lid» باید توسط مرورگر پذیرفته شود.',
+    }),
+    { status: 401, headers: { 'cache-control': 'no-store' } },
+  );
+}
+
 export async function GET(req: Request) {
+  const userId = resolveLearnerIdFromRequest(req);
+  if (userId === GUEST_LEARNER_ID) return noIdentity();
   const url = new URL(req.url);
   const dialogueId = url.searchParams.get('dialogueId') ?? undefined;
-  return NextResponse.json(ok({ attempts: await getAttemptStore().list(dialogueId) }), {
+  return NextResponse.json(ok({ attempts: await getAttemptStore().listForUser(userId, dialogueId) }), {
     headers: { 'cache-control': 'no-store' },
   });
 }
@@ -42,7 +61,9 @@ export async function POST(req: Request) {
     });
   }
 
-  const { dialogueId, userId, answers } = parsed.data;
+  const { dialogueId, answers } = parsed.data;
+  const userId = resolveLearnerIdFromRequest(req);
+  if (userId === GUEST_LEARNER_ID) return noIdentity();
   // `dialogueId` is the content id (`dlg-<slug>`); the loader wants the slug.
   const slug = dialogueId.replace(/^dlg-/, '');
   let questions;

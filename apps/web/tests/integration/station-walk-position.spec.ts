@@ -18,6 +18,7 @@ import { describe, expect, it } from 'vitest';
 
 import { GET as getStation, POST as postStation } from '@/app/api/curriculum/station/route';
 import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
+import { signSessionTokenSync } from '@/lib/learner/session-node';
 import { resetStoresForTests, getStationProgressStore } from '@/lib/poc/stores';
 
 const BASE = 'http://localhost/api/curriculum/station';
@@ -31,7 +32,7 @@ function post(body: unknown, learner: string | null = L1): Request {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      ...(learner ? { cookie: `${LEARNER_COOKIE_NAME}=${learner}` } : {}),
+      ...(learner ? { cookie: `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(learner)}` } : {}),
     },
     body: JSON.stringify(body),
   });
@@ -39,7 +40,7 @@ function post(body: unknown, learner: string | null = L1): Request {
 
 function get(stationSlug: string, learner: string | null = L1): Request {
   return new Request(`${BASE}?chapter=${CH}&station=${stationSlug}`, {
-    headers: learner ? { cookie: `${LEARNER_COOKIE_NAME}=${learner}` } : {},
+    headers: learner ? { cookie: `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(learner)}` } : {},
   });
 }
 

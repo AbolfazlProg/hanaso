@@ -50,13 +50,16 @@ describe('seed (idempotent, deterministic ids)', () => {
     // curriculum seed adds both chapters' station lesson rows (helpers run
     // both). Counts stay exact — determinism is the contract.
     // TASK-LEARNING-06/07: 4 characters (kim added) · 3 dialogues (PoC +
-    // first-meeting-01 [13 lines] + kana-welcome-01 [3 lines]) · 55 lessons
+    // first-meeting-01 [13 lines] + kana-welcome-01 [3 lines]) · 57 lessons
+    // TASK-HANASO-24 correction: the stale 55 predated the H22 curriculum restructure
+    // (commit d940199 added the two real-world milestone stations); content truth:
+    // 1 anchor B_lesson + 56 stations (34 kana-foundation-01 + 22 first-meeting-01).
     // (1 anchor B_lesson + 32 Ch01 stations [k12-foreign, TASK-HANASO-20]
     // + 22 Ch02 stations).
     expect(await counts('content.characters')).toBe(4);
     expect(await counts('content.dialogues')).toBe(3);
     expect(await counts('content.dialogue_lines')).toBe(26);
-    expect(await counts('content.lessons')).toBe(55); // 1 anchor B_lesson + 54 stations
+    expect(await counts('content.lessons')).toBe(57); // 1 anchor B_lesson + 56 stations (34+22)
   });
 
   it('uses deterministic uuidv5 ids — re-seeding updates the same rows', async () => {
