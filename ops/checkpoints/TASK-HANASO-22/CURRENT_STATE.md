@@ -119,7 +119,10 @@ from Learn.
 
 ## Next action (exact)
 
-The mission is feature-complete and verified (see TEST_RESULTS.md). Remaining:
-final commit + push of the test/evidence docs, then the final report to the owner
-(11 questions). Optional next missions: PG integration run, VOICEVOX hostword
-generation on the VPS (TASK-21 leftover), FSRS M2 engine.
+MISSION COMPLETE — all 10 phases delivered, tested, and pushed (tip `0b80617`).
+Recovery for any future session: this file + CHECKPOINT_LOG.md + TEST_RESULTS.md.
+Remaining for the OWNER: review the branch; deploy when ready (the deploy
+one-liner pipeline is TASK-21's — a new release tag is cut at deploy time).
+Out-of-scope leftovers (deliberate): FSRS M2 engine, Library, Vocabulary/Grammar/
+Kanji/Speaking content (researched + architected only), PG integration re-run,
+VOICEVOX hostword generation on the VPS.
