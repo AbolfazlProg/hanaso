@@ -209,13 +209,13 @@ describe('complete — the terminal write (idempotent + meaningful)', () => {
       currentBlock: 'blk-stn-kana-h0-scene',
       lastActivityAt: new Date(Date.now() - 1000).toISOString(),
     });
-    const first = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: STN0, score: null }));
+    const first = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: STN0, score: null, taskCompleted: true }));
     expect(first.status).toBe(200);
     const firstJson = await bodyOf(first);
     expect(firstJson.data?.state?.status).toBe('completed');
     expect(firstJson.data?.state?.currentBlock ?? null).toBeNull(); // anchor cleared
 
-    const second = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: STN0, score: null }));
+    const second = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: STN0, score: null, taskCompleted: true }));
     const secondJson = (await second.json()) as { data?: { already?: boolean } };
     expect(secondJson.data?.already).toBe(true); // idempotent — no double reward
   });

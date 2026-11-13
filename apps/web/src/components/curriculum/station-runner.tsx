@@ -782,7 +782,9 @@ export function StationRunner(props: StationRunnerProps) {
     if (station.completion.kind === 'viewed') {
       void finishSession(null);
     } else if (station.completion.kind === 'task_completed') {
-      void finishSession(null, true);
+      /* TASK-HANASO-22: the task is done (no pass/fail bar) — but the EARNED
+       * exercise score still rides along for the honest bestScore record. */
+      void finishSession(stationFinishScore(blocks, blockResults, sessionScore) ?? sessionScore, true);
     } else {
       // Issue #102: the LAST authored exercise block's earned result finishes the
       // station (a re-visited earlier block's skip must not overwrite it).
@@ -984,6 +986,10 @@ export function StationRunner(props: StationRunnerProps) {
             }
             setSessionScore(score);
             if (step < blocks.length - 1) setStep((s) => s + 1);
+            /* TASK-HANASO-22: task_completed stations — the exercise block finishing
+             * IS the task; the score rides along for the RECORD (bestScore), never
+             * as a pass/fail bar (Learn has no grading — the chapter gate judges). */
+            else if (station.completion.kind === 'task_completed') void finishSession(score, true);
             else void finishSession(score);
           }}
           onSceneDone={() => {

@@ -40,3 +40,37 @@ Guarantees implemented:
 
 Learn de-scoring (exercise_threshold → task_completed on walk stations) + wrong-answer
 feedback fix (no F1 spoiler; in-place animated panel) + tests update.
+
+## Milestone 2 — Learn de-scoring + wrong-answer feedback fix (DONE, 737/737 unit + 22/22 in-mem integration green)
+
+Changes:
+1. **exercise_threshold → task_completed on ALL walk stations** (31 kana + 19 fm01):
+   `chapter-kana01.stations.ts` + `chapter-fm01.stations.ts`. The chapter GATE (assessment,
+   0.90/0.80 + 0.70/0.50) and all prerequisite validation are UNTOUCHED — the gate is the
+   only judge now; Learn never fails a learner.
+2. `station-runner.tsx`:
+   - `onExerciseDone` final-block path: task_completed stations send `finishSession(score, true)`
+     (the exercise finishing IS the task; the score rides for bestScore).
+   - `next()` wrap-up path: task_completed sends the honest stationFinishScore + taskCompleted
+     (was null → would have 409'd).
+3. **Spoiler fix (owner complaint)** — `api/curriculum/station/route.ts`: `correctReading` +
+   `correctAudio` attach ONLY to `outcome.correct || level >= 3` (reveal). First miss (F1)
+   gets the statement only; the reading card + pronunciation arrive with the answer itself.
+4. **Gentle feedback entrance** — `globals.css` `hanaso-feedback-in` (rise+fade, motion
+   tokens, reduced-motion safe) applied to the in-place feedback panel.
+5. Tests updated honestly:
+   - `final-completion-reliability.test.tsx`: mock implements the task-completed contract;
+     R4 asserts taskCompleted=true + fresh score still recorded; R6/R7 keep the criterion-409
+     recovery coverage via a forced/one-shot server rejection (panel stays for future bars).
+   - integration specs: complete calls on exercise stations now send taskCompleted:true
+     (learner-isolation, station-walk-position, station-resume-expiry) — 22/22 pass.
+   - `scripts/h21-e2e/run.mjs`: fastForward sends taskCompleted:true; S5.1 rewritten to the
+     new contract (a WRONG final block still completes; no criterion panel; gate is the judge).
+
+Verified: pnpm test 737/737 · vitest integration (in-mem) 22/22 · tsc clean.
+
+## Next (Milestone 3)
+
+Chapter-01 restructure: 4 islands → 2 sections (Hiragana / Katakana), honest section goals,
+2 milestone stations (type practice + task_completed), estMinutes recompute, journey icon
+identity + locked-click feedback.

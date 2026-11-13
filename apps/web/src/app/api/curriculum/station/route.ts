@@ -250,12 +250,20 @@ export async function POST(req: Request) {
       );
     }
     const outcome = gradeExerciseAnswer(exercise, payload.answer as ExerciseAnswerPayload, payload.attemptNo);
-    /* TASK-LEARNING-08 Addendum-5 §3 — after ANY answered attempt the correct
-     * pronunciation is hearable (owner rule): the kana's own sound for the
-     * kana kinds, the word's committed audio for kana-decode. Absent asset →
-     * no correctAudio (the client hides the control honestly). Attached only
-     * here — on an ANSWERED outcome — never pre-answer (no leak). */
-    if (exercise.type === 'kana-recognition' || exercise.type === 'kana-recall' || exercise.type === 'kana-listening') {
+    /*
+     * TASK-HANASO-22 (owner feedback redesign): the answer's audio + reading
+     * card attach ONLY to a CORRECT outcome or a REVEAL (ladder level ≥ 3 —
+     * attempt 3, where the answer is intentionally shown). Attaching them at
+     * the FIRST miss (the old behavior) leaked the correct answer immediately
+     * — the exact spoiler the owner reported. A wrong F1/F2 attempt now gets
+     * the statement/hint ONLY; the pronunciation stays hearable once the
+     * learner has seen or found the answer (correct, or the F3 reveal).
+     * Absent asset → no correctAudio (the client hides the control honestly).
+     */
+    const revealAnswer = outcome.correct || outcome.level >= 3;
+    if (!revealAnswer) {
+      /* F1/F2 miss: statement/hint only — no key material leaves the server. */
+    } else if (exercise.type === 'kana-recognition' || exercise.type === 'kana-recall' || exercise.type === 'kana-listening') {
       const item = KANA_ITEMS.find((k) => k.kanaId === exercise.targetConcept);
       const urls = item ? kanaAudioUrls(`kn-${item.kanaId}`) : null;
       if (item && urls) outcome.correctAudio = { what: item.glyph, ...urls };

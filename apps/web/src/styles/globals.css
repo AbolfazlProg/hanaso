@@ -122,6 +122,26 @@ body {
   }
 }
 
+/*
+ * TASK-HANASO-22 — the gentle in-place feedback entrance (owner feedback
+ * redesign): the wrong-answer panel settles into the question's own space
+ * with a soft rise+fade instead of snapping the layout. Duration/ease come
+ * from the motion tokens (reduced-motion collapses it to a plain fade).
+ */
+@keyframes hanaso-feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.feedback-in {
+  animation: hanaso-feedback-in var(--dur-fast, 200ms) var(--ease-out-soft, ease-out) both;
+}
+
 /* -- JaBlock — جزیرهٔ LTR برای هر متن ژاپنی (KB components.css) ------------- */
 .ja-block {
   direction: ltr;

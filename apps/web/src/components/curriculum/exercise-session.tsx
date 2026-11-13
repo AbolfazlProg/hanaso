@@ -848,7 +848,7 @@ export function ExerciseSession({
           aria-live="polite"
           data-feedback-panel
           className={[
-            'flex flex-col gap-3 rounded-md border p-4',
+            'feedback-in flex flex-col gap-3 rounded-md border p-4',
             feedback.correct ? 'border-success bg-card' : 'border-error bg-card',
           ].join(' ')}
         >

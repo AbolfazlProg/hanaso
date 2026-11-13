@@ -174,7 +174,7 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
         stepIndex: 0,
       }),
     );
-    const res = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: STN, score: 1 }));
+    const res = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: STN, score: 1, taskCompleted: true }));
     expect(res.status).toBe(200);
     const state = await stateOf(res);
     expect(state.status).toBe('completed');

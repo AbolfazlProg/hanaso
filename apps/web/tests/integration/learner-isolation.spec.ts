@@ -110,7 +110,7 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
   it('Scenario B/C: two QA learners are completely independent (no cross-visibility)', async () => {
     // QA A walks h0 + h1 in order
     await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }, QA_A));
-    await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1 }, QA_A));
+    await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1, taskCompleted: true }, QA_A));
 
     // QA B sees NONE of A's progress
     const bH0 = await stateOf(await getStation(get('stn-kana-h0', QA_B)));
@@ -143,8 +143,8 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
     await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }, QA_B));
     const rejected = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2' }, QA_B));
     expect(rejected.status).toBe(409); // h1 still missing
-    await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1 }, QA_B));
-    const ok = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2', score: 1 }, QA_B));
+    await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1, taskCompleted: true }, QA_B));
+    const ok = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2', score: 1, taskCompleted: true }, QA_B));
     expect(ok.status).toBe(200);
     const state = await stateOf(ok);
     expect(state.status).toBe('completed');

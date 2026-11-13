@@ -36,7 +36,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'greet-first-meeting',
     estMinutes: 4,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
       {
@@ -78,7 +78,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-vocab-core',
     estMinutes: 4,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'vocab-card', id: 'blk-v1-card-watashi', wordId: 'voc-watashi' },
       { kind: 'vocab-card', id: 'blk-v1-card-san', wordId: 'voc-san' },
@@ -132,7 +132,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-statement',
     estMinutes: 4,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'dialogue-player', id: 'blk-g1-dialogue', focusLineRefs: [L(3), L(6)] },
       {
@@ -238,7 +238,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'sov-bridge-persian',
     estMinutes: 2,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       {
         kind: 'rule-card',
@@ -295,7 +295,7 @@ export const FM01_STATIONS: Station[] = [
     teachesConcepts: ['listen-final-intonation'],
     estMinutes: 4,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'dialogue-player', id: 'blk-g2-dialogue', focusLineRefs: [L(5), L(7)] },
       {
@@ -370,7 +370,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'greet-first-meeting',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'expression-card', id: 'blk-e1-card-konnichiwa', expressionId: 'chrk-konnichiwa' },
       { kind: 'expression-card', id: 'blk-e1-card-hajimemashite', expressionId: 'chrk-hajimemashite' },
@@ -410,7 +410,7 @@ export const FM01_STATIONS: Station[] = [
     teachesConcepts: ['listen-final-intonation'],
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'listening-task', id: 'blk-l1-task', taskId: 'listen-1' },
       ex('blk-l1-drill-1', ['ex-fm01-l1-gist-1', 'ex-fm01-l1-who-1']),
@@ -436,7 +436,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-vocab-core',
     estMinutes: 4,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },    blocks: [
       ex('blk-p1-c1', ['ex-fm01-p1-c1-aud-1', 'ex-fm01-p1-c1-aud-2']),
       ex('blk-p1-c2', [
@@ -527,7 +527,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'greet-first-meeting',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
       {
@@ -569,7 +569,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-vocab-core',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       ex('blk-v2-recycle', ['ex-fm01-v2-dec-1', 'ex-fm01-v2-dec-2']),
       { kind: 'vocab-card', id: 'blk-v2-card-kankokujin', wordId: 'voc-kankokujin' },
@@ -604,7 +604,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-question',
     estMinutes: 3,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'dialogue-player', id: 'blk-g3-dialogue', focusLineRefs: [L(9)] },
       {
@@ -687,7 +687,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-statement',
     estMinutes: 4,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'dialogue-player', id: 'blk-g4-dialogue', focusLineRefs: [L(10)] },
       {
@@ -769,7 +769,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'react-new-info',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'expression-card', id: 'blk-e2-card-iie', expressionId: 'chrk-iie' },
       ex('blk-e2-ret-1', ['ex-fm01-e2-resp-1']),
@@ -793,7 +793,7 @@ export const FM01_STATIONS: Station[] = [
     teachesConcepts: ['listen-nasal-mora', 'listen-final-intonation'],
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       { kind: 'listening-task', id: 'blk-l2-task', taskId: 'listen-2' },
       ex('blk-l2-drill-1', ['ex-fm01-l2-aud-1']),
@@ -813,7 +813,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'origin-statement',
     estMinutes: 3,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       {
         kind: 'dialogue-player',
@@ -896,7 +896,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-vocab-core',
     estMinutes: 4,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },    blocks: [
       ex('blk-p2-c1', ['ex-fm01-p2-c1-decode-1', 'ex-fm01-p2-c1-decode-2']),
       ex('blk-p2-c2', ['ex-fm01-p2-c2-cloze-1', 'ex-fm01-p2-c2-prod-1', 'ex-fm01-p2-c2-prod-2']),
@@ -987,7 +987,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'country-pattern',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       {
         kind: 'example-set',
@@ -1104,7 +1104,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'jobs-recognition',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [
       {
         kind: 'example-set',
@@ -1178,7 +1178,7 @@ export const FM01_STATIONS: Station[] = [
     objectiveCode: 'identity-question',
     estMinutes: 3,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.6 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },    blocks: [ex('blk-or2-drill', ['ex-fm01-or2-mp-1', 'ex-fm01-or2-cloze-1', 'ex-fm01-or2-cloze-2'])],
     fsrsItems: [],
   },

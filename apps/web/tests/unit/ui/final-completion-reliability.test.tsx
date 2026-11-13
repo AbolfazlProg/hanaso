@@ -273,8 +273,15 @@ interface CompleteCall {
   taskCompleted: boolean;
 }
 
-function renderK8() {
+/**
+ * TASK-HANASO-22: the walk stations are now task_completed (Learn de-scoring —
+ * the gate is the only judge). `rejectComplete: 'criterion'` simulates a server
+ * that still sends the structured criterion 409 (the client's recovery panel
+ * must keep working for any future threshold surface / server-side bar).
+ */
+function renderK8(rejectComplete: 'never' | 'criterion' | 'criterion-once' = 'never') {
   const completeCalls: CompleteCall[] = [];
+  let rejectedOnce = false;
   const fetchMock = vi.fn(async (url: string | URL, init?: RequestInit) => {
     const u = String(url);
     if (u.startsWith('/api/curriculum/station?')) {
@@ -304,24 +311,33 @@ function renderK8() {
       }
       if (body.action === 'complete') {
         completeCalls.push({ score: body.score ?? null, taskCompleted: body.taskCompleted ?? false });
-        const score = body.score ?? 0;
-        if (score >= 0.7) {
+        /* TASK-HANASO-22 contract: the station criterion is task_completed —
+         * the server accepts the finished walk (any score; the score is only
+         * RECORDED). The forced-criterion mode still exercises the client's
+         * structured-409 recovery panel (kept for future threshold surfaces). */
+        const accept = body.taskCompleted === true || (body.score ?? 0) >= 0.7;
+        const mustReject =
+          rejectComplete === 'criterion' || (rejectComplete === 'criterion-once' && !rejectedOnce);
+        if (mustReject) {
+          rejectedOnce = true;
+        }
+        if (mustReject || !accept) {
           return new Response(
             JSON.stringify({
-              data: { stationSlug: STATION.slug, state: { status: 'completed' }, already: false },
+              error: {
+                code: 'station/completion_not_met',
+                message: 'برای ثبت پایان این درس، نمرهٔ تمرین پایانی باید دست‌کم ۷۰٪ باشد.',
+                details: { kind: 'criterion', score: body.score ?? 0, threshold: 0.7 },
+              },
             }),
-            { status: 200, headers: { 'content-type': 'application/json' } },
+            { status: 409, headers: { 'content-type': 'application/json' } },
           );
         }
         return new Response(
           JSON.stringify({
-            error: {
-              code: 'station/completion_not_met',
-              message: 'برای ثبت پایان این درس، نمرهٔ تمرین پایانی باید دست‌کم ۷۰٪ باشد.',
-              details: { kind: 'criterion', score, threshold: 0.7 },
-            },
+            data: { stationSlug: STATION.slug, state: { status: 'completed' }, already: false },
           }),
-          { status: 409, headers: { 'content-type': 'application/json' } },
+          { status: 200, headers: { 'content-type': 'application/json' } },
         );
       }
       return new Response(JSON.stringify({ data: {} }), {
@@ -438,11 +454,12 @@ describe('R4..R7 — StationRunner final-completion reliability (stn-kana-k8 tra
       { timeout: 4000 },
     );
     expect(completeCalls.length).toBeGreaterThanOrEqual(1);
-    expect(completeCalls[0]!.score).toBe(1); // the FRESH score — 3/3, not the stale 2/3
+    expect(completeCalls[0]!.taskCompleted).toBe(true); // TASK-HANASO-22: the task contract
+    expect(completeCalls[0]!.score).toBe(1); // the FRESH score — 3/3, not the stale 2/3 (still recorded)
   });
 
-  it('R6: an honest below-threshold walk shows the STRUCTURED criterion panel + a redo action', { timeout: 40000 }, async () => {
-    const { completeCalls } = renderK8();
+  it('R6: a server criterion rejection shows the STRUCTURED panel + a redo action (no dead retry)', { timeout: 40000 }, async () => {
+    const { completeCalls } = renderK8('criterion');
     await answerQ1WrongThenRest(); // first-try score 2/3 = 0.667 < 0.7 (honest miss)
     fireEvent.click(await screen.findByRole('button', { name: 'ادامه' }));
     await waitFor(
@@ -457,7 +474,7 @@ describe('R4..R7 — StationRunner final-completion reliability (stn-kana-k8 tra
   });
 
   it('R7: the redo action re-opens ONLY the final exercise; a fresh pass then completes', { timeout: 60000 }, async () => {
-    const { completeCalls } = renderK8();
+    const { completeCalls } = renderK8('criterion-once');
     await answerQ1WrongThenRest();
     fireEvent.click(await screen.findByRole('button', { name: 'ادامه' }));
     await waitFor(() => expect(screen.getByTestId('criterion-failure-panel')).toBeTruthy(), { timeout: 4000 });

@@ -58,7 +58,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-foundation',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -206,7 +206,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-foundation',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -343,7 +343,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-foundation',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -489,7 +489,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-foundation',
     estMinutes: 14,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -658,7 +658,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-foundation',
     estMinutes: 13,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -804,7 +804,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-foundation',
     estMinutes: 15,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: ['や', 'ゆ', 'よ'],
     blocks: [
@@ -967,7 +967,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-mastery',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -1120,7 +1120,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-mastery',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       { kind: 'exercise', id: 'blk-stn-kana-h8-warmup', exerciseIds: ['ex-kana-h8-warm-1'] },
@@ -1252,7 +1252,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-mastery',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -1397,7 +1397,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-mastery',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -1543,7 +1543,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-mastery',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -1711,7 +1711,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-mastery',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -1897,7 +1897,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-foundation',
     estMinutes: 15,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -2045,7 +2045,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-mastery',
     estMinutes: 10,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -2143,7 +2143,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-mastery',
     estMinutes: 16,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -2335,7 +2335,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       { kind: 'exercise', id: 'blk-stn-kana-k1-warmup', exerciseIds: ['ex-kana-k1-warm-1', 'ex-kana-k1-warm-2'] },
@@ -2414,7 +2414,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -2544,7 +2544,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -2652,7 +2652,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -2799,7 +2799,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -2942,7 +2942,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 10,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -3045,7 +3045,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       { kind: 'exercise', id: 'blk-stn-kana-k7-warmup', exerciseIds: ['ex-kana-k7-warm-1'] },
@@ -3178,7 +3178,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-hira-foundation',
     estMinutes: 14,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -3342,7 +3342,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -3466,7 +3466,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 10,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -3546,7 +3546,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -3695,7 +3695,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 12,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -3793,7 +3793,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-katakana',
     estMinutes: 10,
     estLoad: 'light',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -3904,7 +3904,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-two-script-use',
     estMinutes: 13,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
     blocks: [
@@ -4012,7 +4012,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-opt-review',
     estMinutes: 10,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {
@@ -4054,7 +4054,7 @@ export const KANA_STATIONS: Station[] = [
     objectiveCode: 'kana-opt-drill',
     estMinutes: 10,
     estLoad: 'medium',
-    completion: { kind: 'exercise_threshold', threshold: 0.7 },
+    completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     blocks: [
       {

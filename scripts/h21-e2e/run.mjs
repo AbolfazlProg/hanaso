@@ -308,7 +308,7 @@ async function fastForward(page, chapterSlug, stationSlugs) {
       const res = await fetch(`${base}/api/curriculum/station`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'complete', chapterSlug: chapter, stationSlug: slug, score: 1 }),
+        body: JSON.stringify({ action: 'complete', chapterSlug: chapter, stationSlug: slug, score: 1, taskCompleted: true }),
       });
       out.push({ slug, status: res.status });
     }
@@ -469,26 +469,19 @@ try {
 
   /* ============ S5 — error & recovery scenarios ============ */
 
-  /* S5.1 — criterion 409 + the redo-final-block recovery (stn-kana-k12-foreign) */
+  /* S5.1 — TASK-HANASO-22 de-scoring: a WRONG final block must NOT fail the
+   * lesson anymore. The walk stations are task_completed — the learner who
+   * answers everything wrong still completes (Learn = no pass/fail); the
+   * chapter GATE (assessment) is the only judge. The old criterion 409 panel
+   * + redo flow is retired with the threshold data itself. */
   {
     const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 } });
     const page = await ctx.newPage();
     await fastForward(page, 'kana-foundation-01', ffUpTo('stn-kana-k12'));
     const r1 = await walkStation(page, 'kana-foundation-01', 'stn-kana-k12-foreign', { wrongFinalBlock: true });
-    note('S5.1a a below-threshold final block shows the CRITERION 409 panel (not a generic error)', r1.panels.failCriterion && !r1.panels.complete);
-    note('S5.1b the criterion panel keeps prior progress (no data-loss panel)', !r1.panels.failGeneric);
-    await shot(page, 's5-criterion-409-panel');
-
-    const redo = await page.$('[data-testid="redo-final-exercise"]');
-    note('S5.1c the panel offers the redo-final-exercise action', !!redo);
-    if (redo) {
-      await redo.click();
-      await sleep(1500);
-      /* redo re-opens the FINAL exercise block in place — keep the page, walk it correctly */
-      const r2 = await walkStation(page, 'kana-foundation-01', 'stn-kana-k12-foreign', { noNavigate: true });
-      note('S5.1d after a correct redo the station COMPLETES (no full re-walk needed)', r2.panels.complete, JSON.stringify(r2.api.counts));
-      await shot(page, 's5-after-redo-complete');
-    }
+    note('S5.1a a wrong-answered final block still COMPLETES the lesson (no punitive grading in Learn)', r1.panels.complete && !r1.panels.failCriterion && !r1.panels.failGeneric, JSON.stringify(r1.api.counts));
+    note('S5.1b no criterion/409 panel appears (the gate is the only judge)', !r1.panels.failCriterion && !r1.panels.failGeneric);
+    await shot(page, 's5-wrong-walk-still-completes');
     await page.close();
     await ctx.close();
   }
