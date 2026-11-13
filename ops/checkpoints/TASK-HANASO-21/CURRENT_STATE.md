@@ -1,75 +1,63 @@
-# TASK-HANASO-21 — CURRENT STATE (recovery point)
+# TASK-HANASO-21 — CURRENT STATE (FINAL — mission complete)
 
-> Last updated: 2026-11-13 ~09:05 (Asia/Tehran) · Session resumed from context loss.
-> Read this file FIRST, then `CHECKPOINT_LOG.md`, then `git log --oneline -8` + `git status`.
+> Updated: 2026-11-13 ~10:40 (Asia/Tehran). This is the terminal state of the
+> mission; every phase is closed. Recovery: read this, then CHECKPOINT_LOG.md.
 
-## Mission
+## Mission status: COMPLETE
 
-TASK-HANASO-21 — Final Bug Remediation, Lesson Completion Reliability & AIZEN Seal.
-Base: latest valid commit of `fix/TASK-HANASO-20-onboarding`. Branch: `fix/TASK-HANASO-21-completion-seal`.
-Deliverable contract: the final reply to the owner MUST end with the complete one-line
-VPS update command in a code block (real bootstrap SHA + real product target commit, no
-placeholders, sandbox-validated). `OWNER-COMMAND.txt` is only the backup document.
+All phases delivered; branch pushed. The final reply to the owner carries the
+one-line VPS update command (the non-negotiable delivery contract).
 
-## Git state (verified 2026-11-13 09:00)
+## Git state (final)
 
-- Branch: `fix/TASK-HANASO-21-completion-seal` (NOT pushed yet — no `origin/fix/TASK-HANASO-21-completion-seal`).
-- Base: `2719e5d` (docs(ops) TASK-HANASO-20 deploy05 drill result) — i.e. TASK-HANASO-20
-  branch tip, one commit after the reported target `2574788` (that commit only added the
-  drill report doc; verified no product change: docs-only, touches `ops/checkpoints/TASK-HANASO-20/RELEASE_VALIDATION.md`).
-- Reported TASK-HANASO-20 target commit `2574788c36521cec6ac0673488b769e77a8ab982` IS in history (verified).
-- 5 TASK-21 commits on top (all local):
+- Branch: `fix/TASK-HANASO-21-completion-seal` — PUSHED.
+- Product target (D): `33304b1f2b402d70c3090f447d44e2139adcc6b7` (all product
+  code; later commits are docs/ops only).
+- Branch tip (pushed): see `git ls-remote`; the release pin is D, not the tip.
+- Release: `1.0.0-hanaso21-r01` · bootstrap tooling R=`5870eaf3…` · W=`d4736bd8…`.
 
-| SHA | What |
-| --- | --- |
-| `5204883` | P0 final-completion reliability (owner-observed 409 dead end) |
-| `471f731` | AIZEN completion seal (Aizen no inkan, hanko SVG + ceremony) |
-| `90ca72c` | BUG-009 — third option for every rule-listening pair (2AFC retired) |
-| `5142293` | BUG-011 — commit hygiene CI gate |
-| `2ef6630` | OBS-001..010 adjudicated and implemented |
+## Phase closure (all 9 phases)
 
-- Uncommitted: `apps/web/scripts/tl08-a4-audio-gen.mjs` (+42: `contrastAndExerciseWords()`
-  extractor — sweeps rule-step/rule-contrast words, a/b pair sides, kana-decode/rule-listening
-  promptJa) — Phase 3.4 in progress.
-- Untracked: `apps/web/tests/unit/h21-audio-inventory.test.ts` (SCRATCH inventory test).
+| Phase | Status | Key evidence |
+| --- | --- | --- |
+| 0 recovery + TASK-20 docs | ✅ | CP-01; TASK-20's 15 docs read; branch base verified |
+| 1 P0 completion bug | ✅ fixed | root cause: stale auto-next closure → (N−1)/N on k8/k12-foreign → 409 loop; fix commit `5204883`; COMPLETION_ROOT_CAUSE/FIX/E2E_RESULTS |
+| 2 AIZEN seal | ✅ done | `471f731`; vermilion hanko 藍染 + full ceremony + idempotent persistence; AIZEN_SEAL_DESIGN/IMPLEMENTATION/E2E + VLM review |
+| 3.1 BUG-009 | ✅ done | `90ca72c`; third option per documented error family; BUG009_VALIDATION |
+| 3.2 BUG-011 | ✅ done | `5142293`; commit-hygiene CI gate + 6 fixtures; BUG011_HYGIENE_GATE |
+| 3.3 OBS-001..010 | ✅ adjudicated | `2ef6630`; full table in OBSERVATION_REMEDIATION (2 deliberate non-fixes: OBS-005 doc-only, OBS-006 owner-approved deferral) |
+| 3.4 new-word audio | ✅ prepared, honestly limited | `c25dba7`; gen surface complete + permanent honesty gate (pending=29, orphans=0); generation needs the owner's VPS VOICEVOX run — AUDIO_REMEDIATION |
+| 4 protect TASK-20 | ✅ | 737/737 unit incl. all TASK-20 gates; REGRESSION_TEST_RESULTS |
+| 5 regression + E2E | ✅ | unit 737/737 · integration-PG 36+1 (FIRST real-PG run since TASK-20; portable PG 18.7 staged) · browser E2E **46/46** (production build + real PG + real Chromium) |
+| 6 branch/commit/checkpoint | ✅ | branch pushed; 14/14 checkpoint docs (this file + CHECKPOINT_LOG + 12 docs) + 18 E2E screenshots |
+| 7 release + sandbox validation | ✅ | v12 TRUE ONE-LINER + `run-h21.sh` drill **92/92** (incl. rollback + isolation); real-network codeload hash verified; RELEASE_VALIDATION |
+| 8 one-liner in the final reply | ✅ | the command is byte-identical to OWNER-COMMAND.txt v12 and to the drilled line |
 
-## Phase status
+## Bugs found & fixed BEYOND the brief (real product fixes)
 
-| Phase | Status |
-| --- | --- |
-| 0 — recovery + TASK-20 docs | DONE (prior session) |
-| 1 — P0 completion bug | DONE, committed `5204883` (root cause: stale `firstTryCorrect` closure in auto-next timer → perfect walk scored (N-1)/N → 409 `completion_not_met` on stn-kana-k8 2/3 & stn-kana-k12-foreign 1/2 → generic retry re-sent same stale score forever. Fix: sync mirror ref, late-bound advance, structured 409 payload, criterion-failure panel with redo-final-block-only, single-flight complete, bounded (3s) pre-complete walk-sync await) |
-| 2 — AIZEN seal | DONE, committed `471f731` (vermilion shu hanko, 藍染 relief-negative tategaki, carved inner ring, ink-skip chips, −8° tilt, grain filter; enter→press→squash→halo→settle on `--dur-ceremonial`; stamps ONLY on fresh 200, `already:true` settles, replay end carries no seal, reduced-motion = fade) |
-| 3.1 — BUG-009 | DONE, committed `90ca72c` (13+1 rule-listening pairs get a 3rd option from their own documented error family; validation gate [2]→[2,3]) |
-| 3.2 — BUG-011 | DONE, committed `5142293` (scripts/ci/commit-hygiene.sh walks push range, fails docs/style touching apps/web/src, hygiene-waiver: trailer escape hatch; 4 fixture tests) |
-| 3.3 — OBS-001..010 | DONE, committed `2ef6630` (adjudication summary in commit message; FULL table must be in `OBSERVATION_REMEDIATION.md` — NOT YET WRITTEN) |
-| 3.4 — new-word audio | IN PROGRESS: gen script extractor extended (uncommitted); inventory: 160 referenced words, 125 committed, 35 pending of which 6 are `___` template scaffolds (not synthesizable) → ~29 real pending words. VOICEVOX: NOT reachable from this sandbox (no local service at 127.0.0.1:50021, no docker, no SSH to VPS) → per brief: prepare honestly, document limitation, DO NOT claim generation. UI honesty (no broken play buttons) still to verify. |
-| 4 — protect TASK-20 wins | Unit suite green at each commit (731..735/735); full re-verify pending |
-| 5 — regression + E2E | NOT STARTED. TASK-20 baseline: 718 unit / 22 E2E / 31 responsive / 100 drill. Current unit count at HEAD: 735 (+scratch inventory test). |
-| 6 — checkpoint docs | NOT STARTED — this file is the first artifact. 14 files required (list in CHECKPOINT_LOG.md). |
-| 7 — release prep | NOT STARTED (version: continue after `1.0.0-hanaso20-r01` → `1.0.0-hanaso21-r01`; bootstrap `infra/deploy/bootstrap-hanaso.sh` pinned at R=`5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10` W=`d4736bd8…` in TASK-20 v11 — MUST recompute from the ref actually used; verify bootstrap changed-or-not since) |
-| 8 — one-liner in final reply | NOT STARTED (contract: true ONE LINE, no placeholder, real SHAs, sandbox-tested) |
+1. **The kana chapter mastery gate 500'd on PostgreSQL** (chapter dialogues
+   have no B_lesson anchor by design → the content map's INNER JOIN could not
+   resolve them → the gate attempt persistence crashed). A learner who walked
+   the whole kana core path could NEVER open the second chapter — production
+   (n17) is affected. Fixed: content-map LEFT JOIN + progress-upsert guard +
+   integration regression test (`mastery-chapter.spec.ts`). Verified live in
+   the browser E2E (S4.0/S4.1: gate passed, fm01 unlocked and completed).
+2. **Two stale integration expectations** re-pinned to intended states
+   (content.lessons 55; fm01 estMinutes 71 — OBS-003).
+3. **Seal CSS physical properties** → logical (stylelint gate).
 
-## Audio pending list (from scratch inventory run 2026-11-13 08:58)
+## Production status
 
-Real pending (29, gen surface covers ALL of them — "PENDING not covered by the gen surface: (none)"):
-`ええ かぎ かぜ がこう きゃく きゅう きよう くうき けっか さっき さんすう ざせき せん ちゅうごくじん とうきょう ば ぱ ぱん びょういん らーめん ケーキ コヒー コーラ タクシー ティッシュ ネコ ファイル フアイル ヴァイオリン`
-(+6 `___` template scaffolds excluded from synthesis by design.)
+`learn.kotodama.ir` still runs `1.0.0-hanaso17-r01 @ 3f41f6ee` (verified
+live) — the TASK-20 command was never run. The TASK-21 one-liner jumps
+n17→n21 (both releases' fixes in one update). **The owner runs the command —
+nothing is auto-deployed.**
 
-## Environment facts
+## NEXT ACTIONS (for any future session)
 
-- Repo: `/home/z/my-project/hanaso21` (workdir). Remote `origin` = https://github.com/AbolfazlProg/hanaso.git (public; anonymous fetch OK; push needs PAT supplied by owner in brief).
-- VPS: NOT SSH-reachable from this sandbox (no keys). Prod `https://learn.kotodama.ir/api/health` returns 200 (reachable read-only).
-- Production currently runs `1.0.0-hanaso20-r01` (TASK-HANASO-20, target `2574788`… confirmed via /api/health commit field — RE-VERIFY at release time).
-- Test runner: `cd apps/web && npx vitest run` (unit), EQA = part of unit suite; tsc+eslint via package scripts (check package.json).
-- E2E methodology from TASK-20: Playwright against local dev/preview server (see TASK-20 TEST_RESULTS.md for exact commands).
-
-## NEXT ACTIONS (in order)
-
-1. Finish Phase 3.4: verify UI honesty for words without audio (how play buttons gate on committed assets), finalize/replace the scratch inventory test, commit gen-script extension as the honest "assets prepared for VPS run" change.
-2. Phase 5 regression: full unit + EQA + tsc + eslint.
-3. Phase 5 E2E: real-browser completion walk (new user, first lesson, to the end) + AIZEN seal (fresh stamp, refresh persistence, replay no-seal) + responsive spot checks. Screenshots into `screenshots/`.
-4. Write the 13 remaining checkpoint docs (content largely derivable from the 5 commit messages + test evidence; OBSERVATION_REMEDIATION.md must carry the FULL 10-row adjudication table).
-5. Commit checkpoints; push branch with PAT; record pushed SHA.
-6. Phase 7: set version `1.0.0-hanaso21-r01`, decide bootstrap pin (check if `infra/deploy/bootstrap-hanaso.sh` changed since `5870eaf`), compute SHA-256, build the ONE-LINE command, sandbox-validate it (download via api.github.com + codeload fallback, hash check, bash -n syntax, dry health-gate logic), run owner smoke where possible.
-7. Final reply: summary + answers to the 22 questions + THE ONE-LINER as the last operational content.
+1. The owner runs the one-liner (final reply / OWNER-COMMAND.txt v12).
+2. Optional: the owner runs the VOICEVOX audio generation on the VPS
+   (AUDIO_REMEDIATION.md) and commits the assets.
+3. Out of scope for TASK-21 (deliberately untouched): analytics, learning
+   statistics, future APIs, the FSRS review engine (OBS-008's honest
+   «هنوز فعال نیست» line covers it), the apply role (OBS-006).

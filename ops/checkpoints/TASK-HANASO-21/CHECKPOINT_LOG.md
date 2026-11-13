@@ -106,3 +106,25 @@ decision and incident gets an entry HERE as soon as it happens.
   un-500'd + the 46/46 browser E2E suite`.
 - NEXT: re-run full unit suite (content-map change), then the 12 remaining
   checkpoint docs, push, release prep + one-liner sandbox validation.
+
+## CP-05 · 2026-11-13 ~10:40 — MISSION COMPLETE (release validated + pushed)
+
+- Release artifacts: OWNER-COMMAND.txt v12 (the TRUE one-liner:
+  R=5870eaf3…, W=d4736bd8…, D=33304b1…, version 1.0.0-hanaso21-r01) +
+  infra/deploy/sandbox-tests/run-h21.sh.
+- Drill: **92/92 PASS** (static safety, both delivery paths end-to-end,
+  all failure injections abort with nothing executed, idempotent re-run,
+  status, rollback round-trip, migrate-fail auto-rollback, KOTODAMA
+  isolation sweep). run-deploy04 re-verified 140/140 after the mock
+  stdout change; run-deploy05 (v11) retires gracefully.
+- Real-network verification: api.github.com 403 from this sandbox's
+  rate-limited IP (the exact P2 condition) → the REAL codeload fallback
+  delivered the bootstrap with the pinned sha256 byte-for-byte; D
+  confirmed on the pushed remote branch.
+- Production reality: learn.kotodama.ir still runs 1.0.0-hanaso17-r01 @
+  3f41f6ee (the TASK-20 command was never run) → this release jumps
+  n17→n21 carrying BOTH releases. The owner runs the one-liner.
+- Branch pushed: fix/TASK-HANASO-21-completion-seal (tip d268e16…; the
+  release pin D=33304b1… is the last product commit).
+- All 14 checkpoint files present; 18 E2E screenshots committed.
+- MISSION CLOSED. Next session: read CURRENT_STATE.md (final section).
