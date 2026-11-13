@@ -7,6 +7,12 @@ Push discipline: after every phase, commit + push to
 | --- | --- | --- | --- | --- |
 | CP-00 | Phase 0 audit + branch + initial checkpoints | f523975 | ✅ | audit findings in CURRENT_STATE.md |
 | CP-01 | Phase 1 research (4 docs + KB reuse) | 0d38f49 | ✅ | docs/research/*.md + RESEARCH_PROGRESS.md |
+| CP-02 | Practice architecture + design decisions | 6d26d81 | ✅ | PRACTICE_DESIGN_DECISIONS.md |
+| — | Practice engine + API + hub + nav | 5e50d2c | ✅ | milestone 1 |
+| — | Learn de-scoring + F1 spoiler fix + feedback animation | f283f47 | ✅ | milestone 2 (737 unit green) |
+| — | Chapter-01 two-section split + 2 milestones | d940199 | ✅ | milestone 3 |
+| — | Journey icons + locked feedback + seal upgrade + CC0 sound + achievements | 8f783eb | ✅ | milestones 4+5 |
+| CP-03 | Full testing (E2E 25/25 + H21 44/44 + 737 unit + 32 integ + 37 EQA) + evidence docs | 3d8b8cc | ✅ | TEST_RESULTS.md + screenshots + CURRICULUM_RESTRUCTURE + RESEARCH_FINDINGS |
 
 ## CP-00 — Phase 0 audit (2026-11-13)
 
