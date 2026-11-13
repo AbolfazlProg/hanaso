@@ -374,6 +374,14 @@ export const fa = {
     completionPrereqBody:
       'برای ثبت این درس، ابتدا باید درس‌های پیش‌نیازش کامل شوند — ترتیب یادگیری حفظ می‌شود.',
     completionPrereqGo: 'رفتن به درس پیش‌نیاز',
+    /* ---- TASK-HANASO-21 — the criterion 409 panel: the final exercise score
+     * was honestly below the bar. The recovery is a redo of ONLY the final
+     * exercise block (the earned walk is kept — never a full re-walk, never a
+     * same-score retry loop). */
+    completionCriterionTitle: 'نمرهٔ تمرین پایانی برای ثبت پایان کافی نبود',
+    completionCriterionBody:
+      'همهٔ پیشرفت این درس محفوظ است — فقط نمرهٔ تمرین پایانی به حد نصاب نرسید. با یک‌بار انجام دوبارهٔ همان تمرین پایانی می‌توانی نمره را بالا ببری و درس را ثبت کنی؛ لازم نیست کل درس را از اول بگذرانی.',
+    completionCriterionRedo: 'انجام دوبارهٔ تمرین پایانی',
     /* TASK-HANASO-20 (BUG-008) — the rule-card listening column label. */
     listenColumnLabel: 'شنیدن',
     /* ---- TASK-LEARNING-10 §5 — honest short note when the sound is unavailable */

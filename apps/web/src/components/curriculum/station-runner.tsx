@@ -324,10 +324,11 @@ export function StationRunner(props: StationRunnerProps) {
    */
   const [completionFailed, setCompletionFailed] = useState(false);
   const completionFailedRef = useRef(false);
-  const [completionFailure, setCompletionFailure] = useState<{
-    kind: 'prerequisites';
-    prerequisites: { slug: string; titleFa: string }[];
-  } | null>(null);
+  const [completionFailure, setCompletionFailure] = useState<
+    | { kind: 'prerequisites'; prerequisites: { slug: string; titleFa: string }[] }
+    | { kind: 'criterion'; threshold: number | null; score: number | null }
+    | null
+  >(null);
   /**
    * Issue #102: earned exercise results per block id — they live OUTSIDE the
    * current step, so stepping back (and forward again) never loses them. A
@@ -570,7 +571,12 @@ export function StationRunner(props: StationRunnerProps) {
     saveWalkSnapshot(snapshot);
     if (syncStepRef.current !== step) {
       syncStepRef.current = step;
-      void syncWalkPosition(step === 0 ? 'enter' : 'progress', {
+      /* TASK-HANASO-21: the in-flight sync promise is RECORDED — the final
+       * completion POST waits for it (pending progress is persisted BEFORE
+       * `complete` fires; the mission's ordering rule). Never blocks the walk:
+       * the await in finishSession is bounded and syncWalkPosition never
+       * rejects (its own catch keeps the walk offline-safe). */
+      inFlightSyncRef.current = syncWalkPosition(step === 0 ? 'enter' : 'progress', {
         chapterSlug,
         stationSlug: station.slug,
         currentBlockId: block.id,
@@ -579,6 +585,9 @@ export function StationRunner(props: StationRunnerProps) {
     }
   }, [restoreChecked, step, blockResults, exerciseProgress, kanaCardStages, sessionScore]);
 
+  /** TASK-HANASO-21 — the latest in-flight walk-position sync (see above). */
+  const inFlightSyncRef = useRef<Promise<void> | null>(null);
+
   /** TL-13 (A-3): the retry re-submits the LAST completion payload verbatim
    *  (score + taskCompleted flag — a viewed/task station retries identically). */
   const lastCompletionRef = useRef<{ score: number | null; taskCompleted: boolean }>({
@@ -586,8 +595,16 @@ export function StationRunner(props: StationRunnerProps) {
     taskCompleted: false,
   });
 
+  /** TASK-HANASO-21 — single-flight guard: two rapid completion activations
+   *  (double-tap on the wrap-up «ادامه», retry while a POST is in flight) fire
+   *  ONE request, never two concurrent `complete` POSTs. The server stays
+   *  idempotent anyway (`already: true`); this makes the CLIENT honest too. */
+  const completingRef = useRef(false);
+
   const finishSession = useCallback(
     async (score: number | null, taskCompleted = false) => {
+      if (completingRef.current) return; // single flight (TASK-HANASO-21)
+      completingRef.current = true;
       setSessionScore(score);
       lastCompletionRef.current = { score, taskCompleted };
       /*
@@ -599,7 +616,16 @@ export function StationRunner(props: StationRunnerProps) {
       if (replayMode || localReplay) {
         setReplayEnded(true);
         clearWalkSnapshot(chapterSlug, station.slug);
+        completingRef.current = false;
         return;
+      }
+      /* TASK-HANASO-21: the pending walk-position sync settles FIRST — the
+       * completion is only sent after the last progress write (bounded by 3s:
+       * a hanging save must never lock the completion itself; the server's
+       * complete does not depend on the anchor, this is ordering insurance). */
+      const pending = inFlightSyncRef.current;
+      if (pending) {
+        await Promise.race([pending, new Promise((resolve) => setTimeout(resolve, 3000))]);
       }
       setCompleting(true);
       // TL-13 (A-3): a retry clears the failure state up-front; it re-arms if
@@ -624,16 +650,27 @@ export function StationRunner(props: StationRunnerProps) {
           clearWalkSnapshot(chapterSlug, station.slug); // walk done — no stale resume
         } else {
           // TL-13 (A-3): honest failure (409 criterion/prereq, 5xx, offline) — the
-          // learner sees WHY nothing happened and can retry in place.
+          // learner sees WHY nothing happened and can recover in place.
           // TASK-HANASO-20 (BUG-004): a 409 prerequisites rejection carries the
           // ordered prerequisite list in `error.details.prerequisites` — surface
           // it structurally so the panel links to the first unmet lesson.
+          // TASK-HANASO-21: a 409 criterion rejection carries
+          // `error.details.kind = 'criterion'` — the panel offers a redo of ONLY
+          // the final exercise block (retrying the same score loops forever).
           completionFailedRef.current = true;
           setCompletionFailed(true);
           setCompletionFailure(null);
           try {
             const body = (await res.clone().json()) as {
-              error?: { code?: string; details?: { prerequisites?: { slug: string; titleFa?: string }[] } };
+              error?: {
+                code?: string;
+                details?: {
+                  prerequisites?: { slug: string; titleFa?: string }[];
+                  kind?: string;
+                  threshold?: number | null;
+                  score?: number | null;
+                };
+              };
             };
             if (
               res.status === 409 &&
@@ -648,6 +685,16 @@ export function StationRunner(props: StationRunnerProps) {
                   titleFa: p.titleFa ?? p.slug,
                 })),
               });
+            } else if (
+              res.status === 409 &&
+              body?.error?.code === 'station/completion_not_met' &&
+              body.error.details?.kind === 'criterion'
+            ) {
+              setCompletionFailure({
+                kind: 'criterion',
+                threshold: body.error.details.threshold ?? null,
+                score: body.error.details.score ?? null,
+              });
             }
           } catch {
             /* unparseable body → generic failure path (retry) */
@@ -658,6 +705,7 @@ export function StationRunner(props: StationRunnerProps) {
         completionFailedRef.current = true;
         setCompletionFailed(true);
       } finally {
+        completingRef.current = false;
         setCompleting(false);
       }
     },
@@ -669,6 +717,41 @@ export function StationRunner(props: StationRunnerProps) {
     const { score, taskCompleted } = lastCompletionRef.current;
     void finishSession(score, taskCompleted);
   }, [finishSession]);
+
+  /**
+   * TASK-HANASO-21 — the criterion recovery path: redo ONLY the final exercise
+   * block. The earned walk is kept (every earlier result, the position, the
+   * snapshot) — only the LAST exercise block's result is dropped so its LIVE
+   * session renders again (the skip panel is gone). A fresh pass then finishes
+   * the station with the NEW score. This is the mission's «تلاش دوباره بدون
+   * بازآموزی کل درس» guarantee — never a dead retry, never a full re-walk.
+   */
+  const retryFinalExercise = useCallback(() => {
+    let idx = -1;
+    for (let i = blocks.length - 1; i >= 0; i -= 1) {
+      if (blocks[i]!.kind === 'exercise') {
+        idx = i;
+        break;
+      }
+    }
+    if (idx < 0) return; // no exercise block to redo — the generic retry stays
+    const blockId = blocks[idx]!.id;
+    setCompletionFailed(false);
+    setCompletionFailure(null);
+    setBlockResults((r) => {
+      if (!(blockId in r)) return r;
+      const next = { ...r };
+      delete next[blockId];
+      return next;
+    });
+    setExerciseProgress((p) => {
+      if (!(blockId in p)) return p;
+      const next = { ...p };
+      delete next[blockId];
+      return next;
+    });
+    setStep(idx);
+  }, [blocks]);
 
   const next = useCallback(() => {
     if (step < blocks.length - 1) {
@@ -1043,6 +1126,37 @@ export function StationRunner(props: StationRunnerProps) {
             {fa.curriculum.completionPrereqGo}: «{completionFailure.prerequisites[0]!.titleFa}»
             <ArrowLeft aria-hidden className="size-4" />
           </Link>
+        </div>
+      )}
+      {/*
+       * TASK-HANASO-21 — the CRITERION failure panel (409 completion_not_met):
+       * the score of the final exercise block was honestly below the station's
+       * bar. The recovery is a redo of ONLY that block — the earned walk (every
+       * earlier result, the position) is kept, the block's result is dropped so
+       * its LIVE session renders again, and a fresh pass finishes the station
+       * with the new score. NEVER a same-score retry (that loops forever) and
+       * never a full re-walk (the mission's no-relearn retry guarantee).
+       */}
+      {completionFailed && !completed && !completing && completionFailure?.kind === 'criterion' && (
+        <div
+          role="alert"
+          data-completion-failed="criterion"
+          data-testid="criterion-failure-panel"
+          className="flex flex-col gap-2 rounded-md border border-error bg-card p-4"
+        >
+          <p className="text-body font-bold text-error">{fa.curriculum.completionCriterionTitle}</p>
+          <p className="text-small leading-[var(--leading-fa)] text-ink-soft">
+            {fa.curriculum.completionCriterionBody}
+          </p>
+          <button
+            type="button"
+            onClick={retryFinalExercise}
+            data-testid="redo-final-exercise"
+            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+          >
+            <RotateCcw aria-hidden className="size-4" />
+            {fa.curriculum.completionCriterionRedo}
+          </button>
         </div>
       )}
       {completionFailed && !completed && !completing && !completionFailure && (

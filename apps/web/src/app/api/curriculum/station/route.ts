@@ -442,12 +442,32 @@ export async function POST(req: Request) {
     }
   }
   if (!stationMeetsCompletion(station, score, payload.taskCompleted ?? false)) {
+    /*
+     * TASK-HANASO-21 (the owner-observed completion failure): the old body was
+     * an English technical string (`criterion not met (exercise_threshold;
+     * score=0.6)`) the client could only show as a generic retry — and retrying
+     * re-submits the SAME score forever. The rejection is now STRUCTURED (same
+     * contract as the BUG-004 prerequisites payload): a Persian message that
+     * names the bar and the earned score, plus `details.kind = 'criterion'`
+     * with the threshold, so the runner offers the real recovery — redo ONLY
+     * the final exercise block, never a dead retry and never a full re-walk.
+     * The validation itself is unchanged: nothing is accepted that the server
+     * criterion rejects.
+     */
+    const threshold = station.completion.kind === 'exercise_threshold' ? station.completion.threshold : null;
+    const pct = (v: number) => `${Math.round(v * 100).toLocaleString('fa-IR')}٪`;
     return NextResponse.json(
       fail({
         code: 'station/completion_not_met',
-        message: `criterion not met (${station.completion.kind}; score=${score ?? 'null'})`,
+        message:
+          station.completion.kind === 'exercise_threshold' && threshold !== null && score !== null
+            ? `برای ثبت پایان این درس، نمرهٔ تمرین پایانی باید دست‌کم ${pct(threshold)} باشد — نمرهٔ این دور: ${pct(score)}. بدون از دست رفتن پیشرفت، می‌توانی فقط تمرین پایانی را یک‌بار دیگر انجام دهی.`
+            : station.completion.kind === 'task_completed'
+              ? 'برای ثبت پایان این درس، باید تکلیف پایانی این درس کامل شود.'
+              : 'شرط ثبت پایان این درس هنوز برقرار نشده است.',
+        details: { kind: 'criterion', criterion: station.completion, score, threshold },
       }),
-      { status: 409 },
+      { status: 409, headers: { 'cache-control': 'no-store' } },
     );
   }
   const state = await store.upsert(userId, station.slug, {

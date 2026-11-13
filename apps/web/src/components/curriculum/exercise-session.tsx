@@ -181,6 +181,22 @@ export function ExerciseSession({
   const [firstTryCorrect, setFirstTryCorrect] = useState(() =>
     initialProgress ? Math.max(0, Math.min(initialProgress.firstTryCorrect, exercises.length)) : 0,
   );
+  /**
+   * TASK-HANASO-21 — the SYNCHRONOUS mirror of firstTryCorrect.
+   *
+   * Why a ref besides the state: the score of the LAST question of a session
+   * is read by `advance()` — which fires from a 1.5s auto-next timer or an
+   * audio-end beat. Those closures captured `advance` BEFORE React committed
+   * the setFirstTryCorrect increment, so the owner-observed bug reported the
+   * final correct answer as NOT first-try-correct (2/3 instead of 3/3 on
+   * stn-kana-k8 → 409 criterion_not_met on a PERFECT walk → the retry
+   * re-submitted the same stale score forever = a dead end). The ref is
+   * incremented in the SAME synchronous branch as the state update, so EVERY
+   * advance path — fresh closure or stale closure — reads the CURRENT truth.
+   */
+  const firstTryCorrectRef = useRef(
+    initialProgress ? Math.max(0, Math.min(initialProgress.firstTryCorrect, exercises.length)) : 0,
+  );
   const [hintRevealed, setHintRevealed] = useState(false);
   /** #106 F2: option ids the server eliminated — they stay dead for every later attempt. */
   const [eliminated, setEliminated] = useState<string[]>([]);
@@ -405,14 +421,16 @@ export function ExerciseSession({
       autoNextTimerRef.current = null;
     }
     if (isLast) {
-      onSessionDone?.(firstTryCorrect / total, total);
+      // TASK-HANASO-21: the score MUST read the synchronous ref — a closure
+      // captured before the last increment is exactly the stale-score bug.
+      onSessionDone?.(firstTryCorrectRef.current / total, total);
       return; // stays latched — this block is done (host unmounts/replaces it)
     }
     setIndex((i) => i + 1);
     reset();
     // re-arm happens in the [index] effect — never synchronously here, so a
     // rapid double fire (timer + click in the same tick) cannot double-advance.
-  }, [firstTryCorrect, isLast, onSessionDone, reset, stopOutcomeAudio, total]);
+  }, [isLast, onSessionDone, reset, stopOutcomeAudio, total]);
 
   /* TL-10 §5: late-bind the advance/schedule callbacks into the outcome-audio
    * controller (it is declared earlier); reads happen only inside event
@@ -432,12 +450,19 @@ export function ExerciseSession({
       autoNextTimerRef.current = setTimeout(
         () => {
           autoNextTimerRef.current = null;
-          advance();
+          // TASK-HANASO-21: LATE-BOUND advance — never the captured closure.
+          // The captured `advance` froze the pre-increment firstTryCorrect of
+          // the render that scheduled the timer; the ref always holds the
+          // latest committed advance (whose score now reads the synchronous
+          // firstTryCorrectRef anyway — defense in depth, both layers fixed).
+          advanceRef.current?.();
         },
         Math.min(delay, EXPERIENCE.autoNextMaxDelayMs),
       );
     },
-    [advance],
+    // TASK-HANASO-21: `advance` no longer read from the closure — the dep is
+    // intentionally gone (the timer resolves through advanceRef at fire time).
+    [],
   );
   /* TL-10 §5: late-bind (see the note at advanceRef above). */
   scheduleAutoNextRef.current = scheduleAutoNext;
@@ -467,7 +492,13 @@ export function ExerciseSession({
         const outcome = json.data?.outcome;
         if (!outcome) throw new Error('grade failed');
         setFeedback(outcome);
-        if (outcome.correct && attemptNo === 1) setFirstTryCorrect((n) => n + 1);
+        if (outcome.correct && attemptNo === 1) {
+          setFirstTryCorrect((n) => n + 1);
+          // TASK-HANASO-21: the synchronous mirror — incremented in the SAME
+          // guarded branch (the gradingRef gate keeps this single-entry), so
+          // any later advance (timer, audio beat, fallback) reads the truth.
+          firstTryCorrectRef.current += 1;
+        }
         // #106 F2: fold the server's elimination into the persistent set and never
         // keep an eliminated option selected (the next attempt must not re-send it).
         if (outcome.eliminateOptionIds && outcome.eliminateOptionIds.length > 0) {
