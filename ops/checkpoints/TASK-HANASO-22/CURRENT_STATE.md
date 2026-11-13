@@ -17,7 +17,7 @@ from Learn.
 | # | Phase | Status |
 | --- | --- | --- |
 | 0 | Git/state audit + branch + first checkpoint | ✅ DONE (this file, CP-00) |
-| 1 | Scientific research (4 docs in docs/research/) | ⬜ TODO |
+| 1 | Scientific research (4 docs in docs/research/) | ✅ DONE (CP-01) |
 | 2 | Learn/Practice/Review architecture design | ⬜ TODO |
 | 3 | Kana Practice implementation (Focused + Mixed) | ⬜ TODO |
 | 4 | Remove punitive scoring from Learn + feedback redesign | ⬜ TODO |
@@ -119,7 +119,6 @@ from Learn.
 
 ## Next action (exact)
 
-Phase 1 — research: read `japanese-learning-kb` research docs (reuse, don't re-produce),
-write `docs/research/PRACTICE_PEDAGOGY_RESEARCH.md`, `LANGUAGE_SKILL_DIMENSIONS.md`,
-`PRACTICE_SCHEDULING_RESEARCH.md`, `LISTENING_PEDAGOGY_RESEARCH.md` with real cited
-sources (title, authors, year, method, findings, limitations), commit + push.
+Phase 2/3 — write `PRACTICE_DESIGN_DECISIONS.md` (architecture: Learn/Practice/Review
+contract, Kana practice engine design, K1..K8 traceability, persistence model), commit +
+push, then implement (Practice surface + engine + API + persistence).
