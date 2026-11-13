@@ -15,11 +15,19 @@ import type { Chapter } from '../types';
 import { KANA_STATIONS } from './chapter-kana01.stations';
 import { KANA_EXERCISES } from './chapter-kana01.exercises';
 
-const KANA_ISLANDS: Chapter['units'] = [
+const KANA_SECTIONS: Chapter['units'] = [
   {
-    slug: 'island-1-hira-voice',
-    titleFa: 'هیراگانا — صدای ژاپنی',
-    summaryFa: 'نیمی از هیراگانا + قواعد آوایی را می‌خوانی (H0..H6)',
+    /*
+     * TASK-HANASO-22 — Section A (the two-section split, mission §PHASE 9):
+     * Hiragana = the native script, one complete phonetic foundation. The
+     * pedagogical boundary (not a lesson-count split): every hiragana base
+     * glyph + every rule that hiragana words need, closed by a real-world
+     * READING milestone that uses only taught material.
+     */
+    slug: 'section-a-hiragana',
+    titleFa: 'هیراگانا — خطِ بومی ژاپن',
+    summaryFa:
+      'با پایان این بخش، صدای هر هیراگانای پایه و قواعدش (کشش، داکوتن، یوئون، ん، سوکوئون) را می‌شناسی و واژه‌ها و جمله‌های سادهٔ هیراگانایی را می‌خوانی — از پیام دوستت تا تابلوی ایستگاه.',
     stationSlugs: [
       'stn-kana-h0',
       'stn-kana-h1',
@@ -28,29 +36,29 @@ const KANA_ISLANDS: Chapter['units'] = [
       'stn-kana-h4',
       'stn-kana-h5',
       'stn-kana-h6',
-    ],
-  },
-  {
-    slug: 'island-2-hira-complete',
-    titleFa: 'هیراگانا — تکمیل',
-    summaryFa: 'هر واژهٔ هیراگانایی جزوهٔ N5 را می‌خوانی (H7..H15 + مرور اختیاری)',
-    stationSlugs: [
       'stn-kana-h7',
       'stn-kana-h8',
       'stn-kana-h9',
-      'stn-kana-opt-r-h9',
       'stn-kana-h10',
       'stn-kana-h11',
       'stn-kana-h12',
       'stn-kana-h13',
       'stn-kana-h14',
       'stn-kana-h15',
+      'stn-kana-m1-reading',
+      'stn-kana-opt-r-h9',
     ],
   },
   {
-    slug: 'island-3-kata-loanwords',
-    titleFa: 'کاتاکانا — زبانِ وام‌واژه‌ها',
-    summaryFa: 'منو، برند و وام‌واژه‌ها را می‌خوانی (K1..K12 + ترکیب خارجی)',
+    /*
+     * TASK-HANASO-22 — Section B: katakana + the two-script competence. Builds
+     * on section A (mirror transfer), ends with the loanword milestone and the
+     * optional drill. The chapter gate (assessment) follows this section.
+     */
+    slug: 'section-b-katakana',
+    titleFa: 'کاتاکانا — خطِ جهان',
+    summaryFa:
+      'با پایان این بخش، وام‌واژه‌ها، برندها و منوها را با کاتاکانا می‌خوانی، دو خط ژاپنی را از هم تشخیص می‌دهی و نام خودت را می‌نویسی — آمادهٔ اولین مکالمهٔ واقعی.',
     stationSlugs: [
       'stn-kana-k1',
       'stn-kana-k2',
@@ -65,13 +73,10 @@ const KANA_ISLANDS: Chapter['units'] = [
       'stn-kana-k11',
       'stn-kana-k12',
       'stn-kana-k12-foreign',
+      'stn-kana-k13',
+      'stn-kana-m2-realworld',
+      'stn-kana-opt-drill',
     ],
-  },
-  {
-    slug: 'island-4-two-scripts',
-    titleFa: 'آشتی دو خط',
-    summaryFa: 'دو خط را از هم تشخیص می‌دهی و نامت را می‌نویسی (K13 + دریل + گیت)',
-    stationSlugs: ['stn-kana-k13', 'stn-kana-opt-drill'],
   },
 ];
 
@@ -81,10 +86,10 @@ export const CHAPTER_KANA_FOUNDATION: Chapter = {
   titleFa: 'فصل ۰۱ — مبانی نوشتار: هیراگانا و کاتاکانا',
   canDoFa: 'در پایان این فصل هر دو خط کانای ژاپنی را می‌خوانی و واژه‌های سادهٔ واقعی را رمزگشایی می‌کنی.',
   summaryFa:
-    'مسیر کامل کانا برای مبتدی مطلق: ۴ جزیره، ۳۲ ایستگاه، ۹۲ شکل — با یادسپارهای فارسی، واژه‌های واقعیِ همان لحظه و گیت فهم در پایان.',
+    'مسیر کامل کانا برای مبتدی مطلق در دو بخش: هیراگانا (خط بومی) و کاتاکانا (خط وام‌واژه‌ها) — ۳۴ ایستگاه، ۹۲ شکل، دو ایستگاه واقعیِ خواندن، و گیت فهم در پایان.',
   dialogueSlug: 'kana-welcome-01',
   orderInLevel: 1,
-  estMinutes: 386,
+  estMinutes: 406,
   estLoad: 'medium',
   bandArc: 'kana-foundation',
   sceneFa:
@@ -114,5 +119,5 @@ export const CHAPTER_KANA_FOUNDATION: Chapter = {
       M5: ['stn-kana-opt-drill'],
     },
   },
-  units: KANA_ISLANDS,
+  units: KANA_SECTIONS,
 };

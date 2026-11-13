@@ -173,9 +173,13 @@ describe('resolveSections — one section at a time, derived from availability',
     // the first station of the walk is startable; later rows stay locked
     expect(first.rows[0]!.action).toBe('start');
     expect(first.rows.some((r) => r.action === 'locked')).toBe(true);
-    // future sections: honest locked view (DD-114 — visible, not enterable)
-    expect(sections.sections[1]!.status).toBe('locked');
-    expect(sections.sections[1]!.rows.every((r) => r.action === 'locked')).toBe(true);
+    // future sections: honest locked view (DD-114 — visible, not enterable).
+    // TASK-HANASO-22: section B's CORE rows are all locked for a new learner;
+    // the optional free drill (prerequisites: [] by design — FEAT-158) stays
+    // honestly enterable, so the section itself is not "allLocked".
+    const sectionB = sections.sections[1]!;
+    expect(sectionB.rows.filter((r) => r.node.station.core).every((r) => r.action === 'locked')).toBe(true);
+    expect(sectionB.rows.find((r) => r.node.station.slug === 'stn-kana-opt-drill')!.action).toBe('start');
   });
 
   it('the default active section always holds the next actionable station', () => {

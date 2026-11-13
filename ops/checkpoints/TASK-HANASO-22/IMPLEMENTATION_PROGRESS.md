@@ -74,3 +74,29 @@ Verified: pnpm test 737/737 · vitest integration (in-mem) 22/22 · tsc clean.
 Chapter-01 restructure: 4 islands → 2 sections (Hiragana / Katakana), honest section goals,
 2 milestone stations (type practice + task_completed), estMinutes recompute, journey icon
 identity + locked-click feedback.
+
+## Milestone 3 — Chapter-01 two-section split + real-world milestones (DONE, 737/737 unit green)
+
+Content changes (all additive, validation-clean):
+- `chapter-kana01.ts`: 4 islands → 2 sections — `section-a-hiragana` (h0..h15 + m1 + opt-r-h9,
+  core 201' + milestone 10') and `section-b-katakana` (k1..k13 + k12f + m2 + opt-drill,
+  core 165' + milestone 10'). Honest section goals (summaryFa) promise ONLY what the
+  sections actually teach. Chapter estMinutes 386 → 406 (2×10' milestones added; no
+  double counting — practice is optional and uncounted).
+- `chapter-kana01.stations.ts`: orders renumbered (m1=17 between h15 and k1; k1..k13 →
+  18..31; m2=32 after k13; optionals 33/34). Two milestone stations added:
+  `stn-kana-m1-reading` (برگهٔ خواندن هیراگانا — 6 meaning-select items over REGISTERED
+  hostwords: すし ねこ いぬ えき みず ともだち) and `stn-kana-m2-realworld` (منو و تابلوی
+  کاتاکانا — ドア エアコン カラオケ パソコン テスト ラジオ). Type 'practice', core, task_completed,
+  prereq h15/k13 — ZERO new material (the prerequisite law).
+- `chapter-kana01.exercises.ts`: 12 milestone exercises; assessesConcepts reference BASE
+  glyphs only (dakuten forms are rule-derived); targetConcept = the milestones' shared
+  objectiveCode 'kana-realworld-reading'.
+- Tests repinned: curriculum-content (34/32/2, 2 sections, milestone contracts),
+  h21-e2e-key (56 stations), curriculum-reveal (section B core rows locked for a new
+  learner; the free drill stays enterable — FEAT-158 design), section-deeplink (new slugs).
+
+## Next (Milestone 4)
+
+Journey UI: content-type icons (right side identity, locked keeps identity), left access
+state, locked-row click feedback (shake/pulse/vermilion + reason), button feedback audit.

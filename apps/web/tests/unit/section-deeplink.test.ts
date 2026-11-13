@@ -23,7 +23,7 @@ function journeyWith(states: StationState[]) {
 
 describe('sectionOfStation (§۷ — the map deep-link target)', () => {
   it('maps a station to its ChapterUnit slug (data-driven grouping)', () => {
-    expect(sectionOfStation(chapter, 'stn-kana-h0')).toBe('island-1-hira-voice');
+    expect(sectionOfStation(chapter, 'stn-kana-h0')).toBe('section-a-hiragana');
   });
 
   it('returns null when the chapter declares no units (implicit section → no ?s=)', () => {

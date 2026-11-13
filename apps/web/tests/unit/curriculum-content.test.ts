@@ -56,16 +56,19 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     expect(violations).toEqual([]);
   });
 
-  it('carries the 05A blueprint numbers: 32 stations (30 core + 2 optional), 4 islands, zero vocab/grammar', () => {
-    expect(chapter.stations).toHaveLength(32);
-    expect(chapter.stations.filter((s) => s.core)).toHaveLength(30);
+  it('carries the TASK-HANASO-22 structure: 34 stations (32 core + 2 optional), 2 sections, zero vocab/grammar', () => {
+    expect(chapter.stations).toHaveLength(34);
+    expect(chapter.stations.filter((s) => s.core)).toHaveLength(32);
     expect(chapter.stations.filter((s) => !s.core)).toHaveLength(2);
-    expect(chapter.units?.map((u) => u.slug)).toEqual([
-      'island-1-hira-voice',
-      'island-2-hira-complete',
-      'island-3-kata-loanwords',
-      'island-4-two-scripts',
-    ]);
+    expect(chapter.units?.map((u) => u.slug)).toEqual(['section-a-hiragana', 'section-b-katakana']);
+    /* the two real-world milestones: type practice, core, task_completed,
+     * each preceded only by its honest prerequisite (h15 / k13). */
+    const m1 = chapter.stations.find((s) => s.slug === 'stn-kana-m1-reading')!;
+    const m2 = chapter.stations.find((s) => s.slug === 'stn-kana-m2-realworld')!;
+    expect(m1.type).toBe('practice');
+    expect(m1.completion.kind).toBe('task_completed');
+    expect(m1.prerequisites).toEqual(['stn-kana-h15']);
+    expect(m2.prerequisites).toEqual(['stn-kana-k13']);
     // L1 = the kana band: words are reading vessels, never FSRS vocab (DD-119).
     expect(chapter.words).toHaveLength(0);
     expect(chapter.grammar).toHaveLength(0);
@@ -93,11 +96,15 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     expect(level.caps.gate).toEqual({ weighted: 0.9, minMeasure: 0.8 });
   });
 
-  it('resolves the two-level journey map (4 island groups covering all stations)', () => {
+  it('resolves the two-level journey map (2 sections covering all stations)', () => {
     const journey = resolveJourney(chapter, level, [], null);
-    expect(journey.unitGroups?.length).toBe(4);
+    expect(journey.unitGroups?.length).toBe(2);
     const grouped = journey.unitGroups!.flatMap((g) => g.nodes.map((n) => n.station.slug));
-    expect(new Set(grouped).size).toBe(32);
+    expect(new Set(grouped).size).toBe(34);
+    /* section A = hiragana + the reading milestone; section B = katakana + the
+     * loanword milestone (TASK-HANASO-22 two-section split). */
+    expect(journey.unitGroups![0]!.nodes.some((n) => n.station.slug === 'stn-kana-m1-reading')).toBe(true);
+    expect(journey.unitGroups![1]!.nodes.some((n) => n.station.slug === 'stn-kana-m2-realworld')).toBe(true);
   });
 });
 
