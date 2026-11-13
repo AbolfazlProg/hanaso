@@ -1,118 +1,101 @@
-HANASO — OWNER ONE-COMMAND UPDATE (v11)
-TASK-HANASO-20 · 2026-11-13 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
+HANASO — OWNER ONE-COMMAND UPDATE (v12 — TRUE ONE-LINER)
+TASK-HANASO-21 · 2026-11-13 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
 
 WHAT THIS IS
-  The single copy-paste command that installs or updates HANASO on the VPS
-  (run as root). No GitHub Token, no password, no Deploy Key — the repository
-  is public and everything arrives over anonymous HTTPS.
+  ONE single line that installs or updates HANASO on the VPS (run as root).
+  No GitHub Token, no password, no Deploy Key — the repository is public and
+  everything arrives over anonymous HTTPS. Paste it as ONE line (it is a
+  single line on purpose; do not let your SSH client wrap it into several).
 
-WHAT'S NEW IN v11 (HANASO-20)
-  The onboarding-recovery release — every fix from the TASK-HANASO-19 audit
-  (branch audit/TASK-HANASO-19) turned into real code, tests and browser
-  verification:
-  1. FIRST-VISIT FIXED (audit BUG-001/002, Critical/High): the server never
-     renders another visitor's progress again. A Next.js middleware mints the
-     per-browser learner id on the VERY FIRST response (Set-Cookie + the same
-     render resolves it); a cookie-less request degrades to a read-only GUEST
-     scope (honest empty state) and every state-changing API call rejects it
-     (401) — the shared poc-user fallback is retired. The first CTA now goes
-     to the FIRST lesson (h0), completion registers, refresh keeps it.
-  2. THE 409 EXPLAINS ITSELF (BUG-004): a rejected completion now shows WHY in
-     Persian — «برای ثبت این درس، ابتدا باید این درس‌ها کامل شوند» — plus a
-     one-click link to the first unmet prerequisite (ordered), never a dead
-     retry. The API payload carries details.prerequisites.
-  3. KANA CONTENT: きょう standardized to «کیوو» (+ おおさか/えき/がくせい/
-     がっこう) with the TRANSCRIPT gate now comparing the correct-option label;
-     every katakana derived form (バ ビ ピ ザ ジ ャ ュ ゼ プ パ ボ ペ デ だ ず ぶ …)
-     is explicitly taught before first use (DERIVED-GLYPH-SHOWN CI gate); the
-     k12 foreign-combination station now REALLY teaches ファ/ティ/ヴ (new
-     station stn-kana-k12-foreign — 32 stations); 23 decode exercises carry
-     differentiated first feedback + per-distractor rationales (rendered in
-     the UI); the Yōon rule-card listening column plays real committed audio;
-     the 404 page is Persian.
-  4. VERIFICATION: 718/718 unit+integration (was 692 — nothing deleted or
-     weakened), EQA 37/37, 22/22 browser E2E on the local QA instance, 31/31
-     responsive (8 viewports × 3 routes + stations + the writing surface at
-     360), zero console errors. Evidence: ops/checkpoints/TASK-HANASO-20/.
+WHAT'S NEW IN v12 (HANASO-21 — final bug remediation, completion
+reliability & the AIZEN seal)
+  1. THE OWNER-OBSERVED COMPLETION BUG IS FIXED: a stale auto-next closure
+     under-scored a PERFECT walk on short-deck stations (stn-kana-k8 scored
+     2/3 and stn-kana-k12-foreign 1/2 against the 0.7 bar) → 409 forever,
+     with a dead generic retry. Now: a synchronous first-try mirror + a
+     late-bound advance (the score can never go stale), a bounded
+     pre-completion progress sync, a single-flight guard (double-click = ONE
+     complete request), and a STRUCTURED 409 that explains itself in Persian
+     and offers «انجام دوبارهٔ تمرین پایانی» — redo ONLY the final exercise,
+     never a full re-walk. Verified in a real browser on the exact stations
+     (46/46 E2E, production build + real PostgreSQL 18.7).
+  2. THE AIZEN SEAL (Aizen no inkan): a real vermilion hanko — 藍染 carved
+     relief-negative in tategaki, carved inner ring, ink-skip chips, −8°
+     tilt, carved-stone grain — with the full ceremony (descend → press →
+     squash → ink halo → settle) ONLY on a fresh server-confirmed
+     completion. Refresh/revisit shows it settled (never re-animated),
+     replay stamps nothing, re-completes are idempotent (one seal).
+  3. THE CHAPTER MASTERY GATE UN-500'D (found by the new E2E): chapter
+     dialogues have no B_lesson anchor by design, so the content map could
+     not resolve kana-welcome-01 and the kana gate crashed (500) while
+     persisting the attempt — a learner could NEVER open the second chapter.
+     Fixed (LEFT JOIN, nullable anchor) + an integration regression test.
+  4. TASK-HANASO-20 leftovers: BUG-009 (every rule-listening pair carries a
+     third option from its own documented error family — 2AFC retired),
+     BUG-011 (the commit-hygiene CI gate: docs/style commits touching
+     apps/web/src fail CI, with an auditable waiver trailer), OBS-001..010
+     all adjudicated (fm01 anchor/reconnect now carry a real 0.6 check,
+     honest estMinutes pinned by a new EST-MINUTES gate, the /complete FSRS
+     line honest, the dev footer gone from Home, …), and the audio surface
+     completed + pinned by a permanent honesty gate (29 pending words join
+     the next VPS VOICEVOX run — see
+     ops/checkpoints/TASK-HANASO-21/AUDIO_REMEDIATION.md).
 
-PINS (immutable — never drift to "latest")
-  target release : 1.0.0-hanaso20-r01 @ commit 2574788c36521cec6ac0673488b769e77a8ab982
-                   (TASK-HANASO-20 — onboarding recovery + user isolation,
-                   the 409 recovery path, katakana derived-form teaching,
-                   the real k12 foreign station, differentiated feedback,
-                   rule-card audio, Persian 404; 718/718 tests, 22/22 E2E,
-                   31/31 responsive; includes everything from HANASO-17)
-  deploy tooling : commit 9d75279009b64542a7c440e6b54af8739433ebb4 (branch fix/TASK-HANASO-20-onboarding)
-  bootstrap file : infra/deploy/bootstrap-hanaso.sh
-                   sha256 d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073
+PINS (two INDEPENDENT values — never confuse them)
+  Tooling ref   (bootstrap+updater source)  5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10
+  Bootstrap SHA-256 (of that exact file)    d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073
+  Product target commit (the release)       33304b1f2b402d70c3090f447d44e2139adcc6b7
+  Release version                           1.0.0-hanaso21-r01
+  Branch                                    fix/TASK-HANASO-21-completion-seal
 
-DOWNLOAD PATHS (tried in this order — the design follows the owner's live VPS
-evidence of 2026-11-08: github.com git OK · api.github.com 200 · codeload 200 ·
-raw 200 only on 185.199.108.133, SSL timeouts on the other three raw IPs):
-  1/2  api.github.com       contents API at the pinned tooling commit (tiny
-                            payload; an anonymous rate-limit 403 just falls
-                            through)
-  2/2  codeload.github.com  tarball of the pinned tooling commit, single-file
-                            extract
-  The bootstrap's REAL SHA-256 is checked against the pin above BEFORE
-  anything is executed — a corrupted or proxy-mangled download can never run.
-  curl errors are printed verbatim; nothing is hidden.
+DELIVERY PATHS (same evidence-based order as v11: api.github.com first,
+codeload.github.com as the fallback; raw was dropped in v10 — its IPs are
+unreliable from this VPS):
+  1/2  api.github.com       contents API at the pinned tooling commit
+  2/2  codeload.github.com  tarball of the pinned tooling commit,
+                            single-file extract
+  The bootstrap's REAL SHA-256 is checked BEFORE anything is executed — a
+  corrupted, truncated or tampered download can never run. curl errors are
+  printed verbatim; nothing is hidden. If BOTH downloads fail the command
+  aborts having changed NOTHING.
 
-THE COMMAND — copy this block and paste it whole into the VPS shell as root
-(it is a multi-line heredoc — safe against SSH paste line-breaking, unlike the
-old 2.7KB single-line bash -c; paste it INCLUDING the closing HANASO-V11 line):
+THE COMMAND — ONE line, copy it WHOLE (this exact line is also the one the
+sandbox drill infra/deploy/sandbox-tests/run-h21.sh executes):
 
-bash -s -- <<'HANASO-V11'
-set -euo pipefail
-H=AbolfazlProg/hanaso
-P=infra/deploy/bootstrap-hanaso.sh
-R=5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10
-W=d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073
-D=2574788c36521cec6ac0673488b769e77a8ab982
-T=/tmp/hanaso-bootstrap-v11.sh
+bash -c 'R=5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10; W=d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073; D=33304b1f2b402d70c3090f447d44e2139adcc6b7; T=/tmp/hanaso-bootstrap-h21.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso21-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
 
-echo "[hanaso] 1/3  download bootstrap (ref $R) via api.github.com"
-GOT=""
-if curl -fsSL --connect-timeout 10 --max-time 60 \
-        -H "Accept: application/vnd.github.raw" \
-        "https://api.github.com/repos/$H/contents/$P?ref=$R" -o "$T"; then
-  GOT="api.github.com"
-else
-  echo "[hanaso]    api.github.com failed (real curl error above) — trying codeload.github.com"
-  X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"
-  if curl -fsSL --connect-timeout 10 --max-time 300 \
-       "https://codeload.github.com/$H/tar.gz/$R" -o "$X/src.tgz"; then
-    if ! tar -xzf "$X/src.tgz" -C "$X" "hanaso-$R/$P"; then
-      echo "ERROR: codeload tarball fetched but extraction FAILED (tar error above) — NOTHING was executed or changed" >&2
-      exit 1
-    fi
-    mv "$X/hanaso-$R/$P" "$T"
-    rm -rf "$X"
-    GOT="codeload.github.com"
-  else
-    echo "ERROR: ALL bootstrap download paths failed (api.github.com and codeload.github.com) — the real curl errors are printed above; NOTHING was executed or changed" >&2
-    exit 1
-  fi
-fi
-echo "[hanaso]    bootstrap delivered via ${GOT}"
+  (If you are NOT root, start the line with: sudo bash -c ' … ' — the whole
+  single-quoted payload stays exactly the same.)
 
-echo "[hanaso] 2/3  verify SHA-256 — nothing runs unless it matches"
-echo "$W  $T" | sha256sum -c -
+WHAT THE LINE DOES, STEP BY STEP
+  1. pins R (tooling commit), W (the bootstrap file's SHA-256), D (the
+     product release commit) and T (a temp path) — all inside the quoted
+     bash -c payload, nothing undefined can leak in from your shell;
+  2. downloads infra/deploy/bootstrap-hanaso.sh AT COMMIT R — first via
+     api.github.com, and if that path fails (rate-limit, network, TLS) via a
+     codeload tarball with a single-file extract;
+  3. verifies the downloaded file is BYTE-IDENTICAL to the pin (sha256sum
+     -c) — a mismatch aborts with NOTHING executed;
+  4. runs it with HANASO_TARGET_VERSION/HANASO_DEPLOY_SHA/HANASO_TARGET_SHA
+     set — the bootstrap re-verifies R and D exist in the repository, then
+     executes the updater strictly from commit R, which builds the image
+     from commit D on the server, runs the staged swap (postgres →
+     pgbouncer → migrate → web+worker), the health gate, the smoke gate,
+     and records the update history for rollback.
 
-echo "[hanaso] 3/3  start installer — deploy target: $D (1.0.0-hanaso20-r01)"
-HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T" "$@"
-HANASO-V11
+OPTIONAL SUBCOMMANDS — append the word INSIDE the quotes, right before the
+final closing quote:
+  … bash "$T" status'     # read-only health report (all three tiers)
+  … bash "$T" rollback'   # app-level rollback to the previous image
+                          # (database and volumes are NEVER touched)
 
-OPTIONAL SUBCOMMANDS (add the word to the FIRST line of the same block):
-  bash -s -- status <<'HANASO-V11'     # read-only status report (all three health tiers)
-  bash -s -- rollback <<'HANASO-V11'   # roll back to the previous image (DB untouched)
-  (as root; with sudo prefix the whole first line: sudo bash -s -- status <<'HANASO-V11')
-
-VERIFY AFTER THE RUN
-  curl -sS https://learn.kotodama.ir/api/health
-  expected: {"ok":true,...,"version":"1.0.0-hanaso20-r01","commit":"2574788..."}
-
-FULL OWNER GUIDE (Persian, same branch)
-  docs/deployment/OWNER-ONE-COMMAND-UPDATE.fa.md
-  Sandbox evidence: infra/deploy/sandbox-tests/run-deploy05.sh (delivery layer)
-  and run-deploy04.sh (updater mechanics incl. the three-tier gate G1..G6)
+HONESTY
+  - This exact line was executed by the sandbox drill
+    (infra/deploy/sandbox-tests/run-h21.sh — 18/18 checks, see
+    ops/checkpoints/TASK-HANASO-21/RELEASE_VALIDATION.md): both download
+    paths, the hash gate, the end-to-end update, idempotent re-run, status,
+    rollback, migrate-failure auto-rollback and the KOTODAMA isolation
+    sweep.
+  - Production is NOT auto-deployed by this file: the owner runs the line.
+  - The VPS audio run (VOICEVOX) is a SEPARATE optional step — see
+    ops/checkpoints/TASK-HANASO-21/AUDIO_REMEDIATION.md.

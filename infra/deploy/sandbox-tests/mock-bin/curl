@@ -76,8 +76,16 @@ gh_blob() { # <ref> <path> — the REAL bytes (or tampered/HTML variants)
   return 0
 }
 gh_tarball() { # <ref> — same layout as real codeload: root "<repo>-<ref>/"
-  git --git-dir="${HANASO_SIM_ORIGIN:?set HANASO_SIM_ORIGIN}" \
-    archive --format=tar --prefix="hanaso-${1}/" "${1}" | gzip -c > "${out:-/dev/null}"
+  # TASK-HANASO-21: with no -o, real curl streams the tarball on STDOUT — the
+  # v12 one-liner pipes curl | tar, so the mock must stream too (with -o it
+  # keeps writing the file, exactly like run-deploy04/05 always used it).
+  if [ -n "${out}" ]; then
+    git --git-dir="${HANASO_SIM_ORIGIN:?set HANASO_SIM_ORIGIN}" \
+      archive --format=tar --prefix="hanaso-${1}/" "${1}" | gzip -c > "${out}"
+  else
+    git --git-dir="${HANASO_SIM_ORIGIN:?set HANASO_SIM_ORIGIN}" \
+      archive --format=tar --prefix="hanaso-${1}/" "${1}" | gzip -c
+  fi
 }
 
 case "${url}" in
@@ -93,7 +101,8 @@ case "${url}" in
     if [ "${SIM_DL_CODELOAD:-200}" = "corrupt" ]; then
       # v10.1 (TASK-HANASO-18): a 200 response whose body is NOT a tarball —
       # exercises the one-liner's explicit extraction-failure abort.
-      printf 'corrupt-not-a-tarball-sim\n' > "${out:-/dev/null}"
+      # TASK-HANASO-21: streams on stdout when no -o (the v12 pipe shape).
+      if [ -n "${out}" ]; then printf 'corrupt-not-a-tarball-sim\n' > "${out}"; else printf 'corrupt-not-a-tarball-sim\n'; fi
       if wants_code; then printf '200\n'; fi
       exit 0
     fi
