@@ -334,8 +334,8 @@ body {
 }
 .aizen-seal-art {
   display: block;
-  width: 100%;
-  height: auto;
+  inline-size: 100%;
+  block-size: auto;
   transform: rotate(-8deg); /* امضای طبیعی مهر — حتی در حالت ساکن */
 }
 .aizen-seal-stamp {

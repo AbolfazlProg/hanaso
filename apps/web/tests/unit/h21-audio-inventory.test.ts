@@ -65,7 +65,9 @@ test('audio honesty gate — no playable word is an orphan (committed or covered
     path.join(web, 'src', 'modules', 'curriculum', 'content', 'kana-items.ts'),
     'utf8',
   );
-  for (const m of kanaItemsSrc.matchAll(/word:\s*'([^']+)'/g)) needed.add(m[1]);
+  for (const m of kanaItemsSrc.matchAll(/word:\s*'([^']+)'/g)) {
+    if (m[1]) needed.add(m[1]);
+  }
   expect(needed.size).toBeGreaterThan(100); // sanity: the surface is real
 
   // ---- 2. the committed registry (runtime truth) --------------------------

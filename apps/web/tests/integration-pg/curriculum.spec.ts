@@ -50,7 +50,9 @@ describe('curriculum seed (content rows)', () => {
     expect(unitRows).toHaveLength(1);
     const unit = unitRows[0]!;
     expect(unit.id).toBe(unitContentId('first-meeting-01'));
-    expect(unit.est_minutes).toBe(45);
+    // TASK-HANASO-21 OBS-003: the declared estMinutes now equals the honest
+    // station sum (was 45 — the old declared lie the EST-MINUTES gate removed).
+    expect(unit.est_minutes).toBe(71);
 
     const { rows: stationRows } = await pool!.query(
       'select slug, type, core, "order" from content.lessons where unit_id = $1 order by "order"',
