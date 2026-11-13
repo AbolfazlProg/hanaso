@@ -147,19 +147,23 @@ const CONTENT_KIND_LABEL_FA: Record<StationContentKind, string> = {
   deepdive: 'عمیق‌تر (اختیاری)',
 };
 
-/** The right-side identity tile — recognizable even when locked. */
+/** The right-side identity tile — recognizable even when locked.
+ *  The label rides as the accessible name (not color/shape alone — §10.2). */
 function ContentTypeTile({ kind, locked }: { kind: StationContentKind; locked: boolean }) {
   const Icon = CONTENT_KIND_ICON[kind] ?? Target;
+  const label = CONTENT_KIND_LABEL_FA[kind];
   return (
     <span
-      aria-hidden
+      role="img"
+      aria-label={label}
+      title={label}
       className={
         locked
           ? 'grid size-9 place-items-center rounded-md border-2 border-dashed border-ink-faint/70 text-ink-faint opacity-75'
           : 'grid size-9 place-items-center rounded-md border-2 border-ink-faint bg-card text-ink-soft'
       }
     >
-      <Icon className="size-4" />
+      <Icon aria-hidden className="size-4" />
     </span>
   );
 }
@@ -443,7 +447,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
           <button
             type="button"
             onClick={() => gotoSection(activeIndex + 1)}
-            className="flex min-h-14 items-center justify-end gap-3 rounded-md border-2 border-indigo bg-indigo px-4 py-3 text-end text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="flex min-h-14 items-center justify-end gap-3 rounded-md border-2 border-indigo bg-indigo px-4 py-3 text-end text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             <span className="min-w-0">
               <span className="block text-caption text-indigo-mist">

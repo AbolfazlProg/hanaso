@@ -1,0 +1,123 @@
+{
+ "total": 25,
+ "passed": 25,
+ "failed": 0,
+ "results": [
+  {
+   "step": "H1a practice hub renders for a new learner with the honest empty state",
+   "ok": true
+  },
+  {
+   "step": "H1b the review line stays honest (engine not active)",
+   "ok": true
+  },
+  {
+   "step": "H1c nav carries the practice destination",
+   "ok": true
+  },
+  {
+   "step": "H2a focused practice is offered for the completed lesson",
+   "ok": true
+  },
+  {
+   "step": "H2b the session ran in the browser with server-graded feedback",
+   "ok": true,
+   "detail": "answered=24"
+  },
+  {
+   "step": "H2c the recap appears with the honest first-try count (no pass/fail)",
+   "ok": true,
+   "detail": "تمرین تمام شد۴ از ۱۴ پاسخ را بار اول درست گفتی.نتیجهٔ این تمرین ثبت شد — تمرین هیچ‌وقت نمرهٔ قبولی/م"
+  },
+  {
+   "step": "H2d practice evidence recorded (learning objects eligible)",
+   "ok": true,
+   "detail": "eligible=10"
+  },
+  {
+   "step": "H2e status carries NO fake review dates (engine honest)",
+   "ok": true
+  },
+  {
+   "step": "H3a mixed practice honestly locked before 3 completed lessons",
+   "ok": true,
+   "detail": "{\"status\":409,\"code\":\"practice/mixed_locked\"}"
+  },
+  {
+   "step": "H3b mixed practice unlocks after 3 completed lessons",
+   "ok": true,
+   "detail": "items=20"
+  },
+  {
+   "step": "H3c the generated payload carries NO answer keys (SKL-013)",
+   "ok": true
+  },
+  {
+   "step": "H4a a zero-score walk COMPLETES (no punitive bar in Learn)",
+   "ok": true,
+   "detail": "{\"status\":200,\"code\":null}"
+  },
+  {
+   "step": "H5a the journey shows the two sections (A/B titles)",
+   "ok": true,
+   "detail": "{\"a\":true,\"b\":true}"
+  },
+  {
+   "step": "H5b a locked row answers the click with the reason notice",
+   "ok": true,
+   "detail": "rows=17 این درس هنوز باز نشده — برای باز کردنش، ابتدا «خوش‌آمد و سه خط ژاپنی» "
+  },
+  {
+   "step": "H5c the notice names the prerequisite lesson",
+   "ok": true
+  },
+  {
+   "step": "H5d locked rows keep the content-identity tile (labeled, not faceless)",
+   "ok": true,
+   "detail": "درس کانا"
+  },
+  {
+   "step": "H6a milestone M1 (reading sheet) appears in section A",
+   "ok": true,
+   "detail": "ادامهٔ یادگیری— ایستگاه واقعی — برگهٔ خواندن هیراگانا"
+  },
+  {
+   "step": "H6b milestone M1 completes (task contract) with the seal",
+   "ok": true,
+   "detail": "{\"contCount\":1,\"radioCount\":0,\"complete\":true,\"replayEnded\":false}"
+  },
+  {
+   "step": "H6c honest achievements chips beside the seal",
+   "ok": true,
+   "detail": "chips=1"
+  },
+  {
+   "step": "H7a the fresh completion plays the ceremony (data-animate)",
+   "ok": true
+  },
+  {
+   "step": "H7b the upgraded stage: bigger seal frame (≥144px) + rotating ink ring",
+   "ok": true,
+   "detail": "frame=176px"
+  },
+  {
+   "step": "H7c the sound mute toggle is present beside the seal",
+   "ok": true
+  },
+  {
+   "step": "H7d the stamp sound asset is served locally (no hotlink)",
+   "ok": true,
+   "detail": "HEAD 200"
+  },
+  {
+   "step": "H7e revisit shows the seal SETTLED (no re-animation)",
+   "ok": true,
+   "detail": "{\"seal\":true,\"animating\":false}"
+  },
+  {
+   "step": "H8 practice hub is usable at 360px (no horizontal scroll)",
+   "ok": true,
+   "detail": "{\"noHScroll\":true,\"hubVisible\":true,\"tabBar\":true}"
+  }
+ ]
+}

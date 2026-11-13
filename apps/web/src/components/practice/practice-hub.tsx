@@ -105,7 +105,7 @@ export function PracticeHub({ status }: { status: PracticeStatusView }) {
               onClick={() => void start('focused', lastFocus.stationSlug)}
               disabled={busy !== null}
               data-testid="start-focused"
-              className="mt-3 flex min-h-12 items-center justify-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
+              className="mt-3 flex min-h-12 items-center justify-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
             >
               {busy === 'focused' ? <Loader2 aria-hidden className="size-4 animate-spin" /> : null}
               {busy === 'focused' ? fa.practice.loadingSession : fa.practice.startFocused}
@@ -277,7 +277,7 @@ export function PracticeSessionRunner({
     return () => {
       el.pause();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- per-item autoplay only
+    // per-item autoplay only (index drives it; the audio object is created fresh)
   }, [index]);
 
   const answer = useCallback(
@@ -359,7 +359,7 @@ export function PracticeSessionRunner({
           <button
             type="button"
             onClick={() => onExit(recap)}
-            className="flex h-12 items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="flex h-12 items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {fa.practice.backToHub}
             <ArrowLeft aria-hidden className="size-4" />
@@ -500,7 +500,7 @@ export function PracticeSessionRunner({
             onClick={() => void answer({ kind: 'choice', optionId: selected! })}
             disabled={!canCheck || busy}
             data-testid="practice-check"
-            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
+            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
           >
             {busy ? <Loader2 aria-hidden className="mx-auto size-4 animate-spin" /> : fa.practice.checkAnswer}
           </button>
@@ -523,7 +523,7 @@ export function PracticeSessionRunner({
             type="button"
             onClick={next}
             data-testid="practice-next"
-            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {isLast ? fa.practice.finishTitle : fa.practice.continue}
           </button>

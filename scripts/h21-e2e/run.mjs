@@ -613,16 +613,19 @@ try {
     const page = await ctx.newPage();
     await fastForward(page, 'kana-foundation-01', ffUpTo('stn-kana-k8'));
     const first = await page.evaluate(async ({ base }) => {
+      /* TASK-HANASO-22: k9 is a task_completed station (de-scored) — the honest
+       * completion contract carries taskCompleted:true; the idempotency under
+       * test is the SECOND call getting already:true. */
       const r = await fetch(`${base}/api/curriculum/station`, {
         method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: 'stn-kana-k9', score: 1 }),
+        body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: 'stn-kana-k9', score: 1, taskCompleted: true }),
       });
       return { status: r.status, already: (await r.json().catch(() => null))?.data?.already };
     }, { base: BASE });
     const second = await page.evaluate(async ({ base }) => {
       const r = await fetch(`${base}/api/curriculum/station`, {
         method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: 'stn-kana-k9', score: 1 }),
+        body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: 'stn-kana-k9', score: 1, taskCompleted: true }),
       });
       return { status: r.status, already: (await r.json().catch(() => null))?.data?.already };
     }, { base: BASE });

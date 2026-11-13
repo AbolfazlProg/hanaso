@@ -10,7 +10,7 @@
  */
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CircleCheck, Ear, RotateCcw } from 'lucide-react';
+import { ArrowLeft, CircleCheck, Ear, Loader2, RotateCcw } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { JaBlock } from '@/components/patterns/ja-block';
@@ -109,7 +109,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
         <button
           type="button"
           onClick={() => setPhase('questions')}
-          className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+          className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
         >
           {fa.curriculum.gateStart}
           <ArrowLeft aria-hidden className="size-4" />
@@ -145,7 +145,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
             </div>
             <Link
               href={`/learn/${chapterSlug}/complete`}
-              className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+              className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px"
             >
               {fa.curriculum.viewResult}
               <ArrowLeft aria-hidden className="size-4" />
@@ -335,7 +335,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
               setOrdered(nxt.chunks ? ((answers[nxt.id]?.orderedIds as string[] | undefined) ?? []) : []);
             }}
             disabled={ex.options ? !selected : ex.chunks ? ordered.length !== ex.chunks.length : true}
-            className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep disabled:opacity-45"
+            className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px disabled:opacity-45"
           >
             {fa.curriculum.continueBlock}
             <ArrowLeft aria-hidden className="size-4" />
@@ -345,8 +345,12 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
             type="button"
             onClick={submit}
             disabled={submitting || (ex.options ? !selected : ex.chunks ? ordered.length !== ex.chunks.length : true)}
-            className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep disabled:opacity-45"
+            aria-busy={submitting}
+            data-testid="gate-submit"
+            className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px disabled:opacity-45"
           >
+            {/* TASK-HANASO-22 §11: a slow network must SHOW the click registered. */}
+            {submitting ? <Loader2 aria-hidden className="size-4 animate-spin" /> : null}
             {fa.curriculum.gateSubmit}
           </button>
         )}

@@ -18,15 +18,15 @@ from Learn.
 | --- | --- | --- |
 | 0 | Git/state audit + branch + first checkpoint | ✅ DONE (this file, CP-00) |
 | 1 | Scientific research (4 docs in docs/research/) | ✅ DONE (CP-01) |
-| 2 | Learn/Practice/Review architecture design | ⬜ TODO |
-| 3 | Kana Practice implementation (Focused + Mixed) | ⬜ TODO |
-| 4 | Remove punitive scoring from Learn + feedback redesign | ⬜ TODO |
-| 5 | Chapter intros + lesson achievements + milestones | ⬜ TODO |
-| 6 | AIZEN seal presentation upgrade + sound effect | ⬜ TODO |
-| 7 | Chapter 01 → two sections + journey icons + locked feedback | ⬜ TODO |
-| 8 | Button/interaction feedback audit | ⬜ TODO |
-| 9 | Full testing + regression | ⬜ TODO |
-| 10 | Release prep | ⬜ TODO |
+| 2 | Learn/Practice/Review architecture design | ✅ DONE (CP-02) |
+| 3 | Kana Practice implementation (Focused + Mixed) | ✅ DONE |
+| 4 | Remove punitive scoring from Learn + feedback redesign | ✅ DONE |
+| 5 | Chapter intros + lesson achievements + milestones | ✅ DONE |
+| 6 | AIZEN seal presentation upgrade + sound effect | ✅ DONE |
+| 7 | Chapter 01 → two sections + journey icons + locked feedback | ✅ DONE |
+| 8 | Button/interaction feedback audit | ✅ DONE |
+| 9 | Full testing + regression | ✅ DONE (E2E 25/25 + H21 44/44 + unit 737 + integ 32 + EQA 37) |
+| 10 | Release prep | 🔶 BRANCH READY (production build green; owner decides deploy) |
 
 ## Git state
 
@@ -119,6 +119,7 @@ from Learn.
 
 ## Next action (exact)
 
-Phase 2/3 — write `PRACTICE_DESIGN_DECISIONS.md` (architecture: Learn/Practice/Review
-contract, Kana practice engine design, K1..K8 traceability, persistence model), commit +
-push, then implement (Practice surface + engine + API + persistence).
+The mission is feature-complete and verified (see TEST_RESULTS.md). Remaining:
+final commit + push of the test/evidence docs, then the final report to the owner
+(11 questions). Optional next missions: PG integration run, VOICEVOX hostword
+generation on the VPS (TASK-21 leftover), FSRS M2 engine.

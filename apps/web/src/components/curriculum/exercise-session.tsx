@@ -964,7 +964,7 @@ export function ExerciseSession({
             type="button"
             onClick={check}
             disabled={!canCheck || busy}
-            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
+            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
           >
             {fa.curriculum.checkAnswer}
           </button>
@@ -995,7 +995,7 @@ export function ExerciseSession({
           <button
             type="button"
             onClick={advance}
-            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="h-11 min-w-28 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {fa.curriculum.continueBlock}
           </button>

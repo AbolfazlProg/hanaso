@@ -1114,7 +1114,7 @@ export function StationRunner(props: StationRunnerProps) {
                 type="button"
                 onClick={next}
                 disabled={completing}
-                className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
+                className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
               >
                 {/* TL-10 §6/§7: a plain forward action — a status text is never
                  posed as a button, and a normal action is never red. */}
@@ -1187,7 +1187,7 @@ export function StationRunner(props: StationRunnerProps) {
           <button
             type="button"
             onClick={goCompletionDestination}
-            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {completionTarget.label}
             <ArrowLeft aria-hidden className="size-4" />
@@ -1227,7 +1227,7 @@ export function StationRunner(props: StationRunnerProps) {
           <button
             type="button"
             onClick={goCompletionDestination}
-            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {completionTarget.label}
             <ArrowLeft aria-hidden className="size-4" />
@@ -1267,7 +1267,7 @@ export function StationRunner(props: StationRunnerProps) {
               walked and registered for the chain to unlock. */}
           <Link
             href={`/learn/${chapterSlug}/journey/${completionFailure.prerequisites[0]!.slug}`}
-            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {fa.curriculum.completionPrereqGo}: «{completionFailure.prerequisites[0]!.titleFa}»
             <ArrowLeft aria-hidden className="size-4" />
@@ -1298,7 +1298,7 @@ export function StationRunner(props: StationRunnerProps) {
             type="button"
             onClick={retryFinalExercise}
             data-testid="redo-final-exercise"
-            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             <RotateCcw aria-hidden className="size-4" />
             {fa.curriculum.completionCriterionRedo}
@@ -1316,7 +1316,7 @@ export function StationRunner(props: StationRunnerProps) {
           <button
             type="button"
             onClick={retryCompletion}
-            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             <RotateCcw aria-hidden className="size-4" />
             {fa.curriculum.completionRetry}
@@ -2068,7 +2068,7 @@ function BlockView({
             <button
               type="button"
               onClick={() => onExerciseDone(exerciseScore)}
-              className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+              className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
             >
               {isLastBlock ? fa.curriculum.stationDone : fa.curriculum.continueBlock}
               <ArrowLeft aria-hidden className="size-4" />
@@ -2143,7 +2143,7 @@ function BlockView({
           <p className="text-body text-ink-soft">{fa.curriculum.dialogueGoToListen}</p>
           <Link
             href={`/learn/${chapterSlug}/dialogue`}
-            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+            className="flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px"
           >
             {fa.curriculum.replayDialogue}
             <ArrowLeft aria-hidden className="size-4" />
@@ -2739,7 +2739,7 @@ function CharacterSceneBlock({
                     busy ||
                     (s.userReply.kind === 'choice' ? !choice : built.length !== (s.userReply.chips?.length ?? 0))
                   }
-                  className="h-11 w-fit rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep disabled:opacity-45"
+                  className="h-11 w-fit rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px disabled:opacity-45"
                 >
                   {fa.curriculum.checkAnswer}
                 </button>
@@ -2759,7 +2759,7 @@ function CharacterSceneBlock({
         <button
           type="button"
           onClick={advance}
-          className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+          className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px"
         >
           {fa.curriculum.continueBlock}
         </button>
@@ -2768,7 +2768,7 @@ function CharacterSceneBlock({
         <button
           type="button"
           onClick={onSceneDone}
-          className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+          className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px"
         >
           {/* TL-10 §6/§7: a plain forward action — never a status text posed as
              a button, and a normal action is never red. */}
