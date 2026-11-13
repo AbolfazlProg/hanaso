@@ -20,10 +20,10 @@
  * (no emoji), state = weight + underline (never color alone).
  */
 import Link from 'next/link';
-import { Home, Map } from 'lucide-react';
+import { Dumbbell, Home, Map } from 'lucide-react';
 import { fa } from '@/messages/fa';
 
-export type NavDestination = 'home' | 'learn';
+export type NavDestination = 'home' | 'learn' | 'practice';
 
 export interface SiteNavProps {
   active: NavDestination;
@@ -32,6 +32,9 @@ export interface SiteNavProps {
 const DESTINATIONS: { key: NavDestination; href: string; label: string; Icon: typeof Home }[] = [
   { key: 'home', href: '/', label: fa.nav.home, Icon: Home },
   { key: 'learn', href: '/learn', label: fa.nav.journey, Icon: Map },
+  /* TASK-HANASO-22: the practice surface is REAL — the nav grows by data
+   * (still no review/library entries: those engines do not exist yet). */
+  { key: 'practice', href: '/practice', label: fa.nav.practice, Icon: Dumbbell },
 ];
 
 export function SiteNav({ active }: SiteNavProps) {
@@ -71,7 +74,7 @@ export function SiteNav({ active }: SiteNavProps) {
         className="fixed inset-x-0 bottom-0 z-30 border-t-2 border-indigo bg-paper/97 backdrop-blur md:hidden"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
-        <ul className="mx-auto grid max-w-md grid-cols-2">
+        <ul className="mx-auto grid max-w-md grid-cols-3">
           {DESTINATIONS.map(({ key, href, label, Icon }) => (
             <li key={key}>
               <Link

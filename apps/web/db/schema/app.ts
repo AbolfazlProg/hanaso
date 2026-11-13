@@ -183,3 +183,55 @@ export const lessonProgress = app.table(
     index('lesson_progress_user_dialogue_idx').on(t.userId, t.dialogueId),
   ],
 );
+
+/* ------------------------------------------------------- practice_sessions (TASK-HANASO-22) */
+/**
+ * Append-only log of completed independent-practice sessions (Learn↔Practice
+ * separation: practice records EVIDENCE, never gates, never FSRS mutations).
+ * One row per completed session; partial sessions are only logged when at
+ * least one item was answered (the honest exit).
+ */
+export const practiceSessions = app.table(
+  'practice_sessions',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    /** Logical ref → app."user" (same learner identity as the walk tables). */
+    userId: text('user_id').notNull(),
+    /** 'kana' today (registry-scope; future skills extend, never rename). */
+    skill: text('skill').notNull(),
+    /** 'focused' (one station's glyphs) | 'mixed' (taught scope, weak-weighted). */
+    kind: text('kind').notNull(),
+    /** Station slug (focused) or chapter scope key (mixed). */
+    scopeKey: text('scope_key').notNull(),
+    /** [{itemId, objectId, dimension, firstTryCorrect, attempts, ms}] — honest evidence. */
+    itemResults: jsonb('item_results').notNull().default(sql`'[]'::jsonb`),
+    startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+  },
+  (t) => [index('practice_sessions_user_idx').on(t.userId, t.startedAt)],
+);
+
+/* -------------------------------------------------- learning_object_states (TASK-HANASO-22) */
+/**
+ * Per-user Learning Object practice state (PRACTICE_DESIGN_DECISIONS §4):
+ * introduced → practiced → eligible_for_review. HONESTY: no review dates and
+ * no `reviewed`/mastery states — the future FSRS engine (M2) consumes
+ * eligible_for_review; it is never displayed as a scheduled review.
+ */
+export const learningObjectStates = app.table(
+  'learning_object_states',
+  {
+    userId: text('user_id').notNull(),
+    /** Stable content id — the SAME id the FSRS inventory uses (kn-rec-hira-a, word-あう…). */
+    objectId: text('object_id').notNull(),
+    skill: text('skill').notNull(),
+    /** 'introduced' | 'practiced' | 'eligible_for_review' (evidence-backed only). */
+    state: text('state').notNull(),
+    /** { K2: {seen, firstTryCorrect}, … } — per-dimension honest counts. */
+    dimensionStats: jsonb('dimension_stats').notNull().default(sql`'{}'::jsonb`),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.objectId] }), index('learning_object_states_user_idx').on(t.userId)],
+);

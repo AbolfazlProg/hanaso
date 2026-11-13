@@ -18,6 +18,13 @@ import {
   type StationProgressRepository,
 } from '@/modules/curriculum/repository';
 import { PgChapterProgressRepository, PgStationProgressRepository } from '@/db/repositories/curriculum';
+import {
+  InMemoryLearningObjectRepository,
+  InMemoryPracticeSessionRepository,
+  type LearningObjectRepository,
+  type PracticeSessionRepository,
+} from '@/modules/practice/repository';
+import { PgLearningObjectRepository, PgPracticeSessionRepository } from '@/db/repositories/practice';
 import type { PocEvent } from './event-store';
 import { InMemoryEventStore } from './event-store';
 import { databaseConfigured, getDbClient } from '@/db/client';
@@ -38,6 +45,8 @@ const storeCache = globalThis as typeof globalThis & {
     progressStore: ProgressRepository | null;
     stationProgressStore: StationProgressRepository | null;
     chapterProgressStore: ChapterProgressRepository | null;
+    practiceSessionStore: PracticeSessionRepository | null;
+    learningObjectStore: LearningObjectRepository | null;
   };
 };
 storeCache.__hanasoStores ??= {
@@ -46,6 +55,8 @@ storeCache.__hanasoStores ??= {
   progressStore: null,
   stationProgressStore: null,
   chapterProgressStore: null,
+  practiceSessionStore: null,
+  learningObjectStore: null,
 };
 const singletons = storeCache.__hanasoStores;
 
@@ -89,6 +100,22 @@ export function getChapterProgressStore(): ChapterProgressRepository {
   return singletons.chapterProgressStore;
 }
 
+/** Independent-practice sessions (TASK-HANASO-22) — append-only evidence log. */
+export function getPracticeSessionStore(): PracticeSessionRepository {
+  singletons.practiceSessionStore ??= usingPostgresStores()
+    ? new PgPracticeSessionRepository(getDbClient())
+    : new InMemoryPracticeSessionRepository();
+  return singletons.practiceSessionStore;
+}
+
+/** Learning-object practice states (TASK-HANASO-22) — evidence only, never FSRS. */
+export function getLearningObjectStore(): LearningObjectRepository {
+  singletons.learningObjectStore ??= usingPostgresStores()
+    ? new PgLearningObjectRepository(getDbClient())
+    : new InMemoryLearningObjectRepository();
+  return singletons.learningObjectStore;
+}
+
 /** TEST-ONLY: drop cached singletons (switch env between unit/integration runs). */
 export function resetStoresForTests(): void {
   singletons.attemptStore = null;
@@ -96,6 +123,8 @@ export function resetStoresForTests(): void {
   singletons.eventStore = null;
   singletons.stationProgressStore = null;
   singletons.chapterProgressStore = null;
+  singletons.practiceSessionStore = null;
+  singletons.learningObjectStore = null;
 }
 
 export type { PocEvent };
