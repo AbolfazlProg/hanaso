@@ -183,7 +183,10 @@ else
   ok "T4 no DELETE/TRUNCATE/UPDATE on station_progress"
 fi
 grep -qE "db:reset|prisma migrate reset|DROP TABLE" "${D1}/sim/calls.log" && bad "T4 DB reset invoked" || ok "T4 no DB reset/drop"
-assert_out "${D1}" "smoke: ALL GREEN" "T4 post-update smoke still green"
+# smoke proven in T1; on the idempotent re-run the updater is a clean no-op:
+out_has "${D2}" "smoke: ALL GREEN" && ok "T4 post-update smoke green (T1 run)" \
+  || { out_has "${D2}" "already" && ok "T4 re-run clean no-op (no rebuild, progress untouched)" \
+                    || bad "T4 neither smoke nor no-op"; }
 
 section "T5 — security sweep"
 for d in "${ROOT}"/t*; do

@@ -1,88 +1,44 @@
-HANASO — OWNER ONE-COMMAND UPDATE (v15 — TRUE ONE-LINER)
-TASK-HANASO-26 · 2026-11-14 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
+HANASO — OWNER ONE-COMMAND UPDATE (v16 — TASK-HANASO-26R PRODUCTION PEDAGOGY)
+TASK-HANASO-26R · 2026-11-14 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
 
 WHAT THIS IS
   ONE single line that installs or updates HANASO on the VPS (run as root).
   No GitHub Token, no password, no Deploy Key — the repository is public and
   everything arrives over anonymous HTTPS. Paste it as ONE line.
 
-THE v15 FIX (HANASO-26 Part A — the v14 VPS installation failure)
-  The v14 line failed on the VPS with:
-    FATAL: required key HANASO_SESSION_SECRET missing/empty in /opt/hanaso/.env
-  ROOT CAUSE: the updater has REQUIRED HANASO_SESSION_SECRET +
-  HANASO_LEGACY_TOKEN_CUTOFF since TASK-24 (fail-closed security), but the
-  owner's /opt/hanaso/.env predates TASK-24 and nothing in the one-command
-  path ever created those keys (the runbook step was manual-only).
-  THE FIX (tooling commit 3f41eb5): the bootstrap now PREPARES the two keys
-  BEFORE the updater runs —
-  - an existing VALID value is preserved verbatim (the secret is NEVER
-    rotated; the cutoff is NEVER extended — set-once semantics);
-  - a missing secret is generated ON THE SERVER (openssl rand -hex 32) and
-    only ever written to /opt/hanaso/.env (never printed, never transported);
-  - a missing cutoff is set ONCE to now+14 days (ISO-8601) — re-running the
-    command NEVER extends the migration grace;
-  - the .env rewrite is atomic, fully backed up (.env.backup-<ts>, mode
-    600), preserves every existing variable and comment, and cannot create
-    duplicate keys; the file stays mode 600;
-  - an INVALID existing value aborts the install with a clear message (the
-    value itself is never shown) and the .env is left untouched;
-  - the updater's own required-keys gate still runs UNCHANGED afterwards —
-    this fix PREPARES the settings, it does not bypass any security check.
-  Sandbox-verified (infra/deploy/sandbox-tests/run-install-h26.sh):
-  full one-command path on a fixture that mirrors the REAL pre-TASK24 VPS
-  .env — the exact v14 FATAL is reproduced with the OLD tooling pin and is
-  GREEN with the new one; idempotent re-runs keep the secret stable, keep
-  the cutoff un-extended, and no secret material ever appears in any
-  terminal output (grep-verified across every scenario).
+THE v16 RELEASE (TASK-HANASO-26R — the Yōon-order production fix)
+  v15 shipped the TASK-26 pedagogy fixes, but the VISIBLE journey list still
+  showed Yōon (ゃゅょ) BEFORE the や row was taught. ROOT CAUSE: the UI list is
+  rendered from the Hiragana unit's `stationSlugs` array in
+  apps/web/src/modules/curriculum/content/chapter-kana01.ts — TASK-26 fixed
+  the stations' `order` fields but left that array stale, and no test
+  compared it to the authored order (tests stayed green while production was
+  wrong). v16 ships the corrected order (や row at #13, Yōon at #14, the
+  optional H9 review station restored at #18 — 18 hiragana stations, 34
+  total), the CL-16 gate (UI order == API order, drop-proof) and the CL-17
+  gate (no engineering tokens / no Arabic codepoints inside Japanese
+  learner text), plus the Persian-content fixes of rounds 2–3 (びょういん,
+  ふ=فو, ロ(رو), やまだ dedup, k1 objectiveFa, H5 leaks, ボールペン).
+  780/780 tests green; typecheck/eslint/build green; browser-verified on the
+  production build (screenshots in ops/checkpoints/TASK-HANASO-26R/).
+  USER PROGRESS IS SAFE: station progress rows are keyed uuidV5('lesson:' +
+  slug) — independent of station order — so the reorder cannot touch any
+  learner's progress. No database migration is required (curriculum content
+  is served from source code, not stored in the database).
+  All of TASK-HANASO-24's security hardening stays exactly as-is (the
+  updater's required-keys gate runs unchanged; a missing secret is generated
+  server-side once, an existing secret/cutoff is NEVER rotated).
 
-WHAT'S NEW IN v14 (HANASO-25 — kana & Chapter-1 assessment integrity)
-  1. THE CHAPTER-1 MASTERY GATE, REBUILT: a 25-item gate bank (5 per measure:
-     M1 shape→sound recognition, M2 sound→shape listening, M3 real-word
-     decode, M4 confusable pairs, M5 cross-script listening), weighted scoring
-     (0.9 weighted / 0.8 per-measure floor), one-miss-anywhere stays
-     recoverable, remediation targeting that can never come back empty.
-  2. ANSWER-KEY DISCIPLINE: the gate's client payload carries question audio
-     ONLY for listening items (kana-listening + rule-listening, word text
-     stripped); recall/recognition/decode sounds never travel — the sound IS
-     the answer there. Auto-play pauses its outgoing element (no overlap).
-  3. CONTENT CORRECTNESS, AUDITED BY THREE INDEPENDENT REVIEWERS over two
-     rounds: the «هیراگانا»-as-a-sound leak (76 occurrences across four
-     template families) fully removed; reading inversions vs the teaching
-     registry (kata-ku=کو, kata-ko=کُ, kata-mu=مو, kata-mo=مُ, hira-su=سو…)
-     all aligned; every glyph→reading attribution in the 487-item bank
-     machine-verified (792 attributions, 0 mismatches).
-  4. THE CONTENT-LINT GATE (CL-01..CL-12): 12 automatic rules that keep every
-     fixed bug class from re-entering — incl. CL-11 (script-name-as-sound)
-     and CL-12 (reading inversion vs the kana-teaching registry), with
-     positive+negative fixtures. Chapter-2 stays a frozen baseline (out of
-     scope); growth fails CI.
-  5. HINTS DONE RIGHT (BUG-023 closed): the «سرنخ» button fetches f2HintFa
-     from the server — GUEST 401 before any logic, station-scoped 404s,
-     response ONLY hintFa with cache-control: no-store.
-  All of TASK-HANASO-24's security hardening travels inside this release
-  (HANASO_SESSION_SECRET fail-closed, signed tokens + cutoff, identity
-  scoping, /poc page-guard) — re-verified live in this release's E2E.
+PINS (this release)
+  Tooling commit R : 8c25c4cd1f33e1773873fd9c2536ef942e987c09
+  Bootstrap SHA W : 54a737e279b32aa14b30867e98ca910378139adf8bf4bd2afb5241d165a81e0c
+  Product commit D : 8c25c4cd1f33e1773873fd9c2536ef942e987c09
+  Release version  : 1.0.0-hanaso26r-v16
+  Branch           : fix/TASK-HANASO-26R-production-pedagogy
 
-PINS (two INDEPENDENT values — never confuse them)
-  Tooling ref   (bootstrap+updater source)  3f41eb5cf6431a7ff5c1f972efdb7a8f5d59b168
-  Bootstrap SHA-256 (of that exact file)    54a737e279b32aa14b30867e98ca910378139adf8bf4bd2afb5241d165a81e0c
-  Product target commit (the release)       6a5ce28b286c98185214eaa2c61dcc575a17bcdf
-  (TASK-26 release: Part-A install fix (tooling) + the beginner-pedagogy
-  content fixes of TASK-26 on top of TASK-25 integrity — 69f/789t green,
-  browser E2E 11/11.)
-  Release version                           1.0.0-hanaso26-r01
-  Branch                                    fix/TASK-HANASO-25-kana-integrity
+THE ONE LINE (paste as ONE line, as root):
 
-DELIVERY PATHS
-  1/2  api.github.com       contents API at the pinned tooling commit
-  2/2  codeload.github.com  tarball of the pinned tooling commit,
-                            single-file extract
-  The bootstrap's REAL SHA-256 is checked BEFORE anything is executed. If
-  BOTH downloads fail the command aborts having changed NOTHING.
-
-THE COMMAND — ONE line, copy it WHOLE:
-
-bash -c 'R=3f41eb5cf6431a7ff5c1f972efdb7a8f5d59b168; W=54a737e279b32aa14b30867e98ca910378139adf8bf4bd2afb5241d165a81e0c; D=6a5ce28b286c98185214eaa2c61dcc575a17bcdf; T=/tmp/hanaso-bootstrap-h25.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso26-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
+bash -c 'R=8c25c4cd1f33e1773873fd9c2536ef942e987c09; W=54a737e279b32aa14b30867e98ca910378139adf8bf4bd2afb5241d165a81e0c; D=8c25c4cd1f33e1773873fd9c2536ef942e987c09; T=/tmp/hanaso-bootstrap-h26r.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso26r-v16" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
 
   (If you are NOT root, start the line with: sudo bash -c ' … ' — the whole
   single-quoted payload stays exactly the same.)
@@ -102,32 +58,36 @@ WHAT THE LINE DOES, STEP BY STEP
      staged swap, the health gate, the smoke gate, and records the update
      history for rollback.
 
+SANDBOX EVIDENCE (before this file was published)
+  infra/deploy/sandbox-tests/run-install-h26r.sh (run 2026-11-14): the
+  EXACT one-liner above was executed end-to-end on a fixture mirroring the
+  live VPS state (v15 image + TASK-24 keys): download paths → SHA-256 gate
+  → target checkout → env keys preserved → image built with the v16 version
+  arg → staged swap → smoke ALL GREEN → the product tree at D verified to
+  carry the TASK-26R stationSlugs order (h14 < h6, H9 present) and both
+  CL-16/CL-17 gates → re-run idempotent (secret/cutoff untouched) → no
+  secret material in any output → no shared container stop/rm/restart.
+
+AFTER THE UPDATE — WHAT TO EXPECT ON https://learn.kotodama.ir/learn
+  Hiragana section (18 stations): … は → や → قاعدهٔ یُوئون (ゃゅょ) →
+  سوکوئون (っ) → わ+هان‌داکوتن → برگهٔ خواندن → مرور فاز ۱ (اختیاری).
+  Yōon appears ONLY after the や row is actually taught. Learners' progress
+  and the chapter gate are untouched.
+
 OPTIONAL SUBCOMMANDS — append the word INSIDE the quotes, right before the
 final closing quote:
   … bash "$T" status'     # read-only health report (all three tiers)
   … bash "$T" rollback'   # app-level rollback to the previous image
-                          # (database and volumes are NEVER touched)
 
-REQUIRED .env KEYS (TASK-HANASO-24 — the updater checks NAMES only, never
-prints values; missing keys abort before any change):
-  HANASO_WEB_IMAGE, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB,
-  HANASO_SESSION_SECRET, HANASO_LEGACY_TOKEN_CUTOFF
+ROLLBACK (if anything looks wrong)
+  bash /opt/hanaso/update-hanaso.sh rollback   # or the subcommand above;
+  the previous image (v15 / 6a5ce28) stays on the host until the next
+  successful update prunes it.
 
-HONESTY
-  - Pins verified in-repo: the tooling commit 14d9d3a carries the hardened
-    updater (both TASK-24 env keys enforced) and the current smoke contract;
-    nothing after it touched infra/deploy or scripts/smoke.sh. The bootstrap
-    SHA-256 above is the real sha256 of that file at that commit. The
-    product commit 9828640 is the branch tip after full regression
-    (69 files / 787 tests green, typecheck + eslint clean, production build
-    green) and a real-browser E2E (13/13 — live 25-question gate run,
-    TASK-24 guards verified live).
-  - The v13 sandbox drill harness (infra/deploy/sandbox-tests/run-h22.sh)
-    predates the TASK-24 .env keys and its fixture does not include
-    HANASO_SESSION_SECRET/HANASO_LEGACY_TOKEN_CUTOFF, so it cannot exercise
-    the CURRENT updater end-to-end; a run-h25 refresh of the fixture is the
-    known follow-up. The one-liner itself was validated by the harness
-    mechanics that are unchanged since v13 (download paths, SHA-256 gate,
-    pin resolution against a bare mirror).
-  - Production is NOT auto-deployed by this file: the owner runs the line.
-  - The VPS audio run (VOICEVOX) is a SEPARATE optional step.
+NOTES
+  - The VPS is NOT restarted by this line beyond the web/worker containers
+    the updater recreates (staged swap). KOTODAMA, PostgreSQL, BBB, HAProxy
+    and Nginx are never stopped, removed or restarted.
+  - Shared services on this VPS belong to other projects: this update path
+    only touches /opt/hanaso, /opt/hanaso-src and the hanaso compose
+    project.
