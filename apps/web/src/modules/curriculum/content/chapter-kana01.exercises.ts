@@ -10590,7 +10590,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: '「ん» را جا انداخته‌ای — یک مورای کامل است.', c: 'مصوت ردیف «ا» است نه «اِ».' },
     feedback: {
       f1Fa: '「ん» خودش یک ضربهٔ کامل است.',
-      f2HintFa: 'سا-ن.',
+      f2HintFa: 'واکه‌ها را جدا بشمار: سا + ن — دومی فقط «ن» بینی است.',
       f3ExplainFa: '「さん」 = «سان» (۳) — さ+ん = ۲ مورا.',
     },
     assessmentRole: 'practice',

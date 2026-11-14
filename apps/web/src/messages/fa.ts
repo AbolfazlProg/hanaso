@@ -372,6 +372,8 @@ export const fa = {
     correct: 'درست!',
     incorrect: 'نادرست',
     showHint: 'سرنخ',
+    /* TASK-HANASO-25 (BUG-023): the hint button's loading label */
+    hintLoading: 'سرنخ می‌آید…',
     stationDone: 'ایستگاه کامل شد',
     backToJourney: 'بازگشت به مسیر',
     /* ---- TASK-LEARNING-10 §6 — station completion flow (status = message,

@@ -197,7 +197,13 @@ export function ExerciseSession({
   const firstTryCorrectRef = useRef(
     initialProgress ? Math.max(0, Math.min(initialProgress.firstTryCorrect, exercises.length)) : 0,
   );
-  const [hintRevealed, setHintRevealed] = useState(false);
+  /**
+   * TASK-HANASO-25 (BUG-023 — the «سرنخ» no-op): the authored F2 hint, fetched
+   * from the server on click (the hint NEVER rides the bank payload —
+   * answer-key discipline). Null until fetched; reset on retry/advance.
+   */
+  const [hintFa, setHintFa] = useState<string | null>(null);
+  const [hintLoading, setHintLoading] = useState(false);
   /** #106 F2: option ids the server eliminated — they stay dead for every later attempt. */
   const [eliminated, setEliminated] = useState<string[]>([]);
 
@@ -405,7 +411,7 @@ export function ExerciseSession({
     setBuilt([]);
     setFeedback(null);
     setAttemptNo(1);
-    setHintRevealed(false);
+    setHintFa(null); // TASK-HANASO-25: the hint is per-exercise — never bleeds to the next
     setEliminated([]); // eliminations live inside ONE exercise, never across them
   }, []);
 
@@ -533,8 +539,36 @@ export function ExerciseSession({
     [attemptNo, chapterSlug, ex, scheduleAutoNext, startOutcomeAudio, stationSlug],
   );
 
-  const check = useCallback(async () => {
-    if (!ex) return;
+  /**
+   * TASK-HANASO-25 (BUG-023): the «سرنخ» button's action — fetch the authored
+   * F2 hint from the server and render it. The learner keeps full answering
+   * ability (the hint is a redirect, not an answer — recognition/decode hints
+   * were rewritten in CP-03 to never leak the key reading).
+   */
+  const showHint = useCallback(async () => {
+    if (!ex || hintLoading || hintFa !== null) return;
+    setHintLoading(true);
+    try {
+      const res = await fetch('/api/curriculum/station', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          action: 'hint',
+          chapterSlug,
+          stationSlug,
+          exerciseId: ex.id,
+        }),
+      });
+      const json = (await res.json()) as { data?: { hintFa?: string }; error?: unknown };
+      setHintFa(json.data?.hintFa ?? null);
+    } catch {
+      setHintFa(null);
+    } finally {
+      setHintLoading(false);
+    }
+  }, [chapterSlug, ex, hintFa, hintLoading, stationSlug]);
+
+  const check = useCallback(async () => {    if (!ex) return;
     // TL-13 (A-2): the busy state is ALSO checked here so a stale-props click
     // (option selected → rapid double activation before commit) never re-enters.
     if (busy || gradingRef.current) return;
@@ -561,6 +595,9 @@ export function ExerciseSession({
       setBuilt([]);
     }
     setFeedback(null);
+    // TASK-HANASO-25 (BUG-023): the hint clears with the retry — the ladder
+    // advanced; the OLD hint (or its loading state) must not linger.
+    setHintFa(null);
     // `eliminated` intentionally SURVIVES the retry — an eliminated option stays
     // eliminated for every later attempt of the SAME exercise (#106 F2); only
     // reset() (advancing to the next exercise) clears it.
@@ -947,12 +984,26 @@ export function ExerciseSession({
           {!feedback.correct && !feedback.reveal && feedback.level > 0 && attemptNo < 3 && (
             <button
               type="button"
-              onClick={() => setHintRevealed(true)}
-              className="flex w-fit items-center gap-1 text-small text-ai underline underline-offset-4"
+              onClick={() => void showHint()}
+              disabled={hintLoading || hintFa !== null}
+              className="flex w-fit items-center gap-1 text-small text-ai underline underline-offset-4 disabled:opacity-60"
             >
               <Lightbulb aria-hidden className="size-4" />
-              {fa.curriculum.showHint}
+              {hintLoading ? fa.curriculum.hintLoading : fa.curriculum.showHint}
             </button>
+          )}
+          {/* TASK-HANASO-25 (BUG-023): the fetched hint renders HERE — inside
+              the wrong-answer panel, above the retry button; the learner can
+              still answer (the retry stays enabled). */}
+          {hintFa !== null && !feedback.correct && (
+            <p
+              role="status"
+              className="rounded-md border border-ai/40 bg-indigo-wash/30 p-3 text-small leading-[var(--leading-fa)] text-ink"
+              data-testid="hint-text"
+            >
+              <span className="font-bold">{fa.curriculum.showHint}: </span>
+              {hintFa}
+            </p>
           )}
         </div>
       )}
@@ -1006,7 +1057,6 @@ export function ExerciseSession({
           </span>
         )}
       </div>
-      {hintRevealed && !feedback && <p className="text-small text-ink-soft">{fa.curriculum.showHint}…</p>}
     </section>
   );
 }

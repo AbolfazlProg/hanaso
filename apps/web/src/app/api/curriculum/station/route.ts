@@ -98,6 +98,19 @@ const bodySchema = z.discriminatedUnion('action', [
   }),
   z.object({
     /**
+     * TASK-HANASO-25 (BUG-023 — the «سرنخ» no-op): fetch ONE exercise's F2 hint.
+     * The hint ladder (f2HintFa) is authored teaching material — it never
+     * crosses to the client pre-answer with the bank payload (answer-key
+     * discipline), so the button must round-trip. Returns ONLY the hint text:
+     * no options, no key, no rationale — nothing that grades an answer.
+     * Read-only for the GUEST scope (identity rules unchanged). */
+    action: z.literal('hint'),
+    chapterSlug: z.string().min(1),
+    stationSlug: z.string().min(1),
+    exerciseId: z.string().min(1),
+  }),
+  z.object({
+    /**
      * TASK-LEARNING-07 (DD-105/DD-111): handwriting practice record. The client
      * sends ONLY the structured summary (raw pen paths never leave the browser);
      * the character must belong to this station's writing content — a summary for
@@ -238,6 +251,31 @@ export async function POST(req: Request) {
     }
     return NextResponse.json(
       ok({ stationSlug: station.slug, state, ...(resumeExpired ? { resumeExpired: true } : {}) }),
+      { headers: { 'cache-control': 'no-store' } },
+    );
+  }
+
+  if (payload.action === 'hint') {
+    /* TASK-HANASO-25 (BUG-023): the «سرنخ» button's server round-trip. The
+     * exercise must be a PRACTICE item of THIS station (no cross-station
+     * probing); the response carries the authored f2HintFa ONLY — the F2 hint
+     * is the ladder's designed help tier (mnemonic/confusable redirect), it
+     * never names the answer for recognition/decode items (the CP-03 leak
+     * rewrite made sure of that at the content layer). */
+    const station = bundle.chapter.stations.find((s) => s.slug === payload.stationSlug);
+    const exercise = bundle.chapter.exercises[payload.exerciseId];
+    const inStation =
+      station?.blocks?.some(
+        (b) => (b as { exerciseIds?: string[] }).exerciseIds?.includes(payload.exerciseId),
+      ) ?? false;
+    if (!exercise || exercise.assessmentRole !== 'practice' || !inStation) {
+      return NextResponse.json(
+        fail({ code: 'station/unknown_exercise', message: `unknown practice exercise: ${payload.exerciseId}` }),
+        { status: 404 },
+      );
+    }
+    return NextResponse.json(
+      ok({ hintFa: exercise.feedback.f2HintFa }),
       { headers: { 'cache-control': 'no-store' } },
     );
   }
