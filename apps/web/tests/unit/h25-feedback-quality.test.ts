@@ -32,8 +32,13 @@ test('recall feedback — no doubled tails, no cryptic row hints (BUG-020)', () 
       ex.feedback.f2HintFa.includes('روی همین خط از ردیفِ'),
       `${ex.id}: f2HintFa still the cryptic row hint`,
     ).toBe(false);
-    // the f2 must carry a concrete anchor: a confusable glyph OR the nasal fact
-    const anchored = /قاطی نکن|هجا نیست|یادسپار/.test(ex.feedback.f2HintFa);
+    // the f2 must carry a concrete anchor: a named confusable, the nasal fact,
+    // a mnemonic — OR (TASK-26) a concrete shape description that lets the
+    // learner compare strokes without any not-yet-taught glyph (CL-13-legal)
+    const anchored =
+      /قاطی نکن|هجا نیست|یادسپار/.test(ex.feedback.f2HintFa) ||
+      /[ぁ-ゖ゠-ヿ]/.test(ex.feedback.f2HintFa) ||
+      /خط|قوس|حلقه|ضربه|نقطه|دُم|مورب|افقی|عمودی/.test(ex.feedback.f2HintFa);
     expect(anchored, `${ex.id}: f2 must name a concrete anchor (got: ${ex.feedback.f2HintFa})`).toBe(true);
   }
 });

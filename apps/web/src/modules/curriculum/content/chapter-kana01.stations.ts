@@ -73,14 +73,14 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h1-card-hira-i',
         kanaId: 'hira-i',
         showRomaji: true,
-        confusableNoteFa: 'با «り» اشتباه نشود.',
+        confusableNoteFa: 'دو خطِ موازیِ مورب دارد — با کاناهای تک‌خط قاطی نکن؛ جفتش را بعداً در ردیف «را» می‌بینی.',
       },
       {
         kind: 'kana-card',
         id: 'blk-stn-kana-h1-card-hira-u',
         kanaId: 'hira-u',
         showRomaji: true,
-        confusableNoteFa: 'با «ら» اشتباه نشود.',
+        confusableNoteFa: 'این شکل «اُ» است — دُم کوتاهش رو به راست است؛ کانای مشابه را بعداً در ردیف «را» می‌بینی.',
       },
       {
         kind: 'exercise',
@@ -220,14 +220,14 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h2-card-hira-ki',
         kanaId: 'hira-ki',
         showRomaji: true,
-        confusableNoteFa: 'با «さ» اشتباه نشود.',
+        confusableNoteFa: 'خط افقیِ دومش با خط عمودی قطع می‌شود؛ جفت نزدیکش را فردا در ردیف «سا» می‌بینی.',
       },
       {
         kind: 'kana-card',
         id: 'blk-stn-kana-h2-card-hira-ku',
         kanaId: 'hira-ku',
         showRomaji: true,
-        confusableNoteFa: 'با «へ» اشتباه نشود.',
+        confusableNoteFa: 'یک قوسِ رو به پایین است؛ کانای قوسیِ دیگری را بعداً در ردیف «ها» می‌بینی.',
       },
       {
         kind: 'exercise',
@@ -356,14 +356,14 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h3-card-hira-sa',
         kanaId: 'hira-sa',
         showRomaji: true,
-        confusableNoteFa: 'با «き» و «ち» اشتباه نشود.',
+        confusableNoteFa: 'خطِ افقیِ اولش با عمودی قطع می‌شود (با «き» اشتباه نشود)؛ جفتِ دیگرش را بعداً در ردیف «تا» می‌بینی.',
       },
       {
         kind: 'kana-card',
         id: 'blk-stn-kana-h3-card-hira-shi',
         kanaId: 'hira-shi',
         showRomaji: true,
-        confusableNoteFa: 'با «つ» اشتباه نشود.',
+        confusableNoteFa: 'این «شی» است: یک خطِ تقریباً عمودی + قوسِ کوتاه؛ کانای قوسیِ دیگری را بعداً در ردیف «تا» می‌بینی.',
       },
       { kind: 'kana-card', id: 'blk-stn-kana-h3-card-hira-su', kanaId: 'hira-su', showRomaji: true },
       {
@@ -615,7 +615,7 @@ export const KANA_STATIONS: Station[] = [
         patternJa: 'あ段+あ · い段+い · う段+う',
         titleFa: 'کارت مرجع: مصوتِ کشیده',
         bodyFa:
-          'مصوتِ بلند = همان مصوت، دو برابر — با تکرار همان کانا نوشته می‌شود. جفت‌های واقعی که شنیدی: いえ/いいえ، え/ええ — کشش معنا را عوض می‌کند.',
+          'مصوتِ بلند = همان مصوت، دو برابر — با تکرار همان کانا نوشته می‌شود. همان «ضربه‌هایی» که با انگشت می‌شمردی، نام فنی‌اش مورا است: هر ضربه = یک مورا. جفت‌های واقعی که شنیدی: いえ/いいえ، え/ええ — کشش معنا را عوض می‌کند.',
         structureTable: {
           headers: ['واژهٔ کوتاه', 'واژهٔ بلند', 'تفاوت'],
           rows: [
@@ -862,7 +862,7 @@ export const KANA_STATIONS: Station[] = [
         role: 'explain',
         titleFa: 'یُوئون — کوچک یعنی فشرده',
         bodyFa:
-          'گانای کوچک ゃゅょ صدای مستقل ندارد — به کانای قبل می‌چسبد و با آن یک مورا می‌شود. اندازه در ژاپنی معنا دارد؛ مثل فرق «کیــا» و «کی‌یا» در تلفظ فارسی.',
+          'کانای کوچک ゃゅょ صدای مستقل ندارد — به کانای قبل می‌چسبد و با آن یک مورا می‌شود. اندازه در ژاپنی معنا دارد؛ مثل فرق «کیــا» و «کی‌یا» در تلفظ فارسی.',
         miniTable: {
           headers: ['فشرده (۱ مورا)', 'جدا (۲ مورا)', 'شنیدن'],
           rows: [
@@ -1131,7 +1131,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h8-card-hira-nu',
         kanaId: 'hira-nu',
         showRomaji: false,
-        confusableNoteFa: 'با «め» اشتباه نشود.',
+        confusableNoteFa: 'حلقهٔ کوچک دارد و دُمش رو به پایین است؛ جفتش را بعداً در ردیف «ما» می‌بینی.',
       },
       {
         kind: 'exercise',
@@ -1143,7 +1143,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h8-card-hira-ne',
         kanaId: 'hira-ne',
         showRomaji: false,
-        confusableNoteFa: 'با «れ» و «わ» اشتباه نشود.',
+        confusableNoteFa: 'حلقهٔ کوچک + دُمِ بلندِ رو به پایین؛ دو کانای مشابه را بعداً در ردیف‌های «را» و «وا» می‌بینی.',
       },
       { kind: 'kana-card', id: 'blk-stn-kana-h8-card-hira-no', kanaId: 'hira-no', showRomaji: false },
       {
@@ -1582,7 +1582,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h11-card-hira-re',
         kanaId: 'hira-re',
         showRomaji: false,
-        confusableNoteFa: 'با «ね» و «わ» اشتباه نشود.',
+        confusableNoteFa: 'دُمِ بلند و صاف دارد (با «ね» تفاوتش: حلقهٔ کوچک‌تر)؛ کانای دیگر را بعداً در ردیف «وا» می‌بینی.',
       },
       {
         kind: 'kana-card',
@@ -2404,7 +2404,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k1-card-kata-e',
         kanaId: 'kata-e',
         showRomaji: false,
-        confusableNoteFa: 'با «ユ» اشتباه نشود.',
+        confusableNoteFa: 'یک خطِ افقیِ کوتاه روی نیم‌قوس؛ جفتش را بعداً در ردیف کاتاکانای «یا» می‌بینی.',
       },
       { kind: 'kana-card', id: 'blk-stn-kana-k1-card-kata-o', kanaId: 'kata-o', showRomaji: false },
       {
@@ -2480,7 +2480,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k2-card-kata-ta',
         kanaId: 'kata-ta',
         showRomaji: false,
-        confusableNoteFa: 'با «ナ» اشتباه نشود.',
+        confusableNoteFa: 'این «تا» است: خطِ مورب + خطِ افقیِ کوتاهِ روی آن؛ کانای ساده‌ترِ دیگری را بعداً در ردیف کاتاکانای «نا» می‌بینی.',
       },
       { kind: 'kana-card', id: 'blk-stn-kana-k2-card-kata-chi', kanaId: 'kata-chi', showRomaji: false },
       {
@@ -2488,7 +2488,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k2-card-kata-tsu',
         kanaId: 'kata-tsu',
         showRomaji: false,
-        confusableNoteFa: 'با «シ» اشتباه نشود.',
+        confusableNoteFa: 'سه ضربه‌اش از چپ‌بالا به راستِ پایین می‌روند؛ جفت قرینه‌اش را بعداً در ردیف کاتاکانای «شی» می‌بینی.',
       },
       {
         kind: 'exercise',
@@ -2733,7 +2733,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k4-card-kata-so',
         kanaId: 'kata-so',
         showRomaji: false,
-        confusableNoteFa: 'با «ン» اشتباه نشود.',
+        confusableNoteFa: 'این «سُ» است: یک خطِ موربِ بلند + یک نقطه؛ کانای تک‌خطِ «ن» را بعداً می‌بینی.',
       },
       {
         kind: 'exercise',
@@ -2867,7 +2867,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k5-card-kata-fu',
         kanaId: 'kata-fu',
         showRomaji: false,
-        confusableNoteFa: 'با «ワ» اشتباه نشود.',
+        confusableNoteFa: 'دو خطِ موربِ رو به پایین + یک خطِ افقیِ کوتاه؛ کانای دوخطیِ «وا» را بعداً می‌بینی.',
       },
       {
         kind: 'exercise',
@@ -3027,7 +3027,7 @@ export const KANA_STATIONS: Station[] = [
         items: [
           { glyph: 'ャ', readingFa: 'یای کوچک (کاتاکانا)', noteFa: 'کاتاکانا هم یُوئون دارد — ジ+ャ = «جا»: ジャパン.' },
           { glyph: 'ュ', readingFa: 'یوی کوچک (کاتاکانا)', noteFa: 'بعداً در ジュース.' },
-          { glyph: 'ョ', readingFa: 'یوی گردِ کوچک (کاتاکانا)', noteFa: 'کامل‌کنندهٔ خانواده — مثل ひرای گانای ゃゅょ.' },
+          { glyph: 'ョ', readingFa: 'یوی گردِ کوچک (کاتاکانا)', noteFa: 'کامل‌کنندهٔ خانواده — مثل あ که مادرِ خانوادهٔ ゃゅょ است.' },
           { glyph: 'ゼ', readingFa: 'زه', noteFa: 'セ+゛ — در プレゼント (هدیه).' },
           { glyph: 'プ', readingFa: 'پُ', noteFa: 'フ+゜ — در プレゼント.' },
           { glyph: 'パ', readingFa: 'پا', noteFa: 'ハ+゜ — در ジャパン (پْا).' },
@@ -3415,7 +3415,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k9-card-kata-me',
         kanaId: 'kata-me',
         showRomaji: false,
-        confusableNoteFa: 'با «ヌ» اشتباه نشود.',
+        confusableNoteFa: 'دو خطِ مورب موازی + یک نقطه؛ جفتش را بعداً در ردیف کاتاکانای «نا» می‌بینی.',
       },
       { kind: 'kana-card', id: 'blk-stn-kana-k9-card-kata-mo', kanaId: 'kata-mo', showRomaji: false },
       {

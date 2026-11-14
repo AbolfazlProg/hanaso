@@ -32,6 +32,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { getChapter } from '@/modules/curriculum/content';
 import type { Exercise, Chapter } from '@/modules/curriculum/types';
+import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 
 const web = process.cwd();
 
@@ -64,6 +65,39 @@ const ch1 = getChapter('kana-foundation-01')!;
 const ch2 = getChapter('first-meeting-01')!;
 const ARABIC = /[\u0600-\u06FF]/;
 const JA = /[ぁ-ゖ゠-ヿ]/;
+
+/* ----------------------- CL-13 helpers (TASK-HANASO-26 B5) -----------------
+ * Teaching-order discipline: a beginner must never NEED a glyph the course
+ * has not introduced yet. The teaching order is derived from the chapter's
+ * own station walk: a glyph is "taught" at the first station whose blocks
+ * introduce it — kana-card blocks (the glyph itself) and rule blocks (a rule
+ * block INTRODUCES every Japanese glyph it displays: its subject + examples).
+ * A learner-visible text mentioning a Japanese glyph is fine only if that
+ * glyph is taught at or before that station, OR the text carries an explicit
+ * forward-promise («بعداً» / «فردا» / «بعدها» / «بعد از این») marking it as a
+ * preview, not assumed knowledge.
+ */
+const PROMISE_RE = /بعداً|فردا|بعدها|بعد از این/;
+const JAG = /[ぁ-ゖ゠-ヿ]/g; // global — String.match() must return EVERY glyph
+function buildTeachingIndex(ch: Chapter) {
+  const taughtAt = new Map<string, number>();
+  const stationIdx = new Map<string, number>();
+  ch.stations.forEach((s, i) => {
+    stationIdx.set(s.slug, i + 1);
+    for (const b of s.blocks) {
+      if (b.kind === 'kana-card') {
+        const glyph = KANA_ITEMS_BY_ID[(b as { kanaId: string }).kanaId]?.glyph;
+        if (glyph && !taughtAt.has(glyph)) taughtAt.set(glyph, i + 1);
+      } else if ((b.kind as string).startsWith('rule')) {
+        // a rule block INTRODUCES every Japanese glyph it displays
+        for (const g of JSON.stringify(b).match(JAG) ?? []) {
+          if (!taughtAt.has(g)) taughtAt.set(g, i + 1);
+        }
+      }
+    }
+  });
+  return { taughtAt, stationIdx };
+}
 
 /* ---------------------------------------------------------------- helpers */
 
@@ -319,4 +353,73 @@ test('CL-12 fixtures — catches a reading inversion (negative), passes registry
   const fakeClean = { ...ch1, exercises: { ...ch1.exercises, 'fixture-cl12-clean': clean } } as Chapter;
   const cleanHits = lintChapter(fakeClean).filter((f) => f.id === 'fixture-cl12-clean' && f.rule === 'CL-12');
   expect(cleanHits).toEqual([]);
+});
+
+
+/* ------------------------------------------- CL-13 (TASK-HANASO-26 B5) ---- */
+
+test('CL-13 — teaching-order discipline: no learner-visible text NEEDS a not-yet-taught glyph (promises allowed)', () => {
+  const { taughtAt, stationIdx } = buildTeachingIndex(ch1);
+  expect(taughtAt.size).toBeGreaterThanOrEqual(92); // every registry glyph is introduced somewhere in ch1
+
+  // map exercise -> the station that hosts it
+  const exAt = new Map<string, { slug: string; idx: number }>();
+  for (const s of ch1.stations) {
+    for (const b of s.blocks) {
+      if (b.kind === 'exercise') {
+        for (const eid of b.exerciseIds) exAt.set(eid, { slug: s.slug, idx: stationIdx.get(s.slug)! });
+      }
+    }
+  }
+
+  const findings: string[] = [];
+  const check = (where: string, loc: { slug: string; idx: number }, text: string | undefined) => {
+    if (!text || PROMISE_RE.test(text)) return; // an explicit preview promise is allowed
+    for (const g of text.match(JAG) ?? []) {
+      const t = taughtAt.get(g);
+      if (t === undefined) findings.push(`${where} (${loc.slug}): «${g}» is NEVER introduced in ch1`);
+      else if (t > loc.idx) findings.push(`${where} (${loc.slug}): «${g}» only taught later (station #${t})`);
+    }
+  };
+
+  // f1 / f2 (pre-answer surfaces) of every hosted exercise
+  for (const ex of Object.values(ch1.exercises) as Exercise[]) {
+    const loc = exAt.get(ex.id);
+    if (!loc) continue;
+    check(`${ex.id}/f1`, loc, ex.feedback?.f1Fa);
+    check(`${ex.id}/f2`, loc, ex.feedback?.f2HintFa);
+    check(`${ex.id}/promptJa`, loc, ex.promptJa);
+  }
+
+  // confusable notes on kana cards
+  for (const s of ch1.stations) {
+    const idx = stationIdx.get(s.slug)!;
+    for (const b of s.blocks) {
+      if (b.kind === 'kana-card') {
+        check(`card:${(b as { kanaId: string }).kanaId}/confusable`, { slug: s.slug, idx }, (b as { confusableNoteFa?: string }).confusableNoteFa);
+      }
+    }
+  }
+
+  expect(findings, JSON.stringify(findings, null, 1)).toEqual([]);
+});
+
+test('CL-13 fixtures — catches a future-glyph dependency (negative); promise-marked preview passes (positive)', () => {
+  const { taughtAt, stationIdx } = buildTeachingIndex(ch1);
+  const loc = { slug: ch1.stations[1]!.slug, idx: 2 }; // stn-kana-h1 — station #2
+  // negative: a confusable note at h1 that NEEDS り (taught at #12) without a promise
+  const badText = 'با «り» اشتباه نشود.';
+  let bad = false;
+  for (const g of badText.match(JA) ?? []) {
+    const t = taughtAt.get(g);
+    if (t === undefined || t > loc.idx) bad = true;
+  }
+  expect(bad).toBe(true);
+  // positive: the SAME glyph WITH an explicit promise is acceptable
+  const okText = 'دو خطِ موازی — جفتش را بعداً در ردیف «را» می‌بینی.';
+  let ok = true;
+  if (!PROMISE_RE.test(okText)) ok = false;
+  expect(ok).toBe(true);
+  // and stationIdx really places h1 second (sanity of the fixture)
+  expect(stationIdx.get('stn-kana-h1')).toBe(2);
 });
