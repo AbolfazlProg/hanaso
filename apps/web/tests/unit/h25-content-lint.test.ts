@@ -355,7 +355,6 @@ test('CL-12 fixtures — catches a reading inversion (negative), passes registry
   expect(cleanHits).toEqual([]);
 });
 
-
 /* ------------------------------------------- CL-13 (TASK-HANASO-26 B5) ---- */
 
 test('CL-13 — teaching-order discipline: no learner-visible text NEEDS a not-yet-taught glyph (promises allowed)', () => {
@@ -396,7 +395,11 @@ test('CL-13 — teaching-order discipline: no learner-visible text NEEDS a not-y
     const idx = stationIdx.get(s.slug)!;
     for (const b of s.blocks) {
       if (b.kind === 'kana-card') {
-        check(`card:${(b as { kanaId: string }).kanaId}/confusable`, { slug: s.slug, idx }, (b as { confusableNoteFa?: string }).confusableNoteFa);
+        check(
+          `card:${(b as { kanaId: string }).kanaId}/confusable`,
+          { slug: s.slug, idx },
+          (b as { confusableNoteFa?: string }).confusableNoteFa,
+        );
       }
     }
   }
@@ -422,4 +425,120 @@ test('CL-13 fixtures — catches a future-glyph dependency (negative); promise-m
   expect(ok).toBe(true);
   // and stationIdx really places h1 second (sanity of the fixture)
   expect(stationIdx.get('stn-kana-h1')).toBe(2);
+});
+
+/* ------------------------------- CL-14 (TASK-HANASO-26R PHASE 3) -----------
+ * STRUCTURAL rule-order gate — the Yōon regression. A rule mark (yōon, sokuon,
+ * dakuten, handakuten, chōonpu, foreign-small) is only legal inside a station
+ * AFTER its base glyphs have actually been TAUGHT (kana-card blocks), and the
+ * rule STATION itself must come after every station that teaches the base row
+ * it depends on. introducesGlyphs (firstLook previews) do NOT count as
+ * teaching for this gate — that equivalence is exactly how the v26 defect
+ * shipped (h6 yōon at position 7 legalizing 25 surfaces while やゆよ were only
+ * card-taught at position 15).
+ */
+import { RULE_MARK_STATION, decomposeJa, derivedFormsIn } from '@/modules/curriculum/glyph-budget';
+
+/** every glyph ACTUALLY TAUGHT (kana-card) by end of station index i */
+function taughtByEnd(ch: Chapter, i: number): Set<string> {
+  const set = new Set<string>();
+  ch.stations.slice(0, i + 1).forEach((s) => {
+    for (const b of s.blocks) {
+      if (b.kind === 'kana-card') {
+        const g = KANA_ITEMS_BY_ID[(b as { kanaId: string }).kanaId]?.glyph;
+        if (g) set.add(g);
+      }
+    }
+  });
+  return set;
+}
+
+test('CL-14 — structural rule-order: every rule station comes AFTER the stations teaching its base glyphs (the Yōon regression gate)', () => {
+  // 1) rule stations must appear after the kana-card teaching of every base
+  //    glyph their OWN blocks use (firstLook does NOT count — taughtByEnd is
+  //    card-only by construction).
+  const findings: string[] = [];
+  ch1.stations.forEach((s, i) => {
+    const ruleMarks = s.blocks.filter((b) => String(b.kind).startsWith('rule'));
+    if (ruleMarks.length === 0) return;
+    const taught = taughtByEnd(ch1, i);
+    // the station's own prerequisite bases: decompose every Japanese string in
+    // its rule blocks; each mark's base glyph must be TAUGHT by now
+    for (const b of ruleMarks) {
+      // per-FIELD + promise-aware: a field that merely PROMISES a future
+      // glyph («بعداً …» honesty label) is a preview, not a hidden dependency;
+      // a field that USES an untaught glyph without a promise is the defect.
+      for (const [field, text] of Object.entries(b as Record<string, unknown>)) {
+        if (typeof text !== 'string') continue;
+        if (PROMISE_RE.test(text)) continue;
+        for (const g of text.match(JAG) ?? []) {
+          const req = decomposeJa(g);
+          for (const base of req.base) {
+            if (!taught.has(base)) {
+              findings.push(`${s.slug}/${(b as { id: string }).id}.${field}: base «${base}» (from «${g}») not card-taught by #${i + 1}`);
+            }
+          }
+          for (const mark of req.marks) {
+            const teachAt = ch1.stations.findIndex((t) => t.slug === RULE_MARK_STATION[mark]);
+            if (teachAt === -1) continue;
+            if (teachAt > i) {
+              findings.push(`${s.slug}/${(b as { id: string }).id}.${field}: mark «${mark}» (from «${g}») at #${i + 1} but taught at #${teachAt + 1}`);
+            }
+          }
+        }
+      }
+    }
+  });
+  expect(findings, JSON.stringify(findings, null, 1)).toEqual([]);
+
+  // 2) the Yōon station specifically must come AFTER the や row station
+  const yoonIdx = ch1.stations.findIndex((s) => s.slug === RULE_MARK_STATION['yoon-small']);
+  const yaIdx = ch1.stations.findIndex((s) =>
+    s.blocks.some(
+      (b) =>
+        b.kind === 'kana-card' &&
+        ['や', 'ゆ', 'よ'].includes(KANA_ITEMS_BY_ID[(b as { kanaId: string }).kanaId]?.glyph ?? ''),
+    ),
+  );
+  expect(yaIdx).toBeGreaterThan(-1);
+  expect(yoonIdx, 'Yōon rule station must come AFTER the や row station').toBeGreaterThan(yaIdx);
+});
+
+test('CL-14 negative fixture — a station order with yōon BEFORE the や row FAILS the gate', () => {
+  // Build a mutated chapter: move the yoon station right after h5 (the v26
+  // defect) and prove the gate catches it.
+  const mutated: Chapter = { ...ch1, stations: [...ch1.stations] };
+  const yoonIdx = mutated.stations.findIndex((s) => s.slug === RULE_MARK_STATION['yoon-small']);
+  const [yoon] = mutated.stations.splice(yoonIdx, 1);
+  const insertAfter = mutated.stations.findIndex((s) => s.slug === 'stn-kana-h5') + 1;
+  mutated.stations.splice(insertAfter, 0, yoon);
+  // recompute the same structural check against the mutated order
+  const findings: string[] = [];
+  mutated.stations.forEach((s, i) => {
+    const ruleMarks = s.blocks.filter((b) => String(b.kind).startsWith('rule'));
+    if (ruleMarks.length === 0) return;
+    const taught = taughtByEnd(mutated, i);
+    for (const b of ruleMarks) {
+      for (const g of JSON.stringify(b).match(JAG) ?? []) {
+        const req = decomposeJa(g);
+        for (const base of req.base) {
+          if (!taught.has(base)) findings.push(`${s.slug}: base «${base}» untaught`);
+        }
+      }
+    }
+  });
+  expect(findings.length).toBeGreaterThan(0); // the regression MUST be caught
+  expect(findings.some((f) => f.includes(RULE_MARK_STATION['yoon-small']))).toBe(true);
+});
+
+test('CL-14 positive fixture — yōon AFTER the や row passes (clean order)', () => {
+  const yoonIdx = ch1.stations.findIndex((s) => s.slug === RULE_MARK_STATION['yoon-small']);
+  const yaIdx = ch1.stations.findIndex((s) =>
+    s.blocks.some(
+      (b) =>
+        b.kind === 'kana-card' &&
+        ['や', 'ゆ', 'よ'].includes(KANA_ITEMS_BY_ID[(b as { kanaId: string }).kanaId]?.glyph ?? ''),
+    ),
+  );
+  expect(yoonIdx).toBeGreaterThan(yaIdx);
 });

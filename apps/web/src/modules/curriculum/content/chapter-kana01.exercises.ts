@@ -250,7 +250,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «اُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«اُ» = お.',
     },
     assessmentRole: 'practice',
@@ -425,7 +425,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «کی» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«کی» = き.',
     },
     assessmentRole: 'practice',
@@ -494,7 +494,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «کُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«کُ» = こ.',
     },
     assessmentRole: 'practice',
@@ -649,7 +649,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «سا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«سا» = さ.',
     },
     assessmentRole: 'practice',
@@ -718,7 +718,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «سه» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«سه» = せ.',
     },
     assessmentRole: 'practice',
@@ -741,7 +741,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «سُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«سُ» = そ.',
     },
     assessmentRole: 'practice',
@@ -813,7 +813,10 @@ export const KANA_EXERCISES: Exercise[] = [
       { id: 'c', label: '«اییه‌ن»' },
     ],
     correctOptionId: 'a',
-    distractorRationaleFa: { b: '「え」 = «اِه» — «یا» صدای کانای دیگری است.', c: 'آخرین صدا فقط «اِ» است — صدای «ن» در این واژه نیست.' },
+    distractorRationaleFa: {
+      b: '「え」 = «اِه» — «یا» صدای کانای دیگری است.',
+      c: 'آخرین صدا فقط «اِ» است — صدای «ن» در این واژه نیست.',
+    },
     feedback: {
       f1Fa: 'کانای آخر 「え」 است — «اِه»، نه «یا».',
       f2HintFa: 'کانا به کانا بخوان: «ای»…',
@@ -1231,7 +1234,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «نا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«نا» = な.',
     },
     assessmentRole: 'practice',
@@ -1254,7 +1257,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «نی» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«نی» = に.',
     },
     assessmentRole: 'practice',
@@ -1277,7 +1280,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «نو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«نو» = ぬ.',
     },
     assessmentRole: 'practice',
@@ -1478,7 +1481,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «تا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«تا» = た.',
     },
     assessmentRole: 'practice',
@@ -1501,7 +1504,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «چی» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«چی» = ち.',
     },
     assessmentRole: 'practice',
@@ -1570,7 +1573,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «تُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«تُ» = と.',
     },
     assessmentRole: 'practice',
@@ -1745,7 +1748,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «می» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«می» = み.',
     },
     assessmentRole: 'practice',
@@ -1768,7 +1771,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «مو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«مو» = む.',
     },
     assessmentRole: 'practice',
@@ -1791,7 +1794,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «مه» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«مه» = め.',
     },
     assessmentRole: 'practice',
@@ -1969,7 +1972,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «را» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«را» = ら.',
     },
     assessmentRole: 'practice',
@@ -2213,7 +2216,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «ها» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«ها» = は.',
     },
     assessmentRole: 'practice',
@@ -2259,7 +2262,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «فو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«فو» = ふ.',
     },
     assessmentRole: 'practice',
@@ -2282,7 +2285,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «هه» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«هه» = へ.',
     },
     assessmentRole: 'practice',
@@ -2492,7 +2495,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «یا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«یا» = や.',
     },
     assessmentRole: 'practice',
@@ -2515,7 +2518,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «یو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«یو» = ゆ.',
     },
     assessmentRole: 'practice',
@@ -2538,7 +2541,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «یُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط هیراگانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«یُ» = よ.',
     },
     assessmentRole: 'practice',
@@ -2790,7 +2793,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «آ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«آ» = ア.',
     },
     assessmentRole: 'practice',
@@ -2816,7 +2819,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «ای» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«ای» = イ.',
     },
     assessmentRole: 'practice',
@@ -2839,7 +2842,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «او» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«او» = ウ.',
     },
     assessmentRole: 'practice',
@@ -2862,7 +2865,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «اِ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«اِ» = エ.',
     },
     assessmentRole: 'practice',
@@ -3083,7 +3086,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «تسو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«تسو» = ツ.',
     },
     assessmentRole: 'practice',
@@ -3129,7 +3132,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «تُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«تُ» = ト.',
     },
     assessmentRole: 'practice',
@@ -3284,7 +3287,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «را» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«را» = ラ.',
     },
     assessmentRole: 'practice',
@@ -3310,7 +3313,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «ری» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«ری» = リ.',
     },
     assessmentRole: 'practice',
@@ -3333,7 +3336,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «رو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«رو» = ル.',
     },
     assessmentRole: 'practice',
@@ -3356,7 +3359,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «ره» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«ره» = レ.',
     },
     assessmentRole: 'practice',
@@ -3379,7 +3382,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «رُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«رُ» = ロ.',
     },
     assessmentRole: 'practice',
@@ -3531,7 +3534,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «سا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«سا» = サ.',
     },
     assessmentRole: 'practice',
@@ -3554,7 +3557,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «شی» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«شی» = シ.',
     },
     assessmentRole: 'practice',
@@ -3600,7 +3603,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «سه» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«سه» = セ.',
     },
     assessmentRole: 'practice',
@@ -3623,7 +3626,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «سُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«سُ» = ソ.',
     },
     assessmentRole: 'practice',
@@ -3781,7 +3784,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «ها» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«ها» = ハ.',
     },
     assessmentRole: 'practice',
@@ -3807,7 +3810,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «هی» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«هی» = ヒ.',
     },
     assessmentRole: 'practice',
@@ -3830,7 +3833,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «فو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«فو» = フ.',
     },
     assessmentRole: 'practice',
@@ -3876,7 +3879,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «هُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«هُ» = ホ.',
     },
     assessmentRole: 'practice',
@@ -4081,7 +4084,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «کا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«کا» = カ.',
     },
     assessmentRole: 'practice',
@@ -4107,7 +4110,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «کی» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«کی» = キ.',
     },
     assessmentRole: 'practice',
@@ -4130,7 +4133,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «کو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«کو» = ク.',
     },
     assessmentRole: 'practice',
@@ -4429,7 +4432,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «ما» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«ما» = マ.',
     },
     assessmentRole: 'practice',
@@ -4455,7 +4458,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «می» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«می» = ミ.',
     },
     assessmentRole: 'practice',
@@ -4478,7 +4481,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'کانای دیگری با همین ردیف.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «مو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«مو» = ム.',
     },
     assessmentRole: 'practice',
@@ -4501,7 +4504,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.' },
     feedback: {
       f1Fa: 'کانای «مه» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«مه» = メ.',
     },
     assessmentRole: 'practice',
@@ -4628,7 +4631,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «یا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«یا» = ヤ.',
     },
     assessmentRole: 'practice',
@@ -4651,7 +4654,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { b: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «یو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«یو» = ユ.',
     },
     assessmentRole: 'practice',
@@ -4829,7 +4832,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «نا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«نا» = ナ.',
     },
     assessmentRole: 'practice',
@@ -4878,7 +4881,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.', c: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «نو» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«نو» = ヌ.',
     },
     assessmentRole: 'practice',
@@ -4924,7 +4927,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کانای دیگری با همین ردیف.', b: 'کانای دیگری با همین ردیف.' },
     feedback: {
       f1Fa: 'کانای «نُ» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«نُ» = ノ.',
     },
     assessmentRole: 'practice',
@@ -5004,7 +5007,7 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'کانای «وا» این نیست — به شکل درست نگاه کن.',
-      f2HintFa: 'کانای درست به خط  است — شکلش را با یادسپارش مقایسه کن.',
+      f2HintFa: 'کانای درست به خط کاتاکانا است — شکلش را با یادسپارش مقایسه کن.',
       f3ExplainFa: '«وا» = ワ.',
     },
     assessmentRole: 'practice',
@@ -10855,7 +10858,7 @@ export const KANA_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'این ردیف さ است — ردیف اشتباه.', c: '「そ」 بی‌واک است؛ اینجا واک‌دار لازم است.' },
     feedback: {
       f1Fa: 'معنا «خانواده» است: کازوکو.',
-      f2HintFa: 'واک‌دارِ «سِ» چه هست؟',
+      f2HintFa: 'واک‌دارِ «سُ» چه هست؟',
       f3ExplainFa: '「かぞく」 = ک+ぞ+ک — 「ぞ」 = さ+゛.',
     },
     assessmentRole: 'practice',
