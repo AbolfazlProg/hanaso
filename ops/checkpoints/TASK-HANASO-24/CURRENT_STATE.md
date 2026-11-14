@@ -1,6 +1,6 @@
 # TASK-HANASO-24 — CURRENT STATE
 
-> آخرین به‌روزرسانی: **CP-08**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
+> آخرین به‌روزرسانی: **CP-09 — مأموریت کامل**. این فایل همیشه آخرین وضعیت واقعی و «اقدام بعدی» را نگه می‌دارد. پس از قطع سشن، از همین فایل + CHECKPOINT_LOG ادامه بده.
 
 ## مأموریت
 
@@ -46,7 +46,7 @@
 - [x] **CP-06**: سه ساب‌ایجنت مستقل هم‌زمان (A=Auth/IDOR، B=API/Exposure، C=DB/Transaction) — هر سه با یافتهٔ مستقل و شواهد زنده (نه تأیید صِرف): A: 1H+3M+4L (A-01 نبود گیت secret، A-02 decode 500، A-03 duplicate-cookie first/last، A-04 events props بی‌کران) · B: 1C+1H+4M+6L (B-03 BUG-001 gate audio، B-05 events GET بی‌هویت، B-06 perQuestion key harvest) · C: 1H+2M+5L (C-01 درایو in-flight در tx-instance، C-02 25P02 در tx، C-04 attemptCount) → SUBAGENT_REVIEW_{A,B,C}.md
 - [x] **CP-07**: رفع موج ایرادات (commit 14d9d3a) + Verification نهایی با همان ۳ ساب‌ایجنت: **هر سه DOMAIN VERDICT: PASS** (A: همهٔ High/Medium FIXED؛ B: B-06/B-05 FIXED + deferralهای موثق؛ C: C-01/C-02/C-03 FIXED با آزمایش زنده)؛ تست nesting-guard جدید (۳ تست)؛ ادعای «typo» C-10 نمایشی بود (سورس درست بود)؛ شواهد QA تازه‌سازی شد → FINAL_INDEPENDENT_VERIFICATION.md
 - [x] **CP-08**: Regression کامل: TS پاک · ESLint پاک · Unit+Integration in-memory ۶۴ فایل/۷۵۵ سبز · Integration-pg ۹ فایل/۳۸+۸skip سبز · E2E مرورگر واقعی h21 و h22 روی build این شاخه در برابر build بکر af49535: **مجموعهٔ نتایج IDENTICAL** (h21: ۱۸/۴۳ در هر دو؛ h22: ۱۴/۲۴ در هر دو؛ diff خالی) — هیچ رگرسیونی از H24؛ افت نسب به دریل تاریخی ۹۲/۹۲ مربوط به حساسیت زمان‌بندی/صدأ همین sandbox است و در baseline هم وجود دارد. لاگ‌ها در regression-evidence/.
-- [ ] **CP-09**: RELEASE_CANDIDATE.md + مستندات انتشار (بدون deploy)
+- [x] **CP-09**: RELEASE_CANDIDATE.md — هویت RC، خلاصهٔ تغییرات، جدول تأیید کامل، deferred register، الزامات env (SECRET اجباری + CUTOFF پیشنهاد +۱۴ روز + XFP موجود)، چک‌لیست استقرار + ریسک‌ها + rollback. Deploy واقعی طبق مأموریت جداگانه است.
 
 ## اقدام بعدی
 
