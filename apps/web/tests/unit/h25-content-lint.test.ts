@@ -45,6 +45,19 @@ for (const m of kanaSrc.matchAll(
 const glyphToKana = new Map<string, { romaji: string; script: string }>();
 for (const [, r] of registry) glyphToKana.set(r.glyph, { romaji: r.romaji, script: r.script });
 
+// CL-12 truth source: glyph -> Persian pronunciation from the TEACHING
+// registry (kana-teaching.ts pronunciationFa is the course-wide convention).
+const teachingSrc = readFileSync(path.join(web, 'src/modules/curriculum/content/kana-teaching.ts'), 'utf8');
+const kanaIdToPron = new Map<string, string>();
+for (const m of teachingSrc.matchAll(/kanaId:\s*'([^']+)',\s*\n\s*audioRef:\s*'kn-[^']+',\s*\n\s*pronunciationFa:\s*'«([^»]+)»'/g)) {
+  kanaIdToPron.set(m[1]!, m[2]!);
+}
+const teachingPronunciation = new Map<string, string>();
+for (const [kid, r] of registry) {
+  const pron = kanaIdToPron.get(kid);
+  if (pron) teachingPronunciation.set(r.glyph, pron);
+}
+
 const ch1 = getChapter('kana-foundation-01')!;
 const ch2 = getChapter('first-meeting-01')!;
 const ARABIC = /[\u0600-\u06FF]/;
@@ -100,17 +113,47 @@ function lintChapter(ch: Chapter) {
       }
     }
 
-    // CL-11 script NAME in a reading slot (Round-1 A1: the «هیراگانا» leak —
-    // a rationale/f1 that says a glyph's SOUND is the word "hiragana")
+    // CL-11 script NAME in a reading slot (Round-1 A1 + Round-2 A1: the leak
+    // shipped in FOUR template families — صدای «هیراگانا»، شنیده‌شده «هیراگانا»
+    // بود، با خوانش «هیراگانا»، «هیراگانا» را جست‌وجو کن — all caught here)
+    const SCRIPT_AS_SOUND =
+      /(?:صدای|شنیده\u200cشده|خوانش) «(?:هیراگانا|کاتاکانا|کانجی)»|«(?:هیراگانا|کاتاکانا|کانجی)» را جست\u200cوجو کن/;
     for (const field of ['f1Fa', 'f2HintFa', 'f3ExplainFa'] as const) {
       const text = ex.feedback?.[field];
-      if (typeof text === 'string' && /صدای «(?:هیراگانا|کاتاکانا|کانجی)»/.test(text)) {
+      if (typeof text === 'string' && SCRIPT_AS_SOUND.test(text)) {
         findings.push({ rule: 'CL-11', id: ex.id, detail: `${field} uses a script NAME as a sound: ${text.slice(0, 40)}` });
       }
     }
     for (const [k, v] of Object.entries(ex.distractorRationaleFa ?? {})) {
-      if (typeof v === 'string' && /صدای «(?:هیراگانا|کاتاکانا|کانجی)»/.test(v)) {
+      if (typeof v === 'string' && SCRIPT_AS_SOUND.test(v)) {
         findings.push({ rule: 'CL-11', id: ex.id, detail: `rationale ${k} uses a script NAME as a sound: ${v.slice(0, 40)}` });
+      }
+    }
+
+    // CL-12 reading inversion vs the TEACHING registry (Round-2 A: gate items
+    // taught «کُ» for ク where kana-teaching says «کو», «مُ»/«مو» swapped for
+    // モ/ム, «سُ» for す vs registry «سو»). General rule: whenever an item
+    // attributes a reading to a SPECIFIC glyph in text («X» صدای کانای «Y» /
+    // «Y» با خوانش «X»), X must equal the registry pronunciation of Y.
+    for (const field of ['f1Fa', 'f2HintFa', 'f3ExplainFa'] as const) {
+      const text = ex.feedback?.[field];
+      if (typeof text !== 'string') continue;
+      for (const gm of text.matchAll(/«([^»]+)» (?:با )?خوانش «([^»]+)»/g)) {
+        const [glyph, reading] = [gm[1]!.trim(), gm[2]!.trim()];
+        const reg = teachingPronunciation.get(glyph);
+        if (reg && reg !== reading) {
+          findings.push({ rule: 'CL-12', id: ex.id, detail: `${field}: «${glyph}» taught as «${reading}» but registry says «${reg}»` });
+        }
+      }
+    }
+    for (const [k, v] of Object.entries(ex.distractorRationaleFa ?? {})) {
+      if (typeof v !== 'string') continue;
+      for (const gm of v.matchAll(/«([^»]+)» صدای (?:کانای )?«([^»]+)»/g)) {
+        const [reading, glyph] = [gm[1]!.trim(), gm[2]!.trim()];
+        const reg = teachingPronunciation.get(glyph);
+        if (reg && reg !== reading) {
+          findings.push({ rule: 'CL-12', id: ex.id, detail: `rationale ${k}: «${reading}» attributed to «${glyph}» but registry says «${reg}»` });
+        }
       }
     }
 
@@ -196,6 +239,7 @@ test('CL-02..CL-09 — chapter 2: recorded BASELINE only (known out-of-scope ite
     'CL-09': 0,
     'CL-02': 0,
     'CL-11': 0,
+    'CL-12': 0,
   };
   // recompute CL-03a precisely: rationale keys not among option ids
   for (const [rule, base] of Object.entries(BASELINE)) {
@@ -220,4 +264,30 @@ test('fixtures — the lint catches each violation class (negative) and passes c
   expect(hits.some((f) => f.rule === 'CL-02')).toBe(true);
   // positive: the REAL ch1 has zero (proven above) — no false positives on
   // the 487-item bank is the false-positive fixture.
+});
+
+test('CL-12 fixtures — catches a reading inversion (negative), passes registry-correct text (positive)', () => {
+  // negative: teach ク (kata-ku, registry «کو») as «کُ» — the exact Round-2 A3
+  // inversion — inside both an f3 and a distractor rationale; must be flagged.
+  const base = ch1.exercises['ex-kana-gate-m5-4']! as Exercise;
+  const mutated: Exercise = {
+    ...base,
+    feedback: { ...base.feedback, f3ExplainFa: '«ク» با خوانش «کُ» خوانده می‌شود — پخشش کن.' },
+    distractorRationaleFa: { a: '«کُ» صدای کانای «ク» است — شنیده‌شده «کو» بود.' },
+    id: 'fixture-cl12',
+  } as unknown as Exercise;
+  const fakeCh = { ...ch1, exercises: { ...ch1.exercises, 'fixture-cl12': mutated } } as Chapter;
+  const hits = lintChapter(fakeCh).filter((f) => f.id === 'fixture-cl12');
+  expect(hits.filter((f) => f.rule === 'CL-12').length).toBeGreaterThanOrEqual(2);
+
+  // positive: the same item with the registry reading («کو») must NOT flag.
+  const clean: Exercise = {
+    ...base,
+    feedback: { ...base.feedback, f3ExplainFa: '«ク» با خوانش «کو» خوانده می‌شود — پخشش کن.' },
+    distractorRationaleFa: { a: '«کُ» صدای کانای «コ» است — شنیده‌شده «کو» بود.' },
+    id: 'fixture-cl12-clean',
+  } as unknown as Exercise;
+  const fakeClean = { ...ch1, exercises: { ...ch1.exercises, 'fixture-cl12-clean': clean } } as Chapter;
+  const cleanHits = lintChapter(fakeClean).filter((f) => f.id === 'fixture-cl12-clean' && f.rule === 'CL-12');
+  expect(cleanHits).toEqual([]);
 });

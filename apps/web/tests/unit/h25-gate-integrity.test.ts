@@ -9,8 +9,9 @@
  * This spec pins the FIXED contract:
  *  1. bank shape: exactly 5 items per measure (one miss = 0.8 ≥ 0.8 passes);
  *  2. gate arithmetic property: all-correct passes; ONE miss in one measure
- *     still passes; two misses in one measure remediate; one miss in TWO
- *     measures remediates (minMeasure binds per measure);
+ *     still passes (0.8 = the floor); two misses in one measure remediate;
+ *     one miss in two measures passes EXCEPT the M1+M2 pair (0.89 < 0.9 —
+ *     remediates with missed-measure targeting, Round-1 B2);
  *  3. every kana-listening gate item's targetConcept has a committed kn-*
  *     audio asset on disk (the wiring attaches kanaAudioUrls — a missing asset
  *     would degrade to a silent «به صدای پخش‌شده گوش کن» again);
