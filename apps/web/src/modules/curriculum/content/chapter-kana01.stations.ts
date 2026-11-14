@@ -973,7 +973,8 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h8-card-hira-ne',
         kanaId: 'hira-ne',
         showRomaji: false,
-        confusableNoteFa: 'حلقهٔ کوچک + دُمِ بلندِ رو به پایین؛ دو کانای مشابه را بعداً در ردیف‌های «را» و «وا» می‌بینی.',
+        confusableNoteFa:
+          'حلقهٔ کوچک + دُمِ بلندِ رو به پایین؛ دو کانای مشابه را بعداً در ردیف‌های «را» و «وا» می‌بینی.',
       },
       { kind: 'kana-card', id: 'blk-stn-kana-h8-card-hira-no', kanaId: 'hira-no', showRomaji: false },
       {
@@ -1413,7 +1414,8 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h11-card-hira-re',
         kanaId: 'hira-re',
         showRomaji: false,
-        confusableNoteFa: 'دُمِ بلند و صاف دارد (با «ね» تفاوتش: حلقهٔ کوچک‌تر)؛ کانای دیگر را بعداً در ردیف «وا» می‌بینی.',
+        confusableNoteFa:
+          'دُمِ بلند و صاف دارد (با «ね» تفاوتش: حلقهٔ کوچک‌تر)؛ کانای دیگر را بعداً در ردیف «وا» می‌بینی.',
       },
       {
         kind: 'kana-card',
@@ -1793,8 +1795,9 @@ export const KANA_STATIONS: Station[] = [
             role: 'reading',
             ja: 'やまだ',
             reading: 'یامادا',
+            pronFa: 'سه ضربه: یا — ما — دا (だ داکوتنِ た است).',
             fa: 'یامادا (نام خانوادگی)',
-            whyFa: 'や همین‌جا آموختی، ま از ردیف قبل و だ داکوتنِ た — کاملاً خواندنی است.',
+            whyFa: 'や همین‌جا آموختی، ま از ردیف ま و だ داکوتنِ た — کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h14-3',
@@ -2414,7 +2417,7 @@ export const KANA_STATIONS: Station[] = [
     type: 'kana',
     titleFa: 'ردیف ア + طرحوارهٔ قرینه‌گری',
     objectiveFa:
-      'قاعدهٔ صادق فاز K: همان ۴۶ صدا، این‌بار با صورت دوم (کاتاکانا). وام‌واژه‌های آماده اشتهایت را باز می‌کنند و بازگشایی واقعی در K2 ادامه می‌یابد.',
+      'کاتاکانا، خط دوم ژاپنی: همان ۴۶ صدایی که حالا بلدی، با شکل‌های تازه. وام‌واژه‌های واقعی از همین‌جا شروع می‌شوند.',
     core: true,
     order: 18,
     prerequisites: ['stn-kana-h15'],
@@ -2493,7 +2496,7 @@ export const KANA_STATIONS: Station[] = [
     slug: 'stn-kana-k2',
     type: 'kana',
     titleFa: 'ردیف タ',
-    objectiveFa: 'اولین گلیف‌های داکوتن‌دار کاتاکانا (ド) با یادآوری مفهوم H5',
+    objectiveFa: 'اولین گلیف‌های داکوتن‌دار کاتاکانا (ド) با یادآوری مفهوم داکوتن (゛)',
     core: true,
     order: 19,
     prerequisites: ['stn-kana-k1'],
@@ -2563,7 +2566,11 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k2-prereq-dakuten',
         titleFa: 'پیش از خواندن: اولین داکوتنِ کاتاکانا',
         items: [
-          { glyph: 'ド', readingFa: 'دُ', noteFa: 'ト+゛ — همان قاعدهٔ H5، این‌بار در خط دوم: ド (در ドイツ و ドア).' },
+          {
+            glyph: 'ド',
+            readingFa: 'دُ',
+            noteFa: 'ト+゛ — همان قاعدهٔ داکوتن، این‌بار در خط دوم: ド (در ドイツ و ドア).',
+          },
         ],
       },
       {
@@ -3295,7 +3302,7 @@ export const KANA_STATIONS: Station[] = [
             noteFa: 'در هیراگانا کشش را با تکرار مصوت نوشتیم: こ+う. کاتاکانا راه کوتاه‌تری دارد.',
           },
           { glyph: 'ボ', readingFa: 'بُ', noteFa: 'ホ+゛ — در ボールペン (خودکار).' },
-          { glyph: 'ペ', readingFa: 'پِ', noteFa: 'ヘ+゛ — در ボールペن.' },
+          { glyph: 'ペ', readingFa: 'پِ', noteFa: 'ヘ+゛ — در ボールペン.' },
         ],
       },
       {
@@ -3784,7 +3791,7 @@ export const KANA_STATIONS: Station[] = [
     slug: 'stn-kana-k12',
     type: 'kana',
     titleFa: 'ردیف ワ/ヲ',
-    objectiveFa: 'دو کارت آخرِ کاتاکانا: ワ و ヲ — با روماجی روشن (استثنای )',
+    objectiveFa: 'دو کارت آخرِ کاتاکانا: ワ و ヲ — با روماجی روشن (وام‌واژه‌ها استثنا هستند)',
     core: true,
     order: 29,
     prerequisites: ['stn-kana-k11'],

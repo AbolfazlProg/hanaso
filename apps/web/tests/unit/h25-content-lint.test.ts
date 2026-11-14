@@ -646,3 +646,61 @@ test('CL-16 negative fixture — a stale stationSlugs list (old v26 order, or a 
   const dflat = du.flat();
   expect(new Set(dflat).size).not.toBe([...dropped.stations].length);
 });
+
+/* ------------------------------- CL-17 (TASK-HANASO-26R round-3 C) -------
+ * Learner-facing Persian text must not contain internal engineering tokens
+ * (H5, K2, CONTENT-107, FEAT-158, فاز K…) nor Arabic codepoints inside
+ * Japanese strings (the びょういن / ボールペن defect — Arabic ن U+0646 where
+ * kana ン U+30F3 belongs). Round-3 audit caught a silent no-op fix; this gate
+ * makes the class of defect machine-checked forever.
+ */
+const LEARNER_TOKENS = /\b(?:H\d|K\d|CL-\d+|CONTENT-\d+|FEAT-\d+|TL-\d+|BUG-\d+|TASK-[^ ]+|فاز [HK]\b|spec §)/;
+
+test('CL-17 — no internal engineering tokens in any learner-facing text field', () => {
+  const findings: string[] = [];
+  const scan = (obj: unknown, path: string) => {
+    if (typeof obj === 'string') {
+      if (LEARNER_TOKENS.test(obj)) findings.push(`${path}: «${obj.slice(0, 60)}»`);
+      return;
+    }
+    if (Array.isArray(obj)) {
+      obj.forEach((v, i) => scan(v, `${path}[${i}]`));
+      return;
+    }
+    if (obj && typeof obj === 'object') {
+      for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+        if (k === 'id' || k === 'slug' || k === 'kind' || k === 'fsrsCardId' || k === 'introducedInUnit') continue; // structural, not learner-facing
+        scan(v, `${path}.${k}`);
+      }
+    }
+  };
+  for (const st of ch1.stations) scan(st, st.slug);
+  for (const ex of Object.values(ch1.exercises ?? {})) scan(ex, 'exercises');
+  expect(findings, JSON.stringify(findings.slice(0, 10), null, 1)).toEqual([]);
+});
+
+test('CL-17 — no Arabic codepoints inside Japanese-bearing example/word fields', () => {
+  const findings: string[] = [];
+  const KANA = /[\u3040-\u30ff\u31f0-\u31ff\uff66-\uff9d]/;
+  const ARABIC_LETTER = /[\u0621-\u064a]/;
+  const scan = (obj: unknown, path: string) => {
+    if (typeof obj === 'string') {
+      // split: Japanese runs vs Persian runs; flag Arabic letters INSIDE a kana run
+      const runs = obj.split(/([\u3040-\u30ff\u30fc\u3005\u3001\u3002]+)/);
+      for (const run of runs) {
+        if (KANA.test(run) && ARABIC_LETTER.test(run)) findings.push(`${path}: «${run.slice(0, 30)}»`);
+      }
+      return;
+    }
+    if (Array.isArray(obj)) {
+      obj.forEach((v, i) => scan(v, `${path}[${i}]`));
+      return;
+    }
+    if (obj && typeof obj === 'object') {
+      for (const [k, v] of Object.entries(obj as Record<string, unknown>)) scan(v, `${path}.${k}`);
+    }
+  };
+  for (const st of ch1.stations) scan(st, st.slug);
+  for (const ex of Object.values(ch1.exercises ?? {})) scan(ex, 'exercises');
+  expect(findings, JSON.stringify(findings.slice(0, 10), null, 1)).toEqual([]);
+});
