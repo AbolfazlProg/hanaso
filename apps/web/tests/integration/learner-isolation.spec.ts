@@ -134,7 +134,7 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
     expect(err.code).toBe('station/prerequisites_not_met');
     expect(err.message ?? '').toContain('برای ثبت این درس');
     const details = err.details as { prerequisites?: { slug: string; titleFa: string }[] } | undefined;
-    expect(details?.prerequisites?.[0]?.slug).toBe('stn-kana-h5'); // the only declared prerequisite
+    expect(details?.prerequisites?.[0]?.slug).toBe('stn-kana-h14'); // TASK-26R: h6 (yōon) now depends on the や row — the pedagogy-correct chain
     expect(details?.prerequisites?.[0]?.titleFa ?? '').not.toBe('stn-kana-h5'); // a real Persian title
     // ordered by walk order so the client links to the FIRST unmet lesson
   });

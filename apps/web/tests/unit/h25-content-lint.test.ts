@@ -542,3 +542,49 @@ test('CL-14 positive fixture — yōon AFTER the や row passes (clean order)', 
   );
   expect(yoonIdx).toBeGreaterThan(yaIdx);
 });
+
+/* ------------------------------- CL-15 (TASK-HANASO-26R §2) -----------
+ * STRUCTURAL schema gate — a rule-* block must NEVER sit inside an
+ * example-set's examples[] array (the 26R runtime defect: the h12 dakuten-ha
+ * step was nested among reading rows, and the walker fed the block object to
+ * decomposeJa → "text is not iterable" in production tests).
+ */
+test('CL-15 — example-set items are reading rows only (no rule-* blocks nested in examples[])', () => {
+  const findings: string[] = [];
+  for (const s of ch1.stations) {
+    for (const b of s.blocks) {
+      if (b.kind !== 'example-set') continue;
+      const items = (b as unknown as { examples: unknown[] }).examples ?? [];
+      items.forEach((it, idx) => {
+        const kind = (it as { kind?: string }).kind;
+        if (kind && String(kind).startsWith('rule')) {
+          findings.push(`${s.slug}/${(b as { id: string }).id}/examples[${idx}]: nested rule block «${kind}» — rule blocks belong at blocks[] level`);
+        }
+      });
+    }
+  }
+  expect(findings, JSON.stringify(findings, null, 1)).toEqual([]);
+});
+
+test('CL-15 negative fixture — a rule-step nested inside examples[] is caught', () => {
+  const mutated = JSON.parse(JSON.stringify(ch1)) as typeof ch1;
+  const h12 = mutated.stations.find((s: { slug: string }) => s.slug === 'stn-kana-h12')!;
+  const es = h12.blocks.find((b: { kind: string }) => b.kind === 'example-set') as unknown as {
+    examples: { kind?: string }[];
+  };
+  es.examples.splice(1, 0, { kind: 'rule-step', id: 'nested-imposter' });
+  const findings: string[] = [];
+  for (const s of mutated.stations) {
+    for (const b of s.blocks) {
+      if (b.kind !== 'example-set') continue;
+      const items = (b as unknown as { examples: unknown[] }).examples ?? [];
+      items.forEach((it, idx) => {
+        const kind = (it as { kind?: string }).kind;
+        if (kind && String(kind).startsWith('rule')) {
+          findings.push(`${s.slug}/${(b as { id: string }).id}/examples[${idx}]`);
+        }
+      });
+    }
+  }
+  expect(findings.some((f) => f.includes('nested-imposter') === false && f.includes('examples[1]'))).toBe(true);
+});

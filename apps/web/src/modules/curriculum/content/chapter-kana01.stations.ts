@@ -1621,6 +1621,37 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h12-step-dakuten-ha',
+        role: 'explain',
+        titleFa: 'داکوتن ردیف は — همان قاعدهٔ آشنا',
+        bodyFa:
+          'ردیف は هم مثل か و さ با ゛ واک‌دار می‌شود: は→ば، ひ→び، ふ→ぶ. قاعدهٔ جدیدی نیست — فقط سه صدای تازه با همان ゛.',
+        miniTable: {
+          headers: ['بی‌واک', 'با ゛', 'واژه'],
+          rows: [
+            ['は (ها)', 'ば (با)', 'かばん — کیف'],
+            ['ひ (هی)', 'び (بی)', 'بعداً با یُوئون!'],
+            ['ふ (فو)', 'ぶ (بو)', 'しんぶん — روزنامه'],
+          ],
+        },
+      },
+      {
+        kind: 'rule-step',
+        id: 'blk-stn-kana-h12-step-dakuten-ask',
+        role: 'practice',
+        titleFa: 'یک تمرین کوچک با ゛',
+        bodyFa: 'حالا خودت امتحان کن: しんぶん (روزنامه) را با ば واک‌دار بخوان.',
+        ask: {
+          questionFa: '«ぶ» چه صدایی دارد؟',
+          options: [
+            { id: 'a', label: 'بو', correct: true, feedbackFa: 'درست! ふ + ゛ = ぶ.' },
+            { id: 'b', label: 'پو', correct: false, feedbackFa: '«پو» مال ゜ (هان‌داکوتن) است که بعداً می‌آید.' },
+            { id: 'c', label: 'هو', correct: false, feedbackFa: '«هو» خودِ ふ بدون ゛ است.' },
+          ],
+        },
+      },
+      {
         kind: 'example-set',
         id: 'blk-stn-kana-h12-reading',
         examples: [
@@ -1641,22 +1672,6 @@ export const KANA_STATIONS: Station[] = [
             pronFa: '«ن»ِ آخر نرم و بینی است — دهان کمی باز می‌ماند؛ «ن»ی کامل و چسبیده نیست (n).',
             fa: 'کتاب',
             whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
-          },
-          {
-            kind: 'rule-step',
-            id: 'blk-stn-kana-h12-step-dakuten-ha',
-            role: 'explain',
-            titleFa: 'داکوتن ردیف は — همان قاعدهٔ آشنا',
-            bodyFa:
-              'ردیف は هم مثل か و さ با ゛ واک‌دار می‌شود: は→ば، ひ→び、ふ→ぶ. قاعدهٔ جدیدی نیست — فقط سه صدای تازه با همان ゛.',
-            miniTable: {
-              headers: ['بی‌واک', 'با ゛', 'واژه'],
-              rows: [
-                ['は (ها)', 'ば (با)', 'かばん — کیف'],
-                ['ひ (هی)', 'び (بی)', 'بعداً با یُوئون!'],
-                ['ふ (فو)', 'ぶ (بو)', 'しんぶん — روزنامه'],
-              ],
-            },
           },
           {
             id: 'rd-stn-kana-h12-2',
@@ -1784,11 +1799,11 @@ export const KANA_STATIONS: Station[] = [
           {
             id: 'rd-stn-kana-h14-3',
             role: 'reading',
-            ja: 'やま',
-            reading: 'یاما',
-            pronFa: 'دو ضربهٔ روشن: یا — ما.',
-            fa: 'کوه',
-            whyFa: 'فقط با や همین‌جا آموختی و ま از ردیف قبل — کاملاً خواندنی است.',
+            ja: 'やすみ',
+            reading: 'یاسومی',
+            pronFa: 'سه ضربهٔ روشن: یا — سُ — می.',
+            fa: 'استراحت / تعطیلات',
+            whyFa: 'や همین‌جا آموختی، す از ردیف さ و み از ردیف ま — کاملاً خواندنی است.',
           },
         ],
       },
