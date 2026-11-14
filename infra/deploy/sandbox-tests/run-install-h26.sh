@@ -122,7 +122,6 @@ run_oneliner "${D1}"; RC=$?
 assert_exit 0 "${RC}" "T1 one-liner exits 0"
 assert_out "${D1}" "GENERATED (64 hex chars" "T1 env prep: secret GENERATED server-side"
 assert_out "${D1}" "SET ONCE to now+14d" "T1 env prep: cutoff set once (now+14d)"
-assert_out "${D1}" "PRESERVED (never rotated)" "" # placeholder never fires on T1 (no prior secret) — harmless
 out_has "${D1}" "required key HANASO_SESSION_SECRET missing" && bad "T1 the v14 FATAL reproduced" || ok "T1 NO FATAL: updater's A3 gate satisfied"
 SEC1="$(env_get "${D1}/deploy" HANASO_SESSION_SECRET)"
 CUT1="$(env_get "${D1}/deploy" HANASO_LEGACY_TOKEN_CUTOFF)"
@@ -134,7 +133,7 @@ date -d "${CUT1}" >/dev/null 2>&1 && ok "T1 .env now has an ISO cutoff (${CUT1})
   && ok "T1 original vars preserved + image advanced to the new pin" || bad "T1 .env content wrong"
 if grep -qF -- "${SEC1}" "${D1}/out.log"; then bad "T1 SECRET LEAKED in output"; else ok "T1 secret never printed"; fi
 assert_called "${D1}" "docker build" "T1 image built from the pinned target"
-assert_called "${D1}" "docker compose up -d" "T1 stack swapped"
+assert_called "${D1}" "compose up: web worker" "T1 stack swapped (web recreated)"
 assert_out "${D1}" "smoke: ALL GREEN" "T1 smoke green"
 # updater reruns fetch nothing, bootstrap reruns keep values (T2 proves it)
 
