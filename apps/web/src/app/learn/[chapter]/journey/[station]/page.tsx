@@ -95,16 +95,14 @@ export default async function StationPage({
    * TASK-HANASO-27 (F4 cross-station): practice stations reference teaching
    * blocks of EARLIER stations (spiral review). Resolve a non-local blockId
    * against the full chapter bundle → journey href to the OWNING station.
-   * The exercise payload never carries this map; only the host page knows it.
+   * Serializable data only (RSC boundary): the runner turns this map into its
+   * own href resolver on the client. The exercise payload never carries it.
    */
-  const blockIdToStation = new Map<string, string>();
+  const blockIdToStationHref: Record<string, string> = {};
   for (const st of chapter.stations) {
-    for (const b of st.blocks) blockIdToStation.set(b.id, st.slug);
+    const href = `/learn/${chapterSlug}/journey/${st.slug}`;
+    for (const b of st.blocks) blockIdToStationHref[b.id] = href;
   }
-  const returnToStationHref = (blockId: string): string | null => {
-    const owner = blockIdToStation.get(blockId);
-    return owner ? `/learn/${chapterSlug}/journey/${owner}` : null;
-  };
 
   // client-safe exercise payloads (no answers/feedback)
   const clientExercises: Record<string, ClientExercise> = {};
@@ -276,7 +274,7 @@ export default async function StationPage({
           replayMode={replayMode}
           restartRequested={restartRequested}
           mapHref={mapHref}
-          returnToStationHref={returnToStationHref}
+          returnToStationHref={blockIdToStationHref}
         />
       </div>
     </main>

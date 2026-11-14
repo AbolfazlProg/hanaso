@@ -108,7 +108,7 @@ describe('TASK-HANASO-27 — practice stations in the journey (PR-1/PR-2)', () =
     const before = [...hiraUnit.stationSlugs];
     (hiraUnit as { stationSlugs: string[] }).stationSlugs = before.filter((s) => s !== 'stn-kana-p2');
     try {
-      const okNow = hiraUnit.stationSlugs.every((s, i) => {
+      const okNow = hiraUnit.stationSlugs.every((s) => {
         const st = chapter.stations.find((x) => x.slug === s);
         return st !== undefined;
       }) && new Set(hiraUnit.stationSlugs).size === hiraUnit.stationSlugs.length;

@@ -97,7 +97,7 @@ export interface StationRunnerProps {
    * null when unresolvable). Absent = every non-local F4 pointer stays inert
    * (the original #106 behavior for teach stations).
    */
-  returnToStationHref?: (blockId: string) => string | null;
+  returnToStationHref?: Record<string, string>;
   clientExercises: Record<string, ClientExercise>;
   dialogue: {
     lines: Line[];
@@ -910,7 +910,7 @@ export function StationRunner(props: StationRunnerProps) {
    * instead. Unresolvable everywhere = keep the learner where they are (never
    * a dead button: the F4 button only renders when the runner can act).
    */
-  const returnToStationHrefRef = useRef(returnToStationHref);
+  const returnToStationHrefRef = useRef<Record<string, string> | undefined>(returnToStationHref);
   returnToStationHrefRef.current = returnToStationHref;
   const returnToBlock = useCallback(
     (blockId: string) => {
@@ -919,7 +919,7 @@ export function StationRunner(props: StationRunnerProps) {
         setStep(target);
         return;
       }
-      const href = returnToStationHrefRef.current?.(blockId) ?? null;
+      const href = returnToStationHrefRef.current?.[blockId] ?? null;
       if (!href) return; // unresolvable everywhere — stay put
       if (navLatchRef.current) return;
       navLatchRef.current = true;
