@@ -236,6 +236,8 @@ prepare_security_env() {
   # the two keys removed — comments and every other variable are preserved
   grep -vE '^(HANASO_SESSION_SECRET|HANASO_LEGACY_TOKEN_CUTOFF)=' "${env_file}" > "${tmp}"
 
+  # (messages go to STDOUT — never into the .env; only KEY=VALUE lines and
+  #  comments are appended to the temp file)
   {
     echo ""
     echo "# --- TASK-HANASO-24 security keys (added by bootstrap $(date '+%Y-%m-%d %H:%M:%S %Z'); see apps/web/.env.example ---"
@@ -248,7 +250,7 @@ prepare_security_env() {
         die "could not generate a strong HANASO_SESSION_SECRET on this server (openssl and /dev/urandom both failed) — nothing was written."
       fi
       printf 'HANASO_SESSION_SECRET=%s\n' "${new_sec}" >> "${tmp}"
-      echo "   HANASO_SESSION_SECRET    : GENERATED (64 hex chars, random, server-side only)"
+      msg_sec="GENERATED (64 hex chars, random, server-side only)"
     else
       printf 'HANASO_SESSION_SECRET=%s\n' "${sec}" >> "${tmp}"
     fi
@@ -258,7 +260,7 @@ prepare_security_env() {
       local new_cutoff
       new_cutoff="$(date -u -d '+14 days' '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -v+14d '+%Y-%m-%dT%H:%M:%SZ')"
       printf 'HANASO_LEGACY_TOKEN_CUTOFF=%s\n' "${new_cutoff}" >> "${tmp}"
-      echo "   HANASO_LEGACY_TOKEN_CUTOFF: SET ONCE to now+14d (ISO-8601; re-runs never extend it)"
+      msg_cut="SET ONCE to now+14d (ISO-8601; re-runs never extend it)"
     else
       printf 'HANASO_LEGACY_TOKEN_CUTOFF=%s\n' "${cutoff}" >> "${tmp}"
     fi
@@ -266,6 +268,8 @@ prepare_security_env() {
 
   # atomic swap in the same directory (same filesystem)
   mv -f "${tmp}" "${env_file}"
+  [ -n "${msg_sec:-}" ] && echo "   HANASO_SESSION_SECRET    : ${msg_sec}"
+  [ -n "${msg_cut:-}" ] && echo "   HANASO_LEGACY_TOKEN_CUTOFF: ${msg_cut}"
   echo "   .env updated atomically — backup: ${env_file}.backup-${ts} (mode 600)"
 }
 
