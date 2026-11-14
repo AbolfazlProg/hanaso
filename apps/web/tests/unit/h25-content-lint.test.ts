@@ -49,7 +49,9 @@ for (const [, r] of registry) glyphToKana.set(r.glyph, { romaji: r.romaji, scrip
 // registry (kana-teaching.ts pronunciationFa is the course-wide convention).
 const teachingSrc = readFileSync(path.join(web, 'src/modules/curriculum/content/kana-teaching.ts'), 'utf8');
 const kanaIdToPron = new Map<string, string>();
-for (const m of teachingSrc.matchAll(/kanaId:\s*'([^']+)',\s*\n\s*audioRef:\s*'kn-[^']+',\s*\n\s*pronunciationFa:\s*'«([^»]+)»'/g)) {
+for (const m of teachingSrc.matchAll(
+  /kanaId:\s*'([^']+)',\s*\n\s*audioRef:\s*'kn-[^']+',\s*\n\s*pronunciationFa:\s*'«([^»]+)»'/g,
+)) {
   kanaIdToPron.set(m[1]!, m[2]!);
 }
 const teachingPronunciation = new Map<string, string>();
@@ -81,7 +83,11 @@ function lintChapter(ch: Chapter) {
           if (o.id === ex.correctOptionId) continue;
           const info = glyphToKana.get(o.label.trim());
           if (info && info.romaji === keyInfo.romaji) {
-            findings.push({ rule: 'CL-02', id: ex.id, detail: `options ${o.label}/${keyOpt.label} same sound, script-agnostic prompt` });
+            findings.push({
+              rule: 'CL-02',
+              id: ex.id,
+              detail: `options ${o.label}/${keyOpt.label} same sound, script-agnostic prompt`,
+            });
           }
         }
       }
@@ -92,7 +98,8 @@ function lintChapter(ch: Chapter) {
       const optIds = new Set(opts.map((o) => o.id));
       for (const k of Object.keys(ex.distractorRationaleFa)) {
         if (!optIds.has(k)) findings.push({ rule: 'CL-03a', id: ex.id, detail: `rationale key ${k} is not an option` });
-        if (k === ex.correctOptionId) findings.push({ rule: 'CL-03b', id: ex.id, detail: `rationale keyed on the CORRECT option` });
+        if (k === ex.correctOptionId)
+          findings.push({ rule: 'CL-03b', id: ex.id, detail: `rationale keyed on the CORRECT option` });
       }
     }
 
@@ -100,7 +107,11 @@ function lintChapter(ch: Chapter) {
     if (ex.type === 'kana-listening') {
       for (const [k, v] of Object.entries(ex.distractorRationaleFa ?? {})) {
         if (typeof v === 'string' && !/شنیده‌شده|صدای|همان صدا/.test(v)) {
-          findings.push({ rule: 'CL-04', id: ex.id, detail: `option ${k} rationale is shapes-only: ${v.slice(0, 40)}` });
+          findings.push({
+            rule: 'CL-04',
+            id: ex.id,
+            detail: `option ${k} rationale is shapes-only: ${v.slice(0, 40)}`,
+          });
         }
       }
     }
@@ -121,12 +132,20 @@ function lintChapter(ch: Chapter) {
     for (const field of ['f1Fa', 'f2HintFa', 'f3ExplainFa'] as const) {
       const text = ex.feedback?.[field];
       if (typeof text === 'string' && SCRIPT_AS_SOUND.test(text)) {
-        findings.push({ rule: 'CL-11', id: ex.id, detail: `${field} uses a script NAME as a sound: ${text.slice(0, 40)}` });
+        findings.push({
+          rule: 'CL-11',
+          id: ex.id,
+          detail: `${field} uses a script NAME as a sound: ${text.slice(0, 40)}`,
+        });
       }
     }
     for (const [k, v] of Object.entries(ex.distractorRationaleFa ?? {})) {
       if (typeof v === 'string' && SCRIPT_AS_SOUND.test(v)) {
-        findings.push({ rule: 'CL-11', id: ex.id, detail: `rationale ${k} uses a script NAME as a sound: ${v.slice(0, 40)}` });
+        findings.push({
+          rule: 'CL-11',
+          id: ex.id,
+          detail: `rationale ${k} uses a script NAME as a sound: ${v.slice(0, 40)}`,
+        });
       }
     }
 
@@ -142,7 +161,11 @@ function lintChapter(ch: Chapter) {
         const [glyph, reading] = [gm[1]!.trim(), gm[2]!.trim()];
         const reg = teachingPronunciation.get(glyph);
         if (reg && reg !== reading) {
-          findings.push({ rule: 'CL-12', id: ex.id, detail: `${field}: «${glyph}» taught as «${reading}» but registry says «${reg}»` });
+          findings.push({
+            rule: 'CL-12',
+            id: ex.id,
+            detail: `${field}: «${glyph}» taught as «${reading}» but registry says «${reg}»`,
+          });
         }
       }
     }
@@ -152,15 +175,17 @@ function lintChapter(ch: Chapter) {
         const [reading, glyph] = [gm[1]!.trim(), gm[2]!.trim()];
         const reg = teachingPronunciation.get(glyph);
         if (reg && reg !== reading) {
-          findings.push({ rule: 'CL-12', id: ex.id, detail: `rationale ${k}: «${reading}» attributed to «${glyph}» but registry says «${reg}»` });
+          findings.push({
+            rule: 'CL-12',
+            id: ex.id,
+            detail: `rationale ${k}: «${reading}» attributed to «${glyph}» but registry says «${reg}»`,
+          });
         }
       }
     }
 
     // CL-06 Arabic in Japanese fields
-    for (const [field, val] of [
-      ['promptJa', ex.promptJa],
-    ] as Array<[string, string | undefined]>) {
+    for (const [field, val] of [['promptJa', ex.promptJa]] as Array<[string, string | undefined]>) {
       if (val && ARABIC.test(val) && JA.test(val) && !val.includes('[نام]')) {
         findings.push({ rule: 'CL-06', id: ex.id, detail: `${field} mixes Arabic+Japanese: ${val.slice(0, 30)}` });
       }
@@ -168,7 +193,8 @@ function lintChapter(ch: Chapter) {
 
     // CL-07 «؟» in option labels
     for (const o of opts) {
-      if (o.label.includes('؟')) findings.push({ rule: 'CL-07', id: ex.id, detail: `option label carries «؟»: ${o.label}` });
+      if (o.label.includes('؟'))
+        findings.push({ rule: 'CL-07', id: ex.id, detail: `option label carries «؟»: ${o.label}` });
     }
 
     // CL-08 hint presence (practice only)
@@ -229,12 +255,12 @@ test('CL-02..CL-09 — chapter 2: recorded BASELINE only (known out-of-scope ite
   // «؟» labels BUG-009 ×2 + F1-reading family etc.). These are CONTENT fixes
   // explicitly OUT of this mission's scope; CI only fails if the counts GROW.
   const BASELINE: Record<string, number> = {
-    'CL-03a': 0,   // mis-keyed rationale ids (BUG-005 family) — counted below
-    'CL-03b': 23,  // BUG-005: 23 ch2 rationales keyed on the correct option (out of scope)
+    'CL-03a': 0, // mis-keyed rationale ids (BUG-005 family) — counted below
+    'CL-03b': 23, // BUG-005: 23 ch2 rationales keyed on the correct option (out of scope)
     'CL-04': 0,
     'CL-05': 0,
     'CL-06': 0,
-    'CL-07': 11,   // BUG-009/021 family: «؟»-annotated option labels in ch2 (out of scope)
+    'CL-07': 11, // BUG-009/021 family: «؟»-annotated option labels in ch2 (out of scope)
     'CL-08': 0,
     'CL-09': 0,
     'CL-02': 0,
@@ -244,7 +270,10 @@ test('CL-02..CL-09 — chapter 2: recorded BASELINE only (known out-of-scope ite
   // recompute CL-03a precisely: rationale keys not among option ids
   for (const [rule, base] of Object.entries(BASELINE)) {
     const now = byRule[rule] ?? 0;
-    expect(now, `CL baseline GREW for ${rule}: ${now} > ${base} (new ch2 violations must be fixed before merge)`).toBeLessThanOrEqual(base);
+    expect(
+      now,
+      `CL baseline GREW for ${rule}: ${now} > ${base} (new ch2 violations must be fixed before merge)`,
+    ).toBeLessThanOrEqual(base);
   }
   console.log('[content-lint] ch2 baseline state:', byRule);
 });

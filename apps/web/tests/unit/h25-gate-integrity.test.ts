@@ -39,10 +39,7 @@ const gateBank = Object.values(ch1.exercises).filter((e) =>
 ) as Exercise[];
 
 // registry: kanaId -> romaji (for sound-collision checks)
-const kanaSrc = readFileSync(
-  path.join(web, 'src/modules/curriculum/content/kana-items.ts'),
-  'utf8',
-);
+const kanaSrc = readFileSync(path.join(web, 'src/modules/curriculum/content/kana-items.ts'), 'utf8');
 const romajiByKana = new Map<string, string>();
 for (const m of kanaSrc.matchAll(/kanaId:\s*'([^']+)',[\s\S]*?romaji:\s*'([^']+)'/g)) {
   romajiByKana.set(m[1]!, m[2]!);
@@ -90,10 +87,9 @@ test('gate arithmetic — ONE miss in ONE measure still passes (0.8 ≥ 0.8)', (
     expect(wrong, `need a constructible wrong answer for ${victim.id}`).not.toBeNull();
     const answers = { ...allCorrect, [victim.id]: wrong! };
     const res = gradeMasterySubmission(ch1 as Chapter, answers, level);
-    expect(
-      res.outcome,
-      `one miss in ${m} (${victim.id}) must stay a PASS — scores ${JSON.stringify(res.scores)}`,
-    ).toBe('passed');
+    expect(res.outcome, `one miss in ${m} (${victim.id}) must stay a PASS — scores ${JSON.stringify(res.scores)}`).toBe(
+      'passed',
+    );
   }
 });
 

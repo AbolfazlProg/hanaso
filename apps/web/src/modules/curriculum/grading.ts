@@ -278,19 +278,16 @@ export function gradeMasterySubmission(
    */
   let targetMeasures = Object.keys(wrongByMeasure);
   if (result.outcome === 'remediate' && targetMeasures.length === 0) {
-    targetMeasures = (Object.entries(scores)
-      .filter(([, s]) => s !== null)
-      .sort((a, b) => (a[1] as number) - (b[1] as number))
-      .slice(0, 2)
-      .map(([m]) => m) as (keyof typeof scores)[])
-      .map(String);
+    targetMeasures = (
+      Object.entries(scores)
+        .filter(([, s]) => s !== null)
+        .sort((a, b) => (a[1] as number) - (b[1] as number))
+        .slice(0, 2)
+        .map(([m]) => m) as (keyof typeof scores)[]
+    ).map(String);
   }
   const remediationStations = [
-    ...new Set(
-      targetMeasures
-        .flatMap((m) => chapter.mastery.weakPointMap[m] ?? [])
-        .filter(Boolean),
-    ),
+    ...new Set(targetMeasures.flatMap((m) => chapter.mastery.weakPointMap[m] ?? []).filter(Boolean)),
   ];
 
   return { ...result, scores, wrongByMeasure, remediationStations, perQuestion };
