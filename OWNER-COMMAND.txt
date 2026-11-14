@@ -1,10 +1,39 @@
-HANASO — OWNER ONE-COMMAND UPDATE (v14 — TRUE ONE-LINER)
-TASK-HANASO-25 · 2026-11-14 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
+HANASO — OWNER ONE-COMMAND UPDATE (v15 — TRUE ONE-LINER)
+TASK-HANASO-26 · 2026-11-14 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
 
 WHAT THIS IS
   ONE single line that installs or updates HANASO on the VPS (run as root).
   No GitHub Token, no password, no Deploy Key — the repository is public and
   everything arrives over anonymous HTTPS. Paste it as ONE line.
+
+THE v15 FIX (HANASO-26 Part A — the v14 VPS installation failure)
+  The v14 line failed on the VPS with:
+    FATAL: required key HANASO_SESSION_SECRET missing/empty in /opt/hanaso/.env
+  ROOT CAUSE: the updater has REQUIRED HANASO_SESSION_SECRET +
+  HANASO_LEGACY_TOKEN_CUTOFF since TASK-24 (fail-closed security), but the
+  owner's /opt/hanaso/.env predates TASK-24 and nothing in the one-command
+  path ever created those keys (the runbook step was manual-only).
+  THE FIX (tooling commit 86878fd): the bootstrap now PREPARES the two keys
+  BEFORE the updater runs —
+  - an existing VALID value is preserved verbatim (the secret is NEVER
+    rotated; the cutoff is NEVER extended — set-once semantics);
+  - a missing secret is generated ON THE SERVER (openssl rand -hex 32) and
+    only ever written to /opt/hanaso/.env (never printed, never transported);
+  - a missing cutoff is set ONCE to now+14 days (ISO-8601) — re-running the
+    command NEVER extends the migration grace;
+  - the .env rewrite is atomic, fully backed up (.env.backup-<ts>, mode
+    600), preserves every existing variable and comment, and cannot create
+    duplicate keys; the file stays mode 600;
+  - an INVALID existing value aborts the install with a clear message (the
+    value itself is never shown) and the .env is left untouched;
+  - the updater's own required-keys gate still runs UNCHANGED afterwards —
+    this fix PREPARES the settings, it does not bypass any security check.
+  Sandbox-verified (infra/deploy/sandbox-tests/run-install-h26.sh):
+  full one-command path on a fixture that mirrors the REAL pre-TASK24 VPS
+  .env — the exact v14 FATAL is reproduced with the OLD tooling pin and is
+  GREEN with the new one; idempotent re-runs keep the secret stable, keep
+  the cutoff un-extended, and no secret material ever appears in any
+  terminal output (grep-verified across every scenario).
 
 WHAT'S NEW IN v14 (HANASO-25 — kana & Chapter-1 assessment integrity)
   1. THE CHAPTER-1 MASTERY GATE, REBUILT: a 25-item gate bank (5 per measure:
@@ -35,9 +64,11 @@ WHAT'S NEW IN v14 (HANASO-25 — kana & Chapter-1 assessment integrity)
   scoping, /poc page-guard) — re-verified live in this release's E2E.
 
 PINS (two INDEPENDENT values — never confuse them)
-  Tooling ref   (bootstrap+updater source)  14d9d3abe726d9f585948eb60da587d4feefec4c
-  Bootstrap SHA-256 (of that exact file)    d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073
+  Tooling ref   (bootstrap+updater source)  86878fd2f60b4be42b9d56a026293f9f3bdb5dc0
+  Bootstrap SHA-256 (of that exact file)    99d66389ce3f742bcef1b2e755a8daba22632df9fa9a7f55b44d6ddeb395b82e
   Product target commit (the release)       9828640d6ec6028adbe0a0a0cffe9426652c1f34
+  (unchanged from v14 — TASK-26 Part A is a TOOLING fix; the product bits
+  are identical. v15 travels on top of TASK-25 content integrity.)
   Release version                           1.0.0-hanaso25-r01
   Branch                                    fix/TASK-HANASO-25-kana-integrity
 
@@ -50,7 +81,7 @@ DELIVERY PATHS
 
 THE COMMAND — ONE line, copy it WHOLE:
 
-bash -c 'R=14d9d3abe726d9f585948eb60da587d4feefec4c; W=d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073; D=9828640d6ec6028adbe0a0a0cffe9426652c1f34; T=/tmp/hanaso-bootstrap-h25.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso25-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
+bash -c 'R=86878fd2f60b4be42b9d56a026293f9f3bdb5dc0; W=99d66389ce3f742bcef1b2e755a8daba22632df9fa9a7f55b44d6ddeb395b82e; D=9828640d6ec6028adbe0a0a0cffe9426652c1f34; T=/tmp/hanaso-bootstrap-h25.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso25-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
 
   (If you are NOT root, start the line with: sudo bash -c ' … ' — the whole
   single-quoted payload stays exactly the same.)

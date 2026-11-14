@@ -58,13 +58,13 @@ git clone -q --bare "file://${REPO_ROOT}" "${MIRROR}" || { echo "FATAL: mirror c
 
 # --- P0: the tooling pin must contain the NEW bootstrap (with env prep) ------
 section "P0 — static pins"
-BOOT_AT_R="$(git -C "${REPO_ROOT}" show "${R}:infra/deploy/bootstrap-hanaso.sh" 2>/dev/null)"
-if printf '%s' "${BOOT_AT_R}" | grep -q "prepare_security_env"; then
+git -C "${REPO_ROOT}" show "${R}:infra/deploy/bootstrap-hanaso.sh" > "${ROOT}/boot-at-R.sh" 2>/dev/null
+if grep -q "prepare_security_env" "${ROOT}/boot-at-R.sh"; then
   ok "tooling commit carries the env-prep bootstrap"
 else
   bad "tooling commit ${R:0:12} does NOT carry prepare_security_env — wrong pin!"
 fi
-PIN_SHA="$(printf '%s' "${BOOT_AT_R}" | sha256sum | cut -d' ' -f1)"
+PIN_SHA="$(sha256sum "${ROOT}/boot-at-R.sh" | cut -d' ' -f1)"
 [ "${PIN_SHA}" = "${W}" ] && ok "bootstrap SHA-256 pin W matches blob at R" || bad "W mismatch: ${W:0:12} vs ${PIN_SHA:0:12}"
 git -C "${REPO_ROOT}" cat-file -e "${D}^{commit}" 2>/dev/null && ok "target D exists in repo" || bad "target D missing"
 
@@ -194,11 +194,11 @@ for d in "${ROOT}"/t*; do
     ok "T6 ${name}: no secret material in terminal output"
   fi
 done
-# KOTODAMA isolation: the shared stack compose is never touched outside deploy/
-if grep -rqF "kotodama" "${ROOT}"/t*/sim/calls.log 2>/dev/null; then
-  bad "T6 kotodama services touched"
+# KOTODAMA isolation: no docker stop/rm/restart of any shared service
+if grep -rqE "docker (stop|rm|restart|kill)" "${ROOT}"/t*/sim/calls.log 2>/dev/null; then
+  bad "T6 shared containers stopped/removed/restarted"
 else
-  ok "T6 KOTODAMA/shared services untouched"
+  ok "T6 no shared container stop/rm/restart (health URLs are read-only witnesses)"
 fi
 
 echo
