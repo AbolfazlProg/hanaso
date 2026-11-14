@@ -90,6 +90,14 @@ export interface StationRunnerProps {
    * SAME map section. Absent = the plain chapter map.
    */
   mapHref?: string;
+  /**
+   * TASK-HANASO-27 (F4 cross-station): practice-station exercises reference
+   * teaching blocks of EARLIER stations. The host page resolves such a
+   * blockId against the full chapter bundle and returns a journey href (or
+   * null when unresolvable). Absent = every non-local F4 pointer stays inert
+   * (the original #106 behavior for teach stations).
+   */
+  returnToStationHref?: (blockId: string) => string | null;
   clientExercises: Record<string, ClientExercise>;
   dialogue: {
     lines: Line[];
@@ -324,6 +332,7 @@ export function StationRunner(props: StationRunnerProps) {
     replayMode = false,
     restartRequested = false,
     mapHref,
+    returnToStationHref,
     clientExercises,
     dialogue,
     audioByLine,
@@ -887,17 +896,36 @@ export function StationRunner(props: StationRunnerProps) {
     setStep((s) => prevStep(s));
   }, []);
 
+  /* TL-10 §6: rapid navigation double-fire guard (completion CTA + F4 link). */
+  const navLatchRef = useRef(false);
+
   /**
    * Issue #106 (F4): jump the walk back to the authored teaching block the
    * feedback ladder named (blocks render one-at-a-time, so "returning" = moving
    * the step pointer; an unresolvable id keeps the learner where they are).
+   * TASK-HANASO-27: practice stations reference teaching blocks of EARLIER
+   * stations (spiral review). Such an id cannot be a step jump inside this
+   * station — the host page supplies `returnToStationHref` (resolved against
+   * the full chapter bundle) and the learner gets a NAVIGATION to that station
+   * instead. Unresolvable everywhere = keep the learner where they are (never
+   * a dead button: the F4 button only renders when the runner can act).
    */
+  const returnToStationHrefRef = useRef(returnToStationHref);
+  returnToStationHrefRef.current = returnToStationHref;
   const returnToBlock = useCallback(
     (blockId: string) => {
       const target = stepOfBlock(station.blocks, blockId);
-      if (target !== null) setStep(target);
+      if (target !== null) {
+        setStep(target);
+        return;
+      }
+      const href = returnToStationHrefRef.current?.(blockId) ?? null;
+      if (!href) return; // unresolvable everywhere — stay put
+      if (navLatchRef.current) return;
+      navLatchRef.current = true;
+      router.push(href);
     },
-    [station.blocks],
+    [station.blocks, router],
   );
 
   /*
@@ -915,8 +943,6 @@ export function StationRunner(props: StationRunnerProps) {
     [mapHref, chapterSlug],
   );
 
-  /* TL-10 §6: rapid double-click on the CTA navigates exactly once. */
-  const navLatchRef = useRef(false);
   const goCompletionDestination = useCallback(() => {
     if (navLatchRef.current) return;
     navLatchRef.current = true;

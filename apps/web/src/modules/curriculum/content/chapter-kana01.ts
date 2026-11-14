@@ -14,6 +14,8 @@
 import type { Chapter } from '../types';
 import { KANA_STATIONS } from './chapter-kana01.stations';
 import { KANA_EXERCISES } from './chapter-kana01.exercises';
+import { PRACTICE_STATIONS_KANA } from './chapter-kana01.practice';
+import { PRACTICE_EXERCISES_KANA } from './chapter-kana01.practice.exercises';
 
 const KANA_SECTIONS: Chapter['units'] = [
   {
@@ -35,16 +37,20 @@ const KANA_SECTIONS: Chapter['units'] = [
       'stn-kana-h3',
       'stn-kana-h4',
       'stn-kana-h5',
+      'stn-kana-p1',
       'stn-kana-h7',
       'stn-kana-h8',
       'stn-kana-h9',
+      'stn-kana-p2',
       'stn-kana-h10',
       'stn-kana-h11',
       'stn-kana-h12',
+      'stn-kana-p3',
       'stn-kana-h14',
       'stn-kana-h6',
       'stn-kana-h13',
       'stn-kana-h15',
+      'stn-kana-p4',
       'stn-kana-m1-reading',
       'stn-kana-opt-r-h9',
     ],
@@ -89,7 +95,7 @@ export const CHAPTER_KANA_FOUNDATION: Chapter = {
     'مسیر کامل کانا برای مبتدی مطلق در دو بخش: هیراگانا (خط بومی) و کاتاکانا (خط وام‌واژه‌ها) — ۳۴ ایستگاه، ۹۲ شکل، دو ایستگاه واقعیِ خواندن، و گیت فهم در پایان.',
   dialogueSlug: 'kana-welcome-01',
   orderInLevel: 1,
-  estMinutes: 406,
+  estMinutes: 441,
   estLoad: 'medium',
   bandArc: 'kana-foundation',
   sceneFa:
@@ -97,8 +103,8 @@ export const CHAPTER_KANA_FOUNDATION: Chapter = {
   words: [],
   grammar: [],
   expressions: [],
-  stations: KANA_STATIONS,
-  exercises: Object.fromEntries(KANA_EXERCISES.map((e) => [e.id, e])),
+  stations: [...KANA_STATIONS, ...PRACTICE_STATIONS_KANA],
+  exercises: Object.fromEntries([...KANA_EXERCISES, ...Object.values(PRACTICE_EXERCISES_KANA)].map((e) => [e.id, e])),
   mastery: {
     // M-K1..M-K5 profile (DD-120 / thresholds.json — kana gate 0.90/0.80 lives in the
     // L1 level policy, never here). Weights are HANASO-proposed v1 data (no KB source

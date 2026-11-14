@@ -22,10 +22,14 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
       // exception): L1 IS the kana band — one 31-station chapter across 4 islands.
       // Caps reflect that single chapter (the [target, hardMax] S3 window covers the
       // 32-unit scope of section 18; minutes = whole-stage budget).
+      // TASK-HANASO-27 registered exception: +4 integrated practice stations
+      // (stn-kana-p1..p4) raise the core count to 36 — hardMax raised 32→36
+      // with the pedagogy design doc (ops/checkpoints/TASK-HANASO-27/
+      // TASK27_PRACTICE_DESIGN.md §2) as the registered justification.
       vocabCore: [0, 0],
       grammarClusters: [0, 0],
-      stationsCore: [24, 32],
-      chapterMinutes: [280, 420],
+      stationsCore: [24, 36],
+      chapterMinutes: [280, 460],
       dialogueLines: [2, 4],
       listeningSpeed: 0.8,
       furigana: 'all',

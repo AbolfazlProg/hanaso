@@ -1,142 +1,145 @@
 /**
- * HANASO — practice-completion idempotency (TASK-HANASO-24 / CP-04 — BUG-036).
+ * TASK-HANASO-27 — integrated-practice integration tests.
  *
- * In-memory suite (route-handler level, real /api/practice flow):
- *  - a duplicate complete NEVER double-folds evidence: a sequential replay 404s
- *    (the in-flight session is consumed); a concurrent replay resolves
- *    'already' — in every outcome the learning-object stats equal exactly ONE
- *    fold and the session row is written exactly once.
- *  - guest requests are rejected 401 on both GET and POST.
+ * Practice now runs INSIDE the learning journey (stn-kana-p1..p4) through the
+ * ONE station engine. These tests pin the integration contract:
+ *   1. /api/practice GET status is healthy (the hub surface) and reports the
+ *      practice stations; the POST session engine is GONE (405).
+ *   2. Completing a practice station is IDEMPOTENT through the station API
+ *      (sequential replay + concurrent duplicate → `already`, single fold).
+ *   3. Prerequisite truth: stn-kana-p1 stays locked until stn-kana-h5 is
+ *      completed (server rejects completion of a locked practice station).
+ *   4. Learner isolation: one learner's practice completion never appears in
+ *      another learner's status.
  */
 import { beforeEach, describe, expect, it } from 'vitest';
-import { GET as getPracticeStatus, POST as postPractice } from '@/app/api/practice/route';
-import { getLearningObjectStore, getPracticeSessionStore, resetStoresForTests } from '@/lib/poc/stores';
+import { GET as getPracticeStatus } from '@/app/api/practice/route';
+import { POST as postStation, GET as getStation } from '@/app/api/curriculum/station/route';
+import { resetStoresForTests } from '@/lib/poc/stores';
 import { signSessionTokenSync } from '@/lib/learner/session-node';
 
 const BASE = 'http://localhost/api/practice';
+const CH = 'kana-foundation-01';
 
-/** A real per-browser learner id (cookie-signed). */
+/** Real per-browser learner ids (cookie-signed). */
 const QA = 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
+const QB = '11111111-2222-4333-8444-555555555555';
 const QA_COOKIE = `hanaso_lid=${signSessionTokenSync(QA)}`;
+const QB_COOKIE = `hanaso_lid=${signSessionTokenSync(QB)}`;
 
 beforeEach(() => {
   resetStoresForTests();
 });
 
-function post(body: unknown, cookie = QA_COOKIE): Request {
-  return new Request(BASE, {
+function get(cookie: string = QA_COOKIE): Request {
+  return new Request(BASE, { headers: { cookie } });
+}
+function stationPost(body: unknown, cookie: string = QA_COOKIE): Request {
+  return new Request('http://localhost/api/curriculum/station', {
     method: 'POST',
     headers: { 'content-type': 'application/json', cookie },
     body: JSON.stringify(body),
   });
 }
-
-async function json<T>(res: Response): Promise<T> {
-  expect(res.ok).toBe(true);
-  const body = (await res.json()) as { ok: boolean; data: T };
-  expect(body.ok).toBe(true);
-  return body.data;
+async function statusBody(res: Response): Promise<Record<string, unknown>> {
+  const json = (await res.json()) as { ok: boolean; data?: Record<string, unknown> };
+  expect(json.ok).toBe(true);
+  return json.data ?? {};
 }
 
-interface ClientItem {
-  id: string;
-  dimension: string;
-}
-
-/** Mark h1 completed for QA (focused practice needs the station completed). */
-async function completeH1ForQA(): Promise<void> {
-  const { getStationProgressStore } = await import('@/lib/poc/stores');
-  await getStationProgressStore().upsert(QA, 'stn-kana-h1', {
-    stationSlug: 'stn-kana-h1',
-    status: 'completed',
-    bestScore: null,
-    attemptCount: 0,
-    currentBlock: null,
-    lastActivityAt: new Date().toISOString(),
-  });
-}
-
-/** Generate a focused session on h1 and answer every item correctly at attempt 1. */
-async function generateAndAnswerAll(): Promise<{ sessionId: string; items: ClientItem[] }> {
-  const gen = await json<{ sessionId: string; items: ClientItem[] }>(
-    await postPractice(post({ action: 'generate', skill: 'kana', kind: 'focused', scopeKey: 'stn-kana-h1', includeWriting: false })),
-  );
-  expect(gen.items.length).toBeGreaterThan(0);
-  for (const item of gen.items) {
-    const session = await getPracticeSessionStore().get(gen.sessionId);
-    expect(session).toBeTruthy();
-    const item0 = session!.items.find((i) => i.id === item.id)!;
-    const answer =
-      item0.interaction.kind === 'choice'
-        ? { kind: 'choice' as const, optionId: item0.interaction.correctOptionId }
-        : { kind: 'write' as const, accepted: true };
-    const res = await postPractice(post({ action: 'answer', sessionId: gen.sessionId, itemId: item.id, attemptNo: 1, answer }));
-    expect(res.status).toBe(200);
+/** Walk the prerequisite chain honestly (each station completes → next unlocks).
+ * h0 completes by VIEWING (viewed criterion); h1+ are task_completed → the
+ * payload must carry taskCompleted: true (same as the real runner sends). */
+async function completeChain(learnerCookie: string, slugs: string[]) {
+  for (const slug of slugs) {
+    const res = await postStation(
+      stationPost(
+        { action: 'complete', chapterSlug: CH, stationSlug: slug, score: 1, taskCompleted: true },
+        learnerCookie,
+      ),
+    );
+    expect(res.status, `prereq complete ${slug}`).toBe(200);
   }
-  return gen;
 }
 
-/** Sum of all learning-object `seen` counters for QA (the fold footprint). */
-async function totalSeenForQA(): Promise<number> {
-  const records = await getLearningObjectStore().listForUser(QA, 'kana');
-  return records.reduce((acc, r) => {
-    const stats = r.dimensionStats as Record<string, { seen: number }>;
-    return acc + Object.values(stats ?? {}).reduce((a, s) => a + (s?.seen ?? 0), 0);
-  }, 0);
-}
-
-describe('practice completion — idempotency + no double fold (BUG-036)', () => {
-  it('a sequential replay 404s; evidence equals exactly ONE fold', async () => {
-    await completeH1ForQA();
-    const gen = await generateAndAnswerAll();
-
-    const first = await postPractice(post({ action: 'complete', sessionId: gen.sessionId, items: gen.items.map((i) => ({ itemId: i.id, ms: 100 })) }));
-    expect(first.status).toBe(200);
-    const firstBody = (await first.json()) as { data: { recorded: boolean; already?: boolean } };
-    expect(firstBody.data.recorded).toBe(true);
-    expect(firstBody.data.already).toBeUndefined();
-
-    // sequential replay: the in-flight session is consumed → 404, no second fold
-    const replay = await postPractice(post({ action: 'complete', sessionId: gen.sessionId, items: gen.items.map((i) => ({ itemId: i.id, ms: 100 })) }));
-    expect(replay.status).toBe(404);
-
-    // exactly one fold per item — NOT doubled by the replay
-    expect(await totalSeenForQA()).toBe(gen.items.length);
-    // session row written once
-    const sessions = await getPracticeSessionStore().listForUser(QA, 10);
-    expect(sessions.filter((s) => s.id === gen.sessionId)).toHaveLength(1);
+describe('TASK-27 — the /practice hub surface (status-only)', () => {
+  it('GET status reports the integrated practice stations (journey links)', async () => {
+    const res = await getPracticeStatus(get());
+    expect(res.status).toBe(200);
+    const data = await statusBody(res);
+    const stations = data.practiceStations as { stationSlug: string; href: string; completed: boolean }[];
+    expect(stations.map((s) => s.stationSlug)).toEqual(['stn-kana-p1', 'stn-kana-p2', 'stn-kana-p3', 'stn-kana-p4']);
+    for (const s of stations) {
+      expect(s.href.startsWith('/learn/kana-foundation-01/journey/stn-kana-p')).toBe(true);
+    }
   });
 
-  it('a CONCURRENT duplicate complete never double-folds (already, single-folded)', async () => {
-    await completeH1ForQA();
-    const gen = await generateAndAnswerAll();
+  it('the parallel session engine is retired: the route module exports GET only (no POST handler)', async () => {
+    // architectural assertion: the generate/answer/complete surface is gone.
+    const route = await import('@/app/api/practice/route');
+    expect(typeof route.GET).toBe('function');
+    expect('POST' in route).toBe(false);
+  });
 
-    const payload = {
-      action: 'complete' as const,
-      sessionId: gen.sessionId,
-      items: gen.items.map((i) => ({ itemId: i.id, ms: 50 })),
-    };
-    const [a, b] = await Promise.all([postPractice(post(payload)), postPractice(post(payload))]);
+  it('guest (unsigned cookie) never reaches the practice surface', async () => {
+    const res = await getPracticeStatus(new Request(BASE, { headers: { cookie: 'hanaso_lid=unsigned' } }));
+    expect(res.status).toBe(401);
+  });
+});
+
+describe('TASK-27 — practice-station completion via the ONE station engine', () => {
+  it('p1 completes only after its prerequisite h5; sequential replay is idempotent (already)', async () => {
+    // completing p1 while locked → 409 with the prerequisite list
+    const locked = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1' }));
+    expect(locked.status).toBe(409);
+
+    await completeChain(QA_COOKIE, ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5']);
+
+    const first = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }));
+    expect(first.status).toBe(200);
+
+    // sequential replay → already, never re-registered
+    const replay = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }));
+    expect(replay.status).toBe(200);
+    const body2 = (await replay.json()) as { data?: { already?: boolean } };
+    expect(body2.data?.already).toBe(true);
+
+    // the hub now reports p1 completed
+    const status = await statusBody(await getPracticeStatus(get()));
+    const p1 = (status.practiceStations as { stationSlug: string; completed: boolean }[]).find((s) => s.stationSlug === 'stn-kana-p1')!;
+    expect(p1.completed).toBe(true);
+  });
+
+  it('a CONCURRENT duplicate complete never double-registers (single completion state)', async () => {
+    await completeChain(QA_COOKIE, ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5']);
+    const [a, b] = await Promise.all([
+      postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true })),
+      postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true })),
+    ]);
     expect(a.status).toBe(200);
     expect(b.status).toBe(200);
-    const [bodyA, bodyB] = (await Promise.all([a.json(), b.json()])) as [{ data: { already?: boolean } }, { data: { already?: boolean } }];
-    // exactly one recorded fold + at most one idempotent 'already'
-    const alreadyCount = [bodyA.data.already, bodyB.data.already].filter(Boolean).length;
+    const states = await Promise.all([a, b].map(async (r) => (await r.json()) as { data?: { already?: boolean } }));
+    // at most one idempotent 'already' among the two raced responses
+    const alreadyCount = states.filter((s) => s.data?.already).length;
     expect(alreadyCount).toBeLessThanOrEqual(1);
 
-    // session row still exactly once; stats still exactly one fold
-    const sessions = await getPracticeSessionStore().listForUser(QA, 10);
-    expect(sessions.filter((s) => s.id === gen.sessionId)).toHaveLength(1);
-    expect(await totalSeenForQA()).toBe(gen.items.length);
+    // the walk store settles on exactly ONE completed state for p1 (the row
+    // is an upsert keyed uuidV5('lesson:stn-kana-p1') — never duplicated)
+    const getRes = await getStation(new Request(`http://localhost/api/curriculum/station?chapter=${CH}&station=stn-kana-p1`, { headers: { cookie: QA_COOKIE } }));
+    const getBody = (await getRes.json()) as { data?: { state?: { status?: string } } };
+    expect(getBody.data?.state?.status).toBe('completed');
   });
 
-  it('guest requests never touch the practice surface (401 on GET and POST)', async () => {
-    const res = await postPractice(post({ action: 'generate', skill: 'kana', kind: 'focused', scopeKey: 'stn-kana-h1' }, ''));
-    expect(res.status).toBe(401);
-    expect(((await res.json()) as { error: { code: string } }).error.code).toBe('learner/no_identity');
+  it('learner isolation: QB never sees QA’s practice progress', async () => {
+    await completeChain(QA_COOKIE, ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5']);
+    await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }));
 
-    const g = await getPracticeStatus(new Request(BASE, { headers: {} }));
-    expect(g.status).toBe(401);
-    expect(((await g.json()) as { error: { code: string } }).error.code).toBe('learner/no_identity');
+    const qbStatus = await statusBody(await getPracticeStatus(get(QB_COOKIE)));
+    const p1 = (qbStatus.practiceStations as { stationSlug: string; completed: boolean }[]).find((s) => s.stationSlug === 'stn-kana-p1')!;
+    expect(p1.completed).toBe(false);
+
+    // QB cannot complete p1 either (their own walk is empty → locked)
+    const qbTry = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1' }, QB_COOKIE));
+    expect(qbTry.status).toBe(409);
   });
 });

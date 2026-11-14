@@ -91,6 +91,21 @@ export default async function StationPage({
   const replayMode = mode === 'review';
   const restartRequested = restart === '1';
 
+  /*
+   * TASK-HANASO-27 (F4 cross-station): practice stations reference teaching
+   * blocks of EARLIER stations (spiral review). Resolve a non-local blockId
+   * against the full chapter bundle → journey href to the OWNING station.
+   * The exercise payload never carries this map; only the host page knows it.
+   */
+  const blockIdToStation = new Map<string, string>();
+  for (const st of chapter.stations) {
+    for (const b of st.blocks) blockIdToStation.set(b.id, st.slug);
+  }
+  const returnToStationHref = (blockId: string): string | null => {
+    const owner = blockIdToStation.get(blockId);
+    return owner ? `/learn/${chapterSlug}/journey/${owner}` : null;
+  };
+
   // client-safe exercise payloads (no answers/feedback)
   const clientExercises: Record<string, ClientExercise> = {};
   for (const block of station.blocks) {
@@ -261,6 +276,7 @@ export default async function StationPage({
           replayMode={replayMode}
           restartRequested={restartRequested}
           mapHref={mapHref}
+          returnToStationHref={returnToStationHref}
         />
       </div>
     </main>

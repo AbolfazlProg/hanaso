@@ -56,9 +56,9 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     expect(violations).toEqual([]);
   });
 
-  it('carries the TASK-HANASO-22 structure: 34 stations (32 core + 2 optional), 2 sections, zero vocab/grammar', () => {
-    expect(chapter.stations).toHaveLength(34);
-    expect(chapter.stations.filter((s) => s.core)).toHaveLength(32);
+  it('carries the TASK-HANASO-22 + TASK-HANASO-27 structure: 38 stations (36 core + 2 optional), 2 sections, zero vocab/grammar', () => {
+    expect(chapter.stations).toHaveLength(38);
+    expect(chapter.stations.filter((s) => s.core)).toHaveLength(36);
     expect(chapter.stations.filter((s) => !s.core)).toHaveLength(2);
     expect(chapter.units?.map((u) => u.slug)).toEqual(['section-a-hiragana', 'section-b-katakana']);
     /* the two real-world milestones: type practice, core, task_completed,
@@ -67,7 +67,7 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     const m2 = chapter.stations.find((s) => s.slug === 'stn-kana-m2-realworld')!;
     expect(m1.type).toBe('practice');
     expect(m1.completion.kind).toBe('task_completed');
-    expect(m1.prerequisites).toEqual(['stn-kana-h15']);
+    expect(m1.prerequisites).toEqual(['stn-kana-p4']); // TASK-27: the final practice station gates the reading milestone
     expect(m2.prerequisites).toEqual(['stn-kana-k13']);
     // L1 = the kana band: words are reading vessels, never FSRS vocab (DD-119).
     expect(chapter.words).toHaveLength(0);
@@ -102,7 +102,7 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     const journey = resolveJourney(chapter, level, [], null);
     expect(journey.unitGroups?.length).toBe(2);
     const grouped = journey.unitGroups!.flatMap((g) => g.nodes.map((n) => n.station.slug));
-    expect(new Set(grouped).size).toBe(34);
+    expect(new Set(grouped).size).toBe(38);
     /* section A = hiragana + the reading milestone; section B = katakana + the
      * loanword milestone (TASK-HANASO-22 two-section split). */
     expect(journey.unitGroups![0]!.nodes.some((n) => n.station.slug === 'stn-kana-m1-reading')).toBe(true);
@@ -468,13 +468,22 @@ describe('TASK-LEARNING-02 — owner-notes fidelity gates', () => {
 });
 
 describe('F4 return-to-teaching contract (TASK-LEARNING-07 Wave 3 — Issue #106)', () => {
-  it('every practice exercise referenceBlockId resolves to a block in its OWN station', () => {
-    // The runner implements «بازگشت به آموزش» as a step jump INSIDE the current
-    // station's block order (station-walk stepOfBlock). A referenceBlockId pointing
-    // outside its own station would render a dead button — content must keep the
-    // F4 pointer local (validated for every bundled chapter).
+  it('every practice exercise referenceBlockId resolves: own station (step jump) or an EARLIER station (TASK-27 cross-station link)', () => {
+    // #106: the runner implements «بازگشت به آموزش» as a step jump INSIDE the
+    // current station's block order (station-walk stepOfBlock). TASK-HANASO-27:
+    // practice stations reference teaching blocks of EARLIER stations (spiral
+    // review) — the host page resolves those against the full chapter bundle
+    // (returnToStationHref) and the runner navigates there. Gate: a pointer
+    // must be either (a) a block of its OWN station, or (b) a block of another
+    // station that comes BEFORE this one in the chapter order (never forward —
+    // that would leak not-yet-taught content). Unresolvable = dead button.
     const offenders: string[] = [];
     for (const chapter of listChapters()) {
+      const orderBySlug = new Map(chapter.stations.map((s) => [s.slug, s.order]));
+      const ownerByBlockId = new Map<string, string>();
+      for (const station of chapter.stations) {
+        for (const b of station.blocks) ownerByBlockId.set(b.id, station.slug);
+      }
       for (const station of chapter.stations) {
         const blockIds = new Set(station.blocks.map((b) => b.id));
         for (const block of station.blocks) {
@@ -482,14 +491,16 @@ describe('F4 return-to-teaching contract (TASK-LEARNING-07 Wave 3 — Issue #106
           for (const exerciseId of block.exerciseIds) {
             const ex = chapter.exercises[exerciseId];
             if (!ex?.referenceBlockId) continue;
-            if (!blockIds.has(ex.referenceBlockId)) {
-              offenders.push(`${station.slug} → ${ex.id} → ${ex.referenceBlockId}`);
-            }
+            const ref = ex.referenceBlockId;
+            if (blockIds.has(ref)) continue; // (a) local step jump
+            const owner = ownerByBlockId.get(ref);
+            if (owner && (orderBySlug.get(owner) ?? Infinity) < (orderBySlug.get(station.slug) ?? -1)) continue; // (b) earlier station
+            offenders.push(`${station.slug} → ${ex.id} → ${ref}`);
           }
         }
       }
     }
-    expect(offenders, `non-local referenceBlockId → ${offenders.join(' | ')}`).toEqual([]);
+    expect(offenders, `unresolvable/forward referenceBlockId → ${offenders.join(' | ')}`).toEqual([]);
   });
 
   it('grades carry the F2 elimination and F4 pointer through the practice ladder', () => {

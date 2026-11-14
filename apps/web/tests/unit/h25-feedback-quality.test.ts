@@ -22,7 +22,8 @@ const exercises = Object.values(ch1.exercises) as Exercise[];
 
 test('recall feedback — no doubled tails, no cryptic row hints (BUG-020)', () => {
   const recalls = exercises.filter((e) => e.type === 'kana-recall');
-  expect(recalls.length).toBe(92);
+  // TASK-27: +11 practice recalls (p1..p4 incl. coverage pass) → 92+11
+  expect(recalls.length).toBe(104);
   for (const ex of recalls) {
     expect(
       ex.feedback.f1Fa.includes('— به شکل درست نگاه کن. — به شکل درست نگاه کن.'),
