@@ -28,7 +28,7 @@
  * known items stay out of scope, new ones must be caught).
  */
 import { test, expect } from 'vitest';
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { getChapter } from '@/modules/curriculum/content';
 import type { Exercise, Chapter } from '@/modules/curriculum/types';
@@ -97,6 +97,20 @@ function lintChapter(ch: Chapter) {
       const label = keyOpt.label.trim();
       if (!['هیراگانا', 'کاتاکانا', 'کانجی'].includes(label) && ex.feedback.f1Fa.includes(label)) {
         findings.push({ rule: 'CL-05', id: ex.id, detail: `f1 embeds keyed reading «${label}»` });
+      }
+    }
+
+    // CL-11 script NAME in a reading slot (Round-1 A1: the «هیراگانا» leak —
+    // a rationale/f1 that says a glyph's SOUND is the word "hiragana")
+    for (const field of ['f1Fa', 'f2HintFa', 'f3ExplainFa'] as const) {
+      const text = ex.feedback?.[field];
+      if (typeof text === 'string' && /صدای «(?:هیراگانا|کاتاکانا|کانجی)»/.test(text)) {
+        findings.push({ rule: 'CL-11', id: ex.id, detail: `${field} uses a script NAME as a sound: ${text.slice(0, 40)}` });
+      }
+    }
+    for (const [k, v] of Object.entries(ex.distractorRationaleFa ?? {})) {
+      if (typeof v === 'string' && /صدای «(?:هیراگانا|کاتاکانا|کانجی)»/.test(v)) {
+        findings.push({ rule: 'CL-11', id: ex.id, detail: `rationale ${k} uses a script NAME as a sound: ${v.slice(0, 40)}` });
       }
     }
 
@@ -181,6 +195,7 @@ test('CL-02..CL-09 — chapter 2: recorded BASELINE only (known out-of-scope ite
     'CL-08': 0,
     'CL-09': 0,
     'CL-02': 0,
+    'CL-11': 0,
   };
   // recompute CL-03a precisely: rationale keys not among option ids
   for (const [rule, base] of Object.entries(BASELINE)) {

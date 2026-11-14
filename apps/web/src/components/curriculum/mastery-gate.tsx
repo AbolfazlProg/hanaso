@@ -57,7 +57,9 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
 
   /* TASK-HANASO-25 (BUG-001): a listening question's sound auto-plays once
    * when the question appears (the sound IS the question). Same policy as
-   * exercise-session.tsx — normal speed 1.0, replayable. */
+   * exercise-session.tsx — normal speed 1.0, replayable. Round-1 C4: the
+   * cleanup PAUSES the outgoing element so two questions' sounds can never
+   * overlap when the audio URL changes mid-playback. */
   const listenPrompt = ex?.type === 'kana-listening' || ex?.type === 'rule-listening' ? (ex.promptAudio ?? null) : null;
   useEffect(() => {
     if (!listenPrompt) return;
@@ -72,6 +74,13 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
     } catch {
       reportPlaybackError(listenPrompt.opus);
     }
+    return () => {
+      try {
+        el.pause();
+      } catch {
+        /* already torn down */
+      }
+    };
   }, [index, listenPrompt?.opus]);
 
   const record = useCallback(() => {

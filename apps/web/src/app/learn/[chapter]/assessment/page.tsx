@@ -51,7 +51,17 @@ export default async function AssessmentPage({ params }: { params: Promise<{ cha
     .filter((e) => e.assessmentRole.startsWith('mastery_'))
     .map((ex) => {
       const ce = toClientExercise(ex);
-      if (ex.type === 'kana-listening' || ex.type === 'kana-recall') {
+      /*
+       * TASK-HANASO-25 (BUG-001 + Round-1 C2): attach the question's own sound
+       * ONLY where the gate client actually plays it — kana-listening (the
+       * sound IS the question: auto-play + replay) and rule-listening (the
+       * word recording; the written word is the answer and never crosses).
+       * kana-recall is NOT attached here: MasteryGate has no recall-sound
+       * panel (unlike exercise-session.tsx), so the URL would ride the RSC
+       * payload unused. Recognition/decode are NEVER attached — the sound
+       * equals the answer there (owner rule §3).
+       */
+      if (ex.type === 'kana-listening') {
         ce.promptAudio = kanaAudioUrls(`kn-${ex.targetConcept}`);
       }
       if (ex.type === 'rule-listening' && ex.promptJa) {

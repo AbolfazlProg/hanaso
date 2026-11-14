@@ -265,9 +265,29 @@ export function gradeMasterySubmission(
   } as const;
 
   const result = computeMastery(scores, level.caps.gate, chapter.mastery.weights);
+  /*
+   * TASK-HANASO-25 (Round-1 B2): remediation targeting must never come back
+   * EMPTY on a `remediate` outcome. The edge case: one miss in each of two
+   * high-weight measures (e.g. M1+M2) leaves both at exactly the 0.8 floor —
+   * not `weak` by the strict-< rule — but weighted 0.89 < 0.9 still
+   * remediates. wrongByMeasure is keyed by MISSED measures (any miss, floor
+   * or not), so it already carries the signal; we target those. Only when a
+   * remediate verdict arrives with NO missed measures at all (impossible
+   * with the current thresholds, but fail-safe) do we fall back to the two
+   * lowest-scoring measures.
+   */
+  let targetMeasures = Object.keys(wrongByMeasure);
+  if (result.outcome === 'remediate' && targetMeasures.length === 0) {
+    targetMeasures = (Object.entries(scores)
+      .filter(([, s]) => s !== null)
+      .sort((a, b) => (a[1] as number) - (b[1] as number))
+      .slice(0, 2)
+      .map(([m]) => m) as (keyof typeof scores)[])
+      .map(String);
+  }
   const remediationStations = [
     ...new Set(
-      Object.keys(wrongByMeasure)
+      targetMeasures
         .flatMap((m) => chapter.mastery.weakPointMap[m] ?? [])
         .filter(Boolean),
     ),

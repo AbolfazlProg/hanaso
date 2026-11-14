@@ -115,9 +115,9 @@ test('gate arithmetic — TWO misses in ONE measure remediate (0.6 < 0.8)', () =
 test('gate arithmetic — one miss in TWO different measures still passes (each measure independently recoverable)', () => {
   // With 5/measure and minMeasure 0.8, ONE miss anywhere leaves that measure at
   // 0.8 = the floor: recoverable by design (the audit demanded exactly this —
-  // "one miss stays recoverable"). Two measures each at 0.8 + weighted 0.96 ≥
-  // 0.9 ⇒ PASS. This is the pedagogically defensible line: single slips never
-  // lock the chapter; REPEATED misses in one measure (0.6) do.
+  // "one miss stays recoverable"). M2+M4 one-miss-each: weighted
+  // .25×.8+.15×.8+.6 = 0.92 ≥ 0.9 ⇒ PASS. Single slips never lock the
+  // chapter; REPEATED misses in one measure (0.6) do.
   const v1 = gateBank.find((e) => e.assessmentRole === 'mastery_M2')!;
   const v2 = gateBank.find((e) => e.assessmentRole === 'mastery_M4')!;
   const answers = {
@@ -128,6 +128,25 @@ test('gate arithmetic — one miss in TWO different measures still passes (each 
   const res = gradeMasterySubmission(ch1 as Chapter, answers, level);
   expect(res.outcome).toBe('passed');
   expect(res.weakMeasures).toEqual([]); // 0.8 is NOT below the floor
+});
+
+test('Round-1 B2 — M1+M2 one-miss-each remediates (0.89 < 0.9) WITH remediation stations (never an empty map)', () => {
+  // The ONLY two-miss cross-measure combo below the weighted threshold:
+  // .3×.8 + .25×.8 + .2 + .15 + .1 = 0.89 < 0.9 → remediate, but both
+  // measures sit AT the floor (not weak). TASK-HANASO-25: remediation
+  // targeting uses the MISSED measures — the learner always gets stations.
+  const v1 = gateBank.find((e) => e.assessmentRole === 'mastery_M1')!;
+  const v2 = gateBank.find((e) => e.assessmentRole === 'mastery_M2')!;
+  const answers = {
+    ...allCorrect,
+    [v1.id]: wrongAnswerFor(v1)!,
+    [v2.id]: wrongAnswerFor(v2)!,
+  };
+  const res = gradeMasterySubmission(ch1 as Chapter, answers, level);
+  expect(res.outcome).toBe('remediate');
+  expect(res.weakMeasures).toEqual([]); // both at the floor — the known edge
+  expect(res.remediationStations.length).toBeGreaterThan(0); // NEVER empty on remediate
+  expect(res.remediationStations).toContain('stn-kana-opt-r-h9'); // M1+M2 weakPointMap
 });
 
 test('audio honesty — every kana-listening gate item has a committed kn-* asset (opus+m4a)', () => {
