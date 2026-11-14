@@ -1,0 +1,8 @@
+name: hanaso
+services:
+  web:
+    image: ${HANASO_WEB_IMAGE}
+  hanaso-postgres:
+    image: postgres:18
+  hanaso-pgbouncer:
+    image: edoburu/pgbouncer

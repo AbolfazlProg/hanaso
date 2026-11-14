@@ -151,6 +151,127 @@ echo "   updater pinned at commit : ${DEPLOY_SHA}"
 echo "   target commit verified   : ${TARGET_SHA} (${TARGET_VERSION})"
 
 # -----------------------------------------------------------------------------
+# 4b) TASK-HANASO-26 (A2): prepare the REQUIRED TASK-24 security keys in the
+#     deploy dir's .env BEFORE the updater runs. Root cause of the v14 VPS
+#     failure: the updater (fail-closed, A3 check) requires
+#     HANASO_SESSION_SECRET + HANASO_LEGACY_TOKEN_CUTOFF, but the owner's
+#     /opt/hanaso/.env predates TASK-24 and nothing in the one-command path
+#     ever created them. This stage PREPARES them — it never weakens the
+#     updater's own gate (which still runs unchanged afterwards):
+#       - an EXISTING valid value is PRESERVED verbatim (never rotated);
+#       - a missing HANASO_SESSION_SECRET is generated ON THE SERVER with
+#         openssl rand -hex 32 (the TASK-24 contract; /dev/urandom fallback);
+#       - a missing HANASO_LEGACY_TOKEN_CUTOFF is set ONCE to NOW + 14 days
+#         (ISO-8601, the TASK-24 migration grace). A re-run NEVER extends it;
+#       - the write is ATOMIC (tmp + mv in the same dir), preserves every
+#         existing line/comment/variable, never duplicates a key, is backed
+#         up (.env.backup-<ts> alongside, mode 600) and the file stays mode
+#         600 (umask 077);
+#       - the secret is NEVER echoed, logged, or embedded anywhere — only
+#         its length/presence is ever reported.
+#     Skip with HANASO_SKIP_ENV_PREP=1 (explicit expert escape hatch).
+# -----------------------------------------------------------------------------
+prepare_security_env() {
+  if [ "${HANASO_SKIP_ENV_PREP:-0}" = 1 ]; then
+    warn "HANASO_SKIP_ENV_PREP=1 — env preparation skipped (the updater's own gate still applies)"
+    return 0
+  fi
+
+  # same discovery order as the updater (find_deploy_dir), read-only here
+  local env_file="" d
+  for d in "${HANASO_DEPLOY_DIR:-}" /opt/hanaso /srv/hanaso; do
+    d="${d%/}"
+    [ -n "$d" ] || continue
+    if [ -f "$d/docker-compose.yml" ] && [ -f "$d/.env" ] \
+       && grep -q 'hanaso-postgres' "$d/docker-compose.yml" 2>/dev/null \
+       && grep -q 'hanaso-pgbouncer' "$d/docker-compose.yml" 2>/dev/null; then
+      env_file="$d/.env"; break
+    fi
+  done
+  if [ -z "${env_file}" ]; then
+    warn "deploy dir not found — skipping env preparation (the updater will diagnose in full below)"
+    return 0
+  fi
+  log "TASK-24 security keys — preparing ${env_file} (values never printed)"
+
+  # --- read the two keys the same way the updater does (LAST occurrence wins,
+  #     non-empty). grep -c guards; nothing is echoed. ---
+  env_value() { # key -> prints value (possibly empty)
+    sed -n "s/^${1}=//p" "${env_file}" | tail -1
+  }
+  local sec cutoff
+  sec="$(env_value HANASO_SESSION_SECRET)"
+  cutoff="$(env_value HANASO_LEGACY_TOKEN_CUTOFF)"
+
+  # --- validate what EXISTS (fail with a clear message, never the value) ---
+  if [ -n "${sec}" ]; then
+    # TASK-24 contract: >= 32 chars, hex (the runbook generates openssl rand -hex 32)
+    if ! printf '%s' "${sec}" | grep -qE '^[0-9a-fA-F]{32,128}$'; then
+      die "HANASO_SESSION_SECRET exists in ${env_file} but is INVALID (expected 32-128 hex chars per the TASK-24 contract — see apps/web/.env.example). Fix or remove it (it will then be regenerated) and re-run. The value is intentionally not shown."
+    fi
+    echo "   HANASO_SESSION_SECRET    : present and valid — PRESERVED (never rotated)"
+  fi
+  if [ -n "${cutoff}" ]; then
+    # ISO-8601 parseable (same test the app's middleware performs)
+    if ! date -d "${cutoff}" >/dev/null 2>&1; then
+      die "HANASO_LEGACY_TOKEN_CUTOFF exists in ${env_file} but is NOT a parseable ISO-8601 datetime (the app fails closed on it). Fix or remove it and re-run. The value is intentionally not shown."
+    fi
+    echo "   HANASO_LEGACY_TOKEN_CUTOFF: present and valid — PRESERVED (never extended)"
+  fi
+
+  # --- nothing to do? ---
+  if [ -n "${sec}" ] && [ -n "${cutoff}" ]; then
+    echo "   .env unchanged (both TASK-24 keys already present)"
+    return 0
+  fi
+
+  # --- backup + atomic rewrite (umask 077: file and backup stay mode 600) ---
+  local ts tmp
+  ts="$(date '+%Y%m%d-%H%M%S')"
+  cp -p "${env_file}" "${env_file}.backup-${ts}"
+  chmod 600 "${env_file}.backup-${ts}"
+  tmp="$(mktemp "${env_file}.tmp.XXXXXX")"
+  chmod 600 "${tmp}"
+  # start from the existing file with any (invalid-or-duplicate) occurrences of
+  # the two keys removed — comments and every other variable are preserved
+  grep -vE '^(HANASO_SESSION_SECRET|HANASO_LEGACY_TOKEN_CUTOFF)=' "${env_file}" > "${tmp}"
+
+  {
+    echo ""
+    echo "# --- TASK-HANASO-24 security keys (added by bootstrap $(date '+%Y-%m-%d %H:%M:%S %Z'); see apps/web/.env.example ---"
+    if [ -z "${sec}" ]; then
+      # generated ON THE SERVER, never transported, never printed
+      local new_sec
+      new_sec="$(openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+      if [ "${#new_sec}" -lt 32 ]; then
+        rm -f "${tmp}"
+        die "could not generate a strong HANASO_SESSION_SECRET on this server (openssl and /dev/urandom both failed) — nothing was written."
+      fi
+      printf 'HANASO_SESSION_SECRET=%s\n' "${new_sec}" >> "${tmp}"
+      echo "   HANASO_SESSION_SECRET    : GENERATED (64 hex chars, random, server-side only)"
+    else
+      printf 'HANASO_SESSION_SECRET=%s\n' "${sec}" >> "${tmp}"
+    fi
+    if [ -z "${cutoff}" ]; then
+      # NOW + 14 days, ISO-8601 — set ONCE; re-runs see the key present and
+      # never touch it (the migration grace is not silently extended)
+      local new_cutoff
+      new_cutoff="$(date -u -d '+14 days' '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -v+14d '+%Y-%m-%dT%H:%M:%SZ')"
+      printf 'HANASO_LEGACY_TOKEN_CUTOFF=%s\n' "${new_cutoff}" >> "${tmp}"
+      echo "   HANASO_LEGACY_TOKEN_CUTOFF: SET ONCE to now+14d (ISO-8601; re-runs never extend it)"
+    else
+      printf 'HANASO_LEGACY_TOKEN_CUTOFF=%s\n' "${cutoff}" >> "${tmp}"
+    fi
+  } >> "${tmp}"
+
+  # atomic swap in the same directory (same filesystem)
+  mv -f "${tmp}" "${env_file}"
+  echo "   .env updated atomically — backup: ${env_file}.backup-${ts} (mode 600)"
+}
+
+prepare_security_env
+
+# -----------------------------------------------------------------------------
 # 5) integrity — the bootstrap file being run must be byte-identical to the
 #    same path inside the pinned updater commit (guards against a corrupted or
 #    MITM-replaced download; the git SHA pins everything else). Uses git show,
