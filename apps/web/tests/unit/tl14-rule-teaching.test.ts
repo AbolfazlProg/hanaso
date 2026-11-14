@@ -295,10 +295,14 @@ describe('TL-14 slide decks — structural contracts on the shipped data', () =>
     expect(kinds).toContain('rule-prereq');
   });
 
-  it('H6 declares the big ゃゅょ counterparts (やゆよ) as first-look introductions', () => {
-    expect(stationBySlug('stn-kana-h6').introducesGlyphs).toEqual(['や', 'ゆ', 'よ']);
+  it('TASK-26R: H6 yōon comes AFTER the や row station (teaching-order contract)', () => {
+    expect(stationBySlug('stn-kana-h6').introducesGlyphs).toEqual([]);
     const prereq = stationBySlug('stn-kana-h6').blocks.find((b) => b.kind === 'rule-prereq');
     expect(prereq).toBeDefined();
+    const idx = (slug: string) => getChapter('kana-foundation-01')!.stations.findIndex((s) => s.slug === slug);
+    expect(idx('stn-kana-h6')).toBeGreaterThan(idx('stn-kana-h14'));
+    // prereq chain: h6 now depends on the や row, not on h5 directly
+    expect(stationBySlug('stn-kana-h6').prerequisites).toContain('stn-kana-h14');
   });
 
   it('H4 assessment stays fresh: the control word あさ never appears in a teaching slide', () => {
