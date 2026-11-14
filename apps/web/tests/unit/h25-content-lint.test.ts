@@ -437,7 +437,7 @@ test('CL-13 fixtures — catches a future-glyph dependency (negative); promise-m
  * shipped (h6 yōon at position 7 legalizing 25 surfaces while やゆよ were only
  * card-taught at position 15).
  */
-import { RULE_MARK_STATION, decomposeJa, derivedFormsIn } from '@/modules/curriculum/glyph-budget';
+import { RULE_MARK_STATION, decomposeJa } from '@/modules/curriculum/glyph-budget';
 
 /** every glyph ACTUALLY TAUGHT (kana-card) by end of station index i */
 function taughtByEnd(ch: Chapter, i: number): Set<string> {
@@ -509,7 +509,7 @@ test('CL-14 negative fixture — a station order with yōon BEFORE the や row F
   // defect) and prove the gate catches it.
   const mutated: Chapter = { ...ch1, stations: [...ch1.stations] };
   const yoonIdx = mutated.stations.findIndex((s) => s.slug === RULE_MARK_STATION['yoon-small']);
-  const [yoon] = mutated.stations.splice(yoonIdx, 1);
+  const [yoon] = mutated.stations.splice(yoonIdx, 1) as [typeof ch1.stations[number]];
   const insertAfter = mutated.stations.findIndex((s) => s.slug === 'stn-kana-h5') + 1;
   mutated.stations.splice(insertAfter, 0, yoon);
   // recompute the same structural check against the mutated order
@@ -568,11 +568,11 @@ test('CL-15 — example-set items are reading rows only (no rule-* blocks nested
 
 test('CL-15 negative fixture — a rule-step nested inside examples[] is caught', () => {
   const mutated = JSON.parse(JSON.stringify(ch1)) as typeof ch1;
-  const h12 = mutated.stations.find((s: { slug: string }) => s.slug === 'stn-kana-h12')!;
+  const h12 = mutated.stations.find((s: { slug: string }) => s.slug === 'stn-kana-h12') as typeof ch1.stations[number];
   const es = h12.blocks.find((b: { kind: string }) => b.kind === 'example-set') as unknown as {
     examples: { kind?: string }[];
   };
-  es.examples.splice(1, 0, { kind: 'rule-step', id: 'nested-imposter' });
+  es.examples.splice(1, 0, { kind: 'rule-step' });
   const findings: string[] = [];
   for (const s of mutated.stations) {
     for (const b of s.blocks) {

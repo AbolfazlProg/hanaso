@@ -1639,16 +1639,18 @@ export const KANA_STATIONS: Station[] = [
       {
         kind: 'rule-step',
         id: 'blk-stn-kana-h12-step-dakuten-ask',
-        role: 'practice',
+        role: 'explain',
         titleFa: 'یک تمرین کوچک با ゛',
         bodyFa: 'حالا خودت امتحان کن: しんぶん (روزنامه) را با ば واک‌دار بخوان.',
         ask: {
           questionFa: '«ぶ» چه صدایی دارد؟',
           options: [
-            { id: 'a', label: 'بو', correct: true, feedbackFa: 'درست! ふ + ゛ = ぶ.' },
-            { id: 'b', label: 'پو', correct: false, feedbackFa: '«پو» مال ゜ (هان‌داکوتن) است که بعداً می‌آید.' },
-            { id: 'c', label: 'هو', correct: false, feedbackFa: '«هو» خودِ ふ بدون ゛ است.' },
+            { id: 'a', label: 'بو' },
+            { id: 'b', label: 'پو' },
+            { id: 'c', label: 'هو' },
           ],
+          correctOptionId: 'a',
+          revealFa: 'درست! ふ + ゛ = ぶ. «پو» مال ゜ (هان‌داکوتن) است که بعداً می‌آید؛ «هو» خودِ ふ بدون ゛ است.',
         },
       },
       {
