@@ -1,0 +1,26 @@
+PASS  H1a practice hub renders for a new learner with the honest empty state
+PASS  H1b the review line stays honest (engine not active)
+PASS  H1c nav carries the practice destination
+PASS  H2a focused practice is offered for the completed lesson
+FAIL  H2b the session ran in the browser with server-graded feedback — answered=0
+FAIL  H2c the recap appears with the honest first-try count (no pass/fail) — 
+FAIL  H2d practice evidence recorded (learning objects eligible) — eligible=0
+PASS  H2e status carries NO fake review dates (engine honest)
+PASS  H3a mixed practice honestly locked before 3 completed lessons — {"status":409,"code":"practice/mixed_locked"}
+PASS  H3b mixed practice unlocks after 3 completed lessons — items=20
+PASS  H3c the generated payload carries NO answer keys (SKL-013)
+PASS  H4a a zero-score walk COMPLETES (no punitive bar in Learn) — {"status":200,"code":null}
+PASS  H5a the journey shows the two sections (A/B titles) — {"a":true,"b":true}
+FAIL  H5b a locked row answers the click with the reason notice — rows=17 
+FAIL  H5c the notice names the prerequisite lesson
+PASS  H5d locked rows keep the content-identity tile (labeled, not faceless) — درس کانا
+PASS  H6a milestone M1 (reading sheet) appears in section A — ادامهٔ یادگیری— ایستگاه واقعی — برگهٔ خواندن هیراگانا
+FAIL  H6b milestone M1 completes (task contract) with the seal — {"complete":false,"replayEnded":false}
+FAIL  H7a the fresh completion plays the ceremony (data-animate)
+FAIL  H7b the upgraded stage: bigger seal frame (≥144px) + rotating ink ring — frame=null
+FAIL  H7c the sound mute toggle is present beside the seal
+PASS  H7d the stamp sound asset is served locally (no hotlink) — HEAD 200
+FAIL  H7e revisit shows the seal SETTLED (no re-animation) — {"seal":false,"animating":false}
+PASS  H8 practice hub is usable at 360px (no horizontal scroll) — {"noHScroll":true,"hubVisible":true,"tabBar":true}
+
+H22 E2E: 14/24 PASS

@@ -1,0 +1,45 @@
+PASS  S1.1 first visit: middleware mints the per-browser learner id
+PASS  S1.2 the start CTA targets the FIRST lesson (stn-kana-h0) — /learn/kana-foundation-01/journey/stn-kana-h0
+FAIL  S1.3 h0 walked & completed with NO error panel
+FAIL  S1.4 the AIZEN seal appears with the FRESH ceremony (data-animate)
+FAIL  S1.5 exactly ONE complete request for the walk — complete=0
+PASS  S1.6 zero 4xx/5xx on the station API during the walk — []
+FAIL  S1.7 the completion CTA navigates back to the map section — null
+FAIL  S1.9 home after completion shows the NEXT lesson (own progress kept) — {"label":"شروع یادگیری","href":"/learn/kana-foundation-01/journey/stn-kana-h0"}
+FAIL  S1.10 revisit of the completed station: seal present, SETTLED (no re-animation)
+PASS  S1.11 revisit fires NO new complete request
+PASS  S2.1 honest API fast-forward of prerequisites h0..k7 (all 200) — 24 stations
+FAIL  S2.2 PERFECT walk of stn-kana-k8 completes (the owner-bug regression: stale auto-next scored 2/3 → 409 forever) — {}
+PASS  S2.3 NO 409 / failure panel on the k8 walk
+FAIL  S2.4 the k8 seal stamped with the fresh ceremony
+PASS  S2.5 zero 4xx/5xx during the k8 walk — []
+FAIL  S2.6 no console errors during the k8 walk — Failed to load resource: the server responded with a status of 404 (Not Found) | Failed to load resource: the server responded with a status of 404 (Not Found)
+FAIL  S3.1 PERFECT walk of stn-kana-k12-foreign completes (the 1/2-trap regression)
+FAIL  S3.2 the k12-foreign seal ceremony
+PASS  S4.0 the kana mastery gate passed via real API (fm01 unlocked) — {"status":201,"outcome":"passed"}
+FAIL  S4.1 stn-fm01-01-anchor (viewed→0.6 check, OBS-001) completes on a perfect walk — {}
+FAIL  S4.2 the fm01 anchor seal ceremony
+FAIL  S4.3 seal visible at 360px (mobile) — settled on revisit
+FAIL  S4.4 seal renders at 1440px (desktop) too
+FAIL  S5.1a a wrong-answered final block still COMPLETES the lesson (no punitive grading in Learn) — {}
+PASS  S5.1b no criterion/409 panel appears (the gate is the only judge)
+FAIL  S5.2a an aborted completion shows the honest failure panel (no fake success)
+FAIL  S5.2b the in-place retry («تلاش دوباره برای ثبت») recovers the completion
+FAIL  S5.2c after navigate-away + back the completion persists (settled seal)
+PASS  S5.3a walk parked on the final block (resume anchor armed, no complete yet) — {}
+FAIL  S5.3b after refresh the walk RESUMES from the saved position
+FAIL  S5.3c the resumed walk completes — no progress lost — {}
+FAIL  S5.4 double-click on the final advance fires exactly ONE complete (single-flight) — complete=0
+FAIL  S5.4b exactly one seal (no duplicate stamps)
+PASS  S5.5a completing a prereq-locked station returns the structured 409 — {"status":409,"code":"station/prerequisites_not_met","msg":"برای ثبت این درس، ابتدا باید این درس‌ها کامل شوند: «ردیف あ»","prereqs":["stn-kana-h1"]}
+PASS  S5.5b the Persian message names the unmet lesson and the payload is ordered — ["stn-kana-h1"]
+PASS  S5.6a replay mode opens the completed station with the review badge
+FAIL  S5.6b the replay end shows the honest "nothing changed" panel
+PASS  S5.6c replay fires NO complete request and stamps NO new seal
+PASS  S5.7 a repeated complete is idempotent (200 + already:true) — {"first":{"status":200},"second":{"status":200,"already":true}}
+FAIL  S5.8a the SAME identity in a fresh context keeps its progress (next-lesson state, not start) — شروع یادگیری
+PASS  S5.8b a cookie-less GUEST sees the clean empty state (no other user's progress)
+PASS  S6.1 home smoke: 200
+PASS  S6.2 the learning map renders for the progressing user
+
+E2E: 18/43 passed, 25 failed
