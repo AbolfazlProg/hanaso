@@ -102,3 +102,29 @@ URL: `http://127.0.0.1:3100/learn/kana-foundation-01/journey/stn-kana-h12`
 | ۶ | صفر خطای JS/هیدریشن | **PASS** (۰ خطا) | هر ۴ صفحه | — |
 
 **حکم نهایی دور ۳: PASS در تمام ۶ بررسی — اصلاحات TASK-HANASO-26R (ترتیب جدید ایستگاه‌ها، بازسازی stationSlugs، چارچوب مرور h6، انتقال びょういん به h6، اصلاح گزینه‌های ぶ) در بیلد 5791460 به‌طور کامل و بدون خطای کنسول اعمال شده‌اند.**
+
+## بررسی چشمی Build نهایی CP-03 (تکمیل مأموریت — 2026-11-14)
+
+Build واقعی commit `04e5313` (استندالون + static/public کپی‌شده صحیح) روی پورت 3100:
+
+- **ترتیب مرئی /learn (هیراگانا، ۱۸ ردیف):** خوش‌آمد → あ → か → さ → طول مصوت → داکوتن → ん → な → た → ま → ら → は → **や** → **قاعدهٔ یُوئون** → سوکوئون → わ+هان‌داکوتن → برگهٔ خواندن → **مرور فاز ۱ (اختیاری/H9)** — بدون رد ترتیب قدیم.
+- **دکِ h12 کامل طی شد:** مرحلهٔ ۱۲/۱۵ جدول داکوتن は→ば/ひ→び/ふ→ぶ رندر شد؛ مرحلهٔ ۱۳/۱۵ MicroAsk با گزینه‌های **بو/پو/فو** (بدون «هو») و reveal ««فو» خودِ ふ بدون ゛ است».
+- **صفر خطای JavaScript/hydulation** در کل مسیر.
+- API: ۳۴ ایستگاه؛ h14@12 < h6@13؛ opt-r-h9@17.
+- اسکرین‌شات‌ها: `cp03-final-learn.png`، `cp03-final-h12-dakuten.png`، `cp03-final-h12-microask.png`، `cp03-final-h12-microask-reveal.png`
+
+**VERDICT: PASS**
+
+## آزمایش کامل Installer v16 در Sandbox (2026-11-14)
+
+اسکریپت: `infra/deploy/sandbox-tests/run-install-h26r.sh` — دو اجرای کامل، نتیجهٔ نهایی **28/28 PASS**:
+
+- P0: bootstrap در pin R دارای prepare_security_env؛ **SHA-256 بوت‌استرپ (W=54a737e2…) با blob در R بایت‌به‌بایت تطبیق**؛ commit تارگت D موجود.
+- P1: درخت محصول در D دارای ترتیب TASK-26R (h14<h6، H9، ۱۸ ایستگاه) + گیت‌های CL-16/CL-17 — **اثبات می‌کند Installer واقعاً Curriculum جدید را به Production می‌برد.**
+- T1: یک‌لایر کامل — دانلود (مسیر API + fallback) → گیت SHA → checkout → حفظ کلیدهای TASK-24 → build با version=1.0.0-hanaso26r-v16 → staged swap → smoke ALL GREEN.
+- T2: اجرای دوباره = idempotent (secret/cutoff دست‌نخورده، no-op تمیز).
+- T3: مسیر نصب تازه (بدون کلیدهای TASK-24): secret سمت سرور تولید شد، هرگز چاپ نشد.
+- T4: هیچ DELETE/TRUNCATE/UPDATE روی station_progress، بدون db:reset — **Progress حفظ می‌شود** (idها uuidV5('lesson:slug') مستقل از ترتیب‌اند).
+- T5: هیچ مادهٔ secret در خروجی؛ **هیچ stop/rm/restart کانتینر مشترک (KOTODAMA/PostgreSQL/BBB/HAProxy/Nginx).**
+
+**VERDICT: PASS — آمادهٔ اجرای مالک**
