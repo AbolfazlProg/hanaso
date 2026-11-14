@@ -87,3 +87,17 @@ p2-c2-prod-1, g2-cloze-1), full teaching-method redesign.
 
 - None. (Sandbox has no live PostgreSQL; PG-backed integration tests skip —
   record, don't force.)
+
+## 2026-11-14 — TASK-HANASO-25 FINAL STATE (CP-09, tip 0e1cf37)
+- Round 1 reports saved+pushed (e76f702); CP-06 remediation (b5fe987);
+  CP-07 all Round-2 A findings + CL-12 general rule (d10d09a);
+  Round 2 CLOSED: A=B=C=PASS (18a3177).
+- PHASE 7: regression 69f/787t green; real-browser E2E 13/13 (live 25-question
+  gate run; TASK-24 guards verified live: GUEST 401, hint=only-hintFa+no-store);
+  CP-08 (eca0c00).
+- PHASE 8: production build EXIT 0; pins R=14d9d3a (tooling) /
+  W=d4736bd8… (bootstrap sha256, mirror-verified) / D=9828640 (product);
+  version 1.0.0-hanaso25-r01; OWNER-COMMAND.txt v14 committed+pushed (0e1cf37).
+  Known follow-up (honest): run-h25 sandbox-drill fixture refresh (the v13
+  harness fixture predates the TASK-24 .env keys — 62/92 with stale fixtures).
+- No deploy/restart performed — the owner runs the one-liner.
