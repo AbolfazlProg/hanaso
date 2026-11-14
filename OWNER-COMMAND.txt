@@ -1,86 +1,74 @@
-HANASO — OWNER ONE-COMMAND UPDATE (v13 — TRUE ONE-LINER)
-TASK-HANASO-22 · 2026-11-13 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
+HANASO — OWNER ONE-COMMAND UPDATE (v14 — TRUE ONE-LINER)
+TASK-HANASO-25 · 2026-11-14 · repository: https://github.com/AbolfazlProg/hanaso (PUBLIC)
 
 WHAT THIS IS
   ONE single line that installs or updates HANASO on the VPS (run as root).
   No GitHub Token, no password, no Deploy Key — the repository is public and
-  everything arrives over anonymous HTTPS. Paste it as ONE line (it is a
-  single line on purpose; do not let your SSH client wrap it into several).
+  everything arrives over anonymous HTTPS. Paste it as ONE line.
 
-WHAT'S NEW IN v13 (HANASO-22 — learning experience evolution)
-  1. HONEST SCORING, PUNISHMENT RETIRED: the 0.7 exercise gate that could
-     freeze a finished walk (409 forever) is gone from the station flow —
-     every walk now completes (task contract) with an honest station score,
-     and a wrong answer no longer ships its own correctReading/correctAudio:
-     the answer key now arrives only with a correct answer or at review
-     level. Verified in a real browser (44/44 H21 regression + 25/25 H22
-     E2E, production build).
-  2. A REAL PRACTICE MODULE (KANA ONLY, HONEST): /practice — the third nav
-     tab — Focused sessions over the 92-glyph registry (writing canvas,
-     reading, listening); sessions persist server-side
-     (app.practice_sessions + app.learning_object_states — additive
-     migration 0004); the answer key NEVER reaches the client; completion
-     lands honestly in the Review surface (no fake FSRS — documented).
-  3. CHAPTER 01 RESTRUCTURED INTO TWO SECTIONS (hiragana → katakana) with
-     two REAL-WORLD milestone stations built ONLY from taught hostwords
-     (すしねこいぬえきみずともだち · ドア エアコン カラオケ パソコン テスト ラジオ) —
-     katakana is unreachable until hiragana is finished.
-  4. THE AIZEN SEAL CEREMONY, UPGRADED: a larger stage (size-40/44), a
-     rotating ink ring that settles, a one-pass shimmer, and a licensed
-     CC0 stamp sound (public/audio/sfx/aizen-stamp — opengameart
-     rubberduck bfh1_hit_09, credits in docs/research/AUDIO_CREDITS.md)
-     that plays only on a fresh completion, with a PERSISTENT mute
-     (hanaso.sfx.seal-muted) — plus HONEST end-of-lesson achievements (at
-     most 3 chips, only what actually happened).
-  5. JOURNEY LEGIBILITY: every station row carries a content-identity icon
-     (13 types — kana, milestone, vocab, …), recognizable even when locked;
-     a locked row now answers a click with a shake, a vermilion flash and
-     the PERSIAN reason (which prerequisite is missing) — the dead silent
-     lock is gone.
-  All of TASK-HANASO-21's fixes travel inside this release too (the v12
-  line was run by the owner; this is the next release on top of it).
+WHAT'S NEW IN v14 (HANASO-25 — kana & Chapter-1 assessment integrity)
+  1. THE CHAPTER-1 MASTERY GATE, REBUILT: a 25-item gate bank (5 per measure:
+     M1 shape→sound recognition, M2 sound→shape listening, M3 real-word
+     decode, M4 confusable pairs, M5 cross-script listening), weighted scoring
+     (0.9 weighted / 0.8 per-measure floor), one-miss-anywhere stays
+     recoverable, remediation targeting that can never come back empty.
+  2. ANSWER-KEY DISCIPLINE: the gate's client payload carries question audio
+     ONLY for listening items (kana-listening + rule-listening, word text
+     stripped); recall/recognition/decode sounds never travel — the sound IS
+     the answer there. Auto-play pauses its outgoing element (no overlap).
+  3. CONTENT CORRECTNESS, AUDITED BY THREE INDEPENDENT REVIEWERS over two
+     rounds: the «هیراگانا»-as-a-sound leak (76 occurrences across four
+     template families) fully removed; reading inversions vs the teaching
+     registry (kata-ku=کو, kata-ko=کُ, kata-mu=مو, kata-mo=مُ, hira-su=سو…)
+     all aligned; every glyph→reading attribution in the 487-item bank
+     machine-verified (792 attributions, 0 mismatches).
+  4. THE CONTENT-LINT GATE (CL-01..CL-12): 12 automatic rules that keep every
+     fixed bug class from re-entering — incl. CL-11 (script-name-as-sound)
+     and CL-12 (reading inversion vs the kana-teaching registry), with
+     positive+negative fixtures. Chapter-2 stays a frozen baseline (out of
+     scope); growth fails CI.
+  5. HINTS DONE RIGHT (BUG-023 closed): the «سرنخ» button fetches f2HintFa
+     from the server — GUEST 401 before any logic, station-scoped 404s,
+     response ONLY hintFa with cache-control: no-store.
+  All of TASK-HANASO-24's security hardening travels inside this release
+  (HANASO_SESSION_SECRET fail-closed, signed tokens + cutoff, identity
+  scoping, /poc page-guard) — re-verified live in this release's E2E.
 
 PINS (two INDEPENDENT values — never confuse them)
-  Tooling ref   (bootstrap+updater source)  5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10   (unchanged since HANASO-20 — audited again for v13)
+  Tooling ref   (bootstrap+updater source)  14d9d3abe726d9f585948eb60da587d4feefec4c
   Bootstrap SHA-256 (of that exact file)    d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073
-  Product target commit (the release)       3d8b8ccd201dd503e403a6e5912351f68556d6e5
-  Release version                           1.0.0-hanaso22-r01
-  Branch                                    feat/TASK-HANASO-22-learning-experience
+  Product target commit (the release)       9828640d6ec6028adbe0a0a0cffe9426652c1f34
+  Release version                           1.0.0-hanaso25-r01
+  Branch                                    fix/TASK-HANASO-25-kana-integrity
 
-DELIVERY PATHS (same evidence-based order as v12: api.github.com first,
-codeload.github.com as the fallback; raw was dropped in v10 — its IPs are
-unreliable from this VPS):
+DELIVERY PATHS
   1/2  api.github.com       contents API at the pinned tooling commit
   2/2  codeload.github.com  tarball of the pinned tooling commit,
                             single-file extract
-  The bootstrap's REAL SHA-256 is checked BEFORE anything is executed — a
-  corrupted, truncated or tampered download can never run. curl errors are
-  printed verbatim; nothing is hidden. If BOTH downloads fail the command
-  aborts having changed NOTHING.
+  The bootstrap's REAL SHA-256 is checked BEFORE anything is executed. If
+  BOTH downloads fail the command aborts having changed NOTHING.
 
-THE COMMAND — ONE line, copy it WHOLE (this exact line is also the one the
-sandbox drill infra/deploy/sandbox-tests/run-h22.sh executes):
+THE COMMAND — ONE line, copy it WHOLE:
 
-bash -c 'R=5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10; W=d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073; D=3d8b8ccd201dd503e403a6e5912351f68556d6e5; T=/tmp/hanaso-bootstrap-h22.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso22-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
+bash -c 'R=14d9d3abe726d9f585948eb60da587d4feefec4c; W=d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073; D=9828640d6ec6028adbe0a0a0cffe9426652c1f34; T=/tmp/hanaso-bootstrap-h25.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso25-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
 
   (If you are NOT root, start the line with: sudo bash -c ' … ' — the whole
   single-quoted payload stays exactly the same.)
 
 WHAT THE LINE DOES, STEP BY STEP
   1. pins R (tooling commit), W (the bootstrap file's SHA-256), D (the
-     product release commit) and T (a temp path) — all inside the quoted
-     bash -c payload, nothing undefined can leak in from your shell;
+     product release commit) and T (a temp path);
   2. downloads infra/deploy/bootstrap-hanaso.sh AT COMMIT R — first via
-     api.github.com, and if that path fails (rate-limit, network, TLS) via a
-     codeload tarball with a single-file extract;
+     api.github.com, and if that path fails via a codeload tarball with a
+     single-file extract;
   3. verifies the downloaded file is BYTE-IDENTICAL to the pin (sha256sum
      -c) — a mismatch aborts with NOTHING executed;
-  4. runs it with HANASO_TARGET_VERSION/HANASO_DEPLOY_SHA/HANASO_TARGET_SHA
-     set — the bootstrap re-verifies R and D exist in the repository, then
-     executes the updater strictly from commit R, which builds the image
-     from commit D on the server, runs the staged swap (postgres →
-     pgbouncer → migrate → web+worker), the health gate, the smoke gate,
-     and records the update history for rollback.
+  4. runs it with HANASO_TARGET_VERSION/HANASO_DEPLOY_SHA(tooling)/
+     HANASO_TARGET_SHA(product) set — the bootstrap re-verifies R and D
+     exist in the repository, then executes the updater strictly from
+     commit R, which builds the image from commit D on the server, runs the
+     staged swap, the health gate, the smoke gate, and records the update
+     history for rollback.
 
 OPTIONAL SUBCOMMANDS — append the word INSIDE the quotes, right before the
 final closing quote:
@@ -88,17 +76,26 @@ final closing quote:
   … bash "$T" rollback'   # app-level rollback to the previous image
                           # (database and volumes are NEVER touched)
 
+REQUIRED .env KEYS (TASK-HANASO-24 — the updater checks NAMES only, never
+prints values; missing keys abort before any change):
+  HANASO_WEB_IMAGE, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB,
+  HANASO_SESSION_SECRET, HANASO_LEGACY_TOKEN_CUTOFF
+
 HONESTY
-  - This exact line was executed by the sandbox drill
-    (infra/deploy/sandbox-tests/run-h22.sh — the fixture mirrors the REAL
-    production state, verified live 2026-11-13T14:47Z: the owner HAS run
-    the v12 line, learn.kotodama.ir serves 1.0.0-hanaso21-r01 @ 33304b1f…,
-    so this update jumps n21→n22): both download paths, the hash gate, the
-    end-to-end update, idempotent re-run, status, rollback, migrate-failure
-    auto-rollback and the KOTODAMA isolation sweep — see
-    ops/checkpoints/TASK-HANASO-22/RELEASE_VALIDATION.md.
-  - The drill result numbers are written AFTER the run, never before.
+  - Pins verified in-repo: the tooling commit 14d9d3a carries the hardened
+    updater (both TASK-24 env keys enforced) and the current smoke contract;
+    nothing after it touched infra/deploy or scripts/smoke.sh. The bootstrap
+    SHA-256 above is the real sha256 of that file at that commit. The
+    product commit 9828640 is the branch tip after full regression
+    (69 files / 787 tests green, typecheck + eslint clean, production build
+    green) and a real-browser E2E (13/13 — live 25-question gate run,
+    TASK-24 guards verified live).
+  - The v13 sandbox drill harness (infra/deploy/sandbox-tests/run-h22.sh)
+    predates the TASK-24 .env keys and its fixture does not include
+    HANASO_SESSION_SECRET/HANASO_LEGACY_TOKEN_CUTOFF, so it cannot exercise
+    the CURRENT updater end-to-end; a run-h25 refresh of the fixture is the
+    known follow-up. The one-liner itself was validated by the harness
+    mechanics that are unchanged since v13 (download paths, SHA-256 gate,
+    pin resolution against a bare mirror).
   - Production is NOT auto-deployed by this file: the owner runs the line.
-  - The VPS audio run (VOICEVOX) is a SEPARATE optional step — see
-    ops/checkpoints/TASK-HANASO-21/AUDIO_REMEDIATION.md (the 29 pending
-    words noted there join the next run).
+  - The VPS audio run (VOICEVOX) is a SEPARATE optional step.
