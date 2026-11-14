@@ -85,11 +85,13 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     expect(cardIds.size).toBe(92);
   });
 
-  it('ships the kana gate bank: ≥2 switches per M-K measure, kana labels present', () => {
+  it('ships the kana gate bank: ≥5 switches per M-K measure, kana labels present', () => {
+    /* TASK-HANASO-25 (BUG-001 rebank): 5 per measure so ONE miss = 0.8 ≥ 0.8
+     * stays a PASS (recoverable); two misses (0.6) remediate. */
     const bank = Object.values(chapter.exercises).filter((e) => e.assessmentRole.startsWith('mastery_'));
-    expect(bank.length).toBeGreaterThanOrEqual(10);
+    expect(bank.length).toBeGreaterThanOrEqual(25);
     for (const measure of ['M1', 'M2', 'M3', 'M4', 'M5'] as const) {
-      expect(bank.filter((e) => e.assessmentRole === `mastery_${measure}`).length).toBeGreaterThanOrEqual(2);
+      expect(bank.filter((e) => e.assessmentRole === `mastery_${measure}`).length).toBe(5);
     }
     expect(chapter.mastery.measureLabelsFa?.M1).toContain('بازشناسی');
     // The strict kana thresholds live in the L1 policy (0.90/0.80 — DD-120), never here.
@@ -198,7 +200,7 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
       }
     }
     const masteryCount = Object.values(chapter.exercises).filter((e) => e.assessmentRole.startsWith('mastery_')).length;
-    expect(masteryCount).toBe(12); // 05B gate: ≥2 switches × 5 measures (12 items)
+    expect(masteryCount).toBe(12); // 05B gate: ≥2 switches × 5 measures (12 items) — ch2 NOT rebanked (TASK-HANASO-25 scope = ch1 only)
   });
 });
 

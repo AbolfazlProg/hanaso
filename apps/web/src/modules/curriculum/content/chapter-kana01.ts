@@ -109,7 +109,11 @@ export const CHAPTER_KANA_FOUNDATION: Chapter = {
       M2: 'فراخوانی (از صدا به شکل)',
       M3: 'رمزگشایی واژهٔ تازه',
       M4: 'تمایز جفت‌های شبیه',
-      M5: 'تولید نوشتاری (تا فعال‌سازی IME سبک — OQ-007 — به‌صورت انتخابی)',
+      // TASK-HANASO-25 (BUG-001): M5's bank items are kana-listening items that
+      // discriminate cross-script SOUNDS (katakana targets vs sound-distinct
+      // distractors) — the old «تولید نوشتاری» label described a writing/IME
+      // construct that was never banked. Label now states what is measured.
+      M5: 'تمایز شنیداری دو خط کانا',
     },
     weakPointMap: {
       M1: ['stn-kana-opt-r-h9'],

@@ -465,14 +465,16 @@ export const fa = {
     trailScrolledNotice: 'مسیر روی نقطهٔ ادامهٔ تو تنظیم شد',
     yourTurn: 'نوبت تو',
     typeYourName: 'نامت را بنویس',
-    /* mastery gate */
-    gateTitle: 'دروازهٔ فهم مکالمه',
-    gateLead: 'به مکالمهٔ اول برگرد — این بار با حمایت کمتر. سپس به ده پرسش فهم پاسخ بده.',
-    gateReplay: 'شنیدن دوبارهٔ مکالمه',
-    gateStart: 'شروع آزمون فهم',
-    gateSubmit: 'ثابت می‌کنم فهمیدم',
-    gatePassedTitle: 'این مکالمه را فهمیدی',
-    gatePassedBody: 'مُهر «فهمیدم» این فصل خورد. کارت‌های مرور فردا منتظرند.',
+    /* mastery gate — TASK-HANASO-25: counts now match the real 25-item kana
+     * bank (5 per measure); «ده پرسش» was the audit's honesty finding (13/12
+     * served). The FSRS claim is dropped (fsrsItems=[] — BUG-024 family). */
+    gateTitle: 'دروازهٔ فهم فصل',
+    gateLead: 'آماده‌ای؟ به پرسش‌های دروازه پاسخ بده — هر پنج مهارت فصل سنجیده می‌شود. در پرسش‌های شنیداری فقط صدا داری.',
+    gateReplay: 'مرور سریع فصل',
+    gateStart: 'شروع آزمون فصل',
+    gateSubmit: 'ثابت می‌کنم یاد گرفتم',
+    gatePassedTitle: 'این فصل را فهمیدی',
+    gatePassedBody: 'مُهر «فهمیدم» این فصل خورد — فصل بعدی باز شد.',
     gateFailedTitle: 'هنوز کامل نشده',
     gateFailedBody: 'ایستگاه‌های پیشنهادی زیر را دوباره ببین و برگرد — حداکثر سه حلقه در هر جلسه.',
     gateQuestion: 'پرسش',

@@ -4,6 +4,8 @@ import { toClientExercise } from '@/modules/curriculum';
 import { MasteryGate } from '@/components/curriculum/mastery-gate';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 import { resolveLearnerId } from '@/lib/learner/server';
+import { kanaAudioUrls } from '@/modules/audio/kana-audio';
+import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 
@@ -14,6 +16,14 @@ import type { ClientExercise } from '@/modules/curriculum/grading';
  * TASK-HANASO-16: the chapter soft lock gates this route too — a locked
  * chapter's gate is not reachable by direct URL (#94 parity with every other
  * chapter route).
+ *
+ * TASK-HANASO-25 (BUG-001 — the audit's single Critical): the gate's
+ * kana-listening items shipped with «به صدای پخش‌شده گوش کن» prompts and NO
+ * sound — this page never attached promptAudio, unlike the journey station
+ * page. The wiring below mirrors journey/[station]/page.tsx exactly: the
+ * question's OWN sound for kana-listening/kana-recall (never for
+ * recognition/decode — the sound equals the answer there), and the word
+ * recording for rule-listening.
  */
 export default async function AssessmentPage({ params }: { params: Promise<{ chapter: string }> }) {
   const { chapter: slug } = await params;
@@ -39,7 +49,18 @@ export default async function AssessmentPage({ params }: { params: Promise<{ cha
 
   const gate = Object.values(chapter.exercises)
     .filter((e) => e.assessmentRole.startsWith('mastery_'))
-    .map(toClientExercise);
+    .map((ex) => {
+      const ce = toClientExercise(ex);
+      if (ex.type === 'kana-listening' || ex.type === 'kana-recall') {
+        ce.promptAudio = kanaAudioUrls(`kn-${ex.targetConcept}`);
+      }
+      if (ex.type === 'rule-listening' && ex.promptJa) {
+        ce.promptAudio = hostWordAudioUrls(ex.promptJa);
+        ce.promptJa = undefined;
+        ce.promptJaReading = undefined;
+      }
+      return ce;
+    });
   const audioByLine: Record<string, string> = {};
   for (const entry of bundle!.bundle.audio.entries) audioByLine[entry.lineId] = entry.files.opus;
 

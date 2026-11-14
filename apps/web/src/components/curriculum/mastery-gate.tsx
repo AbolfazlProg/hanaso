@@ -7,14 +7,21 @@
  * re-listen) → answer the 10-question gate bank (server-graded — answers NEVER
  * in the client) → qualitative verdict (AC-947: no raw % — the 「理解」 seal)
  * → point-return remediation map on failure (max 3 loops per session).
+ *
+ * TASK-HANASO-25 (BUG-001): kana-listening gate items now carry promptAudio
+ * (attached by the assessment page — same contract as the journey station
+ * page). The sound IS the question: it auto-plays when the question appears
+ * and the replay control stays visible. Recognition/decode items NEVER get a
+ * sound here — the sound equals the answer for those types.
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CircleCheck, Ear, Loader2, RotateCcw } from 'lucide-react';
+import { ArrowLeft, CircleCheck, Ear, Loader2, RotateCcw, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { LineAudioButton } from './line-audio-button';
+import { getCachedAudio, reportPlaybackError } from '@/modules/audio/client-cache';
 
 export interface MasteryGateProps {
   chapterSlug: string;
@@ -47,6 +54,25 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
   const ex = exercises[index];
   const isLast = index === exercises.length - 1;
   const answeredCount = Object.keys(answers).length;
+
+  /* TASK-HANASO-25 (BUG-001): a listening question's sound auto-plays once
+   * when the question appears (the sound IS the question). Same policy as
+   * exercise-session.tsx — normal speed 1.0, replayable. */
+  const listenPrompt = ex?.type === 'kana-listening' || ex?.type === 'rule-listening' ? (ex.promptAudio ?? null) : null;
+  useEffect(() => {
+    if (!listenPrompt) return;
+    const el = getCachedAudio(listenPrompt.opus);
+    if (!el) return;
+    try {
+      el.playbackRate = 1;
+      el.preservesPitch = true;
+      el.currentTime = 0;
+      const p = el.play();
+      if (p && typeof p.then === 'function') p.catch(() => reportPlaybackError(el.src));
+    } catch {
+      reportPlaybackError(listenPrompt.opus);
+    }
+  }, [index, listenPrompt?.opus]);
 
   const record = useCallback(() => {
     if (!ex) return;
@@ -96,10 +122,10 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
         <div className="flex flex-col gap-2 rounded-md bg-surface-warm p-4">
           <p className="text-body font-bold">{fa.curriculum.gateReplay}</p>
           <p className="text-small text-ink-soft">
-            زیرنویس این بار نمایش داده نمی‌شود — فقط با لمس هر خط باز می‌شود. در پرسش‌های شنیداری هم فقط صدا داری.
+            اگر جایی از فصل برایت تازه مانده، مسیر ایستگاه‌ها را دوباره ببین. در پرسش‌های شنیداری فقط صدا داری.
           </p>
           <Link
-            href={`/learn/${chapterSlug}/dialogue`}
+            href={`/learn/${chapterSlug}/journey`}
             className="flex h-11 w-fit items-center gap-2 rounded-md border border-ai px-5 text-body font-bold text-ai transition-colors hover:bg-indigo-wash"
           >
             <RotateCcw aria-hidden className="size-4" />
@@ -214,6 +240,55 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
 
       <section className="flex flex-col gap-4 rounded-md border border-ink-faint bg-card p-5">
         <p className="text-body font-medium">{ex.promptFa}</p>
+
+        {/* TASK-HANASO-25 (BUG-001): the listening question's own sound — replay
+            control always visible (auto-play happens on question change above).
+            No glyph text is shown: the shapes live in the options. */}
+        {listenPrompt ? (
+          <div
+            className="flex flex-wrap items-center gap-3 rounded-md border border-ai/40 bg-indigo-wash/30 p-4"
+            data-listen-question
+          >
+            <button
+              type="button"
+              onClick={() => {
+                const el = getCachedAudio(listenPrompt.opus);
+                if (!el) return;
+                try {
+                  el.pause();
+                  el.playbackRate = 1;
+                  try {
+                    el.preservesPitch = true;
+                  } catch {
+                    /* engines without the property */
+                  }
+                  el.currentTime = 0;
+                  el.onerror = () => {
+                    if (listenPrompt.m4a && !el.src.endsWith(listenPrompt.m4a)) {
+                      el.src = listenPrompt.m4a;
+                      void el.play().catch(() => reportPlaybackError(el.src));
+                    } else {
+                      reportPlaybackError(el.src);
+                    }
+                  };
+                  const p = el.play();
+                  if (p && typeof p.then === 'function') p.catch(() => reportPlaybackError(el.src));
+                } catch {
+                  reportPlaybackError(listenPrompt.opus);
+                }
+              }}
+              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-ai bg-card px-4 text-small font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+              aria-label={fa.curriculum.exHearQuestionSoundAria}
+              data-question-audio="gate-replay"
+            >
+              <Volume2 aria-hidden className="size-5" />
+              {fa.curriculum.exHearQuestionSound}
+            </button>
+            <span className="text-caption leading-[var(--leading-fa)] text-ink-soft">
+              {fa.curriculum.exListenAutoNote}
+            </span>
+          </div>
+        ) : null}
 
         {ex.audioLineRef && (
           <div className="flex items-center gap-3 rounded-md bg-surface-warm p-3">
