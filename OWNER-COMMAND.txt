@@ -13,7 +13,7 @@ THE v15 FIX (HANASO-26 Part A — the v14 VPS installation failure)
   HANASO_LEGACY_TOKEN_CUTOFF since TASK-24 (fail-closed security), but the
   owner's /opt/hanaso/.env predates TASK-24 and nothing in the one-command
   path ever created those keys (the runbook step was manual-only).
-  THE FIX (tooling commit 5738d94): the bootstrap now PREPARES the two keys
+  THE FIX (tooling commit 3f41eb5): the bootstrap now PREPARES the two keys
   BEFORE the updater runs —
   - an existing VALID value is preserved verbatim (the secret is NEVER
     rotated; the cutoff is NEVER extended — set-once semantics);
@@ -64,7 +64,7 @@ WHAT'S NEW IN v14 (HANASO-25 — kana & Chapter-1 assessment integrity)
   scoping, /poc page-guard) — re-verified live in this release's E2E.
 
 PINS (two INDEPENDENT values — never confuse them)
-  Tooling ref   (bootstrap+updater source)  5738d94d584bd7868269e7e9e7a8610484d8de98
+  Tooling ref   (bootstrap+updater source)  3f41eb5cf6431a7ff5c1f972efdb7a8f5d59b168
   Bootstrap SHA-256 (of that exact file)    54a737e279b32aa14b30867e98ca910378139adf8bf4bd2afb5241d165a81e0c
   Product target commit (the release)       9828640d6ec6028adbe0a0a0cffe9426652c1f34
   (unchanged from v14 — TASK-26 Part A is a TOOLING fix; the product bits
@@ -81,7 +81,7 @@ DELIVERY PATHS
 
 THE COMMAND — ONE line, copy it WHOLE:
 
-bash -c 'R=5738d94d584bd7868269e7e9e7a8610484d8de98; W=54a737e279b32aa14b30867e98ca910378139adf8bf4bd2afb5241d165a81e0c; D=9828640d6ec6028adbe0a0a0cffe9426652c1f34; T=/tmp/hanaso-bootstrap-h25.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso25-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
+bash -c 'R=3f41eb5cf6431a7ff5c1f972efdb7a8f5d59b168; W=54a737e279b32aa14b30867e98ca910378139adf8bf4bd2afb5241d165a81e0c; D=9828640d6ec6028adbe0a0a0cffe9426652c1f34; T=/tmp/hanaso-bootstrap-h25.sh; (curl -fsSL --connect-timeout 10 --max-time 60 -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/AbolfazlProg/hanaso/contents/infra/deploy/bootstrap-hanaso.sh?ref=$R" -o "$T" || curl -fsSL --connect-timeout 10 --max-time 300 "https://codeload.github.com/AbolfazlProg/hanaso/tar.gz/$R" | tar -xzO "hanaso-$R/infra/deploy/bootstrap-hanaso.sh" > "$T") && echo "$W  $T" | sha256sum -c - && HANASO_TARGET_VERSION="1.0.0-hanaso25-r01" HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" bash "$T"'
 
   (If you are NOT root, start the line with: sudo bash -c ' … ' — the whole
   single-quoted payload stays exactly the same.)
