@@ -973,8 +973,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h8-card-hira-ne',
         kanaId: 'hira-ne',
         showRomaji: false,
-        confusableNoteFa:
-          'حلقهٔ کوچک + دُمِ بلندِ رو به پایین؛ دو کانای مشابه را بعداً در ردیف‌های «را» و «وا» می‌بینی.',
+        confusableNoteFa: 'حلقهٔ کوچک + دُمِ بلندِ رو به پایین؛ دو کانای مشابه را بعداً در ردیف‌های «را» و «وا» می‌بینی.',
       },
       { kind: 'kana-card', id: 'blk-stn-kana-h8-card-hira-no', kanaId: 'hira-no', showRomaji: false },
       {
@@ -1414,8 +1413,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h11-card-hira-re',
         kanaId: 'hira-re',
         showRomaji: false,
-        confusableNoteFa:
-          'دُمِ بلند و صاف دارد (با «ね» تفاوتش: حلقهٔ کوچک‌تر)؛ کانای دیگر را بعداً در ردیف «وا» می‌بینی.',
+        confusableNoteFa: 'دُمِ بلند و صاف دارد (با «ね» تفاوتش: حلقهٔ کوچک‌تر)؛ کانای دیگر را بعداً در ردیف «وا» می‌بینی.',
       },
       {
         kind: 'kana-card',
@@ -1647,10 +1645,10 @@ export const KANA_STATIONS: Station[] = [
           options: [
             { id: 'a', label: 'بو' },
             { id: 'b', label: 'پو' },
-            { id: 'c', label: 'هو' },
+            { id: 'c', label: 'فو' },
           ],
           correctOptionId: 'a',
-          revealFa: 'درست! ふ + ゛ = ぶ. «پو» مال ゜ (هان‌داکوتن) است که بعداً می‌آید؛ «هو» خودِ ふ بدون ゛ است.',
+          revealFa: 'درست! ふ + ゛ = ぶ. «پو» مال ゜ (هان‌داکوتن) است که بعداً می‌آید؛ «فو» خودِ ふ بدون ゛ است.',
         },
       },
       {
@@ -1793,10 +1791,10 @@ export const KANA_STATIONS: Station[] = [
           {
             id: 'rd-stn-kana-h14-2',
             role: 'reading',
-            ja: 'やすみ',
-            reading: 'یاسومی',
-            fa: 'استراحت / تعطیلی',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
+            ja: 'やまだ',
+            reading: 'یامادا',
+            fa: 'یامادا (نام خانوادگی)',
+            whyFa: 'や همین‌جا آموختی، ま از ردیف قبل و だ داکوتنِ た — کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h14-3',
@@ -1970,7 +1968,7 @@ export const KANA_STATIONS: Station[] = [
           ],
           correctOptionId: 'b',
           revealFa:
-            'آرایشگاه! 「びょういن» (ょ کوچک) بیمارستان است و 「びよういن» (よ بزرگ) آرایشگاه — اندازهٔ یک نویسه معنا را عوض می‌کند.',
+            'آرایشگاه! 「びょういん» (ょ کوچک) بیمارستان است و 「びよういん» (よ بزرگ) آرایشگاه — اندازهٔ یک نویسه معنا را عوض می‌کند.',
         },
       },
       {
@@ -2000,7 +1998,7 @@ export const KANA_STATIONS: Station[] = [
         listenNoteFa: 'صوتِ فرم‌های جدا (きよう و مانند آن) هنوز تولید نشده — فعلاً شکل فشرده را بشنو.',
         persianBridgeFa:
           'اسم «کیّا» را یک‌تکه می‌گویی؛ اما اگر وسطش مکث کنی «کی‌یا» می‌شود — دو تکهٔ جدا. ゃゅょ کوچک = یک‌تکه؛ やゆよ بزرگ = دوتکه.',
-        honestyLabelFa: 'ردیف ひ (و びょういن/びよういن) هنوز آموزش ندیده‌ای — این جفت معروف بعد از ردیف は می‌آید.',
+        honestyLabelFa: 'ردیف ひ و は را در ایستگاه‌های پیش از این دیده‌ای؛ びょういん همین‌جا کامل خواندنی است.',
       },
       {
         kind: 'exercise',
@@ -2723,7 +2721,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k3-wrapup',
         titleFa: 'ردیف ラ — جمع‌بندی',
         itemsFa: [
-          '5 کانای جدید: ラ(را)، リ(ری)، ル(رو)، レ(ره)، ロ(رُ)',
+          '5 کانای جدید: ラ(را)، リ(ری)، ル(رو)، レ(ره)، ロ(رو)',
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 641 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
@@ -3786,7 +3784,7 @@ export const KANA_STATIONS: Station[] = [
     slug: 'stn-kana-k12',
     type: 'kana',
     titleFa: 'ردیف ワ/ヲ',
-    objectiveFa: 'دو کارت آخرِ کاتاکانا: ワ و ヲ — با روماجی روشن (استثنای CONTENT-107)',
+    objectiveFa: 'دو کارت آخرِ کاتاکانا: ワ و ヲ — با روماجی روشن (استثنای )',
     core: true,
     order: 29,
     prerequisites: ['stn-kana-k11'],
@@ -4158,7 +4156,7 @@ export const KANA_STATIONS: Station[] = [
     slug: 'stn-kana-opt-r-h9',
     type: 'review',
     titleFa: 'مرور ایستگاه‌های فاز ۱ (اختیاری)',
-    objectiveFa: 'شاخهٔ اختیاری از H9 — اختیاری است و دروازهٔ فصل را قفل نمی‌کند.',
+    objectiveFa: 'شاخهٔ اختیاری از فاز مرور — اختیاری است و دروازهٔ فصل را قفل نمی‌کند.',
     core: false,
     order: 33,
     prerequisites: ['stn-kana-h9'],

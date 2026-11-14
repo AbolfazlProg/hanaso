@@ -475,14 +475,18 @@ test('CL-14 — structural rule-order: every rule station comes AFTER the statio
           const req = decomposeJa(g);
           for (const base of req.base) {
             if (!taught.has(base)) {
-              findings.push(`${s.slug}/${(b as { id: string }).id}.${field}: base «${base}» (from «${g}») not card-taught by #${i + 1}`);
+              findings.push(
+                `${s.slug}/${(b as { id: string }).id}.${field}: base «${base}» (from «${g}») not card-taught by #${i + 1}`,
+              );
             }
           }
           for (const mark of req.marks) {
             const teachAt = ch1.stations.findIndex((t) => t.slug === RULE_MARK_STATION[mark]);
             if (teachAt === -1) continue;
             if (teachAt > i) {
-              findings.push(`${s.slug}/${(b as { id: string }).id}.${field}: mark «${mark}» (from «${g}») at #${i + 1} but taught at #${teachAt + 1}`);
+              findings.push(
+                `${s.slug}/${(b as { id: string }).id}.${field}: mark «${mark}» (from «${g}») at #${i + 1} but taught at #${teachAt + 1}`,
+              );
             }
           }
         }
@@ -509,7 +513,7 @@ test('CL-14 negative fixture — a station order with yōon BEFORE the や row F
   // defect) and prove the gate catches it.
   const mutated: Chapter = { ...ch1, stations: [...ch1.stations] };
   const yoonIdx = mutated.stations.findIndex((s) => s.slug === RULE_MARK_STATION['yoon-small']);
-  const [yoon] = mutated.stations.splice(yoonIdx, 1) as [typeof ch1.stations[number]];
+  const [yoon] = mutated.stations.splice(yoonIdx, 1) as [(typeof ch1.stations)[number]];
   const insertAfter = mutated.stations.findIndex((s) => s.slug === 'stn-kana-h5') + 1;
   mutated.stations.splice(insertAfter, 0, yoon);
   // recompute the same structural check against the mutated order
@@ -558,7 +562,9 @@ test('CL-15 — example-set items are reading rows only (no rule-* blocks nested
       items.forEach((it, idx) => {
         const kind = (it as { kind?: string }).kind;
         if (kind && String(kind).startsWith('rule')) {
-          findings.push(`${s.slug}/${(b as { id: string }).id}/examples[${idx}]: nested rule block «${kind}» — rule blocks belong at blocks[] level`);
+          findings.push(
+            `${s.slug}/${(b as { id: string }).id}/examples[${idx}]: nested rule block «${kind}» — rule blocks belong at blocks[] level`,
+          );
         }
       });
     }
@@ -568,7 +574,9 @@ test('CL-15 — example-set items are reading rows only (no rule-* blocks nested
 
 test('CL-15 negative fixture — a rule-step nested inside examples[] is caught', () => {
   const mutated = JSON.parse(JSON.stringify(ch1)) as typeof ch1;
-  const h12 = mutated.stations.find((s: { slug: string }) => s.slug === 'stn-kana-h12') as typeof ch1.stations[number];
+  const h12 = mutated.stations.find(
+    (s: { slug: string }) => s.slug === 'stn-kana-h12',
+  ) as (typeof ch1.stations)[number];
   const es = h12.blocks.find((b: { kind: string }) => b.kind === 'example-set') as unknown as {
     examples: { kind?: string }[];
   };
@@ -587,4 +595,54 @@ test('CL-15 negative fixture — a rule-step nested inside examples[] is caught'
     }
   }
   expect(findings.some((f) => f.includes('nested-imposter') === false && f.includes('examples[1]'))).toBe(true);
+});
+
+/* ------------------------------- CL-16 (TASK-HANASO-26R round-2 A) -------
+ * The VISIBLE journey list order comes from the section units' stationSlugs
+ * arrays — not from station.order. Round-2 audit caught the fix shipping with
+ * reordered stations but a STALE stationSlugs list (UI showed yōon before the
+ * や row even though the API nodes were correct). Gate: each unit's
+ * stationSlugs must list its stations in ascending station.order, and the
+ * units' concatenation must equal the full ordered chapter (no drops — the
+ * first round of this fix accidentally dropped stn-kana-opt-r-h9).
+ */
+test('CL-16 — every unit stationSlugs list matches the authored station order (UI list == API order)', () => {
+  const ordered = [...ch1.stations].sort((a, b) => a.order - b.order).map((s) => s.slug);
+  const byUnit: string[][] = (ch1 as unknown as { units: { stationSlugs: string[] }[] }).units.map(
+    (u) => u.stationSlugs,
+  );
+  const flat = byUnit.flat();
+  expect(new Set(flat).size).toBe(ordered.length); // permutation, no dupes
+  expect([...new Set(flat)].sort()).toEqual([...new Set(ordered)].sort()); // no drops
+  const pos = new Map(ordered.map((s, i) => [s, i]));
+  for (const slugs of byUnit) {
+    const positions = slugs.map((s) => pos.get(s));
+    positions.forEach((p) => expect(p).toBeDefined());
+    for (let i = 1; i < positions.length; i++) {
+      expect(positions[i], `unit list out of order at #${i}`).toBeGreaterThan(positions[i - 1]!);
+    }
+  }
+});
+
+test('CL-16 negative fixture — a stale stationSlugs list (old v26 order, or a dropped station) fails', () => {
+  const mutated = JSON.parse(JSON.stringify(ch1)) as typeof ch1;
+  const units = (mutated as unknown as { units: { stationSlugs: string[] }[] }).units;
+  const u = units.find((x: { stationSlugs: string[] }) => x.stationSlugs.includes('stn-kana-h6'))!;
+  const slugs = u.stationSlugs;
+  const h6i = slugs.indexOf('stn-kana-h6');
+  slugs.splice(h6i, 1);
+  slugs.splice(slugs.indexOf('stn-kana-h7'), 0, 'stn-kana-h6'); // the v26 defect
+  const ordered = [...mutated.stations].sort((a, b) => a.order - b.order).map((s) => s.slug);
+  const pos = new Map(ordered.map((s, i) => [s, i]));
+  const positions = slugs.map((s) => pos.get(s));
+  let outOfOrder = false;
+  for (let i = 1; i < positions.length; i++) if (positions[i]! < positions[i - 1]!) outOfOrder = true;
+  expect(outOfOrder).toBe(true);
+  // and a DROPPED station must also fail the permutation check
+  const dropped = JSON.parse(JSON.stringify(ch1)) as typeof ch1;
+  const du = (dropped as unknown as { units: { stationSlugs: string[] }[] }).units;
+  const dtarget = du.find((x: { stationSlugs: string[] }) => x.stationSlugs.includes('stn-kana-h6'))!;
+  dtarget.stationSlugs.splice(dtarget.stationSlugs.indexOf('stn-kana-opt-r-h9'), 1);
+  const dflat = du.flat();
+  expect(new Set(dflat).size).not.toBe([...dropped.stations].length);
 });
