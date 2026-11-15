@@ -861,12 +861,12 @@ export const KANA_EXERCISES: Exercise[] = [
     promptJaReading: 'گاکوسِی',
     options: [
       { id: 'a', label: '«گاکوسِی»' },
-      { id: 'b', label: '«گَکسِ»' },
+      { id: 'b', label: '«گاکوسِیی»' },
       { id: 'c', label: '«کَکسِی»' },
     ],
     correctOptionId: 'a',
     distractorRationaleFa: {
-      b: '「せ+い」 = «سِی» — بدونش پایان واژه ناقص است.',
+      b: 'い پایانی کشیده نمی‌شود — せ+い = «سِی»، نه «سِیی».',
       c: '「が» واک‌دار است («گ»)، نه بی‌واک («ک»).',
     },
     feedback: {
@@ -4266,14 +4266,17 @@ export const KANA_EXERCISES: Exercise[] = [
     promptJa: 'コンピューター',
     promptJaReading: 'کُمپیووتاا',
     options: [
-      { id: 'a', label: '«کُنپیوتاا»' },
+      { id: 'a', label: '«کُمپیوتاا»' },
       { id: 'b', label: '«کُمپیووتاا»' },
-      { id: 'c', label: '«گُنپیووتاا»' },
+      { id: 'c', label: '«گُمپیووتاا»' },
     ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: '「ュ» کوچک جا افتاده — «کُمپیووتاا».', c: '「コ» = «ک»، نه «گ».' },
+    distractorRationaleFa: {
+      a: '「ュ» کوچک جا افتاده — «کُمپیووتاا».',
+      c: '「コ» = «ک»، نه «گ».',
+    },
     feedback: {
-      f1Fa: '「ュ» کوچک در «پیوو» است — کُن+پیوو+تاا.',
+      f1Fa: '「ュ» کوچک در «پیوو» است — کُم+پیوو+تاا؛ 「ン» قبل از «پ» مثل «م» خوانده می‌شود.',
       f2HintFa: 'کانا به کانا بخوان: «ک»…',
       f3ExplainFa: '«コンピューター» = «کُمپیووتاا» (رایانه) — 「ン» قبل از «پ» مثل «م» خوانده می‌شود.',
     },
@@ -5864,12 +5867,12 @@ export const KANA_EXERCISES: Exercise[] = [
     promptJa: 'らーめん',
     promptJaReading: 'راامِن',
     options: [
-      { id: 'a', label: '«رامه»' },
+      { id: 'a', label: '«راامِه»' },
       { id: 'b', label: '«رامِآ»' },
       { id: 'c', label: '«راامِن»' },
     ],
     correctOptionId: 'c',
-    distractorRationaleFa: { a: '«آ» و «ن» آخر جا افتاده.', b: '「ん» = «ن» بینی — «آ» نیست.' },
+    distractorRationaleFa: { a: '「ん» پایانی را جا انداخته‌ای — «راامِن» با «ن» بینی تمام می‌شود.', b: '「ん» = «ن» بینی — «آ» نیست.' },
     feedback: {
       f1Fa: '「ー» = «آ»ی کشیده و 「ん» = «ن» بینی.',
       f2HintFa: 'کانا به کانا بخوان: «ر»…',
@@ -10301,7 +10304,7 @@ export const KANA_EXERCISES: Exercise[] = [
     targetConcept: 'hira-wo',
     assessesConcepts: ['hira-wo'],
     difficulty: 3,
-    promptFa: 'به صدای پخش‌شده گوش کن — کدام کانا این صدا را دارد؟',
+    promptFa: 'به صدای پخش‌شده گوش کن — کدام کانای هیراگانا این صدا را دارد؟ (خط را درست انتخاب کن)',
     options: [
       { id: 'a', label: 'ワ' },
       { id: 'b', label: 'わ' },
@@ -11215,12 +11218,12 @@ export const KANA_EXERCISES: Exercise[] = [
     promptJa: 'さん',
     promptJaReading: 'سان',
     options: [
-      { id: 'a', label: '«سا»' },
+      { id: 'a', label: '«سام»' },
       { id: 'b', label: '«سان»' },
       { id: 'c', label: '«سِن»' },
     ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: '「ん» را جا انداخته‌ای — یک مورای کامل است.', c: 'مصوت ردیف «ا» است نه «اِ».' },
+    distractorRationaleFa: { a: '「ん» اینجا «ن» بینی است، نه «م» — «سام» یعنی む پایانی.', c: 'مصوت ردیف «ا» است نه «اِ».' },
     feedback: {
       f1Fa: '「ん» خودش یک ضربهٔ کامل است.',
       f2HintFa: 'واکه‌ها را جدا بشمار: سا + ن — دومی فقط «ن» بینی است.',
@@ -11261,7 +11264,7 @@ export const KANA_EXERCISES: Exercise[] = [
     promptJa: 'さんすう',
     promptJaReading: 'سانسوو',
     options: [
-      { id: 'a', label: '«سانسو»' },
+      { id: 'a', label: '«زانسوو»' },
       { id: 'b', label: '«سانسوو»' },
       { id: 'c', label: '«ساسوو»' },
     ],

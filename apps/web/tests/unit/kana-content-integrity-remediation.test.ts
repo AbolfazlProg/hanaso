@@ -171,3 +171,58 @@ describe('REMEDIATION-02 content-integrity guards — gate independence (RP-08)'
     expect(dupes).toEqual([]);
   });
 });
+
+describe('REMEDIATION-02 content-integrity guards — shape fairness (RP-05)', () => {
+  /** Visible Persian letters (diacritics/ZWNJ/guillemets excluded). */
+  const DIAC = /[\u064B-\u0652\u0670\u0640«»\u200c\u0651\s]/g;
+  const visibleLen = (label: string) => label.replace(DIAC, '').length;
+
+  it('the correct option is rarely the uniquely-longest one (pick-the-longest heuristic stays weak)', () => {
+    let total = 0;
+    let uniqueLongest = 0;
+    const offenders: string[] = [];
+    for (const ex of ALL) {
+      if (ex.type !== 'kana-decode') continue;
+      const ropts = readingOptions(ex);
+      if (ropts.length < 3) continue;
+      const correct = ropts.find((o) => o.id === ex.correctOptionId);
+      if (!correct) continue;
+      total += 1;
+      const cl = visibleLen(correct.label);
+      const others = ropts.filter((o) => o.id !== ex.correctOptionId).map((o) => visibleLen(o.label));
+      if (cl > Math.max(...others)) {
+        uniqueLongest += 1;
+        offenders.push(`${ex.id} (${cl} vs ${others.join('/')})`);
+      }
+    }
+    expect(total).toBeGreaterThan(50);
+    // After RP-05 the ratio is 1/68 (~1.5%); allow up to 10% before the guard fires
+    // (a few defensible cases like いいえ keep semantic deletion errors).
+    expect(uniqueLongest / total).toBeLessThan(0.1);
+    if (uniqueLongest / total >= 0.1) throw new Error(offenders.join('; '));
+  });
+});
+
+describe('REMEDIATION-02 content-integrity guards — script naming (AUD-014)', () => {
+  const HIRA = /[\u3041-\u309F]/;
+  const KATA = /[\u30A0-\u30FF]/;
+
+  it('every script-discrimination item (same sound in both scripts among options) names the script in its prompt', () => {
+    const problems: string[] = [];
+    for (const ex of ALL) {
+      const labels = (ex.options ?? [])
+        .map((o) => o.label.replace(/[«»]/g, '').trim())
+        .filter((l) => /^[\u3040-\u30FF\sー]+$/.test(l));
+      if (labels.length < 2) continue;
+      const hira = labels.filter((l) => HIRA.test(l) && !KATA.test(l));
+      const kata = labels.filter((l) => KATA.test(l) && !HIRA.test(l));
+      const sameSound = hira.some((h) =>
+        kata.some((k) => h.length === k.length && [...h].every((c, i) => k.charCodeAt(i) - c.charCodeAt(0) === 0x60)),
+      );
+      if (sameSound && !/هیراگانا|کاتاکانا/.test(ex.promptFa ?? '')) {
+        problems.push(`${ex.id}: ${hira.join('|')} vs ${kata.join('|')} without naming the script`);
+      }
+    }
+    expect(problems).toEqual([]);
+  });
+});

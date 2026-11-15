@@ -772,6 +772,9 @@ export const KANA_ITEMS: KanaItem[] = [
     introducedInUnit: 'H15',
   },
   {
+    // HANASO-KANA-REMEDIATION-02 (AUD-012): を carries no hostWord by design — it appears
+    // only as the object particle, never as a lexical word, so a host word cannot exist;
+    // the romajiNoteFa below carries the particle reading instead.
     kanaId: 'hira-wo',
     glyph: 'を',
     script: 'hira',
@@ -1074,6 +1077,10 @@ export const KANA_ITEMS: KanaItem[] = [
     introducedInUnit: 'K11',
   },
   {
+    // HANASO-KANA-REMEDIATION-02 (AUD-012): no katakana hostWord for ヌ by design — the
+    // katakana lessons teach K-glyphs as script counterparts of taught hiragana host words
+    // (いぬ/へや/むぎ/もち/やま/ゆき); a katakana hostWord would additionally require a
+    // committed TTS asset (audio-a3 manifest contract), so the hiragana host word carries it.
     kanaId: 'kata-nu',
     glyph: 'ヌ',
     script: 'kata',
@@ -1135,6 +1142,10 @@ export const KANA_ITEMS: KanaItem[] = [
     introducedInUnit: 'K5',
   },
   {
+    // HANASO-KANA-REMEDIATION-02 (AUD-012): no katakana hostWord for ヘ by design — the
+    // katakana lessons teach K-glyphs as script counterparts of taught hiragana host words
+    // (いぬ/へや/むぎ/もち/やま/ゆき); a katakana hostWord would additionally require a
+    // committed TTS asset (audio-a3 manifest contract), so the hiragana host word carries it.
     kanaId: 'kata-he',
     glyph: 'ヘ',
     script: 'kata',
@@ -1174,6 +1185,10 @@ export const KANA_ITEMS: KanaItem[] = [
     introducedInUnit: 'K9',
   },
   {
+    // HANASO-KANA-REMEDIATION-02 (AUD-012): no katakana hostWord for ム by design — the
+    // katakana lessons teach K-glyphs as script counterparts of taught hiragana host words
+    // (いぬ/へや/むぎ/もち/やま/ゆき); a katakana hostWord would additionally require a
+    // committed TTS asset (audio-a3 manifest contract), so the hiragana host word carries it.
     kanaId: 'kata-mu',
     glyph: 'ム',
     script: 'kata',
@@ -1194,6 +1209,10 @@ export const KANA_ITEMS: KanaItem[] = [
     introducedInUnit: 'K9',
   },
   {
+    // HANASO-KANA-REMEDIATION-02 (AUD-012): no katakana hostWord for モ by design — the
+    // katakana lessons teach K-glyphs as script counterparts of taught hiragana host words
+    // (いぬ/へや/むぎ/もち/やま/ゆき); a katakana hostWord would additionally require a
+    // committed TTS asset (audio-a3 manifest contract), so the hiragana host word carries it.
     kanaId: 'kata-mo',
     glyph: 'モ',
     script: 'kata',
@@ -1203,6 +1222,10 @@ export const KANA_ITEMS: KanaItem[] = [
     introducedInUnit: 'K9',
   },
   {
+    // HANASO-KANA-REMEDIATION-02 (AUD-012): no katakana hostWord for ヤ by design — the
+    // katakana lessons teach K-glyphs as script counterparts of taught hiragana host words
+    // (いぬ/へや/むぎ/もち/やま/ゆき); a katakana hostWord would additionally require a
+    // committed TTS asset (audio-a3 manifest contract), so the hiragana host word carries it.
     kanaId: 'kata-ya',
     glyph: 'ヤ',
     script: 'kata',
@@ -1212,6 +1235,10 @@ export const KANA_ITEMS: KanaItem[] = [
     introducedInUnit: 'K10',
   },
   {
+    // HANASO-KANA-REMEDIATION-02 (AUD-012): no katakana hostWord for ユ by design — the
+    // katakana lessons teach K-glyphs as script counterparts of taught hiragana host words
+    // (いぬ/へや/むぎ/もち/やま/ゆき); a katakana hostWord would additionally require a
+    // committed TTS asset (audio-a3 manifest contract), so the hiragana host word carries it.
     kanaId: 'kata-yu',
     glyph: 'ユ',
     script: 'kata',
