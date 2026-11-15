@@ -113,14 +113,6 @@ body {
     opacity: 1;
   }
 }
-@keyframes hanaso-fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
 
 /*
  * TASK-HANASO-22 — the gentle in-place feedback entrance (owner feedback
@@ -140,6 +132,13 @@ body {
 }
 .feedback-in {
   animation: hanaso-feedback-in var(--dur-fast, 200ms) var(--ease-out-soft, ease-out) both;
+}
+
+/* -- Seigaiha wave (青海波) — the ONE definition; consumers use .seigaiha ----
+ * TASK-28 hygiene: was duplicated as a data-URI in section-journey.tsx. */
+.seigaiha {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='28' viewBox='0 0 56 28'%3E%3Cg fill='none' stroke='%23c9d8e4' stroke-width='1'%3E%3Cpath d='M0 28a14 14 0 0 1 28 0 14 14 0 0 1 28 0'/%3E%3Cpath d='M-14 14a14 14 0 0 1 28 0 14 14 0 0 1 28 0 14 14 0 0 1 28 0'/%3E%3Cpath d='M0 0a14 14 0 0 1 28 0 14 14 0 0 1 28 0'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 56px 28px;
 }
 
 /*
@@ -165,7 +164,7 @@ body {
   }
 }
 .locked-shake {
-  animation: hanaso-locked-shake 320ms var(--ease-out-soft, ease-out) both;
+  animation: hanaso-locked-shake var(--dur-shake, 320ms) var(--ease-out-soft, ease-out) both;
 }
 @keyframes hanaso-locked-flash {
   0% {
@@ -179,6 +178,12 @@ body {
 }
 .locked-flash {
   animation: hanaso-locked-flash 900ms var(--ease-out-soft, ease-out) both;
+}
+/* TASK-28: the promise the 22 comment made — reduced motion = flash only, no shake */
+@media (prefers-reduced-motion: reduce) {
+  .locked-shake {
+    animation: none;
+  }
 }
 
 /* -- JaBlock — جزیرهٔ LTR برای هر متن ژاپنی (KB components.css) ------------- */
@@ -231,22 +236,6 @@ body {
 :focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
-}
-
-/* TASK-LEARNING-07 (#107): حلقهٔ نبض نقطهٔ ادامه روی نقشهٔ مسیر — فقط motion-safe */
-@keyframes pulse-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-  70% {
-    transform: scale(1.28);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1.28);
-    opacity: 0;
-  }
 }
 
 /* TASK-LEARNING-08 phase 2 (#117 §6): ورود تدریجی محتوای آموزشی با حس جوهر.
@@ -402,7 +391,7 @@ body {
 }
 .aizen-seal-halo {
   position: absolute;
-  inset: -12%;
+  inset: -16%;
   border-radius: 9999px;
   background: radial-gradient(circle, var(--color-shu) 0%, color-mix(in srgb, var(--color-shu) 42%, transparent) 46%, transparent 72%);
   opacity: 0;
@@ -410,6 +399,40 @@ body {
 }
 .aizen-seal-halo:not(.aizen-seal-halo-idle) {
   animation: aizen-seal-ink-halo calc(var(--dur-ceremonial) + 520ms) ease-out both;
+}
+/*
+ * TASK-HANASO-28 — the ink-ring EXPAND beat: a second concentric ring that
+ * bursts outward exactly at the stamp's press moment (42% of the sequence),
+ * like ink pressed through washi. Pure CSS, layered under the rotating ring.
+ */
+@keyframes aizen-seal-ink-ring-expand {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  30% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.28);
+  }
+}
+.aizen-seal-ink-ring {
+  position: absolute;
+  inset: -16%;
+  border-radius: 9999px;
+  border: 2px solid color-mix(in srgb, var(--color-shu) 62%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  animation: aizen-seal-ink-ring-expand 420ms ease-out both;
+  animation-delay: calc((var(--dur-ceremonial) + 320ms) * 0.42);
+}
+@media (prefers-reduced-motion: reduce) {
+  .aizen-seal-ink-ring {
+    animation: none;
+    opacity: 0;
+  }
 }
 /*
  * TASK-HANASO-22 — the rotating ink ring + shimmer sweep (seal upgrade).
@@ -426,7 +449,7 @@ body {
 }
 .aizen-seal-ring {
   position: absolute;
-  inset: -13%;
+  inset: -16%;
   animation: aizen-seal-ring-turn 64s linear infinite;
 }
 .aizen-seal-ring-settled {

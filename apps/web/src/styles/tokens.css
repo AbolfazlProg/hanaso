@@ -97,7 +97,10 @@
   --text-h2: 1.75rem; /* 28 — section heading */
   --text-h1: 2rem; /* 32 — page heading */
   --text-display: 2.5rem; /* 40 — editorial big numbers */
-  --text-hero-fa: clamp(2.5rem, 5.6vw, 4.375rem); /* Aizen hero — Vazirmatn 900 (40→70) */
+  --text-hero-fa: clamp(2.5rem, 5.6vw, 4.375rem);
+  /* TASK-28: the big kana-glyph display sizes (was raw clamp() in components) */
+  --text-glyph-display: clamp(2.75rem, 11vw, 4rem);
+  --text-glyph-hero: clamp(3.25rem, 14vw, 5rem); /* Aizen hero — Vazirmatn 900 (40→70) */
   --text-hero-ja: clamp(1.75rem, 3.4vw, 2.625rem); /* Aizen JA hero — Zen Kaku 900 (28→42) */
 
   --leading-fa: 1.8; /* ALREQ */
@@ -184,6 +187,7 @@
   --dur-ceremonial: 1200ms; /* comprehension seal — once */
   --dur-shimmer: 1400ms; /* skeleton loop — stops under reduced motion (AC-907) */
   --dur-spin: 800ms; /* button spinner — same rule */
+  --dur-shake: 320ms; /* TASK-28: locked-row shake — collapses under reduced motion */
 
   /* ابعاد مرجع */
   --touch-min: 44px; /* WCAG 2.5.8 + our policy floor */
@@ -201,5 +205,6 @@
     --dur-ceremonial: 0ms; /* seal → simple fade via components.css contract */
     --dur-shimmer: 0ms; /* loops stop too — AC-907 (review P2 fix) */
     --dur-spin: 0ms;
+    --dur-shake: 0ms; /* TASK-28: shake stops too — the vermilion flash stays as color-only feedback */
   }
 }

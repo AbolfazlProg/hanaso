@@ -231,6 +231,12 @@ export const fa = {
     rowReview: 'مرور',
     rowLocked: 'قفل',
     rowOptional: 'اختیاری',
+    /* TASK-HANASO-28 — journey focus + section switcher labels */
+    rowCurrentChip: 'ایستگاه فعلی',
+    rowMilestoneChip: 'ایستگاه واقعی',
+    rowMinutesShort: (m: number) => `${new Intl.NumberFormat('fa-IR').format(m)}′`,
+    sectionSwitcherLabel: 'انتخاب بخش فصل',
+    sectionActiveChip: 'فعلی',
     rowMinutes: (m: number) => `~${new Intl.NumberFormat('fa-IR').format(m)} دقیقه`,
     sectionPrev: 'بخش قبلی',
     sectionNext: 'بخش بعدی',

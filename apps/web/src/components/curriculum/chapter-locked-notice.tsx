@@ -29,7 +29,7 @@ export function ChapterLockedNotice({
         {prerequisiteSlug ? (
           <Link
             href={`/learn/${prerequisiteSlug}`}
-            className="mt-4 inline-flex items-center gap-2 rounded-md border border-ai px-4 py-2 text-body font-bold text-ai"
+            className="mt-4 inline-flex items-center gap-2 rounded-md border border-ai px-4 py-2 text-body font-bold text-ai transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
           >
             {fa.curriculum.goPrerequisite} — {prerequisiteTitleFa}
           </Link>

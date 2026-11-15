@@ -98,7 +98,7 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
 
       <p className="flex items-center gap-2 text-caption text-ink-faint">
         <Map aria-hidden className="size-4" />
-        بعد از مکالمه، مسیر جزیره‌ای فصل پیش روی‌ات باز می‌شود.
+        بعد از مکالمه، مسیر یادگیری فصل — بخش به بخش، قدم به قدم — پیش روی‌ات باز می‌شود.
       </p>
     </main>
   );

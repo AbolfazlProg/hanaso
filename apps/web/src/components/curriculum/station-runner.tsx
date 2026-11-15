@@ -247,24 +247,61 @@ async function recordWritingPractice(payload: {
 /* ------------------------------------------------------------------ TASK-HANASO-22 */
 
 /**
- * The lesson's honest achievements (max 3) — pure function of the station data
- * (exported for unit tests). Labels say what ACTUALLY happened (Introduced /
- * Practiced); nothing claims mastery.
+ * TASK-HANASO-28 — richer HONEST achievements: still a pure function of the
+ * station data (exported for unit tests), still max 3, still never claiming
+ * mastery — but now derived from WHAT THE LESSON ACTUALLY CONTAINED:
+ *  - readable real words unlocked by this lesson's example-set 'reading'
+ *    items («حالا N واژهٔ واقعی تازه خواندنی شد») — the tangible progress;
+ *  - the exercise TYPES practiced (kana sound↔shape↔word binding) — so a
+ *    practice station no longer collapses into one generic chip.
+ * Labels keep the Introduced/Practiced discipline (station-design §۳).
  */
-export function lessonAchievementsOf(station: { blocks: readonly { kind: string }[]; type: string; objectiveCode?: string }): string[] {
+export function lessonAchievementsOf(
+  station: {
+    blocks: readonly { kind: string; examples?: { role: string }[]; exerciseIds?: string[] }[];
+    type: string;
+    objectiveCode?: string;
+  },
+  clientExercises?: Record<string, { type: string }>,
+): string[] {
   const out: string[] = [];
-  const blocks = station.blocks as readonly { kind: string }[];
+  const blocks = station.blocks as readonly { kind: string; examples?: { role: string }[]; exerciseIds?: string[] }[];
   const kanaCards = blocks.filter((b) => b.kind === 'kana-card').length;
-  const exercises = blocks.filter((b) => b.kind === 'exercise').length;
+  const exerciseBlocks = blocks.filter((b) => b.kind === 'exercise');
   const writing = blocks.filter((b) => b.kind === 'writing-practice').length;
+  const readingWords = blocks
+    .filter((b) => b.kind === 'example-set')
+    .flatMap((b) => b.examples ?? [])
+    .filter((ex) => ex.role === 'reading').length;
   if ((station as { objectiveCode?: string }).objectiveCode === 'kana-realworld-reading') {
     out.push('واژه‌های واقعیِ ژاپنی را با دانش خودت خواندی');
+  }
+  if (readingWords > 0) {
+    out.push(`حالا ${faNum(readingWords)} واژهٔ واقعیِ ژاپنی تازه خواندنی شد`);
   }
   if (kanaCards > 0) {
     out.push(`با ${faNum(kanaCards)} شکل جدید آشنا شدی`);
   }
-  if (exercises > 0) {
-    out.push(`${faNum(exercises)} دور تمرین یادگیری را کامل کردی`);
+  if (exerciseBlocks.length > 0) {
+    /* the exercise-type fingerprint of THIS station's blocks — the kana
+     * practice types get specific chips; anything else stays generic */
+    const types = new Set<string>();
+    for (const b of exerciseBlocks) {
+      for (const id of b.exerciseIds ?? []) {
+        const t = clientExercises?.[id]?.type;
+        if (t) types.add(t);
+      }
+    }
+    const before = out.length;
+    if (types.has('kana-listening') && (types.has('kana-recognition') || types.has('kana-recall'))) {
+      out.push('صدای کاناها را به شکل‌هایشان گره زدی');
+    }
+    if (types.has('kana-decode')) {
+      out.push('واژه‌های واقعی را رمزگشایی کردی');
+    }
+    if (out.length === before) {
+      out.push(`${faNum(exerciseBlocks.length)} دور تمرین یادگیری را کامل کردی`);
+    }
   }
   if (writing > 0) {
     out.push('نوشتن دستی را تمرین کردی');
@@ -283,12 +320,28 @@ function readSealSfxMuted(): boolean {
   }
 }
 
-/** The muted-aware stamp sound (docs/research/AUDIO_CREDITS.md — CC0). */
+/**
+ * The muted-aware stamp sound (docs/research/AUDIO_CREDITS.md — CC0).
+ * TASK-HANASO-28: dual-format contract — .opus first (smallest), .m4a as the
+ * Safari/fallback; either failing (autoplay policy, offline, codec) degrades
+ * silently to the visual ceremony.
+ */
+const SEAL_SFX_SOURCES = ['/audio/sfx/aizen-stamp.opus', '/audio/sfx/aizen-stamp.m4a'] as const;
+
 function playSealStampSound() {
   try {
     if (readSealSfxMuted()) return;
-    const el = new Audio('/audio/sfx/aizen-stamp.m4a');
+    const el = new Audio(SEAL_SFX_SOURCES[0]);
     el.volume = 0.8;
+    let failed = false;
+    el.addEventListener('error', () => {
+      if (failed) return; // both formats unavailable — visual ceremony only
+      failed = true;
+      const fallback = new Audio(SEAL_SFX_SOURCES[1]);
+      fallback.volume = 0.8;
+      const p2 = fallback.play();
+      if (p2 && typeof p2.then === 'function') p2.catch(() => {});
+    });
     const p = el.play();
     if (p && typeof p.then === 'function') p.catch(() => {});
   } catch {
@@ -296,7 +349,11 @@ function playSealStampSound() {
   }
 }
 
-/** A tiny quiet toggle beside the seal: silence the stamp sound (persisted). */
+/**
+ * TASK-HANASO-28: a quiet ghost icon-button in the message row (NOT on the
+ * seal stage) — the ceremonial composition stays clean; the mute affordance
+ * is one tab-stop after the announcement, with a tooltip-style aria-label.
+ */
 function SealSoundToggle() {
   const [muted, setMuted] = useState<boolean>(false);
   useEffect(() => {
@@ -317,7 +374,8 @@ function SealSoundToggle() {
       onClick={toggle}
       data-testid="seal-sound-toggle"
       aria-label={muted ? 'پخش صدای مهر' : 'قطع صدای مهر'}
-      className="absolute bottom-0 end-0 grid size-8 place-items-center rounded-full border border-ink-faint bg-card text-ink-soft transition-colors hover:border-ai hover:text-ai focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+      title={muted ? 'پخش صدای مهر' : 'قطع صدای مهر'}
+      className="grid size-8 shrink-0 place-items-center rounded-full border border-ink-faint bg-card text-ink-soft transition-colors hover:border-ai hover:text-ai focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
     >
       {muted ? <VolumeX aria-hidden className="size-4" /> : <Volume2 aria-hidden className="size-4" />}
     </button>
@@ -384,7 +442,7 @@ export function StationRunner(props: StationRunnerProps) {
    * never a mastery claim). Pure function of the station data, exported for
    * tests via lessonAchievementsOf below.
    */
-  const lessonAchievements = useMemo(() => lessonAchievementsOf(station), [station]);
+  const lessonAchievements = useMemo(() => lessonAchievementsOf(station, clientExercises), [station, clientExercises]);
 
   /*
    * TASK-HANASO-22 — the stamp sound: ONLY on a FRESH completion (the seal's
@@ -1191,13 +1249,20 @@ export function StationRunner(props: StationRunnerProps) {
            * licensed stamp sound (docs/research/AUDIO_CREDITS.md) fires ONCE
            * with the fresh ceremony's press moment and can be muted (persisted).
            */}
-          <span className="relative mx-auto block size-40 p-2 md:size-44" data-aizen-seal-frame>
+          {/*
+           * TASK-HANASO-28 — the celebration stage, upgraded: a bigger frame
+           * (size-48 / md:size-56) with the ink-ring breathing room, and NO
+           * speaker button on the stage — the sound toggle moved into the
+           * message row so the ceremonial composition stays pure. The seal
+           * stamps ONLY on fresh completion; revisit/replay stays settled.
+           */}
+          <span className="relative mx-auto block size-48 p-2 md:size-56" data-aizen-seal-frame>
             <AizenSeal animate={freshCompletion} label={fa.curriculum.sealLabel} className="h-full w-full" />
-            <SealSoundToggle />
           </span>
           <p className="flex items-center justify-center gap-2 text-body font-bold text-success">
             <CheckCircle2 aria-hidden className="size-5" />
             {fa.curriculum.stationCompletedMessage}
+            <SealSoundToggle />
           </p>
           <ul className="flex flex-wrap items-center justify-center gap-2" data-lesson-achievements>
             {lessonAchievements.map((a) => (

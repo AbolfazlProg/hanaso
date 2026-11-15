@@ -360,7 +360,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
                   key={id}
                   type="button"
                   onClick={() => setOrdered((o) => o.filter((x) => x !== id))}
-                  className="rounded-sm border border-ink-faint bg-surface-warm px-3 py-2 text-ja"
+                  className="rounded-sm border border-ink-faint bg-surface-warm px-3 py-2 text-ja transition-colors hover:border-ai focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
                 >
                   {ex.chunks!.find((c) => c.id === id)?.ja}
                 </button>
@@ -434,7 +434,7 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
             className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px disabled:opacity-45"
           >
             {/* TASK-HANASO-22 §11: a slow network must SHOW the click registered. */}
-            {submitting ? <Loader2 aria-hidden className="size-4 animate-spin" /> : null}
+            {submitting ? <Loader2 aria-hidden className="size-4 motion-safe:animate-[spin_var(--dur-spin)_linear_infinite]" /> : null}
             {fa.curriculum.gateSubmit}
           </button>
         )}

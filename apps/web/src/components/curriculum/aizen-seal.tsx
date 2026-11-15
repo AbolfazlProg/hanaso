@@ -55,6 +55,12 @@ export function AizenSeal({ animate, label, className }: AizenSealProps) {
         className={animate ? 'aizen-seal-halo' : 'aizen-seal-halo aizen-seal-halo-idle'}
       />
       {/*
+       * TASK-HANASO-28 — the ink-ring EXPAND beat: a concentric ring bursting
+       * outward at the stamp's press moment (ink pressed through washi).
+       * Renders only during the ceremony; reduced-motion keeps it invisible.
+       */}
+      {animate ? <span aria-hidden data-aizen-seal-ink-ring className="aizen-seal-ink-ring" /> : null}
+      {/*
        * TASK-HANASO-22 — the rotating ink ring: a carved-dash orbit that
        * slowly turns around the impression, the way a wet seal's outer ring
        * reads on paper. It runs only while the ceremony plays (and settles

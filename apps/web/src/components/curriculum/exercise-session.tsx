@@ -755,7 +755,7 @@ export function ExerciseSession({
                (was text-lead/18px — far too small for the subject of the
                question). */
             <span className="flex justify-center py-2" lang="ja" dir="ltr">
-              <JaBlock className="text-[clamp(3.25rem,14vw,5rem)] font-bold leading-[1.15] text-ink">
+              <JaBlock className="text-[length:var(--text-glyph-hero)] font-bold leading-[1.15] text-ink">
                 {ex.promptJa}
               </JaBlock>
             </span>
@@ -778,6 +778,7 @@ export function ExerciseSession({
           eliminated={eliminated}
           locked={feedback?.correct === true}
           onSelect={setSelected}
+          verdict={feedback ? (feedback.correct ? 'correct' : 'incorrect') : null}
         />
       )}
 
@@ -797,7 +798,7 @@ export function ExerciseSession({
                   type="button"
                   disabled={feedback !== null}
                   onClick={() => setOrdered((o) => o.filter((x) => x !== id))}
-                  className="rounded-sm border border-ink-faint bg-surface-warm px-3 py-2 text-ja"
+                  className="rounded-sm border border-ink-faint bg-surface-warm px-3 py-2 text-ja transition-colors hover:border-ai focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:hover:border-ink-faint"
                 >
                   {chunk.ja}
                 </button>
@@ -915,7 +916,7 @@ export function ExerciseSession({
               className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-md border border-ink-faint bg-surface-warm px-4 py-3"
               data-feedback-reading
             >
-              <JaBlock className="text-[clamp(2.75rem,11vw,4rem)] font-bold leading-[1.15] text-ink">
+              <JaBlock className="text-[length:var(--text-glyph-display)] font-bold leading-[1.15] text-ink">
                 {feedback.correctReading.glyph}
               </JaBlock>
               <p className="flex flex-wrap items-baseline gap-x-2">
@@ -1074,6 +1075,9 @@ export interface OptionRowProps {
   /** True once the answer was correct (the whole row locks). */
   locked: boolean;
   onSelect: (optionId: string) => void;
+  /** TASK-HANASO-28 §6: post-grade verdict — correct/incorrect colors the
+   *  SELECTED option itself, so the outcome is visible where the eye is. */
+  verdict?: 'correct' | 'incorrect' | null;
 }
 
 /**
@@ -1092,7 +1096,7 @@ const isKanaGlyphOption = (label: string): boolean => KANA_OPTION_RE.test(label)
  *  TASK-LEARNING-09 §۸: the options flow into TWO columns once the card has
  *  real horizontal room (tablets/desktop) — glyph tiles and Persian labels
  *  alike; phones keep the single column (touch targets stay full-width). */
-export function OptionRow({ options, selected, eliminated, locked, onSelect }: OptionRowProps) {
+export function OptionRow({ options, selected, eliminated, locked, onSelect, verdict }: OptionRowProps) {
   return (
     <div role="radiogroup" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {options.map((opt) => {
@@ -1110,11 +1114,15 @@ export function OptionRow({ options, selected, eliminated, locked, onSelect }: O
               onSelect(opt.id);
             }}
             className={[
-              'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
+              'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-[border-color,background-color,transform] active:scale-[0.99]',
               isEliminated
                 ? 'cursor-not-allowed border-ink-faint bg-surface-sunken text-ink-faint opacity-60'
                 : selected === opt.id
-                  ? 'border-ai bg-indigo-wash text-ink'
+                  ? verdict === 'correct'
+                    ? 'border-success bg-card text-success'
+                    : verdict === 'incorrect'
+                      ? 'border-error bg-card text-error'
+                      : 'border-ai bg-indigo-wash text-ink'
                   : 'border-ink-faint bg-card text-ink hover:border-ai',
             ].join(' ')}
           >

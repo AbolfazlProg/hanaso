@@ -52,6 +52,7 @@ import {
   ShieldCheck,
   Target,
   type LucideIcon,
+  MapPin,
 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 
@@ -171,8 +172,7 @@ function ContentTypeTile({ kind, locked }: { kind: StationContentKind; locked: b
 /* ------------------------------------------------------------------ helpers */
 
 /** Seigaiha wave band (DD-084) — subtle SVG texture for the section plaque. */
-const SEIGAIHA_URL =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='28' viewBox='0 0 56 28'%3E%3Cg fill='none' stroke='%23FAF7EF' stroke-opacity='0.12' stroke-width='1.1'%3E%3Cpath d='M0 28 a14 14 0 0 1 28 0 a14 14 0 0 1 28 0'/%3E%3Cpath d='M-14 14 a14 14 0 0 1 28 0 a14 14 0 0 1 28 0 a14 14 0 0 1 28 0'/%3E%3Cpath d='M-28 0 a14 14 0 0 1 28 0 a14 14 0 0 1 28 0 a14 14 0 0 1 28 0'/%3E%3C/g%3E%3C/svg%3E\")";
+
 
 /** Row state marker: shape + icon (never color alone — island §۸ honest states). */
 function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean }) {
@@ -294,7 +294,8 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
         window.history.replaceState(null, '', url.toString());
       }
       if (!firstRender.current) {
-        panelRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        panelRef.current?.scrollIntoView({ block: 'start', behavior: calm ? 'auto' : 'smooth' });
       }
       firstRender.current = false;
     },
@@ -306,25 +307,88 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
     firstRender.current = false;
   }, []);
 
+  /*
+   * TASK-HANASO-28 — auto-scroll to the CURRENT lesson, once per mount:
+   * returning from a station used to land at the page top with the frontier
+   * row 600–1900px below the fold. Rules (mission §5):
+   *  - runs ONCE (latch) so it never fights the user's own scrolling;
+   *  - NOT on tab-focus refreshes (visibilitychange path stays put);
+   *  - block:'center' so the row and its neighbours are both visible;
+   *  - reduced-motion → instant jump (matchMedia, the kana-card pattern);
+   *  - only when the current row is actually below the fold (don't hijack a
+   *    user who already sees it, e.g. near the top of a fresh chapter).
+   */
+  const autoScrolledRef = useRef(false);
+  const currentRowRef = useRef<HTMLLIElement | null>(null);
+  useEffect(() => {
+    if (autoScrolledRef.current) return;
+    autoScrolledRef.current = true;
+    const li = currentRowRef.current;
+    if (!li) return;
+    const rect = li.getBoundingClientRect();
+    const belowFold = rect.top > window.innerHeight * 0.75 || rect.bottom < 0;
+    if (!belowFold) return;
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    li.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' });
+  }, []);
+
   const section = sections[activeIndex] ?? sections[0];
   if (!section) return null;
 
   const prev = activeIndex > 0 ? sections[activeIndex - 1] : null;
   const next = activeIndex + 1 < sections.length ? sections[activeIndex + 1] : null;
 
+  /*
+   * TASK-HANASO-28 — compact section switcher (segmented control): the two
+   * chapter sections sit ABOVE the panel so switching is one tap instead of a
+   * hunt for the bottom nav (which stays for its named destinations). Labels
+   * are section TITLES ONLY — the owner's no-counters rule is preserved. The
+   * active segment reflects the live section; a locked section stays
+   * pressable but shows the lock glyph (it answers via gotoSection → the
+   * honest locked status inside the panel, never a fake entry).
+   */
+  const multiSection = sections.length > 1;
+
   return (
-    <section
-      ref={panelRef}
-      aria-label={section.titleFa}
-      className="relative overflow-hidden rounded-md border-2 border-indigo bg-card shadow-[var(--shadow-card)]"
-    >
+    <div>
+      {multiSection ? (
+        <div
+          role="tablist"
+          aria-label={fa.curriculum.sectionSwitcherLabel}
+          className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2"
+        >
+          {sections.map((sec, i) => {
+            const active = i === activeIndex;
+            return (
+              <button
+                key={sec.slug}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => gotoSection(i)}
+                className={[
+                  'flex min-h-12 items-center gap-2 rounded-md border-2 px-3 py-2 text-start transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai',
+                  active
+                    ? 'border-indigo bg-indigo text-paper shadow-[var(--shadow-cta)]'
+                    : 'border-ink-faint/60 bg-card text-ink hover:border-ai hover:bg-indigo-wash',
+                ].join(' ')}
+              >
+                <span className="min-w-0 truncate text-small font-bold">{sec.titleFa}</span>
+                {sec.status === 'locked' ? <Lock aria-hidden className="size-3.5 shrink-0 opacity-70" /> : null}
+                {active ? <span className="ms-auto rounded-full bg-paper/15 px-2 py-0.5 text-caption">{fa.curriculum.sectionActiveChip}</span> : null}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+      <section
+        ref={panelRef}
+        aria-label={section.titleFa}
+        className="relative overflow-hidden rounded-md border-2 border-indigo bg-card shadow-[var(--shadow-card)]"
+      >
       {/* ---- section plaque: seigaiha band + title + goal + honest status ---- */}
       <header className="relative bg-indigo p-5 text-paper sm:p-6">
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-70"
-          style={{ backgroundImage: SEIGAIHA_URL, backgroundSize: '56px 28px' }}
-        />
+        <span aria-hidden className="seigaiha pointer-events-none absolute inset-0 opacity-70" />
         <div className="relative flex flex-wrap items-center gap-x-3 gap-y-2">
           <span className="rounded-full border border-indigo-mist/60 px-3 py-0.5 text-caption text-indigo-mist">
             {fa.curriculum.sectionBadge}
@@ -360,12 +424,34 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
         {section.rows.map((row) => {
           const locked = row.action === 'locked';
           const shaking = lockedFeedback?.slug === row.slug;
+          /*
+           * TASK-HANASO-28 — the CURRENT lesson is finally VISIBLE: an
+           * indigo start-edge bar + a quiet «ایستگاه فعلی» chip + aria-current
+           * on the interactive element (the isFocus flag existed server-side
+           * but was never rendered). This answers «کجا هستم؟» at a glance.
+           */
+          const isCurrent = section.isFocus && (row.action === 'start' || row.action === 'continue');
+          const rowRef = isCurrent && !autoScrolledRef.current ? currentRowRef : undefined;
           const body = (
             <>
               <RowMarker action={row.action} flash={shaking} />
               <div className="min-w-0 flex-1">
                 <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-body font-bold text-ink">
                   {row.titleFa}
+                  {isCurrent ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-indigo/40 bg-indigo-wash px-2 py-0.5 text-caption font-bold text-indigo">
+                      <MapPin aria-hidden className="size-3" />
+                      {fa.curriculum.rowCurrentChip}
+                    </span>
+                  ) : null}
+                  {row.contentKind === 'milestone' ? (
+                    /* TASK-28 R7 — real-world milestone stations get a vermilion
+                     * chip next to the title: «این یکی، دنیای واقعی است». */
+                    <span className="inline-flex items-center gap-1 rounded-full border border-shu/50 bg-surface-warm px-2 py-0.5 text-caption font-bold text-shu">
+                      <Award aria-hidden className="size-3" />
+                      {fa.curriculum.rowMilestoneChip}
+                    </span>
+                  ) : null}
                   {!row.core ? (
                     <span className="inline-flex items-center gap-1 rounded-full border border-ink-faint bg-surface-warm px-2 py-0.5 text-caption text-ink-soft">
                       {fa.curriculum.rowOptional}
@@ -375,6 +461,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
                 <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">{row.objectiveFa}</p>
               </div>
               <span className="flex shrink-0 items-center gap-2 text-caption text-ink-faint">
+                <span className="sm:hidden" aria-hidden>{fa.curriculum.rowMinutesShort(row.estMinutes)}</span>
                 <span className="hidden sm:inline">{fa.curriculum.rowMinutes(row.estMinutes)}</span>
                 {/* TASK-HANASO-22: the RIGHT tile is the CONTENT IDENTITY (never a
                     second lock — the duplicate-lock fix). Locked stays recognizable. */}
@@ -384,7 +471,16 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
           );
 
           return (
-            <li key={row.slug} className={shaking ? 'locked-shake' : undefined}>
+            <li
+              key={row.slug}
+              ref={rowRef}
+              data-testid={isCurrent ? 'journey-current-row' : undefined}
+              className={[
+                'relative',
+                shaking ? 'locked-shake' : '',
+                isCurrent ? 'bg-indigo-wash/60 before:absolute before:inset-y-0 before:start-0 before:w-1 before:bg-indigo' : '',
+              ].filter(Boolean).join(' ') || undefined}
+            >
               {locked ? (
                 /* honest locked row: visible goal, a CLICK THAT ANSWERS (shake +
                    vermilion flash + the reason), but never an entry (island §۸). */
@@ -399,6 +495,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
               ) : (
                 <Link
                   href={row.href}
+                  aria-current={isCurrent ? 'true' : undefined}
                   className="group flex items-center gap-3 p-4 transition-colors hover:bg-indigo-wash focus-visible:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ai sm:gap-4 sm:p-5"
                 >
                   {body}
@@ -468,6 +565,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
           </p>
         )}
       </nav>
-    </section>
+      </section>
+    </div>
   );
 }
