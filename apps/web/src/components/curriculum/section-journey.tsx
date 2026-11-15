@@ -108,6 +108,15 @@ export interface SectionJourneyProps {
   chapterSlug: string;
   /** Deep-linked section (?s=) — server-validated; undefined = default. */
   initialSectionSlug?: string;
+  /**
+   * TASK-HANASO-28 (Subagent C fix): the slug of the learner's NEXT actionable
+   * core station (server's nextStation). The current-row marker matches THIS
+   * slug exactly — never a `section.isFocus && action` heuristic (an optional
+   * available station in the focus section used to win the «ایستگاه فعلی»
+   * chip, the aria-current and the auto-scroll target). Null = the chapter's
+   * core path is done → no row is «current».
+   */
+  nextStationSlug?: string | null;
   initial: {
     sections: SectionDto[];
     activeIndex: number;
@@ -211,8 +220,12 @@ function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean
 
 /* ------------------------------------------------------------------ component */
 
-export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: SectionJourneyProps) {
+export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlug, initial }: SectionJourneyProps) {
   const [sections, setSections] = useState<SectionDto[]>(initial.sections);
+  /* Subagent C fix — the LIVE next-station slug (initial: the server prop;
+   * updated by the tab-focus refresh so the «ایستگاه فعلی» marker follows
+   * the real frontier, exactly one row, even after cross-tab progress). */
+  const [liveNextStationSlug, setNextStationSlug] = useState<string | null | undefined>(nextStationSlug);
   const [activeIndex, setActiveIndex] = useState(() => {
     if (initialSectionSlug) {
       const idx = initial.sections.findIndex((s) => s.slug === initialSectionSlug);
@@ -244,12 +257,17 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
   }, []);
 
   /* live refresh on tab focus (walk state changed in another tab) */
+  const nextStationSlugRef = useRef(nextStationSlug);
+  nextStationSlugRef.current = nextStationSlug;
   useEffect(() => {
     const refresh = async () => {
       try {
         const res = await fetch(`/api/curriculum/journey?chapter=${chapterSlug}`);
         const json = (await res.json()) as {
-          data?: { sections?: (Omit<SectionDto, 'rows'> & { rows: Omit<SectionRowDto, 'contentKind' | 'blockedByTitlesFa'>[] })[] };
+          data?: {
+            nextStationSlug?: string | null;
+            sections?: (Omit<SectionDto, 'rows'> & { rows: Omit<SectionRowDto, 'contentKind' | 'blockedByTitlesFa'>[] })[];
+          };
         };
         if (json.data?.sections && json.data.sections.length > 0) {
           /* the refresh payload predates the new fields — merge onto the
@@ -271,6 +289,11 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
               };
             }),
           );
+          /* Subagent C fix: the current-row marker follows the LIVE next
+           * station too (walk state may have changed in the other tab). */
+          if (json.data.nextStationSlug !== undefined && json.data.nextStationSlug !== nextStationSlugRef.current) {
+            setNextStationSlug(json.data.nextStationSlug);
+          }
         }
       } catch {
         /* offline — keep the server-rendered state */
@@ -429,8 +452,13 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, initial }: Sec
            * indigo start-edge bar + a quiet «ایستگاه فعلی» chip + aria-current
            * on the interactive element (the isFocus flag existed server-side
            * but was never rendered). This answers «کجا هستم؟» at a glance.
+           * Subagent C fix: the row is current ONLY when its slug IS the
+           * server-computed next station — the old `section.isFocus &&
+           * action` heuristic also tagged optional available rows (e.g.
+           * stn-kana-opt-r-h9 beside the frontier) and mis-targeted the
+           * one-shot auto-scroll ref when several rows matched.
            */
-          const isCurrent = section.isFocus && (row.action === 'start' || row.action === 'continue');
+          const isCurrent = liveNextStationSlug != null && row.slug === liveNextStationSlug;
           const rowRef = isCurrent && !autoScrolledRef.current ? currentRowRef : undefined;
           const body = (
             <>

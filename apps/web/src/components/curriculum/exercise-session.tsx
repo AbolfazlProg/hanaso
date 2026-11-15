@@ -777,7 +777,25 @@ export function ExerciseSession({
           selected={selected}
           eliminated={eliminated}
           locked={feedback?.correct === true}
-          onSelect={setSelected}
+          onSelect={(optionId) => {
+            /* TASK-28 Subagent C fix: picking a NEW option after a wrong
+             * grade is a NEW attempt — exactly the retry ladder, minus the
+             * selection reset (the learner already picked). The old code kept
+             * feedback on re-select, so the fresh choice rendered red (an
+             * «incorrect» signal before it was ever graded) and the hidden
+             * check button made the re-select a dead end. The verdict always
+             * clears (the stale red must never color the new choice), the
+             * ladder advances with it (first-try scoring stays honest — same
+             * bump as the retry button), the per-attempt hint clears
+             * (BUG-023 discipline), and the attempt-3 cap holds: the bump
+             * saturates at 3, where «ادامه» stays the only forward path. */
+            if (feedback && !feedback.correct) {
+              setFeedback(null);
+              setAttemptNo((n) => Math.min(3, n + 1));
+              setHintFa(null);
+            }
+            setSelected(optionId);
+          }}
           verdict={feedback ? (feedback.correct ? 'correct' : 'incorrect') : null}
         />
       )}

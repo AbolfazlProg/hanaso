@@ -221,6 +221,7 @@ export function JourneyHome(props: JourneyHomeProps) {
       <SectionJourney
         chapterSlug={chapterSlug}
         initialSectionSlug={initialSectionSlug}
+        nextStationSlug={nextStationSlug}
         initial={{ sections: sectionDtos, activeIndex: activeSectionIndex }}
       />
 

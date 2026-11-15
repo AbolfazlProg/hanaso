@@ -5,13 +5,25 @@
  *     exercise-type fingerprint) with the max-3 + no-mastery discipline;
  *  2. the seal stage contract — bigger frame, NO sound toggle on the stage
  *     (it moved to the message row), ink-ring layer during ceremony only;
- *  3. the journey current-row + section switcher labels exist in fa bundle.
+ *  3. the journey current-row + section switcher labels exist in fa bundle;
+ *  4. SUBAGENT C FIXES (regression pins):
+ *     C1 — the «ایستگاه فعلی» marker matches the server's nextStationSlug
+ *          EXACTLY (one row), never the old isFocus&&action heuristic (an
+ *          optional available station beside the frontier must NOT win the
+ *          chip / aria-current / the auto-scroll target);
+ *     C2 — re-selecting an option after a WRONG grade clears the stale
+ *          verdict (no premature red on the fresh choice) and advances the
+ *          attempt ladder exactly like the retry button.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { cleanup, fireEvent, render, screen, act } from '@testing-library/react';
+import * as React from 'react';
 import { lessonAchievementsOf } from '@/components/curriculum/station-runner';
 import { AizenSeal } from '@/components/curriculum/aizen-seal';
-import { render } from '@testing-library/react';
+import { SectionJourney, type SectionDto } from '@/components/curriculum/section-journey';
+import { ExerciseSession } from '@/components/curriculum/exercise-session';
 import { fa } from '@/messages/fa';
+import type { ClientExercise } from '@/modules/curriculum/grading';
 
 const ex = (id: string, type: string) => ({ id, type });
 
@@ -121,5 +133,237 @@ describe('TASK-28 journey labels — fa bundle keys', () => {
     expect(fa.curriculum.sectionActiveChip).toBe('فعلی');
     expect(fa.curriculum.rowMilestoneChip).toBe('ایستگاه واقعی');
     expect(fa.curriculum.rowMinutesShort(8)).toContain('۸');
+  });
+});
+
+/* ------------------------------------------------------------------ helpers */
+/** A minimal one-section DTO whose rows reproduce the Subagent C scenario:
+ *  the frontier core station (nextStation) AND an optional available station
+ *  (prerequisites: [] — e.g. stn-kana-opt-drill) sit in the SAME focus
+ *  section. The old heuristic tagged BOTH. */
+const row = (slug: string, action: SectionDto['rows'][number]['action']): SectionDto['rows'][number] => ({
+  slug,
+  type: 'practice',
+  contentKind: action === 'review' ? 'review' : 'practice',
+  titleFa: `ایستگاه ${slug}`,
+  objectiveFa: 'هدف',
+  core: slug !== 'stn-optional',
+  estMinutes: 8,
+  availability: action === 'locked' ? 'locked' : action === 'review' ? 'completed' : 'available',
+  action,
+  href: `/learn/x/journey/${slug}`,
+});
+const makeSection = (isFocus: boolean): SectionDto => ({
+  slug: 'section-a',
+  titleFa: 'بخش آزمایشی',
+  status: 'in_progress',
+  isFocus,
+  coreCompleted: 2,
+  coreTotal: 3,
+  rows: [
+    row('stn-done', 'review'),
+    row('stn-frontier', 'start'), // the server's next station
+    row('stn-optional', 'start'), // optional + available — NOT current
+    row('stn-future', 'locked'),
+  ],
+});
+
+describe('TASK-28 Subagent C fix C1 — current-row = exact nextStationSlug match', () => {
+  afterEach(() => cleanup());
+
+  it('C1a: only the frontier row gets the chip + aria-current; the optional available row does not', () => {
+    const { container } = render(
+      <SectionJourney
+        chapterSlug="x"
+        nextStationSlug="stn-frontier"
+        initial={{ sections: [makeSection(true)], activeIndex: 0 }}
+      />,
+    );
+    // exactly ONE current row (chip + testid + aria-current all agree)
+    expect(container.querySelectorAll('[data-testid="journey-current-row"]')).toHaveLength(1);
+    expect(container.querySelectorAll('[aria-current="true"]')).toHaveLength(1);
+    expect(container.textContent).toContain('ایستگاه فعلی');
+    // and it is the frontier row, not the optional one
+    const currentLi = container.querySelector('[data-testid="journey-current-row"]')!;
+    expect(currentLi.textContent).toContain('stn-frontier');
+    expect(currentLi.textContent).not.toContain('stn-optional');
+  });
+
+  it('C1b: the old heuristic would have tagged the optional row too — slug match does not (focus section, no slug prop)', () => {
+    // no nextStationSlug (chapter done) → NO row is current, even though the
+    // section is the focus section with start/continue rows present.
+    const { container } = render(
+      <SectionJourney chapterSlug="x" initial={{ sections: [makeSection(true)], activeIndex: 0 }} />,
+    );
+    expect(container.querySelectorAll('[data-testid="journey-current-row"]')).toHaveLength(0);
+    expect(container.querySelectorAll('[aria-current="true"]')).toHaveLength(0);
+  });
+
+  it('C1c: the marker follows the LIVE slug after a tab-focus refresh', async () => {
+    /* realistic walk: the frontier was completed in another tab → the next
+     * core station (stn-future) unlocked. Station SETS are authored content
+     * (the merge updates existing rows only) — only availability changes. */
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response(
+          JSON.stringify({
+            data: {
+              nextStationSlug: 'stn-future',
+              sections: [
+                {
+                  slug: 'section-a',
+                  titleFa: 'بخش آزمایشی',
+                  status: 'in_progress',
+                  coreCompleted: 3,
+                  coreTotal: 4,
+                  isFocus: true,
+                  rows: [
+                    { slug: 'stn-done', availability: 'completed', action: 'review' },
+                    { slug: 'stn-frontier', availability: 'completed', action: 'review' },
+                    { slug: 'stn-optional', availability: 'available', action: 'start' },
+                    { slug: 'stn-future', availability: 'available', action: 'start' },
+                  ],
+                },
+              ],
+            },
+          }),
+          { status: 200 },
+        ),
+      ),
+    );
+    const { container } = render(
+      <SectionJourney
+        chapterSlug="x"
+        nextStationSlug="stn-frontier"
+        initial={{ sections: [makeSection(true)], activeIndex: 0 }}
+      />,
+    );
+    expect(container.querySelector('[data-testid="journey-current-row"]')?.textContent).toContain('stn-frontier');
+    // tab-focus refresh → the marker moves to the live frontier
+    await act(async () => {
+      Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+      await new Promise((r) => setTimeout(r, 0));
+      await Promise.resolve();
+    });
+    const current = container.querySelector('[data-testid="journey-current-row"]');
+    expect(current?.textContent).toContain('stn-future');
+    // still exactly ONE current row — the optional available one never wins
+    expect(container.querySelectorAll('[data-testid="journey-current-row"]')).toHaveLength(1);
+    expect(current?.textContent).not.toContain('stn-optional');
+    vi.unstubAllGlobals();
+  });
+});
+
+describe('TASK-28 Subagent C fix C2 — re-select after a wrong grade', () => {
+  const exWrong: ClientExercise = {
+    id: 'ex-c2',
+    type: 'kana-recognition',
+    targetSkill: 'vocab',
+    promptFa: 'این کانا چه صدایی دارد؟',
+    promptJa: 'あ',
+    options: [
+      { id: 'a', label: '«آ»' },
+      { id: 'b', label: '«اُ»' },
+      { id: 'c', label: '«ای»' },
+    ],
+  };
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response(
+          JSON.stringify({
+            data: {
+              outcome: {
+                correct: false,
+                level: 2,
+                feedbackFa: 'نه — این «آ» است.',
+              },
+            },
+          }),
+          { status: 200 },
+        ),
+      ),
+    );
+  });
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+  });
+
+  async function gradeWrong(label: string) {
+    const radio = screen.getByRole('radio', { name: new RegExp(label) });
+    const btn = screen.getByRole('button', { name: 'بررسی پاسخ' }) as HTMLButtonElement;
+    await act(async () => {
+      fireEvent.click(radio);
+    });
+    await act(async () => {
+      fireEvent.click(btn);
+    });
+    for (let i = 0; i < 25 && !document.querySelector('[data-feedback-panel]'); i += 1) {
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 0));
+        await Promise.resolve();
+      });
+    }
+    expect(document.querySelector('[data-feedback-panel]')).toBeTruthy();
+  }
+
+  it('C2a: picking a new option clears the stale red verdict (no premature «incorrect» on the fresh choice)', async () => {
+    render(
+      <ExerciseSession
+        chapterSlug="kana-foundation-01"
+        stationSlug="stn-kana-h1"
+        exercises={[exWrong]}
+        audioByLine={{}}
+        audioAvailable={false}
+      />,
+    );
+    await gradeWrong('«اُ»'); // wrong answer graded
+    // the wrong option shows the verdict red (post-grade state)
+    expect(document.querySelector('[data-feedback-panel]')!.className).toContain('border-error');
+    // re-select a DIFFERENT option without pressing «تلاش دوباره»
+    await act(async () => {
+      fireEvent.click(screen.getByRole('radio', { name: '«آ»' }));
+    });
+    // the stale feedback panel is GONE — the new choice renders with the
+    // neutral selected style (indigo), not the old red verdict
+    expect(document.querySelector('[data-feedback-panel]')).toBeNull();
+    const selected = document.querySelector('[aria-checked="true"]');
+    expect(selected).toBeTruthy();
+    expect(selected!.className).not.toContain('border-error');
+    expect(selected!.className).not.toContain('text-error');
+  });
+
+  it('C2b: the re-select advances the attempt ladder exactly like the retry button (attempt 1 → 2)', async () => {
+    render(
+      <ExerciseSession
+        chapterSlug="kana-foundation-01"
+        stationSlug="stn-kana-h1"
+        exercises={[exWrong]}
+        audioByLine={{}}
+        audioAvailable={false}
+      />,
+    );
+    await gradeWrong('«اُ»');
+    await act(async () => {
+      fireEvent.click(screen.getByRole('radio', { name: '«آ»' }));
+    });
+    // the graded re-submit now carries attemptNo=2 (the fetch body proves it)
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'بررسی پاسخ' }));
+    });
+    for (let i = 0; i < 25 && screen.queryByRole('button', { name: 'بررسی پاسخ' }); i += 1) {
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 0));
+        await Promise.resolve();
+      });
+    }
+    const calls = (fetch as ReturnType<typeof vi.fn>).mock.calls as unknown as [string, { body: string }][];
+    const bodies = calls.map(([, init]) => JSON.parse(init.body));
+    expect(bodies.some((b) => b.attemptNo === 2 && b.answer.optionId === 'a')).toBe(true);
   });
 });
