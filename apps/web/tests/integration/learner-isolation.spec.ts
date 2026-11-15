@@ -23,6 +23,7 @@ import { GET as getStation, POST as postStation } from '@/app/api/curriculum/sta
 import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
 import { signSessionTokenSync } from '@/lib/learner/session-node';
 import { resetStoresForTests, getStationProgressStore } from '@/lib/poc/stores';
+import { firstExerciseOf } from '../helpers/grade-first';
 
 const BASE = 'http://localhost/api/curriculum/station';
 const CH = 'kana-foundation-01';
@@ -144,6 +145,25 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
     await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }, QA_B));
     const rejected = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2' }, QA_B));
     expect(rejected.status).toBe(409); // h1 still missing
+    /* TASK-29 M1: h1/h2 carry exercise blocks — one honest server-graded answer
+     * each before completing (the completion guard requires it). */
+    for (const slug of ['stn-kana-h1', 'stn-kana-h2']) {
+      const first = firstExerciseOf(slug)!;
+      const graded = await postStation(
+        post(
+          {
+            action: 'grade',
+            chapterSlug: CH,
+            stationSlug: slug,
+            exerciseId: first.exerciseId,
+            attemptNo: 1,
+            answer: { kind: 'option', optionId: first.correctOptionId },
+          },
+          QA_B,
+        ),
+      );
+      expect(graded.status, `grade ${slug}`).toBe(200);
+    }
     await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1, taskCompleted: true }, QA_B));
     const ok = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2', score: 1, taskCompleted: true }, QA_B));
     expect(ok.status).toBe(200);

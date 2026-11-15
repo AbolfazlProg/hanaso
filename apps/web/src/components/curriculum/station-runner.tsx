@@ -870,6 +870,13 @@ export function StationRunner(props: StationRunnerProps) {
                 threshold: body.error.details.threshold ?? null,
                 score: body.error.details.score ?? null,
               });
+            } else if (res.status === 409 && body?.error?.code === 'station/no_graded_answers') {
+              /* TASK-HANASO-29 (M1): the server never saw a graded answer for
+               * this station (e.g., a walk snapshot restored from another
+               * browser profile). Same recovery as the criterion panel: redo
+               * the final exercise block — the live session re-grades and the
+               * completion then passes with a real server-witnessed answer. */
+              setCompletionFailure({ kind: 'criterion', threshold: null, score: null });
             }
           } catch {
             /* unparseable body → generic failure path (retry) */

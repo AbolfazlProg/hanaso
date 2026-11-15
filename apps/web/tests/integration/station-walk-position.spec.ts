@@ -20,6 +20,7 @@ import { GET as getStation, POST as postStation } from '@/app/api/curriculum/sta
 import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
 import { signSessionTokenSync } from '@/lib/learner/session-node';
 import { resetStoresForTests, getStationProgressStore } from '@/lib/poc/stores';
+import { firstExerciseOf } from '../helpers/grade-first';
 
 const BASE = 'http://localhost/api/curriculum/station';
 const CH = 'kana-foundation-01';
@@ -175,6 +176,20 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
         stepIndex: 0,
       }),
     );
+    /* TASK-29 M1: h1 carries exercise blocks — one honest server-graded answer
+     * before completing (the completion guard requires it). */
+    const first = firstExerciseOf(STN)!;
+    const graded = await postStation(
+      post({
+        action: 'grade',
+        chapterSlug: CH,
+        stationSlug: STN,
+        exerciseId: first.exerciseId,
+        attemptNo: 1,
+        answer: { kind: 'option', optionId: first.correctOptionId },
+      }),
+    );
+    expect(graded.status).toBe(200);
     const res = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: STN, score: 1, taskCompleted: true }));
     expect(res.status).toBe(200);
     const state = await stateOf(res);

@@ -92,8 +92,8 @@ export const fa = {
     /* مرور — همیشه صادقانه (موتور FSRS هنوز فعال نشده) */
     reviewQueuePending: 'کارت‌های مرورِ آنچه یاد گرفته‌ای ثبت شده‌اند — صف مرور هوشمند به‌زودی فعال می‌شود.',
     reviewDue: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} کارت برای مرور امروز`,
+    reviewRoutePending: 'صف مرور هوشمند هنوز در دسترس نیست — به‌زودی فعال می‌شود.',
     reviewEmpty: 'امروز مروری نداری — درس بدهی یا بخوانی؟',
-    reviewCta: 'شروع مرور',
     /* خط مسیر */
     pathLink: 'مشاهدهٔ مسیر یادگیری',
     pathCurrentChapter: (title: string) => `فصل جاری: ${title}`,

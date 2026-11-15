@@ -282,7 +282,19 @@ export async function POST(req: Request) {
 
   if (payload.action === 'grade') {
     const exercise = bundle.chapter.exercises[payload.exerciseId];
-    if (!exercise || exercise.assessmentRole !== 'practice') {
+    /*
+     * TASK-HANASO-29 (Subagent A F2): grade must validate the SAME station
+     * scope as hint — the exercise has to be a practice item of THIS station
+     * (its blocks reference it). Before this, grading an exercise that
+     * belonged to a DIFFERENT station of the same chapter was accepted and
+     * its attempt counter landed on the posted station. Not a key leak (same
+     * chapter), but a validation inconsistency between the two actions.
+     */
+    const inStation =
+      station?.blocks?.some(
+        (b) => (b as { exerciseIds?: string[] }).exerciseIds?.includes(payload.exerciseId),
+      ) ?? false;
+    if (!exercise || exercise.assessmentRole !== 'practice' || !inStation) {
       return NextResponse.json(
         fail({ code: 'station/unknown_exercise', message: `unknown practice exercise: ${payload.exerciseId}` }),
         { status: 404 },
@@ -487,6 +499,32 @@ export async function POST(req: Request) {
         { status: 409, headers: { 'cache-control': 'no-store' } },
       );
     }
+  }
+  /*
+   * TASK-HANASO-29 (Subagent B M1): the completion score is client-attested —
+   * the server must not accept a `task_completed` completion for a station that
+   * carries exercise blocks unless the server actually SAW at least one graded
+   * answer for it (attemptCount is incremented by the `grade` action only).
+   * Scope today: no station uses `exercise_threshold` (score is never a gate in
+   * production content), bestScore is a display-less record, and the chapter
+   * mastery gate grades its own server-graded questions — so this guard closes
+   * the remaining integrity gap (a tampered client completing a station with
+   * exercises without answering anything) WITHOUT inventing a parallel
+   * score-replay architecture. Stations without exercise blocks (pure
+   * teaching/dialogue stations, e.g. chapter 2) are unaffected: their task is
+   * not exercise-graded.
+   */
+  const exerciseBlockCount = station.blocks.filter((b) => b.kind === 'exercise').length;
+  if (exerciseBlockCount > 0 && (current?.attemptCount ?? 0) === 0) {
+    return NextResponse.json(
+      fail({
+        code: 'station/no_graded_answers',
+        message:
+          'برای ثبت پایان این درس، باید تمرین‌های آن را واقعاً انجام دهی — پاسخ‌های ثبت‌شده‌ای برای این ایستگاه یافت نشد.',
+        details: { kind: 'criterion', criterion: station.completion, score, exerciseBlocks: exerciseBlockCount },
+      }),
+      { status: 409, headers: { 'cache-control': 'no-store' } },
+    );
   }
   if (!stationMeetsCompletion(station, score, payload.taskCompleted ?? false)) {
     /*

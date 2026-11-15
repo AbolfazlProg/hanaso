@@ -27,7 +27,7 @@ import {
 import { PgLearningObjectRepository, PgPracticeSessionRepository } from '@/db/repositories/practice';
 import type { PocEvent } from './event-store';
 import { InMemoryEventStore } from './event-store';
-import { databaseConfigured, getDbClient } from '@/db/client';
+import { assertProductionDatabase, databaseConfigured, getDbClient } from '@/db/client';
 
 /*
  * TASK-LEARNING-08 (WP-5): the singletons live on globalThis — Next dev
@@ -65,7 +65,20 @@ export function usingPostgresStores(): boolean {
   return databaseConfigured();
 }
 
+/**
+ * TASK-HANASO-29 (Subagent B M2): the in-memory DEV-ONLY fallback is FORBIDDEN
+ * in production — a silent fallback loses every learner's progress on restart
+ * while health checks stay green. Every repository getter funnels through this
+ * guard: production without DATABASE_URL throws at the FIRST store access
+ * (same fail-closed contract as HANASO_SESSION_SECRET). Dev (NODE_ENV=
+ * 'development'/'test') keeps the honest in-memory behavior.
+ */
+function assertStoreBackend(): void {
+  if (!usingPostgresStores()) assertProductionDatabase();
+}
+
 export function getAttemptStore(): AttemptRepository {
+  assertStoreBackend();
   singletons.attemptStore ??= usingPostgresStores()
     ? new PgAttemptRepository(getDbClient())
     : new InMemoryAttemptRepository();
@@ -78,6 +91,7 @@ export function getEventStore(): InMemoryEventStore {
 }
 
 export function getProgressStore(): ProgressRepository {
+  assertStoreBackend();
   singletons.progressStore ??= usingPostgresStores()
     ? new PgProgressRepository(getDbClient())
     : new InMemoryProgressRepository();
@@ -86,6 +100,7 @@ export function getProgressStore(): ProgressRepository {
 
 /** Island walk progress (TASK-LEARNING-01) — station states. */
 export function getStationProgressStore(): StationProgressRepository {
+  assertStoreBackend();
   singletons.stationProgressStore ??= usingPostgresStores()
     ? new PgStationProgressRepository(getDbClient())
     : new InMemoryStationProgressRepository();
@@ -94,6 +109,7 @@ export function getStationProgressStore(): StationProgressRepository {
 
 /** Island walk progress (TASK-LEARNING-01) — chapter A→D aggregate. */
 export function getChapterProgressStore(): ChapterProgressRepository {
+  assertStoreBackend();
   singletons.chapterProgressStore ??= usingPostgresStores()
     ? new PgChapterProgressRepository(getDbClient())
     : new InMemoryChapterProgressRepository();
@@ -102,6 +118,7 @@ export function getChapterProgressStore(): ChapterProgressRepository {
 
 /** Independent-practice sessions (TASK-HANASO-22) — append-only evidence log. */
 export function getPracticeSessionStore(): PracticeSessionRepository {
+  assertStoreBackend();
   singletons.practiceSessionStore ??= usingPostgresStores()
     ? new PgPracticeSessionRepository(getDbClient())
     : new InMemoryPracticeSessionRepository();
@@ -110,6 +127,7 @@ export function getPracticeSessionStore(): PracticeSessionRepository {
 
 /** Learning-object practice states (TASK-HANASO-22) — evidence only, never FSRS. */
 export function getLearningObjectStore(): LearningObjectRepository {
+  assertStoreBackend();
   singletons.learningObjectStore ??= usingPostgresStores()
     ? new PgLearningObjectRepository(getDbClient())
     : new InMemoryLearningObjectRepository();

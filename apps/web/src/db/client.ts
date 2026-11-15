@@ -52,6 +52,35 @@ export function requiredDatabaseUrl(): string {
   return url;
 }
 
+/**
+ * TASK-HANASO-29 (Subagent B M2): is the in-memory DEV-ONLY repository fallback
+ * ALLOWED in this environment? Only when NODE_ENV is explicitly 'development'
+ * or 'test'. In production the fallback is forbidden — see assertProductionDatabase()
+ * (stores.ts calls it before ever constructing an in-memory repository).
+ * The explicit allowlist (instead of `!== 'production'`) is deliberate: an
+ * unset/typo'd NODE_ENV in a production container must NOT silently enable the
+ * volatile dev stores; operators opt into dev/test by setting NODE_ENV.
+ */
+export function inMemoryStoresAllowed(): boolean {
+  return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+}
+
+/**
+ * TASK-HANASO-29 (Subagent B M2): production must NEVER silently fall back to
+ * the in-memory repositories — progress would vanish on restart while
+ * everything looked healthy. Same fail-closed contract as HANASO_SESSION_SECRET
+ * (lib/learner/session.ts): throw at the first store access. The message names
+ * the missing variable only — never any connection value.
+ */
+export function assertProductionDatabase(): void {
+  if (databaseConfigured()) return;
+  if (inMemoryStoresAllowed()) return;
+  throw new Error(
+    'DATABASE_URL is not set — production must not run on the in-memory DEV-ONLY repositories ' +
+      '(progress would be lost on restart). Set DATABASE_URL (or NODE_ENV=development for local dev).',
+  );
+}
+
 /** True when the Postgres layer is enabled (used by stores + /api/ready switching). */
 export function databaseConfigured(): boolean {
   return typeof process.env.DATABASE_URL === 'string' && process.env.DATABASE_URL.length > 0;

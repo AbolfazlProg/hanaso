@@ -16,6 +16,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { GET as getPracticeStatus } from '@/app/api/practice/route';
 import { POST as postStation, GET as getStation } from '@/app/api/curriculum/station/route';
 import { resetStoresForTests } from '@/lib/poc/stores';
+import { firstExerciseOf } from '../helpers/grade-first';
 import { signSessionTokenSync } from '@/lib/learner/session-node';
 
 const BASE = 'http://localhost/api/practice';
@@ -52,6 +53,25 @@ async function statusBody(res: Response): Promise<Record<string, unknown>> {
  * payload must carry taskCompleted: true (same as the real runner sends). */
 async function completeChain(learnerCookie: string, slugs: string[]) {
   for (const slug of slugs) {
+    /* TASK-29 M1: stations with exercise blocks need one server-graded answer
+     * before `complete` (the completion guard) — the honest walk shape. */
+    const first = firstExerciseOf(slug);
+    if (first) {
+      const graded = await postStation(
+        stationPost(
+          {
+            action: 'grade',
+            chapterSlug: CH,
+            stationSlug: slug,
+            exerciseId: first.exerciseId,
+            attemptNo: 1,
+            answer: { kind: 'option', optionId: first.correctOptionId },
+          },
+          learnerCookie,
+        ),
+      );
+      expect(graded.status, `grade ${slug}`).toBe(200);
+    }
     const res = await postStation(
       stationPost(
         { action: 'complete', chapterSlug: CH, stationSlug: slug, score: 1, taskCompleted: true },
@@ -95,6 +115,19 @@ describe('TASK-27 — practice-station completion via the ONE station engine', (
 
     await completeChain(QA_COOKIE, ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5']);
 
+    /* TASK-29 M1: p1 carries exercise blocks — one honest grade first. */
+    const p1First = firstExerciseOf('stn-kana-p1')!;
+    const p1Graded = await postStation(
+      stationPost({
+        action: 'grade',
+        chapterSlug: CH,
+        stationSlug: 'stn-kana-p1',
+        exerciseId: p1First.exerciseId,
+        attemptNo: 1,
+        answer: { kind: 'option', optionId: p1First.correctOptionId },
+      }),
+    );
+    expect(p1Graded.status).toBe(200);
     const first = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }));
     expect(first.status).toBe(200);
 
@@ -112,6 +145,19 @@ describe('TASK-27 — practice-station completion via the ONE station engine', (
 
   it('a CONCURRENT duplicate complete never double-registers (single completion state)', async () => {
     await completeChain(QA_COOKIE, ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5']);
+    /* TASK-29 M1: p1 carries exercise blocks — one honest grade before the race. */
+    const p1First = firstExerciseOf('stn-kana-p1')!;
+    const p1Graded = await postStation(
+      stationPost({
+        action: 'grade',
+        chapterSlug: CH,
+        stationSlug: 'stn-kana-p1',
+        exerciseId: p1First.exerciseId,
+        attemptNo: 1,
+        answer: { kind: 'option', optionId: p1First.correctOptionId },
+      }),
+    );
+    expect(p1Graded.status).toBe(200);
     const [a, b] = await Promise.all([
       postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true })),
       postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true })),
