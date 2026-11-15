@@ -1305,6 +1305,10 @@ export const KANA_ITEMS: KanaItem[] = [
     script: 'kata',
     row: 'wa-row',
     romaji: 'wo',
+    // HANASO-KANA-REMEDIATION-02 (AUD-013): parity with hiragana を — ヲ is the
+    // katakana counterpart of the object particle and is read 'o' as a particle;
+    // it survives almost exclusively in deliberate/stylised katakana text.
+    romajiNoteFa: "as particle read 'o'",
     fsrsCardId: 'kn-rec-kata-wo',
     introducedInUnit: 'K12',
   },

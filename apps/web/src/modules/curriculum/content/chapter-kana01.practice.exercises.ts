@@ -1502,9 +1502,9 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     difficulty: 3,
     promptFa: 'این واژه را بخوان — راهنمایی: روزنامه',
     promptJa: 'しんぶん',
-    promptJaReading: 'شینبون',
+    promptJaReading: 'شیمبون',
     options: [
-      { id: 'a', label: '«شینبون»' },
+      { id: 'a', label: '«شیمبون»' },
       { id: 'b', label: '«شینفون»' },
       { id: 'c', label: '«شینمون»' },
     ],
@@ -1516,7 +1516,7 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     feedback: {
       f1Fa: 'به نشان ゛ روی کانای سوم نگاه کن.',
       f2HintFa: 'کانای سوم ぶ («بو») است — گزینهٔ «شینفون» را حذف کن؛ آن ふ بی‌علامت می‌خواهد.',
-      f3ExplainFa: 'しんぶん = «شینبون» (روزنامه) — ふ + ゛ = ぶ «بو».',
+      f3ExplainFa: 'しんぶん = «شیمبون» (روزنامه) — ふ + ゛ = ぶ «بو»؛ 「ん» قبل از «ب» مثل «م» خوانده می‌شود.',
     },
     assessmentRole: 'practice',
   },
@@ -1929,7 +1929,7 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     correctOptionId: 'a',
     distractorRationaleFa: {
       b: '«کی‌یُو» سه ضربه است — شنیدی «کیُو» دو ضربه را.',
-      c: '「きゅ» «کیو» است — شنیده‌شده «کیُ» با ょ بود.',
+      c: '「きゅ» «کیُو» است — شنیده‌شده «کیو» با ょ بود.',
     },
     feedback: {
       f1Fa: 'صدا را دوباره پخش کن — فشرده خوانده می‌شود یا جدا؟',
@@ -1981,12 +1981,12 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     promptJaReading: 'گَکّوو',
     options: [
       { id: 'a', label: '«گَکّوو»' },
-      { id: 'b', label: '«گاکو»' },
+      { id: 'b', label: '«کَکّوو»' },
       { id: 'c', label: '«گاکوو»' },
     ],
     correctOptionId: 'a',
     distractorRationaleFa: {
-      b: 'هم っ و هم う جا افتاده — چهار ضربه است.',
+      b: '「が» واک‌دار است — دو خطِ راست‌بالای آن را ببین («گ»، نه «ک»).',
       c: 'مکثِ っ را جا انداختی — فشردگی وسط را حس کن.',
     },
     feedback: {
