@@ -1,0 +1,187 @@
+# KANA CONTENT INVENTORY — Chapter 1 (`kana-foundation-01`)
+
+> منبع: اجرای مستقیم ماژول‌های TS واقعی Production (baseline `5b503598`) با اسکریپت `scripts/audit_inventory.ts` (فقط‌خواندنی). فایل خام کامل: `ops/checkpoints/HANASO-KANA-AUDIT-01/inventory.json` (همان محتوا، همهٔ فیلدها).
+
+## ۱. آمار کلی
+
+| سنجه | مقدار |
+|---|---|
+| Stationها | 38 (۳۶ core + ۲ optional) |
+| Exerciseها (کلید exercise در فصل) | 586 |
+| — تمرینی (practice) در Stationها | 561 |
+| — بانک گیت (mastery M1..M5) | 25 (۵×۵) |
+| Registry گلیف Kana | 92 (46 هیراگانا + 46 کاتاکانا) |
+| مرجع exercise در بلوک‌ها | 561 — ارجاع معلق: 0 |
+| Stationهای دارای تمرین | 37 از 38 |
+
+### توزیع نوع تمرین
+
+| ExerciseType | تعداد | Assessment Intent (INFERRED از نوع/پرامپت) |
+|---|---|---|
+| `kana-listening` | 198 | Sound-to-Kana (listening) |
+| `kana-recognition` | 169 | Glyph Recognition → Kana-to-Sound |
+| `kana-recall` | 104 | Sound/Romaji-to-Kana (recall) |
+| `kana-decode` | 76 | Kana Decoding → Word Reading (romaji/Persian) |
+| `rule-listening` | 17 | Rule-aware Listening Discrimination (Sokuon/Yōon/Dakuten/Chōon/Long-vowel) |
+| `meaning-select` | 14 | Vocabulary Recognition (meaning) |
+| `cloze` | 6 | Orthographic Rule (choose the glyph/mark) |
+| `produce-template` | 2 | Orthographic Rule (build the word) |
+
+### توزیع نوع Station
+
+| نوع | تعداد | slugs |
+|---|---|---|
+| kana | 28 | stn-kana-h1, stn-kana-h2, stn-kana-h3, stn-kana-h4, stn-kana-h5, stn-kana-h7, stn-kana-h8, stn-kana-h9, stn-kana-h10, stn-kana-h11, stn-kana-h12, stn-kana-h14, stn-kana-h6, stn-kana-h13, stn-kana-h15, stn-kana-k1, stn-kana-k2, stn-kana-k3, stn-kana-k4, stn-kana-k5, stn-kana-k6, stn-kana-k7, stn-kana-k8, stn-kana-k9, stn-kana-k10, stn-kana-k11, stn-kana-k12, stn-kana-k12-foreign |
+| practice | 6 | stn-kana-m1-reading, stn-kana-m2-realworld, stn-kana-p1, stn-kana-p2, stn-kana-p3, stn-kana-p4 |
+| anchor | 1 | stn-kana-h0 |
+| integrate | 1 | stn-kana-k13 |
+| review | 1 | stn-kana-opt-r-h9 |
+| deepdive | 1 | stn-kana-opt-drill |
+
+### فیلدهای NOT_DEFINED در مدل داده
+
+- `Learning Objective` (متادیتای رسمی): وجود ندارد به‌صورت یک فیلد جبری برای Exercise؛ نزدیک‌ترین: `targetConcept` (موجود در همهٔ موارد بررسی‌شده) + `assessesConcepts` (اختیاری). Intent هر تمرین را **INFERRED** ثبت کردیم (ستون بالا) چون metadata رسمی «Assessment Intent» در معماری تعریف نشده.
+- `Accepted Answers` (چند پاسخ مجاز): در مدل داده تعریف نشده — فقط `correctOptionId` یگانه. NOT_DEFINED.
+- `Audio Reference`: از طریق `audioLineRef` فقط برای تمرین‌های listening صوتی تعریف می‌شود؛ برای kana-listening/rule-listening صدا از promptJa می‌آید (hostwords/kana-audio registries).
+- `Persian Reading Guide` / `Romaji`: به‌صورت متن گزینه‌ها (`«…»`) و `promptJaReading` — قرارداد HANASO در سند ممیزی خوانش بررسی می‌شود.
+- `Hint`: در Exercise تعریف نشده (فقط F2HintFa در نردبان Feedback). `Prerequisite`: فقط در سطح Station.
+
+## ۲. فهرست کامل Stationها (به‌ترتیب سفر)
+
+| # | Station ID | نوع | عنوان | ترتیب | پیش‌نیاز | تعداد تمرین | تمرین‌ها |
+|---|---|---|---|---|---|---|---|
+| 1 | `stn-kana-h0` | anchor | خوش‌آمد و سه خط ژاپنی | 1 | — | 0 | — |
+| 2 | `stn-kana-h1` | kana | ردیف あ | 2 | stn-kana-h0 | 15 | `ex-kana-h1-rec-hira-a`, `ex-kana-h1-rec-hira-i`, `ex-kana-h1-rec-hira-u`, `ex-kana-h1-rec-hira-e`, `ex-kana-h1-rec-hira-o`, `ex-kana-h1-rcl-hira-a`, `ex-kana-h1-rcl-hira-i`, `ex-kana-h1-rcl-hira-u`, `ex-kana-h1-rcl-hira-e`, `ex-kana-h1-rcl-hira-o`, `ex-kana-h1-lis-hira-a`, `ex-kana-h1-lis-hira-i`, `ex-kana-h1-lis-hira-u`, `ex-kana-h1-lis-hira-e`, `ex-kana-h1-lis-hira-o` |
+| 3 | `stn-kana-h2` | kana | ردیف か | 3 | stn-kana-h1 | 18 | `ex-kana-h2-warm-1`, `ex-kana-h2-warm-2`, `ex-kana-h2-warm-3`, `ex-kana-h2-rec-hira-ka`, `ex-kana-h2-rec-hira-ki`, `ex-kana-h2-rec-hira-ku`, `ex-kana-h2-rec-hira-ke`, `ex-kana-h2-rec-hira-ko`, `ex-kana-h2-rcl-hira-ka`, `ex-kana-h2-rcl-hira-ki`, `ex-kana-h2-rcl-hira-ku`, `ex-kana-h2-rcl-hira-ke`, `ex-kana-h2-rcl-hira-ko`, `ex-kana-h2-lis-hira-ka`, `ex-kana-h2-lis-hira-ki`, `ex-kana-h2-lis-hira-ku`, `ex-kana-h2-lis-hira-ke`, `ex-kana-h2-lis-hira-ko` |
+| 4 | `stn-kana-h3` | kana | ردیف さ | 4 | stn-kana-h2 | 18 | `ex-kana-h3-warm-1`, `ex-kana-h3-warm-2`, `ex-kana-h3-warm-3`, `ex-kana-h3-rec-hira-sa`, `ex-kana-h3-rec-hira-shi`, `ex-kana-h3-rec-hira-su`, `ex-kana-h3-rec-hira-se`, `ex-kana-h3-rec-hira-so`, `ex-kana-h3-rcl-hira-sa`, `ex-kana-h3-rcl-hira-shi`, `ex-kana-h3-rcl-hira-su`, `ex-kana-h3-rcl-hira-se`, `ex-kana-h3-rcl-hira-so`, `ex-kana-h3-lis-hira-sa`, `ex-kana-h3-lis-hira-shi`, `ex-kana-h3-lis-hira-su`, `ex-kana-h3-lis-hira-se`, `ex-kana-h3-lis-hira-so` |
+| 5 | `stn-kana-h4` | kana | قاعدهٔ طول مصوت | 5 | stn-kana-h3 | 15 | `ex-kana-h4-warm-1`, `ex-kana-h4-warm-2`, `ex-kana-h4-warm-3`, `ex-kana-h4-clo-1`, `ex-kana-h4-dec-1`, `ex-kana-h4-dec-2`, `ex-kana-h4-dec-3`, `ex-kana-h4-dec-4`, `ex-kana-h4-lis-1`, `ex-kana-h4-lis-2`, `ex-kana-h4-ind-1`, `ex-kana-h4-asm-1`, `ex-kana-h4-asm-2`, `ex-kana-h4-asm-3`, `ex-kana-h4-asm-4` |
+| 6 | `stn-kana-h5` | kana | قاعدهٔ داکوتن (゛) | 6 | stn-kana-h4 | 15 | `ex-kana-h5-warm-1`, `ex-kana-h5-warm-2`, `ex-kana-h5-warm-3`, `ex-kana-h5-clo-1`, `ex-kana-h5-dec-1`, `ex-kana-h5-dec-2`, `ex-kana-h5-dec-3`, `ex-kana-h5-dec-4`, `ex-kana-h5-lis-1`, `ex-kana-h5-lis-2`, `ex-kana-h5-ind-1`, `ex-kana-h5-asm-1`, `ex-kana-h5-asm-2`, `ex-kana-h5-asm-3`, `ex-kana-h5-asm-4` |
+| 7 | `stn-kana-h7` | kana | ん | 8 | stn-kana-p1 | 10 | `ex-kana-h7-warm-1`, `ex-kana-h7-warm-2`, `ex-kana-h7-warm-3`, `ex-kana-h7-nas-1`, `ex-kana-h7-nas-2`, `ex-kana-h7-lis-1`, `ex-kana-h7-asm-1`, `ex-kana-h7-rec-hira-n`, `ex-kana-h7-rcl-hira-n`, `ex-kana-h7-lis-hira-n` |
+| 8 | `stn-kana-h8` | kana | ردیف な | 9 | stn-kana-h7 | 16 | `ex-kana-h8-warm-1`, `ex-kana-h8-rec-hira-na`, `ex-kana-h8-rec-hira-ni`, `ex-kana-h8-rec-hira-nu`, `ex-kana-h8-rec-hira-ne`, `ex-kana-h8-rec-hira-no`, `ex-kana-h8-rcl-hira-na`, `ex-kana-h8-rcl-hira-ni`, `ex-kana-h8-rcl-hira-nu`, `ex-kana-h8-rcl-hira-ne`, `ex-kana-h8-rcl-hira-no`, `ex-kana-h8-lis-hira-na`, `ex-kana-h8-lis-hira-ni`, `ex-kana-h8-lis-hira-nu`, `ex-kana-h8-lis-hira-ne`, `ex-kana-h8-lis-hira-no` |
+| 9 | `stn-kana-h9` | kana | ردیف た | 10 | stn-kana-h8 | 18 | `ex-kana-h9-warm-1`, `ex-kana-h9-warm-2`, `ex-kana-h9-warm-3`, `ex-kana-h9-rec-hira-ta`, `ex-kana-h9-rec-hira-chi`, `ex-kana-h9-rec-hira-tsu`, `ex-kana-h9-rec-hira-te`, `ex-kana-h9-rec-hira-to`, `ex-kana-h9-rcl-hira-ta`, `ex-kana-h9-rcl-hira-chi`, `ex-kana-h9-rcl-hira-tsu`, `ex-kana-h9-rcl-hira-te`, `ex-kana-h9-rcl-hira-to`, `ex-kana-h9-lis-hira-ta`, `ex-kana-h9-lis-hira-chi`, `ex-kana-h9-lis-hira-tsu`, `ex-kana-h9-lis-hira-te`, `ex-kana-h9-lis-hira-to` |
+| 10 | `stn-kana-h10` | kana | ردیف ま | 12 | stn-kana-p2 | 18 | `ex-kana-h10-warm-1`, `ex-kana-h10-warm-2`, `ex-kana-h10-warm-3`, `ex-kana-h10-rec-hira-ma`, `ex-kana-h10-rec-hira-mi`, `ex-kana-h10-rec-hira-mu`, `ex-kana-h10-rec-hira-me`, `ex-kana-h10-rec-hira-mo`, `ex-kana-h10-rcl-hira-ma`, `ex-kana-h10-rcl-hira-mi`, `ex-kana-h10-rcl-hira-mu`, `ex-kana-h10-rcl-hira-me`, `ex-kana-h10-rcl-hira-mo`, `ex-kana-h10-lis-hira-ma`, `ex-kana-h10-lis-hira-mi`, `ex-kana-h10-lis-hira-mu`, `ex-kana-h10-lis-hira-me`, `ex-kana-h10-lis-hira-mo` |
+| 11 | `stn-kana-h11` | kana | ردیف ら | 13 | stn-kana-h10 | 18 | `ex-kana-h11-warm-1`, `ex-kana-h11-warm-2`, `ex-kana-h11-warm-3`, `ex-kana-h11-rec-hira-ra`, `ex-kana-h11-rec-hira-ri`, `ex-kana-h11-rec-hira-ru`, `ex-kana-h11-rec-hira-re`, `ex-kana-h11-rec-hira-ro`, `ex-kana-h11-rcl-hira-ra`, `ex-kana-h11-rcl-hira-ri`, `ex-kana-h11-rcl-hira-ru`, `ex-kana-h11-rcl-hira-re`, `ex-kana-h11-rcl-hira-ro`, `ex-kana-h11-lis-hira-ra`, `ex-kana-h11-lis-hira-ri`, `ex-kana-h11-lis-hira-ru`, `ex-kana-h11-lis-hira-re`, `ex-kana-h11-lis-hira-ro` |
+| 12 | `stn-kana-h12` | kana | ردیف は | 14 | stn-kana-h11 | 18 | `ex-kana-h12-warm-1`, `ex-kana-h12-warm-2`, `ex-kana-h12-warm-3`, `ex-kana-h12-rec-hira-ha`, `ex-kana-h12-rec-hira-hi`, `ex-kana-h12-rec-hira-fu`, `ex-kana-h12-rec-hira-he`, `ex-kana-h12-rec-hira-ho`, `ex-kana-h12-rcl-hira-ha`, `ex-kana-h12-rcl-hira-hi`, `ex-kana-h12-rcl-hira-fu`, `ex-kana-h12-rcl-hira-he`, `ex-kana-h12-rcl-hira-ho`, `ex-kana-h12-lis-hira-ha`, `ex-kana-h12-lis-hira-hi`, `ex-kana-h12-lis-hira-fu`, `ex-kana-h12-lis-hira-he`, `ex-kana-h12-lis-hira-ho` |
+| 13 | `stn-kana-h14` | kana | ردیف や | 16 | stn-kana-p3 | 12 | `ex-kana-h14-warm-1`, `ex-kana-h14-warm-2`, `ex-kana-h14-warm-3`, `ex-kana-h14-rec-hira-ya`, `ex-kana-h14-rec-hira-yu`, `ex-kana-h14-rec-hira-yo`, `ex-kana-h14-rcl-hira-ya`, `ex-kana-h14-rcl-hira-yu`, `ex-kana-h14-rcl-hira-yo`, `ex-kana-h14-lis-hira-ya`, `ex-kana-h14-lis-hira-yu`, `ex-kana-h14-lis-hira-yo` |
+| 14 | `stn-kana-h6` | kana | قاعدهٔ یُوئون (ゃゅょ) | 17 | stn-kana-h14 | 15 | `ex-kana-h6-warm-1`, `ex-kana-h6-warm-2`, `ex-kana-h6-warm-3`, `ex-kana-h6-clo-1`, `ex-kana-h6-prd-1`, `ex-kana-h6-dec-1`, `ex-kana-h6-dec-2`, `ex-kana-h6-dec-3`, `ex-kana-h6-dec-4`, `ex-kana-h6-lis-1`, `ex-kana-h6-lis-2`, `ex-kana-h6-asm-1`, `ex-kana-h6-asm-2`, `ex-kana-h6-asm-3`, `ex-kana-h6-asm-4` |
+| 15 | `stn-kana-h13` | kana | قاعدهٔ سوکوئون (っ) | 18 | stn-kana-h6 | 15 | `ex-kana-h13-warm-1`, `ex-kana-h13-warm-2`, `ex-kana-h13-warm-3`, `ex-kana-h13-prd-1`, `ex-kana-h13-clo-1`, `ex-kana-h13-dec-1`, `ex-kana-h13-dec-2`, `ex-kana-h13-dec-3`, `ex-kana-h13-dec-4`, `ex-kana-h13-lis-1`, `ex-kana-h13-lis-2`, `ex-kana-h13-asm-1`, `ex-kana-h13-asm-2`, `ex-kana-h13-asm-3`, `ex-kana-h13-asm-4` |
+| 16 | `stn-kana-h15` | kana | ردیف わ + قاعدهٔ هان‌داکوتن (゜) | 19 | stn-kana-h13 | 14 | `ex-kana-h15-warm-1`, `ex-kana-h15-warm-2`, `ex-kana-h15-warm-3`, `ex-kana-h15-rec-hira-wa`, `ex-kana-h15-rec-hira-wo`, `ex-kana-h15-clo-1`, `ex-kana-h15-asm-1`, `ex-kana-h15-lis-1`, `ex-kana-h15-lis-2`, `ex-kana-h15-rcl-hira-wa`, `ex-kana-h15-rcl-hira-wo`, `ex-kana-h15-asm-2`, `ex-kana-h15-lis-hira-wa`, `ex-kana-h15-lis-hira-wo` |
+| 17 | `stn-kana-m1-reading` | practice | ایستگاه واقعی — برگهٔ خواندن هیراگانا | 21 | stn-kana-p4 | 6 | `ex-kana-m1-word-sushi`, `ex-kana-m1-word-neko`, `ex-kana-m1-word-inu`, `ex-kana-m1-word-eki`, `ex-kana-m1-word-mizu`, `ex-kana-m1-word-tomodachi` |
+| 18 | `stn-kana-k1` | kana | ردیف ア + طرحوارهٔ قرینه‌گری | 22 | stn-kana-h15 | 17 | `ex-kana-k1-warm-1`, `ex-kana-k1-warm-2`, `ex-kana-k1-rec-kata-a`, `ex-kana-k1-rec-kata-i`, `ex-kana-k1-rec-kata-u`, `ex-kana-k1-rec-kata-e`, `ex-kana-k1-rec-kata-o`, `ex-kana-k1-rcl-kata-a`, `ex-kana-k1-rcl-kata-i`, `ex-kana-k1-rcl-kata-u`, `ex-kana-k1-rcl-kata-e`, `ex-kana-k1-rcl-kata-o`, `ex-kana-k1-lis-kata-a`, `ex-kana-k1-lis-kata-i`, `ex-kana-k1-lis-kata-u`, `ex-kana-k1-lis-kata-e`, `ex-kana-k1-lis-kata-o` |
+| 19 | `stn-kana-k2` | kana | ردیف タ | 23 | stn-kana-k1 | 18 | `ex-kana-k2-warm-1`, `ex-kana-k2-warm-2`, `ex-kana-k2-warm-3`, `ex-kana-k2-rec-kata-ta`, `ex-kana-k2-rec-kata-chi`, `ex-kana-k2-rec-kata-tsu`, `ex-kana-k2-rec-kata-te`, `ex-kana-k2-rec-kata-to`, `ex-kana-k2-rcl-kata-ta`, `ex-kana-k2-rcl-kata-chi`, `ex-kana-k2-rcl-kata-tsu`, `ex-kana-k2-rcl-kata-te`, `ex-kana-k2-rcl-kata-to`, `ex-kana-k2-lis-kata-ta`, `ex-kana-k2-lis-kata-chi`, `ex-kana-k2-lis-kata-tsu`, `ex-kana-k2-lis-kata-te`, `ex-kana-k2-lis-kata-to` |
+| 20 | `stn-kana-k3` | kana | ردیف ラ | 24 | stn-kana-k2 | 18 | `ex-kana-k3-warm-1`, `ex-kana-k3-warm-2`, `ex-kana-k3-warm-3`, `ex-kana-k3-rec-kata-ra`, `ex-kana-k3-rec-kata-ri`, `ex-kana-k3-rec-kata-ru`, `ex-kana-k3-rec-kata-re`, `ex-kana-k3-rec-kata-ro`, `ex-kana-k3-rcl-kata-ra`, `ex-kana-k3-rcl-kata-ri`, `ex-kana-k3-rcl-kata-ru`, `ex-kana-k3-rcl-kata-re`, `ex-kana-k3-rcl-kata-ro`, `ex-kana-k3-lis-kata-ra`, `ex-kana-k3-lis-kata-ri`, `ex-kana-k3-lis-kata-ru`, `ex-kana-k3-lis-kata-re`, `ex-kana-k3-lis-kata-ro` |
+| 21 | `stn-kana-k4` | kana | ردیف サ | 25 | stn-kana-k3 | 18 | `ex-kana-k4-warm-1`, `ex-kana-k4-warm-2`, `ex-kana-k4-warm-3`, `ex-kana-k4-rec-kata-sa`, `ex-kana-k4-rec-kata-shi`, `ex-kana-k4-rec-kata-su`, `ex-kana-k4-rec-kata-se`, `ex-kana-k4-rec-kata-so`, `ex-kana-k4-rcl-kata-sa`, `ex-kana-k4-rcl-kata-shi`, `ex-kana-k4-rcl-kata-su`, `ex-kana-k4-rcl-kata-se`, `ex-kana-k4-rcl-kata-so`, `ex-kana-k4-lis-kata-sa`, `ex-kana-k4-lis-kata-shi`, `ex-kana-k4-lis-kata-su`, `ex-kana-k4-lis-kata-se`, `ex-kana-k4-lis-kata-so` |
+| 22 | `stn-kana-k5` | kana | ردیف ハ | 26 | stn-kana-k4 | 18 | `ex-kana-k5-warm-1`, `ex-kana-k5-warm-2`, `ex-kana-k5-warm-3`, `ex-kana-k5-rec-kata-ha`, `ex-kana-k5-rec-kata-hi`, `ex-kana-k5-rec-kata-fu`, `ex-kana-k5-rec-kata-he`, `ex-kana-k5-rec-kata-ho`, `ex-kana-k5-rcl-kata-ha`, `ex-kana-k5-rcl-kata-hi`, `ex-kana-k5-rcl-kata-fu`, `ex-kana-k5-rcl-kata-he`, `ex-kana-k5-rcl-kata-ho`, `ex-kana-k5-lis-kata-ha`, `ex-kana-k5-lis-kata-hi`, `ex-kana-k5-lis-kata-fu`, `ex-kana-k5-lis-kata-he`, `ex-kana-k5-lis-kata-ho` |
+| 23 | `stn-kana-k6` | kana | ン | 27 | stn-kana-k5 | 6 | `ex-kana-k6-warm-1`, `ex-kana-k6-warm-2`, `ex-kana-k6-warm-3`, `ex-kana-k6-rec-kata-n`, `ex-kana-k6-rcl-kata-n`, `ex-kana-k6-lis-kata-n` |
+| 24 | `stn-kana-k7` | kana | ردیف カ | 28 | stn-kana-k6 | 16 | `ex-kana-k7-warm-1`, `ex-kana-k7-rec-kata-ka`, `ex-kana-k7-rec-kata-ki`, `ex-kana-k7-rec-kata-ku`, `ex-kana-k7-rec-kata-ke`, `ex-kana-k7-rec-kata-ko`, `ex-kana-k7-rcl-kata-ka`, `ex-kana-k7-rcl-kata-ki`, `ex-kana-k7-rcl-kata-ku`, `ex-kana-k7-rcl-kata-ke`, `ex-kana-k7-rcl-kata-ko`, `ex-kana-k7-lis-kata-ka`, `ex-kana-k7-lis-kata-ki`, `ex-kana-k7-lis-kata-ku`, `ex-kana-k7-lis-kata-ke`, `ex-kana-k7-lis-kata-ko` |
+| 25 | `stn-kana-k8` | kana | قاعدهٔ کوچوئون‌پو (ー) | 29 | stn-kana-k7 | 13 | `ex-kana-k8-warm-1`, `ex-kana-k8-warm-2`, `ex-kana-k8-warm-3`, `ex-kana-k8-clo-1`, `ex-kana-k8-dec-1`, `ex-kana-k8-dec-2`, `ex-kana-k8-dec-3`, `ex-kana-k8-dec-4`, `ex-kana-k8-lis-1`, `ex-kana-k8-lis-2`, `ex-kana-k8-asm-1`, `ex-kana-k8-asm-2`, `ex-kana-k8-asm-3` |
+| 26 | `stn-kana-k9` | kana | ردیف マ | 30 | stn-kana-k8 | 18 | `ex-kana-k9-warm-1`, `ex-kana-k9-warm-2`, `ex-kana-k9-warm-3`, `ex-kana-k9-rec-kata-ma`, `ex-kana-k9-rec-kata-mi`, `ex-kana-k9-rec-kata-mu`, `ex-kana-k9-rec-kata-me`, `ex-kana-k9-rec-kata-mo`, `ex-kana-k9-rcl-kata-ma`, `ex-kana-k9-rcl-kata-mi`, `ex-kana-k9-rcl-kata-mu`, `ex-kana-k9-rcl-kata-me`, `ex-kana-k9-rcl-kata-mo`, `ex-kana-k9-lis-kata-ma`, `ex-kana-k9-lis-kata-mi`, `ex-kana-k9-lis-kata-mu`, `ex-kana-k9-lis-kata-me`, `ex-kana-k9-lis-kata-mo` |
+| 27 | `stn-kana-k10` | kana | ردیف ヤ | 31 | stn-kana-k9 | 12 | `ex-kana-k10-warm-1`, `ex-kana-k10-warm-2`, `ex-kana-k10-warm-3`, `ex-kana-k10-rec-kata-ya`, `ex-kana-k10-rec-kata-yu`, `ex-kana-k10-rec-kata-yo`, `ex-kana-k10-rcl-kata-ya`, `ex-kana-k10-rcl-kata-yu`, `ex-kana-k10-rcl-kata-yo`, `ex-kana-k10-lis-kata-ya`, `ex-kana-k10-lis-kata-yu`, `ex-kana-k10-lis-kata-yo` |
+| 28 | `stn-kana-k11` | kana | ردیف ナ | 32 | stn-kana-k10 | 18 | `ex-kana-k11-warm-1`, `ex-kana-k11-warm-2`, `ex-kana-k11-warm-3`, `ex-kana-k11-rec-kata-na`, `ex-kana-k11-rec-kata-ni`, `ex-kana-k11-rec-kata-nu`, `ex-kana-k11-rec-kata-ne`, `ex-kana-k11-rec-kata-no`, `ex-kana-k11-rcl-kata-na`, `ex-kana-k11-rcl-kata-ni`, `ex-kana-k11-rcl-kata-nu`, `ex-kana-k11-rcl-kata-ne`, `ex-kana-k11-rcl-kata-no`, `ex-kana-k11-lis-kata-na`, `ex-kana-k11-lis-kata-ni`, `ex-kana-k11-lis-kata-nu`, `ex-kana-k11-lis-kata-ne`, `ex-kana-k11-lis-kata-no` |
+| 29 | `stn-kana-k12` | kana | ردیف ワ/ヲ | 33 | stn-kana-k11 | 9 | `ex-kana-k12-warm-1`, `ex-kana-k12-warm-2`, `ex-kana-k12-warm-3`, `ex-kana-k12-rec-kata-wa`, `ex-kana-k12-rec-kata-wo`, `ex-kana-k12-rcl-kata-wa`, `ex-kana-k12-rcl-kata-wo`, `ex-kana-k12-lis-kata-wa`, `ex-kana-k12-lis-kata-wo` |
+| 30 | `stn-kana-k12-foreign` | kana | ترکیب خارجی (ファ/ティ/ヴ) | 34 | stn-kana-k12 | 4 | `ex-kana-kf-warm-1`, `ex-kana-kf-warm-2`, `ex-kana-kf-dec-1`, `ex-kana-kf-lis-1` |
+| 31 | `stn-kana-k13` | integrate | آشتی دو خط + نامِ خودت | 35 | stn-kana-k12-foreign | 8 | `ex-kana-k13-warm-1`, `ex-kana-k13-warm-2`, `ex-kana-k13-disc-1`, `ex-kana-k13-disc-2`, `ex-kana-k13-disc-3`, `ex-kana-k13-disc-4`, `ex-kana-k13-disc-5`, `ex-kana-k13-disc-6` |
+| 32 | `stn-kana-m2-realworld` | practice | ایستگاه واقعی — منو و تابلوی کاتاکانا | 36 | stn-kana-k13 | 6 | `ex-kana-m2-word-door`, `ex-kana-m2-word-aircon`, `ex-kana-m2-word-karaoke`, `ex-kana-m2-word-pasokon`, `ex-kana-m2-word-test`, `ex-kana-m2-word-radio` |
+| 33 | `stn-kana-opt-r-h9` | review | مرور ایستگاه‌های فاز ۱ (اختیاری) | 37 | stn-kana-h9 | 12 | `ex-kana-optrev-rec-1`, `ex-kana-optrev-rec-2`, `ex-kana-optrev-rec-3`, `ex-kana-optrev-rec-4`, `ex-kana-optrev-rec-5`, `ex-kana-optrev-rec-6`, `ex-kana-optrev-rec-7`, `ex-kana-optrev-rec-8`, `ex-kana-optrev-rec-9`, `ex-kana-optrev-rec-10`, `ex-kana-optrev-rec-11`, `ex-kana-optrev-rec-12` |
+| 34 | `stn-kana-opt-drill` | deepdive | دریل آزاد کانا (اختیاری) | 38 | — | 10 | `ex-kana-optdrill-rec-1`, `ex-kana-optdrill-rec-2`, `ex-kana-optdrill-rec-3`, `ex-kana-optdrill-rec-4`, `ex-kana-optdrill-rec-5`, `ex-kana-optdrill-rec-6`, `ex-kana-optdrill-rec-7`, `ex-kana-optdrill-rec-8`, `ex-kana-optdrill-rec-9`, `ex-kana-optdrill-rec-10` |
+| 35 | `stn-kana-p1` | practice | تمرین ۱ — سه ردیف و دو قاعده | 7 | stn-kana-h5 | 19 | `ex-kana-p1-rec-sa`, `ex-kana-p1-rec-o`, `ex-kana-p1-rec-se`, `ex-kana-p1-rec-ki`, `ex-kana-p1-lis-ko`, `ex-kana-p1-lis-shi`, `ex-kana-p1-lis-ga`, `ex-kana-p1-rcl-a`, `ex-kana-p1-rcl-shi`, `ex-kana-p1-rcl-ga`, `ex-kana-p1-dec-asa`, `ex-kana-p1-dec-sushi`, `ex-kana-p1-dec-koko`, `ex-kana-p1-dec-iie`, `ex-kana-p1-msg-gogo`, `ex-kana-p1-dec-ookii`, `ex-kana-p1-rec-go`, `ex-kana-p1-lis-so`, `ex-kana-p1-dec-kasa` |
+| 36 | `stn-kana-p2` | practice | تمرین ۲ — ん و ردیف‌های ن/ت | 11 | stn-kana-h9 | 18 | `ex-kana-p2-rec-na`, `ex-kana-p2-rec-nu`, `ex-kana-p2-rec-chi`, `ex-kana-p2-rec-to`, `ex-kana-p2-lis-ni`, `ex-kana-p2-lis-tsu`, `ex-kana-p2-lis-da`, `ex-kana-p2-rcl-tsu`, `ex-kana-p2-rec-ta`, `ex-kana-p2-rec-n`, `ex-kana-p2-dec-kuni`, `ex-kana-p2-dec-sono`, `ex-kana-p2-dec-ashita`, `ex-kana-p2-dec-sensei`, `ex-kana-p2-dec-san`, `ex-kana-p2-dec-anata`, `ex-kana-p2-lis-to`, `ex-kana-p2-dec-atsui` |
+| 37 | `stn-kana-p3` | practice | تمرین ۳ — ردیف‌های م/ر/ه و داکوتن ば | 15 | stn-kana-h12 | 20 | `ex-kana-p3-rec-me`, `ex-kana-p3-rec-ho`, `ex-kana-p3-rec-ru`, `ex-kana-p3-rec-he`, `ex-kana-p3-lis-ne`, `ex-kana-p3-lis-ba`, `ex-kana-p3-lis-mi`, `ex-kana-p3-rec-nu`, `ex-kana-p3-rec-re`, `ex-kana-p3-rcl-ro`, `ex-kana-p3-rec-ha`, `ex-kana-p3-rec-he2`, `ex-kana-p3-dec-neko`, `ex-kana-p3-dec-mizu`, `ex-kana-p3-dec-kuruma`, `ex-kana-p3-dec-kaban`, `ex-kana-p3-dec-shinbun`, `ex-kana-p3-dec-hon`, `ex-kana-p3-rec-fu`, `ex-kana-p3-dec-tomodachi` |
+| 38 | `stn-kana-p4` | practice | تمرین ۴ — آیین کامل هیراگانا | 20 | stn-kana-h15 | 42 | `ex-kana-p4-rec-wa`, `ex-kana-p4-rec-wo`, `ex-kana-p4-rec-po`, `ex-kana-p4-rec-bo`, `ex-kana-p4-lis-wa`, `ex-kana-p4-lis-pa`, `ex-kana-p4-lis-yu`, `ex-kana-p4-rec-ne`, `ex-kana-p4-rcl-ho`, `ex-kana-p4-rec-yo-small`, `ex-kana-p4-rl-gakkou`, `ex-kana-p4-rl-kyou`, `ex-kana-p4-rl-gogo`, `ex-kana-p4-dec-gakkou`, `ex-kana-p4-dec-enpitsu`, `ex-kana-p4-dec-shashin`, `ex-kana-p4-dec-watashi`, `ex-kana-p4-rec-tsu`, `ex-kana-p4-lis-chi`, `ex-kana-p4-dec-sushi`, `ex-kana-p4-msg-neko`, `ex-kana-p4-rec-n`, `ex-kana-p4-rec-ke`, `ex-kana-p4-lis-ke`, `ex-kana-p4-rec-no`, `ex-kana-p4-lis-no`, `ex-kana-p4-rec-te`, `ex-kana-p4-rec-mu`, `ex-kana-p4-rec-mo`, `ex-kana-p4-lis-ra`, `ex-kana-p4-rec-ri`, `ex-kana-p4-rec-ro2`, `ex-kana-p4-rec-hi`, `ex-kana-p4-rec-fu2`, `ex-kana-p4-rec-ya`, `ex-kana-p4-rec-yu`, `ex-kana-p4-lis-wo2`, `ex-kana-p4-rcl-te`, `ex-kana-p4-rcl-mu`, `ex-kana-p4-rcl-ra`, `ex-kana-p4-rcl-ri`, `ex-kana-p4-rcl-hi` |
+
+> ایستگاه‌های p1..p4 از `chapter-kana01.practice.ts` و بقیه از `chapter-kana01.stations.ts`؛ ۲۵ تمرین `ex-kana-gate-*` فقط در صفحهٔ assessment (گیت فصل) استفاده می‌شوند و به هیچ station walk میانجی نیستند — «orphan» نیستند، معماری گیت است (DD-117).
+
+## ۳. تمرین‌ها — فهرست فشرده (تمام ۵۸۶ مورد در inventory.json)
+
+هر تمرین در JSON این فیلدها را دارد: `exerciseId, exerciseType, stationId, targetSkill, targetConcept, assessesConcepts, difficulty, promptFa, promptJa, promptJaReading, audioLineRef, options[{id,label}], correctOptionId, distractorRationaleFa, feedbackF1, feedbackF2Hint, feedbackF3Explain, assessmentRole, referenceBlockId, lineRef, clozeTokens, chunks, correctOrder, chips, acceptedChipOrder`.
+
+### ۳.۱ نمونهٔ ساختاری (یک مورد از هر نوع)
+
+#### `ex-kana-h1-rec-hira-a` (kana-recognition) — station `stn-kana-h1`
+
+- **Prompt (fa):** این کانا چه صدایی دارد؟
+- **PromptJa:** あ | **Reading:** —
+- **Options:** `a`=«آ» | `b`=«اُ» | `c`=«ای» → **correct:** `a`
+- **F1:** به شکل کانا دقت کن — از کدام ردیف است؟ با یادسپار و جفت‌های شبیه مقایسه‌اش کن.
+- **F2 (hint):** به شکل あ و یادسپارش برگرد؛ با جفت اشتباه‌پذیرش مقایسه کن.
+- **F3:** کانای あ در هیراگانا/کاتاکانا با خوانش «آ» خوانده می‌شود.
+- **Distractor rationale:** {"b": "«اُ» صدای کانای دیگری است.", "c": "«ای» صدای کانای دیگری است."}
+
+#### `ex-kana-h1-rcl-hira-a` (kana-recall) — station `stn-kana-h1`
+
+- **Prompt (fa):** کانای «آ» کدام است؟
+- **PromptJa:** — | **Reading:** —
+- **Options:** `a`=あ | `b`=お | `c`=い → **correct:** `a`
+- **F1:** کانای «آ» این نیست — به شکل درست نگاه کن.
+- **F2 (hint):** به شکل جفت اشتباه‌پذیرش دقت کن: با «お» قاطی نکن — کانای درست به خط هیراگانا است.
+- **F3:** «آ» = あ.
+- **Distractor rationale:** {"b": "جفت اشتباه‌پذیر — به تفاوت شکل دقت کن.", "c": "کانای دیگری با همین ردیف."}
+
+#### `ex-kana-h4-dec-1` (kana-decode) — station `stn-kana-h4`
+
+- **Prompt (fa):** این واژه را بخوان — راهنمایی: دبیرستان
+- **PromptJa:** こうこう | **Reading:** کووکوو
+- **Options:** `a`=«گوکو» | `b`=«کوکو» | `c`=«کووکوو» → **correct:** `c`
+- **F1:** دو کشش را بشمار: こ+う و こ+う — «کووکوو» چهار موراست.
+- **F2 (hint):** کانا به کانا بخوان: «ک»…
+- **F3:** «こうこう» = «کووکوو» (دبیرستان) — دو اُوی کشیده.
+- **Distractor rationale:** {"a": "هر دو کشش (う) جا افتاده — こうこう = «کوو+کوو».", "b": "یک کشش را انداختی — «کوو» دوبار می‌آید."}
+
+#### `ex-kana-h1-lis-hira-a` (kana-listening) — station `stn-kana-h1`
+
+- **Prompt (fa):** به صدای پخش‌شده گوش کن — کدام کانا این صدا را دارد؟
+- **PromptJa:** — | **Reading:** —
+- **Options:** `a`=あ | `b`=お | `c`=い → **correct:** `a`
+- **F1:** صدای شنیده‌شده «آ» بود — دوباره پخش کن و به آوا دقت کن.
+- **F2 (hint):** صدا را دوباره پخش کن و خوانش هر گزینه را با آن مقایسه کن — «آ» را جست‌وجو کن.
+- **F3:** «あ» با خوانش «آ» خوانده می‌شود — پخشش کن و شکلش را به خاطر بسپار.
+- **Distractor rationale:** {"b": "«お» صدای «اُ» است — شنیده‌شده «آ» بود.", "c": "«い» صدای «ای» است — شنیده‌شده «آ» بود."}
+
+#### `ex-kana-h4-lis-1` (rule-listening) — station `stn-kana-h4`
+
+- **Prompt (fa):** به صدا گوش کن — کدام واژه را شنیدی؟ (به طول واکهٔ اول دقت کن)
+- **PromptJa:** いいえ | **Reading:** اییه (نه)
+- **Options:** `a`=いえ | `b`=いいえ | `c`=いえい → **correct:** `b`
+- **F1:** دوباره پخش کن: آیِ اول کوتاه است یا کشیده؟
+- **F2 (hint):** با انگشت بشمار: سه ضربه = ای-ی-هِ نه، ای-ه.
+- **F3:** «いいえ» = «اییه» (نه) — آیِ اول کشیده است (۳ مورا).
+- **Distractor rationale:** {"a": "«ایه» بود — دو مورا بدون کشش؛ واژهٔ شنیده‌شده سه موراست.", "c": "«ای-اِ-ی» بود — سه مورا اما با چیدمان دیگر؛ واژهٔ شنیده‌شده «ای-ای-اِ» است."}
+
+#### `ex-kana-h5-clo-1` (cloze) — station `stn-kana-h5`
+
+- **Prompt (fa):** واژهٔ «خانواده» را کامل کن: کدام کانا جای خالی است؟
+- **PromptJa:** — | **Reading:** —
+- **Options:** `a`=さ | `b`=ぞ | `c`=そ → **correct:** `b`
+- **F1:** معنا «خانواده» است: کازوکو.
+- **F2 (hint):** واک‌دارِ «سُ» چه هست؟
+- **F3:** 「かぞく」 = ک+ぞ+ک — 「ぞ」 = さ+゛.
+- **Distractor rationale:** {"a": "این ردیف さ است — ردیف اشتباه.", "c": "「そ」 بی‌واک است؛ اینجا واک‌دار لازم است."}
+
+#### `ex-kana-h6-prd-1` (produce-template) — station `stn-kana-h6`
+
+- **Prompt (fa):** واژهٔ «امروز» را از قطعه‌ها بساز (ترتیب را رعایت کن)
+- **PromptJa:** — | **Reading:** —
+- **Options:** — → **correct:** `NOT_MCQ`
+- **F1:** ترتیب را بررسی کن: اول き، بعد ょ کوچک، آخر う.
+- **F2 (hint):** اول き، بعد ょ کوچک، آخر う.
+- **F3:** 「きょう」 = きょ+う (۲ مورا).
+
+#### `ex-kana-m1-word-sushi` (meaning-select) — station `stn-kana-m1-reading`
+
+- **Prompt (fa):** این واژهٔ واقعی چه معنایی دارد؟
+- **PromptJa:** すし | **Reading:** —
+- **Options:** `a`=گربه | `b`=سوشی | `c`=ایستگاه → **correct:** `b`
+- **F1:** کانا به کانا بخوان: す+し — «سُشی».
+- **F2 (hint):** غذای معروف ژاپنی که با برنج و ماهی درست می‌شود.
+- **F3:** すし = سوشی — واژهٔ میزبانِ کانای す.
+- **Distractor rationale:** {"a": "گربه = ねこ — واژهٔ دیگری از همین درس‌هاست؛ す شروعِ «سوشی» است.", "c": "ایستگاه = えき — با え شروع می‌شود، نه す."}
+
+## ۴. Registry گلیف‌ها (خلاصه)
+
+ردیف‌ها: a-row×10, ha-row×10, ka-row×10, ma-row×10, n-row×2, na-row×10, ra-row×10, sa-row×10, ta-row×10, wa-row×4, ya-row×6
+
+وضعیت mnemonicها: {'draft': 53, 'NOT_DEFINED': 39} (طبق OQ-051 «draft» = بازبینی انسانی در انتظار — UI باید برچسب صادقانه نشان دهد).
+
+## ۵. پوشش
+
+این Inventory **تمام** Stationها و Exerciseهای فصل ۱ را پوشش می‌دهد: 38/38 station، 586/586 exercise، 92/92 گلیف. هیچ نمونه‌ای بررسی‌جداشده باقی نمانده است؛ تحلیل کیفیت (پاسخ چندگانه، خوانش، Feedback) در اسناد ASSESSMENT_VALIDITY_AUDIT / JAPANESE_LINGUISTIC_AUDIT / PERSIAN_READING_GUIDE_AUDIT / FEEDBACK_AND_RATIONALE_AUDIT انجام می‌شود.
