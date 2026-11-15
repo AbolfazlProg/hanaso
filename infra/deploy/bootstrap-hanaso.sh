@@ -49,8 +49,8 @@
 set -euo pipefail
 
 # --- pinned refs -------------------------------------------------------------
-TARGET_SHA="${HANASO_TARGET_SHA:-2574788c36521cec6ac0673488b769e77a8ab982}"
-TARGET_VERSION="${HANASO_TARGET_VERSION:-1.0.0-hanaso20-r01}"
+TARGET_SHA="${HANASO_TARGET_SHA:-df67d6af58544731b83b3396a3858eaefad2b674}"
+TARGET_VERSION="${HANASO_TARGET_VERSION:-1.1.0-hanaso29-r01}"
 TARGET_BRANCH="${HANASO_TARGET_BRANCH:-fix/TASK-HANASO-20-onboarding}"
 DEPLOY_BRANCH="${HANASO_DEPLOY_BRANCH:-hanaso17-home-dashboard}"
 # Exact updater commit. The documented one-liner ALWAYS overrides this with an
