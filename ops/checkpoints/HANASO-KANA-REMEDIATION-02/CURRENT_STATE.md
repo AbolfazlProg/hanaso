@@ -1,33 +1,49 @@
 # HANASO-KANA-REMEDIATION-02 — CURRENT STATE
 
-> وضعیت زندهٔ اصلاح محتوا/سنجش (Mission 2). پس از هر دسته اقدام به‌روزرسانی و Commit/Push می‌شود.
+> وضعیت زندهٔ اصلاح محتوا/سنجش (Mission 2). پارامترهای مأموریت در تاریخچهٔ git این فایل حفظ شده‌اند.
 
-## پارامترهای مأموریت (ثابت)
+## وضعیت: **MISSION COMPLETE — READY FOR MERGE** ✅
+
+## پارامترهای مأموریت
 
 | پارامتر | مقدار |
 |---|---|
-| شاخهٔ اصلاح | `fix/HANASO-KANA-CONTENT-REMEDIATION-02` |
-| مبنا | `4dedcd9` (tip ممیزی HANASO-KANA-AUDIT-01؛ حمل‌کنندهٔ Source عین Production `5b503598` / v1.1.0-hanaso29-r01) |
-| Specification | گزارش‌های ممیزی در `ops/checkpoints/HANASO-KANA-AUDIT-01/` (بدون تغییر، به‌عنوان مرجع Findings) |
-| دامنه | فقط Content/Assessment/Answer Key/Distractor/Feedback/Hint/منطق تولید — **بدون UI/CSS (Mission 3)** |
-| مصون‌ها | ۵۹ گزینهٔ هم‌صدای عمدی Katakana (RP-10)، Findingsهای UI (AUD-007/008/009/015)، سرویس‌های مشترک، Progress/Sessions واقعی، Secrets |
+| شاخه | `fix/HANASO-KANA-CONTENT-REMEDIATION-02` |
+| مبنا | `4dedcd9` (tip ممیزی؛ حامل Source عین Production `5b503598` / v1.1.0-hanaso29-r01) |
+| کامیت‌ها | CP-0 `f116578` → RP-04 `13342ab` → CP-1 `23bd689` → CP-2 `1f4413e` → CP-3 `a3dcb88` → FINAL (این کامیت) |
+| Specification | گزارش‌های ممیزی در `ops/checkpoints/HANASO-KANA-AUDIT-01/` (دست‌نخورده) |
+| دامنه | فقط Content/Assessment/Answer Key/Distractor/Feedback/Hint/منطق تولید — بدون UI |
+| مصون‌ها | ۵۹ گزینهٔ عمدی تشخیص خط، یافته‌های UI (Mission 3)، سرویس‌های مشترک، داده‌های واقعی |
 
-## وضعیت: IN_PROGRESS
+## خروجی نهایی
 
-### Program
+| تحویل‌شدنی | وضعیت |
+|---|---|
+| ۱۲ یافتهٔ در دامنه (۲H+۴M+۴L+Native+NOT_A_BUG) | ✅ RESOLVED — `FINDING_RESOLUTION_MATRIX.md` |
+| ۱۰ الگوی ریشه‌ای | ✅ ریشه‌ای/مستند — `ROOT_CAUSE_FIX_REPORT.md` |
+| سند قرارداد فارسی‌نویسی (M2-0.1) | ✅ `PERSIAN_READING_CONVENTION.md` v1.0 |
+| گاردهای رگرسیون دائمی (کل backlog) | ✅ ۷ گارد + ۵ بلوک romaji — `REGRESSION_GUARDS.md` |
+| QA زبانی + سنجش (جایگزین subagent به درخواست مالک) | ✅ `SELF_QA_REVIEWS.md` |
+| گزارش پیاده‌سازی / راستی‌آزمایی نهایی | ✅ `FIX_IMPLEMENTATION_REPORT.md` / `FINAL_VERIFICATION_REPORT.md` |
+| بازممیزی ۵۸۶ تمرین | ✅ `scripts/remediation_reaudit.py` (repo اصلی) — ۵/۵ پاک |
+| پایش زندهٔ UI ایستگاه‌های اصلاح‌شده | ✅ agent-browser — جزئیات در FINAL_VERIFICATION §ج |
 
-1. **CP-0 (این کامیت):** شاخه + CURRENT_STATE.
-2. خواندن Source و تطبیق Findings با فایل‌های واقعی.
-3. اصلاح Root Patternها به ترتیب: RP-04 (Helper romaji) → RP-02 (قرارداد خوانش + تصادم‌ها) → RP-01 (چندپاسخگی) → RP-03 (Hint افشاگر) → RP-05 (نشت شکل) → RP-08 (تکرار گیت) → RP-09 (شکاف‌های رجیستری).
-4. Guardrailهای رگرسیون (تست‌های ماشینی).
-5. اعتبارسنجی کامل ۵۸۶ + Lint/Typecheck/Build.
-6. Subagent A (زبانی) + B (سنجش) + C (رجرسیون نهایی) — مستقل.
-7. گزارش‌ها + Resolution Matrix + FINAL_VERIFICATION.
+## اعتبارسنجی نهایی (روی tip)
 
-## Findings ممیزی (مرجع — ۱۵ شناسه)
+`77 files / 856 tests PASS` · ESLint پاک · tsc پاک · build موفق · 586 re-audit پاک · UI spot-check پاک
 
-HIGH: AUD-001 (چندپاسخگی ×۳ تمرین)، AUD-002 (تصادم کیوو) — MEDIUM: AUD-003 (hint لودهنده ×۳)، AUD-004 (نگارش ناهماهنگ ×۴)، AUD-005 (Helper romaji)، AUD-006 (نشت شکل)، AUD-007/008/009 (UI → خارج از دامنه)، AUD-015 (NEEDS_CONTEXT → خارج از دامنه) — LOW: AUD-010 (تکرار گیت ×۳)، AUD-011 (ん/labial → تحقیق + DEFERRED/قرارداد)، AUD-012 (۸ hostWord)، AUD-013 (ヲ) — NOT_A_BUG: AUD-014 (۵۹ مورد — دست نخورد).
+## معوق (خارج از دامنهٔ این مأموریت)
+
+- AUD-007/008/009 (UI) → **Mission 3** (backlog آماده در ممیزی)
+- AUD-015 (NEEDS_CONTEXT) → تصمیم مالک
+- Native Review انسانی فارسی (شیوایی rationaleها) → توصیهٔ پیش از انتشار عمومی
+- hostWordهای ۸ گلیف → نیازمند asset صوتی TTS در آینده (قید ثبت‌شده در رجیستری)
 
 ## تاریخچهٔ Checkpointها
 
-- CP-0: شاخه ساخته شد؛ خواندن Source آغاز می‌شود.
+- **CP-0** `f116578`: شاخه + CURRENT_STATE
+- **RP-04** `13342ab`: بازنویسی kanaWordRomaji (موتور ترکیب؛ ۱۶ تست)
+- **CP-1** `23bd689`: ۲ High + Mediumهای محتوایی + قرارداد + RP-05/08/09
+- **CP-2** `1f4413e`: ۵ گارد یکپارچگی + ۷ یافتهٔ پنهان + یکسان‌سازی TL-14 (۸۵۴ تست سبز)
+- **CP-3** `a3dcb88`: M2-2.4/3.2/3.4 + گارد آماری/خط + حاشیه‌های رجیستری + Self-QA (۸۵۶ تست سبز)
+- **FINAL**: شش گزارش تحویل + این فایل — مأموریت بسته شد
