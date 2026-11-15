@@ -3316,14 +3316,14 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k8-step-kohi',
         role: 'notice',
         bodyFa: '«قهوه»: کوو — هیی. هر خطِ افقی ー یعنی: مصوتِ قبلی، یک ضربهٔ دیگر.',
-        word: { ja: 'コーヒー', readingFa: 'کووهی', fa: 'قهوه', highlight: ['ー'], beats: 4 },
+        word: { ja: 'コーヒー', readingFa: 'کووهیی', fa: 'قهوه', highlight: ['ー'], beats: 4 },
       },
       {
         kind: 'rule-contrast',
         id: 'blk-stn-kana-k8-contrast-kohi',
         titleFa: 'با ー و بدون ー',
         a: { ja: 'コヒー', readingFa: 'کوهی', fa: 'این شکل واژه نیست — کششِ اول حذف شده', highlight: [], beats: 3 },
-        b: { ja: 'コーヒー', readingFa: 'کووهی', fa: 'قهوه', highlight: ['ー'], beats: 4 },
+        b: { ja: 'コーヒー', readingFa: 'کووهیی', fa: 'قهوه', highlight: ['ー'], beats: 4 },
         ask: {
           questionFa: 'کدام «قهوه» است؟',
           options: [
@@ -3331,7 +3331,7 @@ export const KANA_STATIONS: Station[] = [
             { id: 'b', label: 'コーヒー' },
           ],
           correctOptionId: 'b',
-          revealFa: 'دو ー: بعد از コ و بعد از ヒ — «کووهی»، چهار ضربه.',
+          revealFa: 'دو ー: بعد از コ و بعد از ヒ — «کووهیی»، چهار ضربه.',
         },
       },
       {
@@ -4036,7 +4036,7 @@ export const KANA_STATIONS: Station[] = [
         titleFa: 'دو خط، یک زبان',
         items: [
           { word: 'ねこ', readingFa: 'نِکو', noteFa: 'گربه — واژهٔ بومی → هیراگانا.' },
-          { word: 'コーヒー', readingFa: 'کووهی', noteFa: 'قهوه — وام‌واژه → کاتاکانا.' },
+          { word: 'コーヒー', readingFa: 'کووهیی', noteFa: 'قهوه — وام‌واژه → کاتاکانا.' },
         ],
       },
       {

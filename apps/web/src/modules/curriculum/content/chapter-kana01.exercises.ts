@@ -5837,12 +5837,15 @@ export const KANA_EXERCISES: Exercise[] = [
     promptJa: 'とうきょう',
     promptJaReading: 'توکیوو',
     options: [
-      { id: 'a', label: '«تُکیوو»' },
+      { id: 'a', label: '«توکیو»' },
       { id: 'b', label: '«توکیوو»' },
       { id: 'c', label: '«دوکیوو»' },
     ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: 'کششِ اول («توو») جا افتاده.', c: '「と» بی‌علامت است — «ت»، نه «د».' },
+    distractorRationaleFa: {
+      a: 'کششِ اول («توو») جا افتاده — دو کشش در واژه است.',
+      c: '「と» بی‌علامت است — «ت»، نه «د».',
+    },
     feedback: {
       f1Fa: 'دو کشش: «توو» و «کیوو» — とう+きょう.',
       f2HintFa: 'کانا به کانا بخوان: «ت»…',

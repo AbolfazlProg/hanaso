@@ -862,12 +862,12 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     promptJaReading: 'سُنو',
     options: [
       { id: 'a', label: '«سُنو»' },
-      { id: 'b', label: '«سونو»' },
+      { id: 'b', label: '«سُنِ»' },
       { id: 'c', label: '«زُنُو»' },
     ],
     correctOptionId: 'a',
     distractorRationaleFa: {
-      b: 'مصوت هر دو «اُ» است — そ «سُ» و の «نُ».',
+      b: '「の» «نُ» است، نه «نِ» — هر دو مصوت «اُ»‌اند.',
       c: 'هیچ ゛ نیست — そ بی‌علامت است.',
     },
     feedback: {
@@ -1448,12 +1448,12 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     options: [
       { id: 'a', label: '«کوروما»' },
       { id: 'b', label: '«گوروما»' },
-      { id: 'c', label: '«کُروما»' },
+      { id: 'c', label: '«کُرومِ»' },
     ],
     correctOptionId: 'a',
     distractorRationaleFa: {
       b: 'هیچ ゛ نیست — く بی‌علامت «کُ» است.',
-      c: 'مصوت く «اُ» و る «و» — «کوروما» درست است.',
+      c: '「ま» «ما» است، نه «مِ» — مصوت آخر را جابه‌جا نکن.',
     },
     feedback: {
       f1Fa: 'کانا به کانا: く+る+ま.',
@@ -1533,12 +1533,12 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     promptJaReading: 'هُن',
     options: [
       { id: 'a', label: '«هُن»' },
-      { id: 'b', label: '«هون»' },
+      { id: 'b', label: '«هُون»' },
       { id: 'c', label: '«مُن»' },
     ],
     correctOptionId: 'a',
     distractorRationaleFa: {
-      b: '「ほ» خوانش «هُ» دارد — مصوت «اُ».',
+      b: 'کشش ندارد — ほ کوتاه است؛ «هُون» یعنی ほう+ن.',
       c: '「ま» «ما» است؛ ほ خطی است بدون حلقه.',
     },
     feedback: {
