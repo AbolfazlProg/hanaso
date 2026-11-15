@@ -1,0 +1,221 @@
+TOTAL 586
+
+### WITHIN-ITEM SAME-READING OPTION PAIRS (decode): 4
+  ('ex-kana-h4-asm-1', 'stn-kana-h4', 'あさ', '«اَسا»', '«اسا»', 'b')
+  ('ex-kana-h4-asm-1', 'stn-kana-h4', 'あさ', '«اسا»', '==promptJaReading(اَسا)', 'b')
+  ('ex-kana-k8-asm-1', 'stn-kana-k8', 'ケーキ', '«کِیکی»', '«کِیکِی»', 'b')
+  ('ex-kana-k8-asm-1', 'stn-kana-k8', 'ケーキ', '«کِیکِی»', '==promptJaReading(کِیکی)', 'b')
+
+### SAME-SOUND CO-OPTIONS (recall/listening), prompt does NOT name script: 0
+
+### SAME-SOUND CO-OPTIONS where prompt NAMES script (intentional): 19
+  ('ex-kana-k1-rcl-kata-a', 'kana-recall', 'آ', [('a', 'あ'), ('b', 'ア')], ['あ', 'ア', 'い'], 'b')
+  ('ex-kana-k1-rcl-kata-i', 'kana-recall', 'ای', [('b', 'イ'), ('c', 'い')], ['あ', 'イ', 'い'], 'b')
+  ('ex-kana-k2-rcl-kata-ta', 'kana-recall', 'تا', [('a', 'た'), ('c', 'タ')], ['た', 'ト', 'タ'], 'c')
+  ('ex-kana-k2-rcl-kata-chi', 'kana-recall', 'چی', [('a', 'ち'), ('c', 'チ')], ['ち', 'た', 'チ'], 'c')
+  ('ex-kana-k3-rcl-kata-ra', 'kana-recall', 'را', [('b', 'ら'), ('c', 'ラ')], ['り', 'ら', 'ラ'], 'c')
+  ('ex-kana-k3-rcl-kata-ri', 'kana-recall', 'ری', [('b', 'リ'), ('c', 'り')], ['ら', 'リ', 'り'], 'b')
+  ('ex-kana-k4-rcl-kata-sa', 'kana-recall', 'سا', [('a', 'サ'), ('b', 'さ')], ['サ', 'さ', 'し'], 'a')
+  ('ex-kana-k5-rcl-kata-ha', 'kana-recall', 'ها', [('a', 'は'), ('b', 'ハ')], ['は', 'ハ', 'ひ'], 'b')
+  ('ex-kana-k5-rcl-kata-hi', 'kana-recall', 'هی', [('a', 'ひ'), ('c', 'ヒ')], ['ひ', 'は', 'ヒ'], 'c')
+  ('ex-kana-k6-rcl-kata-n', 'kana-recall', 'ن', [('b', 'ン'), ('c', 'ん')], ['ソ', 'ン', 'ん'], 'b')
+  ('ex-kana-k7-rcl-kata-ka', 'kana-recall', 'کا', [('a', 'か'), ('b', 'カ')], ['か', 'カ', 'き'], 'b')
+  ('ex-kana-k7-rcl-kata-ki', 'kana-recall', 'کی', [('a', 'キ'), ('c', 'き')], ['キ', 'か', 'き'], 'a')
+  ('ex-kana-k9-rcl-kata-ma', 'kana-recall', 'ما', [('a', 'マ'), ('b', 'ま')], ['マ', 'ま', 'み'], 'a')
+  ('ex-kana-k9-rcl-kata-mi', 'kana-recall', 'می', [('a', 'み'), ('c', 'ミ')], ['み', 'ま', 'ミ'], 'c')
+  ('ex-kana-k10-rcl-kata-ya', 'kana-recall', 'یا', [('b', 'や'), ('c', 'ヤ')], ['ゆ', 'や', 'ヤ'], 'c')
+  ('ex-kana-k11-rcl-kata-na', 'kana-recall', 'نا', [('b', 'ナ'), ('c', 'な')], ['タ', 'ナ', 'な'], 'b')
+  ('ex-kana-k11-rcl-kata-ni', 'kana-recall', 'نی', [('b', 'ニ'), ('c', 'に')], ['な', 'ニ', 'に'], 'b')
+  ('ex-kana-k12-rcl-kata-wa', 'kana-recall', 'وا', [('a', 'ワ'), ('c', 'わ')], ['ワ', 'フ', 'わ'], 'a')
+  ('ex-kana-k12-rcl-kata-wo', 'kana-recall', 'اُ', [('a', 'を'), ('c', 'ヲ')], ['を', 'わ', 'ヲ'], 'c')
+
+### SCRIPT-NAMED mixed-script option items: 59
+  ('ex-kana-k1-rcl-kata-a', 'kana-recall', ['あ', 'ア', 'い'], 'b')
+  ('ex-kana-k1-rcl-kata-i', 'kana-recall', ['あ', 'イ', 'い'], 'b')
+  ('ex-kana-k2-rcl-kata-ta', 'kana-recall', ['た', 'ト', 'タ'], 'c')
+  ('ex-kana-k2-rcl-kata-chi', 'kana-recall', ['ち', 'た', 'チ'], 'c')
+  ('ex-kana-k3-rcl-kata-ra', 'kana-recall', ['り', 'ら', 'ラ'], 'c')
+  ('ex-kana-k3-rcl-kata-ri', 'kana-recall', ['ら', 'リ', 'り'], 'b')
+  ('ex-kana-k4-rcl-kata-sa', 'kana-recall', ['サ', 'さ', 'し'], 'a')
+  ('ex-kana-k5-rcl-kata-ha', 'kana-recall', ['は', 'ハ', 'ひ'], 'b')
+  ('ex-kana-k5-rcl-kata-hi', 'kana-recall', ['ひ', 'は', 'ヒ'], 'c')
+  ('ex-kana-k6-rcl-kata-n', 'kana-recall', ['ソ', 'ン', 'ん'], 'b')
+  ('ex-kana-k7-rcl-kata-ka', 'kana-recall', ['か', 'カ', 'き'], 'b')
+  ('ex-kana-k7-rcl-kata-ki', 'kana-recall', ['キ', 'か', 'き'], 'a')
+  ('ex-kana-k9-rcl-kata-ma', 'kana-recall', ['マ', 'ま', 'み'], 'a')
+  ('ex-kana-k9-rcl-kata-mi', 'kana-recall', ['み', 'ま', 'ミ'], 'c')
+  ('ex-kana-k10-rcl-kata-ya', 'kana-recall', ['ゆ', 'や', 'ヤ'], 'c')
+  ('ex-kana-k11-rcl-kata-na', 'kana-recall', ['タ', 'ナ', 'な'], 'b')
+  ('ex-kana-k11-rcl-kata-ni', 'kana-recall', ['な', 'ニ', 'に'], 'b')
+  ('ex-kana-k12-rcl-kata-wa', 'kana-recall', ['ワ', 'フ', 'わ'], 'a')
+  ('ex-kana-k12-rcl-kata-wo', 'kana-recall', ['を', 'わ', 'ヲ'], 'c')
+  ('ex-kana-k1-lis-kata-a', 'kana-listening', ['あ', 'ア', 'い'], 'b')
+  ('ex-kana-k1-lis-kata-i', 'kana-listening', ['あ', 'イ', 'い'], 'b')
+  ('ex-kana-k2-warm-1', 'kana-listening', ['ア', 'あ', 'い'], 'a')
+  ('ex-kana-k2-warm-2', 'kana-listening', ['い', 'あ', 'イ'], 'c')
+  ('ex-kana-k2-lis-kata-ta', 'kana-listening', ['た', 'ト', 'タ'], 'c')
+  ('ex-kana-k2-lis-kata-chi', 'kana-listening', ['ち', 'た', 'チ'], 'c')
+  ('ex-kana-k3-warm-1', 'kana-listening', ['ラ', 'タ', 'た'], 'b')
+  ('ex-kana-k3-warm-2', 'kana-listening', ['チ', 'た', 'ち'], 'a')
+  ('ex-kana-k3-lis-kata-ra', 'kana-listening', ['り', 'ら', 'ラ'], 'c')
+  ('ex-kana-k3-lis-kata-ri', 'kana-listening', ['ら', 'リ', 'り'], 'b')
+  ('ex-kana-k4-warm-1', 'kana-listening', ['ラ', 'ら', 'り'], 'a')
+  ('ex-kana-k4-warm-2', 'kana-listening', ['リ', 'ら', 'り'], 'a')
+  ('ex-kana-k4-lis-kata-sa', 'kana-listening', ['サ', 'さ', 'し'], 'a')
+  ('ex-kana-k5-warm-1', 'kana-listening', ['し', 'さ', 'サ'], 'c')
+  ('ex-kana-k5-lis-kata-ha', 'kana-listening', ['は', 'ハ', 'ひ'], 'b')
+  ('ex-kana-k5-lis-kata-hi', 'kana-listening', ['ひ', 'は', 'ヒ'], 'c')
+  ('ex-kana-k6-warm-1', 'kana-listening', ['は', 'ハ', 'ひ'], 'b')
+  ('ex-kana-k6-warm-2', 'kana-listening', ['ひ', 'は', 'ヒ'], 'c')
+  ('ex-kana-k6-lis-kata-n', 'kana-listening', ['ソ', 'ン', 'ん'], 'b')
+  ('ex-kana-k7-warm-1', 'kana-listening', ['ん', 'ソ', 'ン'], 'c')
+  ('ex-kana-k7-lis-kata-ka', 'kana-listening', ['か', 'カ', 'き'], 'b')
+  ('ex-kana-k7-lis-kata-ki', 'kana-listening', ['キ', 'か', 'き'], 'a')
+  ('ex-kana-k8-warm-1', 'kana-listening', ['カ', 'か', 'き'], 'a')
+  ('ex-kana-k8-warm-2', 'kana-listening', ['キ', 'か', 'き'], 'a')
+  ('ex-kana-k9-warm-1', 'kana-listening', ['カ', 'か', 'き'], 'a')
+  ('ex-kana-k9-warm-2', 'kana-listening', ['キ', 'か', 'き'], 'a')
+  ('ex-kana-k9-lis-kata-ma', 'kana-listening', ['マ', 'ま', 'み'], 'a')
+  ('ex-kana-k9-lis-kata-mi', 'kana-listening', ['み', 'ま', 'ミ'], 'c')
+  ('ex-kana-k10-warm-1', 'kana-listening', ['マ', 'ま', 'み'], 'a')
+  ('ex-kana-k10-warm-2', 'kana-listening', ['ま', 'ミ', 'み'], 'b')
+  ('ex-kana-k10-lis-kata-ya', 'kana-listening', ['ゆ', 'や', 'ヤ'], 'c')
+  ('ex-kana-k11-warm-1', 'kana-listening', ['や', 'ヤ', 'ゆ'], 'b')
+  ('ex-kana-k11-lis-kata-na', 'kana-listening', ['タ', 'ナ', 'な'], 'b')
+  ('ex-kana-k11-lis-kata-ni', 'kana-listening', ['な', 'ニ', 'に'], 'b')
+  ('ex-kana-k12-warm-1', 'kana-listening', ['タ', 'ナ', 'な'], 'b')
+  ('ex-kana-k12-warm-2', 'kana-listening', ['ニ', 'な', 'に'], 'a')
+  ('ex-kana-k12-lis-kata-wa', 'kana-listening', ['ワ', 'フ', 'わ'], 'a')
+  ('ex-kana-k12-lis-kata-wo', 'kana-listening', ['を', 'わ', 'ヲ'], 'c')
+  ('ex-kana-k13-warm-1', 'kana-listening', ['わ', 'フ', 'ワ'], 'c')
+  ('ex-kana-k13-warm-2', 'kana-listening', ['ヲ', 'わ', 'を'], 'a')
+
+### RECOG AMBIG/DUP: 0
+
+### KEY MISMATCH: 0
+
+### HINT LEAK: 3
+  ('ex-kana-gate-m3-2', 'ORPHAN_NOT_IN_STATION', 'とうきょう', 'توکیو', '«توکیوو»', 'exact/substring')
+  ('ex-kana-k8-asm-1', 'stn-kana-k8', 'ケーキ', 'کیک', '«کِیکی»', 'exact/substring')
+  ('ex-kana-kf-dec-1', 'stn-kana-k12-foreign', 'ファイル', 'فایل', '«فایل»', 'exact/substring')
+
+### UNTAUGHT: 10
+  ('ex-kana-h5-dec-2', 'stn-kana-h5', ['ぞ'])
+  ('ex-kana-h5-dec-4', 'stn-kana-h5', ['ご'])
+  ('ex-kana-h5-lis-1', 'stn-kana-h5', ['ご'])
+  ('ex-kana-h5-lis-2', 'stn-kana-h5', ['ご'])
+  ('ex-kana-h5-clo-1', 'stn-kana-h5', ['ぞ'])
+  ('ex-kana-h5-asm-3', 'stn-kana-h5', ['ご'])
+  ('ex-kana-p1-msg-gogo', 'stn-kana-p1', ['ご'])
+  ('ex-kana-p1-rec-go', 'stn-kana-p1', ['ご'])
+  ('ex-kana-p4-rl-gakkou', 'stn-kana-p4', ['ご'])
+  ('ex-kana-p4-rl-gogo', 'stn-kana-p4', ['ご'])
+
+### P1-P4 GUARDRAIL VIOLATIONS: 0
+
+### CLOZE:
+  ('ex-kana-h5-clo-1', 'stn-kana-h5', ['か', None, 'く'], ['さ', 'ぞ', 'そ'], 'b', 'ぞ', 'واژهٔ «خانواده» را کامل کن: کدام کانا جای خالی است؟')
+  ('ex-kana-h6-clo-1', 'stn-kana-h6', ['き', None, 'う'], ['ょ', 'よ', 'や'], 'a', 'ょ', 'واژهٔ «امروز» را کامل کن — به اندازهٔ کانا دقت کن')
+  ('ex-kana-h13-clo-1', 'stn-kana-h13', ['が', None, 'こ', 'う'], ['つ', 'っ', 'と'], 'b', 'っ', 'واژهٔ «مدرسه» را کامل کن — به اندازهٔ کانا دقت کن')
+  ('ex-kana-k8-clo-1', 'stn-kana-k8', ['コ', None, 'ヒ', 'ー'], ['ー', 'ン', 'イ'], 'a', 'ー', 'واژهٔ «قهوه» را کامل کن — کشش کجا می\u200cآید؟')
+  ('ex-kana-h4-clo-1', 'stn-kana-h4', ['お', None, 'さ', 'か'], ['お', 'あ', 'う'], 'a', 'お', 'واژهٔ «اوساکا» را کامل کن — کشش با کدام کانا نوشته می\u200cشود؟')
+  ('ex-kana-h15-clo-1', 'stn-kana-h15', ['さ', 'ん', None], ['ぽ', 'ぼ', 'ほ'], 'a', 'ぽ', 'واژهٔ «پیاده\u200cروی» را کامل کن — کدام گلیف جای خالی است؟')
+
+### PRODUCE:
+  ('ex-kana-h6-prd-1', 'きょう', 'واژهٔ «امروز» را از قطعه\u200cها بساز (ترتیب را رعایت کن)')
+  ('ex-kana-h13-prd-1', 'がっこう', 'واژهٔ «مدرسه» را از قطعه\u200cها بساز (جا و اندازهٔ っ مهم است)')
+
+### MEANING-SELECT + station objective:
+  ('ex-kana-m1-word-sushi', 'stn-kana-m1-reading', 'すし', ['گربه', 'سوشی', 'ایستگاه'], 'b', 'واژه\u200cهای واقعیِ هیراگانایی را فقط با آموخته\u200cهای خودت می\u200cخوانی')
+  ('ex-kana-m1-word-neko', 'stn-kana-m1-reading', 'ねこ', ['سگ', 'آب', 'گربه'], 'c', 'واژه\u200cهای واقعیِ هیراگانایی را فقط با آموخته\u200cهای خودت می\u200cخوانی')
+  ('ex-kana-m1-word-inu', 'stn-kana-m1-reading', 'いぬ', ['خانه', 'سگ', 'دوست'], 'b', 'واژه\u200cهای واقعیِ هیراگانایی را فقط با آموخته\u200cهای خودت می\u200cخوانی')
+  ('ex-kana-m1-word-eki', 'stn-kana-m1-reading', 'えき', ['ایستگاه', 'شب', 'نام'], 'a', 'واژه\u200cهای واقعیِ هیراگانایی را فقط با آموخته\u200cهای خودت می\u200cخوانی')
+  ('ex-kana-m1-word-mizu', 'stn-kana-m1-reading', 'みず', ['دفترچه جیبی', 'آب', 'بالا / رو'], 'b', 'واژه\u200cهای واقعیِ هیراگانایی را فقط با آموخته\u200cهای خودت می\u200cخوانی')
+  ('ex-kana-m1-word-tomodachi', 'stn-kana-m1-reading', 'ともだち', ['دوست', 'ملاقات کردن', 'کشور'], 'a', 'واژه\u200cهای واقعیِ هیراگانایی را فقط با آموخته\u200cهای خودت می\u200cخوانی')
+  ('ex-kana-m2-word-door', 'stn-kana-m2-realworld', 'ドア', ['در', 'رادیو', 'صورتی'], 'a', 'وام\u200cواژه\u200cهای واقعی (منو، برند، اشیای روزمره) را با کاتاکانا می\u200cخوانی')
+  ('ex-kana-m2-word-aircon', 'stn-kana-m2-realworld', 'エアコン', ['کارائوکه', 'کولر', 'آزمون'], 'b', 'وام\u200cواژه\u200cهای واقعی (منو، برند، اشیای روزمره) را با کاتاکانا می\u200cخوانی')
+  ('ex-kana-m2-word-karaoke', 'stn-kana-m2-realworld', 'カラオケ', ['اسکی', 'رایانهٔ شخصی', 'کارائوکه'], 'c', 'وام\u200cواژه\u200cهای واقعی (منو، برند، اشیای روزمره) را با کاتاکانا می\u200cخوانی')
+  ('ex-kana-m2-word-pasokon', 'stn-kana-m2-realworld', 'パソコン', ['رایانهٔ شخصی', 'گارسون (زن)', 'اندازه'], 'a', 'وام\u200cواژه\u200cهای واقعی (منو، برند، اشیای روزمره) را با کاتاکانا می\u200cخوانی')
+  ('ex-kana-m2-word-test', 'stn-kana-m2-realworld', 'テスト', ['رادیو', 'آزمون', 'مغازهٔ اجاره'], 'b', 'وام\u200cواژه\u200cهای واقعی (منو، برند، اشیای روزمره) را با کاتاکانا می\u200cخوانی')
+  ('ex-kana-m2-word-radio', 'stn-kana-m2-realworld', 'ラジオ', ['در', 'کارائوکه', 'رادیو'], 'c', 'وام\u200cواژه\u200cهای واقعی (منو، برند، اشیای روزمره) را با کاتاکانا می\u200cخوانی')
+  ('ex-kana-p1-msg-gogo', 'stn-kana-p1', 'ごご', ['بعدازظهر', 'اینجا', 'خانه'], 'a', 'آموخته\u200cهای あ/か/さ و قواعد کشش و داکوتن را با بازیابی فعال تثبیت می\u200cکنی')
+  ('ex-kana-p4-msg-neko', 'stn-kana-p4', 'ねこ', ['گربه', 'سگ', 'آب'], 'a', 'پیش از برگهٔ خواندن واقعی، کل هیراگانا با همهٔ قواعدش را یک\u200cجا مرور می\u200cکنی')
+
+### EXACT DUP GROUPS: 44  (gate-contaminated: 3 )
+ GATE-DUP (('こ', 'این کانا چه صدایی دارد؟', ('«کا»', '«کُ»', '«کی»'), 'a'), [('ex-kana-h2-rec-hira-ko', 'stn-kana-h2'), ('ex-kana-gate-m1-1', 'ORPHAN_NOT_IN_STATION')])
+ GATE-DUP (('', 'به صدای پخش\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('あ', 'い', 'え'), 'c'), [('ex-kana-h1-lis-hira-e', 'stn-kana-h1'), ('ex-kana-gate-m2-1', 'ORPHAN_NOT_IN_STATION')])
+ GATE-DUP (('', 'به صدای پخش\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('く', 'は', 'へ'), 'c'), [('ex-kana-h12-lis-hira-he', 'stn-kana-h12'), ('ex-kana-gate-m2-2', 'ORPHAN_NOT_IN_STATION')])
+
+### NEAR DUP (same word+key, multi-station): 55
+   ('あ', '«آ»') -> [('ex-kana-h1-rec-hira-a', 'stn-kana-h1'), ('ex-kana-optrev-rec-1', 'stn-kana-opt-r-h9'), ('ex-kana-optdrill-rec-1', 'stn-kana-opt-drill')]
+   ('あさ', '«اَسا»') -> [('ex-kana-h4-asm-1', 'stn-kana-h4'), ('ex-kana-p1-dec-asa', 'stn-kana-p1')]
+   ('い', '«ای»') -> [('ex-kana-h1-rec-hira-i', 'stn-kana-h1'), ('ex-kana-optrev-rec-2', 'stn-kana-opt-r-h9'), ('ex-kana-optdrill-rec-2', 'stn-kana-opt-drill')]
+   ('いいえ', '«اییه»') -> [('ex-kana-h4-dec-3', 'stn-kana-h4'), ('ex-kana-p1-dec-iie', 'stn-kana-p1')]
+   ('う', '«او»') -> [('ex-kana-h1-rec-hira-u', 'stn-kana-h1'), ('ex-kana-optrev-rec-3', 'stn-kana-opt-r-h9'), ('ex-kana-optdrill-rec-3', 'stn-kana-opt-drill')]
+   ('え', '«اِ»') -> [('ex-kana-h1-rec-hira-e', 'stn-kana-h1'), ('ex-kana-optrev-rec-4', 'stn-kana-opt-r-h9')]
+   ('お', '«اُ»') -> [('ex-kana-h1-rec-hira-o', 'stn-kana-h1'), ('ex-kana-optrev-rec-5', 'stn-kana-opt-r-h9'), ('ex-kana-optdrill-rec-4', 'stn-kana-opt-drill'), ('ex-kana-p1-rec-o', 'stn-kana-p1')]
+   ('おおきい', '«اووکیی»') -> [('ex-kana-h4-dec-2', 'stn-kana-h4'), ('ex-kana-p1-dec-ookii', 'stn-kana-p1')]
+   ('か', '«کا»') -> [('ex-kana-h2-rec-hira-ka', 'stn-kana-h2'), ('ex-kana-optrev-rec-6', 'stn-kana-opt-r-h9')]
+   ('かさ', '«کاسا»') -> [('ex-kana-gate-m3-5', 'ORPHAN_NOT_IN_STATION'), ('ex-kana-p1-dec-kasa', 'stn-kana-p1')]
+   ('がっこう', '«گَکّوو»') -> [('ex-kana-h13-dec-1', 'stn-kana-h13'), ('ex-kana-p4-dec-gakkou', 'stn-kana-p4')]
+   ('がっこう', 'がっこう') -> [('ex-kana-h13-lis-1', 'stn-kana-h13'), ('ex-kana-p4-rl-gakkou', 'stn-kana-p4')]
+   ('き', '«کی»') -> [('ex-kana-h2-rec-hira-ki', 'stn-kana-h2'), ('ex-kana-optrev-rec-7', 'stn-kana-opt-r-h9'), ('ex-kana-optdrill-rec-5', 'stn-kana-opt-drill'), ('ex-kana-p1-rec-ki', 'stn-kana-p1')]
+   ('きょう', 'きょう') -> [('ex-kana-h6-lis-1', 'stn-kana-h6'), ('ex-kana-p4-rl-kyou', 'stn-kana-p4')]
+   ('く', '«کو»') -> [('ex-kana-h2-rec-hira-ku', 'stn-kana-h2'), ('ex-kana-optrev-rec-8', 'stn-kana-opt-r-h9'), ('ex-kana-optdrill-rec-6', 'stn-kana-opt-drill')]
+   ('け', '«که»') -> [('ex-kana-h2-rec-hira-ke', 'stn-kana-h2'), ('ex-kana-optrev-rec-9', 'stn-kana-opt-r-h9'), ('ex-kana-p4-rec-ke', 'stn-kana-p4')]
+   ('こ', '«کُ»') -> [('ex-kana-h2-rec-hira-ko', 'stn-kana-h2'), ('ex-kana-optrev-rec-10', 'stn-kana-opt-r-h9'), ('ex-kana-gate-m1-1', 'ORPHAN_NOT_IN_STATION')]
+   ('ごご', 'ごご') -> [('ex-kana-h5-lis-1', 'stn-kana-h5'), ('ex-kana-p4-rl-gogo', 'stn-kana-p4')]
+   ('さ', '«سا»') -> [('ex-kana-h3-rec-hira-sa', 'stn-kana-h3'), ('ex-kana-optrev-rec-11', 'stn-kana-opt-r-h9'), ('ex-kana-optdrill-rec-7', 'stn-kana-opt-drill'), ('ex-kana-gate-m1-4', 'ORPHAN_NOT_IN_STATION'), ('ex-kana-p1-rec-sa', 'stn-kana-p1')]
+   ('さん', '«سان»') -> [('ex-kana-h7-nas-1', 'stn-kana-h7'), ('ex-kana-p2-dec-san', 'stn-kana-p2')]
+   ('し', '«شی»') -> [('ex-kana-h3-rec-hira-shi', 'stn-kana-h3'), ('ex-kana-optrev-rec-12', 'stn-kana-opt-r-h9'), ('ex-kana-optdrill-rec-8', 'stn-kana-opt-drill'), ('ex-kana-gate-m4-1', 'ORPHAN_NOT_IN_STATION')]
+   ('せ', '«سه»') -> [('ex-kana-h3-rec-hira-se', 'stn-kana-h3'), ('ex-kana-p1-rec-se', 'stn-kana-p1')]
+   ('せんせい', '«سِنسِی»') -> [('ex-kana-gate-m3-1', 'ORPHAN_NOT_IN_STATION'), ('ex-kana-p2-dec-sensei', 'stn-kana-p2')]
+   ('た', '«تا»') -> [('ex-kana-h9-rec-hira-ta', 'stn-kana-h9'), ('ex-kana-p2-rec-ta', 'stn-kana-p2')]
+   ('ち', '«چی»') -> [('ex-kana-h9-rec-hira-chi', 'stn-kana-h9'), ('ex-kana-optdrill-rec-9', 'stn-kana-opt-drill'), ('ex-kana-p2-rec-chi', 'stn-kana-p2')]
+   ('つ', '«تسو»') -> [('ex-kana-h9-rec-hira-tsu', 'stn-kana-h9'), ('ex-kana-optdrill-rec-10', 'stn-kana-opt-drill'), ('ex-kana-gate-m1-2', 'ORPHAN_NOT_IN_STATION'), ('ex-kana-gate-m4-3', 'ORPHAN_NOT_IN_STATION'), ('ex-kana-p4-rec-tsu', 'stn-kana-p4')]
+   ('て', '«ته»') -> [('ex-kana-h9-rec-hira-te', 'stn-kana-h9'), ('ex-kana-p4-rec-te', 'stn-kana-p4')]
+   ('と', '«تُ»') -> [('ex-kana-h9-rec-hira-to', 'stn-kana-h9'), ('ex-kana-p2-rec-to', 'stn-kana-p2')]
+   ('な', '«نا»') -> [('ex-kana-h8-rec-hira-na', 'stn-kana-h8'), ('ex-kana-p2-rec-na', 'stn-kana-p2')]
+   ('ぬ', '«نو»') -> [('ex-kana-h8-rec-hira-nu', 'stn-kana-h8'), ('ex-kana-p2-rec-nu', 'stn-kana-p2'), ('ex-kana-p3-rec-nu', 'stn-kana-p3')]
+   ('ね', '«نه»') -> [('ex-kana-h8-rec-hira-ne', 'stn-kana-h8'), ('ex-kana-gate-m4-5', 'ORPHAN_NOT_IN_STATION'), ('ex-kana-p4-rec-ne', 'stn-kana-p4')]
+   ('ねこ', 'گربه') -> [('ex-kana-m1-word-neko', 'stn-kana-m1-reading'), ('ex-kana-p4-msg-neko', 'stn-kana-p4')]
+   ('の', '«نُ»') -> [('ex-kana-h8-rec-hira-no', 'stn-kana-h8'), ('ex-kana-p4-rec-no', 'stn-kana-p4')]
+   ('は', '«ها»') -> [('ex-kana-h12-rec-hira-ha', 'stn-kana-h12'), ('ex-kana-p3-rec-ha', 'stn-kana-p3')]
+   ('ひ', '«هی»') -> [('ex-kana-h12-rec-hira-hi', 'stn-kana-h12'), ('ex-kana-p4-rec-hi', 'stn-kana-p4')]
+   ('ふ', '«فو»') -> [('ex-kana-h12-rec-hira-fu', 'stn-kana-h12'), ('ex-kana-p3-rec-fu', 'stn-kana-p3')]
+   ('へ', '«هه»') -> [('ex-kana-h12-rec-hira-he', 'stn-kana-h12'), ('ex-kana-p3-rec-he', 'stn-kana-p3'), ('ex-kana-p3-rec-he2', 'stn-kana-p3')]
+   ('ほ', '«هُ»') -> [('ex-kana-h12-rec-hira-ho', 'stn-kana-h12'), ('ex-kana-p3-rec-ho', 'stn-kana-p3')]
+   ('む', '«مو»') -> [('ex-kana-h10-rec-hira-mu', 'stn-kana-h10'), ('ex-kana-p4-rec-mu', 'stn-kana-p4')]
+   ('め', '«مه»') -> [('ex-kana-h10-rec-hira-me', 'stn-kana-h10'), ('ex-kana-p3-rec-me', 'stn-kana-p3')]
+   ('も', '«مُ»') -> [('ex-kana-h10-rec-hira-mo', 'stn-kana-h10'), ('ex-kana-p4-rec-mo', 'stn-kana-p4')]
+   ('や', '«یا»') -> [('ex-kana-h14-rec-hira-ya', 'stn-kana-h14'), ('ex-kana-p4-rec-ya', 'stn-kana-p4')]
+   ('ゆ', '«یو»') -> [('ex-kana-h14-rec-hira-yu', 'stn-kana-h14'), ('ex-kana-p4-rec-yu', 'stn-kana-p4')]
+   ('り', '«ری»') -> [('ex-kana-h11-rec-hira-ri', 'stn-kana-h11'), ('ex-kana-p4-rec-ri', 'stn-kana-p4')]
+   ('る', '«رو»') -> [('ex-kana-h11-rec-hira-ru', 'stn-kana-h11'), ('ex-kana-p3-rec-ru', 'stn-kana-p3')]
+   ('れ', '«ره»') -> [('ex-kana-h11-rec-hira-re', 'stn-kana-h11'), ('ex-kana-p3-rec-re', 'stn-kana-p3')]
+   ('ろ', '«رُ»') -> [('ex-kana-h11-rec-hira-ro', 'stn-kana-h11'), ('ex-kana-p4-rec-ro2', 'stn-kana-p4')]
+   ('わ', '«وا»') -> [('ex-kana-h15-rec-hira-wa', 'stn-kana-h15'), ('ex-kana-p4-rec-wa', 'stn-kana-p4')]
+   ('を', '«اُ»') -> [('ex-kana-h15-rec-hira-wo', 'stn-kana-h15'), ('ex-kana-p4-rec-wo', 'stn-kana-p4')]
+   ('ん', '«ن»') -> [('ex-kana-h7-rec-hira-n', 'stn-kana-h7'), ('ex-kana-p2-rec-n', 'stn-kana-p2'), ('ex-kana-p4-rec-n', 'stn-kana-p4')]
+   ('ソ', '«سُ»') -> [('ex-kana-k4-rec-kata-so', 'stn-kana-k4'), ('ex-kana-gate-m4-2', 'ORPHAN_NOT_IN_STATION')]
+   ('ナ', '«نا»') -> [('ex-kana-k11-rec-kata-na', 'stn-kana-k11'), ('ex-kana-gate-m1-3', 'ORPHAN_NOT_IN_STATION')]
+   ('ヌ', '«نو»') -> [('ex-kana-k11-rec-kata-nu', 'stn-kana-k11'), ('ex-kana-gate-m4-4', 'ORPHAN_NOT_IN_STATION')]
+   ('ミ', '«می»') -> [('ex-kana-k9-rec-kata-mi', 'stn-kana-k9'), ('ex-kana-gate-m1-5', 'ORPHAN_NOT_IN_STATION')]
+   ('ワ', '«وا»') -> [('ex-kana-k12-rec-kata-wa', 'stn-kana-k12'), ('ex-kana-kf-warm-2', 'stn-kana-k12-foreign')]
+
+### SHAPE STATS (decode n=68)
+  stn-kana-h4            n=8 unique-longest=1 (12%) unique-shadda=0 unique-doubled-v=4 correct-maxlen=5 (62%)
+  stn-kana-h5            n=8 unique-longest=1 (12%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=7 (88%)
+  stn-kana-p1            n=6 unique-longest=1 (17%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=6 (100%)
+  stn-kana-h7            n=3 unique-longest=2 (67%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=2 (67%)
+  stn-kana-p2            n=7 unique-longest=0 (0%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=3 (43%)
+  stn-kana-p3            n=7 unique-longest=0 (0%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=5 (71%)
+  stn-kana-h6            n=6 unique-longest=0 (0%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=1 (17%)
+  stn-kana-h13           n=6 unique-longest=0 (0%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=2 (33%)
+  stn-kana-h15           n=1 unique-longest=0 (0%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=1 (100%)
+  stn-kana-p4            n=4 unique-longest=0 (0%) unique-shadda=1 unique-doubled-v=0 correct-maxlen=3 (75%)
+  stn-kana-k8            n=6 unique-longest=0 (0%) unique-shadda=0 unique-doubled-v=1 correct-maxlen=4 (67%)
+  stn-kana-k12-foreign   n=1 unique-longest=0 (0%) unique-shadda=0 unique-doubled-v=0 correct-maxlen=0 (0%)
+  ORPHAN_NOT_IN_STATION  n=5 unique-longest=1 (20%) unique-shadda=0 unique-doubled-v=1 correct-maxlen=4 (80%)
+
+saved /home/z/my-project/audit_out/_subagent_b_results.json

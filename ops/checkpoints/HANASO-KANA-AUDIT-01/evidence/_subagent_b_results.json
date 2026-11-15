@@ -1,0 +1,2584 @@
+{
+ "same_reading_pairs": [
+  [
+   "ex-kana-h4-asm-1",
+   "stn-kana-h4",
+   "あさ",
+   "«اَسا»",
+   "«اسا»",
+   "b"
+  ],
+  [
+   "ex-kana-h4-asm-1",
+   "stn-kana-h4",
+   "あさ",
+   "«اسا»",
+   "==promptJaReading(اَسا)",
+   "b"
+  ],
+  [
+   "ex-kana-k8-asm-1",
+   "stn-kana-k8",
+   "ケーキ",
+   "«کِیکی»",
+   "«کِیکِی»",
+   "b"
+  ],
+  [
+   "ex-kana-k8-asm-1",
+   "stn-kana-k8",
+   "ケーキ",
+   "«کِیکِی»",
+   "==promptJaReading(کِیکی)",
+   "b"
+  ]
+ ],
+ "same_sound_coopt": [],
+ "same_sound_coopt_named": [
+  [
+   "ex-kana-k1-rcl-kata-a",
+   "kana-recall",
+   "آ",
+   [
+    [
+     "a",
+     "あ"
+    ],
+    [
+     "b",
+     "ア"
+    ]
+   ],
+   [
+    "あ",
+    "ア",
+    "い"
+   ],
+   "b"
+  ],
+  [
+   "ex-kana-k1-rcl-kata-i",
+   "kana-recall",
+   "ای",
+   [
+    [
+     "b",
+     "イ"
+    ],
+    [
+     "c",
+     "い"
+    ]
+   ],
+   [
+    "あ",
+    "イ",
+    "い"
+   ],
+   "b"
+  ],
+  [
+   "ex-kana-k2-rcl-kata-ta",
+   "kana-recall",
+   "تا",
+   [
+    [
+     "a",
+     "た"
+    ],
+    [
+     "c",
+     "タ"
+    ]
+   ],
+   [
+    "た",
+    "ト",
+    "タ"
+   ],
+   "c"
+  ],
+  [
+   "ex-kana-k2-rcl-kata-chi",
+   "kana-recall",
+   "چی",
+   [
+    [
+     "a",
+     "ち"
+    ],
+    [
+     "c",
+     "チ"
+    ]
+   ],
+   [
+    "ち",
+    "た",
+    "チ"
+   ],
+   "c"
+  ],
+  [
+   "ex-kana-k3-rcl-kata-ra",
+   "kana-recall",
+   "را",
+   [
+    [
+     "b",
+     "ら"
+    ],
+    [
+     "c",
+     "ラ"
+    ]
+   ],
+   [
+    "り",
+    "ら",
+    "ラ"
+   ],
+   "c"
+  ],
+  [
+   "ex-kana-k3-rcl-kata-ri",
+   "kana-recall",
+   "ری",
+   [
+    [
+     "b",
+     "リ"
+    ],
+    [
+     "c",
+     "り"
+    ]
+   ],
+   [
+    "ら",
+    "リ",
+    "り"
+   ],
+   "b"
+  ],
+  [
+   "ex-kana-k4-rcl-kata-sa",
+   "kana-recall",
+   "سا",
+   [
+    [
+     "a",
+     "サ"
+    ],
+    [
+     "b",
+     "さ"
+    ]
+   ],
+   [
+    "サ",
+    "さ",
+    "し"
+   ],
+   "a"
+  ],
+  [
+   "ex-kana-k5-rcl-kata-ha",
+   "kana-recall",
+   "ها",
+   [
+    [
+     "a",
+     "は"
+    ],
+    [
+     "b",
+     "ハ"
+    ]
+   ],
+   [
+    "は",
+    "ハ",
+    "ひ"
+   ],
+   "b"
+  ],
+  [
+   "ex-kana-k5-rcl-kata-hi",
+   "kana-recall",
+   "هی",
+   [
+    [
+     "a",
+     "ひ"
+    ],
+    [
+     "c",
+     "ヒ"
+    ]
+   ],
+   [
+    "ひ",
+    "は",
+    "ヒ"
+   ],
+   "c"
+  ],
+  [
+   "ex-kana-k6-rcl-kata-n",
+   "kana-recall",
+   "ن",
+   [
+    [
+     "b",
+     "ン"
+    ],
+    [
+     "c",
+     "ん"
+    ]
+   ],
+   [
+    "ソ",
+    "ン",
+    "ん"
+   ],
+   "b"
+  ],
+  [
+   "ex-kana-k7-rcl-kata-ka",
+   "kana-recall",
+   "کا",
+   [
+    [
+     "a",
+     "か"
+    ],
+    [
+     "b",
+     "カ"
+    ]
+   ],
+   [
+    "か",
+    "カ",
+    "き"
+   ],
+   "b"
+  ],
+  [
+   "ex-kana-k7-rcl-kata-ki",
+   "kana-recall",
+   "کی",
+   [
+    [
+     "a",
+     "キ"
+    ],
+    [
+     "c",
+     "き"
+    ]
+   ],
+   [
+    "キ",
+    "か",
+    "き"
+   ],
+   "a"
+  ],
+  [
+   "ex-kana-k9-rcl-kata-ma",
+   "kana-recall",
+   "ما",
+   [
+    [
+     "a",
+     "マ"
+    ],
+    [
+     "b",
+     "ま"
+    ]
+   ],
+   [
+    "マ",
+    "ま",
+    "み"
+   ],
+   "a"
+  ],
+  [
+   "ex-kana-k9-rcl-kata-mi",
+   "kana-recall",
+   "می",
+   [
+    [
+     "a",
+     "み"
+    ],
+    [
+     "c",
+     "ミ"
+    ]
+   ],
+   [
+    "み",
+    "ま",
+    "ミ"
+   ],
+   "c"
+  ],
+  [
+   "ex-kana-k10-rcl-kata-ya",
+   "kana-recall",
+   "یا",
+   [
+    [
+     "b",
+     "や"
+    ],
+    [
+     "c",
+     "ヤ"
+    ]
+   ],
+   [
+    "ゆ",
+    "や",
+    "ヤ"
+   ],
+   "c"
+  ],
+  [
+   "ex-kana-k11-rcl-kata-na",
+   "kana-recall",
+   "نا",
+   [
+    [
+     "b",
+     "ナ"
+    ],
+    [
+     "c",
+     "な"
+    ]
+   ],
+   [
+    "タ",
+    "ナ",
+    "な"
+   ],
+   "b"
+  ],
+  [
+   "ex-kana-k11-rcl-kata-ni",
+   "kana-recall",
+   "نی",
+   [
+    [
+     "b",
+     "ニ"
+    ],
+    [
+     "c",
+     "に"
+    ]
+   ],
+   [
+    "な",
+    "ニ",
+    "に"
+   ],
+   "b"
+  ],
+  [
+   "ex-kana-k12-rcl-kata-wa",
+   "kana-recall",
+   "وا",
+   [
+    [
+     "a",
+     "ワ"
+    ],
+    [
+     "c",
+     "わ"
+    ]
+   ],
+   [
+    "ワ",
+    "フ",
+    "わ"
+   ],
+   "a"
+  ],
+  [
+   "ex-kana-k12-rcl-kata-wo",
+   "kana-recall",
+   "اُ",
+   [
+    [
+     "a",
+     "を"
+    ],
+    [
+     "c",
+     "ヲ"
+    ]
+   ],
+   [
+    "を",
+    "わ",
+    "ヲ"
+   ],
+   "c"
+  ]
+ ],
+ "recog_ambig": [],
+ "key_mismatch": [],
+ "hint_leak": [
+  [
+   "ex-kana-gate-m3-2",
+   "ORPHAN_NOT_IN_STATION",
+   "とうきょう",
+   "توکیو",
+   "«توکیوو»",
+   "exact/substring"
+  ],
+  [
+   "ex-kana-k8-asm-1",
+   "stn-kana-k8",
+   "ケーキ",
+   "کیک",
+   "«کِیکی»",
+   "exact/substring"
+  ],
+  [
+   "ex-kana-kf-dec-1",
+   "stn-kana-k12-foreign",
+   "ファイル",
+   "فایل",
+   "«فایل»",
+   "exact/substring"
+  ]
+ ],
+ "untaught": [
+  [
+   "ex-kana-h5-dec-2",
+   "stn-kana-h5",
+   [
+    "ぞ"
+   ]
+  ],
+  [
+   "ex-kana-h5-dec-4",
+   "stn-kana-h5",
+   [
+    "ご"
+   ]
+  ],
+  [
+   "ex-kana-h5-lis-1",
+   "stn-kana-h5",
+   [
+    "ご"
+   ]
+  ],
+  [
+   "ex-kana-h5-lis-2",
+   "stn-kana-h5",
+   [
+    "ご"
+   ]
+  ],
+  [
+   "ex-kana-h5-clo-1",
+   "stn-kana-h5",
+   [
+    "ぞ"
+   ]
+  ],
+  [
+   "ex-kana-h5-asm-3",
+   "stn-kana-h5",
+   [
+    "ご"
+   ]
+  ],
+  [
+   "ex-kana-p1-msg-gogo",
+   "stn-kana-p1",
+   [
+    "ご"
+   ]
+  ],
+  [
+   "ex-kana-p1-rec-go",
+   "stn-kana-p1",
+   [
+    "ご"
+   ]
+  ],
+  [
+   "ex-kana-p4-rl-gakkou",
+   "stn-kana-p4",
+   [
+    "ご"
+   ]
+  ],
+  [
+   "ex-kana-p4-rl-gogo",
+   "stn-kana-p4",
+   [
+    "ご"
+   ]
+  ]
+ ],
+ "guardrail_violations": [],
+ "gate_dupes": [
+  [
+   [
+    "こ",
+    "این کانا چه صدایی دارد؟",
+    [
+     "«کا»",
+     "«کُ»",
+     "«کی»"
+    ],
+    "a"
+   ],
+   [
+    [
+     "ex-kana-h2-rec-hira-ko",
+     "stn-kana-h2"
+    ],
+    [
+     "ex-kana-gate-m1-1",
+     "ORPHAN_NOT_IN_STATION"
+    ]
+   ]
+  ],
+  [
+   [
+    "",
+    "به صدای پخش‌شده گوش کن — کدام کانا این صدا را دارد؟",
+    [
+     "あ",
+     "い",
+     "え"
+    ],
+    "c"
+   ],
+   [
+    [
+     "ex-kana-h1-lis-hira-e",
+     "stn-kana-h1"
+    ],
+    [
+     "ex-kana-gate-m2-1",
+     "ORPHAN_NOT_IN_STATION"
+    ]
+   ]
+  ],
+  [
+   [
+    "",
+    "به صدای پخش‌شده گوش کن — کدام کانا این صدا را دارد؟",
+    [
+     "く",
+     "は",
+     "へ"
+    ],
+    "c"
+   ],
+   [
+    [
+     "ex-kana-h12-lis-hira-he",
+     "stn-kana-h12"
+    ],
+    [
+     "ex-kana-gate-m2-2",
+     "ORPHAN_NOT_IN_STATION"
+    ]
+   ]
+  ]
+ ],
+ "exact_dup_groups": {
+  "('あ', 'این کانا چه صدایی دارد؟', ('«آ»', '«اُ»', '«ای»'), 'a')": [
+   [
+    "ex-kana-h1-rec-hira-a",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-1",
+    "stn-kana-opt-r-h9"
+   ]
+  ],
+  "('い', 'این کانا چه صدایی دارد؟', ('«آ»', '«ای»', '«ری»'), 'a')": [
+   [
+    "ex-kana-h1-rec-hira-i",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-2",
+    "stn-kana-opt-r-h9"
+   ]
+  ],
+  "('う', 'این کانا چه صدایی دارد؟', ('«آ»', '«او»', '«را»'), 'b')": [
+   [
+    "ex-kana-h1-rec-hira-u",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-3",
+    "stn-kana-opt-r-h9"
+   ]
+  ],
+  "('え', 'این کانا چه صدایی دارد؟', ('«آ»', '«اِ»', '«ای»'), 'c')": [
+   [
+    "ex-kana-h1-rec-hira-e",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-4",
+    "stn-kana-opt-r-h9"
+   ]
+  ],
+  "('お', 'این کانا چه صدایی دارد؟', ('«آ»', '«اُ»', '«ای»'), 'c')": [
+   [
+    "ex-kana-h1-rec-hira-o",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-5",
+    "stn-kana-opt-r-h9"
+   ]
+  ],
+  "('き', 'این کانا چه صدایی دارد؟', ('«سا»', '«کا»', '«کی»'), 'c')": [
+   [
+    "ex-kana-h2-rec-hira-ki",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-optrev-rec-7",
+    "stn-kana-opt-r-h9"
+   ]
+  ],
+  "('こ', 'این کانا چه صدایی دارد؟', ('«کا»', '«کُ»', '«کی»'), 'a')": [
+   [
+    "ex-kana-h2-rec-hira-ko",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-gate-m1-1",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('さ', 'این کانا چه صدایی دارد؟', ('«سا»', '«چی»', '«کی»'), 'b')": [
+   [
+    "ex-kana-h3-rec-hira-sa",
+    "stn-kana-h3"
+   ],
+   [
+    "ex-kana-optrev-rec-11",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-7",
+    "stn-kana-opt-drill"
+   ]
+  ],
+  "('し', 'این کانا چه صدایی دارد؟', ('«تسو»', '«سا»', '«شی»'), 'c')": [
+   [
+    "ex-kana-h3-rec-hira-shi",
+    "stn-kana-h3"
+   ],
+   [
+    "ex-kana-optrev-rec-12",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-8",
+    "stn-kana-opt-drill"
+   ]
+  ],
+  "('ゆ', 'این کانا چه صدایی دارد؟', ('«یا»', '«یو»', '«یُ»'), 'a')": [
+   [
+    "ex-kana-h14-rec-hira-yu",
+    "stn-kana-h14"
+   ],
+   [
+    "ex-kana-p4-rec-yu",
+    "stn-kana-p4"
+   ]
+  ],
+  "('く', 'این کانا چه صدایی دارد؟', ('«هه»', '«کا»', '«کو»'), 'a')": [
+   [
+    "ex-kana-optrev-rec-8",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-6",
+    "stn-kana-opt-drill"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('あ', 'い', 'え'), 'c')": [
+   [
+    "ex-kana-h1-lis-hira-e",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-gate-m2-1",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('か', 'き', 'く'), 'b')": [
+   [
+    "ex-kana-h2-lis-hira-ka",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-h3-warm-1",
+    "stn-kana-h3"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('か', 'く', 'こ'), 'c')": [
+   [
+    "ex-kana-h2-lis-hira-ku",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-h3-warm-3",
+    "stn-kana-h3"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('き', 'さ', 'す'), 'b')": [
+   [
+    "ex-kana-h3-lis-hira-sa",
+    "stn-kana-h3"
+   ],
+   [
+    "ex-kana-h4-warm-1",
+    "stn-kana-h4"
+   ],
+   [
+    "ex-kana-h6-warm-1",
+    "stn-kana-h6"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('さ', 'し', 'せ'), 'c')": [
+   [
+    "ex-kana-h3-lis-hira-shi",
+    "stn-kana-h3"
+   ],
+   [
+    "ex-kana-h4-warm-2",
+    "stn-kana-h4"
+   ],
+   [
+    "ex-kana-h6-warm-2",
+    "stn-kana-h6"
+   ],
+   [
+    "ex-kana-h7-warm-2",
+    "stn-kana-h7"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('さ', 'し', 'せ'), 'a')": [
+   [
+    "ex-kana-h3-lis-hira-se",
+    "stn-kana-h3"
+   ],
+   [
+    "ex-kana-h5-warm-2",
+    "stn-kana-h5"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('さ', 'し', 'す'), 'a')": [
+   [
+    "ex-kana-h4-warm-3",
+    "stn-kana-h4"
+   ],
+   [
+    "ex-kana-h6-warm-3",
+    "stn-kana-h6"
+   ],
+   [
+    "ex-kana-h7-warm-3",
+    "stn-kana-h7"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('な', 'に', 'ぬ'), 'b')": [
+   [
+    "ex-kana-h8-lis-hira-na",
+    "stn-kana-h8"
+   ],
+   [
+    "ex-kana-h8-lis-hira-nu",
+    "stn-kana-h8"
+   ],
+   [
+    "ex-kana-h9-warm-2",
+    "stn-kana-h9"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('な', 'に', 'ぬ'), 'a')": [
+   [
+    "ex-kana-h9-warm-1",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-p2-lis-ni",
+    "stn-kana-p2"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('た', 'ち', 'つ'), 'c')": [
+   [
+    "ex-kana-h9-lis-hira-ta",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-h10-warm-1",
+    "stn-kana-h10"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('さ', 'た', 'ち'), 'b')": [
+   [
+    "ex-kana-h9-lis-hira-chi",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-h10-warm-2",
+    "stn-kana-h10"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('し', 'た', 'つ'), 'b')": [
+   [
+    "ex-kana-h9-lis-hira-tsu",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-h10-warm-3",
+    "stn-kana-h10"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('ま', 'み', 'む'), 'c')": [
+   [
+    "ex-kana-h10-lis-hira-ma",
+    "stn-kana-h10"
+   ],
+   [
+    "ex-kana-h10-lis-hira-mi",
+    "stn-kana-h10"
+   ],
+   [
+    "ex-kana-h11-warm-2",
+    "stn-kana-h11"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('ま', 'み', 'む'), 'b')": [
+   [
+    "ex-kana-h10-lis-hira-mu",
+    "stn-kana-h10"
+   ],
+   [
+    "ex-kana-h11-warm-3",
+    "stn-kana-h11"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('ら', 'る', 'ろ'), 'b')": [
+   [
+    "ex-kana-h11-lis-hira-ro",
+    "stn-kana-h11"
+   ],
+   [
+    "ex-kana-h12-warm-3",
+    "stn-kana-h12"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('は', 'ひ', 'ふ'), 'b')": [
+   [
+    "ex-kana-h12-lis-hira-hi",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-h13-warm-2",
+    "stn-kana-h13"
+   ],
+   [
+    "ex-kana-h13-warm-3",
+    "stn-kana-h13"
+   ],
+   [
+    "ex-kana-h14-warm-3",
+    "stn-kana-h14"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('は', 'ひ', 'ふ'), 'a')": [
+   [
+    "ex-kana-h12-lis-hira-fu",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-h14-warm-2",
+    "stn-kana-h14"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('く', 'は', 'へ'), 'c')": [
+   [
+    "ex-kana-h12-lis-hira-he",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-gate-m2-2",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('は', 'ひ', 'ほ'), 'c')": [
+   [
+    "ex-kana-h12-lis-hira-ho",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-h13-warm-1",
+    "stn-kana-h13"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('や', 'ゆ', 'よ'), 'b')": [
+   [
+    "ex-kana-h14-lis-hira-ya",
+    "stn-kana-h14"
+   ],
+   [
+    "ex-kana-h14-lis-hira-yu",
+    "stn-kana-h14"
+   ],
+   [
+    "ex-kana-h15-warm-3",
+    "stn-kana-h15"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('や', 'ゆ', 'よ'), 'a')": [
+   [
+    "ex-kana-h14-lis-hira-yo",
+    "stn-kana-h14"
+   ],
+   [
+    "ex-kana-h15-warm-1",
+    "stn-kana-h15"
+   ],
+   [
+    "ex-kana-p4-lis-yu",
+    "stn-kana-p4"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('ね', 'れ', 'わ'), 'a')": [
+   [
+    "ex-kana-h15-lis-hira-wa",
+    "stn-kana-h15"
+   ],
+   [
+    "ex-kana-p4-lis-wa",
+    "stn-kana-p4"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('あ', 'い', 'ウ'), 'c')": [
+   [
+    "ex-kana-k1-lis-kata-u",
+    "stn-kana-k1"
+   ],
+   [
+    "ex-kana-k2-warm-3",
+    "stn-kana-k2"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('た', 'ツ', 'テ'), 'a')": [
+   [
+    "ex-kana-k2-lis-kata-tsu",
+    "stn-kana-k2"
+   ],
+   [
+    "ex-kana-k3-warm-3",
+    "stn-kana-k3"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('さ', 'し', 'ス'), 'c')": [
+   [
+    "ex-kana-k4-lis-kata-su",
+    "stn-kana-k4"
+   ],
+   [
+    "ex-kana-k5-warm-3",
+    "stn-kana-k5"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانای کاتاکانا این صدا را دارد؟', ('は', 'ひ', 'ハ'), 'b')": [
+   [
+    "ex-kana-k5-lis-kata-ha",
+    "stn-kana-k5"
+   ],
+   [
+    "ex-kana-k6-warm-1",
+    "stn-kana-k6"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانای کاتاکانا این صدا را دارد؟', ('は', 'ひ', 'ヒ'), 'c')": [
+   [
+    "ex-kana-k5-lis-kata-hi",
+    "stn-kana-k5"
+   ],
+   [
+    "ex-kana-k6-warm-2",
+    "stn-kana-k6"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانای کاتاکانا این صدا را دارد؟', ('か', 'き', 'キ'), 'a')": [
+   [
+    "ex-kana-k7-lis-kata-ki",
+    "stn-kana-k7"
+   ],
+   [
+    "ex-kana-k8-warm-2",
+    "stn-kana-k8"
+   ],
+   [
+    "ex-kana-k9-warm-2",
+    "stn-kana-k9"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('か', 'ク', 'ケ'), 'b')": [
+   [
+    "ex-kana-k7-lis-kata-ku",
+    "stn-kana-k7"
+   ],
+   [
+    "ex-kana-k7-lis-kata-ke",
+    "stn-kana-k7"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانای کاتاکانا این صدا را دارد؟', ('か', 'き', 'カ'), 'a')": [
+   [
+    "ex-kana-k8-warm-1",
+    "stn-kana-k8"
+   ],
+   [
+    "ex-kana-k9-warm-1",
+    "stn-kana-k9"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانای کاتاکانا این صدا را دارد؟', ('ま', 'み', 'マ'), 'a')": [
+   [
+    "ex-kana-k9-lis-kata-ma",
+    "stn-kana-k9"
+   ],
+   [
+    "ex-kana-k10-warm-1",
+    "stn-kana-k10"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانای کاتاکانا این صدا را دارد؟', ('な', 'タ', 'ナ'), 'b')": [
+   [
+    "ex-kana-k11-lis-kata-na",
+    "stn-kana-k11"
+   ],
+   [
+    "ex-kana-k12-warm-1",
+    "stn-kana-k12"
+   ]
+  ],
+  "('', 'به صدای پخش\\u200cشده گوش کن — کدام کانا این صدا را دارد؟', ('な', 'ヌ', 'メ'), 'b')": [
+   [
+    "ex-kana-k11-lis-kata-nu",
+    "stn-kana-k11"
+   ],
+   [
+    "ex-kana-k12-warm-3",
+    "stn-kana-k12"
+   ]
+  ]
+ },
+ "near_dup": {
+  "('あ', '«آ»')": [
+   [
+    "ex-kana-h1-rec-hira-a",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-1",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-1",
+    "stn-kana-opt-drill"
+   ]
+  ],
+  "('い', '«ای»')": [
+   [
+    "ex-kana-h1-rec-hira-i",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-2",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-2",
+    "stn-kana-opt-drill"
+   ]
+  ],
+  "('う', '«او»')": [
+   [
+    "ex-kana-h1-rec-hira-u",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-3",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-3",
+    "stn-kana-opt-drill"
+   ]
+  ],
+  "('え', '«اِ»')": [
+   [
+    "ex-kana-h1-rec-hira-e",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-4",
+    "stn-kana-opt-r-h9"
+   ]
+  ],
+  "('お', '«اُ»')": [
+   [
+    "ex-kana-h1-rec-hira-o",
+    "stn-kana-h1"
+   ],
+   [
+    "ex-kana-optrev-rec-5",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-4",
+    "stn-kana-opt-drill"
+   ],
+   [
+    "ex-kana-p1-rec-o",
+    "stn-kana-p1"
+   ]
+  ],
+  "('か', '«کا»')": [
+   [
+    "ex-kana-h2-rec-hira-ka",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-optrev-rec-6",
+    "stn-kana-opt-r-h9"
+   ]
+  ],
+  "('き', '«کی»')": [
+   [
+    "ex-kana-h2-rec-hira-ki",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-optrev-rec-7",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-5",
+    "stn-kana-opt-drill"
+   ],
+   [
+    "ex-kana-p1-rec-ki",
+    "stn-kana-p1"
+   ]
+  ],
+  "('く', '«کو»')": [
+   [
+    "ex-kana-h2-rec-hira-ku",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-optrev-rec-8",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-6",
+    "stn-kana-opt-drill"
+   ]
+  ],
+  "('け', '«که»')": [
+   [
+    "ex-kana-h2-rec-hira-ke",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-optrev-rec-9",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-p4-rec-ke",
+    "stn-kana-p4"
+   ]
+  ],
+  "('こ', '«کُ»')": [
+   [
+    "ex-kana-h2-rec-hira-ko",
+    "stn-kana-h2"
+   ],
+   [
+    "ex-kana-optrev-rec-10",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-gate-m1-1",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('さ', '«سا»')": [
+   [
+    "ex-kana-h3-rec-hira-sa",
+    "stn-kana-h3"
+   ],
+   [
+    "ex-kana-optrev-rec-11",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-7",
+    "stn-kana-opt-drill"
+   ],
+   [
+    "ex-kana-gate-m1-4",
+    "ORPHAN_NOT_IN_STATION"
+   ],
+   [
+    "ex-kana-p1-rec-sa",
+    "stn-kana-p1"
+   ]
+  ],
+  "('し', '«شی»')": [
+   [
+    "ex-kana-h3-rec-hira-shi",
+    "stn-kana-h3"
+   ],
+   [
+    "ex-kana-optrev-rec-12",
+    "stn-kana-opt-r-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-8",
+    "stn-kana-opt-drill"
+   ],
+   [
+    "ex-kana-gate-m4-1",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('せ', '«سه»')": [
+   [
+    "ex-kana-h3-rec-hira-se",
+    "stn-kana-h3"
+   ],
+   [
+    "ex-kana-p1-rec-se",
+    "stn-kana-p1"
+   ]
+  ],
+  "('おおきい', '«اووکیی»')": [
+   [
+    "ex-kana-h4-dec-2",
+    "stn-kana-h4"
+   ],
+   [
+    "ex-kana-p1-dec-ookii",
+    "stn-kana-p1"
+   ]
+  ],
+  "('いいえ', '«اییه»')": [
+   [
+    "ex-kana-h4-dec-3",
+    "stn-kana-h4"
+   ],
+   [
+    "ex-kana-p1-dec-iie",
+    "stn-kana-p1"
+   ]
+  ],
+  "('ん', '«ن»')": [
+   [
+    "ex-kana-h7-rec-hira-n",
+    "stn-kana-h7"
+   ],
+   [
+    "ex-kana-p2-rec-n",
+    "stn-kana-p2"
+   ],
+   [
+    "ex-kana-p4-rec-n",
+    "stn-kana-p4"
+   ]
+  ],
+  "('な', '«نا»')": [
+   [
+    "ex-kana-h8-rec-hira-na",
+    "stn-kana-h8"
+   ],
+   [
+    "ex-kana-p2-rec-na",
+    "stn-kana-p2"
+   ]
+  ],
+  "('ぬ', '«نو»')": [
+   [
+    "ex-kana-h8-rec-hira-nu",
+    "stn-kana-h8"
+   ],
+   [
+    "ex-kana-p2-rec-nu",
+    "stn-kana-p2"
+   ],
+   [
+    "ex-kana-p3-rec-nu",
+    "stn-kana-p3"
+   ]
+  ],
+  "('ね', '«نه»')": [
+   [
+    "ex-kana-h8-rec-hira-ne",
+    "stn-kana-h8"
+   ],
+   [
+    "ex-kana-gate-m4-5",
+    "ORPHAN_NOT_IN_STATION"
+   ],
+   [
+    "ex-kana-p4-rec-ne",
+    "stn-kana-p4"
+   ]
+  ],
+  "('の', '«نُ»')": [
+   [
+    "ex-kana-h8-rec-hira-no",
+    "stn-kana-h8"
+   ],
+   [
+    "ex-kana-p4-rec-no",
+    "stn-kana-p4"
+   ]
+  ],
+  "('た', '«تا»')": [
+   [
+    "ex-kana-h9-rec-hira-ta",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-p2-rec-ta",
+    "stn-kana-p2"
+   ]
+  ],
+  "('ち', '«چی»')": [
+   [
+    "ex-kana-h9-rec-hira-chi",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-9",
+    "stn-kana-opt-drill"
+   ],
+   [
+    "ex-kana-p2-rec-chi",
+    "stn-kana-p2"
+   ]
+  ],
+  "('つ', '«تسو»')": [
+   [
+    "ex-kana-h9-rec-hira-tsu",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-optdrill-rec-10",
+    "stn-kana-opt-drill"
+   ],
+   [
+    "ex-kana-gate-m1-2",
+    "ORPHAN_NOT_IN_STATION"
+   ],
+   [
+    "ex-kana-gate-m4-3",
+    "ORPHAN_NOT_IN_STATION"
+   ],
+   [
+    "ex-kana-p4-rec-tsu",
+    "stn-kana-p4"
+   ]
+  ],
+  "('て', '«ته»')": [
+   [
+    "ex-kana-h9-rec-hira-te",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-p4-rec-te",
+    "stn-kana-p4"
+   ]
+  ],
+  "('と', '«تُ»')": [
+   [
+    "ex-kana-h9-rec-hira-to",
+    "stn-kana-h9"
+   ],
+   [
+    "ex-kana-p2-rec-to",
+    "stn-kana-p2"
+   ]
+  ],
+  "('む', '«مو»')": [
+   [
+    "ex-kana-h10-rec-hira-mu",
+    "stn-kana-h10"
+   ],
+   [
+    "ex-kana-p4-rec-mu",
+    "stn-kana-p4"
+   ]
+  ],
+  "('め', '«مه»')": [
+   [
+    "ex-kana-h10-rec-hira-me",
+    "stn-kana-h10"
+   ],
+   [
+    "ex-kana-p3-rec-me",
+    "stn-kana-p3"
+   ]
+  ],
+  "('も', '«مُ»')": [
+   [
+    "ex-kana-h10-rec-hira-mo",
+    "stn-kana-h10"
+   ],
+   [
+    "ex-kana-p4-rec-mo",
+    "stn-kana-p4"
+   ]
+  ],
+  "('り', '«ری»')": [
+   [
+    "ex-kana-h11-rec-hira-ri",
+    "stn-kana-h11"
+   ],
+   [
+    "ex-kana-p4-rec-ri",
+    "stn-kana-p4"
+   ]
+  ],
+  "('る', '«رو»')": [
+   [
+    "ex-kana-h11-rec-hira-ru",
+    "stn-kana-h11"
+   ],
+   [
+    "ex-kana-p3-rec-ru",
+    "stn-kana-p3"
+   ]
+  ],
+  "('れ', '«ره»')": [
+   [
+    "ex-kana-h11-rec-hira-re",
+    "stn-kana-h11"
+   ],
+   [
+    "ex-kana-p3-rec-re",
+    "stn-kana-p3"
+   ]
+  ],
+  "('ろ', '«رُ»')": [
+   [
+    "ex-kana-h11-rec-hira-ro",
+    "stn-kana-h11"
+   ],
+   [
+    "ex-kana-p4-rec-ro2",
+    "stn-kana-p4"
+   ]
+  ],
+  "('は', '«ها»')": [
+   [
+    "ex-kana-h12-rec-hira-ha",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-p3-rec-ha",
+    "stn-kana-p3"
+   ]
+  ],
+  "('ひ', '«هی»')": [
+   [
+    "ex-kana-h12-rec-hira-hi",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-p4-rec-hi",
+    "stn-kana-p4"
+   ]
+  ],
+  "('ふ', '«فو»')": [
+   [
+    "ex-kana-h12-rec-hira-fu",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-p3-rec-fu",
+    "stn-kana-p3"
+   ]
+  ],
+  "('へ', '«هه»')": [
+   [
+    "ex-kana-h12-rec-hira-he",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-p3-rec-he",
+    "stn-kana-p3"
+   ],
+   [
+    "ex-kana-p3-rec-he2",
+    "stn-kana-p3"
+   ]
+  ],
+  "('ほ', '«هُ»')": [
+   [
+    "ex-kana-h12-rec-hira-ho",
+    "stn-kana-h12"
+   ],
+   [
+    "ex-kana-p3-rec-ho",
+    "stn-kana-p3"
+   ]
+  ],
+  "('がっこう', '«گَکّوو»')": [
+   [
+    "ex-kana-h13-dec-1",
+    "stn-kana-h13"
+   ],
+   [
+    "ex-kana-p4-dec-gakkou",
+    "stn-kana-p4"
+   ]
+  ],
+  "('や', '«یا»')": [
+   [
+    "ex-kana-h14-rec-hira-ya",
+    "stn-kana-h14"
+   ],
+   [
+    "ex-kana-p4-rec-ya",
+    "stn-kana-p4"
+   ]
+  ],
+  "('ゆ', '«یو»')": [
+   [
+    "ex-kana-h14-rec-hira-yu",
+    "stn-kana-h14"
+   ],
+   [
+    "ex-kana-p4-rec-yu",
+    "stn-kana-p4"
+   ]
+  ],
+  "('わ', '«وا»')": [
+   [
+    "ex-kana-h15-rec-hira-wa",
+    "stn-kana-h15"
+   ],
+   [
+    "ex-kana-p4-rec-wa",
+    "stn-kana-p4"
+   ]
+  ],
+  "('を', '«اُ»')": [
+   [
+    "ex-kana-h15-rec-hira-wo",
+    "stn-kana-h15"
+   ],
+   [
+    "ex-kana-p4-rec-wo",
+    "stn-kana-p4"
+   ]
+  ],
+  "('ソ', '«سُ»')": [
+   [
+    "ex-kana-k4-rec-kata-so",
+    "stn-kana-k4"
+   ],
+   [
+    "ex-kana-gate-m4-2",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('ミ', '«می»')": [
+   [
+    "ex-kana-k9-rec-kata-mi",
+    "stn-kana-k9"
+   ],
+   [
+    "ex-kana-gate-m1-5",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('ナ', '«نا»')": [
+   [
+    "ex-kana-k11-rec-kata-na",
+    "stn-kana-k11"
+   ],
+   [
+    "ex-kana-gate-m1-3",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('ヌ', '«نو»')": [
+   [
+    "ex-kana-k11-rec-kata-nu",
+    "stn-kana-k11"
+   ],
+   [
+    "ex-kana-gate-m4-4",
+    "ORPHAN_NOT_IN_STATION"
+   ]
+  ],
+  "('ワ', '«وا»')": [
+   [
+    "ex-kana-k12-rec-kata-wa",
+    "stn-kana-k12"
+   ],
+   [
+    "ex-kana-kf-warm-2",
+    "stn-kana-k12-foreign"
+   ]
+  ],
+  "('せんせい', '«سِنسِی»')": [
+   [
+    "ex-kana-gate-m3-1",
+    "ORPHAN_NOT_IN_STATION"
+   ],
+   [
+    "ex-kana-p2-dec-sensei",
+    "stn-kana-p2"
+   ]
+  ],
+  "('かさ', '«کاسا»')": [
+   [
+    "ex-kana-gate-m3-5",
+    "ORPHAN_NOT_IN_STATION"
+   ],
+   [
+    "ex-kana-p1-dec-kasa",
+    "stn-kana-p1"
+   ]
+  ],
+  "('あさ', '«اَسا»')": [
+   [
+    "ex-kana-h4-asm-1",
+    "stn-kana-h4"
+   ],
+   [
+    "ex-kana-p1-dec-asa",
+    "stn-kana-p1"
+   ]
+  ],
+  "('ごご', 'ごご')": [
+   [
+    "ex-kana-h5-lis-1",
+    "stn-kana-h5"
+   ],
+   [
+    "ex-kana-p4-rl-gogo",
+    "stn-kana-p4"
+   ]
+  ],
+  "('きょう', 'きょう')": [
+   [
+    "ex-kana-h6-lis-1",
+    "stn-kana-h6"
+   ],
+   [
+    "ex-kana-p4-rl-kyou",
+    "stn-kana-p4"
+   ]
+  ],
+  "('さん', '«سان»')": [
+   [
+    "ex-kana-h7-nas-1",
+    "stn-kana-h7"
+   ],
+   [
+    "ex-kana-p2-dec-san",
+    "stn-kana-p2"
+   ]
+  ],
+  "('がっこう', 'がっこう')": [
+   [
+    "ex-kana-h13-lis-1",
+    "stn-kana-h13"
+   ],
+   [
+    "ex-kana-p4-rl-gakkou",
+    "stn-kana-p4"
+   ]
+  ],
+  "('ねこ', 'گربه')": [
+   [
+    "ex-kana-m1-word-neko",
+    "stn-kana-m1-reading"
+   ],
+   [
+    "ex-kana-p4-msg-neko",
+    "stn-kana-p4"
+   ]
+  ]
+ },
+ "shape": [
+  {
+   "eid": "ex-kana-h4-dec-1",
+   "sid": "stn-kana-h4",
+   "unique_longest": true,
+   "unique_shadda": false,
+   "unique_doubled_v": true,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h4-dec-2",
+   "sid": "stn-kana-h4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": true,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h4-dec-3",
+   "sid": "stn-kana-h4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h4-dec-4",
+   "sid": "stn-kana-h4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": true,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h5-dec-1",
+   "sid": "stn-kana-h5",
+   "unique_longest": true,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h5-dec-2",
+   "sid": "stn-kana-h5",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h5-dec-3",
+   "sid": "stn-kana-h5",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h5-dec-4",
+   "sid": "stn-kana-h5",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h6-dec-1",
+   "sid": "stn-kana-h6",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h6-dec-2",
+   "sid": "stn-kana-h6",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h6-dec-3",
+   "sid": "stn-kana-h6",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h6-dec-4",
+   "sid": "stn-kana-h6",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h13-dec-1",
+   "sid": "stn-kana-h13",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h13-dec-2",
+   "sid": "stn-kana-h13",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h13-dec-3",
+   "sid": "stn-kana-h13",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h13-dec-4",
+   "sid": "stn-kana-h13",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-k8-dec-1",
+   "sid": "stn-kana-k8",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-k8-dec-2",
+   "sid": "stn-kana-k8",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-k8-dec-3",
+   "sid": "stn-kana-k8",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": true,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-k8-dec-4",
+   "sid": "stn-kana-k8",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-gate-m3-1",
+   "sid": "ORPHAN_NOT_IN_STATION",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-gate-m3-2",
+   "sid": "ORPHAN_NOT_IN_STATION",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-gate-m3-3",
+   "sid": "ORPHAN_NOT_IN_STATION",
+   "unique_longest": true,
+   "unique_shadda": false,
+   "unique_doubled_v": true,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-gate-m3-4",
+   "sid": "ORPHAN_NOT_IN_STATION",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-gate-m3-5",
+   "sid": "ORPHAN_NOT_IN_STATION",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h4-ind-1",
+   "sid": "stn-kana-h4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h4-asm-1",
+   "sid": "stn-kana-h4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h4-asm-2",
+   "sid": "stn-kana-h4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": true,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h4-asm-3",
+   "sid": "stn-kana-h4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h5-ind-1",
+   "sid": "stn-kana-h5",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h5-asm-1",
+   "sid": "stn-kana-h5",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h5-asm-2",
+   "sid": "stn-kana-h5",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h5-asm-3",
+   "sid": "stn-kana-h5",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h6-asm-1",
+   "sid": "stn-kana-h6",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h6-asm-2",
+   "sid": "stn-kana-h6",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h7-nas-1",
+   "sid": "stn-kana-h7",
+   "unique_longest": true,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h7-nas-2",
+   "sid": "stn-kana-h7",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h7-asm-1",
+   "sid": "stn-kana-h7",
+   "unique_longest": true,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-h13-asm-1",
+   "sid": "stn-kana-h13",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h13-asm-2",
+   "sid": "stn-kana-h13",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-h15-asm-1",
+   "sid": "stn-kana-h15",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-k8-asm-1",
+   "sid": "stn-kana-k8",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-k8-asm-3",
+   "sid": "stn-kana-k8",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-kf-dec-1",
+   "sid": "stn-kana-k12-foreign",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-p1-dec-asa",
+   "sid": "stn-kana-p1",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p1-dec-sushi",
+   "sid": "stn-kana-p1",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p1-dec-koko",
+   "sid": "stn-kana-p1",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p1-dec-iie",
+   "sid": "stn-kana-p1",
+   "unique_longest": true,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p1-dec-ookii",
+   "sid": "stn-kana-p1",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p1-dec-kasa",
+   "sid": "stn-kana-p1",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p2-dec-kuni",
+   "sid": "stn-kana-p2",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p2-dec-sono",
+   "sid": "stn-kana-p2",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-p2-dec-ashita",
+   "sid": "stn-kana-p2",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-p2-dec-sensei",
+   "sid": "stn-kana-p2",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-p2-dec-san",
+   "sid": "stn-kana-p2",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-p2-dec-anata",
+   "sid": "stn-kana-p2",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p2-dec-atsui",
+   "sid": "stn-kana-p2",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p3-dec-neko",
+   "sid": "stn-kana-p3",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p3-dec-mizu",
+   "sid": "stn-kana-p3",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-p3-dec-kuruma",
+   "sid": "stn-kana-p3",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p3-dec-kaban",
+   "sid": "stn-kana-p3",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p3-dec-shinbun",
+   "sid": "stn-kana-p3",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p3-dec-hon",
+   "sid": "stn-kana-p3",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-p3-dec-tomodachi",
+   "sid": "stn-kana-p3",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p4-dec-gakkou",
+   "sid": "stn-kana-p4",
+   "unique_longest": false,
+   "unique_shadda": true,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p4-dec-enpitsu",
+   "sid": "stn-kana-p4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  },
+  {
+   "eid": "ex-kana-p4-dec-shashin",
+   "sid": "stn-kana-p4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": false
+  },
+  {
+   "eid": "ex-kana-p4-dec-watashi",
+   "sid": "stn-kana-p4",
+   "unique_longest": false,
+   "unique_shadda": false,
+   "unique_doubled_v": false,
+   "correct_is_maxlen": true
+  }
+ ],
+ "glyph_sound_consensus": {
+  "あ": {
+   "آ": 3
+  },
+  "い": {
+   "أی": 3
+  },
+  "う": {
+   "أو": 3
+  },
+  "え": {
+   "إ": 2
+  },
+  "お": {
+   "ؤ": 4
+  },
+  "か": {
+   "کا": 2
+  },
+  "き": {
+   "کی": 4
+  },
+  "く": {
+   "کو": 3
+  },
+  "け": {
+   "که": 3
+  },
+  "こ": {
+   "ک": 3
+  },
+  "さ": {
+   "سا": 5
+  },
+  "し": {
+   "شی": 4
+  },
+  "す": {
+   "سو": 1
+  },
+  "せ": {
+   "سه": 2
+  },
+  "そ": {
+   "س": 1,
+   "هیراگانا": 1
+  },
+  "ん": {
+   "ن": 3
+  },
+  "な": {
+   "نا": 2
+  },
+  "に": {
+   "نی": 1
+  },
+  "ぬ": {
+   "نو": 3
+  },
+  "ね": {
+   "نه": 3
+  },
+  "の": {
+   "ن": 2
+  },
+  "た": {
+   "تا": 2
+  },
+  "ち": {
+   "چی": 3
+  },
+  "つ": {
+   "تسو": 5
+  },
+  "て": {
+   "ته": 2
+  },
+  "と": {
+   "ت": 2
+  },
+  "ま": {
+   "ما": 1
+  },
+  "み": {
+   "می": 1
+  },
+  "む": {
+   "مو": 2
+  },
+  "め": {
+   "مه": 2
+  },
+  "も": {
+   "م": 2
+  },
+  "ら": {
+   "را": 1
+  },
+  "り": {
+   "ری": 2
+  },
+  "る": {
+   "رو": 2
+  },
+  "れ": {
+   "ره": 2
+  },
+  "ろ": {
+   "ر": 2
+  },
+  "は": {
+   "ها": 2,
+   "هیراگانا": 1
+  },
+  "ひ": {
+   "هی": 2,
+   "هیراگانا": 1
+  },
+  "ふ": {
+   "فو": 2
+  },
+  "へ": {
+   "هه": 3
+  },
+  "ほ": {
+   "ه": 2
+  },
+  "や": {
+   "یا": 2
+  },
+  "ゆ": {
+   "یو": 2
+  },
+  "よ": {
+   "ی": 1
+  },
+  "わ": {
+   "وا": 2
+  },
+  "を": {
+   "ؤ": 2
+  },
+  "ア": {
+   "آ": 1
+  },
+  "イ": {
+   "أی": 1
+  },
+  "ウ": {
+   "أو": 1
+  },
+  "エ": {
+   "إ": 1
+  },
+  "オ": {
+   "ؤ": 1
+  },
+  "タ": {
+   "تا": 1
+  },
+  "チ": {
+   "چی": 1
+  },
+  "ツ": {
+   "تسو": 1
+  },
+  "テ": {
+   "ته": 1
+  },
+  "ト": {
+   "ت": 1
+  },
+  "ラ": {
+   "را": 1
+  },
+  "リ": {
+   "ری": 1
+  },
+  "ル": {
+   "رو": 1
+  },
+  "レ": {
+   "ره": 1
+  },
+  "ロ": {
+   "ر": 1
+  },
+  "サ": {
+   "سا": 1
+  },
+  "シ": {
+   "شی": 1,
+   "کاتاکانا": 1
+  },
+  "ス": {
+   "سو": 1
+  },
+  "セ": {
+   "سه": 1
+  },
+  "ソ": {
+   "س": 2
+  },
+  "ハ": {
+   "ها": 1
+  },
+  "ヒ": {
+   "هی": 1
+  },
+  "フ": {
+   "فو": 1
+  },
+  "ヘ": {
+   "هه": 1
+  },
+  "ホ": {
+   "ه": 1
+  },
+  "ン": {
+   "ن": 1
+  },
+  "カ": {
+   "کا": 1
+  },
+  "キ": {
+   "کی": 1
+  },
+  "ク": {
+   "کو": 1
+  },
+  "ケ": {
+   "که": 1
+  },
+  "コ": {
+   "ک": 1
+  },
+  "マ": {
+   "ما": 1
+  },
+  "ミ": {
+   "می": 2
+  },
+  "ム": {
+   "مو": 1
+  },
+  "メ": {
+   "مه": 1
+  },
+  "モ": {
+   "م": 1
+  },
+  "ヤ": {
+   "یا": 1
+  },
+  "ユ": {
+   "یو": 1
+  },
+  "ヨ": {
+   "ی": 1
+  },
+  "ナ": {
+   "نا": 2
+  },
+  "ニ": {
+   "نی": 1
+  },
+  "ヌ": {
+   "نو": 2,
+   "کاتاکانا": 1
+  },
+  "ネ": {
+   "نه": 1,
+   "کاتاکانا": 1
+  },
+  "ノ": {
+   "ن": 1
+  },
+  "ワ": {
+   "وا": 2
+  },
+  "ヲ": {
+   "ؤ": 1
+  },
+  "ご": {
+   "گو": 1
+  },
+  "ぽ": {
+   "پ": 1
+  },
+  "ぼ": {
+   "ب": 1
+  }
+ }
+}

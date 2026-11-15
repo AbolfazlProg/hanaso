@@ -1,0 +1,253 @@
+====================================================================================================
+SECTION A — kanaRegistry romaji check (92 glyphs)
+====================================================================================================
+  [i] hira-wo を: romaji='wo' (particle ん note: pronounced 'o' as particle — documented via romajiNoteFa)
+  [i] kata-wo ヲ: romaji='wo' (particle ん note: pronounced 'o' as particle — no note found in registry)
+Registry romaji mismatches: 0 / 92
+  [ok] no duplicate glyphs
+
+====================================================================================================
+SECTION B — host word verification (word exists & meaningFa correct)
+====================================================================================================
+  [ ] hira-wo を: NO hostWord (structural gap, not linguistic)
+  [ ] kata-nu ヌ: NO hostWord (structural gap, not linguistic)
+  [ ] kata-he ヘ: NO hostWord (structural gap, not linguistic)
+  [ ] kata-mu ム: NO hostWord (structural gap, not linguistic)
+  [ ] kata-mo モ: NO hostWord (structural gap, not linguistic)
+  [ ] kata-ya ヤ: NO hostWord (structural gap, not linguistic)
+  [ ] kata-yu ユ: NO hostWord (structural gap, not linguistic)
+  [ ] kata-wo ヲ: NO hostWord (structural gap, not linguistic)
+  hostWords missing: 8; unverified: 0
+  -- host word contains the taught glyph? --
+
+====================================================================================================
+SECTION C — mora engine sanity vs hand-verified truth table
+====================================================================================================
+  [!] engine mismatch しゃしん: engine=3 truth=2
+  [!] engine mismatch ゆうびんきょく: engine=6 truth=7
+  [!] engine mismatch らーめん: engine=4 truth=3
+  [!] engine mismatch プレゼント: engine=5 truth=4
+
+====================================================================================================
+SECTION D — exercise scan: mora claims vs truth (586 exercises)
+====================================================================================================
+  wrong mora claims: 0
+  -- word-form mora claims --
+  [X] ex-kana-h4-lis-1 rat-a: いいえ claimed=2 truth=3 :: «ایه» بود — دو مورا بدون کشش؛ واژهٔ شنیده‌شده سه موراست.
+  [X] ex-kana-h4-lis-2 rat-c: いえ claimed=3 truth=2 :: سه مورا بود؛ واژهٔ شنیده‌شده دو موراست: «ای-اِ».
+  [X] ex-kana-h4-asm-3 rat-c: いえ claimed=1 truth=2 :: یک مورا کم داری.
+  [X] ex-kana-h6-clo-1 F3: きょう claimed=1 truth=2 :: 「きょう」 = きょ+う — ゃゅょ کوچک = یک مورا.
+  [X] ex-kana-h6-lis-1 F3: きょう claimed=1 truth=2 :: 「きょう」 = «کیوو» (امروز) — ゃ/ゅ/ょ کوچک، یک مورا.
+  [X] ex-kana-h6-lis-2 F3: いしゃ claimed=1 truth=2 :: 「いしゃ」 = «ایشا» (پزشک) — しゃ یک مورا.
+  [X] ex-kana-h6-asm-1 F3: きゅう claimed=1 truth=2 :: 「きゅう」 = «کیوو» (۹) — きゅ یک مورا + う.
+  [X] ex-kana-h6-asm-1 rat-c: きゅう claimed=3 truth=2 :: یک فشردگی و یک کشش؛ «کی‌یوو» سه مورای جدا نه.
+  [X] ex-kana-h6-asm-2 F3: きゃく claimed=1 truth=2 :: 「きゃく」 = «کیاکو» (مهمان) — きゃ یک مورا.
+  [X] ex-kana-h6-asm-4 F3: いしゃ claimed=1 truth=2 :: 「いしゃ» = پزشک — しゃ یک مورا.
+  [X] ex-kana-h7-lis-1 rat-a: せんせい claimed=1 truth=4 :: یک مورای آخر کم دارد — «سِنسِ» واژهٔ ژاپنی نیست.
+  [X] ex-kana-h7-nas-1 rat-a: さん claimed=1 truth=2 :: 「ん» را جا انداخته‌ای — یک مورای کامل است.
+  [X] ex-kana-h7-nas-2 rat-a: せん claimed=1 truth=2 :: 「ん» یک موراست — حذفش نکن.
+  [X] ex-kana-h13-lis-2 F2: ざっし claimed=1 truth=3 :: یک مورای فشار بین دو بخش است.
+  [X] ex-kana-h13-asm-1 F1: けっか claimed=1 truth=3 :: کِک…کا: یک مورای فشار.
+  [X] ex-kana-k8-lis-1 F3: コーヒー claimed=1 truth=4 :: 「コーヒー」 = «کووهی» — هر ー یک مورای کشش.
+  [X] ex-kana-kf-lis-1 F3: ファイル claimed=1 truth=3 :: 「ファイル» = «فایل» — ファ ترکیب خارجی است، یک مورا.
+  [X] ex-kana-p4-rl-gakkou F3: がっこう claimed=1 truth=4 :: がっこう = «گَکّوو» (مدرسه) — っ کوچک = یک مورای مکث.
+  wrong word-form mora claims: 18
+
+====================================================================================================
+SECTION E — Persian reading convention consistency (86 promptJaReading + option labels)
+====================================================================================================
+  [!] ex-kana-k8-dec-4: ん before labial ピ but no م in reading «کُنپیووتاا»
+  [!] ex-kana-p3-dec-shinbun: ん before labial ぶ but no م in reading «شینبون»
+  convention auto-flags: 2
+
+  -- reading table vs actual inventory readings --
+  [ok] ex-kana-h4-dec-1: こうこう -> «کووکوو» (expected «کووکوو») - long o doubled
+  [ok] ex-kana-h4-dec-2: おおきい -> «اووکیی» (expected «اووکیی») 
+  [ok] ex-kana-h4-dec-3: いいえ -> «اییه» (expected «اییه») - i-i-e: doubled ی
+  [ok] ex-kana-h4-dec-4: おおさか -> «اووساکا» (expected «اووساکا») 
+  [ok] ex-kana-h5-dec-1: がくせい -> «گاکوسِی» (expected «گاکوسِی») - e+i → سِی
+  [ok] ex-kana-h5-dec-2: かぞく -> «کازوکو» (expected «کازوکو») 
+  [ok] ex-kana-h5-dec-3: かいぎ -> «کایگی» (expected «کایگی») 
+  [ok] ex-kana-h5-dec-4: ごご -> «گوگو» (expected «گوگو») - short — correct, no long vowel here
+  [ok] ex-kana-h6-dec-1: いしゃ -> «ایشا» (expected «ایشا») - yoon
+  [ok] ex-kana-h6-dec-2: かいしゃ -> «کایشا» (expected «کایشا») 
+  [ok] ex-kana-h6-dec-3: きょう -> «کیوو» (expected «کیوو») - yoon+long o
+  [ok] ex-kana-h6-dec-4: じゅう -> «جوو» (expected «جوو») 
+  [ok] ex-kana-h13-dec-1: がっこう -> «گَکّوو» (expected «گَکّوو») - sokuon tashdid
+  [ok] ex-kana-h13-dec-2: ざっし -> «زَشّی» (expected «زَشّی») 
+  [ok] ex-kana-h13-dec-3: ちょっと -> «چُوتّو» (expected «چُوتّو») 
+  [ok] ex-kana-h13-dec-4: いっしょ -> «ایْشّو» (expected «ایْشّو») 
+  [!] ex-kana-k8-dec-1: コーヒー -> «کووهی» (expected «کووهیی») - CHOON: ه+ー → هیی (doubled) — HANASO writes کووهی in dec-1 but کووهی in F3 of k8-lis-1 rat-c says کوو-هیی; check
+  [ok] ex-kana-k8-dec-2: ジュース -> «جووس» (expected «جووس») - long u — single و after ج? HANASO writes جووس — correct per convention? じゅ+ー+ス: جوو+س yes
+  [ok] ex-kana-k8-dec-3: ボールペン -> «بوولپِن» (expected «بوولپِن») - HANASO reading — ボー=بوو، but they write بوولپِن with single و? verify
+  [ok] ex-kana-k8-dec-4: コンピューター -> «کُنپیووتاا» (expected «کُنپیووتاا») - HANASO writes ...اا at end? verify
+  [ok] ex-kana-gate-m3-1: せんせい -> «سِنسِی» (expected «سِنسِی») 
+  [ok] ex-kana-gate-m3-2: とうきょう -> «توکیوو» (expected «توکیوو») 
+  [ok] ex-kana-gate-m3-3: らーめん -> «راامِن» (expected «راامِن») - double ا for long a
+  [!] ex-kana-gate-m3-4: ねこ -> «نِکُ» (expected «نِکو») 
+  [ok] ex-kana-gate-m3-5: かさ -> «کاسا» (expected «کاسا») - HANASO writes کاسا — correct
+  [ok] ex-kana-h4-lis-1: いいえ -> «اییه» (expected «اییه») - i-i-e: doubled ی
+  [ok] ex-kana-h4-lis-2: いえ -> «ایه» (expected «ایه») 
+  [ok] ex-kana-h4-ind-1: えき -> «اِکی» (expected «اِکی») 
+  [ok] ex-kana-h4-asm-1: あさ -> «اَسا» (expected «اَسا») - HANASO writes اَسا — fine
+  [ok] ex-kana-h4-asm-2: くうき -> «کووکی» (expected «کووکی») 
+  [ok] ex-kana-h4-asm-3: いえ -> «ایه» (expected «ایه») 
+  [ok] ex-kana-h5-lis-1: ごご -> «گوگو» (expected «گوگو») - short — correct, no long vowel here
+  [ok] ex-kana-h5-asm-3: ごご -> «گوگو» (expected «گوگو») - short — correct, no long vowel here
+  [ok] ex-kana-h6-lis-1: きょう -> «کیوو» (expected «کیوو») - yoon+long o
+  [ok] ex-kana-h6-lis-2: いしゃ -> «ایشا» (expected «ایشا») - yoon
+  [ok] ex-kana-h6-asm-1: きゅう -> «کیوو» (expected «کیوو») - HANASO writes کیوو — but this is ambiguous with きょう! both کیوو — POTENTIAL COLLISION
+  [ok] ex-kana-h6-asm-2: きゃく -> «کیاکو» (expected «کیاکو») 
+  [ok] ex-kana-h7-lis-1: せんせい -> «سِنسِی» (expected «سِنسِی») 
+  [ok] ex-kana-h7-nas-1: さん -> «سان» (expected «سان») 
+  [ok] ex-kana-h7-nas-2: せん -> «سِن» (expected «سِن») 
+  [ok] ex-kana-h7-asm-1: さんすう -> «سانسوو» (expected «سانسوو») 
+  [ok] ex-kana-h13-lis-1: がっこう -> «گَکّوو» (expected «گَکّوو») - sokuon tashdid
+  [ok] ex-kana-h13-lis-2: ざっし -> «زَشّی» (expected «زَشّی») 
+  [ok] ex-kana-h13-asm-1: けっか -> «کِکّا» (expected «کِکّا») 
+  [ok] ex-kana-h13-asm-2: さっき -> «سَکّکی» (expected «سَکّکی») - HANASO writes سَکّکی — double ک? verify
+  [ok] ex-kana-h15-lis-1: さんぽ -> «سامپو» (expected «سامپو») - ん→م before پ
+  [ok] ex-kana-h15-lis-2: えんぴつ -> «اِمپیتسو» (expected «اِمپیتسو») - ん→م before پ
+  [ok] ex-kana-h15-asm-1: ぱん -> «پان» (expected «پان») 
+  [!] ex-kana-k8-lis-1: コーヒー -> «کووهی» (expected «کووهیی») - CHOON: ه+ー → هیی (doubled) — HANASO writes کووهی in dec-1 but کووهی in F3 of k8-lis-1 rat-c says کوو-هیی; check
+  [ok] ex-kana-k8-lis-2: ジュース -> «جووس» (expected «جووس») - long u — single و after ج? HANASO writes جووس — correct per convention? じゅ+ー+ス: جوو+س yes
+  [ok] ex-kana-k8-asm-1: ケーキ -> «کِیکی» (expected «کِیکی») - HANASO writes کِیکی — کِー = کِی? convention: ー doubles previous vowel → کِیکی plausible
+  [ok] ex-kana-k8-asm-3: コーラ -> «کوورا» (expected «کوورا») 
+  [ok] ex-kana-kf-dec-1: ファイル -> «فایل» (expected «فایل») - ファ=فا one mora
+  [ok] ex-kana-kf-lis-1: ファイル -> «فایل» (expected «فایل») - ファ=فا one mora
+  [ok] ex-kana-p1-dec-asa: あさ -> «اَسا» (expected «اَسا») - HANASO writes اَسا — fine
+  [ok] ex-kana-p1-dec-iie: いいえ -> «اییه» (expected «اییه») - i-i-e: doubled ی
+  [ok] ex-kana-p1-dec-ookii: おおきい -> «اووکیی» (expected «اووکیی») 
+  [ok] ex-kana-p1-dec-kasa: かさ -> «کاسا» (expected «کاسا») - HANASO writes کاسا — correct
+  [ok] ex-kana-p2-dec-sensei: せんせい -> «سِنسِی» (expected «سِنسِی») 
+  [ok] ex-kana-p2-dec-san: さん -> «سان» (expected «سان») 
+  [ok] ex-kana-p3-dec-neko: ねこ -> «نِکو» (expected «نِکو») 
+  [ok] ex-kana-p4-rl-gakkou: がっこう -> «گَکّوو» (expected «گَکّوو») - sokuon tashdid
+  [ok] ex-kana-p4-rl-kyou: きょう -> «کیوو» (expected «کیوو») - yoon+long o
+  [ok] ex-kana-p4-rl-gogo: ごご -> «گوگو» (expected «گوگو») - short — correct, no long vowel here
+  [ok] ex-kana-p4-dec-gakkou: がっこう -> «گَکّوو» (expected «گَکّوو») - sokuon tashdid
+  [ok] ex-kana-p4-dec-enpitsu: えんぴつ -> «اِمپیتسو» (expected «اِمپیتسو») - ん→م before پ
+
+  -- reading collisions (same Persian string, different Japanese words) --
+  [!] «کیوو» used for: ['きゅう', 'きょう']
+
+====================================================================================================
+SECTION F — romaji derivation spot checks (kana-romaji.ts logic)
+====================================================================================================
+  [ok] ノート -> nooto (expected nooto)
+  [ok] こうこう -> koukou (expected koukou)
+  [ok] コーヒー -> koohii (expected koohii)
+  [ok] おおきい -> ookii (expected ookii)
+  [ok] せんせい -> sensei (expected sensei)
+  [!] がっこう -> がっkou (expected gakkou)
+  [!] きょう -> kiょu (expected kyou)
+  [!] しゃしん -> shiゃshin (expected shashin)
+  [!] ジュース -> ジュsu (expected juusu)
+  [!] ファイル -> fuァiru (expected fairu)
+  [!] とうきょう -> toukiょu (expected toukyou)
+  [!] さんぽ -> sanぽ (expected sanpo)
+  [!] えんぴつ -> enぴtsu (expected enpitsu)
+  [!] ちょっと -> chiょっto (expected chotto)
+  [!] ざっし -> ざっshi (expected zasshi)
+
+====================================================================================================
+SECTION G — absolute-claim language in exercises
+====================================================================================================
+  absolute-claim occurrences in exercises: 0
+
+====================================================================================================
+SECTION H — dump of exercises about きょう/きゅう/きよう for manual review
+====================================================================================================
+--- ex-kana-h6-dec-3 (kana-decode) ja='きょう' reading='کیوو'
+    F1: 「きょ+う» — «کیو» + «اُو» = کیوو (۲ مورا).
+    F3: «きょう» = «کیوو» (امروز).
+--- ex-kana-h13-dec-1 (kana-decode) ja='がっこう' reading='گَکّوو'
+    F1: 「が» واک‌دار است و 「う» آخر کشش می‌سازد.
+    F3: «がっこう» = «گَکّوو» (مدرسه).
+--- ex-kana-h13-dec-3 (kana-decode) ja='ちょっと' reading='چُوتّو'
+    F1: 「ちょ» = «چُو» — ょ کوچک را جا نینداز.
+    F3: «ちょっと» = «چُوتّو» (کمی) — ちょ فشرده + っ فشار + と.
+--- ex-kana-k8-dec-1 (kana-decode) ja='コーヒー' reading='کووهی'
+    F1: دو «ー» در واژه است — «کوو+هیی».
+    F3: «コーヒー» = «کووهی» (قهوه) — コ+ー+ヒ+ー، دو کشش.
+--- ex-kana-gate-m3-1 (kana-decode) ja='せんせい' reading='سِنسِی'
+    F1: 「せ+い» آخر = «سِی» — کاملش کن.
+    F3: «せんせい» = «سِنسِی» (معلم / استاد).
+--- ex-kana-gate-m3-2 (kana-decode) ja='とうきょう' reading='توکیوو'
+    F1: دو کشش: «توو» و «کیوو» — とう+きょう.
+    F3: «とうきょう» = «توکیوو» (توکیو).
+--- ex-kana-h6-clo-1 (cloze) ja='' reading=''
+    F1: «کیوو» با ょ کوچک نوشته می‌شود — «کیو» بخشِ اولش یک ضربه است.
+    F3: 「きょう」 = きょ+う — ゃゅょ کوچک = یک مورا.
+--- ex-kana-h6-lis-1 (rule-listening) ja='きょう' reading='کیوو (امروز)'
+    F1: 「きょ» و 「きよ» را بلند بگو — فرق در فشردگی است.
+    F3: 「きょう」 = «کیوو» (امروز) — ゃ/ゅ/ょ کوچک، یک مورا.
+--- ex-kana-h6-prd-1 (produce-template) ja='' reading=''
+    F1: ترتیب را بررسی کن: اول き، بعد ょ کوچک، آخر う.
+    F3: 「きょう」 = きょ+う (۲ مورا).
+--- ex-kana-h6-asm-1 (kana-decode) ja='きゅう' reading='کیوو'
+    F1: 「きゅ» فشرده + 「う» کشش.
+    F3: 「きゅう」 = «کیوو» (۹) — きゅ یک مورا + う.
+--- ex-kana-h6-asm-3 (kana-decode) ja='' reading=''
+    F1: به اندازهٔ «یو» نگاه کن: کوچک یا بزرگ؟
+    F3: 「きょう» = امروز (۲ مورا).
+--- ex-kana-h7-lis-1 (rule-listening) ja='せんせい' reading='سِنسِی (معلم)'
+    F1: چهار ضربه بشمار: سِ-ن-سِ-ی.
+    F3: 「せんせい」 = «سِنسِی» (معلم) — ۴ مورا: せ・ん・せ・い.
+--- ex-kana-h13-clo-1 (cloze) ja='' reading=''
+    F1: مکث/فشارِ یک ضربه با کانای کوچک نوشته می‌شود.
+    F3: 「がっこう」 = が+っ+こ+う — っ کوچک = مورای فشار.
+--- ex-kana-h13-lis-1 (rule-listening) ja='がっこう' reading='گَکّوو (مدرسه)'
+    F1: وسط واژه سکوت/فشار کوتاهی هست یا نیست؟
+    F3: 「がっこう」 = «گَکّوو» (مدرسه) — ۴ مورا با っ.
+--- ex-kana-h13-prd-1 (produce-template) ja='' reading=''
+    F1: ترتیب را بررسی کن: が، っ، こ، う.
+    F3: 「がっこう」 = が+っ+こ+う (۴ مورا).
+--- ex-kana-k8-lis-1 (rule-listening) ja='コーヒー' reading='کووهی (قهوه)'
+    F1: دو جا کشش می‌شنوی یا یک جا؟
+    F3: 「コーヒー」 = «کووهی» — هر ー یک مورای کشش.
+--- ex-kana-k8-clo-1 (cloze) ja='' reading=''
+    F1: کشش با خط افقی نوشته می‌شود.
+    F3: 「コーヒー」 = コ+ー+ヒ+ー — دو کشش.
+--- ex-kana-p2-dec-sensei (kana-decode) ja='せんせい' reading='سِنسِی'
+    F1: 「ん» را جا نینداز — وسط واژه یک ضربهٔ کامل است.
+    F3: せんせい = «سِنسِی» (معلم) — せ+ん+せ+い.
+--- ex-kana-p4-rl-gakkou (rule-listening) ja='がっこう' reading='گَکّوو'
+    F1: صدا را دوباره پخش کن — مکث/فشردگی وسط واژه را بشنو.
+    F3: がっこう = «گَکّوو» (مدرسه) — っ کوچک = یک مورای مکث.
+--- ex-kana-p4-rl-kyou (rule-listening) ja='きょう' reading='کیوو'
+    F1: صدا را دوباره پخش کن — فشرده خوانده می‌شود یا جدا؟
+    F3: きょう = «کیوو» (امروز) — き+ょ فشرده + う.
+--- ex-kana-p4-dec-gakkou (kana-decode) ja='がっこう' reading='گَکّوو'
+    F1: چهار ضربه را بشمار: が+っ+こ+う.
+    F3: がっこう = «گَکّوو» (مدرسه) — っ مکث + う کشش.
+
+====================================================================================================
+FINDINGS SUMMARY (programmatic)
+====================================================================================================
+C-MORA-WRONG: 18 item(s)
+   [Critical/CONFIRMED] ex-kana-h4-lis-1: rat-a: word-form claim 2 mora for いいえ, truth 3 — "«ایه» بود — دو مورا بدون کشش؛ واژهٔ شنیده‌شده سه موراست."
+   [Critical/CONFIRMED] ex-kana-h4-lis-2: rat-c: word-form claim 3 mora for いえ, truth 2 — "سه مورا بود؛ واژهٔ شنیده‌شده دو موراست: «ای-اِ»."
+   [Critical/CONFIRMED] ex-kana-h4-asm-3: rat-c: word-form claim 1 mora for いえ, truth 2 — "یک مورا کم داری."
+   [Critical/CONFIRMED] ex-kana-h6-clo-1: F3: word-form claim 1 mora for きょう, truth 2 — "「きょう」 = きょ+う — ゃゅょ کوچک = یک مورا."
+   [Critical/CONFIRMED] ex-kana-h6-lis-1: F3: word-form claim 1 mora for きょう, truth 2 — "「きょう」 = «کیوو» (امروز) — ゃ/ゅ/ょ کوچک، یک مورا."
+   [Critical/CONFIRMED] ex-kana-h6-lis-2: F3: word-form claim 1 mora for いしゃ, truth 2 — "「いしゃ」 = «ایشا» (پزشک) — しゃ یک مورا."
+   ... and 12 more
+D-READING: 3 item(s)
+   [High/CONFIRMED] ex-kana-k8-dec-1: コーヒー: reading «کووهی» differs from convention-expected «کووهیی» (CHOON: ه+ー → هیی (doubled) — HANASO writes کووهی in dec-1 but کووهی in F3 of k8-lis-1
+   [High/CONFIRMED] ex-kana-gate-m3-4: ねこ: reading «نِکُ» differs from convention-expected «نِکو» ()
+   [High/CONFIRMED] ex-kana-k8-lis-1: コーヒー: reading «کووهی» differs from convention-expected «کووهیی» (CHOON: ه+ー → هیی (doubled) — HANASO writes کووهی in dec-1 but کووهی in F3 of k8-lis-1
+D-READING-COLLISION: 1 item(s)
+   [High/CONFIRMED] ex-kana-h6-asm-1 / ex-kana-h6-dec-3: Persian «کیوو» is used BOTH for きょう (kyō, today) and きゅう (kyū, nine) — two different Japanese pronunciations map to the same Persian string; learner c
+F-ROMAJI-DERIV: 10 item(s)
+   [Low/CONFIRMED] kana-romaji.ts: がっこう -> がっkou, expected gakkou
+   [Low/CONFIRMED] kana-romaji.ts: きょう -> kiょu, expected kyou
+   [Low/CONFIRMED] kana-romaji.ts: しゃしん -> shiゃshin, expected shashin
+   [Low/CONFIRMED] kana-romaji.ts: ジュース -> ジュsu, expected juusu
+   [Low/CONFIRMED] kana-romaji.ts: ファイル -> fuァiru, expected fairu
+   [Low/CONFIRMED] kana-romaji.ts: とうきょう -> toukiょu, expected toukyou
+   ... and 4 more
+
+TOTAL findings: 32
+Exercises scanned: 586 / 586
+Registry items scanned: 92 / 92
