@@ -50,16 +50,21 @@ describe('seed (idempotent, deterministic ids)', () => {
     // curriculum seed adds both chapters' station lesson rows (helpers run
     // both). Counts stay exact — determinism is the contract.
     // TASK-LEARNING-06/07: 4 characters (kim added) · 3 dialogues (PoC +
-    // first-meeting-01 [13 lines] + kana-welcome-01 [3 lines]) · 57 lessons
+    // first-meeting-01 [13 lines] + kana-welcome-01 [3 lines]) · 61 lessons
     // TASK-HANASO-24 correction: the stale 55 predated the H22 curriculum restructure
     // (commit d940199 added the two real-world milestone stations); content truth:
     // 1 anchor B_lesson + 56 stations (34 kana-foundation-01 + 22 first-meeting-01).
     // (1 anchor B_lesson + 32 Ch01 stations [k12-foreign, TASK-HANASO-20]
     // + 22 Ch02 stations).
+    // HANASO-PRODUCTION-REMEDIATION correction: the stale 57 predated TASK-27
+    // (118c1d2, Nov 14) which added the 4 integrated practice stations p1..p4 to
+    // the journey — its CI run was format-red, so the integration pin never re-ran.
+    // Content truth now: 1 anchor B_lesson + 60 stations (38 kana-foundation-01
+    // incl. 4 practice + 22 first-meeting-01).
     expect(await counts('content.characters')).toBe(4);
     expect(await counts('content.dialogues')).toBe(3);
     expect(await counts('content.dialogue_lines')).toBe(26);
-    expect(await counts('content.lessons')).toBe(57); // 1 anchor B_lesson + 56 stations (34+22)
+    expect(await counts('content.lessons')).toBe(61); // 1 anchor B_lesson + 60 stations (38+22, incl. 4 practice)
   });
 
   it('uses deterministic uuidv5 ids — re-seeding updates the same rows', async () => {
