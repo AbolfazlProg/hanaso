@@ -11,7 +11,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Award, BookOpenText, CheckCircle2, Ear, Eye, MessageCircleQuestion, Mic, Play, PlayCircle, RotateCcw, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Award,
+  BookOpenText,
+  CheckCircle2,
+  Ear,
+  Eye,
+  MessageCircleQuestion,
+  Mic,
+  Play,
+  PlayCircle,
+  RotateCcw,
+  Sparkles,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { AizenSeal } from '@/components/curriculum/aizen-seal';
 import type { ClientExercise } from '@/modules/curriculum/grading';
@@ -1927,9 +1943,7 @@ function BlockView({
                 if (!word) return null;
                 const urls = exampleAudioByWord?.[word] ?? null;
                 if (!urls) return null;
-                return (
-                  <WordPlayChip key={`${block.id}-listen-${i}`} word={word} urls={urls} />
-                );
+                return <WordPlayChip key={`${block.id}-listen-${i}`} word={word} urls={urls} />;
               })}
               {block.listenNoteFa && (
                 <span className="text-caption text-ink-faint">

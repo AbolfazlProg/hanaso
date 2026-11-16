@@ -135,6 +135,8 @@ test('E2E answer key integrity — every practice exercise in both chapters is w
         });
     }
     writeFileSync(process.env.H21_E2E_DUMP, JSON.stringify({ stations, mastery }, null, 1));
-    console.log(`[h21-e2e-key] dumped ${stations.length} stations / ${exerciseCount} exercises → ${process.env.H21_E2E_DUMP}`);
+    console.log(
+      `[h21-e2e-key] dumped ${stations.length} stations / ${exerciseCount} exercises → ${process.env.H21_E2E_DUMP}`,
+    );
   }
 });

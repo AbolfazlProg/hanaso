@@ -31,14 +31,14 @@ reviewed and left untouched (per this mission's brief: "از حذف یا باز�
 `tests/unit/commit-hygiene-gate.test.ts` (4 tests) builds throwaway git
 fixtures and asserts:
 
-| Fixture | Expected | Verified |
-| --- | --- | --- |
-| `docs(...)` commit touching `apps/web/src` | FAIL | ✅ |
-| `style(...)` commit touching `apps/web/src` | FAIL | ✅ |
-| `fix(...)` commit touching `apps/web/src` | PASS | ✅ |
-| `docs(...)` commit touching only `ops/` | PASS | ✅ |
-| waiver trailer | PASS loudly (logged) | ✅ |
-| unresolvable base (first push) | skip | ✅ |
+| Fixture                                     | Expected             | Verified |
+| ------------------------------------------- | -------------------- | -------- |
+| `docs(...)` commit touching `apps/web/src`  | FAIL                 | ✅       |
+| `style(...)` commit touching `apps/web/src` | FAIL                 | ✅       |
+| `fix(...)` commit touching `apps/web/src`   | PASS                 | ✅       |
+| `docs(...)` commit touching only `ops/`     | PASS                 | ✅       |
+| waiver trailer                              | PASS loudly (logged) | ✅       |
+| unresolvable base (first push)              | skip                 | ✅       |
 
 CI on this branch runs the gate on every push — the incompatible-label
 changes are detected before they can hide a behavior change again.

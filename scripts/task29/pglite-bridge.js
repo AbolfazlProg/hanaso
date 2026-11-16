@@ -20,14 +20,30 @@ const pg = new PGlite();
 
 /* ---------- pg wire protocol helpers ---------- */
 const MSG = {
-  AUTH_OK: 0x52, BACKEND_KEY: 0x4b, PARAM_STATUS: 0x53, READY: 0x5a, ROW_DESC: 0x54,
-  DATA_ROW: 0x44, CMD_COMPLETE: 0x43, EMPTY_QUERY: 0x49, ERROR: 0x45, NOTICE: 0x4e,
-  PARSE_COMPLETE: 0x31, BIND_COMPLETE: 0x32, CLOSE_COMPLETE: 0x33, NO_DATA: 0x6e,
+  AUTH_OK: 0x52,
+  BACKEND_KEY: 0x4b,
+  PARAM_STATUS: 0x53,
+  READY: 0x5a,
+  ROW_DESC: 0x54,
+  DATA_ROW: 0x44,
+  CMD_COMPLETE: 0x43,
+  EMPTY_QUERY: 0x49,
+  ERROR: 0x45,
+  NOTICE: 0x4e,
+  PARSE_COMPLETE: 0x31,
+  BIND_COMPLETE: 0x32,
+  CLOSE_COMPLETE: 0x33,
+  NO_DATA: 0x6e,
   PORTAL_SUSPENDED: 0x73,
 };
 
-function cstr(s) { return Buffer.concat([Buffer.from(s, 'utf8'), Buffer.from([0])]); }
-function str(buf, off) { const end = buf.indexOf(0, off); return [buf.toString('utf8', off, end), end + 1]; }
+function cstr(s) {
+  return Buffer.concat([Buffer.from(s, 'utf8'), Buffer.from([0])]);
+}
+function str(buf, off) {
+  const end = buf.indexOf(0, off);
+  return [buf.toString('utf8', off, end), end + 1];
+}
 
 function packet(type, payload) {
   const head = Buffer.alloc(5);
@@ -59,10 +75,12 @@ function enqueue(fn) {
 }
 
 async function runQuery(sql, params = []) {
-  return enqueue(() => pg.query(sql, params.length ? params : undefined).catch(async (e) => {
-    // retry once with explicit typed binding for common param-type mismatch
-    throw e;
-  }));
+  return enqueue(() =>
+    pg.query(sql, params.length ? params : undefined).catch(async (e) => {
+      // retry once with explicit typed binding for common param-type mismatch
+      throw e;
+    }),
+  );
 }
 
 /* ---------- per-connection state ---------- */
@@ -74,7 +92,15 @@ const server = net.createServer((sock) => {
 
   const send = (b) => sock.write(b);
   const errorOut = (msg) => {
-    const fields = [Buffer.from(['S', 0]), cstr('FATAL'), Buffer.from([0]), Buffer.from(['M', 0]), cstr(msg), Buffer.from([0]), Buffer.from([0])];
+    const fields = [
+      Buffer.from(['S', 0]),
+      cstr('FATAL'),
+      Buffer.from([0]),
+      Buffer.from(['M', 0]),
+      cstr(msg),
+      Buffer.from([0]),
+      Buffer.from([0]),
+    ];
     send(packet(MSG.ERROR, Buffer.concat(fields)));
     sock.end();
   };
@@ -84,7 +110,10 @@ const server = net.createServer((sock) => {
   }
 
   async function execSimple(sql) {
-    if (!sql.trim()) { send(packet(MSG.EMPTY_QUERY, Buffer.alloc(0))); return; }
+    if (!sql.trim()) {
+      send(packet(MSG.EMPTY_QUERY, Buffer.alloc(0)));
+      return;
+    }
     try {
       const res = await runQuery(sql);
       emitResult(res);
@@ -96,8 +125,12 @@ const server = net.createServer((sock) => {
   function emitError(e) {
     const msg = (e && e.message) || String(e);
     const fields = Buffer.concat([
-      Buffer.from(['S', 0]), cstr('ERROR'), Buffer.from([0]),
-      Buffer.from(['M', 0]), cstr(msg), Buffer.from([0]),
+      Buffer.from(['S', 0]),
+      cstr('ERROR'),
+      Buffer.from([0]),
+      Buffer.from(['M', 0]),
+      cstr(msg),
+      Buffer.from([0]),
       Buffer.from([0]),
     ]);
     send(packet(MSG.ERROR, fields));
@@ -113,12 +146,12 @@ const server = net.createServer((sock) => {
     for (const f of fields) {
       const name = cstr(f.name);
       const meta = Buffer.alloc(18);
-      meta.writeInt32BE(0, 0);          // table oid
-      meta.writeInt16BE(0, 4);          // column attnum
+      meta.writeInt32BE(0, 0); // table oid
+      meta.writeInt16BE(0, 4); // column attnum
       meta.writeInt32BE(f.dataType || 25, 6); // type oid (default text)
-      meta.writeInt16BE(-1, 10);        // typlen
-      meta.writeInt32BE(-1, 12);        // typmod
-      meta.writeInt16BE(0, 16);         // format: text
+      meta.writeInt16BE(-1, 10); // typlen
+      meta.writeInt32BE(-1, 12); // typmod
+      meta.writeInt16BE(0, 16); // format: text
       parts.push(name, meta);
     }
     send(packet(MSG.ROW_DESC, Buffer.concat(parts)));
@@ -171,7 +204,8 @@ const server = net.createServer((sock) => {
         if (buf.length < len) return;
         const body = buf.subarray(4, len);
         const code = body.readInt32BE(0);
-        if (code === 80877103) { // SSLRequest — say no
+        if (code === 80877103) {
+          // SSLRequest — say no
           buf = buf.subarray(len);
           send(Buffer.from('N'));
           continue;
@@ -189,9 +223,12 @@ const server = net.createServer((sock) => {
           }
           buf = buf.subarray(len);
           phase = 'ready';
-          const authOk = Buffer.alloc(4); authOk.writeInt32BE(0, 0);
+          const authOk = Buffer.alloc(4);
+          authOk.writeInt32BE(0, 0);
           send(packet(MSG.AUTH_OK, authOk));
-          const keys = Buffer.alloc(8); keys.writeInt32BE(123456, 0); keys.writeInt32BE(567890, 4);
+          const keys = Buffer.alloc(8);
+          keys.writeInt32BE(123456, 0);
+          keys.writeInt32BE(567890, 4);
           send(packet(MSG.BACKEND_KEY, keys));
           send(packet(MSG.PARAM_STATUS, cstrings(['server_version', '16.2'])));
           send(packet(MSG.PARAM_STATUS, cstrings(['client_encoding', 'UTF8'])));
@@ -213,70 +250,101 @@ const server = net.createServer((sock) => {
       const body = buf.subarray(5, 1 + len);
       buf = buf.subarray(1 + len);
 
-      if (type === 0x51) { // Query (simple)
+      if (type === 0x51) {
+        // Query (simple)
         const [sql] = str(body, 0);
         sql_last = sql;
         await execSimple(sql);
         await readyForQuery();
-      } else if (type === 0x50) { // Parse
+      } else if (type === 0x50) {
+        // Parse
         const [name, o1] = str(body, 0);
         const [sql, o2] = str(body, o1);
         sql_last = sql;
         unnamed.prepared = { sql, oids: [] };
         send(packet(MSG.PARSE_COMPLETE, Buffer.alloc(0)));
-      } else if (type === 0x42) { // Bind
+      } else if (type === 0x42) {
+        // Bind
         const [portal, o1] = str(body, 0);
         const [psrc, o2] = str(body, o1);
         const nFmt = body.readInt16BE(o2);
         const fmts = [];
         let off = o2 + 2;
-        for (let i = 0; i < nFmt; i++) { fmts.push(body.readInt16BE(off)); off += 2; }
-        const nPar = body.readInt16BE(off); off += 2;
+        for (let i = 0; i < nFmt; i++) {
+          fmts.push(body.readInt16BE(off));
+          off += 2;
+        }
+        const nPar = body.readInt16BE(off);
+        off += 2;
         const params = [];
         for (let i = 0; i < nPar; i++) {
-          const l = body.readInt32BE(off); off += 4;
-          if (l === -1) { params.push(null); continue; }
+          const l = body.readInt32BE(off);
+          off += 4;
+          if (l === -1) {
+            params.push(null);
+            continue;
+          }
           const isBin = (fmts.length === 1 ? fmts[0] : fmts[i]) === 1;
-          const raw = body.subarray(off, off + l); off += l;
+          const raw = body.subarray(off, off + l);
+          off += l;
           params.push(isBin ? raw : raw.toString('utf8'));
         }
-        const nRfmt = body.readInt16BE(off); off += 2;
+        const nRfmt = body.readInt16BE(off);
+        off += 2;
         const rfmts = [];
-        for (let i = 0; i < nRfmt; i++) { rfmts.push(body.readInt16BE(off)); off += 2; }
+        for (let i = 0; i < nRfmt; i++) {
+          rfmts.push(body.readInt16BE(off));
+          off += 2;
+        }
         unnamed.bound = { ...unnamed.prepared, params };
         send(packet(MSG.BIND_COMPLETE, Buffer.alloc(0)));
-      } else if (type === 0x44) { // Describe (portal or statement)
+      } else if (type === 0x44) {
+        // Describe (portal or statement)
         const kind = body[0];
         if (kind === 0x50 && unnamed.bound) {
           const { sql, params } = unnamed.bound;
           try {
             const res = await runQuery(describeWrapped(sql), params);
             const fields = res.fields || [];
-            if (fields.length === 0) { send(packet(MSG.NO_DATA, Buffer.alloc(0))); }
-            else {
+            if (fields.length === 0) {
+              send(packet(MSG.NO_DATA, Buffer.alloc(0)));
+            } else {
               emitRowDescription(fields);
             }
-          } catch (e) { emitError(e); }
+          } catch (e) {
+            emitError(e);
+          }
         } else if (kind === 0x53 && unnamed.prepared) {
           send(packet(MSG.PARSE_COMPLETE, Buffer.alloc(0)));
         }
-      } else if (type === 0x45) { // Execute
+      } else if (type === 0x45) {
+        // Execute
         const [portal, o1] = str(body, 0);
         const maxRows = body.readInt32BE(o1);
         const job = unnamed.bound || unnamed.prepared;
-        if (!job) { emitError(new Error('no bound statement')); await readyForQuery(); continue; }
+        if (!job) {
+          emitError(new Error('no bound statement'));
+          await readyForQuery();
+          continue;
+        }
         try {
           const res = await runQuery(job.sql, job.params || []);
           emitResult(res);
-        } catch (e) { emitError(e); }
-      } else if (type === 0x53) { // Sync
+        } catch (e) {
+          emitError(e);
+        }
+      } else if (type === 0x53) {
+        // Sync
         await readyForQuery();
-      } else if (type === 0x58) { // Terminate
+      } else if (type === 0x58) {
+        // Terminate
         sock.end();
         return;
-      } else if (type === 0x43) { // Close
+      } else if (type === 0x43) {
+        // Close
         send(packet(MSG.CLOSE_COMPLETE, Buffer.alloc(0)));
-      } else if (type === 0x66) { // Flush
+      } else if (type === 0x66) {
+        // Flush
         // nothing buffered — no-op
       } else {
         emitError(new Error(`unsupported message type 0x${type.toString(16)}`));

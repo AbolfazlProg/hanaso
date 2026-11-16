@@ -41,15 +41,15 @@ export function glyphsIntroducedByStation(stationSlug: string): KanaItem[] {
  * decodable once the rule is taught.
  */
 const RULE_CHAR_STATIONS: Record<string, string> = {
-  'ゃ': 'stn-kana-h6',
-  'ゅ': 'stn-kana-h6',
-  'ょ': 'stn-kana-h6',
-  'っ': 'stn-kana-h13',
-  'ー': 'stn-kana-k8',
+  ゃ: 'stn-kana-h6',
+  ゅ: 'stn-kana-h6',
+  ょ: 'stn-kana-h6',
+  っ: 'stn-kana-h13',
+  ー: 'stn-kana-k8',
   // katakana small yoon shares the h6 rule but only appears in katakana words
-  'ャ': 'stn-kana-h6',
-  'ュ': 'stn-kana-h6',
-  'ョ': 'stn-kana-h6',
+  ャ: 'stn-kana-h6',
+  ュ: 'stn-kana-h6',
+  ョ: 'stn-kana-h6',
 };
 
 export interface TaughtScope {

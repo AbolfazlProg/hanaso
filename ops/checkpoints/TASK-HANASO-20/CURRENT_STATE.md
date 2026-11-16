@@ -8,16 +8,16 @@
 
 ## وضعیت فنی
 
-| محور | وضعیت |
-| --- | --- |
-| تست unit+integration | ✅ 718/718 (مبنا ۶۹۲؛ +۲۶؛ هیچ حذف/تضعیف) |
-| EQA | ✅ 37/37 · صفر waiver فعال |
-| typecheck / lint | ✅ / ✅ |
-| E2E مرورگری | ✅ 22/22 (QA instance، in-memory) |
-| Responsive | ✅ 31/31 + صفر خطای JS |
-| بیلد production | ✅ (شامل `ƒ Proxy (Middleware)`) |
-| PG واقعی (integration-pg) | ⚠️ اجرا نشد — نیازمند `TEST_DATABASE_URL` به سرور PG؛ در Sandbox نبود |
-| Deploy به VPS | ⚠️ **انجام نشد** — نیازمند اجرای دستور مالک روی VPS (OWNER-COMMAND v11 آماده است) |
+| محور                      | وضعیت                                                                             |
+| ------------------------- | --------------------------------------------------------------------------------- |
+| تست unit+integration      | ✅ 718/718 (مبنا ۶۹۲؛ +۲۶؛ هیچ حذف/تضعیف)                                         |
+| EQA                       | ✅ 37/37 · صفر waiver فعال                                                        |
+| typecheck / lint          | ✅ / ✅                                                                           |
+| E2E مرورگری               | ✅ 22/22 (QA instance، in-memory)                                                 |
+| Responsive                | ✅ 31/31 + صفر خطای JS                                                            |
+| بیلد production           | ✅ (شامل `ƒ Proxy (Middleware)`)                                                  |
+| PG واقعی (integration-pg) | ⚠️ اجرا نشد — نیازمند `TEST_DATABASE_URL` به سرور PG؛ در Sandbox نبود             |
+| Deploy به VPS             | ⚠️ **انجام نشد** — نیازمند اجرای دستور مالک روی VPS (OWNER-COMMAND v11 آماده است) |
 
 ## شاخه/انتشار
 

@@ -43,15 +43,15 @@ sound /n/ in two scripts: unanswerable by listening (BUG-026).
 
 ## 2. The fix (all three defects + label)
 
-| # | Change | File |
-| --- | --- | --- |
-| A | Assessment page attaches `promptAudio` for kana-listening/kana-recall (`kanaAudioUrls`) and rule-listening (`hostWordAudioUrls`, promptJa stripped) — mirrors the journey page contract exactly; recognition/decode never get sound (the sound IS the answer there) | assessment/page.tsx |
-| A | MasteryGate renders the listening-question panel (replay button + auto-play on question change, normal speed 1.0, LRU-cached audio, honest no-asset degradation) | mastery-gate.tsx |
-| B | **Rebank: 5 items × 5 measures = 25.** One miss = 4/5 = 0.8 ≥ 0.8 ⇒ still a PASS (recoverable). Two misses = 0.6 < 0.8 ⇒ remediate. The cliff became a graded slope; the 0.9 weighted now also meaningfully binds (two-miss weighted ≈ 0.92 still passes, three misses ≈ 0.88 fails) | chapter-kana01.exercises.ts |
-| B | 12 new items authored (m1-4, m1-5, m2-4, m2-5, m3-4, m3-5, m4-3, m4-4, m4-5, m5-3, m5-4, m5-5) + 5 existing items' options/rationales fixed (m2-1/2/3 sound-named rationales, m2-3 katakana script-explicit prompt + katakana distractors, m5-1 ン→ぬ so every distractor differs in sound, m5-2 rationale names /wa/ vs /wo/) | chapter-kana01.exercises.ts |
-| C | With audio attached + distractors sound-distinct, guessing odds on M2∪M5 collapse from "only path" to "worst case" — the construct is now hearable | — |
-| D | M5 label: «تمایز شنیداری دو خط کانا» — states what the items actually measure | chapter-kana01.ts |
-| E | Gate copy: «ده پرسش» → real count; intro no longer links a kana chapter to a dialogue replay with dialogue-specific instructions | fa.ts, mastery-gate.tsx |
+| #   | Change                                                                                                                                                                                                                                                                                                                         | File                        |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- |
+| A   | Assessment page attaches `promptAudio` for kana-listening/kana-recall (`kanaAudioUrls`) and rule-listening (`hostWordAudioUrls`, promptJa stripped) — mirrors the journey page contract exactly; recognition/decode never get sound (the sound IS the answer there)                                                            | assessment/page.tsx         |
+| A   | MasteryGate renders the listening-question panel (replay button + auto-play on question change, normal speed 1.0, LRU-cached audio, honest no-asset degradation)                                                                                                                                                               | mastery-gate.tsx            |
+| B   | **Rebank: 5 items × 5 measures = 25.** One miss = 4/5 = 0.8 ≥ 0.8 ⇒ still a PASS (recoverable). Two misses = 0.6 < 0.8 ⇒ remediate. The cliff became a graded slope; the 0.9 weighted now also meaningfully binds (two-miss weighted ≈ 0.92 still passes, three misses ≈ 0.88 fails)                                           | chapter-kana01.exercises.ts |
+| B   | 12 new items authored (m1-4, m1-5, m2-4, m2-5, m3-4, m3-5, m4-3, m4-4, m4-5, m5-3, m5-4, m5-5) + 5 existing items' options/rationales fixed (m2-1/2/3 sound-named rationales, m2-3 katakana script-explicit prompt + katakana distractors, m5-1 ン→ぬ so every distractor differs in sound, m5-2 rationale names /wa/ vs /wo/) | chapter-kana01.exercises.ts |
+| C   | With audio attached + distractors sound-distinct, guessing odds on M2∪M5 collapse from "only path" to "worst case" — the construct is now hearable                                                                                                                                                                             | —                           |
+| D   | M5 label: «تمایز شنیداری دو خط کانا» — states what the items actually measure                                                                                                                                                                                                                                                  | chapter-kana01.ts           |
+| E   | Gate copy: «ده پرسش» → real count; intro no longer links a kana chapter to a dialogue replay with dialogue-specific instructions                                                                                                                                                                                               | fa.ts, mastery-gate.tsx     |
 
 ### New-item authoring rules (all verified mechanically, see the test)
 
@@ -68,17 +68,17 @@ sound /n/ in two scripts: unanswerable by listening (BUG-026).
 
 ## 3. Gate arithmetic — the property test (tests/unit/h25-gate-integrity.test.ts)
 
-| Scenario | Expectation | Result |
-| --- | --- | --- |
-| All 25 correct | passed (weighted 1.0) | ✓ |
-| ONE miss in one measure (all 5 measures each) | still **passed** (0.8 ≥ 0.8, weighted ≈ 0.96) | ✓ |
-| TWO misses in one measure (all 5 measures each) | remediate + that measure weak + remediation stations listed | ✓ |
-| One miss in two different measures | still passed (each measure at its floor, weighted 0.96) | ✓ |
-| Bank shape | exactly 5 per measure, 25 total | ✓ |
-| Every kana-listening item has committed opus+m4a asset | ✓ (10/10) | ✓ |
-| No option set carries the target sound twice | ✓ | ✓ |
-| Listening rationales speak about SOUND | ✓ | ✓ |
-| M5 label matches the measured construct | ✓ | ✓ |
+| Scenario                                               | Expectation                                                 | Result |
+| ------------------------------------------------------ | ----------------------------------------------------------- | ------ |
+| All 25 correct                                         | passed (weighted 1.0)                                       | ✓      |
+| ONE miss in one measure (all 5 measures each)          | still **passed** (0.8 ≥ 0.8, weighted ≈ 0.96)               | ✓      |
+| TWO misses in one measure (all 5 measures each)        | remediate + that measure weak + remediation stations listed | ✓      |
+| One miss in two different measures                     | still passed (each measure at its floor, weighted 0.96)     | ✓      |
+| Bank shape                                             | exactly 5 per measure, 25 total                             | ✓      |
+| Every kana-listening item has committed opus+m4a asset | ✓ (10/10)                                                   | ✓      |
+| No option set carries the target sound twice           | ✓                                                           | ✓      |
+| Listening rationales speak about SOUND                 | ✓                                                           | ✓      |
+| M5 label matches the measured construct                | ✓                                                           | ✓      |
 
 Full unit suite after the change: **65 files / 764 tests passed** (including
 the two count-sensitive tests updated to the new truth: kana bank 25, FM bank

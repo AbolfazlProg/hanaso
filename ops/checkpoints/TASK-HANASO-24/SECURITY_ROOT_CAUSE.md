@@ -7,13 +7,13 @@
 
 ## 1. Ground truth (re-validated this session)
 
-| Item | Value | Validation |
-| --- | --- | --- |
-| Repo / branch | github.com/AbolfazlProg/hanaso · `fix/TASK-HANASO-24-security` | `git ls-remote` + local clone |
-| Branch base | `af49535` (tip of feat/TASK-HANASO-22 line — 182 commits ahead of main) | `git merge-base`, log |
-| Audit reference | `audit/TASK-HANASO-23 @ d691e25` (CP-07 final synthesis — mission complete) | `git show d691e25` |
-| Production | `1.0.0-hanaso22-r01 @ 3d8b8cc` — read-only for this mission | in branch history |
-| Identity | no accounts; `hanaso_lid` cookie = per-browser UUID | `lib/learner/*`, `middleware.ts` |
+| Item            | Value                                                                       | Validation                       |
+| --------------- | --------------------------------------------------------------------------- | -------------------------------- |
+| Repo / branch   | github.com/AbolfazlProg/hanaso · `fix/TASK-HANASO-24-security`              | `git ls-remote` + local clone    |
+| Branch base     | `af49535` (tip of feat/TASK-HANASO-22 line — 182 commits ahead of main)     | `git merge-base`, log            |
+| Audit reference | `audit/TASK-HANASO-23 @ d691e25` (CP-07 final synthesis — mission complete) | `git show d691e25`               |
+| Production      | `1.0.0-hanaso22-r01 @ 3d8b8cc` — read-only for this mission                 | in branch history                |
+| Identity        | no accounts; `hanaso_lid` cookie = per-browser UUID                         | `lib/learner/*`, `middleware.ts` |
 
 ## 2. Identity architecture as-is
 
@@ -35,13 +35,14 @@ they read userId from body/query instead, defaulting to shared 'poc-user'.
 - `api/attempts/route.ts:45,78-80` — POST: `userId` from body (schema `modules/mastery/types.ts:71` — `z.string().min(1).optional()`, any string, NULL allowed); `PgAttemptRepository.create` re-defaults NULL → `poc-user` (`db/repositories/attempts.ts`: `input.userId ?? POC_DEFAULT_USER_ID`)
 - Schemas accept userId from clients: `modules/progress/types.ts:48`, `modules/mastery/types.ts:71`
 
-**Attack chain (audit-verified, re-confirmed by code):** attacker POSTs `/api/attempts {userId: victim, answers: all-correct}` → server grading creates a *passed* attempt owned by victim → POSTs `/api/progress {userId: victim, event: mastery_passed, attemptId}` → the D-gate ownership check at `api/progress/route.ts:65` (`attempt.userId === userId`) passes because BOTH sides are attacker-supplied → victim's unit flips to `understood`. Any third cookie reads it via GET `?userId=victim`. The `poc-user` default additionally lets anonymous clients poison the shared store (BUG-033).
+**Attack chain (audit-verified, re-confirmed by code):** attacker POSTs `/api/attempts {userId: victim, answers: all-correct}` → server grading creates a _passed_ attempt owned by victim → POSTs `/api/progress {userId: victim, event: mastery_passed, attemptId}` → the D-gate ownership check at `api/progress/route.ts:65` (`attempt.userId === userId`) passes because BOTH sides are attacker-supplied → victim's unit flips to `understood`. Any third cookie reads it via GET `?userId=victim`. The `poc-user` default additionally lets anonymous clients poison the shared store (BUG-033).
 
-Root cause: these two routes predate the learner-identity work (TASK-LEARNING-08/#109); the newer surfaces were migrated, the legacy pair never was — and the repository layer *amplifies* it with its own `poc-user` fallback.
+Root cause: these two routes predate the learner-identity work (TASK-LEARNING-08/#109); the newer surfaces were migrated, the legacy pair never was — and the repository layer _amplifies_ it with its own `poc-user` fallback.
 
 ### RC-2 — Identity cookie is forgeable and stealable (BUG-028/039; mission findings 3+5)
 
 `middleware.ts:41-46` + `lib/learner/identity.ts:54-57`:
+
 - `httpOnly: false` (client JS reads/writes it — `identity.ts` `writeCookieId` sets it via `document.cookie`)
 - **no `Secure`** — value crosses plaintext HTTP
 - value = raw UUID, **no server-side issuance record, no signature** — any client that knows a victim's UUID becomes the victim (forged-cookie IDOR); the server cannot distinguish issued from forged
@@ -78,29 +79,29 @@ Volatile-state register (mission §4 "document the risk"): (a) `PgPracticeSessio
 - `/api/ready` discloses DB mode (`skipped` detail) — operational endpoint, consumed by deploy gates; accepted risk (documented), not changed (changing it risks breaking deploy tooling — out of security scope, no user data).
 - Practice `write` items: `api/practice/route.ts:249` — `payload.answer.kind === 'write' && payload.answer.accepted` grades by client boolean (BUG-031, fabricated LO evidence). Fixing needs server-side stroke grading (a feature) or dropping the kind (a product-behavior change) — **deferred with rationale** in §6; evidence-only surface (never gates the walk, never FSRS, review engine not active).
 - F1 feedback text embeds correct readings on learn surfaces (BUG-029) — content-authoring fix, out of this mission's code scope (documented for the content track).
-- No rate limiting / body-size limits anywhere (T2-B-06/T1-B-10) — noted; a real limiter is infra work (needs product decision on budgets), documented as deferred. The IDOR/identity fixes remove the *cross-user* damage; remaining exposure is self-inflicted rows under one's own identity.
+- No rate limiting / body-size limits anywhere (T2-B-06/T1-B-10) — noted; a real limiter is infra work (needs product decision on budgets), documented as deferred. The IDOR/identity fixes remove the _cross-user_ damage; remaining exposure is self-inflicted rows under one's own identity.
 
 ## 4. Complete endpoint census (mission: "search for ALL similar paths")
 
-| Surface | Method | Identity source | Ownership scoping | Key exposure | Multi-write | Verdict |
-| --- | --- | --- | --- | --- | --- | --- |
-| `/api/progress` | GET/POST | **body/query userId** (client) | ❌ none | — | 1 upsert | **FIX (RC-1)** |
-| `/api/attempts` | GET/POST | **body userId** (client) | GET: ❌ none (all users) | server-graded ✓ | insert (attemptNo retry ✓) | **FIX (RC-1)** |
-| `/api/events` | GET/POST | none | ❌ (global ring) | `user_id` in GET | heap ring | harden (CP-02) |
-| `/api/ready`, `/api/health` | GET | none (ops) | n/a | DB mode (accepted) | n/a | document only |
-| `/api/dialogues/[slug]` | GET | none (public content) | n/a | no keys in bundle | n/a | OK (traversal-blocked) |
-| `/api/curriculum/station` | GET/POST | cookie (guest 401 on POST ✓) | ✓ per-learner | server-graded, reveal at F3 only ✓ | complete = 2 upserts ❌tx | **TX fix (CP-04)** |
-| `/api/curriculum/journey` | GET | cookie (guest → honest empty) | ✓ | stripped ✓ | read-only | OK |
-| `/api/curriculum/mastery` | POST | cookie, **no explicit guest 401** (gate 409s guests first — unreachable write) | ✓ | server-graded ✓ | attempt + chapter upsert ❌tx | add 401 + TX (CP-02/04) |
-| `/api/practice` | GET/POST | cookie (guest 401 ✓) | ✓ session ownership checks | `toClientItem` stripped ✓ | complete = 1+N ❌tx, no idempotency | **TX+idempotency (CP-04)** |
-| `/poc/*` pages (6) | RSC | mixed | — | `/poc/practice` ships full key (RC-3); assessment strips ✓ | — | **dev-only gate (CP-03)** |
-| `/` home, `/learn`, `/practice` | RSC | cookie (`resolveLearnerId`) | ✓ per-learner | stripped (audit wire-probed) ✓ | reads only | OK |
+| Surface                         | Method   | Identity source                                                                | Ownership scoping          | Key exposure                                               | Multi-write                         | Verdict                    |
+| ------------------------------- | -------- | ------------------------------------------------------------------------------ | -------------------------- | ---------------------------------------------------------- | ----------------------------------- | -------------------------- |
+| `/api/progress`                 | GET/POST | **body/query userId** (client)                                                 | ❌ none                    | —                                                          | 1 upsert                            | **FIX (RC-1)**             |
+| `/api/attempts`                 | GET/POST | **body userId** (client)                                                       | GET: ❌ none (all users)   | server-graded ✓                                            | insert (attemptNo retry ✓)          | **FIX (RC-1)**             |
+| `/api/events`                   | GET/POST | none                                                                           | ❌ (global ring)           | `user_id` in GET                                           | heap ring                           | harden (CP-02)             |
+| `/api/ready`, `/api/health`     | GET      | none (ops)                                                                     | n/a                        | DB mode (accepted)                                         | n/a                                 | document only              |
+| `/api/dialogues/[slug]`         | GET      | none (public content)                                                          | n/a                        | no keys in bundle                                          | n/a                                 | OK (traversal-blocked)     |
+| `/api/curriculum/station`       | GET/POST | cookie (guest 401 on POST ✓)                                                   | ✓ per-learner              | server-graded, reveal at F3 only ✓                         | complete = 2 upserts ❌tx           | **TX fix (CP-04)**         |
+| `/api/curriculum/journey`       | GET      | cookie (guest → honest empty)                                                  | ✓                          | stripped ✓                                                 | read-only                           | OK                         |
+| `/api/curriculum/mastery`       | POST     | cookie, **no explicit guest 401** (gate 409s guests first — unreachable write) | ✓                          | server-graded ✓                                            | attempt + chapter upsert ❌tx       | add 401 + TX (CP-02/04)    |
+| `/api/practice`                 | GET/POST | cookie (guest 401 ✓)                                                           | ✓ session ownership checks | `toClientItem` stripped ✓                                  | complete = 1+N ❌tx, no idempotency | **TX+idempotency (CP-04)** |
+| `/poc/*` pages (6)              | RSC      | mixed                                                                          | —                          | `/poc/practice` ships full key (RC-3); assessment strips ✓ | —                                   | **dev-only gate (CP-03)**  |
+| `/` home, `/learn`, `/practice` | RSC      | cookie (`resolveLearnerId`)                                                    | ✓ per-learner              | stripped (audit wire-probed) ✓                             | reads only                          | OK                         |
 
 ## 5. Fix design (per phase; details in each phase doc)
 
 **CP-02 — identity + IDOR (this doc → IDOR_REMEDIATION.md + AUTH_SESSION_HARDENING.md)**
 
-1. *Signed session token* (real session architecture, stateless — fits no-accounts product, edge middleware, additive-only):
+1. _Signed session token_ (real session architecture, stateless — fits no-accounts product, edge middleware, additive-only):
    - cookie value becomes `<uuid>.<base64url(hmac-sha256(HANASO_SESSION_SECRET, "hanaso_lid:"+uuid))>`; same name `hanaso_lid`, same 365d/lax.
    - Middleware (edge, WebCrypto) mints on GET/HEAD only — **no more mint-and-proceed on state-changing requests** (closes BUG-039: cookie-less POST → routes see guest → 401, the in-code guards become live).
    - Existing valid-shape raw-uuid cookies are **re-issued signed with the SAME uuid** on first GET (one-time transition; no re-keying, no orphaned progress; residual window documented in AUTH_SESSION_HARDENING.md).
@@ -108,7 +109,7 @@ Volatile-state register (mission §4 "document the risk"): (a) `PgPracticeSessio
    - Cookie flags: `httpOnly: true`, `secure` (https/x-forwarded-proto aware; 127.0.0.1 stays usable for QA), `sameSite: 'lax'` (Strict would mint fresh identities for users arriving from external links — identity loss; Lax already blocks cross-site POST fetches → CSRF for our JSON-only mutating APIs is closed by Lax + content-type; analysis in AUTH_SESSION_HARDENING.md).
    - Client twin: stops writing the cookie (server owns it); keeps localStorage mirror for walk-snapshot namespacing only.
    - Secret: `HANASO_SESSION_SECRET` env; dev/test fallback constant + one-time warn (determinism for tests); RELEASE_CANDIDATE gates on a real secret in prod.
-2. *IDOR routes*: `/api/progress` + `/api/attempts` resolve identity from cookie only; `userId` removed from request schemas (zod strips unknown → stale clients ignored, never trusted); GET attempts scoped to the caller (`listForUser`); repo-level `poc-user` fallback removed from the request path (repository keeps the constant only for seeding/history); D-gate check now compares two server-derived values (chain dead). Explicit guest 401 on mastery POST for consistency.
+2. _IDOR routes_: `/api/progress` + `/api/attempts` resolve identity from cookie only; `userId` removed from request schemas (zod strips unknown → stale clients ignored, never trusted); GET attempts scoped to the caller (`listForUser`); repo-level `poc-user` fallback removed from the request path (repository keeps the constant only for seeding/history); D-gate check now compares two server-derived values (chain dead). Explicit guest 401 on mastery POST for consistency.
 
 **CP-03 — answer key (→ ANSWER_KEY_EXPOSURE_FIX.md)**: all six `/poc/*` pages become **dev/test-only** (`NODE_ENV==='production'` → `notFound()`): in production they 404 — no RSC payload, no key, nothing to strip; in dev they keep working (integration flows, demos). The H22 real surfaces are untouched. Verified by direct GET + browser test in CP-05 (scenario 12).
 
@@ -116,13 +117,13 @@ Volatile-state register (mission §4 "document the risk"): (a) `PgPracticeSessio
 
 ## 6. Deferred items (explicit, with rationale)
 
-| Item | Why deferred | Owner track |
-| --- | --- | --- |
-| BUG-031 write-kind client grading | fix = new server grading feature or product change; evidence-only, no gate/FSRS impact | product decision → next mission |
-| BUG-029 F1 text content leak | content authoring (60+ strings), not code | content mission |
-| Rate limiting / body-size limits | needs product budgets; cross-user damage removed by CP-02 | infra follow-up |
-| PG-backed in-flight sessions + event store | availability (restart/multi-instance), not confidentiality; single VPS today | next data mission |
-| `/api/ready` DB-mode disclosure | ops endpoint, consumed by deploy tooling | accepted risk |
+| Item                                       | Why deferred                                                                           | Owner track                     |
+| ------------------------------------------ | -------------------------------------------------------------------------------------- | ------------------------------- |
+| BUG-031 write-kind client grading          | fix = new server grading feature or product change; evidence-only, no gate/FSRS impact | product decision → next mission |
+| BUG-029 F1 text content leak               | content authoring (60+ strings), not code                                              | content mission                 |
+| Rate limiting / body-size limits           | needs product budgets; cross-user damage removed by CP-02                              | infra follow-up                 |
+| PG-backed in-flight sessions + event store | availability (restart/multi-instance), not confidentiality; single VPS today           | next data mission               |
+| `/api/ready` DB-mode disclosure            | ops endpoint, consumed by deploy tooling                                               | accepted risk                   |
 
 ## 7. Evidence index (primary locations)
 

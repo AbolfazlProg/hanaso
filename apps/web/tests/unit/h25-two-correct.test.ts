@@ -36,10 +36,7 @@ const ch1 = getChapter('kana-foundation-01')!;
 const exercises = Object.values(ch1.exercises) as Exercise[];
 
 // registry: kanaId -> {glyph, romaji, script}
-const kanaSrc = readFileSync(
-  path.join(web, 'src/modules/curriculum/content/kana-items.ts'),
-  'utf8',
-);
+const kanaSrc = readFileSync(path.join(web, 'src/modules/curriculum/content/kana-items.ts'), 'utf8');
 const registry = new Map<string, { glyph: string; romaji: string; script: string }>();
 for (const m of kanaSrc.matchAll(
   /kanaId:\s*'([^']+)',\s*\n\s*glyph:\s*'([^']+)',\s*\n\s*script:\s*'([^']+)',\s*\n\s*row:\s*'([^']+)',\s*\n\s*romaji:\s*'([^']+)'/g,
@@ -133,12 +130,24 @@ test('positive fixture — the remediated prompt passes; a same-sound NON-twin d
 
 test('recall family — all 19 remediated recall items are script-explicit', () => {
   const recallIds = [
-    'ex-kana-k1-rcl-kata-a', 'ex-kana-k1-rcl-kata-i', 'ex-kana-k2-rcl-kata-ta',
-    'ex-kana-k2-rcl-kata-chi', 'ex-kana-k3-rcl-kata-ra', 'ex-kana-k3-rcl-kata-ri',
-    'ex-kana-k4-rcl-kata-sa', 'ex-kana-k5-rcl-kata-ha', 'ex-kana-k5-rcl-kata-hi',
-    'ex-kana-k6-rcl-kata-n', 'ex-kana-k7-rcl-kata-ka', 'ex-kana-k7-rcl-kata-ki',
-    'ex-kana-k9-rcl-kata-ma', 'ex-kana-k9-rcl-kata-mi', 'ex-kana-k10-rcl-kata-ya',
-    'ex-kana-k11-rcl-kata-na', 'ex-kana-k11-rcl-kata-ni', 'ex-kana-k12-rcl-kata-wa',
+    'ex-kana-k1-rcl-kata-a',
+    'ex-kana-k1-rcl-kata-i',
+    'ex-kana-k2-rcl-kata-ta',
+    'ex-kana-k2-rcl-kata-chi',
+    'ex-kana-k3-rcl-kata-ra',
+    'ex-kana-k3-rcl-kata-ri',
+    'ex-kana-k4-rcl-kata-sa',
+    'ex-kana-k5-rcl-kata-ha',
+    'ex-kana-k5-rcl-kata-hi',
+    'ex-kana-k6-rcl-kata-n',
+    'ex-kana-k7-rcl-kata-ka',
+    'ex-kana-k7-rcl-kata-ki',
+    'ex-kana-k9-rcl-kata-ma',
+    'ex-kana-k9-rcl-kata-mi',
+    'ex-kana-k10-rcl-kata-ya',
+    'ex-kana-k11-rcl-kata-na',
+    'ex-kana-k11-rcl-kata-ni',
+    'ex-kana-k12-rcl-kata-wa',
     'ex-kana-k12-rcl-kata-wo',
   ];
   expect(recallIds.length).toBe(19);
@@ -149,7 +158,7 @@ test('recall family — all 19 remediated recall items are script-explicit', () 
   }
 });
 
-test('the audit\'s named case — あ for the sound of ア is never marked wrong by ambiguity', () => {
+test("the audit's named case — あ for the sound of ア is never marked wrong by ambiguity", () => {
   // The mission's explicit example: a phonetically-correct あ answer for the
   // ア sound must not be graded wrong BY THE AMBIGUITY — the remediated items
   // ask for the script, so あ is now honestly wrong ONLY because the question

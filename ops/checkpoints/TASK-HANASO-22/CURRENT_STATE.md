@@ -14,19 +14,19 @@ from Learn.
 
 ## Phase status
 
-| # | Phase | Status |
-| --- | --- | --- |
-| 0 | Git/state audit + branch + first checkpoint | ✅ DONE (this file, CP-00) |
-| 1 | Scientific research (4 docs in docs/research/) | ✅ DONE (CP-01) |
-| 2 | Learn/Practice/Review architecture design | ✅ DONE (CP-02) |
-| 3 | Kana Practice implementation (Focused + Mixed) | ✅ DONE |
-| 4 | Remove punitive scoring from Learn + feedback redesign | ✅ DONE |
-| 5 | Chapter intros + lesson achievements + milestones | ✅ DONE |
-| 6 | AIZEN seal presentation upgrade + sound effect | ✅ DONE |
-| 7 | Chapter 01 → two sections + journey icons + locked feedback | ✅ DONE |
-| 8 | Button/interaction feedback audit | ✅ DONE |
-| 9 | Full testing + regression | ✅ DONE (E2E 25/25 + H21 44/44 + unit 737 + integ 32 + EQA 37) |
-| 10 | Release prep | 🔶 BRANCH READY (production build green; owner decides deploy) |
+| #   | Phase                                                       | Status                                                         |
+| --- | ----------------------------------------------------------- | -------------------------------------------------------------- |
+| 0   | Git/state audit + branch + first checkpoint                 | ✅ DONE (this file, CP-00)                                     |
+| 1   | Scientific research (4 docs in docs/research/)              | ✅ DONE (CP-01)                                                |
+| 2   | Learn/Practice/Review architecture design                   | ✅ DONE (CP-02)                                                |
+| 3   | Kana Practice implementation (Focused + Mixed)              | ✅ DONE                                                        |
+| 4   | Remove punitive scoring from Learn + feedback redesign      | ✅ DONE                                                        |
+| 5   | Chapter intros + lesson achievements + milestones           | ✅ DONE                                                        |
+| 6   | AIZEN seal presentation upgrade + sound effect              | ✅ DONE                                                        |
+| 7   | Chapter 01 → two sections + journey icons + locked feedback | ✅ DONE                                                        |
+| 8   | Button/interaction feedback audit                           | ✅ DONE                                                        |
+| 9   | Full testing + regression                                   | ✅ DONE (E2E 25/25 + H21 44/44 + unit 737 + integ 32 + EQA 37) |
+| 10  | Release prep                                                | 🔶 BRANCH READY (production build green; owner decides deploy) |
 
 ## Git state
 
@@ -43,7 +43,7 @@ from Learn.
 
 - Monorepo `apps/web` (Next.js 16 App Router, pnpm, TS strict), modules:
   `audio, character, curriculum, dialogue, fsrs, home, mastery, practice, progress,
-  shared, writing`. DB: Drizzle + PostgreSQL, schemas `content` + `app`
+shared, writing`. DB: Drizzle + PostgreSQL, schemas `content` + `app`
   (station_progress, chapter_progress, lesson_progress, dialogue_mastery_attempts).
 - Chapters (content-as-code, `src/modules/curriculum/content/`):
   1. `kana-foundation-01` (L1): 33 stations (h0..h15, k1..k13, k12-foreign,
@@ -99,7 +99,7 @@ from Learn.
   action box ALSO shows Lock (duplicate lock confirmed — section-journey.tsx:240-243).
   Locked row = non-clickable `div` with only a `title` tooltip (no shake/reason).
 - Station types: `anchor, dialogue, vocab, grammar, expression, listen, structure,
-  practice, integrate, mastery, review, deepdive, kana` — no per-type icon identity.
+practice, integrate, mastery, review, deepdive, kana` — no per-type icon identity.
 
 ### Assets available for Practice
 
@@ -122,18 +122,19 @@ from Learn.
 MISSION COMPLETE — all 10 phases delivered, tested, and pushed, PLUS the
 delivery layer (CP-04): OWNER-COMMAND.txt **v13** cut for THIS release.
 Recovery for any future session: this file + CHECKPOINT_LOG.md + TEST_RESULTS.md
-+ RELEASE_VALIDATION.md.
-Delivery layer state (2026-11-13): product target D = `3d8b8cc` (docs-only
-commits after it never touch product code), version `1.0.0-hanaso22-r01`,
-R/W unchanged (5870eaf3 / d4736bd8…). Live production verified at
-1.0.0-hanaso21-r01 @ 33304b1f (the owner ran the v12 line ~4h earlier), so the
-v13 line jumps n21→n22. The exact one-liner was drilled: run-h22.sh 92/92
-(the line executed verbatim), run-h21/run-deploy05 retired with SKIP,
-run-deploy04 regression 140/140, and the REAL-network codeload download at R
-hash-matched the pin (api.github.com honestly 403 from this sandbox IP).
-Remaining for the OWNER: review the branch; run the v13 line from
-OWNER-COMMAND.txt when ready (root, one paste; `status`/`rollback` optional
-subcommands inside the quotes).
-Out-of-scope leftovers (deliberate): FSRS M2 engine, Library, Vocabulary/Grammar/
-Kanji/Speaking content (researched + architected only), PG integration re-run,
-VOICEVOX hostword generation on the VPS.
+
+- RELEASE_VALIDATION.md.
+  Delivery layer state (2026-11-13): product target D = `3d8b8cc` (docs-only
+  commits after it never touch product code), version `1.0.0-hanaso22-r01`,
+  R/W unchanged (5870eaf3 / d4736bd8…). Live production verified at
+  1.0.0-hanaso21-r01 @ 33304b1f (the owner ran the v12 line ~4h earlier), so the
+  v13 line jumps n21→n22. The exact one-liner was drilled: run-h22.sh 92/92
+  (the line executed verbatim), run-h21/run-deploy05 retired with SKIP,
+  run-deploy04 regression 140/140, and the REAL-network codeload download at R
+  hash-matched the pin (api.github.com honestly 403 from this sandbox IP).
+  Remaining for the OWNER: review the branch; run the v13 line from
+  OWNER-COMMAND.txt when ready (root, one paste; `status`/`rollback` optional
+  subcommands inside the quotes).
+  Out-of-scope leftovers (deliberate): FSRS M2 engine, Library, Vocabulary/Grammar/
+  Kanji/Speaking content (researched + architected only), PG integration re-run,
+  VOICEVOX hostword generation on the VPS.

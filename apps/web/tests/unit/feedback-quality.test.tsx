@@ -105,15 +105,16 @@ describe('BUG-007 — the rationale renders in the feedback panel', () => {
     // stub the grade endpoint: server-shaped WRONG outcome with the a-rationale
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () =>
-        new Response(
-          JSON.stringify({
-            data: {
-              outcome: gradeExerciseAnswer(dec1, { kind: 'option', optionId: 'a' }, 1),
-            },
-          }),
-          { status: 200 },
-        ),
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              data: {
+                outcome: gradeExerciseAnswer(dec1, { kind: 'option', optionId: 'a' }, 1),
+              },
+            }),
+            { status: 200 },
+          ),
       ),
     );
     const clientEx = toClientExercise(dec1);

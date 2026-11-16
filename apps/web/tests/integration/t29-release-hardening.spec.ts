@@ -44,7 +44,7 @@ const stn = ch1.stations.find((s) =>
 )!;
 
 describe('TASK-HANASO-29 F2 — grade action is station-scoped like hint', () => {
-  it('grades a station\'s OWN practice exercise (positive control — unchanged behavior)', async () => {
+  it("grades a station's OWN practice exercise (positive control — unchanged behavior)", async () => {
     const correctOptionId = ex.correctOptionId!;
     const res = await stationPost(
       post({

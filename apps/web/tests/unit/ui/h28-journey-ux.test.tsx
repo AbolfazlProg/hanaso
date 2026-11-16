@@ -37,12 +37,7 @@ describe('TASK-28 lessonAchievementsOf — richer honest chips', () => {
         { kind: 'kana-card' },
         {
           kind: 'example-set',
-          examples: [
-            { role: 'anchor' },
-            { role: 'reading' },
-            { role: 'reading' },
-            { role: 'faded' },
-          ],
+          examples: [{ role: 'anchor' }, { role: 'reading' }, { role: 'reading' }, { role: 'faded' }],
         },
         { kind: 'exercise', exerciseIds: ['e1', 'e2'] },
         { kind: 'writing-practice' },
@@ -67,9 +62,7 @@ describe('TASK-28 lessonAchievementsOf — richer honest chips', () => {
   it('A2: a practice station gets the exercise-type fingerprint, not one generic chip', () => {
     const station = {
       type: 'practice',
-      blocks: [
-        { kind: 'exercise', exerciseIds: ['a', 'b', 'c', 'd', 'e', 'f'] },
-      ],
+      blocks: [{ kind: 'exercise', exerciseIds: ['a', 'b', 'c', 'd', 'e', 'f'] }],
     };
     const chips = lessonAchievementsOf(station, {
       a: ex('a', 'kana-recognition'),
@@ -96,10 +89,7 @@ describe('TASK-28 lessonAchievementsOf — richer honest chips', () => {
   it('A4: no clientExercises map → generic chip still works (pure function contract)', () => {
     const station = {
       type: 'lesson',
-      blocks: [
-        { kind: 'kana-card' },
-        { kind: 'exercise', exerciseIds: ['y'] },
-      ],
+      blocks: [{ kind: 'kana-card' }, { kind: 'exercise', exerciseIds: ['y'] }],
     };
     const chips = lessonAchievementsOf(station);
     expect(chips).toContain('با ۱ شکل جدید آشنا شدی');
@@ -205,31 +195,32 @@ describe('TASK-28 Subagent C fix C1 — current-row = exact nextStationSlug matc
      * (the merge updates existing rows only) — only availability changes. */
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () =>
-        new Response(
-          JSON.stringify({
-            data: {
-              nextStationSlug: 'stn-future',
-              sections: [
-                {
-                  slug: 'section-a',
-                  titleFa: 'بخش آزمایشی',
-                  status: 'in_progress',
-                  coreCompleted: 3,
-                  coreTotal: 4,
-                  isFocus: true,
-                  rows: [
-                    { slug: 'stn-done', availability: 'completed', action: 'review' },
-                    { slug: 'stn-frontier', availability: 'completed', action: 'review' },
-                    { slug: 'stn-optional', availability: 'available', action: 'start' },
-                    { slug: 'stn-future', availability: 'available', action: 'start' },
-                  ],
-                },
-              ],
-            },
-          }),
-          { status: 200 },
-        ),
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              data: {
+                nextStationSlug: 'stn-future',
+                sections: [
+                  {
+                    slug: 'section-a',
+                    titleFa: 'بخش آزمایشی',
+                    status: 'in_progress',
+                    coreCompleted: 3,
+                    coreTotal: 4,
+                    isFocus: true,
+                    rows: [
+                      { slug: 'stn-done', availability: 'completed', action: 'review' },
+                      { slug: 'stn-frontier', availability: 'completed', action: 'review' },
+                      { slug: 'stn-optional', availability: 'available', action: 'start' },
+                      { slug: 'stn-future', availability: 'available', action: 'start' },
+                    ],
+                  },
+                ],
+              },
+            }),
+            { status: 200 },
+          ),
       ),
     );
     const { container } = render(
@@ -273,19 +264,20 @@ describe('TASK-28 Subagent C fix C2 — re-select after a wrong grade', () => {
   beforeEach(() => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () =>
-        new Response(
-          JSON.stringify({
-            data: {
-              outcome: {
-                correct: false,
-                level: 2,
-                feedbackFa: 'نه — این «آ» است.',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              data: {
+                outcome: {
+                  correct: false,
+                  level: 2,
+                  feedbackFa: 'نه — این «آ» است.',
+                },
               },
-            },
-          }),
-          { status: 200 },
-        ),
+            }),
+            { status: 200 },
+          ),
       ),
     );
   });

@@ -205,7 +205,9 @@ describe('AizenSeal — TASK-HANASO-21 the completion seal', () => {
     const css = readFileSync('src/styles/globals.css', 'utf8');
     expect(css).toContain('aizen-seal-stamp');
     expect(css).toMatch(/animation: aizen-seal-stamp calc\(var\(--dur-ceremonial\)/);
-    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)[\s\S]*\.aizen-seal-stamp[\s\S]*animation: hanaso-fade-in var\(--dur-fast\) both;/);
+    expect(css).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.aizen-seal-stamp[\s\S]*animation: hanaso-fade-in var\(--dur-fast\) both;/,
+    );
     const tokens = readFileSync('src/styles/tokens.css', 'utf8');
     expect(tokens).toMatch(/--dur-ceremonial: 0ms; \/\* seal → simple fade/);
   });

@@ -434,7 +434,9 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
             className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px disabled:opacity-45"
           >
             {/* TASK-HANASO-22 §11: a slow network must SHOW the click registered. */}
-            {submitting ? <Loader2 aria-hidden className="size-4 motion-safe:animate-[spin_var(--dur-spin)_linear_infinite]" /> : null}
+            {submitting ? (
+              <Loader2 aria-hidden className="size-4 motion-safe:animate-[spin_var(--dur-spin)_linear_infinite]" />
+            ) : null}
             {fa.curriculum.gateSubmit}
           </button>
         )}

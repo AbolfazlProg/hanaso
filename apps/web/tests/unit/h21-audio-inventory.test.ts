@@ -61,10 +61,7 @@ test('audio honesty gate — no playable word is an orphan (committed or covered
     }
   }
   // the kana cards' host words (kana-items.ts `word:` fields)
-  const kanaItemsSrc = readFileSync(
-    path.join(web, 'src', 'modules', 'curriculum', 'content', 'kana-items.ts'),
-    'utf8',
-  );
+  const kanaItemsSrc = readFileSync(path.join(web, 'src', 'modules', 'curriculum', 'content', 'kana-items.ts'), 'utf8');
   for (const m of kanaItemsSrc.matchAll(/word:\s*'([^']+)'/g)) {
     if (m[1]) needed.add(m[1]);
   }
@@ -80,11 +77,11 @@ test('audio honesty gate — no playable word is an orphan (committed or covered
   };
 
   // ---- 3. the generation surface (what the next VPS run regenerates) ------
-  const listed = spawnSync(
-    process.execPath,
-    ['apps/web/scripts/tl08-a4-audio-gen.mjs', '--list'],
-    { cwd: repoRoot, encoding: 'utf8', timeout: 60_000 },
-  );
+  const listed = spawnSync(process.execPath, ['apps/web/scripts/tl08-a4-audio-gen.mjs', '--list'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    timeout: 60_000,
+  });
   expect(listed.status, `gen --list failed: ${listed.stderr}`).toBe(0);
   const genSurface = new Set(JSON.parse(listed.stdout.trim()) as string[]);
 
@@ -109,6 +106,8 @@ test('audio honesty gate — no playable word is an orphan (committed or covered
     .filter((w) => !basicKana.has(w))
     .filter((w) => !committed(w))
     .sort();
-  console.log(`[h21-audio] surface=${needed.size} committed=${needed.size - pending.length} pendingVpsRun=${pending.length}`);
+  console.log(
+    `[h21-audio] surface=${needed.size} committed=${needed.size - pending.length} pendingVpsRun=${pending.length}`,
+  );
   if (pending.length > 0) console.log(`[h21-audio] pending (next VPS VOICEVOX run): ${pending.join(' ')}`);
 });

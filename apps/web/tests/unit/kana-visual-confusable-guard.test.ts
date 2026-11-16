@@ -29,10 +29,25 @@ import type { Exercise } from '@/modules/curriculum/types';
 
 /** small kana → full-size counterpart (folding table) */
 const SMALL_TO_FULL: Record<string, string> = {
-  っ: 'つ', ゃ: 'や', ゅ: 'ゆ', ょ: 'よ', ゎ: 'わ',
-  ぁ: 'あ', ぃ: 'い', ぅ: 'う', ぇ: 'え', ぉ: 'お',
-  ァ: 'ア', ィ: 'イ', ゥ: 'ウ', ェ: 'エ', ォ: 'オ',
-  ッ: 'ツ', ャ: 'ヤ', ュ: 'ユ', ョ: 'ヨ',
+  っ: 'つ',
+  ゃ: 'や',
+  ゅ: 'ゆ',
+  ょ: 'よ',
+  ゎ: 'わ',
+  ぁ: 'あ',
+  ぃ: 'い',
+  ぅ: 'う',
+  ぇ: 'え',
+  ぉ: 'お',
+  ァ: 'ア',
+  ィ: 'イ',
+  ゥ: 'ウ',
+  ェ: 'エ',
+  ォ: 'オ',
+  ッ: 'ツ',
+  ャ: 'ヤ',
+  ュ: 'ユ',
+  ョ: 'ヨ',
 };
 
 function foldKana(s: string): string {
@@ -72,7 +87,9 @@ describe('PRODUCTION-REMEDIATION guards — visually confusable options (inciden
   });
 
   it('the three production defect exercises now use visually distinct, real-word distractors', () => {
-    const byId = new Map(([...KANA_EXERCISES, ...Object.values(PRACTICE_EXERCISES_KANA)] as Exercise[]).map((e) => [e.id, e]));
+    const byId = new Map(
+      ([...KANA_EXERCISES, ...Object.values(PRACTICE_EXERCISES_KANA)] as Exercise[]).map((e) => [e.id, e]),
+    );
     const h6a3 = byId.get('ex-kana-h6-asm-3');
     const h6a4 = byId.get('ex-kana-h6-asm-4');
     const h13a4 = byId.get('ex-kana-h13-asm-4');

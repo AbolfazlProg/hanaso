@@ -6,27 +6,27 @@
 
 ## پارامترهای مأموریت
 
-| پارامتر | مقدار |
-|---|---|
-| شاخه | `fix/HANASO-KANA-CONTENT-REMEDIATION-02` |
-| مبنا | `4dedcd9` (tip ممیزی؛ حامل Source عین Production `5b503598` / v1.1.0-hanaso29-r01) |
-| کامیت‌ها | CP-0 `f116578` → RP-04 `13342ab` → CP-1 `23bd689` → CP-2 `1f4413e` → CP-3 `a3dcb88` → FINAL (این کامیت) |
-| Specification | گزارش‌های ممیزی در `ops/checkpoints/HANASO-KANA-AUDIT-01/` (دست‌نخورده) |
-| دامنه | فقط Content/Assessment/Answer Key/Distractor/Feedback/Hint/منطق تولید — بدون UI |
-| مصون‌ها | ۵۹ گزینهٔ عمدی تشخیص خط، یافته‌های UI (Mission 3)، سرویس‌های مشترک، داده‌های واقعی |
+| پارامتر       | مقدار                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------- |
+| شاخه          | `fix/HANASO-KANA-CONTENT-REMEDIATION-02`                                                                |
+| مبنا          | `4dedcd9` (tip ممیزی؛ حامل Source عین Production `5b503598` / v1.1.0-hanaso29-r01)                      |
+| کامیت‌ها      | CP-0 `f116578` → RP-04 `13342ab` → CP-1 `23bd689` → CP-2 `1f4413e` → CP-3 `a3dcb88` → FINAL (این کامیت) |
+| Specification | گزارش‌های ممیزی در `ops/checkpoints/HANASO-KANA-AUDIT-01/` (دست‌نخورده)                                 |
+| دامنه         | فقط Content/Assessment/Answer Key/Distractor/Feedback/Hint/منطق تولید — بدون UI                         |
+| مصون‌ها       | ۵۹ گزینهٔ عمدی تشخیص خط، یافته‌های UI (Mission 3)، سرویس‌های مشترک، داده‌های واقعی                      |
 
 ## خروجی نهایی
 
-| تحویل‌شدنی | وضعیت |
-|---|---|
-| ۱۲ یافتهٔ در دامنه (۲H+۴M+۴L+Native+NOT_A_BUG) | ✅ RESOLVED — `FINDING_RESOLUTION_MATRIX.md` |
-| ۱۰ الگوی ریشه‌ای | ✅ ریشه‌ای/مستند — `ROOT_CAUSE_FIX_REPORT.md` |
-| سند قرارداد فارسی‌نویسی (M2-0.1) | ✅ `PERSIAN_READING_CONVENTION.md` v1.0 |
-| گاردهای رگرسیون دائمی (کل backlog) | ✅ ۷ گارد + ۵ بلوک romaji — `REGRESSION_GUARDS.md` |
-| QA زبانی + سنجش (جایگزین subagent به درخواست مالک) | ✅ `SELF_QA_REVIEWS.md` |
-| گزارش پیاده‌سازی / راستی‌آزمایی نهایی | ✅ `FIX_IMPLEMENTATION_REPORT.md` / `FINAL_VERIFICATION_REPORT.md` |
-| بازممیزی ۵۸۶ تمرین | ✅ `scripts/remediation_reaudit.py` (repo اصلی) — ۵/۵ پاک |
-| پایش زندهٔ UI ایستگاه‌های اصلاح‌شده | ✅ agent-browser — جزئیات در FINAL_VERIFICATION §ج |
+| تحویل‌شدنی                                         | وضعیت                                                              |
+| -------------------------------------------------- | ------------------------------------------------------------------ |
+| ۱۲ یافتهٔ در دامنه (۲H+۴M+۴L+Native+NOT_A_BUG)     | ✅ RESOLVED — `FINDING_RESOLUTION_MATRIX.md`                       |
+| ۱۰ الگوی ریشه‌ای                                   | ✅ ریشه‌ای/مستند — `ROOT_CAUSE_FIX_REPORT.md`                      |
+| سند قرارداد فارسی‌نویسی (M2-0.1)                   | ✅ `PERSIAN_READING_CONVENTION.md` v1.0                            |
+| گاردهای رگرسیون دائمی (کل backlog)                 | ✅ ۷ گارد + ۵ بلوک romaji — `REGRESSION_GUARDS.md`                 |
+| QA زبانی + سنجش (جایگزین subagent به درخواست مالک) | ✅ `SELF_QA_REVIEWS.md`                                            |
+| گزارش پیاده‌سازی / راستی‌آزمایی نهایی              | ✅ `FIX_IMPLEMENTATION_REPORT.md` / `FINAL_VERIFICATION_REPORT.md` |
+| بازممیزی ۵۸۶ تمرین                                 | ✅ `scripts/remediation_reaudit.py` (repo اصلی) — ۵/۵ پاک          |
+| پایش زندهٔ UI ایستگاه‌های اصلاح‌شده                | ✅ agent-browser — جزئیات در FINAL_VERIFICATION §ج                 |
 
 ## اعتبارسنجی نهایی (روی tip)
 

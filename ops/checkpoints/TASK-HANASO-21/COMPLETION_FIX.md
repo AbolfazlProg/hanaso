@@ -36,23 +36,23 @@ nothing invalid is accepted. Every fix is on the honest path.
 6. **Structured 409** — same contract as the BUG-004 prerequisites payload:
    a Persian message naming the bar and the earned score («برای ثبت پایان
    این درس، نمرهٔ تمرین پایانی باید دست‌کم ۷۰٪ باشد — نمرهٔ این دور: ۶۷٪ …»)
-   + `details.kind='criterion'` with `threshold`/`score`. The client can
-   finally tell the two 409s apart and route each to its real recovery.
+   - `details.kind='criterion'` with `threshold`/`score`. The client can
+     finally tell the two 409s apart and route each to its real recovery.
 
 ## The 10 mandatory requirements — where each lives
 
-| # | Requirement | Implementation |
-| --- | --- | --- |
-| 1 | Prerequisite activities persist before completion | bounded pre-complete sync await (#4) |
-| 2 | Completion after saves succeed | same (#4) |
-| 3 | Idempotent — no duplicate records/stamps on re-click | server `already:true` + single-flight (#3) + seal settles on `already` |
-| 4 | No race on concurrent requests | single-flight guard + server-side state check |
-| 5 | Real errors identifiable (status + message) | structured 409 payloads (#6) |
-| 6 | UI never claims success before the server confirms | panel renders ONLY on `res.ok`; `freshCompletion` from the response body |
-| 7 | Failure never destroys valid progress | nothing is deleted on failure; walk snapshot + blockResults survive |
-| 8 | Retry without re-walking the whole lesson | redo-final-exercise (#5) |
-| 9 | Success response drives the correct UI state | `setCompleted(res.ok)` → completion panel + seal |
-| 10 | Map return + continue path works | E2E S1.7/S1.8/S1.9 green |
+| #   | Requirement                                          | Implementation                                                           |
+| --- | ---------------------------------------------------- | ------------------------------------------------------------------------ |
+| 1   | Prerequisite activities persist before completion    | bounded pre-complete sync await (#4)                                     |
+| 2   | Completion after saves succeed                       | same (#4)                                                                |
+| 3   | Idempotent — no duplicate records/stamps on re-click | server `already:true` + single-flight (#3) + seal settles on `already`   |
+| 4   | No race on concurrent requests                       | single-flight guard + server-side state check                            |
+| 5   | Real errors identifiable (status + message)          | structured 409 payloads (#6)                                             |
+| 6   | UI never claims success before the server confirms   | panel renders ONLY on `res.ok`; `freshCompletion` from the response body |
+| 7   | Failure never destroys valid progress                | nothing is deleted on failure; walk snapshot + blockResults survive      |
+| 8   | Retry without re-walking the whole lesson            | redo-final-exercise (#5)                                                 |
+| 9   | Success response drives the correct UI state         | `setCompleted(res.ok)` → completion panel + seal                         |
+| 10  | Map return + continue path works                     | E2E S1.7/S1.8/S1.9 green                                                 |
 
 ## Tests
 

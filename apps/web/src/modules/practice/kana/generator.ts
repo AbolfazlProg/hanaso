@@ -216,7 +216,10 @@ function buildMoraCount(word: KanaWord, rng: () => number): KeyedPracticeItem | 
     if (optionValues.size < PRACTICE_POLICY.choicesPerItem && correct - drift >= 2) optionValues.add(correct - drift);
     drift += 1;
   }
-  const options = shuffle([...optionValues].map((n) => ({ id: freshOptionId(), label: `${faNum(n)} مورا` })), rng);
+  const options = shuffle(
+    [...optionValues].map((n) => ({ id: freshOptionId(), label: `${faNum(n)} مورا` })),
+    rng,
+  );
   const correctOption = options.find((o) => o.label.startsWith(faNum(correct)))!;
   const audio = wordAudio(word.word) ?? undefined;
   return {
@@ -245,10 +248,7 @@ function buildLoanwordMeaning(word: KanaWord, scope: TaughtScope, rng: () => num
   );
   if (distractors.length < PRACTICE_POLICY.choicesPerItem - 1) return null;
   const correct = { id: freshOptionId(), label: word.meaningFa };
-  const options = shuffle(
-    [correct, ...distractors.map((w) => ({ id: freshOptionId(), label: w.meaningFa }))],
-    rng,
-  );
+  const options = shuffle([correct, ...distractors.map((w) => ({ id: freshOptionId(), label: w.meaningFa }))], rng);
   const audio = wordAudio(word.word) ?? undefined;
   return {
     id: `k8-${word.word}`,

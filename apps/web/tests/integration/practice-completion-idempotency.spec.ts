@@ -113,7 +113,14 @@ describe('TASK-27 — practice-station completion via the ONE station engine', (
     const locked = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1' }));
     expect(locked.status).toBe(409);
 
-    await completeChain(QA_COOKIE, ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5']);
+    await completeChain(QA_COOKIE, [
+      'stn-kana-h0',
+      'stn-kana-h1',
+      'stn-kana-h2',
+      'stn-kana-h3',
+      'stn-kana-h4',
+      'stn-kana-h5',
+    ]);
 
     /* TASK-29 M1: p1 carries exercise blocks — one honest grade first. */
     const p1First = firstExerciseOf('stn-kana-p1')!;
@@ -128,23 +135,36 @@ describe('TASK-27 — practice-station completion via the ONE station engine', (
       }),
     );
     expect(p1Graded.status).toBe(200);
-    const first = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }));
+    const first = await postStation(
+      stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }),
+    );
     expect(first.status).toBe(200);
 
     // sequential replay → already, never re-registered
-    const replay = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }));
+    const replay = await postStation(
+      stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }),
+    );
     expect(replay.status).toBe(200);
     const body2 = (await replay.json()) as { data?: { already?: boolean } };
     expect(body2.data?.already).toBe(true);
 
     // the hub now reports p1 completed
     const status = await statusBody(await getPracticeStatus(get()));
-    const p1 = (status.practiceStations as { stationSlug: string; completed: boolean }[]).find((s) => s.stationSlug === 'stn-kana-p1')!;
+    const p1 = (status.practiceStations as { stationSlug: string; completed: boolean }[]).find(
+      (s) => s.stationSlug === 'stn-kana-p1',
+    )!;
     expect(p1.completed).toBe(true);
   });
 
   it('a CONCURRENT duplicate complete never double-registers (single completion state)', async () => {
-    await completeChain(QA_COOKIE, ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5']);
+    await completeChain(QA_COOKIE, [
+      'stn-kana-h0',
+      'stn-kana-h1',
+      'stn-kana-h2',
+      'stn-kana-h3',
+      'stn-kana-h4',
+      'stn-kana-h5',
+    ]);
     /* TASK-29 M1: p1 carries exercise blocks — one honest grade before the race. */
     const p1First = firstExerciseOf('stn-kana-p1')!;
     const p1Graded = await postStation(
@@ -159,8 +179,12 @@ describe('TASK-27 — practice-station completion via the ONE station engine', (
     );
     expect(p1Graded.status).toBe(200);
     const [a, b] = await Promise.all([
-      postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true })),
-      postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true })),
+      postStation(
+        stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }),
+      ),
+      postStation(
+        stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }),
+      ),
     ]);
     expect(a.status).toBe(200);
     expect(b.status).toBe(200);
@@ -171,21 +195,38 @@ describe('TASK-27 — practice-station completion via the ONE station engine', (
 
     // the walk store settles on exactly ONE completed state for p1 (the row
     // is an upsert keyed uuidV5('lesson:stn-kana-p1') — never duplicated)
-    const getRes = await getStation(new Request(`http://localhost/api/curriculum/station?chapter=${CH}&station=stn-kana-p1`, { headers: { cookie: QA_COOKIE } }));
+    const getRes = await getStation(
+      new Request(`http://localhost/api/curriculum/station?chapter=${CH}&station=stn-kana-p1`, {
+        headers: { cookie: QA_COOKIE },
+      }),
+    );
     const getBody = (await getRes.json()) as { data?: { state?: { status?: string } } };
     expect(getBody.data?.state?.status).toBe('completed');
   });
 
   it('learner isolation: QB never sees QA’s practice progress', async () => {
-    await completeChain(QA_COOKIE, ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5']);
-    await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }));
+    await completeChain(QA_COOKIE, [
+      'stn-kana-h0',
+      'stn-kana-h1',
+      'stn-kana-h2',
+      'stn-kana-h3',
+      'stn-kana-h4',
+      'stn-kana-h5',
+    ]);
+    await postStation(
+      stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1', score: 1, taskCompleted: true }),
+    );
 
     const qbStatus = await statusBody(await getPracticeStatus(get(QB_COOKIE)));
-    const p1 = (qbStatus.practiceStations as { stationSlug: string; completed: boolean }[]).find((s) => s.stationSlug === 'stn-kana-p1')!;
+    const p1 = (qbStatus.practiceStations as { stationSlug: string; completed: boolean }[]).find(
+      (s) => s.stationSlug === 'stn-kana-p1',
+    )!;
     expect(p1.completed).toBe(false);
 
     // QB cannot complete p1 either (their own walk is empty → locked)
-    const qbTry = await postStation(stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1' }, QB_COOKIE));
+    const qbTry = await postStation(
+      stationPost({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-p1' }, QB_COOKIE),
+    );
     expect(qbTry.status).toBe(409);
   });
 });

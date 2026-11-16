@@ -5,19 +5,19 @@
 
 ## الف) معیارهای تکمیل (§9 مأموریت)
 
-| معیار | وضعیت | مدرک |
-|---|---|---|
-| هر یافتهٔ UI ممیزی ۱ تعیین‌تکلیف شد | ✅ ۴ FIXED + ۳ NOT_A_BUG/VERIFIED + ۱ DONE + ۰ بدون تعیین تکلیف | UI_FINDING_RESOLUTION_MATRIX |
-| معناشناسی آیکون نوع/قفل درست | ✅ (از مبنا؛ راستی‌آزمایی دسکتاپ+کیبورد+Enter) | CP-0 probe + e2 |
-| توضیح قفل موبایل خوانا و قابل‌اتکا | ✅ scroll-into-view + ماندگار؛ 360/390/430 | e1, e8 + CP-1 |
-| تایپوگرافی ژاپنی آموزنده اصلاح/تأیید | ✅ 14px→17px/500 + isolation rationale/F2 | e3, e4 |
-| AUD-015 تعیین‌تکلیف با شاهد | ✅ کنتراست=FIXED (۱۱ مورد)؛ auto-scroll=NOT_A_BUG (سناریوها) | ACCESSIBILITY §۲-۳ |
-| رگرسیون ریسپانسیو در ۶ عرض | ✅ ۲۴ ترکیب، ۰ مشکل ساختاری | RESPONSIVE_QA |
-| محتوا/کلید/گاردهای Mission 2 سالم | ✅ 856/856 تست؛ ۴۱/۴۱ گارد؛ صفر تغییر محتوا | REGRESSION_RESULTS |
-| تست/typecheck/lint/build | ✅ همه سبز (build با heap-capped پس از OAM اولیهٔ sandbox) | REGRESSION_RESULTS |
-| QA مرورگر بدون blocker | ✅ ۱۰/۱۰ سناریو | BROWSER_REGRESSION |
-| Checkpointها و گزارش‌ها commit+push | ✅ CP-0..CP-3 + مستندات + release | §Git |
-| Working tree/branch نهایی گزارش شود | ✅ §Git پایین |
+| معیار                                | وضعیت                                                           | مدرک                         |
+| ------------------------------------ | --------------------------------------------------------------- | ---------------------------- |
+| هر یافتهٔ UI ممیزی ۱ تعیین‌تکلیف شد  | ✅ ۴ FIXED + ۳ NOT_A_BUG/VERIFIED + ۱ DONE + ۰ بدون تعیین تکلیف | UI_FINDING_RESOLUTION_MATRIX |
+| معناشناسی آیکون نوع/قفل درست         | ✅ (از مبنا؛ راستی‌آزمایی دسکتاپ+کیبورد+Enter)                  | CP-0 probe + e2              |
+| توضیح قفل موبایل خوانا و قابل‌اتکا   | ✅ scroll-into-view + ماندگار؛ 360/390/430                      | e1, e8 + CP-1                |
+| تایپوگرافی ژاپنی آموزنده اصلاح/تأیید | ✅ 14px→17px/500 + isolation rationale/F2                       | e3, e4                       |
+| AUD-015 تعیین‌تکلیف با شاهد          | ✅ کنتراست=FIXED (۱۱ مورد)؛ auto-scroll=NOT_A_BUG (سناریوها)    | ACCESSIBILITY §۲-۳           |
+| رگرسیون ریسپانسیو در ۶ عرض           | ✅ ۲۴ ترکیب، ۰ مشکل ساختاری                                     | RESPONSIVE_QA                |
+| محتوا/کلید/گاردهای Mission 2 سالم    | ✅ 856/856 تست؛ ۴۱/۴۱ گارد؛ صفر تغییر محتوا                     | REGRESSION_RESULTS           |
+| تست/typecheck/lint/build             | ✅ همه سبز (build با heap-capped پس از OAM اولیهٔ sandbox)      | REGRESSION_RESULTS           |
+| QA مرورگر بدون blocker               | ✅ ۱۰/۱۰ سناریو                                                 | BROWSER_REGRESSION           |
+| Checkpointها و گزارش‌ها commit+push  | ✅ CP-0..CP-3 + مستندات + release                               | §Git                         |
+| Working tree/branch نهایی گزارش شود  | ✅ §Git پایین                                                   |
 
 ## ب) شکار رگرسیون معکوس (بازبینی انتقادی)
 

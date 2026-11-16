@@ -67,7 +67,7 @@ describe('TASK-HANASO-29 M2 — production fail-safe without DATABASE_URL', () =
     expect(() => mod.getProgressStore()).toThrow(/DATABASE_URL/);
   });
 
-  it('typo\'d NODE_ENV + no DATABASE_URL → also THROWS (explicit allowlist only)', async () => {
+  it("typo'd NODE_ENV + no DATABASE_URL → also THROWS (explicit allowlist only)", async () => {
     setNodeEnv('prod'); // not on the dev/test allowlist
     delete process.env.DATABASE_URL;
     const { mod } = await freshStores();

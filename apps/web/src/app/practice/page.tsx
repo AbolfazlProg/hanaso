@@ -99,7 +99,9 @@ export default async function PracticePage() {
                 aria-disabled="true"
                 className="flex flex-col gap-1 rounded-2xl border border-dashed border-line p-4 opacity-70"
               >
-                <span className="text-body font-bold text-ink-soft"><MixedFaJaText text={s.titleFa} /></span>
+                <span className="text-body font-bold text-ink-soft">
+                  <MixedFaJaText text={s.titleFa} />
+                </span>
                 <span className="text-small text-ink-soft">{fa.practice.lockedHint}</span>
               </div>
             ) : (
@@ -109,7 +111,9 @@ export default async function PracticePage() {
                 className="group flex flex-col gap-1 rounded-2xl border border-line bg-paper p-4 transition-colors hover:border-indigo"
               >
                 <span className="flex items-center gap-2">
-                  <span className="text-body font-bold text-indigo group-hover:underline"><MixedFaJaText text={s.titleFa} /></span>
+                  <span className="text-body font-bold text-indigo group-hover:underline">
+                    <MixedFaJaText text={s.titleFa} />
+                  </span>
                   {s.completed && <span className="text-small text-sky">{fa.practice.doneLabel}</span>}
                 </span>
                 <span className="text-small text-ink-soft">{s.objectiveFa}</span>
@@ -124,7 +128,9 @@ export default async function PracticePage() {
         {weakObjects.length > 0 && (
           <section className="flex flex-col gap-1">
             <h2 className="text-small font-bold text-ink">{fa.practice.weakTitle}</h2>
-            <p className="text-small text-ink-soft">{fa.practice.weakBody} {weakObjects.map((w) => w.labelFa).join(' · ')}</p>
+            <p className="text-small text-ink-soft">
+              {fa.practice.weakBody} {weakObjects.map((w) => w.labelFa).join(' · ')}
+            </p>
           </section>
         )}
 

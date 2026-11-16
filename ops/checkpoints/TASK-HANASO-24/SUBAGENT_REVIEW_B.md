@@ -13,6 +13,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
 ## FINDINGS
 
 ### B-01 — Production still serves /poc/practice with the full answer key (pre-fix build) [SEVERITY: Critical] [STATUS: CONFIRMED]
+
 - Location: production deployment (runs 3d8b8cc); fixed by `src/lib/poc/page-guard.ts:21-25` + all six `src/app/poc/*/page.tsx`.
 - Evidence: ONE read-only GET `https://learn.kotodama.ir/poc/practice` → **HTTP 200, 32,693 bytes**. Inline RSC flight
   payload contains **9× `correctOptionId`** (e.g. `"correctOptionId":"chr-yamada"`, `"correctOptionId":"s-cafe-morning-01-l4"`)
@@ -26,6 +27,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   (pre-fix build)" in the release notes.
 
 ### B-02 — Practice write items ship the target glyph pre-answer; grading is client-trusted [SEVERITY: Medium] [STATUS: CONFIRMED]
+
 - Location: `src/modules/practice/session.ts:99-110` (`toClientItem` keeps `character` for `write` items) vs the same
   file's type docs lines 58-63 which label `character` "SERVER-ONLY: the target glyph"; `src/app/api/practice/route.ts:247-250`
   (server trusts `answer:{kind:'write',accepted}`); `src/components/practice/practice-hub.tsx:550-587` (WriteItem judges locally).
@@ -39,13 +41,14 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   (send stroke summary, not `accepted`), or accept + document the trade-off explicitly (lesson parity argument exists).
 
 ### B-03 — Mastery gate listening questions (kana chapter M2/M5) ship with NO audio — unanswerable [SEVERITY: High] [STATUS: CONFIRMED]
+
 - Location: `src/app/learn/[chapter]/assessment/page.tsx:40-42` (bank mapped via `toClientExercise` — never attaches
   `promptAudio`); `src/app/api/curriculum/mastery/route.ts:228-232` (GET bank — same); contrast: the STATION page attaches
   kana audio at `src/app/learn/[chapter]/journey/[station]/page.tsx:114-125`. Items: `ex-kana-gate-m2-1..3`,
   `ex-kana-gate-m5-1..2` (`chapter-kana01.exercises.ts:9620-9726`, type `kana-listening`).
 - Evidence: live bank GET → 13 items; the 5 `kana-listening` items have `promptAudio:null`, `promptJa:null`, no
-  `audioLineRef`. Chromium walk of the gate: q9-q13 prompt «به صدای پخش‌شده گوش کن…» render **0 `<audio>` elements, 0 play
-  buttons, 0 /audio/* network requests** across the whole walk. Same browser on station stn-kana-h1 fires
+  `audioLineRef`. Chromium walk of the gate: q9-q13 prompt «به صدای پخش‌شده گوش کن…» render _*0 `<audio>` elements, 0 play
+  buttons, 0 /audio/* network requests_* across the whole walk. Same browser on station stn-kana-h1 fires
   `/audio/kana/kn-hira-*.opus` normally. (Also: gate intro copy says «ده پرسش» but serves 13.)
 - Impact: 5/13 gate questions measure guessing, not listening — M2/M5 gate measures are noise; a learner can fail the
   chapter gate they actually understood (or pass it deaf). Assessment-integrity defect on the live learn surface; the
@@ -55,6 +58,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   `kana-listening`/`rule-listening` item must have a servable audio binding on every surface that serves it.
 
 ### B-04 — BUG-029 un-remediated: F1 feedback on kana-recognition items states the correct reading at the FIRST miss [SEVERITY: Medium] [STATUS: CONFIRMED]
+
 - Location: `src/modules/curriculum/grading.ts:75-76` (level 1 → `feedbackFa = ex.feedback.f1Fa`); authored content e.g.
   `chapter-kana01.exercises.ts:32` `f1Fa:'«あ» صدای «آ» دارد — یک بار دیگر به شکلش نگاه کن.'`.
 - Evidence: live probe: wrong answer attempt 1 on `ex-kana-h1-rec-hira-a` →
@@ -70,6 +74,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   option's label tokens.
 
 ### B-05 — /api/events GET is fully unauthenticated and shows the shared ring; POST props are unbounded [SEVERITY: Medium] [STATUS: CONFIRMED]
+
 - Location: `src/app/api/events/route.ts:57-68` (GET has NO identity resolution — only `user_id` is stripped from props);
   POST (lines 32-55) is identity-gated; `src/lib/poc/event-store.ts:9-13` (`props: z.record(z.string(), z.unknown())` —
   no key/size limits; ring = 1000 events in RAM).
@@ -86,6 +91,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   explicitly.
 
 ### B-06 — /api/attempts perQuestion discloses the key of a FIXED bank with unlimited retakes [SEVERITY: Medium] [STATUS: CONFIRMED]
+
 - Location: `src/lib/poc/assessment-bank.ts:39-114` (hardcoded 5-question bank), `:120-136` (perQuestion includes
   `correctOptionId`), `src/app/api/attempts/route.ts:86-105` (all-must-be-answered enforced — good; then perQuestion
   returned), `src/modules/mastery/repository.ts:30` (attemptNo = count+1, no cap).
@@ -100,8 +106,9 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   attempts, or cap attempts per dialogue per learner.
 
 ### B-07 — rule-listening answer-word stripping lives only in the station page — latent leak in the gate surfaces [SEVERITY: Low] [STATUS: CONFIRMED (code path; no current mastery_ rule-listening item)]
+
 - Location: strip done ad hoc at `src/app/learn/[chapter]/journey/[station]/page.tsx:117-125` (`ce.promptJa=undefined;
-  ce.promptJaReading=undefined` for `rule-listening`); `toClientExercise` (`grading.ts:344-359`) is type-agnostic and
+ce.promptJaReading=undefined` for `rule-listening`); `toClientExercise` (`grading.ts:344-359`) is type-agnostic and
   KEEPS `promptJa`/`promptJaReading`; consumers: `api/curriculum/mastery/route.ts:228-232` and
   `learn/[chapter]/assessment/page.tsx:40-42`.
 - Evidence: source read + live bank GET: today's mastery banks contain no `rule-listening` items (kana01:
@@ -114,6 +121,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   exercise type; add an EQA/CI assertion that mastery-bank client projections of such types carry no `promptJa`.
 
 ### B-08 — Full kana teaching table (glyph→romaji→host words) ships in a public client chunk [SEVERITY: Low] [STATUS: CONFIRMED (accepted-by-design)]
+
 - Location: `src/components/curriculum/kana-card.tsx:59,545` and `station-runner.tsx:47` import
   `KANA_ITEMS(_BY_GLYPH/_BY_ID)` (client islands) → chunk `_next/static/chunks/2iop210mmmbv8.js` (183,690 bytes).
 - Evidence: on-disk chunk scan: 92× `fsrsCardId`, 201× `kanaId`, 98× `romaji`, 88× `hostWord`, plus authored mnemonic
@@ -129,6 +137,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   that is a product decision (server-side per-session option re-naming), not a strip gap.
 
 ### B-09 — Ops endpoints disclose environment details [SEVERITY: Low] [STATUS: CONFIRMED (documented accepted)]
+
 - Location: `src/app/api/ready/route.ts:24-40` (DB mode + `serverVersion:"18.4 (Debian…)"` when ok; driver errors
   correctly hidden — "see server logs"); `src/app/api/health/route.ts:11-26` (commitSha + env).
 - Evidence: live GET /api/ready → `{"database":{"status":"ok","detail":"SELECT 1 via the app pool","serverVersion":"18.4…"}}`;
@@ -137,6 +146,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
 - Suggested fix: none blocking; optionally fold serverVersion into the accepted-risk line or drop it.
 
 ### B-10 — Caller's internal userId echoed in attempt/progress envelopes [SEVERITY: Low] [STATUS: CONFIRMED]
+
 - Location: `src/modules/mastery/types.ts:40` (`userId` on DialogueMasteryAttempt) → serialized by
   `api/attempts/route.ts:103` and GET list; `api/progress/route.ts:49` returns `{userId,…}`.
 - Evidence: live POST /api/attempts → `attempt.userId` = my session uuid. Own-identity only (GET is listForUser-scoped —
@@ -144,6 +154,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
 - Impact: minimal (self-echo); tidy-up candidate, not a leak.
 
 ### B-11 — Answer-key test coverage: unit strip test exists; RSC flight, bundles, and most surfaces untested [SEVERITY: Medium] [STATUS: CONFIRMED]
+
 - Location: covered — `tests/unit/curriculum-content.test.ts:277-281` (toClientExercise strips `correctOptionId`/
   `correctOrder`, no `f1Fa`), `scripts/h22-e2e/run.mjs:274` (H3c: generated /api/practice payload lacks `correctOptionId`),
   `tests/integration/mastery-api.spec.ts:64` (perQuestion shape post-submission).
@@ -159,6 +170,7 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
   extend H3c to the full pattern set.
 
 ### B-12 — Grade-block reveals for prediction/rule-slide-ask return in both outcomes [SEVERITY: Info] [STATUS: CONFIRMED (by design)]
+
 - Location: `src/app/api/curriculum/station/route.ts:347-364`.
 - Evidence: source read; `explainFa` returns for `prediction`/`rule-slide-ask` regardless of correctness — documented
   unscored warm-up semantics; block answer material (`correctOptionId`, `revealFa`, `acceptedOrders`) verified stripped
@@ -219,13 +231,13 @@ build) on 127.0.0.1:3132 with dedicated DB `hanaso_qa_b` (PG 18.4 @54329). Produ
 
 ## LEAD-CLAIM VERDICTS
 
-| Claim | Verdict |
-|---|---|
-| Six /poc pages 404 in production builds via page-guard | TRUE (verified in real standalone build; dev/test unchanged) |
-| /poc/practice RSC payload no longer ships any answer key | TRUE (page unreachable; 404 flight clean) |
-| Learn surfaces strip keys (toClientItem / toClientQuestions / mastery bank GET) | TRUE (all three live-verified) — but see B-02 (write `character` kept) and B-07 (latent rule-listening gap) |
-| /api/events GET no longer discloses user_id | TRUE — but the lead missed that GET is fully unauthenticated and the ring carries other learners' scores (B-05) |
-| attempts POST perQuestion is legitimate post-submission feedback | PARTLY — full-submission gating verified, but fixed bank + unlimited retakes make it a harvestable key (B-06) |
+| Claim                                                                           | Verdict                                                                                                         |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Six /poc pages 404 in production builds via page-guard                          | TRUE (verified in real standalone build; dev/test unchanged)                                                    |
+| /poc/practice RSC payload no longer ships any answer key                        | TRUE (page unreachable; 404 flight clean)                                                                       |
+| Learn surfaces strip keys (toClientItem / toClientQuestions / mastery bank GET) | TRUE (all three live-verified) — but see B-02 (write `character` kept) and B-07 (latent rule-listening gap)     |
+| /api/events GET no longer discloses user_id                                     | TRUE — but the lead missed that GET is fully unauthenticated and the ring carries other learners' scores (B-05) |
+| attempts POST perQuestion is legitimate post-submission feedback                | PARTLY — full-submission gating verified, but fixed bank + unlimited retakes make it a harvestable key (B-06)   |
 
 Top items for the lead: **B-03** (gate listening questions have no audio — live-learn defect), **B-01** (deploy!), **B-05**,
 **B-06**, **B-11**.
@@ -241,14 +253,14 @@ unit **755/755** (64 files) and PG integration **35 passed / 8 skipped** — bot
 
 ### Per-finding verdicts
 
-| Finding | Verdict | Evidence |
-|---|---|---|
-| B-06 attempts perQuestion key harvest | **FIXED** (one Low residual, B-13) | Source: `assessment-bank.ts` `GradedAssessment.perQuestion` now `{questionId, measure, correct}` — `correctOptionId` removed from type AND `gradeAssessment` push; client `assessment-form.tsx` updated (`isCorrectReveal = false`); test asserts `JSON.stringify(perQuestion)` lacks `correctOptionId` (mastery-api.spec.ts). Live: two garbage POSTs (201, 201) — raw response JSON contains ZERO `correctOptionId` in ALL of perQuestion/attempt/weakPoints/scoring; per-question booleans all-false for garbage run (legitimate); attemptNo 1→2 works. |
-| B-05 events GET unauth + cross-learner + unbounded props | **FIXED** | Source: GET resolves identity (401 guest), listing filters `props.user_id === caller` and strips it; POST stamps server-side `user_id` (overrides client-supplied); props bounded 16 keys/4KB (`.refine`). Live: identity-A posts marker event → identity-B listing `total:0`, marker absent; A sees own (`total:1`, marker present); server-emitted events stamped (events.ts:105) and visible to their own caller only (identity C: 8 own events, `user_id` stripped from all); 2MB props POST → **400**; 17-keys POST → **400**; legit POST → 201; injected `user_id:"FAKE-ID"` overwritten (not visible to B, not in A's output). |
-| B-02 write `character` pre-answer (BUG-031) | **DEFERRED-OK** (doc honesty delivered, behavior unchanged as agreed) | Source: `session.ts` server-shape comment now states explicitly: client projection DOES carry `character`, local writing engine needs it, evidence-only, never gates/FSRS, server-side stroke grading is the follow-up; client-shape comment references BUG-031. Live: generate still returns write items with `character` and NOTHING new (write keys: `character/kind/promptAudio/promptFa`; choice keys unchanged, no `correctOptionId`/`revealFa`). Deferral recorded in CURRENT_STATE.md:55 («B-02 behavior=BUG-031 (تصمیم محصول)»). |
-| B-04 (BUG-029 f1Fa) + B-03 (BUG-001 gate audio) | **DEFERRED-OK** | Explicitly carried: CURRENT_STATE.md:47 and :55 record `B-03=BUG-001 / B-04=BUG-029 (content track)` as reasoned deferrals, not silently dropped. (No FINAL_INDEPENDENT_VERIFICATION.md exists yet — CURRENT_STATE CP-09 row is still unchecked; deferrals must survive into RELEASE_CANDIDATE.md when written.) |
-| B-11 test gaps (RSC flight + network scans) | **PARTIALLY → acceptable for this mission** | `scripts/h24_security_qa.mjs` S12 now asserts: direct GET 404, RSC flight of /poc/practice grep-clean (KEY_RE), real-Chromium network capture clean; S6 (line 276) asserts practice generate payload has no keys. I re-ran the full script on the new build: **12/12 scenarios, 51/51 checks PASSED** (evidence `/tmp/h24qa/security_qa_results.json` @23:44, base :3132). Note: qa-evidence/ files in-repo are still the CP-05 run (23:11, pre-14d9d3a) — the re-pass is verified by me but the committed evidence predates the fix commit. Remaining gap: no in-repo CI test greps learn-page RSC flights or client chunks — acceptable for this mission given the QA script + my clean re-scan (below), but it should land as an automated test next track. |
-| B-01 production on pre-fix build | **DEFERRED-OK (deploy = the blocker)** | No deploy commits anywhere in git log since 23:00 (checked `--all`). My ONE read-only production GET: `/poc/practice` → **HTTP 200, 32,693 bytes, `correctOptionId` present** — production is still the pre-24 build and still leaking. CURRENT_STATE.md:47/55 mark deploy as the blocker («B-01 deploy blocker — در RC», CP-09 = release docs without deploy); `infra/deploy/update-hanaso.sh` now dies unless `.env` carries HANASO_SESSION_SECRET + HANASO_LEGACY_TOKEN_CUTOFF (verified lines 303-311). |
+| Finding                                                  | Verdict                                                               | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| -------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| B-06 attempts perQuestion key harvest                    | **FIXED** (one Low residual, B-13)                                    | Source: `assessment-bank.ts` `GradedAssessment.perQuestion` now `{questionId, measure, correct}` — `correctOptionId` removed from type AND `gradeAssessment` push; client `assessment-form.tsx` updated (`isCorrectReveal = false`); test asserts `JSON.stringify(perQuestion)` lacks `correctOptionId` (mastery-api.spec.ts). Live: two garbage POSTs (201, 201) — raw response JSON contains ZERO `correctOptionId` in ALL of perQuestion/attempt/weakPoints/scoring; per-question booleans all-false for garbage run (legitimate); attemptNo 1→2 works.                                                                                                                                                                                                     |
+| B-05 events GET unauth + cross-learner + unbounded props | **FIXED**                                                             | Source: GET resolves identity (401 guest), listing filters `props.user_id === caller` and strips it; POST stamps server-side `user_id` (overrides client-supplied); props bounded 16 keys/4KB (`.refine`). Live: identity-A posts marker event → identity-B listing `total:0`, marker absent; A sees own (`total:1`, marker present); server-emitted events stamped (events.ts:105) and visible to their own caller only (identity C: 8 own events, `user_id` stripped from all); 2MB props POST → **400**; 17-keys POST → **400**; legit POST → 201; injected `user_id:"FAKE-ID"` overwritten (not visible to B, not in A's output).                                                                                                                          |
+| B-02 write `character` pre-answer (BUG-031)              | **DEFERRED-OK** (doc honesty delivered, behavior unchanged as agreed) | Source: `session.ts` server-shape comment now states explicitly: client projection DOES carry `character`, local writing engine needs it, evidence-only, never gates/FSRS, server-side stroke grading is the follow-up; client-shape comment references BUG-031. Live: generate still returns write items with `character` and NOTHING new (write keys: `character/kind/promptAudio/promptFa`; choice keys unchanged, no `correctOptionId`/`revealFa`). Deferral recorded in CURRENT_STATE.md:55 («B-02 behavior=BUG-031 (تصمیم محصول)»).                                                                                                                                                                                                                      |
+| B-04 (BUG-029 f1Fa) + B-03 (BUG-001 gate audio)          | **DEFERRED-OK**                                                       | Explicitly carried: CURRENT_STATE.md:47 and :55 record `B-03=BUG-001 / B-04=BUG-029 (content track)` as reasoned deferrals, not silently dropped. (No FINAL_INDEPENDENT_VERIFICATION.md exists yet — CURRENT_STATE CP-09 row is still unchecked; deferrals must survive into RELEASE_CANDIDATE.md when written.)                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| B-11 test gaps (RSC flight + network scans)              | **PARTIALLY → acceptable for this mission**                           | `scripts/h24_security_qa.mjs` S12 now asserts: direct GET 404, RSC flight of /poc/practice grep-clean (KEY_RE), real-Chromium network capture clean; S6 (line 276) asserts practice generate payload has no keys. I re-ran the full script on the new build: **12/12 scenarios, 51/51 checks PASSED** (evidence `/tmp/h24qa/security_qa_results.json` @23:44, base :3132). Note: qa-evidence/ files in-repo are still the CP-05 run (23:11, pre-14d9d3a) — the re-pass is verified by me but the committed evidence predates the fix commit. Remaining gap: no in-repo CI test greps learn-page RSC flights or client chunks — acceptable for this mission given the QA script + my clean re-scan (below), but it should land as an automated test next track. |
+| B-01 production on pre-fix build                         | **DEFERRED-OK (deploy = the blocker)**                                | No deploy commits anywhere in git log since 23:00 (checked `--all`). My ONE read-only production GET: `/poc/practice` → **HTTP 200, 32,693 bytes, `correctOptionId` present** — production is still the pre-24 build and still leaking. CURRENT_STATE.md:47/55 mark deploy as the blocker («B-01 deploy blocker — در RC», CP-09 = release docs without deploy); `infra/deploy/update-hanaso.sh` now dies unless `.env` carries HANASO_SESSION_SECRET + HANASO_LEGACY_TOKEN_CUTOFF (verified lines 303-311).                                                                                                                                                                                                                                                    |
 
 ### Spot-check re-verification on 14d9d3a (all clean)
 

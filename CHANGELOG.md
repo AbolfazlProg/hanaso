@@ -311,6 +311,7 @@
 ## 2026-11-13 — TASK-HANASO-20 · v11 · 1.0.0-hanaso20-r01 @ 2574788c3652
 
 The onboarding-recovery release (audit TASK-HANASO-19 → real fixes):
+
 - P0 first-visit identity: learner-id middleware (first-response mint),
   read-only GUEST scope, shared poc-user fallback retired; cookie-less writes 401
 - P0 409 recovery: Persian cause + ordered prerequisite link + details payload

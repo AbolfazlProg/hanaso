@@ -19,10 +19,10 @@ render that SCHEDULED it. That closure froze the PRE-increment
 the timer advanced the session, `onSessionDone` reported the final answer as
 NOT first-try-correct. The earned score became (N−1)/N:
 
-| Station | Deck size | Perfect walk scored | Threshold | Result |
-| --- | --- | --- | --- | --- |
-| `stn-kana-k8` (chōonpu) | 3 questions | **2/3 = 0.667** | 0.7 | 409 `completion_not_met` |
-| `stn-kana-k12-foreign` | 2 questions | **1/2 = 0.5** | 0.7 | 409 `completion_not_met` |
+| Station                 | Deck size   | Perfect walk scored | Threshold | Result                   |
+| ----------------------- | ----------- | ------------------- | --------- | ------------------------ |
+| `stn-kana-k8` (chōonpu) | 3 questions | **2/3 = 0.667**     | 0.7       | 409 `completion_not_met` |
+| `stn-kana-k12-foreign`  | 2 questions | **1/2 = 0.5**       | 0.7       | 409 `completion_not_met` |
 
 The API then behaved AS DESIGNED — it rejected a below-threshold score — but
 the rejection body was an English technical string

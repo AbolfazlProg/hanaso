@@ -77,22 +77,22 @@
 - گیت فصل واقعاً قفل می‌کند: fm01 دارای `prerequisiteChapterSlug: 'kana-foundation-01'` (`content/index.ts:95`)؛ `chapterAccessStatus` (`server.ts:87-104`) قفل است مگر وضعیت فصل پیش‌نیاز `understood` باشد. `understood` فقط از گیت قبول‌شده می‌آید (`progress-machine.ts:106-113` — gate_attempted passed؛ مسیر `/api/curriculum/mastery` → `submitMasteryWithFold`). گیت خودش هم تا تکمیل core path باز نمی‌شود (mastery/route.ts:69-82 — `mastery/gate_locked` 409).
 - همهٔ روت‌های fm01 گارد یکسان دارند: journey (`journey/page.tsx:44-56`)، station (`[station]/page.tsx:57-66`)، assessment (`assessment/page.tsx:40-49`)، complete (`complete/page.tsx:33-42`)، dialogue، intro — هیچ مسیر دورزدن وجود ندارد؛ CTA دروازه هم فقط وقتی corePathComplete به assessment لینک می‌دهد (`journey-home.tsx:132-136`).
 - قانون CHAPTER-CHAIN در `validateCourseChain` فصل‌های بدون پیش‌نیاز را رد می‌کند (`validation.ts:720-755`) و هنگام load یک‌بار اجرا می‌شود (`server.ts:37-45`).
-- سلامت ایستگاه‌های fm01: ۲۲ ایستگاه، orderهای ۱..۲۲ یکتا و متوالی؛ همهٔ پیش‌نیازها داخل همان فصل و مرتب (قانون PREREQ-ORDER در validation.ts:160-171 هنگام load اجرا می‌شود)؛ زنجیره: 01(بدون پیش‌نیاز)→02→03→{04,05}→…→09→10→…→17→18؛ اختیاری‌ها به 02/03/13/17 وصل‌اند و هرگز پیش‌نیاز core نیستند (قانون OPTIONAL-NO-GATE — validation.ts:184+). هیچ ارجاع متقابل فصلی (stn-kana*) در fm01 نیست (grep: صفر). units هر ۲۲ ایستگاه را کامل پوشش می‌دهد (index.ts:52-92 — واحد ۱: 01-09، واحد ۲: 10-18 + ۴ اختیاری) — بدون گروه __rest__.
+- سلامت ایستگاه‌های fm01: ۲۲ ایستگاه، orderهای ۱..۲۲ یکتا و متوالی؛ همهٔ پیش‌نیازها داخل همان فصل و مرتب (قانون PREREQ-ORDER در validation.ts:160-171 هنگام load اجرا می‌شود)؛ زنجیره: 01(بدون پیش‌نیاز)→02→03→{04,05}→…→09→10→…→17→18؛ اختیاری‌ها به 02/03/13/17 وصل‌اند و هرگز پیش‌نیاز core نیستند (قانون OPTIONAL-NO-GATE — validation.ts:184+). هیچ ارجاع متقابل فصلی (stn-kana*) در fm01 نیست (grep: صفر). units هر ۲۲ ایستگاه را کامل پوشش می‌دهد (index.ts:52-92 — واحد ۱: 01-09، واحد ۲: 10-18 + ۴ اختیاری) — بدون گروه **rest**.
 - فصل کانا: ۳۸ ایستگاه (۳۴ آموزشی + ۴ تمرین) با order یکتا ۱..۳۸؛ ایستگاه unreachable یا پیش‌نیاز هرگز-بازنشدنی یافت نشد.
 
 ---
 
 ## فهرست یافته‌ها (با شدت)
 
-| # | شدت | جریان | یافته | شاهد |
-|---|------|--------|--------|--------|
-| F1 | **Medium** (latent) | ۵/مرور | لینک `href="/review"` در شاخهٔ due خانه، ولی روت `/review` وجود ندارد — امروز غیرقابل‌دسترس (fsrsActive همیشه false) اما با فعال‌سازی موتور → 404 | `app/page.tsx:125`؛ نبود `app/review/` در ساختار app |
-| F2 | Low | ۳ | اکشن `grade` تعلق تمرین به «همین ایستگاه» را چک نمی‌کند (برخلاف `hint`) — نمره‌دهی تمرین ایستگاه دیگرِ همان فصل و ثبت attempt روی ایستگاه پست‌شده ممکن است | `api/curriculum/station/route.ts:284-291` در برابر `266-271` |
-| F3 | Low | ۴ | GET `/api/practice` هیچ مصرف‌کنندهٔ کلاینتی ندارد (هاب مستقیماً store می‌خواند) — سطح API بلااستفاده | `app/practice/page.tsx:35-43`؛ grep fetch '/api/practice' = صفر |
-| F4 | Low | ۴/۵ | `completePracticeSession` بدون caller تولیدی — `practice_sessions`/`learning_object_states` برای کاربران جدید خالی می‌مانند؛ بخش‌های «جلسات اخیر/نقاط ضعف» هاب همیشه خالی‌اند (رندر صادقانهٔ هیچ) | `lib/poc/completions.ts` (فقط تست caller)؛ `app/practice/page.tsx:123-141` |
-| F5 | Low | ۱ | `hiddenCount` محاسبه می‌شود ولی هیچ‌جا رندر نمی‌شود | `reveal.ts:107`؛ grep مصرف = صفر |
-| F6 | Low/Info | ۴ | هاب /practice به فصل kana و ۴ slug hardcoded است؛ ایستگاه‌های practice fm01 لیست نمی‌شوند (دامنهٔ TASK-27) | `app/practice/page.tsx:29,33` |
-| F7 | Low/Info | ۲ | پاسخ `/api/curriculum/journey` فیلدهای `units`/`nodes` را هم برمی‌گرداند که کلاینت فعلی مصرف نمی‌کند | `api/curriculum/journey/route.ts:78-122` |
+| #   | شدت                 | جریان  | یافته                                                                                                                                                                                             | شاهد                                                                       |
+| --- | ------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| F1  | **Medium** (latent) | ۵/مرور | لینک `href="/review"` در شاخهٔ due خانه، ولی روت `/review` وجود ندارد — امروز غیرقابل‌دسترس (fsrsActive همیشه false) اما با فعال‌سازی موتور → 404                                                 | `app/page.tsx:125`؛ نبود `app/review/` در ساختار app                       |
+| F2  | Low                 | ۳      | اکشن `grade` تعلق تمرین به «همین ایستگاه» را چک نمی‌کند (برخلاف `hint`) — نمره‌دهی تمرین ایستگاه دیگرِ همان فصل و ثبت attempt روی ایستگاه پست‌شده ممکن است                                        | `api/curriculum/station/route.ts:284-291` در برابر `266-271`               |
+| F3  | Low                 | ۴      | GET `/api/practice` هیچ مصرف‌کنندهٔ کلاینتی ندارد (هاب مستقیماً store می‌خواند) — سطح API بلااستفاده                                                                                              | `app/practice/page.tsx:35-43`؛ grep fetch '/api/practice' = صفر            |
+| F4  | Low                 | ۴/۵    | `completePracticeSession` بدون caller تولیدی — `practice_sessions`/`learning_object_states` برای کاربران جدید خالی می‌مانند؛ بخش‌های «جلسات اخیر/نقاط ضعف» هاب همیشه خالی‌اند (رندر صادقانهٔ هیچ) | `lib/poc/completions.ts` (فقط تست caller)؛ `app/practice/page.tsx:123-141` |
+| F5  | Low                 | ۱      | `hiddenCount` محاسبه می‌شود ولی هیچ‌جا رندر نمی‌شود                                                                                                                                               | `reveal.ts:107`؛ grep مصرف = صفر                                           |
+| F6  | Low/Info            | ۴      | هاب /practice به فصل kana و ۴ slug hardcoded است؛ ایستگاه‌های practice fm01 لیست نمی‌شوند (دامنهٔ TASK-27)                                                                                        | `app/practice/page.tsx:29,33`                                              |
+| F7  | Low/Info            | ۲      | پاسخ `/api/curriculum/journey` فیلدهای `units`/`nodes` را هم برمی‌گرداند که کلاینت فعلی مصرف نمی‌کند                                                                                              | `api/curriculum/journey/route.ts:78-122`                                   |
 
 **Critical: 0 · High: 0 · Medium: 1 · Low: 5 (＋۲ اطلاعاتی)**
 

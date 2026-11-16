@@ -11,23 +11,23 @@
 
 ## جدول تطبیق — تک‌تک شناسه‌ها با یک وضعیت
 
-| شناسه | شدت ممیزی | وضعیت مأموریت ۲ (ماتریس) | توضیح |
-|---|---|---|---|
-| AUD-001 | High | **RESOLVED + Guard** | چندپاسخگی؛ + ۷ یافتهٔ پنهان با گارد کشف و رفع شد |
-| AUD-002 | High | **RESOLVED + Guard** | تصادم کیوو؛ گارد یکتایی |
-| AUD-003 | Medium | **RESOLVED + Guard** | hint افشاگر ×۳ حذف شد |
-| AUD-004 | Medium | **RESOLVED + Guard** | ناهماهنگی نگارش ねこ/コーヒー یکدست شد |
-| AUD-005 | Medium | **RESOLVED + Guard** | موتور kanaWordRomaji بازنویسی شد |
-| AUD-006 | Medium | **RESOLVED + Guard** | نشت شکل ۸.۸٪→۱.۵٪ + گارد آستانه‌ای |
-| AUD-007 | Medium (UI) | **DEFERRED → Mission 3** | قفل سمت راست → **دامنهٔ همین مأموریت ۳ (UI-01)** |
-| AUD-008 | Medium (UI) | **DEFERRED → Mission 3** | متن ۱۶px → **UI-03 همین مأموریت** |
-| AUD-009 | Medium (UI) | **DEFERRED → Mission 3** | آیکون قفل → **UI-01 همین مأموریت** |
-| AUD-010 | Low | **RESOLVED + Guard** | ۳ گیت تکراری بازنویسی شد |
-| AUD-011 | Low | **RESOLVED (research-backed)** | ん-labial با منبع تعیین تکلیف شد — از NEEDS_NATIVE_REVIEW به RESOLVED ارتقا |
-| AUD-012 | Low | **RESOLVED (documented choice)** | علت نبود hostWord در ۷ حاشیهٔ رجیستری مستند شد |
-| AUD-013 | Low | **RESOLVED** | ヲ note افزوده شد |
-| AUD-014 | Low | **VERIFIED + Guard** | ۵۹ مورد عمدی — NOT_A_BUG؛ گارد نام‌بردن خط |
-| AUD-015 | NEEDS_CONTEXT | **DEFERRED → Mission 3** | کنتراست/auto-scroll → **UI-04 همین مأموریت** |
+| شناسه   | شدت ممیزی     | وضعیت مأموریت ۲ (ماتریس)         | توضیح                                                                       |
+| ------- | ------------- | -------------------------------- | --------------------------------------------------------------------------- |
+| AUD-001 | High          | **RESOLVED + Guard**             | چندپاسخگی؛ + ۷ یافتهٔ پنهان با گارد کشف و رفع شد                            |
+| AUD-002 | High          | **RESOLVED + Guard**             | تصادم کیوو؛ گارد یکتایی                                                     |
+| AUD-003 | Medium        | **RESOLVED + Guard**             | hint افشاگر ×۳ حذف شد                                                       |
+| AUD-004 | Medium        | **RESOLVED + Guard**             | ناهماهنگی نگارش ねこ/コーヒー یکدست شد                                      |
+| AUD-005 | Medium        | **RESOLVED + Guard**             | موتور kanaWordRomaji بازنویسی شد                                            |
+| AUD-006 | Medium        | **RESOLVED + Guard**             | نشت شکل ۸.۸٪→۱.۵٪ + گارد آستانه‌ای                                          |
+| AUD-007 | Medium (UI)   | **DEFERRED → Mission 3**         | قفل سمت راست → **دامنهٔ همین مأموریت ۳ (UI-01)**                            |
+| AUD-008 | Medium (UI)   | **DEFERRED → Mission 3**         | متن ۱۶px → **UI-03 همین مأموریت**                                           |
+| AUD-009 | Medium (UI)   | **DEFERRED → Mission 3**         | آیکون قفل → **UI-01 همین مأموریت**                                          |
+| AUD-010 | Low           | **RESOLVED + Guard**             | ۳ گیت تکراری بازنویسی شد                                                    |
+| AUD-011 | Low           | **RESOLVED (research-backed)**   | ん-labial با منبع تعیین تکلیف شد — از NEEDS_NATIVE_REVIEW به RESOLVED ارتقا |
+| AUD-012 | Low           | **RESOLVED (documented choice)** | علت نبود hostWord در ۷ حاشیهٔ رجیستری مستند شد                              |
+| AUD-013 | Low           | **RESOLVED**                     | ヲ note افزوده شد                                                           |
+| AUD-014 | Low           | **VERIFIED + Guard**             | ۵۹ مورد عمدی — NOT_A_BUG؛ گارد نام‌بردن خط                                  |
+| AUD-015 | NEEDS_CONTEXT | **DEFERRED → Mission 3**         | کنتراست/auto-scroll → **UI-04 همین مأموریت**                                |
 
 ## پاسخ دقیق به «۱۲ چطور با ۴ جمع می‌شود؟»
 

@@ -4,20 +4,29 @@
 
 ## ۱. نسخهٔ زندهٔ Production
 
-| فیلد | مقدار | منبع |
-|---|---|---|
-| URL | `https://learn.kotodama.ir` | — |
-| سرویس | `hanaso-web` | `GET /api/health` |
-| نسخه | `1.1.0-hanaso29-r01` | `GET /api/health` |
-| Commit | `5b503598422611dacb2f9d3e77d2be3226d3347a` | `GET /api/health` |
-| env | `production` | `GET /api/health` |
-| دیتابیس | PostgreSQL `18.6`، `SELECT 1` OK (latency ~12ms) | `GET /api/ready` |
-| تاریخ تأیید | 2026-11-15 (دو بار: 16:54 و 17:02 UTC) | curl مستقیم |
+| فیلد        | مقدار                                            | منبع              |
+| ----------- | ------------------------------------------------ | ----------------- |
+| URL         | `https://learn.kotodama.ir`                      | —                 |
+| سرویس       | `hanaso-web`                                     | `GET /api/health` |
+| نسخه        | `1.1.0-hanaso29-r01`                             | `GET /api/health` |
+| Commit      | `5b503598422611dacb2f9d3e77d2be3226d3347a`       | `GET /api/health` |
+| env         | `production`                                     | `GET /api/health` |
+| دیتابیس     | PostgreSQL `18.6`، `SELECT 1` OK (latency ~12ms) | `GET /api/ready`  |
+| تاریخ تأیید | 2026-11-15 (دو بار: 16:54 و 17:02 UTC)           | curl مستقیم       |
 
 خروجی خام:
 
 ```json
-{"ok":true,"status":"ok","service":"hanaso-web","version":"1.1.0-hanaso29-r01","commit":"5b503598422611dacb2f9d3e77d2be3226d3347a","env":"production","uptimeSec":3276,"timestamp":"2026-11-15T17:02:03.877Z"}
+{
+  "ok": true,
+  "status": "ok",
+  "service": "hanaso-web",
+  "version": "1.1.0-hanaso29-r01",
+  "commit": "5b503598422611dacb2f9d3e77d2be3226d3347a",
+  "env": "production",
+  "uptimeSec": 3276,
+  "timestamp": "2026-11-15T17:02:03.877Z"
+}
 ```
 
 ## ۲. تطابق Commit با مخزن

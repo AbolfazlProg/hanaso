@@ -100,7 +100,13 @@ export function toClientItem(item: KeyedPracticeItem): ClientPracticeItem {
     return {
       id: item.id,
       dimension: item.dimension,
-      interaction: { kind: 'choice' as const, promptFa: rest.promptFa, promptJa: rest.promptJa, promptAudio: rest.promptAudio, options: rest.options },
+      interaction: {
+        kind: 'choice' as const,
+        promptFa: rest.promptFa,
+        promptJa: rest.promptJa,
+        promptAudio: rest.promptAudio,
+        options: rest.options,
+      },
     } satisfies ClientPracticeItem;
   }
   const { revealFa: _r, ...rest } = item.interaction;
@@ -112,7 +118,12 @@ export function toClientItem(item: KeyedPracticeItem): ClientPracticeItem {
   return {
     id: item.id,
     dimension: item.dimension,
-    interaction: { kind: 'write' as const, promptFa: rest.promptFa, promptAudio: rest.promptAudio, character: rest.character },
+    interaction: {
+      kind: 'write' as const,
+      promptFa: rest.promptFa,
+      promptAudio: rest.promptAudio,
+      character: rest.character,
+    },
   } satisfies ClientPracticeItem;
 }
 

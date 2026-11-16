@@ -66,7 +66,7 @@ decision and incident gets an entry HERE as soon as it happens.
     stn-kana-k12-foreign (32nd Ch01 station) was never re-pinned because the
     suite could not run in that sandbox.
   - Stale expectation 2: unit est_minutes 45→71 — TASK-HANASO-21 OBS-003.
-  Both are intended product states; tests re-pinned, no product change.
+    Both are intended product states; tests re-pinned, no product change.
 - tsc --noEmit: clean (one strict-null fix in the new gate test).
 - eslint: clean. stylelint: 2 errors in the AIZEN seal CSS (physical
   width/height) fixed → logical inline-size/block-size. Fonts budget: green.
@@ -103,7 +103,7 @@ decision and incident gets an entry HERE as soon as it happens.
   criterion panel shows the Persian explanation + redo-only-final-exercise
   CTA + progress-kept reassurance.
 - Commits: `fix(db)+test(e2e): TASK-HANASO-21 — chapter mastery gate
-  un-500'd + the 46/46 browser E2E suite`.
+un-500'd + the 46/46 browser E2E suite`.
 - NEXT: re-run full unit suite (content-map change), then the 12 remaining
   checkpoint docs, push, release prep + one-liner sandbox validation.
 

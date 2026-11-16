@@ -18,20 +18,20 @@ one-line VPS update command (the non-negotiable delivery contract).
 
 ## Phase closure (all 9 phases)
 
-| Phase | Status | Key evidence |
-| --- | --- | --- |
-| 0 recovery + TASK-20 docs | ✅ | CP-01; TASK-20's 15 docs read; branch base verified |
-| 1 P0 completion bug | ✅ fixed | root cause: stale auto-next closure → (N−1)/N on k8/k12-foreign → 409 loop; fix commit `5204883`; COMPLETION_ROOT_CAUSE/FIX/E2E_RESULTS |
-| 2 AIZEN seal | ✅ done | `471f731`; vermilion hanko 藍染 + full ceremony + idempotent persistence; AIZEN_SEAL_DESIGN/IMPLEMENTATION/E2E + VLM review |
-| 3.1 BUG-009 | ✅ done | `90ca72c`; third option per documented error family; BUG009_VALIDATION |
-| 3.2 BUG-011 | ✅ done | `5142293`; commit-hygiene CI gate + 6 fixtures; BUG011_HYGIENE_GATE |
-| 3.3 OBS-001..010 | ✅ adjudicated | `2ef6630`; full table in OBSERVATION_REMEDIATION (2 deliberate non-fixes: OBS-005 doc-only, OBS-006 owner-approved deferral) |
-| 3.4 new-word audio | ✅ prepared, honestly limited | `c25dba7`; gen surface complete + permanent honesty gate (pending=29, orphans=0); generation needs the owner's VPS VOICEVOX run — AUDIO_REMEDIATION |
-| 4 protect TASK-20 | ✅ | 737/737 unit incl. all TASK-20 gates; REGRESSION_TEST_RESULTS |
-| 5 regression + E2E | ✅ | unit 737/737 · integration-PG 36+1 (FIRST real-PG run since TASK-20; portable PG 18.7 staged) · browser E2E **46/46** (production build + real PG + real Chromium) |
-| 6 branch/commit/checkpoint | ✅ | branch pushed; 14/14 checkpoint docs (this file + CHECKPOINT_LOG + 12 docs) + 18 E2E screenshots |
-| 7 release + sandbox validation | ✅ | v12 TRUE ONE-LINER + `run-h21.sh` drill **92/92** (incl. rollback + isolation); real-network codeload hash verified; RELEASE_VALIDATION |
-| 8 one-liner in the final reply | ✅ | the command is byte-identical to OWNER-COMMAND.txt v12 and to the drilled line |
+| Phase                          | Status                        | Key evidence                                                                                                                                                       |
+| ------------------------------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0 recovery + TASK-20 docs      | ✅                            | CP-01; TASK-20's 15 docs read; branch base verified                                                                                                                |
+| 1 P0 completion bug            | ✅ fixed                      | root cause: stale auto-next closure → (N−1)/N on k8/k12-foreign → 409 loop; fix commit `5204883`; COMPLETION_ROOT_CAUSE/FIX/E2E_RESULTS                            |
+| 2 AIZEN seal                   | ✅ done                       | `471f731`; vermilion hanko 藍染 + full ceremony + idempotent persistence; AIZEN_SEAL_DESIGN/IMPLEMENTATION/E2E + VLM review                                        |
+| 3.1 BUG-009                    | ✅ done                       | `90ca72c`; third option per documented error family; BUG009_VALIDATION                                                                                             |
+| 3.2 BUG-011                    | ✅ done                       | `5142293`; commit-hygiene CI gate + 6 fixtures; BUG011_HYGIENE_GATE                                                                                                |
+| 3.3 OBS-001..010               | ✅ adjudicated                | `2ef6630`; full table in OBSERVATION_REMEDIATION (2 deliberate non-fixes: OBS-005 doc-only, OBS-006 owner-approved deferral)                                       |
+| 3.4 new-word audio             | ✅ prepared, honestly limited | `c25dba7`; gen surface complete + permanent honesty gate (pending=29, orphans=0); generation needs the owner's VPS VOICEVOX run — AUDIO_REMEDIATION                |
+| 4 protect TASK-20              | ✅                            | 737/737 unit incl. all TASK-20 gates; REGRESSION_TEST_RESULTS                                                                                                      |
+| 5 regression + E2E             | ✅                            | unit 737/737 · integration-PG 36+1 (FIRST real-PG run since TASK-20; portable PG 18.7 staged) · browser E2E **46/46** (production build + real PG + real Chromium) |
+| 6 branch/commit/checkpoint     | ✅                            | branch pushed; 14/14 checkpoint docs (this file + CHECKPOINT_LOG + 12 docs) + 18 E2E screenshots                                                                   |
+| 7 release + sandbox validation | ✅                            | v12 TRUE ONE-LINER + `run-h21.sh` drill **92/92** (incl. rollback + isolation); real-network codeload hash verified; RELEASE_VALIDATION                            |
+| 8 one-liner in the final reply | ✅                            | the command is byte-identical to OWNER-COMMAND.txt v12 and to the drilled line                                                                                     |
 
 ## Bugs found & fixed BEYOND the brief (real product fixes)
 

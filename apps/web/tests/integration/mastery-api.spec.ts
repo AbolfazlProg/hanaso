@@ -188,7 +188,9 @@ describe('POST/GET /api/events (PoC analytics sink)', () => {
     expect(many.status).toBe(400);
 
     // > 4KB serialized in a single value
-    const huge = await postEvent(post(`${BASE}/events`, { name: 'dialogue_line_replayed', props: { blob: 'x'.repeat(8192) } }));
+    const huge = await postEvent(
+      post(`${BASE}/events`, { name: 'dialogue_line_replayed', props: { blob: 'x'.repeat(8192) } }),
+    );
     expect(huge.status).toBe(400);
 
     // the legit shape still passes (17-key/4KB bounds are far above real events)

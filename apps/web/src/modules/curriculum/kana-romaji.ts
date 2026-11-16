@@ -24,7 +24,6 @@ const ROMAJI_BY_GLYPH = new Map<string, string>(KANA_ITEMS.map((k) => [k.glyph, 
 const VOWELS = 'aiueo';
 const VOWEL_TAIL = new RegExp(`[${VOWELS}]$`);
 
-
 /** Combining voicing marks (NFD forms — NFC input is handled via VOICED_NFC). */
 const DAKUTEN_NFD = '\u3099';
 const HANDAKUTEN_NFD = '\u309A';
@@ -34,28 +33,58 @@ const VOICED_NFC = new Map<string, { base: string; daku: boolean; handaku: boole
 {
   const pairs: Array<[string, string, boolean, boolean]> = [
     // hiragana dakuten
-    ['が', 'か', true, false], ['ぎ', 'き', true, false], ['ぐ', 'く', true, false],
-    ['げ', 'け', true, false], ['ご', 'こ', true, false],
-    ['ざ', 'さ', true, false], ['じ', 'し', true, false], ['ず', 'す', true, false],
-    ['ぜ', 'せ', true, false], ['ぞ', 'そ', true, false],
-    ['だ', 'た', true, false], ['ぢ', 'ち', true, false], ['づ', 'つ', true, false],
-    ['で', 'て', true, false], ['ど', 'と', true, false],
-    ['ば', 'は', true, false], ['び', 'ひ', true, false], ['ぶ', 'ふ', true, false],
-    ['べ', 'へ', true, false], ['ぼ', 'ほ', true, false],
+    ['が', 'か', true, false],
+    ['ぎ', 'き', true, false],
+    ['ぐ', 'く', true, false],
+    ['げ', 'け', true, false],
+    ['ご', 'こ', true, false],
+    ['ざ', 'さ', true, false],
+    ['じ', 'し', true, false],
+    ['ず', 'す', true, false],
+    ['ぜ', 'せ', true, false],
+    ['ぞ', 'そ', true, false],
+    ['だ', 'た', true, false],
+    ['ぢ', 'ち', true, false],
+    ['づ', 'つ', true, false],
+    ['で', 'て', true, false],
+    ['ど', 'と', true, false],
+    ['ば', 'は', true, false],
+    ['び', 'ひ', true, false],
+    ['ぶ', 'ふ', true, false],
+    ['べ', 'へ', true, false],
+    ['ぼ', 'ほ', true, false],
     // katakana dakuten
-    ['ガ', 'カ', true, false], ['ギ', 'キ', true, false], ['グ', 'ク', true, false],
-    ['ゲ', 'ケ', true, false], ['ゴ', 'コ', true, false],
-    ['ザ', 'サ', true, false], ['ジ', 'シ', true, false], ['ズ', 'ス', true, false],
-    ['ゼ', 'セ', true, false], ['ゾ', 'ソ', true, false],
-    ['ダ', 'タ', true, false], ['ヂ', 'チ', true, false], ['ヅ', 'ツ', true, false],
-    ['デ', 'テ', true, false], ['ド', 'ト', true, false],
-    ['バ', 'ハ', true, false], ['ビ', 'ヒ', true, false], ['ブ', 'フ', true, false],
-    ['ベ', 'ヘ', true, false], ['ボ', 'ホ', true, false],
+    ['ガ', 'カ', true, false],
+    ['ギ', 'キ', true, false],
+    ['グ', 'ク', true, false],
+    ['ゲ', 'ケ', true, false],
+    ['ゴ', 'コ', true, false],
+    ['ザ', 'サ', true, false],
+    ['ジ', 'シ', true, false],
+    ['ズ', 'ス', true, false],
+    ['ゼ', 'セ', true, false],
+    ['ゾ', 'ソ', true, false],
+    ['ダ', 'タ', true, false],
+    ['ヂ', 'チ', true, false],
+    ['ヅ', 'ツ', true, false],
+    ['デ', 'テ', true, false],
+    ['ド', 'ト', true, false],
+    ['バ', 'ハ', true, false],
+    ['ビ', 'ヒ', true, false],
+    ['ブ', 'フ', true, false],
+    ['ベ', 'ヘ', true, false],
+    ['ボ', 'ホ', true, false],
     // handakuten (は-row only, both scripts)
-    ['ぱ', 'は', false, true], ['ぴ', 'ひ', false, true], ['ぷ', 'ふ', false, true],
-    ['ぺ', 'へ', false, true], ['ぽ', 'ほ', false, true],
-    ['パ', 'ハ', false, true], ['ピ', 'ヒ', false, true], ['プ', 'フ', false, true],
-    ['ペ', 'ヘ', false, true], ['ポ', 'ホ', false, true],
+    ['ぱ', 'は', false, true],
+    ['ぴ', 'ひ', false, true],
+    ['ぷ', 'ふ', false, true],
+    ['ぺ', 'へ', false, true],
+    ['ぽ', 'ほ', false, true],
+    ['パ', 'ハ', false, true],
+    ['ピ', 'ヒ', false, true],
+    ['プ', 'フ', false, true],
+    ['ペ', 'ヘ', false, true],
+    ['ポ', 'ホ', false, true],
   ];
   for (const [voiced, base, daku, handaku] of pairs) {
     VOICED_NFC.set(voiced, { base, daku, handaku });
@@ -86,17 +115,28 @@ function decompose(ch: string): { base: string; daku: number; handaku: number } 
 
 /** Small kana that fuse with the preceding base kana. */
 const SMALL_Y = new Map<string, string>([
-  ['ゃ', 'ya'], ['ゅ', 'yu'], ['ょ', 'yo'],
-  ['ャ', 'ya'], ['ュ', 'yu'], ['ョ', 'yo'],
+  ['ゃ', 'ya'],
+  ['ゅ', 'yu'],
+  ['ょ', 'yo'],
+  ['ャ', 'ya'],
+  ['ュ', 'yu'],
+  ['ョ', 'yo'],
 ]);
 const SMALL_F = new Map<string, string>([
-  ['ァ', 'fa'], ['ィ', 'i'], ['ゥ', 'u'], ['ェ', 'e'], ['ォ', 'o'],
-  ['ぁ', 'a'], ['ぃ', 'i'], ['ぅ', 'u'], ['ぇ', 'e'], ['ぉ', 'o'],
+  ['ァ', 'fa'],
+  ['ィ', 'i'],
+  ['ゥ', 'u'],
+  ['ェ', 'e'],
+  ['ォ', 'o'],
+  ['ぁ', 'a'],
+  ['ぃ', 'i'],
+  ['ぅ', 'u'],
+  ['ぇ', 'e'],
+  ['ぉ', 'o'],
 ]);
 
 /** Voiceless→voiced consonant pairs used when resolving ゛ (ふ fu → ぶ bu). */
 const VOICED_CONSONANT: Record<string, string> = { k: 'g', s: 'z', t: 'd', h: 'b', p: 'b', f: 'b' };
-
 
 /** Resolve one full kana character (voicing included) to romaji, or null. */
 function romajiOf(ch: string): string | null {
@@ -187,9 +227,12 @@ export function kanaWordRomaji(word: string): string {
       const last = out[out.length - 1] ?? '';
       const prev = out.slice(0, -1);
       if (out.length >= 2 && VOWELS.includes(last)) {
-        if (out.endsWith('fu')) out = `${out.slice(0, -1)}${f[1]}`; // フ+ァ → fa (swap the vowel)
-        else if (out.endsWith('te') && f === 'i') out = `${out.slice(0, -1)}i`; // テ+ィ → ti
-        else if (out.endsWith('de') && f === 'i') out = `${out.slice(0, -1)}i`; // デ+ィ → di
+        if (out.endsWith('fu'))
+          out = `${out.slice(0, -1)}${f[1]}`; // フ+ァ → fa (swap the vowel)
+        else if (out.endsWith('te') && f === 'i')
+          out = `${out.slice(0, -1)}i`; // テ+ィ → ti
+        else if (out.endsWith('de') && f === 'i')
+          out = `${out.slice(0, -1)}i`; // デ+ィ → di
         else out = `${prev}${f[0]}`; // re-vocalize the preceding vowel
         continue;
       }
@@ -214,7 +257,8 @@ export function kanaWordRomaji(word: string): string {
         const onset = nextRomaji !== null ? onsetOf(nextRomaji) : null;
         if (onset === 'sh') out += 's';
         else if (onset === 'ch') out += 't';
-        else if (onset === 'ts') out += 't'; // ま+っ+つ → mattsu (single t; the syllable brings its own ts)
+        else if (onset === 'ts')
+          out += 't'; // ま+っ+つ → mattsu (single t; the syllable brings its own ts)
         else if (onset !== null && onset !== '') out += onset;
         else out += ch; // vowel/n follows — keep the sokuon visible rather than guess
         continue;

@@ -5,6 +5,7 @@
 ## Milestone 1 — Practice engine + persistence + API + hub (DONE, typecheck green)
 
 Files created:
+
 - `apps/web/src/modules/practice/session.ts` — skill-agnostic contract; toClientItem strips keys.
 - `apps/web/src/modules/practice/kana/dimensions.ts` — K1..K8 + labels.
 - `apps/web/src/modules/practice/kana/policy.ts` — PRACTICE_POLICY (owner-tunable DATA).
@@ -30,6 +31,7 @@ Files created:
 - `apps/web/src/components/site-nav.tsx` — 3rd nav destination (تمرین, Dumbbell icon).
 
 Guarantees implemented:
+
 - Answer keys never reach the client (choice items stripped; write items carry the glyph
   ONLY because the writing engine judges locally — same as lesson writing blocks).
 - Practice never mutates FSRS / never gates / never shows pass-fail.
@@ -44,6 +46,7 @@ feedback fix (no F1 spoiler; in-place animated panel) + tests update.
 ## Milestone 2 — Learn de-scoring + wrong-answer feedback fix (DONE, 737/737 unit + 22/22 in-mem integration green)
 
 Changes:
+
 1. **exercise_threshold → task_completed on ALL walk stations** (31 kana + 19 fm01):
    `chapter-kana01.stations.ts` + `chapter-fm01.stations.ts`. The chapter GATE (assessment,
    0.90/0.80 + 0.70/0.50) and all prerequisite validation are UNTOUCHED — the gate is the
@@ -78,6 +81,7 @@ identity + locked-click feedback.
 ## Milestone 3 — Chapter-01 two-section split + real-world milestones (DONE, 737/737 unit green)
 
 Content changes (all additive, validation-clean):
+
 - `chapter-kana01.ts`: 4 islands → 2 sections — `section-a-hiragana` (h0..h15 + m1 + opt-r-h9,
   core 201' + milestone 10') and `section-b-katakana` (k1..k13 + k12f + m2 + opt-drill,
   core 165' + milestone 10'). Honest section goals (summaryFa) promise ONLY what the

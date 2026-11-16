@@ -30,7 +30,11 @@ import { ensureTestDatabase } from './helpers';
 const QA = 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
 const QB = '77777777-8888-4999-aaaa-bbbbbbbbbbbb';
 
-function storedSession(id: string, userId: string, results: StoredPracticeSession['itemResults']): StoredPracticeSession {
+function storedSession(
+  id: string,
+  userId: string,
+  results: StoredPracticeSession['itemResults'],
+): StoredPracticeSession {
   return {
     id,
     userId,
@@ -81,7 +85,10 @@ describe('runInTx rollback machinery (BUG-036)', () => {
         throw new Error('forced failure');
       }),
     ).rejects.toThrow('forced failure');
-    const [row] = await db.select().from(learningObjectStates).where(sql`${learningObjectStates.objectId} = 'probe-object'`);
+    const [row] = await db
+      .select()
+      .from(learningObjectStates)
+      .where(sql`${learningObjectStates.objectId} = 'probe-object'`);
     expect(row).toBeUndefined();
   });
 });
@@ -118,7 +125,10 @@ describe('practice completion — idempotency + concurrency (BUG-036)', () => {
     expect(second.status).toBe('already');
     expect(second.newlyEligible).toBe(0);
     // and the fold count is still exactly ONE
-    const [row] = await getDbClient().db.select().from(learningObjectStates).where(sql`${learningObjectStates.objectId} = 'kn-rec-hira-c'`);
+    const [row] = await getDbClient()
+      .db.select()
+      .from(learningObjectStates)
+      .where(sql`${learningObjectStates.objectId} = 'kn-rec-hira-c'`);
     const stats = row!.dimensionStats as Record<string, { seen: number }>;
     expect(stats.K1?.seen).toBe(1);
   });
@@ -207,7 +217,10 @@ describe('station completion — atomic chapter fold (BUG-036)', () => {
     expect(b.chapter?.status).toBe('stations_complete');
 
     const { db } = getDbClient();
-    const rows = await db.select().from(chapterProgress).where(sql`${chapterProgress.userId} = ${QB}`);
+    const rows = await db
+      .select()
+      .from(chapterProgress)
+      .where(sql`${chapterProgress.userId} = ${QB}`);
     expect(rows).toHaveLength(1); // upsert convergence — never two contradictory rows
     expect(rows[0]!.status).toBe('stations_complete');
   });

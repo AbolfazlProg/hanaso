@@ -13,25 +13,25 @@
 
 ## وضعیت Git (اعتبارسنجی‌شده با Git و ls-remote — 2026-11-14)
 
-| مورد | مقدار |
-| --- | --- |
-| مخزن | github.com/AbolfazlProg/hanaso (private) |
-| شاخهٔ کار | `fix/TASK-HANASO-24-security` (ایجادشده از `af49535`) |
+| مورد       | مقدار                                                                                                                                             |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| مخزن       | github.com/AbolfazlProg/hanaso (private)                                                                                                          |
+| شاخهٔ کار  | `fix/TASK-HANASO-24-security` (ایجادشده از `af49535`)                                                                                             |
 | پایهٔ شاخه | `af49535` = تیپ `feat/TASK-HANASO-22-learning-experience` — آخرین خط توسعهٔ معتبر محصول (۱۸۲ commit جلوتر از main؛ شامل release تولیدی `3d8b8cc`) |
-| main | `16db1dc` (merge-base با خط ۲۲؛ پشت خط محصول) |
-| ممیزی | `audit/TASK-HANASO-23 @ d691e25` — کامل؛ **فقط مرجع**، پایهٔ fix نیست |
-| Production | `1.0.0-hanaso22-r01 @ 3d8b8cc` — read-only |
-| Worktree | `/home/z/my-project/hanaso24` |
+| main       | `16db1dc` (merge-base با خط ۲۲؛ پشت خط محصول)                                                                                                     |
+| ممیزی      | `audit/TASK-HANASO-23 @ d691e25` — کامل؛ **فقط مرجع**، پایهٔ fix نیست                                                                             |
+| Production | `1.0.0-hanaso22-r01 @ 3d8b8cc` — read-only                                                                                                        |
+| Worktree   | `/home/z/my-project/hanaso24`                                                                                                                     |
 
 ## پنج یافتهٔ مأموریت ← معادل در BUG REGISTER ممیزی
 
-| # | یافتهٔ مأموریت | BUG IDs ممیزی | مکان‌های گزارش‌شده |
-| --- | --- | --- | --- |
-| ۱ | IDOR در /api/progress و /api/attempts | BUG-011 (+BUG-030, BUG-033, BUG-039) | api/progress/route.ts:30,55 · attempts/route.ts:45,78 |
-| ۲ | افشای Answer Key در /poc/practice | BUG-032 (تأیید روی Production با یک GET) | poc/practice/page.tsx (RSC payload: correctOptionId×9, correctOrder×2) |
-| ۳ | ضعف Cookie و هویت Guest | BUG-028 (+T3-01/BUG-039) | identity cookie بدون httpOnly/Secure؛ mint-and-proceed روی POST |
-| ۴ | نبود Transaction در ثبت Practice | BUG-036 | ۱ write + N upsert متوالی بدون transaction |
-| ۵ | اعتبارسنجی هویت/Session/مالکیت | BUG-028/030/033/039 + CSRF + مالکیت رکورد | همهٔ مسیرهای Write |
+| #   | یافتهٔ مأموریت                        | BUG IDs ممیزی                             | مکان‌های گزارش‌شده                                                     |
+| --- | ------------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------- |
+| ۱   | IDOR در /api/progress و /api/attempts | BUG-011 (+BUG-030, BUG-033, BUG-039)      | api/progress/route.ts:30,55 · attempts/route.ts:45,78                  |
+| ۲   | افشای Answer Key در /poc/practice     | BUG-032 (تأیید روی Production با یک GET)  | poc/practice/page.tsx (RSC payload: correctOptionId×9, correctOrder×2) |
+| ۳   | ضعف Cookie و هویت Guest               | BUG-028 (+T3-01/BUG-039)                  | identity cookie بدون httpOnly/Secure؛ mint-and-proceed روی POST        |
+| ۴   | نبود Transaction در ثبت Practice      | BUG-036                                   | ۱ write + N upsert متوالی بدون transaction                             |
+| ۵   | اعتبارسنجی هویت/Session/مالکیت        | BUG-028/030/033/039 + CSRF + مالکیت رکورد | همهٔ مسیرهای Write                                                     |
 
 یادداشت: learn-surfaces واقعی (curriculum/journey/practice/mastery) طبق ممیزی سالم‌اند (کلیدها strip می‌شوند، cookie-scoped اند). سطح مخرب: `/poc/*` و APIهای legacy مشترک.
 
@@ -51,6 +51,7 @@
 ## اقدام بعدی
 
 CP-07 — رفع اختلاف‌ها و ایرادات تأییدشده + تست مجدد + Verification نهایی:
+
 1. FIXهای داخل scope: A-02 (گارد decode)، A-03 (last-wins در resolver)، A-04/B-05 (events: هویت اجباری GET + فیلتر user_id + bound props)، B-06 (حذف correctOptionId از perQuestion)، C-01 (چرخهٔ in-flight: deleteInFlight روی singleton + sweep-on-generate + تست replay ترتیبی PG)، C-02 (retry predicate با 25P02)، C-04 (attemptCount داخل tx)، C-05 (nesting guard)، A-01 (fail-closed boot بدون secret در production + .env.example + گیت deploy).
 2. DEFER با استدلال: B-01 (deploy blocker — در RC)، B-03=BUG-001 و B-04=BUG-029 (content track)، B-02 behavior=BUG-031 (تصمیم محصول)، rate-limit کامل (نیاز به بودجهٔ محصول).
 3. اجرای مجدد کل تست‌ها (in-memory + PG) + به‌روزرسانی مستندات (C-08).

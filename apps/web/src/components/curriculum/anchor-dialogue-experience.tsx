@@ -156,8 +156,7 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
       {bundle.audio.audioSource === 'voicevox' && bundle.audio.voiceCredits?.length ? (
         <p className="flex items-center gap-1.5 text-caption text-ink-soft">
           <Volume2 aria-hidden className="size-3.5 shrink-0" />
-          صداها با موتور VOICEVOX از پیش تولید شده‌اند —{' '}
-          <MixedFaJaText text={bundle.audio.voiceCredits.join('・')} />
+          صداها با موتور VOICEVOX از پیش تولید شده‌اند — <MixedFaJaText text={bundle.audio.voiceCredits.join('・')} />
         </p>
       ) : null}
 

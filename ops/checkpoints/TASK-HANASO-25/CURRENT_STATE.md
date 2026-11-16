@@ -63,17 +63,17 @@ p2-c2-prod-1, g2-cloze-1), full teaching-method redesign.
 
 ## Phase plan
 
-| Phase | Content | Status |
-| --- | --- | --- |
-| 0 | Branch, this file, CHECKPOINT_LOG, push | ✅ this commit |
-| 1 | Gate: audio wiring + bank math + M5 labels + gate-m5-1 | ⬜ |
-| 2 | 60 two-correct items (script-explicit prompts) | ⬜ |
-| 3 | 92 recall f1Fa dedup + listening rationale + F1 recognition leak | ⬜ |
-| 4 | Hint wiring (server hint action + UI) | ⬜ |
-| 5 | Content Lint + CI + fixtures | ⬜ |
-| 6 | 3 subagents × 2 rounds | ⬜ |
-| 7 | Regression (unit/integration/E2E/browser) | ⬜ |
-| 8 | Release prep + OWNER-COMMAND.txt | ⬜ |
+| Phase | Content                                                          | Status         |
+| ----- | ---------------------------------------------------------------- | -------------- |
+| 0     | Branch, this file, CHECKPOINT_LOG, push                          | ✅ this commit |
+| 1     | Gate: audio wiring + bank math + M5 labels + gate-m5-1           | ⬜             |
+| 2     | 60 two-correct items (script-explicit prompts)                   | ⬜             |
+| 3     | 92 recall f1Fa dedup + listening rationale + F1 recognition leak | ⬜             |
+| 4     | Hint wiring (server hint action + UI)                            | ⬜             |
+| 5     | Content Lint + CI + fixtures                                     | ⬜             |
+| 6     | 3 subagents × 2 rounds                                           | ⬜             |
+| 7     | Regression (unit/integration/E2E/browser)                        | ⬜             |
+| 8     | Release prep + OWNER-COMMAND.txt                                 | ⬜             |
 
 ## Rules in force
 
@@ -89,6 +89,7 @@ p2-c2-prod-1, g2-cloze-1), full teaching-method redesign.
   record, don't force.)
 
 ## 2026-11-14 — TASK-HANASO-25 FINAL STATE (CP-09, tip 0e1cf37)
+
 - Round 1 reports saved+pushed (e76f702); CP-06 remediation (b5fe987);
   CP-07 all Round-2 A findings + CL-12 general rule (d10d09a);
   Round 2 CLOSED: A=B=C=PASS (18a3177).

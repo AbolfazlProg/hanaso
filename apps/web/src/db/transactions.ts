@@ -19,7 +19,9 @@ export function usingDbTransactions(): boolean {
 /** One Postgres transaction per unit; tx-bound repositories join it. */
 export async function runInTx<T>(fn: (tx: DbClient) => Promise<T>): Promise<T> {
   if (insideTx.getStore()) {
-    throw new Error('[hanaso/tx] runInTx called inside another runInTx - nest the work in ONE unit instead (a second connection would self-starve the pool).');
+    throw new Error(
+      '[hanaso/tx] runInTx called inside another runInTx - nest the work in ONE unit instead (a second connection would self-starve the pool).',
+    );
   }
   const outer = getDbClient();
   return insideTx.run(true, () => outer.db.transaction(async (tx) => fn(asTxClient(tx, outer.pool))));

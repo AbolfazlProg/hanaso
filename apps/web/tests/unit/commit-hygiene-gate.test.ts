@@ -21,14 +21,38 @@ import { dirname } from 'node:path';
 
 // this file: apps/web/tests/unit/x.test.ts → repo root needs FOUR ups
 // (tests/unit → tests → web → apps → root) — robust regardless of cwd.
-const GATE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', 'scripts', 'ci', 'commit-hygiene.sh');
+const GATE = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  '..',
+  '..',
+  'scripts',
+  'ci',
+  'commit-hygiene.sh',
+);
 const dirs: string[] = [];
 
-function fixture(): { dir: string; git: (args: string[]) => string; commit: (msg: string, files: Record<string, string>) => string } {
+function fixture(): {
+  dir: string;
+  git: (args: string[]) => string;
+  commit: (msg: string, files: Record<string, string>) => string;
+} {
   const dir = mkdtempSync(join(tmpdir(), 'h21-hygiene-'));
   dirs.push(dir);
   const git = (args: string[]) =>
-    execFileSync('git', args, { cwd: dir, encoding: 'utf8', env: { ...process.env, GIT_AUTHOR_NAME: 'T', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 'T', GIT_COMMITTER_EMAIL: 't@t', HOME: dir } }).trim();
+    execFileSync('git', args, {
+      cwd: dir,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        GIT_AUTHOR_NAME: 'T',
+        GIT_AUTHOR_EMAIL: 't@t',
+        GIT_COMMITTER_NAME: 'T',
+        GIT_COMMITTER_EMAIL: 't@t',
+        HOME: dir,
+      },
+    }).trim();
   git(['init', '-q']);
   git(['config', 'user.name', 'T']);
   git(['config', 'user.email', 't@t']);
@@ -46,7 +70,11 @@ function fixture(): { dir: string; git: (args: string[]) => string; commit: (msg
 
 function run(dir: string, before: string, after: string) {
   try {
-    const out = execFileSync('bash', [GATE, before, after], { cwd: dir, encoding: 'utf8', env: { ...process.env, HOME: dir } });
+    const out = execFileSync('bash', [GATE, before, after], {
+      cwd: dir,
+      encoding: 'utf8',
+      env: { ...process.env, HOME: dir },
+    });
     return { code: 0, out };
   } catch (e) {
     const err = e as { status?: number; stdout?: string };
@@ -91,9 +119,12 @@ describe('commit-hygiene.sh — BUG-011 gate', () => {
   it('H5: the explicit hygiene-waiver trailer passes with a loud log', () => {
     const { dir, commit } = fixture();
     const base = commit('chore: base', { 'README.md': 'x' });
-    const waived = commit('style: prettier --write sweep\n\nhygiene-waiver: format-only (prettier), zero semantic change', {
-      'apps/web/src/d.ts': 'x',
-    });
+    const waived = commit(
+      'style: prettier --write sweep\n\nhygiene-waiver: format-only (prettier), zero semantic change',
+      {
+        'apps/web/src/d.ts': 'x',
+      },
+    );
     const r = run(dir, base, waived);
     expect(r.code).toBe(0);
     expect(r.out).toContain('WAIVED');

@@ -29,14 +29,16 @@ describe('runInTx nesting guard (C-05)', () => {
 
   it('the nested inner write never happened (outer rolled back with its error)', async () => {
     // the outer unit fails BECAUSE the inner threw — nothing from either persists
-    await expect(runInTx(async () => { await runInTx(async () => undefined); })).rejects.toThrow();
+    await expect(
+      runInTx(async () => {
+        await runInTx(async () => undefined);
+      }),
+    ).rejects.toThrow();
   });
 
   it('concurrent INDEPENDENT units all succeed (no false nesting)', async () => {
     const results = await Promise.all(
-      Array.from({ length: 4 }, () =>
-        runInTx(async (tx) => tx.db.execute(sql`select 1 as one`)),
-      ),
+      Array.from({ length: 4 }, () => runInTx(async (tx) => tx.db.execute(sql`select 1 as one`))),
     );
     expect(results).toHaveLength(4);
   });

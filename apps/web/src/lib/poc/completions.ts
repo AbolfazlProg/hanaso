@@ -23,7 +23,13 @@ import { PgLearningObjectRepository, PgPracticeSessionRepository } from '@/db/re
 import { PgAttemptRepository } from '@/db/repositories/attempts';
 import { PgChapterProgressRepository, PgStationProgressRepository } from '@/db/repositories/curriculum';
 import { isRetryableTxError } from '@/db/repositories/attempts';
-import { getAttemptStore, getChapterProgressStore, getLearningObjectStore, getPracticeSessionStore, getStationProgressStore } from '@/lib/poc/stores';
+import {
+  getAttemptStore,
+  getChapterProgressStore,
+  getLearningObjectStore,
+  getPracticeSessionStore,
+  getStationProgressStore,
+} from '@/lib/poc/stores';
 import { foldItemResult, seedRecord } from '@/modules/practice/evidence';
 import type { LearningObjectRecord, PracticeItemResult } from '@/modules/practice/session';
 import type { StoredPracticeSession } from '@/modules/practice/session';
@@ -34,7 +40,10 @@ import type { AttemptInput, DialogueMasteryAttempt } from '@/modules/mastery/typ
 /* ------------------------------------------------------------------ shared */
 
 /** Transaction-scoped advisory lock (bigint key). Same key = serialized. */
-async function advisoryXactLock(client: { db: import('drizzle-orm/node-postgres').NodePgDatabase }, key: string): Promise<void> {
+async function advisoryXactLock(
+  client: { db: import('drizzle-orm/node-postgres').NodePgDatabase },
+  key: string,
+): Promise<void> {
   await client.db.execute(sql`select pg_advisory_xact_lock(hashtext(${key}))`);
 }
 
@@ -95,7 +104,10 @@ export async function completePracticeSession(
 async function completePracticeSequence(
   stored: StoredPracticeSession,
   groups: PracticeFoldGroup[],
-  txRepos?: { sessionRepo: Pick<PgPracticeSessionRepository, 'recordCompleted'>; loRepo: Pick<PgLearningObjectRepository, 'get' | 'upsert'> },
+  txRepos?: {
+    sessionRepo: Pick<PgPracticeSessionRepository, 'recordCompleted'>;
+    loRepo: Pick<PgLearningObjectRepository, 'get' | 'upsert'>;
+  },
 ): Promise<CompletePracticeOutcome> {
   const sessionRepo = txRepos?.sessionRepo ?? getPracticeSessionStore();
   const loRepo = txRepos?.loRepo ?? getLearningObjectStore();
@@ -147,16 +159,14 @@ export async function completeStationWalk(params: {
      * read lost concurrent grade increments (read-modify-write on the counter).
      */
     const fresh = await stationRepo.get(params.userId, params.stationSlug);
-    const state = fresh
-      ? { ...params.stationState, attemptCount: fresh.attemptCount }
-      : params.stationState;
+    const state = fresh ? { ...params.stationState, attemptCount: fresh.attemptCount } : params.stationState;
     const station = await stationRepo.upsert(params.userId, params.stationSlug, state);
     // The aggregate precondition is evaluated INSIDE the unit — the same
     // statement scope sees the station write above (old code read it after
     // the upsert too; now both live or die together).
     const states = await stationRepo.listForUnit(params.userId, params.coreSlugs);
-    const allDone = params.coreSlugs.every(
-      (slug) => states.some((st) => st.stationSlug === slug && st.status !== 'in_progress'),
+    const allDone = params.coreSlugs.every((slug) =>
+      states.some((st) => st.stationSlug === slug && st.status !== 'in_progress'),
     );
     if (!allDone) {
       return { station, chapter: await chapterRepo.get(params.userId, params.chapterSlug) };

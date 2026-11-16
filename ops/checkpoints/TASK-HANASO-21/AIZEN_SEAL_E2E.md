@@ -3,16 +3,16 @@
 All checks from the real-browser E2E suite (46/46 green; evidence in
 `screenshots/e2e/`):
 
-| Required check | Evidence | Result |
-| --- | --- | --- |
-| Seal shown after a REAL lesson completion | S1.4 (h0), S2.4 (k8), S3.2 (k12-foreign), S4.2 (fm01 anchor) — fresh ceremony (`data-animate="true"`) | PASS |
-| Correct on mobile | e2e-09 (`s4-seal-mobile-360.png`) — S4.3, seal fully visible at 360px | PASS |
-| Correct on desktop | e2e-10 (`s4-seal-desktop-1440.png`) — S4.4 | PASS |
-| Animation runs on FIRST completion | S1.4 / S2.4 `sealAnimate === true` | PASS |
-| Stays after refresh | S1.10 — seal present, SETTLED | PASS |
-| No re-run of the animation | S1.10 — `data-animate` absent on revisit | PASS |
-| No duplicate on replay | S5.6c — replay end: NO seal stamp, NO complete POST | PASS |
-| No duplicate seal on concurrent requests | S5.4b (double-click: one seal) + S5.7 (`already:true` settles) | PASS |
+| Required check                            | Evidence                                                                                              | Result |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------ |
+| Seal shown after a REAL lesson completion | S1.4 (h0), S2.4 (k8), S3.2 (k12-foreign), S4.2 (fm01 anchor) — fresh ceremony (`data-animate="true"`) | PASS   |
+| Correct on mobile                         | e2e-09 (`s4-seal-mobile-360.png`) — S4.3, seal fully visible at 360px                                 | PASS   |
+| Correct on desktop                        | e2e-10 (`s4-seal-desktop-1440.png`) — S4.4                                                            | PASS   |
+| Animation runs on FIRST completion        | S1.4 / S2.4 `sealAnimate === true`                                                                    | PASS   |
+| Stays after refresh                       | S1.10 — seal present, SETTLED                                                                         | PASS   |
+| No re-run of the animation                | S1.10 — `data-animate` absent on revisit                                                              | PASS   |
+| No duplicate on replay                    | S5.6c — replay end: NO seal stamp, NO complete POST                                                   | PASS   |
+| No duplicate seal on concurrent requests  | S5.4b (double-click: one seal) + S5.7 (`already:true` settles)                                        | PASS   |
 
 ## Design review (VLM, on the actual screenshots)
 

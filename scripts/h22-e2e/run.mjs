@@ -65,7 +65,13 @@ async function apiComplete(page, stationSlug, score = 1) {
       const r = await fetch(`${base}/api/curriculum/station`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: slug, score, taskCompleted: true }),
+        body: JSON.stringify({
+          action: 'complete',
+          chapterSlug: 'kana-foundation-01',
+          stationSlug: slug,
+          score,
+          taskCompleted: true,
+        }),
       });
       return { status: r.status, body: await r.json().catch(() => null) };
     },
@@ -79,9 +85,12 @@ async function walkCurrentStation(page, maxSteps = 150) {
   for (let i = 0; i < maxSteps; i++) {
     const st = await page.evaluate(() => {
       const cont = [...document.querySelectorAll('button')].filter(
-        (b) => b.offsetParent && !b.disabled && (b.textContent.includes('ادامه') || b.textContent.includes('پایان درس')),
+        (b) =>
+          b.offsetParent && !b.disabled && (b.textContent.includes('ادامه') || b.textContent.includes('پایان درس')),
       );
-      const radio = [...document.querySelectorAll('[role="radio"]')].filter((r) => r.offsetParent && !r.hasAttribute('disabled'));
+      const radio = [...document.querySelectorAll('[role="radio"]')].filter(
+        (r) => r.offsetParent && !r.hasAttribute('disabled'),
+      );
       return {
         contCount: cont.length,
         radioCount: radio.length,
@@ -94,34 +103,48 @@ async function walkCurrentStation(page, maxSteps = 150) {
     if (st.radioCount > 0) {
       /* 1) pick an option FIRST — the check button only enables after a pick */
       await page.evaluate(() => {
-        [...document.querySelectorAll('[role="radio"]')].filter((r) => r.offsetParent && !r.hasAttribute('disabled'))[0].click();
+        [...document.querySelectorAll('[role="radio"]')]
+          .filter((r) => r.offsetParent && !r.hasAttribute('disabled'))[0]
+          .click();
       });
       await sleep(200);
       /* 2) the now-enabled check button */
       await page.evaluate(() => {
-        const b = [...document.querySelectorAll('button')].find((x) => x.offsetParent && !x.disabled && x.textContent.includes('بررسی پاسخ'));
+        const b = [...document.querySelectorAll('button')].find(
+          (x) => x.offsetParent && !x.disabled && x.textContent.includes('بررسی پاسخ'),
+        );
         if (b) b.click();
       });
       await sleep(1500);
       /* the F1/F2 ladder: try again once, then whatever shows, continue */
       for (let k = 0; k < 3; k++) {
         const after = await page.evaluate(() => ({
-          retry: !![...document.querySelectorAll('button')].find((b) => b.offsetParent && !b.disabled && b.textContent.includes('دوباره تلاش کن')),
-          cont: !![...document.querySelectorAll('button')].find((b) => b.offsetParent && !b.disabled && b.textContent.includes('ادامه')),
+          retry: !![...document.querySelectorAll('button')].find(
+            (b) => b.offsetParent && !b.disabled && b.textContent.includes('دوباره تلاش کن'),
+          ),
+          cont: !![...document.querySelectorAll('button')].find(
+            (b) => b.offsetParent && !b.disabled && b.textContent.includes('ادامه'),
+          ),
         }));
         if (after.cont) break;
         if (after.retry) {
           await page.evaluate(() => {
-            [...document.querySelectorAll('button')].find((b) => b.offsetParent && !b.disabled && b.textContent.includes('دوباره تلاش کن')).click();
+            [...document.querySelectorAll('button')]
+              .find((b) => b.offsetParent && !b.disabled && b.textContent.includes('دوباره تلاش کن'))
+              .click();
           });
           await sleep(500);
           await page.evaluate(() => {
-            const r = [...document.querySelectorAll('[role="radio"]')].filter((x) => x.offsetParent && !x.hasAttribute('disabled'));
+            const r = [...document.querySelectorAll('[role="radio"]')].filter(
+              (x) => x.offsetParent && !x.hasAttribute('disabled'),
+            );
             if (r[1]) r[1].click();
           });
           await sleep(140);
           await page.evaluate(() => {
-            const b = [...document.querySelectorAll('button')].find((x) => x.offsetParent && !x.disabled && x.textContent.includes('بررسی پاسخ'));
+            const b = [...document.querySelectorAll('button')].find(
+              (x) => x.offsetParent && !x.disabled && x.textContent.includes('بررسی پاسخ'),
+            );
             if (b) b.click();
           });
           await sleep(1300);
@@ -133,9 +156,12 @@ async function walkCurrentStation(page, maxSteps = 150) {
     }
     if (st.contCount > 0) {
       await page.evaluate(() => {
-        [...document.querySelectorAll('button')].filter(
-          (x) => x.offsetParent && !x.disabled && (x.textContent.includes('ادامه') || x.textContent.includes('پایان درس')),
-        )[0].click();
+        [...document.querySelectorAll('button')]
+          .filter(
+            (x) =>
+              x.offsetParent && !x.disabled && (x.textContent.includes('ادامه') || x.textContent.includes('پایان درس')),
+          )[0]
+          .click();
       });
       await sleep(950);
     } else {
@@ -182,7 +208,9 @@ async function walkCurrentStation(page, maxSteps = 150) {
     let sawFeedback = false;
     for (let i = 0; i < 90; i++) {
       const st = await page.evaluate(() => ({
-        optCount: [...document.querySelectorAll('[data-testid="practice-option"]')].filter((b) => b.offsetParent && !b.disabled).length,
+        optCount: [...document.querySelectorAll('[data-testid="practice-option"]')].filter(
+          (b) => b.offsetParent && !b.disabled,
+        ).length,
         /* the check button exists even while disabled (before an option is picked) */
         hasCheck: !!document.querySelector('[data-testid="practice-check"]'),
         hasNext: !!document.querySelector('[data-testid="practice-next"]'),
@@ -193,7 +221,9 @@ async function walkCurrentStation(page, maxSteps = 150) {
       if (st.hasCheck && st.optCount > 0) {
         /* 1) pick the first option — the check button enables */
         await page.evaluate(() => {
-          [...document.querySelectorAll('[data-testid="practice-option"]')].filter((b) => b.offsetParent && !b.disabled)[0].click();
+          [...document.querySelectorAll('[data-testid="practice-option"]')]
+            .filter((b) => b.offsetParent && !b.disabled)[0]
+            .click();
         });
         await sleep(220);
         /* 2) NOW the enabled check button */
@@ -209,11 +239,16 @@ async function walkCurrentStation(page, maxSteps = 150) {
       /* wrong-at-1 path: feedback with a try-again → retry once, then next */
       if (st.feedback) {
         const hasRetry = await page.evaluate(
-          () => !![...document.querySelectorAll('button')].find((b) => b.offsetParent && !b.disabled && b.textContent.includes('تلاش دوباره')),
+          () =>
+            !![...document.querySelectorAll('button')].find(
+              (b) => b.offsetParent && !b.disabled && b.textContent.includes('تلاش دوباره'),
+            ),
         );
         if (hasRetry) {
           await page.evaluate(() => {
-            [...document.querySelectorAll('button')].find((b) => b.offsetParent && !b.disabled && b.textContent.includes('تلاش دوباره')).click();
+            [...document.querySelectorAll('button')]
+              .find((b) => b.offsetParent && !b.disabled && b.textContent.includes('تلاش دوباره'))
+              .click();
           });
           await sleep(500);
           continue;
@@ -231,19 +266,34 @@ async function walkCurrentStation(page, maxSteps = 150) {
       }
       await sleep(500);
     }
-    note('H2b the session ran in the browser with server-graded feedback', answered > 0 && sawFeedback, `answered=${answered}`);
+    note(
+      'H2b the session ran in the browser with server-graded feedback',
+      answered > 0 && sawFeedback,
+      `answered=${answered}`,
+    );
     const recap = await page.evaluate(() => ({
       present: !!document.querySelector('[data-testid="practice-recap"]'),
       text: document.querySelector('[data-testid="practice-recap"]')?.textContent ?? '',
     }));
-    note('H2c the recap appears with the honest first-try count (no pass/fail)', recap.present && /بار اول درست/.test(recap.text), recap.text.slice(0, 100));
+    note(
+      'H2c the recap appears with the honest first-try count (no pass/fail)',
+      recap.present && /بار اول درست/.test(recap.text),
+      recap.text.slice(0, 100),
+    );
     await shot(page, 'h2-practice-recap');
     const status = await page.evaluate(async (base) => {
       const r = await fetch(`${base}/api/practice`);
       return (await r.json().catch(() => null))?.data ?? null;
     }, BASE);
-    note('H2d practice evidence recorded (learning objects eligible)', !!status && status.eligibleForReview > 0, `eligible=${status?.eligibleForReview ?? 'n/a'}`);
-    note('H2e status carries NO fake review dates (engine honest)', !!status && JSON.stringify(status).includes('هنوز فعال نیست'));
+    note(
+      'H2d practice evidence recorded (learning objects eligible)',
+      !!status && status.eligibleForReview > 0,
+      `eligible=${status?.eligibleForReview ?? 'n/a'}`,
+    );
+    note(
+      'H2e status carries NO fake review dates (engine honest)',
+      !!status && JSON.stringify(status).includes('هنوز فعال نیست'),
+    );
   }
   await ctx.close();
 }
@@ -256,11 +306,20 @@ async function walkCurrentStation(page, maxSteps = 150) {
     const r = await fetch(`${base}/api/practice`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ action: 'generate', skill: 'kana', kind: 'mixed', scopeKey: 'chapter:kana-foundation-01' }),
+      body: JSON.stringify({
+        action: 'generate',
+        skill: 'kana',
+        kind: 'mixed',
+        scopeKey: 'chapter:kana-foundation-01',
+      }),
     });
     return { status: r.status, code: (await r.json().catch(() => null))?.error?.code };
   }, BASE);
-  note('H3a mixed practice honestly locked before 3 completed lessons', locked.status === 409 && locked.code === 'practice/mixed_locked', JSON.stringify(locked));
+  note(
+    'H3a mixed practice honestly locked before 3 completed lessons',
+    locked.status === 409 && locked.code === 'practice/mixed_locked',
+    JSON.stringify(locked),
+  );
 
   await apiComplete(page, 'stn-kana-h1');
   await apiComplete(page, 'stn-kana-h2');
@@ -268,12 +327,25 @@ async function walkCurrentStation(page, maxSteps = 150) {
     const r = await fetch(`${base}/api/practice`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ action: 'generate', skill: 'kana', kind: 'mixed', scopeKey: 'chapter:kana-foundation-01' }),
+      body: JSON.stringify({
+        action: 'generate',
+        skill: 'kana',
+        kind: 'mixed',
+        scopeKey: 'chapter:kana-foundation-01',
+      }),
     });
     const body = (await r.json().catch(() => null))?.data ?? null;
-    return { status: r.status, items: body?.items?.length ?? 0, hasKeys: JSON.stringify(body ?? {}).includes('correctOptionId') };
+    return {
+      status: r.status,
+      items: body?.items?.length ?? 0,
+      hasKeys: JSON.stringify(body ?? {}).includes('correctOptionId'),
+    };
   }, BASE);
-  note('H3b mixed practice unlocks after 3 completed lessons', unlocked.status === 200 && unlocked.items > 0, `items=${unlocked.items}`);
+  note(
+    'H3b mixed practice unlocks after 3 completed lessons',
+    unlocked.status === 200 && unlocked.items > 0,
+    `items=${unlocked.items}`,
+  );
   note('H3c the generated payload carries NO answer keys (SKL-013)', unlocked.hasKeys === false);
   await ctx.close();
 }
@@ -286,7 +358,13 @@ async function walkCurrentStation(page, maxSteps = 150) {
     const r = await fetch(`${base}/api/curriculum/station`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: 'stn-kana-h1', score: 0, taskCompleted: true }),
+      body: JSON.stringify({
+        action: 'complete',
+        chapterSlug: 'kana-foundation-01',
+        stationSlug: 'stn-kana-h1',
+        score: 0,
+        taskCompleted: true,
+      }),
     });
     return { status: r.status, code: (await r.json().catch(() => null))?.error?.code ?? null };
   }, BASE);
@@ -306,7 +384,9 @@ async function walkCurrentStation(page, maxSteps = 150) {
   note('H5a the journey shows the two sections (A/B titles)', sections.a || sections.b, JSON.stringify(sections));
   const lockedClick = await page.evaluate(() => {
     /* the locked row's aria-label carries the access state: «<title> — قفل» */
-    const rows = [...document.querySelectorAll('button')].filter((b) => (b.getAttribute('aria-label') ?? '').endsWith('قفل'));
+    const rows = [...document.querySelectorAll('button')].filter((b) =>
+      (b.getAttribute('aria-label') ?? '').endsWith('قفل'),
+    );
     if (rows.length === 0) return { hasLockedRow: false };
     rows[0].click();
     return { hasLockedRow: true, count: rows.length };
@@ -316,15 +396,25 @@ async function walkCurrentStation(page, maxSteps = 150) {
     const el = document.querySelector('[data-locked-reason]');
     return { present: !!el, text: el?.textContent ?? '' };
   });
-  note('H5b a locked row answers the click with the reason notice', lockedClick.hasLockedRow && notice.present, `rows=${lockedClick.count ?? 0} ${notice.text.slice(0, 70)}`);
+  note(
+    'H5b a locked row answers the click with the reason notice',
+    lockedClick.hasLockedRow && notice.present,
+    `rows=${lockedClick.count ?? 0} ${notice.text.slice(0, 70)}`,
+  );
   note('H5c the notice names the prerequisite lesson', notice.present && /ابتدا/.test(notice.text));
   const tiles = await page.evaluate(() => {
-    const row = [...document.querySelectorAll('button')].find((b) => (b.getAttribute('aria-label') ?? '').endsWith('قفل'));
+    const row = [...document.querySelectorAll('button')].find((b) =>
+      (b.getAttribute('aria-label') ?? '').endsWith('قفل'),
+    );
     if (!row) return { found: false };
     const titledSpans = row.querySelectorAll('span[title]');
     return { found: true, identityTiles: titledSpans.length, firstTitle: titledSpans[0]?.getAttribute('title') ?? '' };
   });
-  note('H5d locked rows keep the content-identity tile (labeled, not faceless)', tiles.found && tiles.identityTiles >= 1, tiles.firstTitle);
+  note(
+    'H5d locked rows keep the content-identity tile (labeled, not faceless)',
+    tiles.found && tiles.identityTiles >= 1,
+    tiles.firstTitle,
+  );
   await shot(page, 'h5-journey-locked-notice');
   await ctx.close();
 }
@@ -333,16 +423,31 @@ async function walkCurrentStation(page, maxSteps = 150) {
 {
   const { ctx, page } = await newLearner();
   for (const slug of [
-    'stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5',
-    'stn-kana-h6', 'stn-kana-h7', 'stn-kana-h8', 'stn-kana-h9', 'stn-kana-h10', 'stn-kana-h11',
-    'stn-kana-h12', 'stn-kana-h13', 'stn-kana-h14', 'stn-kana-h15',
+    'stn-kana-h0',
+    'stn-kana-h1',
+    'stn-kana-h2',
+    'stn-kana-h3',
+    'stn-kana-h4',
+    'stn-kana-h5',
+    'stn-kana-h6',
+    'stn-kana-h7',
+    'stn-kana-h8',
+    'stn-kana-h9',
+    'stn-kana-h10',
+    'stn-kana-h11',
+    'stn-kana-h12',
+    'stn-kana-h13',
+    'stn-kana-h14',
+    'stn-kana-h15',
   ]) {
     await apiComplete(page, slug);
   }
   await page.goto(`${BASE}/learn/kana-foundation-01/journey?s=section-a-hiragana`, { waitUntil: 'domcontentloaded' });
   await sleep(1400);
   const milestoneRow = await page.evaluate(() => {
-    const row = [...document.querySelectorAll('a')].find((a) => a.getAttribute('href')?.includes('stn-kana-m1-reading'));
+    const row = [...document.querySelectorAll('a')].find((a) =>
+      a.getAttribute('href')?.includes('stn-kana-m1-reading'),
+    );
     return { present: !!row, text: row?.textContent?.slice(0, 60) ?? '' };
   });
   note('H6a milestone M1 (reading sheet) appears in section A', milestoneRow.present, milestoneRow.text);
@@ -383,7 +488,11 @@ async function walkCurrentStation(page, maxSteps = 150) {
     };
   });
   note('H7a the fresh completion plays the ceremony (data-animate)', done.complete && seal.animating);
-  note('H7b the upgraded stage: bigger seal frame (≥144px) + rotating ink ring', !!seal.frameWidth && parseInt(seal.frameWidth) >= 144 && seal.ring, `frame=${seal.frameWidth}`);
+  note(
+    'H7b the upgraded stage: bigger seal frame (≥144px) + rotating ink ring',
+    !!seal.frameWidth && parseInt(seal.frameWidth) >= 144 && seal.ring,
+    `frame=${seal.frameWidth}`,
+  );
   note('H7c the sound mute toggle is present beside the seal', seal.soundToggle);
   const sfx = await page.evaluate(async (base) => {
     const r = await fetch(`${base}/audio/sfx/aizen-stamp.m4a`, { method: 'HEAD' });
@@ -397,7 +506,11 @@ async function walkCurrentStation(page, maxSteps = 150) {
     seal: !!document.querySelector('[data-aizen-seal]'),
     animating: document.querySelector('[data-aizen-seal]')?.getAttribute('data-animate') === 'true',
   }));
-  note('H7e revisit shows the seal SETTLED (no re-animation)', revisit.seal && !revisit.animating, JSON.stringify(revisit));
+  note(
+    'H7e revisit shows the seal SETTLED (no re-animation)',
+    revisit.seal && !revisit.animating,
+    JSON.stringify(revisit),
+  );
   await ctx.close();
 }
 
@@ -414,7 +527,11 @@ async function walkCurrentStation(page, maxSteps = 150) {
     hubVisible: document.body.textContent.includes('تمرین متمرکز'),
     tabBar: !![...document.querySelectorAll('nav a')].find((a) => a.getAttribute('href') === '/practice'),
   }));
-  note('H8 practice hub is usable at 360px (no horizontal scroll)', mobile.noHScroll && mobile.hubVisible, JSON.stringify(mobile));
+  note(
+    'H8 practice hub is usable at 360px (no horizontal scroll)',
+    mobile.noHScroll && mobile.hubVisible,
+    JSON.stringify(mobile),
+  );
   await shot(page, 'h8-practice-mobile');
   await ctx.close();
 }

@@ -206,7 +206,9 @@ export const practiceSessions = app.table(
     /** Station slug (focused) or chapter scope key (mixed). */
     scopeKey: text('scope_key').notNull(),
     /** [{itemId, objectId, dimension, firstTryCorrect, attempts, ms}] — honest evidence. */
-    itemResults: jsonb('item_results').notNull().default(sql`'[]'::jsonb`),
+    itemResults: jsonb('item_results')
+      .notNull()
+      .default(sql`'[]'::jsonb`),
     startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
     completedAt: timestamp('completed_at', { withTimezone: true }),
   },
@@ -230,7 +232,9 @@ export const learningObjectStates = app.table(
     /** 'introduced' | 'practiced' | 'eligible_for_review' (evidence-backed only). */
     state: text('state').notNull(),
     /** { K2: {seen, firstTryCorrect}, … } — per-dimension honest counts. */
-    dimensionStats: jsonb('dimension_stats').notNull().default(sql`'{}'::jsonb`),
+    dimensionStats: jsonb('dimension_stats')
+      .notNull()
+      .default(sql`'{}'::jsonb`),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.objectId] }), index('learning_object_states_user_idx').on(t.userId)],

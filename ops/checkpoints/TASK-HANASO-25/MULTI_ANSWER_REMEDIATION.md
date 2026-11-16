@@ -23,13 +23,13 @@ other script, not "another kana of the same row").
 
 ## 2. Per-item adjudication (the mission's five questions, applied to all 59)
 
-| Question | Answer for this family |
-| --- | --- |
-| Are two options genuinely correct Japanese? | **Yes** — both glyphs render the target sound; the twin is not a distractor error but a script distinction. |
-| Is the ambiguity from the prompt? | **Yes** — the prompt asks for "the kana for آ" without naming a script; that question has two valid answers. |
-| Are the wrong options insufficiently distinct? | The non-twin distractors are fine (different sounds). The twin is a GOOD distractor once the question is honest. |
-| Does the key match the asked definition? | After the fix — yes: the question asks for the KATAKANA glyph for the reading/sound. |
-| Does feedback explain right and wrong correctly? | After the fix — the twin's rationale states the real difference (same sound, other script). |
+| Question                                         | Answer for this family                                                                                           |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Are two options genuinely correct Japanese?      | **Yes** — both glyphs render the target sound; the twin is not a distractor error but a script distinction.      |
+| Is the ambiguity from the prompt?                | **Yes** — the prompt asks for "the kana for آ" without naming a script; that question has two valid answers.     |
+| Are the wrong options insufficiently distinct?   | The non-twin distractors are fine (different sounds). The twin is a GOOD distractor once the question is honest. |
+| Does the key match the asked definition?         | After the fix — yes: the question asks for the KATAKANA glyph for the reading/sound.                             |
+| Does feedback explain right and wrong correctly? | After the fix — the twin's rationale states the real difference (same sound, other script).                      |
 
 **Decision: make every item script-explicit** (the bank's own fix pattern,
 `ex-kana-gate-m4-2`: «این کانای کاتاکانا چه صدایی دارد؟…»). The mission

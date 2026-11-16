@@ -30,7 +30,10 @@ export const dynamic = 'force-dynamic';
 
 function noIdentity(): NextResponse {
   return NextResponse.json(
-    fail({ code: 'learner/no_identity', message: 'شناسهٔ زبان‌آموز یافت نشد — کوکی «hanaso_lid» باید توسط مرورگر پذیرفته شود.' }),
+    fail({
+      code: 'learner/no_identity',
+      message: 'شناسهٔ زبان‌آموز یافت نشد — کوکی «hanaso_lid» باید توسط مرورگر پذیرفته شود.',
+    }),
     { status: 401, headers: { 'cache-control': 'no-store' } },
   );
 }

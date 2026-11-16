@@ -44,10 +44,11 @@ cd /opt/hanaso && docker compose --env-file .env run --rm web node apps/web/scri
 
 (or any equivalent that runs the script inside the web container where
 VOICEVOX is reachable), then commit the regenerated `public/audio/hostwords/*`
-+ manifest. After that run the honesty gate flips to pending=0 with zero
-code changes — and the play controls for those 29 words appear
-automatically (the UI resolves from the registry, no deploy needed beyond
-the asset commit).
+
+- manifest. After that run the honesty gate flips to pending=0 with zero
+  code changes — and the play controls for those 29 words appear
+  automatically (the UI resolves from the registry, no deploy needed beyond
+  the asset commit).
 
 ## Why this mattered (the tie-in to the P0 bug)
 

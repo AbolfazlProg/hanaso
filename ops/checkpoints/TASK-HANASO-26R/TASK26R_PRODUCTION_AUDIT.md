@@ -67,31 +67,31 @@ URL: `https://learn.kotodama.ir/learn`
 
 ایستگاه جاری (باز/unlocked، خارج از فهرست قفل‌شده‌ها، لینک‌دار):
 
-| # | عنوان | وضعیت | URL |
-|---|---|---|---|
-| ۰ | خوش‌آمد و سه خط ژاپنی | در دسترس (شروع یادگیری) | `/learn/kana-foundation-01/journey/stn-kana-h0` |
+| #   | عنوان                 | وضعیت                   | URL                                             |
+| --- | --------------------- | ----------------------- | ----------------------------------------------- |
+| ۰   | خوش‌آمد و سه خط ژاپنی | در دسترس (شروع یادگیری) | `/learn/kana-foundation-01/journey/stn-kana-h0` |
 
 فهرست قفل‌شده‌ها (ol) — ۱۷ مورد، همه با برچسب «قفل» (کپی aria-label از DOM):
 
-| # | عنوان دقیق (aria-label) | slug | URL | قفل به‌وسیلهٔ |
-|---|---|---|---|---|
-| ۱ | ردیف あ — قفل | stn-kana-h1 | `/learn/kana-foundation-01/journey/stn-kana-h1` | stn-kana-h0 |
-| ۲ | ردیف か — قفل | stn-kana-h2 | `/learn/kana-foundation-01/journey/stn-kana-h2` | stn-kana-h1 |
-| ۳ | ردیف さ — قفل | stn-kana-h3 | `/learn/kana-foundation-01/journey/stn-kana-h3` | stn-kana-h2 |
-| ۴ | قاعدهٔ طول مصوت — قفل | stn-kana-h4 | `/learn/kana-foundation-01/journey/stn-kana-h4` | stn-kana-h3 |
-| ۵ | قاعدهٔ داکوتن (゛) — قفل | stn-kana-h5 | `/learn/kana-foundation-01/journey/stn-kana-h5` | stn-kana-h4 |
-| **۶** | **قاعدهٔ یُوئون (ゃゅょ) — قفل** | **stn-kana-h6** | `/learn/kana-foundation-01/journey/stn-kana-h6` | stn-kana-h5 |
-| ۷ | ん — قفل | stn-kana-h7 | `/learn/kana-foundation-01/journey/stn-kana-h7` | stn-kana-h6 |
-| ۸ | ردیف な — قفل | stn-kana-h8 | `/learn/kana-foundation-01/journey/stn-kana-h8` | stn-kana-h7 |
-| ۹ | ردیف た — قفل | stn-kana-h9 | `/learn/kana-foundation-01/journey/stn-kana-h9` | stn-kana-h8 |
-| ۱۰ | ردیف ま — قفل | stn-kana-h10 | `/learn/kana-foundation-01/journey/stn-kana-h10` | stn-kana-h9 |
-| ۱۱ | ردیف ら — قفل | stn-kana-h11 | `/learn/kana-foundation-01/journey/stn-kana-h11` | stn-kana-h10 |
-| ۱۲ | ردیف は — قفل | stn-kana-h12 | `/learn/kana-foundation-01/journey/stn-kana-h12` | stn-kana-h11 |
-| ۱۳ | قاعدهٔ سوکوئون (っ) — قفل | stn-kana-h13 | `/learn/kana-foundation-01/journey/stn-kana-h13` | stn-kana-h12 |
-| **۱۴** | **ردیف や — قفل** | **stn-kana-h14** | `/learn/kana-foundation-01/journey/stn-kana-h14` | stn-kana-h13 |
-| ۱۵ | ردیف わ + قاعدهٔ هان‌داکوتن (゜) — قفل | stn-kana-h15 | `/learn/kana-foundation-01/journey/stn-kana-h15` | stn-kana-h14 |
-| ۱۶ | ایستگاه واقعی — برگهٔ خواندن هیراگانا — قفل | stn-kana-m1-reading | `/learn/kana-foundation-01/journey/stn-kana-m1-reading` | stn-kana-h15 |
-| ۱۷ | مرور ایستگاه‌های فاز ۱ (اختیاری) — قفل | stn-kana-opt-r-h9 | `/learn/kana-foundation-01/journey/stn-kana-opt-r-h9` | (اختیاری) |
+| #      | عنوان دقیق (aria-label)                     | slug                | URL                                                     | قفل به‌وسیلهٔ |
+| ------ | ------------------------------------------- | ------------------- | ------------------------------------------------------- | ------------- |
+| ۱      | ردیف あ — قفل                               | stn-kana-h1         | `/learn/kana-foundation-01/journey/stn-kana-h1`         | stn-kana-h0   |
+| ۲      | ردیف か — قفل                               | stn-kana-h2         | `/learn/kana-foundation-01/journey/stn-kana-h2`         | stn-kana-h1   |
+| ۳      | ردیف さ — قفل                               | stn-kana-h3         | `/learn/kana-foundation-01/journey/stn-kana-h3`         | stn-kana-h2   |
+| ۴      | قاعدهٔ طول مصوت — قفل                       | stn-kana-h4         | `/learn/kana-foundation-01/journey/stn-kana-h4`         | stn-kana-h3   |
+| ۵      | قاعدهٔ داکوتن (゛) — قفل                    | stn-kana-h5         | `/learn/kana-foundation-01/journey/stn-kana-h5`         | stn-kana-h4   |
+| **۶**  | **قاعدهٔ یُوئون (ゃゅょ) — قفل**            | **stn-kana-h6**     | `/learn/kana-foundation-01/journey/stn-kana-h6`         | stn-kana-h5   |
+| ۷      | ん — قفل                                    | stn-kana-h7         | `/learn/kana-foundation-01/journey/stn-kana-h7`         | stn-kana-h6   |
+| ۸      | ردیف な — قفل                               | stn-kana-h8         | `/learn/kana-foundation-01/journey/stn-kana-h8`         | stn-kana-h7   |
+| ۹      | ردیف た — قفل                               | stn-kana-h9         | `/learn/kana-foundation-01/journey/stn-kana-h9`         | stn-kana-h8   |
+| ۱۰     | ردیف ま — قفل                               | stn-kana-h10        | `/learn/kana-foundation-01/journey/stn-kana-h10`        | stn-kana-h9   |
+| ۱۱     | ردیف ら — قفل                               | stn-kana-h11        | `/learn/kana-foundation-01/journey/stn-kana-h11`        | stn-kana-h10  |
+| ۱۲     | ردیف は — قفل                               | stn-kana-h12        | `/learn/kana-foundation-01/journey/stn-kana-h12`        | stn-kana-h11  |
+| ۱۳     | قاعدهٔ سوکوئون (っ) — قفل                   | stn-kana-h13        | `/learn/kana-foundation-01/journey/stn-kana-h13`        | stn-kana-h12  |
+| **۱۴** | **ردیف や — قفل**                           | **stn-kana-h14**    | `/learn/kana-foundation-01/journey/stn-kana-h14`        | stn-kana-h13  |
+| ۱۵     | ردیف わ + قاعدهٔ هان‌داکوتن (゜) — قفل      | stn-kana-h15        | `/learn/kana-foundation-01/journey/stn-kana-h15`        | stn-kana-h14  |
+| ۱۶     | ایستگاه واقعی — برگهٔ خواندن هیراگانا — قفل | stn-kana-m1-reading | `/learn/kana-foundation-01/journey/stn-kana-m1-reading` | stn-kana-h15  |
+| ۱۷     | مرور ایستگاه‌های فاز ۱ (اختیاری) — قفل      | stn-kana-opt-r-h9   | `/learn/kana-foundation-01/journey/stn-kana-opt-r-h9`   | (اختیاری)     |
 
 زیر همین فهرست: «این اولین بخش است» و «بخش بعدی: کاتاکانا — خطِ جهان» (بسته/collect).
 
@@ -118,8 +118,8 @@ URL: `https://learn.kotodama.ir/learn/kana-foundation-01/journey/stn-kana-h6`
 > **قاعدهٔ یُوئون (ゃゅょ)** (H1)
 > فصل ۰۱ — مبانی نوشتار: هیراگانا و کاتاکانا
 > **یُوئون: کانای کوچک ゃ/ゅ/ょ، صامت و مصوت را در یک مورا فشرده می‌کند** (اولین متن آموزشی/هدف ایستگاه)
-> ۱ / ۱۳  ← شمارش گام‌ها (۱۳ گام)
-> ۱ / ۳  ← پرسش ۱ از ۳
+> ۱ / ۱۳ ← شمارش گام‌ها (۱۳ گام)
+> ۱ / ۳ ← پرسش ۱ از ۳
 > واژگان
 > به صدای پخش‌شده گوش کن — کدام کانا این صدا را دارد؟
 > شنیدن صدا
@@ -140,8 +140,8 @@ URL: `https://learn.kotodama.ir/learn/kana-foundation-01/journey/stn-kana-h14`
 > **ردیف や** (H1)
 > فصل ۰۱ — مبانی نوشتار: هیراگانا و کاتاکانا
 > **ردیف や** (اولین متن آموزشی/هدف ایستگاه — فقط عنوان)
-> ۱ / ۱۰  ← شمارش گام‌ها (۱۰ گام)
-> ۱ / ۳  ← پرسش ۱ از ۳
+> ۱ / ۱۰ ← شمارش گام‌ها (۱۰ گام)
+> ۱ / ۳ ← پرسش ۱ از ۳
 > واژگان
 > به صدای پخش‌شده گوش کن — کدام کانا این صدا را دارد؟
 > شنیدن صدا
@@ -172,12 +172,12 @@ URL: `https://learn.kotodama.ir/learn/kana-foundation-01/journey/stn-kana-h14`
 
 ## ۷) اسکرین‌شات‌های ضمیمه (پوشهٔ screenshots/)
 
-| فایل | محتوا |
-|---|---|
-| `subA-before-01-homepage.png` | صفحهٔ خانه برای کاربر جدید (1280×614) |
-| `subA-before-02-learn-top.png` | صفحهٔ مسیر یادگیری، تمام‌صفحه با فهرست ۱۷ ایستگاه قفل‌شده (1280×2931) |
-| `subA-before-03-stn-kana-h6-yoon-direct.png` | صفحهٔ ایستگاه یُوئون stn-kana-h6 (1280×748) |
-| `subA-before-04-stn-kana-h14-yarow-direct.png` | صفحهٔ ایستگاه ردیف や stn-kana-h14 (1280×748) |
+| فایل                                           | محتوا                                                                 |
+| ---------------------------------------------- | --------------------------------------------------------------------- |
+| `subA-before-01-homepage.png`                  | صفحهٔ خانه برای کاربر جدید (1280×614)                                 |
+| `subA-before-02-learn-top.png`                 | صفحهٔ مسیر یادگیری، تمام‌صفحه با فهرست ۱۷ ایستگاه قفل‌شده (1280×2931) |
+| `subA-before-03-stn-kana-h6-yoon-direct.png`   | صفحهٔ ایستگاه یُوئون stn-kana-h6 (1280×748)                           |
+| `subA-before-04-stn-kana-h14-yarow-direct.png` | صفحهٔ ایستگاه ردیف や stn-kana-h14 (1280×748)                         |
 
 همهٔ تصاویر با اسکریپت بررسی شدند (سایز > 0، نسبت غیرسفید 0.57 تا 0.79 — هیچ‌کدام خالی نیستند).
 

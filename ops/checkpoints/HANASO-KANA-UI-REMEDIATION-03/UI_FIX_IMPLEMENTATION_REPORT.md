@@ -5,15 +5,15 @@
 
 ## ۱. فایل‌های تغییریافته (فقط UI — صفر تغییر محتوا)
 
-| فایل | تغییر |
-|---|---|
-| `section-journey.tsx` | پیام قفل: scroll-into-view + حذف auto-dismiss + رنگ shu-deep + دقایق ink-soft + isolation عناوین (rows/prev/next/goal/objective) |
-| `exercise-session.tsx` | ja-instruct روی F1/F2/rationale + MixedFaJaText برای rationale/F2 + helper textها → ink-soft |
-| `kana-card.tsx` | ja-instruct روی pairHint/whyFa + شمارندهٔ ضربه/credit → ink-soft + isolation credit |
-| `station-runner.tsx` | ja-instruct روی rule-step body/example whyFa + isolation H2 |
-| `anchor-dialogue-experience.tsx` | credit → ink-soft + isolation |
-| `practice/page.tsx` | isolation عناوین ایستگاه‌ها |
-| `styles/globals.css` | کلاس `.ja-instruct` (floor در --text-ja) |
+| فایل                             | تغییر                                                                                                                            |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `section-journey.tsx`            | پیام قفل: scroll-into-view + حذف auto-dismiss + رنگ shu-deep + دقایق ink-soft + isolation عناوین (rows/prev/next/goal/objective) |
+| `exercise-session.tsx`           | ja-instruct روی F1/F2/rationale + MixedFaJaText برای rationale/F2 + helper textها → ink-soft                                     |
+| `kana-card.tsx`                  | ja-instruct روی pairHint/whyFa + شمارندهٔ ضربه/credit → ink-soft + isolation credit                                              |
+| `station-runner.tsx`             | ja-instruct روی rule-step body/example whyFa + isolation H2                                                                      |
+| `anchor-dialogue-experience.tsx` | credit → ink-soft + isolation                                                                                                    |
+| `practice/page.tsx`              | isolation عناوین ایستگاه‌ها                                                                                                      |
+| `styles/globals.css`             | کلاس `.ja-instruct` (floor در --text-ja)                                                                                         |
 
 ## ۲. جزئیات هر اصلاح
 
@@ -22,6 +22,7 @@
 **مسئلهٔ بازتولیدشده (390×844):** کلیک ردیف قفلِ نزدیک لبهٔ پایین → پیام ۹۹px زیر fold؛ + محو خودکار بعد از ۳.۶s.
 
 **اصلاح (section-journey.tsx):**
+
 - حذف `lockedTimerRef` + `setTimeout(3600)`؛ state پیام ماندگار است (طبق backlog: «ماندگار تا تعامل بعدی» — کلیک ردیف دیگر جایگزینش می‌کند).
 - `useEffect` جدید: وقتی پیام رندر شد، اگر offscreen بود (`rect.top<0 || rect.bottom>vh`) → `scrollIntoView({block:'center', behavior: calm?'auto':'smooth'})` — همان الگوی محترمِ auto-scroll TASK-28 (فقط offscreen، بدون جنگ با کاربر).
 
@@ -32,6 +33,7 @@
 **مسئلهٔ بازتولیدشده:** گلیف‌های تمایزی در جمله‌های آموزشی h1 («あ فقط یک پیچ دارد؛ お دو تا...») با 14px/400 (وراثت `text-small`). مقیاس خود پروژه `--text-ja: 17px` (FEAT-109) وجود داشت ولی اعمال نشده بود.
 
 **اصلاح:**
+
 - کلاس `.ja-instruct` در globals.css: `font-size: max(1em, var(--text-ja)); font-weight: 500` — فقط بزرگ می‌کند؛ سلسله‌مراتب (16/18/28px) حفظ شد. کامنتِ ریشه در CSS.
 - اعمال روی ۶ نقطهٔ رندر (بند ۱).
 - **کشف جانبی:** `distractorRationaleFa` و `hintFa` خام رندر می‌شدند (بدون MixedFaJaText) — کانای rationaleهای مأموریت ۲ بدون isolation بودند. wrap شدند.

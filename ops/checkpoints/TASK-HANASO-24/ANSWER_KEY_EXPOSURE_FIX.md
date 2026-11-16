@@ -46,25 +46,25 @@ rule: the `/poc` namespace does not exist in production.
 Direct GETs (curl) against the QA server (`127.0.0.1:3124`, built from this
 branch, `env -u DATABASE_URL`, real `HANASO_SESSION_SECRET`):
 
-| Check | Result |
-| --- | --- |
-| `GET /poc/practice` | **404** — body scanned for `correctOptionId\|correctOrder\|token:` → **0 hits** |
-| `GET /poc/{assessment,dialogue,lesson,ui,t2-eval}` | **404** ×5 |
-| `GET /poc/practice` with `RSC: 1` (flight payload) | no key material (0 hits) |
-| `GET /` (product home) | 200 (no regression) |
-| Client JS bundles (`.next/static/**`) | 0 hits for key identifiers (server-side chunks contain only CODE identifiers — the server needs those to function; no VALUES ever cross the wire) |
+| Check                                              | Result                                                                                                                                            |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /poc/practice`                                | **404** — body scanned for `correctOptionId\|correctOrder\|token:` → **0 hits**                                                                   |
+| `GET /poc/{assessment,dialogue,lesson,ui,t2-eval}` | **404** ×5                                                                                                                                        |
+| `GET /poc/practice` with `RSC: 1` (flight payload) | no key material (0 hits)                                                                                                                          |
+| `GET /` (product home)                             | 200 (no regression)                                                                                                                               |
+| Client JS bundles (`.next/static/**`)              | 0 hits for key identifiers (server-side chunks contain only CODE identifiers — the server needs those to function; no VALUES ever cross the wire) |
 
 Real browser (Chromium via playwright-core 1.57, anonymous context — script
 `scripts/h24_poc_browser_check.mjs`, output JSON kept in the QA workspace):
 
-| Check | Result |
-| --- | --- |
-| `/poc/practice` navigation | 404 page («هاناسو» chrome, no exercise content) |
-| DOM after load | key material: **none** |
-| Every network response body during the visit | key material: **none** |
-| `hanaso_lid` cookie | present · **httpOnly** · **secure** · **SameSite=Lax** · `<uuid>.<sig>` shape |
-| `document.cookie` from page JS | cannot read the identity (httpOnly holds) |
-| `GET /` after the poc visit | 200 |
+| Check                                        | Result                                                                        |
+| -------------------------------------------- | ----------------------------------------------------------------------------- |
+| `/poc/practice` navigation                   | 404 page («هاناسو» chrome, no exercise content)                               |
+| DOM after load                               | key material: **none**                                                        |
+| Every network response body during the visit | key material: **none**                                                        |
+| `hanaso_lid` cookie                          | present · **httpOnly** · **secure** · **SameSite=Lax** · `<uuid>.<sig>` shape |
+| `document.cookie` from page JS               | cannot read the identity (httpOnly holds)                                     |
+| `GET /` after the poc visit                  | 200                                                                           |
 
 Scenario 12 of the mandatory QA matrix (CP-05) re-proves this against the same
 build with the full 12-scenario harness.

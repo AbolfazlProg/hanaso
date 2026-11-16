@@ -118,7 +118,6 @@ const FOREIGN_SMALL = new Set([
   'ヺ',
 ]);
 
-
 /**
  * TASK-HANASO-20 (audit UNTAUGHT_CONTENT_AUDIT): every precomposed/combining
  * DERIVED form — dakuten + handakuten (both scripts), the yōon smalls (both

@@ -67,7 +67,7 @@ fixed before release).
 2. **[MEDIUM] M1+M2 single-miss pair remediates with NO weak measures.**
    One miss in M1 AND one in M2: both measures 0.8 (not weak), weighted =
    .3×.8 + .25×.8 + .45 = **0.89 < 0.9 → remediate with `weakMeasures:
-   []`** — likely zero remediation stations (weakPointMap is measure-keyed,
+[]`** — likely zero remediation stations (weakPointMap is measure-keyed,
    chapter-kana01.ts:118-124; needs a test to confirm). It is the ONLY
    two-miss-different-measures combo that fails (all other pairs ≤ 0.10
    pass). The property test (h25:115-131) covers only M2+M4 (actual 0.92)
@@ -144,12 +144,12 @@ Provisional verdict: **PASS** (qualified — 2 Low findings; test-run and
 
 ## Remediation register (all fixed in CP-06)
 
-| # | Source | Finding | Fix |
-| --- | --- | --- | --- |
-| R1 | A1/B4 (Critical) | «هیراگانا» leaked into listening rationales (m2-2, m2-4, m2-5 + ~20 practice items) | reading-map rewrite pass + regex guard in the lint |
-| R2 | A2 (High) | m5-4 internal contradiction (コ labeled «کُ», heard sound «کو») | コ=«کو», heard=«کُ» everywhere in the item |
-| R3 | A3/B4 (Medium) | m4-4 ヮ instead of モ; f2 names ノ (not an option) | モ fixed; f2 names メ/モ |
-| R4 | B2 (Medium) | M1+M2 one-miss-each → remediate with weakMeasures [] (no stations) | remediation falls back to the two lowest measures; property test added; docs' 0.96 figure corrected |
-| R5 | C2 (Low) | kana-recall promptAudio rides the gate payload unused | attach only where the gate plays it (listening/rule-listening) |
-| R6 | C4 (Low) | auto-play effect has no cleanup (overlap on URL change) | cleanup pauses the outgoing element |
-| R7 | A4 (Minor) | transliteration inconsistencies within items (へ «هه», う «او», す «سو», く «کو») | normalized to the registry readings in the touched items |
+| #   | Source           | Finding                                                                             | Fix                                                                                                 |
+| --- | ---------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| R1  | A1/B4 (Critical) | «هیراگانا» leaked into listening rationales (m2-2, m2-4, m2-5 + ~20 practice items) | reading-map rewrite pass + regex guard in the lint                                                  |
+| R2  | A2 (High)        | m5-4 internal contradiction (コ labeled «کُ», heard sound «کو»)                     | コ=«کو», heard=«کُ» everywhere in the item                                                          |
+| R3  | A3/B4 (Medium)   | m4-4 ヮ instead of モ; f2 names ノ (not an option)                                  | モ fixed; f2 names メ/モ                                                                            |
+| R4  | B2 (Medium)      | M1+M2 one-miss-each → remediate with weakMeasures [] (no stations)                  | remediation falls back to the two lowest measures; property test added; docs' 0.96 figure corrected |
+| R5  | C2 (Low)         | kana-recall promptAudio rides the gate payload unused                               | attach only where the gate plays it (listening/rule-listening)                                      |
+| R6  | C4 (Low)         | auto-play effect has no cleanup (overlap on URL change)                             | cleanup pauses the outgoing element                                                                 |
+| R7  | A4 (Minor)       | transliteration inconsistencies within items (へ «هه», う «او», す «سو», く «کو»)   | normalized to the registry readings in the touched items                                            |

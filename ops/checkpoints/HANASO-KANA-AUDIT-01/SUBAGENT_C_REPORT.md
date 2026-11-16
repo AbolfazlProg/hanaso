@@ -12,14 +12,14 @@
 
 ## ۲. پوشش واقعی (صادقانه)
 
-| بخش | وضعیت |
-|---|---|
-| Journey map — دسکتاپ 1440 | ✓ بازدید و اسکرین‌شات (`journey-desktop-fresh.png`, `journey-desktop-h0-done.png`) |
-| Journey map — موبایل 390 | ✓ بازدید و اسکرین‌شات (`journey-mobile-fresh.png`, `journey-mobile-locked-click.png`, `journey-mobile-locked-feedback.png`) |
-| Station h0 (anchor) + Completion/مهر | ✓ (`h0-anchor-desktop.png`, `h0-complete-stamp-desktop.png`) |
-| Station h1 — کارت Kana + تمرین نوشتن | ✓ (`h1-kana-card-writing-desktop.png`, `h1-writing-practice-desktop.png`, `h1-writing-free-mode-desktop.png`) |
-| Station h13 — Sokuon / がっこう | ✓ (`h13-warmup-wrong-F3-reveal.png`, `h13-gakkou-decode-options.png`) |
-| ایستگاه‌های h2..h12, h14, h15, p1..p4, K1..K13, گیت فصل | ✗ در این سشن فقط از طریق API (walk برنامه‌ای h1→p4 برای unlocking) پیموده شد؛ UI تک‌تک آن‌ها رندر و اسکرین‌شات نشد — پوشش UI رندرشده: **4 ایستگاه از 38** (+ journey در دو viewport). این محدودیت صادقانه ثبت می‌شود.
+| بخش                                                     | وضعیت                                                                                                                                                                                                                 |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Journey map — دسکتاپ 1440                               | ✓ بازدید و اسکرین‌شات (`journey-desktop-fresh.png`, `journey-desktop-h0-done.png`)                                                                                                                                    |
+| Journey map — موبایل 390                                | ✓ بازدید و اسکرین‌شات (`journey-mobile-fresh.png`, `journey-mobile-locked-click.png`, `journey-mobile-locked-feedback.png`)                                                                                           |
+| Station h0 (anchor) + Completion/مهر                    | ✓ (`h0-anchor-desktop.png`, `h0-complete-stamp-desktop.png`)                                                                                                                                                          |
+| Station h1 — کارت Kana + تمرین نوشتن                    | ✓ (`h1-kana-card-writing-desktop.png`, `h1-writing-practice-desktop.png`, `h1-writing-free-mode-desktop.png`)                                                                                                         |
+| Station h13 — Sokuon / がっこう                         | ✓ (`h13-warmup-wrong-F3-reveal.png`, `h13-gakkou-decode-options.png`)                                                                                                                                                 |
+| ایستگاه‌های h2..h12, h14, h15, p1..p4, K1..K13, گیت فصل | ✗ در این سشن فقط از طریق API (walk برنامه‌ای h1→p4 برای unlocking) پیموده شد؛ UI تک‌تک آن‌ها رندر و اسکرین‌شات نشد — پوشش UI رندرشده: **4 ایستگاه از 38** (+ journey در دو viewport). این محدودیت صادقانه ثبت می‌شود. |
 
 ## ۳. Findings
 
@@ -75,12 +75,12 @@
 
 ## ۵. جمع‌بندی
 
-| Finding | Severity | Confidence | Evidence |
-|---|---|---|---|
-| KANA-C-01 قفل سمت راست کارت (دسکتاپ+موبایل) | Medium | CONFIRMED | journey-desktop-fresh.png, journey-mobile-fresh.png |
-| KANA-C-02 پیام قفل زیر fold + محو ~1s در موبایل | High | CONFIRMED | journey-mobile-locked-click.png, journey-mobile-locked-feedback.png |
-| KANA-C-03 متن آموزشی ژاپنی inline 16px | Medium | CONFIRMED | h1-kana-card-writing-desktop.png |
-| KANA-C-04 نردبان F1→F3 صحیح (مثبت) | — | CONFIRMED | h13-warmup-wrong-F3-reveal.png |
-| (کنتراست/auto-scroll کامل) | — | NEEDS_CONTEXT | — (پوشش UI فقط ۴ ایستگاه) |
+| Finding                                         | Severity | Confidence    | Evidence                                                            |
+| ----------------------------------------------- | -------- | ------------- | ------------------------------------------------------------------- |
+| KANA-C-01 قفل سمت راست کارت (دسکتاپ+موبایل)     | Medium   | CONFIRMED     | journey-desktop-fresh.png, journey-mobile-fresh.png                 |
+| KANA-C-02 پیام قفل زیر fold + محو ~1s در موبایل | High     | CONFIRMED     | journey-mobile-locked-click.png, journey-mobile-locked-feedback.png |
+| KANA-C-03 متن آموزشی ژاپنی inline 16px          | Medium   | CONFIRMED     | h1-kana-card-writing-desktop.png                                    |
+| KANA-C-04 نردبان F1→F3 صحیح (مثبت)              | —        | CONFIRMED     | h13-warmup-wrong-F3-reveal.png                                      |
+| (کنتراست/auto-scroll کامل)                      | —        | NEEDS_CONTEXT | — (پوشش UI فقط ۴ ایستگاه)                                           |
 
 پوشش UI رندرشده: ۴ ایستگاه از ۳۸ + Journey در ۲ viewport + walk برنامه‌ای h1→p4 (بدون رندر UI تک‌تک). محدودیت در FINAL_AUDIT_REPORT نیز ثبت شده است.

@@ -9,11 +9,11 @@
 Repo-wide: zero `db.transaction` calls. Three flows could fail midway and
 persist contradictory state:
 
-| Flow | Writes (pre-24, non-atomic) | Partial-failure damage |
-| --- | --- | --- |
-| practice `complete` (`api/practice/route.ts`) | 1× INSERT `practice_sessions` + N× read-modify-write upserts `learning_object_states` | session logged with missing/half evidence; concurrent duplicate complete → raw 23505 → 500; concurrent different sessions same object → LOST UPDATE |
-| station `complete` (`api/curriculum/station/route.ts`) | upsert `station_progress` + conditional upsert `chapter_progress` | station completed while the chapter aggregate never flips → learner permanently locked out of the gate by an inconsistent aggregate |
-| mastery gate (`api/curriculum/mastery/route.ts`) | INSERT attempt (MAX+1 attemptNo) + chapter fold | attempt row without its aggregate; MAX+1 race under double-submit |
+| Flow                                                   | Writes (pre-24, non-atomic)                                                           | Partial-failure damage                                                                                                                              |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| practice `complete` (`api/practice/route.ts`)          | 1× INSERT `practice_sessions` + N× read-modify-write upserts `learning_object_states` | session logged with missing/half evidence; concurrent duplicate complete → raw 23505 → 500; concurrent different sessions same object → LOST UPDATE |
+| station `complete` (`api/curriculum/station/route.ts`) | upsert `station_progress` + conditional upsert `chapter_progress`                     | station completed while the chapter aggregate never flips → learner permanently locked out of the gate by an inconsistent aggregate                 |
+| mastery gate (`api/curriculum/mastery/route.ts`)       | INSERT attempt (MAX+1 attemptNo) + chapter fold                                       | attempt row without its aggregate; MAX+1 race under double-submit                                                                                   |
 
 ## 2. The fix
 
@@ -26,6 +26,7 @@ thread — no interleaving); documented, semantics unchanged.
 **New `src/lib/poc/completions.ts`** — the three multi-step flows as services:
 
 ### completePracticeSession(stored, groups)
+
 - ONE transaction: session insert + every object's evidence fold.
 - **Idempotent**: `recordCompleted` is now `ON CONFLICT (id) DO NOTHING` +
   returning (Pg) / existence check (in-memory) → a duplicate replay resolves
@@ -38,6 +39,7 @@ thread — no interleaving); documented, semantics unchanged.
   `recorded: true`); response otherwise unchanged.
 
 ### completeStationWalk(userId, chapterSlug, stationSlug, stationState, coreSlugs)
+
 - ONE transaction: station upsert + the chapter fold.
 - The aggregate precondition (`allDone`) is computed INSIDE the unit — the
   same statement scope sees the station write above (same read-after-write
@@ -46,6 +48,7 @@ thread — no interleaving); documented, semantics unchanged.
   (response shape preserved exactly).
 
 ### submitMasteryWithFold(userId, chapterSlug, dialogueId, input, outcome, gate, maxLoops)
+
 - ONE transaction: attempt insert + chapter fold, guarded by
   `pg_advisory_xact_lock('ma:<userId>:<dialogueId>')` — MAX+1 is race-free and
   double-submits serialize; the existing in-`create` 23505 retry stays as the
@@ -56,6 +59,7 @@ thread — no interleaving); documented, semantics unchanged.
   fold.
 
 ### Repository changes
+
 - `PracticeSessionRepository.recordCompleted` → `Promise<'recorded' | 'already'>`;
   Pg: `onConflictDoNothing({target: id}).returning()` — a concurrent duplicate
   resolves `'already'` instead of a raw 500.
@@ -63,6 +67,7 @@ thread — no interleaving); documented, semantics unchanged.
   private) for the service-level retries.
 
 ### Route changes
+
 - `api/practice` complete branch → `completePracticeSession` (+ `already` flag).
 - `api/curriculum/station` complete branch → `completeStationWalk` (the
   `allDone` read moved inside the unit).
@@ -71,6 +76,7 @@ thread — no interleaving); documented, semantics unchanged.
   and are unchanged.
 
 ### Unique constraints (verified — `db/schema/app.ts`)
+
 `dialogue_mastery_attempts (user_id, dialogue_id, attempt_no)` unique (the
 23505 backstop); `station_progress` PK (user, station); `chapter_progress` PK
 (user, unit); `learning_object_states` PK (user, objectId); `practice_sessions`
@@ -101,6 +107,7 @@ PK (id). No migration needed — additive code only; nothing destructive run.
 
 `tests/integration/practice-completion-idempotency.spec.ts` (in-memory, real
 route flow, 3 tests):
+
 - sequential replay → 404, evidence = exactly ONE fold, session row written once;
 - CONCURRENT duplicate complete → one `recorded` + one `already`, stats
   single-folded, row written once;
@@ -108,6 +115,7 @@ route flow, 3 tests):
 
 `tests/integration-pg/transaction-concurrency.spec.ts` (real PostgreSQL 18.4,
 service level, 5 tests):
+
 - `runInTx` rollback machinery: a thrown unit leaves NOTHING;
 - concurrent duplicate completes → `['already','recorded']`, one row;
 - concurrent DIFFERENT sessions on the SAME object → BOTH folds visible

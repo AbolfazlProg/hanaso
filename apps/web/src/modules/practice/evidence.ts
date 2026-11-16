@@ -34,7 +34,11 @@ export function foldItemResult(record: LearningObjectRecord, result: PracticeIte
 }
 
 /** Seed a record for an object seen in a session (idempotent insert). */
-export function seedRecord(userId: string, objectId: string, skill: LearningObjectRecord['skill']): LearningObjectRecord {
+export function seedRecord(
+  userId: string,
+  objectId: string,
+  skill: LearningObjectRecord['skill'],
+): LearningObjectRecord {
   return {
     userId,
     objectId,

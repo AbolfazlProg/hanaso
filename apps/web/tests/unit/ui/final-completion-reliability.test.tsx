@@ -285,10 +285,10 @@ function renderK8(rejectComplete: 'never' | 'criterion' | 'criterion-once' = 'ne
   const fetchMock = vi.fn(async (url: string | URL, init?: RequestInit) => {
     const u = String(url);
     if (u.startsWith('/api/curriculum/station?')) {
-      return new Response(
-        JSON.stringify({ data: { state: { status: 'in_progress', currentBlock: null } } }),
-        { status: 200, headers: { 'content-type': 'application/json' } },
-      );
+      return new Response(JSON.stringify({ data: { state: { status: 'in_progress', currentBlock: null } } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
     }
     if (u === '/api/curriculum/station' && init?.method === 'POST') {
       const body = JSON.parse(String(init.body)) as {
@@ -316,8 +316,7 @@ function renderK8(rejectComplete: 'never' | 'criterion' | 'criterion-once' = 'ne
          * RECORDED). The forced-criterion mode still exercises the client's
          * structured-409 recovery panel (kept for future threshold surfaces). */
         const accept = body.taskCompleted === true || (body.score ?? 0) >= 0.7;
-        const mustReject =
-          rejectComplete === 'criterion' || (rejectComplete === 'criterion-once' && !rejectedOnce);
+        const mustReject = rejectComplete === 'criterion' || (rejectComplete === 'criterion-once' && !rejectedOnce);
         if (mustReject) {
           rejectedOnce = true;
         }
@@ -342,8 +341,8 @@ function renderK8(rejectComplete: 'never' | 'criterion' | 'criterion-once' = 'ne
       }
       return new Response(JSON.stringify({ data: {} }), {
         status: 200,
-        headers: { 'content-type': 'application/json' } },
-      );
+        headers: { 'content-type': 'application/json' },
+      });
     }
     return new Response('{}', { status: 200 });
   });
@@ -458,39 +457,47 @@ describe('R4..R7 — StationRunner final-completion reliability (stn-kana-k8 tra
     expect(completeCalls[0]!.score).toBe(1); // the FRESH score — 3/3, not the stale 2/3 (still recorded)
   });
 
-  it('R6: a server criterion rejection shows the STRUCTURED panel + a redo action (no dead retry)', { timeout: 40000 }, async () => {
-    const { completeCalls } = renderK8('criterion');
-    await answerQ1WrongThenRest(); // first-try score 2/3 = 0.667 < 0.7 (honest miss)
-    fireEvent.click(await screen.findByRole('button', { name: 'ادامه' }));
-    await waitFor(
-      () => {
-        expect(screen.getByTestId('criterion-failure-panel')).toBeTruthy();
-      },
-      { timeout: 4000 },
-    );
-    expect(completeCalls[0]!.score).toBeCloseTo(2 / 3, 5);
-    // the redo action exists (no dead retry loop)
-    expect(screen.getByTestId('redo-final-exercise')).toBeTruthy();
-  });
+  it(
+    'R6: a server criterion rejection shows the STRUCTURED panel + a redo action (no dead retry)',
+    { timeout: 40000 },
+    async () => {
+      const { completeCalls } = renderK8('criterion');
+      await answerQ1WrongThenRest(); // first-try score 2/3 = 0.667 < 0.7 (honest miss)
+      fireEvent.click(await screen.findByRole('button', { name: 'ادامه' }));
+      await waitFor(
+        () => {
+          expect(screen.getByTestId('criterion-failure-panel')).toBeTruthy();
+        },
+        { timeout: 4000 },
+      );
+      expect(completeCalls[0]!.score).toBeCloseTo(2 / 3, 5);
+      // the redo action exists (no dead retry loop)
+      expect(screen.getByTestId('redo-final-exercise')).toBeTruthy();
+    },
+  );
 
-  it('R7: the redo action re-opens ONLY the final exercise; a fresh pass then completes', { timeout: 60000 }, async () => {
-    const { completeCalls } = renderK8('criterion-once');
-    await answerQ1WrongThenRest();
-    fireEvent.click(await screen.findByRole('button', { name: 'ادامه' }));
-    await waitFor(() => expect(screen.getByTestId('criterion-failure-panel')).toBeTruthy(), { timeout: 4000 });
-    fireEvent.click(screen.getByTestId('redo-final-exercise'));
-    // the assessment block re-renders as a LIVE session (no skip panel)
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'بررسی پاسخ' })).toBeTruthy();
-    });
-    await answerFirstTryCorrectAll();
-    fireEvent.click(await screen.findByRole('button', { name: 'ادامه' }));
-    await waitFor(
-      () => {
-        expect(screen.getByText('این ایستگاه را با موفقیت پشت سر گذشتی!')).toBeTruthy();
-      },
-      { timeout: 4000 },
-    );
-    expect(completeCalls[completeCalls.length - 1]!.score).toBe(1);
-  });
+  it(
+    'R7: the redo action re-opens ONLY the final exercise; a fresh pass then completes',
+    { timeout: 60000 },
+    async () => {
+      const { completeCalls } = renderK8('criterion-once');
+      await answerQ1WrongThenRest();
+      fireEvent.click(await screen.findByRole('button', { name: 'ادامه' }));
+      await waitFor(() => expect(screen.getByTestId('criterion-failure-panel')).toBeTruthy(), { timeout: 4000 });
+      fireEvent.click(screen.getByTestId('redo-final-exercise'));
+      // the assessment block re-renders as a LIVE session (no skip panel)
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'بررسی پاسخ' })).toBeTruthy();
+      });
+      await answerFirstTryCorrectAll();
+      fireEvent.click(await screen.findByRole('button', { name: 'ادامه' }));
+      await waitFor(
+        () => {
+          expect(screen.getByText('این ایستگاه را با موفقیت پشت سر گذشتی!')).toBeTruthy();
+        },
+        { timeout: 4000 },
+      );
+      expect(completeCalls[completeCalls.length - 1]!.score).toBe(1);
+    },
+  );
 });

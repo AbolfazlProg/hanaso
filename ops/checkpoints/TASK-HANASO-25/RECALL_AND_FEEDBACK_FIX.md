@@ -10,7 +10,7 @@
 1. `f1Fa` ended with `— به شکل درست نگاه کن.` **twice** (a template generator
    concatenated the suffix twice) — 92 occurrences, verified by count;
 2. `f2HintFa` was the cryptic `روی همین خط از ردیفِ «X» هست؛ جفت اشتباه‌پذیرش
-   را حذف کن.` — which names neither the confusable glyph nor any usable
+را حذف کن.` — which names neither the confusable glyph nor any usable
    anchor; for ん (n-row: a row that does not exist as a syllable row) the
    hint was outright nonsense («ردیفِ ن»).
 
@@ -19,9 +19,9 @@
 - f1Fa: single tail (the doubled string removed globally; 92/92);
 - f2HintFa rewritten per item from registry data:
   - normal items: `به شکل جفت اشتباه‌پذیرش دقت کن: با ««confusable-glyph»» قاطی
-    نکن — کانای درست به خط «script» است.` (confusableWith from kana-items);
+نکن — کانای درست به خط «script» است.` (confusableWith from kana-items);
   - ん/ン items: `تنها کانایی است که هجا نیست — «ن» بینیِ بدون واکه؛ گزینه‌ای که
-    با واکه می‌آید (مثل «نـا») درست نیست.` — the audit's demanded
+با واکه می‌آید (مثل «نـا») درست نیست.` — the audit's demanded
     standalone-nasal phrasing.
 
 Per the mission's repetition-vs-reinforcement rule: these were NOT "useful
@@ -47,7 +47,7 @@ mapped):**
   the heard sound);
 - f1: `صدای شنیده‌شده «آ» بود — دوباره پخش کن و به آوا دقت کن.`;
 - f2: `صدا را دوباره پخش کن و خوانش هر گزینه را با آن مقایسه کن — «آ» را
-  جست‌وجو کن.`;
+جست‌وجو کن.`;
 - f3: `«あ» با خوانش «آ» خوانده می‌شود — پخشش کن و شکلش را به خاطر بسپار.`
   (names the kana — the old template never did);
 - the 36 twin options keep their script-distinction rationale from CP-02

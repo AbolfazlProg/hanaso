@@ -4,16 +4,16 @@
 
 ## ۱) تست‌های فنی (PHASE 6 — «تست فنی»)
 
-| تست | فرمان | نتیجه |
-| --- | --- | --- |
-| TypeScript | `pnpm typecheck` | ✅ صفر خطا |
-| ESLint | `pnpm lint` | ✅ صفر خطا |
-| Unit + Integration (in-memory) | `pnpm test` | ✅ **718/718** (58 فایل) — خط مبنا ۶۹۲؛ ۲۶ تست جدید |
-| EQA gates | `pnpm test:eqa` | ✅ 37/37 + صفر waiver فعال |
-| Unit جدید | — | ✅ 26: identity (۹) + middleware (۴) + isolation (۶) + tl14 fixtures (۵) + feedback-quality (۵) + rule-card-listen (۳) + 404 (۱) + ... (شمارش در کامیت‌ها) |
-| Prerequisite CI | DERIVED-GLYPH-SHOWN + TRANSCRIPT تعمیم‌یافته | ✅ فصل واقعی پاک؛ ۶+۳ fixture تبدیلی سبز |
-| Session Isolation | `learner-isolation.spec.ts` | ✅ ۶/۶ |
-| Home Smoke | E2E S1 + curl | ✅ 200 + Set-Cookie در اولین پاسخ |
+| تست                            | فرمان                                        | نتیجه                                                                                                                                                      |
+| ------------------------------ | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TypeScript                     | `pnpm typecheck`                             | ✅ صفر خطا                                                                                                                                                 |
+| ESLint                         | `pnpm lint`                                  | ✅ صفر خطا                                                                                                                                                 |
+| Unit + Integration (in-memory) | `pnpm test`                                  | ✅ **718/718** (58 فایل) — خط مبنا ۶۹۲؛ ۲۶ تست جدید                                                                                                        |
+| EQA gates                      | `pnpm test:eqa`                              | ✅ 37/37 + صفر waiver فعال                                                                                                                                 |
+| Unit جدید                      | —                                            | ✅ 26: identity (۹) + middleware (۴) + isolation (۶) + tl14 fixtures (۵) + feedback-quality (۵) + rule-card-listen (۳) + 404 (۱) + ... (شمارش در کامیت‌ها) |
+| Prerequisite CI                | DERIVED-GLYPH-SHOWN + TRANSCRIPT تعمیم‌یافته | ✅ فصل واقعی پاک؛ ۶+۳ fixture تبدیلی سبز                                                                                                                   |
+| Session Isolation              | `learner-isolation.spec.ts`                  | ✅ ۶/۶                                                                                                                                                     |
+| Home Smoke                     | E2E S1 + curl                                | ✅ 200 + Set-Cookie در اولین پاسخ                                                                                                                          |
 
 ## ۲) E2E مرورگری (PHASE 6 — کاربر جدید/دارندهٔ پیشرفت/آموزشی)
 

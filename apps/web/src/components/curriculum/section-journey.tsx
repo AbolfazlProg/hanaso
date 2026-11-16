@@ -183,7 +183,6 @@ function ContentTypeTile({ kind, locked }: { kind: StationContentKind; locked: b
 
 /** Seigaiha wave band (DD-084) — subtle SVG texture for the section plaque. */
 
-
 /** Row state marker: shape + icon (never color alone — island §۸ honest states). */
 function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean }) {
   const box = 'grid size-7 shrink-0 place-items-center rounded-full border-2';
@@ -212,7 +211,10 @@ function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean
     default:
       /* the LOCK lives HERE (access state) — and flashes vermilion on click. */
       return (
-        <span className={`${box} border-dashed border-ink-faint text-ink-faint${flash ? ' locked-flash' : ''}`} aria-hidden>
+        <span
+          className={`${box} border-dashed border-ink-faint text-ink-faint${flash ? ' locked-flash' : ''}`}
+          aria-hidden
+        >
           <Lock className="size-3.5" />
         </span>
       );
@@ -283,7 +285,9 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
         const json = (await res.json()) as {
           data?: {
             nextStationSlug?: string | null;
-            sections?: (Omit<SectionDto, 'rows'> & { rows: Omit<SectionRowDto, 'contentKind' | 'blockedByTitlesFa'>[] })[];
+            sections?: (Omit<SectionDto, 'rows'> & {
+              rows: Omit<SectionRowDto, 'contentKind' | 'blockedByTitlesFa'>[];
+            })[];
           };
         };
         if (json.data?.sections && json.data.sections.length > 0) {
@@ -415,7 +419,11 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
               >
                 <span className="min-w-0 truncate text-small font-bold">{sec.titleFa}</span>
                 {sec.status === 'locked' ? <Lock aria-hidden className="size-3.5 shrink-0 opacity-70" /> : null}
-                {active ? <span className="ms-auto rounded-full bg-paper/15 px-2 py-0.5 text-caption">{fa.curriculum.sectionActiveChip}</span> : null}
+                {active ? (
+                  <span className="ms-auto rounded-full bg-paper/15 px-2 py-0.5 text-caption">
+                    {fa.curriculum.sectionActiveChip}
+                  </span>
+                ) : null}
               </button>
             );
           })}
@@ -426,198 +434,212 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
         aria-label={section.titleFa}
         className="relative overflow-hidden rounded-md border-2 border-indigo bg-card shadow-[var(--shadow-card)]"
       >
-      {/* ---- section plaque: seigaiha band + title + goal + honest status ---- */}
-      <header className="relative bg-indigo p-5 text-paper sm:p-6">
-        <span aria-hidden className="seigaiha pointer-events-none absolute inset-0 opacity-70" />
-        <div className="relative flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className="rounded-full border border-indigo-mist/60 px-3 py-0.5 text-caption text-indigo-mist">
-            {fa.curriculum.sectionBadge}
-          </span>
-          <h2 className="text-h2 font-black">{section.titleFa}</h2>
-        </div>
-        {section.goalFa ? (
-          <p className="relative mt-3 max-w-prose text-small leading-[var(--leading-fa)] text-indigo-mist">
-            <span className="font-bold text-paper">{fa.curriculum.sectionGoalLabel}: </span>
-            <MixedFaJaText text={section.goalFa} />
+        {/* ---- section plaque: seigaiha band + title + goal + honest status ---- */}
+        <header className="relative bg-indigo p-5 text-paper sm:p-6">
+          <span aria-hidden className="seigaiha pointer-events-none absolute inset-0 opacity-70" />
+          <div className="relative flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span className="rounded-full border border-indigo-mist/60 px-3 py-0.5 text-caption text-indigo-mist">
+              {fa.curriculum.sectionBadge}
+            </span>
+            <h2 className="text-h2 font-black">{section.titleFa}</h2>
+          </div>
+          {section.goalFa ? (
+            <p className="relative mt-3 max-w-prose text-small leading-[var(--leading-fa)] text-indigo-mist">
+              <span className="font-bold text-paper">{fa.curriculum.sectionGoalLabel}: </span>
+              <MixedFaJaText text={section.goalFa} />
+            </p>
+          ) : null}
+          <p className="relative mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-caption text-indigo-mist">
+            {section.status === 'completed' ? (
+              <span className="flex items-center gap-1.5">
+                <CircleCheck aria-hidden className="size-4" />
+                {fa.curriculum.sectionStatusCompleted}
+              </span>
+            ) : section.status === 'locked' ? (
+              <span className="flex items-center gap-1.5">
+                <Lock aria-hidden className="size-4" />
+                {fa.curriculum.sectionStatusLocked}
+              </span>
+            ) : (
+              <span>{fa.curriculum.sectionStatusInProgress}</span>
+            )}
+            {section.coreCompleted > 0 ? <span>{fa.curriculum.sectionRowsDone(section.coreCompleted)}</span> : null}
           </p>
-        ) : null}
-        <p className="relative mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-caption text-indigo-mist">
-          {section.status === 'completed' ? (
-            <span className="flex items-center gap-1.5">
-              <CircleCheck aria-hidden className="size-4" />
-              {fa.curriculum.sectionStatusCompleted}
-            </span>
-          ) : section.status === 'locked' ? (
-            <span className="flex items-center gap-1.5">
-              <Lock aria-hidden className="size-4" />
-              {fa.curriculum.sectionStatusLocked}
-            </span>
-          ) : (
-            <span>{fa.curriculum.sectionStatusInProgress}</span>
-          )}
-          {section.coreCompleted > 0 ? <span>{fa.curriculum.sectionRowsDone(section.coreCompleted)}</span> : null}
-        </p>
-      </header>
+        </header>
 
-      {/* ---- rows: stations of THIS section only, walk order, page scroll ---- */}
-      <ol className="divide-y divide-ink-faint/40">
-        {section.rows.map((row) => {
-          const locked = row.action === 'locked';
-          const shaking = lockedFeedback?.slug === row.slug;
-          /*
-           * TASK-HANASO-28 — the CURRENT lesson is finally VISIBLE: an
-           * indigo start-edge bar + a quiet «ایستگاه فعلی» chip + aria-current
-           * on the interactive element (the isFocus flag existed server-side
-           * but was never rendered). This answers «کجا هستم؟» at a glance.
-           * Subagent C fix: the row is current ONLY when its slug IS the
-           * server-computed next station — the old `section.isFocus &&
-           * action` heuristic also tagged optional available rows (e.g.
-           * stn-kana-opt-r-h9 beside the frontier) and mis-targeted the
-           * one-shot auto-scroll ref when several rows matched.
-           */
-          const isCurrent = liveNextStationSlug != null && row.slug === liveNextStationSlug;
-          const rowRef = isCurrent && !autoScrolledRef.current ? currentRowRef : undefined;
-          const body = (
-            <>
-              {/* PRODUCTION-REMEDIATION §3.1 (RTL fix): in dir=rtl the FIRST DOM
-               * child renders on the visual RIGHT. The station-type tile goes
-               * FIRST (visual right = the identity side), the access marker
-               * (lock/start/continue/done) goes LAST (visual left) — matching
-               * the owner-approved semantics: left = lock state, right = type. */}
-              <span className="flex shrink-0 items-center gap-2 text-caption text-ink-soft">
-                <span className="sm:hidden" aria-hidden>{fa.curriculum.rowMinutesShort(row.estMinutes)}</span>
-                <span className="hidden sm:inline">{fa.curriculum.rowMinutes(row.estMinutes)}</span>
-                {/* TASK-HANASO-22: this tile is the CONTENT IDENTITY (never a
+        {/* ---- rows: stations of THIS section only, walk order, page scroll ---- */}
+        <ol className="divide-y divide-ink-faint/40">
+          {section.rows.map((row) => {
+            const locked = row.action === 'locked';
+            const shaking = lockedFeedback?.slug === row.slug;
+            /*
+             * TASK-HANASO-28 — the CURRENT lesson is finally VISIBLE: an
+             * indigo start-edge bar + a quiet «ایستگاه فعلی» chip + aria-current
+             * on the interactive element (the isFocus flag existed server-side
+             * but was never rendered). This answers «کجا هستم؟» at a glance.
+             * Subagent C fix: the row is current ONLY when its slug IS the
+             * server-computed next station — the old `section.isFocus &&
+             * action` heuristic also tagged optional available rows (e.g.
+             * stn-kana-opt-r-h9 beside the frontier) and mis-targeted the
+             * one-shot auto-scroll ref when several rows matched.
+             */
+            const isCurrent = liveNextStationSlug != null && row.slug === liveNextStationSlug;
+            const rowRef = isCurrent && !autoScrolledRef.current ? currentRowRef : undefined;
+            const body = (
+              <>
+                {/* PRODUCTION-REMEDIATION §3.1 (RTL fix): in dir=rtl the FIRST DOM
+                 * child renders on the visual RIGHT. The station-type tile goes
+                 * FIRST (visual right = the identity side), the access marker
+                 * (lock/start/continue/done) goes LAST (visual left) — matching
+                 * the owner-approved semantics: left = lock state, right = type. */}
+                <span className="flex shrink-0 items-center gap-2 text-caption text-ink-soft">
+                  <span className="sm:hidden" aria-hidden>
+                    {fa.curriculum.rowMinutesShort(row.estMinutes)}
+                  </span>
+                  <span className="hidden sm:inline">{fa.curriculum.rowMinutes(row.estMinutes)}</span>
+                  {/* TASK-HANASO-22: this tile is the CONTENT IDENTITY (never a
                     second lock — the duplicate-lock fix). Locked stays recognizable. */}
-                <ContentTypeTile kind={row.contentKind} locked={locked} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-body font-bold text-ink">
-                  <MixedFaJaText text={row.titleFa} />
-                  {isCurrent ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-indigo/40 bg-indigo-wash px-2 py-0.5 text-caption font-bold text-indigo">
-                      <MapPin aria-hidden className="size-3" />
-                      {fa.curriculum.rowCurrentChip}
-                    </span>
-                  ) : null}
-                  {row.contentKind === 'milestone' ? (
-                    /* TASK-28 R7 — real-world milestone stations get a vermilion
-                     * chip next to the title: «این یکی، دنیای واقعی است». */
-                    <span className="inline-flex items-center gap-1 rounded-full border border-shu/50 bg-surface-warm px-2 py-0.5 text-caption font-bold text-shu">
-                      <Award aria-hidden className="size-3" />
-                      {fa.curriculum.rowMilestoneChip}
-                    </span>
-                  ) : null}
-                  {!row.core ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-ink-faint bg-surface-warm px-2 py-0.5 text-caption text-ink-soft">
-                      {fa.curriculum.rowOptional}
-                    </span>
-                  ) : null}
-                </p>
-                <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft"><MixedFaJaText text={row.objectiveFa} /></p>
-              </div>
-              <RowMarker action={row.action} flash={shaking} />
-            </>
-          );
+                  <ContentTypeTile kind={row.contentKind} locked={locked} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-body font-bold text-ink">
+                    <MixedFaJaText text={row.titleFa} />
+                    {isCurrent ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-indigo/40 bg-indigo-wash px-2 py-0.5 text-caption font-bold text-indigo">
+                        <MapPin aria-hidden className="size-3" />
+                        {fa.curriculum.rowCurrentChip}
+                      </span>
+                    ) : null}
+                    {row.contentKind === 'milestone' ? (
+                      /* TASK-28 R7 — real-world milestone stations get a vermilion
+                       * chip next to the title: «این یکی، دنیای واقعی است». */
+                      <span className="inline-flex items-center gap-1 rounded-full border border-shu/50 bg-surface-warm px-2 py-0.5 text-caption font-bold text-shu">
+                        <Award aria-hidden className="size-3" />
+                        {fa.curriculum.rowMilestoneChip}
+                      </span>
+                    ) : null}
+                    {!row.core ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-ink-faint bg-surface-warm px-2 py-0.5 text-caption text-ink-soft">
+                        {fa.curriculum.rowOptional}
+                      </span>
+                    ) : null}
+                  </p>
+                  <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
+                    <MixedFaJaText text={row.objectiveFa} />
+                  </p>
+                </div>
+                <RowMarker action={row.action} flash={shaking} />
+              </>
+            );
 
-          return (
-            <li
-              key={row.slug}
-              ref={rowRef}
-              data-testid={isCurrent ? 'journey-current-row' : undefined}
-              className={[
-                'relative',
-                shaking ? 'locked-shake' : '',
-                isCurrent ? 'bg-indigo-wash/60 before:absolute before:inset-y-0 before:start-0 before:w-1 before:bg-indigo' : '',
-              ].filter(Boolean).join(' ') || undefined}
-            >
-              {locked ? (
-                /* honest locked row: visible goal, a CLICK THAT ANSWERS (shake +
+            return (
+              <li
+                key={row.slug}
+                ref={rowRef}
+                data-testid={isCurrent ? 'journey-current-row' : undefined}
+                className={
+                  [
+                    'relative',
+                    shaking ? 'locked-shake' : '',
+                    isCurrent
+                      ? 'bg-indigo-wash/60 before:absolute before:inset-y-0 before:start-0 before:w-1 before:bg-indigo'
+                      : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ') || undefined
+                }
+              >
+                {locked ? (
+                  /* honest locked row: visible goal, a CLICK THAT ANSWERS (shake +
                    vermilion flash + the reason), but never an entry (island §۸). */
-                <button
-                  type="button"
-                  onClick={() => onLockedClick(row)}
-                  aria-label={`${row.titleFa} — ${fa.curriculum.rowLocked}`}
-                  className="flex w-full items-center gap-3 p-4 text-start transition-colors hover:bg-surface-warm/60 focus-visible:bg-surface-warm focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ai sm:gap-4 sm:p-5"
-                >
-                  {body}
-                </button>
-              ) : (
-                <Link
-                  href={row.href}
-                  aria-current={isCurrent ? 'true' : undefined}
-                  className="group flex items-center gap-3 p-4 transition-colors hover:bg-indigo-wash focus-visible:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ai sm:gap-4 sm:p-5"
-                >
-                  {body}
-                </Link>
-              )}
-              {lockedFeedback?.slug === row.slug ? (
-                <p
-                  ref={lockedReasonRef}
-                  role="status"
-                  aria-live="polite"
-                  data-locked-reason
-                  /* UI-03/UI-04: shu-deep passes AA (5.8:1) on surface-warm where
-                   * the flash color shu itself measured 4.37:1. */
-                  className="feedback-in border-t border-ink-faint/40 bg-surface-warm px-4 py-2.5 text-small font-bold leading-[var(--leading-fa)] text-shu-deep sm:px-5"
-                >
-                  {lockedFeedback.message}
-                </p>
-              ) : null}
-            </li>
-          );
-        })}
-      </ol>
+                  <button
+                    type="button"
+                    onClick={() => onLockedClick(row)}
+                    aria-label={`${row.titleFa} — ${fa.curriculum.rowLocked}`}
+                    className="flex w-full items-center gap-3 p-4 text-start transition-colors hover:bg-surface-warm/60 focus-visible:bg-surface-warm focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ai sm:gap-4 sm:p-5"
+                  >
+                    {body}
+                  </button>
+                ) : (
+                  <Link
+                    href={row.href}
+                    aria-current={isCurrent ? 'true' : undefined}
+                    className="group flex items-center gap-3 p-4 transition-colors hover:bg-indigo-wash focus-visible:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ai sm:gap-4 sm:p-5"
+                  >
+                    {body}
+                  </Link>
+                )}
+                {lockedFeedback?.slug === row.slug ? (
+                  <p
+                    ref={lockedReasonRef}
+                    role="status"
+                    aria-live="polite"
+                    data-locked-reason
+                    /* UI-03/UI-04: shu-deep passes AA (5.8:1) on surface-warm where
+                     * the flash color shu itself measured 4.37:1. */
+                    className="feedback-in border-t border-ink-faint/40 bg-surface-warm px-4 py-2.5 text-small font-bold leading-[var(--leading-fa)] text-shu-deep sm:px-5"
+                  >
+                    {lockedFeedback.message}
+                  </p>
+                ) : null}
+              </li>
+            );
+          })}
+        </ol>
 
-      {/* ---- section navigation: explicit buttons with named destinations ---- */}
-      <nav
-        aria-label={fa.curriculum.sectionBadge}
-        className="grid grid-cols-1 gap-3 border-t-2 border-indigo bg-surface-warm p-4 sm:grid-cols-2 sm:p-5"
-      >
-        {prev ? (
-          <button
-            type="button"
-            onClick={() => gotoSection(activeIndex - 1)}
-            className="flex min-h-14 items-center gap-3 rounded-md border-2 border-ink bg-card px-4 py-3 text-start transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-          >
-            <ArrowRight aria-hidden className="size-5 shrink-0 text-ink-soft" />
-            <span className="min-w-0">
-              <span className="block text-caption text-ink-soft">{fa.curriculum.sectionPrev}</span>
-              <span className="block truncate text-body font-bold text-ink"><MixedFaJaText text={prev.titleFa} /></span>
-            </span>
-          </button>
-        ) : (
-          <p className="flex min-h-14 items-center gap-2 rounded-md border-2 border-dashed border-ink-faint/50 px-4 py-3 text-caption text-ink-faint">
-            <ArrowRight aria-hidden className="size-4" />
-            {fa.curriculum.sectionFirstHint}
-          </p>
-        )}
-
-        {next ? (
-          <button
-            type="button"
-            onClick={() => gotoSection(activeIndex + 1)}
-            className="flex min-h-14 items-center justify-end gap-3 rounded-md border-2 border-indigo bg-indigo px-4 py-3 text-end text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-          >
-            <span className="min-w-0">
-              <span className="block text-caption text-indigo-mist">
-                {fa.curriculum.sectionNext}
-                {next.status === 'locked' ? ` — ${fa.curriculum.sectionStatusLocked}` : ''}
+        {/* ---- section navigation: explicit buttons with named destinations ---- */}
+        <nav
+          aria-label={fa.curriculum.sectionBadge}
+          className="grid grid-cols-1 gap-3 border-t-2 border-indigo bg-surface-warm p-4 sm:grid-cols-2 sm:p-5"
+        >
+          {prev ? (
+            <button
+              type="button"
+              onClick={() => gotoSection(activeIndex - 1)}
+              className="flex min-h-14 items-center gap-3 rounded-md border-2 border-ink bg-card px-4 py-3 text-start transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            >
+              <ArrowRight aria-hidden className="size-5 shrink-0 text-ink-soft" />
+              <span className="min-w-0">
+                <span className="block text-caption text-ink-soft">{fa.curriculum.sectionPrev}</span>
+                <span className="block truncate text-body font-bold text-ink">
+                  <MixedFaJaText text={prev.titleFa} />
+                </span>
               </span>
-              <span className="block truncate text-body font-bold"><MixedFaJaText text={next.titleFa} /></span>
-              {next.status === 'locked' ? (
-                <span className="block text-caption text-indigo-mist">{fa.curriculum.sectionNextLockedHint}</span>
-              ) : null}
-            </span>
-            <ArrowLeft aria-hidden className="size-5 shrink-0" />
-          </button>
-        ) : (
-          <p className="flex min-h-14 items-center justify-end gap-2 rounded-md border-2 border-dashed border-ink-faint/50 px-4 py-3 text-caption text-ink-faint sm:col-start-2">
-            {fa.curriculum.sectionLastHint}
-            <ArrowLeft aria-hidden className="size-4" />
-          </p>
-        )}
-      </nav>
+            </button>
+          ) : (
+            <p className="flex min-h-14 items-center gap-2 rounded-md border-2 border-dashed border-ink-faint/50 px-4 py-3 text-caption text-ink-faint">
+              <ArrowRight aria-hidden className="size-4" />
+              {fa.curriculum.sectionFirstHint}
+            </p>
+          )}
+
+          {next ? (
+            <button
+              type="button"
+              onClick={() => gotoSection(activeIndex + 1)}
+              className="flex min-h-14 items-center justify-end gap-3 rounded-md border-2 border-indigo bg-indigo px-4 py-3 text-end text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+            >
+              <span className="min-w-0">
+                <span className="block text-caption text-indigo-mist">
+                  {fa.curriculum.sectionNext}
+                  {next.status === 'locked' ? ` — ${fa.curriculum.sectionStatusLocked}` : ''}
+                </span>
+                <span className="block truncate text-body font-bold">
+                  <MixedFaJaText text={next.titleFa} />
+                </span>
+                {next.status === 'locked' ? (
+                  <span className="block text-caption text-indigo-mist">{fa.curriculum.sectionNextLockedHint}</span>
+                ) : null}
+              </span>
+              <ArrowLeft aria-hidden className="size-5 shrink-0" />
+            </button>
+          ) : (
+            <p className="flex min-h-14 items-center justify-end gap-2 rounded-md border-2 border-dashed border-ink-faint/50 px-4 py-3 text-caption text-ink-faint sm:col-start-2">
+              {fa.curriculum.sectionLastHint}
+              <ArrowLeft aria-hidden className="size-4" />
+            </p>
+          )}
+        </nav>
       </section>
     </div>
   );

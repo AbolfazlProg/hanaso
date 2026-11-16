@@ -48,14 +48,14 @@ takes precedence; guest progress merges — documented in identity.ts).
 
 ### Files
 
-| File | Change |
-| --- | --- |
-| `src/lib/learner/session.ts` (NEW) | Pure core: secret resolution (`HANASO_SESSION_SECRET` env; loud dev fallback with a production warn — the release gate refuses to ship without a real secret), token shape parse (`<uuid>.<43-char base64url>`), HMAC message domain `hanaso_lid:v1:`. |
-| `src/lib/learner/session-node.ts` (NEW) | node:crypto twin — `signSessionTokenSync` / `verifySessionTokenSync` (constant-time). Used by resolvers + tests. |
-| `src/lib/learner/session-web.ts` (NEW) | WebCrypto twin (edge runtime) — byte-identical signatures. Used by the middleware. |
-| `src/lib/learner/server.ts` | Both resolvers verify the signature; anything else → GUEST. Re-exports the sign/verify helpers for tests. |
-| `src/lib/learner/identity.ts` (client twin) | No longer reads/writes the cookie (server owns it). Keeps ONLY the localStorage id — used to namespace walk snapshots; never crosses the network. Existing users keep their localStorage uuid, so walk snapshots survive the upgrade. |
-| `src/middleware.ts` | Signed mint on GET/HEAD only; legacy raw-uuid re-issue (same uuid, now signed); **state-changing requests without identity pass through UN-minted → the route guards' 401 is live over HTTP** (BUG-039 closed); flags httpOnly + lax + secure(https/xfp/production). |
+| File                                        | Change                                                                                                                                                                                                                                                               |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/learner/session.ts` (NEW)          | Pure core: secret resolution (`HANASO_SESSION_SECRET` env; loud dev fallback with a production warn — the release gate refuses to ship without a real secret), token shape parse (`<uuid>.<43-char base64url>`), HMAC message domain `hanaso_lid:v1:`.               |
+| `src/lib/learner/session-node.ts` (NEW)     | node:crypto twin — `signSessionTokenSync` / `verifySessionTokenSync` (constant-time). Used by resolvers + tests.                                                                                                                                                     |
+| `src/lib/learner/session-web.ts` (NEW)      | WebCrypto twin (edge runtime) — byte-identical signatures. Used by the middleware.                                                                                                                                                                                   |
+| `src/lib/learner/server.ts`                 | Both resolvers verify the signature; anything else → GUEST. Re-exports the sign/verify helpers for tests.                                                                                                                                                            |
+| `src/lib/learner/identity.ts` (client twin) | No longer reads/writes the cookie (server owns it). Keeps ONLY the localStorage id — used to namespace walk snapshots; never crosses the network. Existing users keep their localStorage uuid, so walk snapshots survive the upgrade.                                |
+| `src/middleware.ts`                         | Signed mint on GET/HEAD only; legacy raw-uuid re-issue (same uuid, now signed); **state-changing requests without identity pass through UN-minted → the route guards' 401 is live over HTTP** (BUG-039 closed); flags httpOnly + lax + secure(https/xfp/production). |
 
 ### Session fixation / rotation / CSRF analysis (mission §2 requirements)
 

@@ -50,57 +50,32 @@ export const PRACTICE_STATIONS_KANA: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p1-rec',
-        exerciseIds: [
-          'ex-kana-p1-rec-sa',
-          'ex-kana-p1-rec-o',
-          'ex-kana-p1-rec-se',
-          'ex-kana-p1-rec-ki',
-        ],
+        exerciseIds: ['ex-kana-p1-rec-sa', 'ex-kana-p1-rec-o', 'ex-kana-p1-rec-se', 'ex-kana-p1-rec-ki'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p1-lis',
-        exerciseIds: [
-          'ex-kana-p1-lis-ko',
-          'ex-kana-p1-lis-shi',
-          'ex-kana-p1-lis-ga',
-        ],
+        exerciseIds: ['ex-kana-p1-lis-ko', 'ex-kana-p1-lis-shi', 'ex-kana-p1-lis-ga'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p1-rcl',
-        exerciseIds: [
-          'ex-kana-p1-rcl-a',
-          'ex-kana-p1-rcl-shi',
-          'ex-kana-p1-rcl-ga',
-        ],
+        exerciseIds: ['ex-kana-p1-rcl-a', 'ex-kana-p1-rcl-shi', 'ex-kana-p1-rcl-ga'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p1-dec',
-        exerciseIds: [
-          'ex-kana-p1-dec-asa',
-          'ex-kana-p1-dec-sushi',
-          'ex-kana-p1-dec-koko',
-        ],
+        exerciseIds: ['ex-kana-p1-dec-asa', 'ex-kana-p1-dec-sushi', 'ex-kana-p1-dec-koko'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p1-word',
-        exerciseIds: [
-          'ex-kana-p1-dec-iie',
-          'ex-kana-p1-msg-gogo',
-          'ex-kana-p1-dec-ookii',
-        ],
+        exerciseIds: ['ex-kana-p1-dec-iie', 'ex-kana-p1-msg-gogo', 'ex-kana-p1-dec-ookii'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p1-mixed',
-        exerciseIds: [
-          'ex-kana-p1-rec-go',
-          'ex-kana-p1-lis-so',
-          'ex-kana-p1-dec-kasa',
-        ],
+        exerciseIds: ['ex-kana-p1-rec-go', 'ex-kana-p1-lis-so', 'ex-kana-p1-dec-kasa'],
       },
       {
         kind: 'wrap-up',
@@ -141,56 +116,32 @@ export const PRACTICE_STATIONS_KANA: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p2-rec',
-        exerciseIds: [
-          'ex-kana-p2-rec-na',
-          'ex-kana-p2-rec-nu',
-          'ex-kana-p2-rec-chi',
-          'ex-kana-p2-rec-to',
-        ],
+        exerciseIds: ['ex-kana-p2-rec-na', 'ex-kana-p2-rec-nu', 'ex-kana-p2-rec-chi', 'ex-kana-p2-rec-to'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p2-lis',
-        exerciseIds: [
-          'ex-kana-p2-lis-ni',
-          'ex-kana-p2-lis-tsu',
-          'ex-kana-p2-lis-da',
-        ],
+        exerciseIds: ['ex-kana-p2-lis-ni', 'ex-kana-p2-lis-tsu', 'ex-kana-p2-lis-da'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p2-rcl',
-        exerciseIds: [
-          'ex-kana-p2-rcl-tsu',
-          'ex-kana-p2-rec-ta',
-          'ex-kana-p2-rec-n',
-        ],
+        exerciseIds: ['ex-kana-p2-rcl-tsu', 'ex-kana-p2-rec-ta', 'ex-kana-p2-rec-n'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p2-dec',
-        exerciseIds: [
-          'ex-kana-p2-dec-kuni',
-          'ex-kana-p2-dec-sono',
-          'ex-kana-p2-dec-ashita',
-        ],
+        exerciseIds: ['ex-kana-p2-dec-kuni', 'ex-kana-p2-dec-sono', 'ex-kana-p2-dec-ashita'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p2-word',
-        exerciseIds: [
-          'ex-kana-p2-dec-sensei',
-          'ex-kana-p2-dec-san',
-          'ex-kana-p2-dec-anata',
-        ],
+        exerciseIds: ['ex-kana-p2-dec-sensei', 'ex-kana-p2-dec-san', 'ex-kana-p2-dec-anata'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p2-mixed',
-        exerciseIds: [
-          'ex-kana-p2-lis-to',
-          'ex-kana-p2-dec-atsui',
-        ],
+        exerciseIds: ['ex-kana-p2-lis-to', 'ex-kana-p2-dec-atsui'],
       },
       {
         kind: 'wrap-up',
@@ -231,21 +182,12 @@ export const PRACTICE_STATIONS_KANA: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p3-rec',
-        exerciseIds: [
-          'ex-kana-p3-rec-me',
-          'ex-kana-p3-rec-ho',
-          'ex-kana-p3-rec-ru',
-          'ex-kana-p3-rec-he',
-        ],
+        exerciseIds: ['ex-kana-p3-rec-me', 'ex-kana-p3-rec-ho', 'ex-kana-p3-rec-ru', 'ex-kana-p3-rec-he'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p3-lis',
-        exerciseIds: [
-          'ex-kana-p3-lis-ne',
-          'ex-kana-p3-lis-ba',
-          'ex-kana-p3-lis-mi',
-        ],
+        exerciseIds: ['ex-kana-p3-lis-ne', 'ex-kana-p3-lis-ba', 'ex-kana-p3-lis-mi'],
       },
       {
         kind: 'exercise',
@@ -261,28 +203,17 @@ export const PRACTICE_STATIONS_KANA: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p3-dec',
-        exerciseIds: [
-          'ex-kana-p3-dec-neko',
-          'ex-kana-p3-dec-mizu',
-          'ex-kana-p3-dec-kuruma',
-        ],
+        exerciseIds: ['ex-kana-p3-dec-neko', 'ex-kana-p3-dec-mizu', 'ex-kana-p3-dec-kuruma'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p3-word',
-        exerciseIds: [
-          'ex-kana-p3-dec-kaban',
-          'ex-kana-p3-dec-shinbun',
-          'ex-kana-p3-dec-hon',
-        ],
+        exerciseIds: ['ex-kana-p3-dec-kaban', 'ex-kana-p3-dec-shinbun', 'ex-kana-p3-dec-hon'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p3-mixed',
-        exerciseIds: [
-          'ex-kana-p3-rec-fu',
-          'ex-kana-p3-dec-tomodachi',
-        ],
+        exerciseIds: ['ex-kana-p3-rec-fu', 'ex-kana-p3-dec-tomodachi'],
       },
       {
         kind: 'wrap-up',
@@ -323,39 +254,22 @@ export const PRACTICE_STATIONS_KANA: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p4-rec',
-        exerciseIds: [
-          'ex-kana-p4-rec-wa',
-          'ex-kana-p4-rec-wo',
-          'ex-kana-p4-rec-po',
-          'ex-kana-p4-rec-bo',
-        ],
+        exerciseIds: ['ex-kana-p4-rec-wa', 'ex-kana-p4-rec-wo', 'ex-kana-p4-rec-po', 'ex-kana-p4-rec-bo'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p4-lis',
-        exerciseIds: [
-          'ex-kana-p4-lis-wa',
-          'ex-kana-p4-lis-pa',
-          'ex-kana-p4-lis-yu',
-        ],
+        exerciseIds: ['ex-kana-p4-lis-wa', 'ex-kana-p4-lis-pa', 'ex-kana-p4-lis-yu'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p4-pairs',
-        exerciseIds: [
-          'ex-kana-p4-rec-ne',
-          'ex-kana-p4-rcl-ho',
-          'ex-kana-p4-rec-yo-small',
-        ],
+        exerciseIds: ['ex-kana-p4-rec-ne', 'ex-kana-p4-rcl-ho', 'ex-kana-p4-rec-yo-small'],
       },
       {
         kind: 'exercise',
         id: 'blk-stn-kana-p4-rule',
-        exerciseIds: [
-          'ex-kana-p4-rl-gakkou',
-          'ex-kana-p4-rl-kyou',
-          'ex-kana-p4-rl-gogo',
-        ],
+        exerciseIds: ['ex-kana-p4-rl-gakkou', 'ex-kana-p4-rl-kyou', 'ex-kana-p4-rl-gogo'],
       },
       {
         kind: 'exercise',

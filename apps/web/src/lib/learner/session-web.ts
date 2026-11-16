@@ -10,13 +10,9 @@ import { getSessionSecret, parseSessionToken, sessionTokenMessage } from './sess
 const encoder = new TextEncoder();
 
 async function computeSignatureWeb(uuid: string, secret: string): Promise<string> {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  );
+  const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [
+    'sign',
+  ]);
   const mac = await crypto.subtle.sign('HMAC', key, encoder.encode(sessionTokenMessage(uuid)));
   // base64url without padding (43 chars for 32 bytes)
   let binary = '';

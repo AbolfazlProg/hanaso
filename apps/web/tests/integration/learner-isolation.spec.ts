@@ -71,7 +71,7 @@ beforeEach(() => {
 });
 
 describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () => {
-  it('Scenario A: a cookie-less GET sees NO ONE\'s data — not even legacy poc-user rows', async () => {
+  it("Scenario A: a cookie-less GET sees NO ONE's data — not even legacy poc-user rows", async () => {
     // legacy shared-account rows, as the live DB carries them (BUG-001 setup)
     const store = getStationProgressStore();
     await store.upsert('poc-user', 'stn-kana-h0', {
@@ -98,9 +98,7 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
   });
 
   it('Scenario A: a cookie-less WRITE is rejected 401 — never a silent shared-store write', async () => {
-    const res = await postStation(
-      post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }, null),
-    );
+    const res = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }, null));
     expect(res.status).toBe(401);
     const err = await errorOf(res);
     expect(err.code).toBe('learner/no_identity');
@@ -112,7 +110,9 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
   it('Scenario B/C: two QA learners are completely independent (no cross-visibility)', async () => {
     // QA A walks h0 + h1 in order
     await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }, QA_A));
-    await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1, taskCompleted: true }, QA_A));
+    await postStation(
+      post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1, taskCompleted: true }, QA_A),
+    );
 
     // QA B sees NONE of A's progress
     const bH0 = await stateOf(await getStation(get('stn-kana-h0', QA_B)));
@@ -164,14 +164,18 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
       );
       expect(graded.status, `grade ${slug}`).toBe(200);
     }
-    await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1, taskCompleted: true }, QA_B));
-    const ok = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2', score: 1, taskCompleted: true }, QA_B));
+    await postStation(
+      post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1, taskCompleted: true }, QA_B),
+    );
+    const ok = await postStation(
+      post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2', score: 1, taskCompleted: true }, QA_B),
+    );
     expect(ok.status).toBe(200);
     const state = await stateOf(ok);
     expect(state.status).toBe('completed');
   });
 
-  it('Scenario D (identity switch): the same endpoint returns each caller\'s own data only', async () => {
+  it("Scenario D (identity switch): the same endpoint returns each caller's own data only", async () => {
     await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h0' }, QA_A));
     const forA = await stateOf(await getStation(get('stn-kana-h0', QA_A)));
     const forB = await stateOf(await getStation(get('stn-kana-h0', QA_B)));

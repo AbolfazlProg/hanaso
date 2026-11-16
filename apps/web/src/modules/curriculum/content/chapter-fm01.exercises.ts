@@ -2003,5 +2003,3 @@ export const FM01_EXERCISES: Exercise[] = [
     assessmentRole: 'practice',
   },
 ];
-
-

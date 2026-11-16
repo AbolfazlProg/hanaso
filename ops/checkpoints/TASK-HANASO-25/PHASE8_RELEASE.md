@@ -1,6 +1,7 @@
 # TASK-HANASO-25 — PHASE 8: Release pin + OWNER-COMMAND v14 (CP-09)
 
 ## Pins (verified)
+
 - Tooling ref R = 14d9d3abe726d9f585948eb60da587d4feefec4c (TASK-24 CP-07a tip;
   hardened updater with BOTH required env keys; smoke contract current;
   nothing after it touched infra/deploy or scripts/smoke.sh — verified by
@@ -14,6 +15,7 @@
 - Version 1.0.0-hanaso25-r01 · Branch fix/TASK-HANASO-25-kana-integrity
 
 ## Verification performed in this phase
+
 1. Production build: `corepack pnpm build` EXIT 0 (first failure was the dev
    server holding .next; after stopping it: compiled 10.7s, TypeScript clean,
    8/8 static pages, BUILD_ID 70Ar7WCGnwRoLlWR_vTIw).
@@ -35,6 +37,7 @@
    tooling pin, 76 at h22) — out of scope, not regressed by us.
 
 ## Not done (honest)
+
 - The full 92-assertion sandbox drill with a REFRESHED fixture (run-h25.sh)
   was not completed within this session's budget; the delivery-layer
   mechanics that matter (multi-path download, SHA-256 gate, pin resolution

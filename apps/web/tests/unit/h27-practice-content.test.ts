@@ -55,11 +55,31 @@ function practiceExerciseIds(): string[] {
  * か-row + さ-row dakuten shown at h5; は-row dakuten (ば/び/ぶ) at h12;
  * handakuten (ぱ/ぴ/ぽ/ぼ) at h15. */
 const DERIVED_FORM_STATION: Record<string, string> = {
-  が: 'stn-kana-h5', ぎ: 'stn-kana-h5', ぐ: 'stn-kana-h5', げ: 'stn-kana-h5', ご: 'stn-kana-h5',
-  ざ: 'stn-kana-h5', じ: 'stn-kana-h5', ず: 'stn-kana-h5', ぜ: 'stn-kana-h5', ぞ: 'stn-kana-h5',
-  だ: 'stn-kana-h9', ぢ: 'stn-kana-h9', づ: 'stn-kana-h9', で: 'stn-kana-h9', ど: 'stn-kana-h9',
-  ば: 'stn-kana-h12', び: 'stn-kana-h12', ぶ: 'stn-kana-h12', べ: 'stn-kana-h12', ぼ: 'stn-kana-h12',
-  ぱ: 'stn-kana-h15', ぴ: 'stn-kana-h15', ぷ: 'stn-kana-h15', ぺ: 'stn-kana-h15', ぽ: 'stn-kana-h15',
+  が: 'stn-kana-h5',
+  ぎ: 'stn-kana-h5',
+  ぐ: 'stn-kana-h5',
+  げ: 'stn-kana-h5',
+  ご: 'stn-kana-h5',
+  ざ: 'stn-kana-h5',
+  じ: 'stn-kana-h5',
+  ず: 'stn-kana-h5',
+  ぜ: 'stn-kana-h5',
+  ぞ: 'stn-kana-h5',
+  だ: 'stn-kana-h9',
+  ぢ: 'stn-kana-h9',
+  づ: 'stn-kana-h9',
+  で: 'stn-kana-h9',
+  ど: 'stn-kana-h9',
+  ば: 'stn-kana-h12',
+  び: 'stn-kana-h12',
+  ぶ: 'stn-kana-h12',
+  べ: 'stn-kana-h12',
+  ぼ: 'stn-kana-h12',
+  ぱ: 'stn-kana-h15',
+  ぴ: 'stn-kana-h15',
+  ぷ: 'stn-kana-h15',
+  ぺ: 'stn-kana-h15',
+  ぽ: 'stn-kana-h15',
 };
 
 function glyphsTaughtBefore(slug: string): Set<string> {
@@ -108,15 +128,36 @@ describe('TASK-HANASO-27 — practice stations in the journey (PR-1/PR-2)', () =
     const before = [...hiraUnit.stationSlugs];
     (hiraUnit as { stationSlugs: string[] }).stationSlugs = before.filter((s) => s !== 'stn-kana-p2');
     try {
-      const okNow = hiraUnit.stationSlugs.every((s) => {
-        const st = chapter.stations.find((x) => x.slug === s);
-        return st !== undefined;
-      }) && new Set(hiraUnit.stationSlugs).size === hiraUnit.stationSlugs.length;
+      const okNow =
+        hiraUnit.stationSlugs.every((s) => {
+          const st = chapter.stations.find((x) => x.slug === s);
+          return st !== undefined;
+        }) && new Set(hiraUnit.stationSlugs).size === hiraUnit.stationSlugs.length;
       // the CL-16 gate (h25-content-lint) is the real assertion; here we pin
       // the invariant it builds on: every station has a UNIQUE order and the
       // unit list length must match the station count for section A.
       const aStations = chapter.stations.filter((s) =>
-        ['stn-kana-h0', 'stn-kana-h1', 'stn-kana-h2', 'stn-kana-h3', 'stn-kana-h4', 'stn-kana-h5', 'stn-kana-h7', 'stn-kana-h8', 'stn-kana-h9', 'stn-kana-h10', 'stn-kana-h11', 'stn-kana-h12', 'stn-kana-h14', 'stn-kana-h6', 'stn-kana-h13', 'stn-kana-h15', 'stn-kana-m1-reading', 'stn-kana-opt-r-h9', ...P_SLUGS].includes(s.slug),
+        [
+          'stn-kana-h0',
+          'stn-kana-h1',
+          'stn-kana-h2',
+          'stn-kana-h3',
+          'stn-kana-h4',
+          'stn-kana-h5',
+          'stn-kana-h7',
+          'stn-kana-h8',
+          'stn-kana-h9',
+          'stn-kana-h10',
+          'stn-kana-h11',
+          'stn-kana-h12',
+          'stn-kana-h14',
+          'stn-kana-h6',
+          'stn-kana-h13',
+          'stn-kana-h15',
+          'stn-kana-m1-reading',
+          'stn-kana-opt-r-h9',
+          ...P_SLUGS,
+        ].includes(s.slug),
       );
       expect(okNow && hiraUnit.stationSlugs.length === aStations.length).toBe(false);
     } finally {
@@ -127,11 +168,23 @@ describe('TASK-HANASO-27 — practice stations in the journey (PR-1/PR-2)', () =
 
 describe('TASK-HANASO-27 — untaught-content ban per station (PR-3)', () => {
   const cases: [slug: string, forbidden: string, why: string][] = [
-    ['stn-kana-p1', 'んぬねのたちつてとまみむめもらりるれろはひふへほやゆよわを', 'all later-row glyphs + ん are untaught at p1'],
+    [
+      'stn-kana-p1',
+      'んぬねのたちつてとまみむめもらりるれろはひふへほやゆよわを',
+      'all later-row glyphs + ん are untaught at p1',
+    ],
     ['stn-kana-p1', 'ぱぴぽぼ', 'handakuten is untaught until h15'],
-    ['stn-kana-p2', 'まみむめもらりるれろはひふへほやゆよわをばびぶ', 'rows ま/ら/は + ば and later are untaught at p2'],
+    [
+      'stn-kana-p2',
+      'まみむめもらりるれろはひふへほやゆよわをばびぶ',
+      'rows ま/ら/は + ば and later are untaught at p2',
+    ],
     ['stn-kana-p3', 'ゃゅょっやゆよわをぱぴぽぼ', 'yōon/sokuon/わ-row/handakuten untaught at p3'],
-    ['stn-kana-p4', 'ーァィゥェォカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンヴ', 'katakana glyphs and the chōonpu never appear in hiragana practice'],
+    [
+      'stn-kana-p4',
+      'ーァィゥェォカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンヴ',
+      'katakana glyphs and the chōonpu never appear in hiragana practice',
+    ],
   ];
 
   it.each(cases)('%s: no forbidden glyph anywhere in its items (%s)', (slug, forbidden) => {

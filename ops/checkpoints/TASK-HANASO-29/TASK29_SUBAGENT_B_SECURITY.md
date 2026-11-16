@@ -14,19 +14,23 @@
 ## ۱. Session و احراز هویت — سالم (بدون یافته بحرانی)
 
 ### ۱-۱. توکن امضاشده و fail-closed بودن secret
+
 - `apps/web/src/lib/learner/session.ts:52-61` — `getSessionSecret()` در حالت production بدون `HANASO_SESSION_SECRET` **خطای boot** می‌دهد (fail-closed)؛ fallback عمومی dev فقط در حالت غیر-production برمی‌گردد. این دقیقاً قرارداد TASK-24 است و در کد (نه کامنت) تأیید شد.
 - `session.ts:78-87` — `parseSessionToken` ساختار `uuid.signature(base64url, 43 char)` را می‌پذیرد؛ uuid خام legacy و هر مقدار خراب → null.
 - `apps/web/src/lib/learner/session-node.ts:25-32` — `verifySessionTokenSync` با `timingSafeEqual` (مقایسه زمان-ثابت) امضا را چک می‌کند؛ امضای غلط → null.
 - `session-web.ts:34-44` — نسخه edge (middleware) حلقه diff روی طول ثابت 43 کاراکتر دارد؛ چون `parseSessionToken` طول را از قبل تثبیت کرده، این مقایسه عملاً زمان-ثابت است — قابل قبول.
 
 ### ۱-۲. Middleware — mint فقط روی GET/HEAD
+
 - `apps/web/src/middleware.ts:34-36` — `shouldMint` فقط GET/HEAD.
 - `middleware.ts:89-93` — روی درخواست state-changing بدون هویت **هیچ کوکی‌ای mint نمی‌شود**؛ مسیر route خودش 401 می‌دهد (رفع BUG-039).
 - `middleware.ts:58-64` — re-issue امضای uuid خام legacy فقط داخل پنجره `HANASO_LEGACY_TOKEN_CUTOFF` (wall-clock)؛ در production بدون cutoff کاملاً غیرفعال (fail-closed) و تاریخ نامعتبر → غیرفعال.
 - `middleware.ts:101-107` — کوکی با `httpOnly: true`، `sameSite: 'lax'`، `secure` (https / X-Forwarded-Proto / production) و maxAge یک‌ساله صادر می‌شود.
 
 ### ۱-۳. آیا کلاینت می‌تواند id زبان‌آموز دیگری بفرستد؟ — خیر
+
 تمام مسیرها id را **فقط** از کوکی امضاشده استخراج می‌کنند:
+
 - `apps/web/src/lib/learner/server.ts:81-87` — `resolveLearnerIdFromRequest` کوکی header را می‌خواند (آخرین occurrence برنده — سازگار با middleware، رفع A-03) و `server.ts:90-93` امضا را verify می‌کند؛ ناموفق → `GUEST_LEARNER_ID` (`'guest'`).
 - **POST /api/curriculum/station** (`apps/web/src/app/api/curriculum/station/route.ts:171`): `userId = resolveLearnerIdFromRequest(req)` — هیچ فیلد body/schema‌ای به نام userId وجود ندارد؛ schema در `route.ts:51-133` فقط `chapterSlug/stationSlug/exerciseId/attemptNo/answer/score/taskCompleted/...` را می‌پذیرد. مهمان → 401 (`route.ts:179-187`).
 - `/api/attempts` — `attemptSubmissionSchema` در `apps/web/src/modules/mastery/types.ts:72-75` فقط `dialogueId + answers` دارد؛ `userId` body با zod حذف می‌شود؛ route در `apps/web/src/app/api/attempts/route.ts:65-66` از کوکی resolve می‌کند.
@@ -44,14 +48,14 @@
 
 همه store-callهای تغییردهنده با همان userId حل‌شده scope می‌شوند:
 
-| مسیر | محل resolve | محل scope شدن store |
-|---|---|---|
-| POST/GET station | `station/route.ts:171,596` | `:208,232,335,399,455,461,525-538` (upsert/listForUnit/incrementAttempts/completeStationWalk همگی با `userId`) |
-| GET/POST attempts | `attempts/route.ts:38,65` | `:42 (listForUser)`، `:99-102 (create با userId)` |
-| GET/POST progress | `progress/route.ts:46,71` | `:48,76,99` — به‌علاوه `:84-95`: دروازه mastery_passed وجود/مالکیت attempt را **سمت سرور** تطبیق می‌دهد (`attempt.userId !== userId` → 404) |
-| POST mastery | `mastery/route.ts:56` | `:81 (listForUnit)`, `:124 (submitMasteryWithFold با userId)` |
-| GET/POST events | `events/route.ts:33,70` | `:56 (مهر user_id caller)`، `:73-80 (لیست فقط رویدادهای خود caller، حذف user_id)` |
-| GET practice | `practice/route.ts:44` | `:36,52,55 (listForUser)` |
+| مسیر              | محل resolve                | محل scope شدن store                                                                                                                         |
+| ----------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST/GET station  | `station/route.ts:171,596` | `:208,232,335,399,455,461,525-538` (upsert/listForUnit/incrementAttempts/completeStationWalk همگی با `userId`)                              |
+| GET/POST attempts | `attempts/route.ts:38,65`  | `:42 (listForUser)`، `:99-102 (create با userId)`                                                                                           |
+| GET/POST progress | `progress/route.ts:46,71`  | `:48,76,99` — به‌علاوه `:84-95`: دروازه mastery_passed وجود/مالکیت attempt را **سمت سرور** تطبیق می‌دهد (`attempt.userId !== userId` → 404) |
+| POST mastery      | `mastery/route.ts:56`      | `:81 (listForUnit)`, `:124 (submitMasteryWithFold با userId)`                                                                               |
+| GET/POST events   | `events/route.ts:33,70`    | `:56 (مهر user_id caller)`، `:73-80 (لیست فقط رویدادهای خود caller، حذف user_id)`                                                           |
+| GET practice      | `practice/route.ts:44`     | `:36,52,55 (listForUser)`                                                                                                                   |
 
 - مهمان در تمام سطح‌های state-changing با `learner/no_identity` و 401 رد می‌شود (الگوی یکسان در همه routeها).
 - `getEventStore()` در production هم in-memory است اما لیست GET caller-scoped و بدون user_id است — افشای بین‌کاربری ندارد.
@@ -102,14 +106,17 @@
 ## ۶. نصاب و ایمنی استقرار — سالم با دو نکته (M3, M4)
 
 ### ۶-۱. Pin و SHA-256
+
 - Bootstrap: `infra/deploy/bootstrap-hanaso.sh:52-59` — `HANASO_TARGET_SHA`/`HANASO_TARGET_VERSION`/`HANASO_DEPLOY_SHA` (branch فقط fallback با هشدار صریح `:142-145`)؛ وجود commitها verify می‌شود (`:135-149`)؛ آپدیتر فقط از worktree همان DEPLOY_SHA اجرا می‌شود (`:301-310`).
 - One-liner مالک (`OWNER-COMMAND.txt`): SHA-256 واقعی فایل bootstrap قبل از اجرا چک می‌شود (`sha256sum -c`) — گیت سخت.
 - Self-check داخل bootstrap (`:284-296`): عدم تطابق فقط **warn** می‌دهد و ادامه می‌دهد (نکته M3/Low) — به‌جا نوشته که آپدیتر همچنان از commit pin شده اجرا می‌شود و one-liner خودش گیت سخت را دارد؛ ولی در invocation دستی مستقیم، این گیت نرم است.
 
 ### ۶-۲. TLS
+
 - هیچ `curl -k`/`--insecure`/`tls-verify off` در هیچ اسکریپت deploy وجود ندارد (grep تأیید شد). مسیر raw با `curl --resolve` به IP مالک‌تأییدشده می‌رود و TLS کاملاً روشن می‌ماند (`bootstrap-hanaso.sh:13-14,37-38`). `http://127.0.0.1:3100` فقط loopback است.
 
 ### ۶-۳. حفظ volumes/secrets و عدم لمس سرویس‌های مشترک
+
 - تفکیک `/opt/hanaso` (deploy، هرگز clone/حذف نمی‌شود) از `/opt/hanaso-src` — `bootstrap-hanaso.sh:27-33,112-114` و `update-hanaso.sh:96-145` (دایرکتوری ناهمخوان گزارش و دست‌نخورده).
 - backup قبل از هر تغییر: `.env` + pg_dump با تأیید non-empty (`update-hanaso.sh:445-459`)؛ rollback فقط image، «DB untouched» (`:251-275`).
 - KOTODAMA فقط **شاهد** است: baseline (`:361-362`) و گیت C10 که اگر HTTP code تغییر کند می‌ایستد (`:674-677`)؛ HAProxy/nginx هرگز لمس نمی‌شوند (پیام‌های INGRESS_PREEXISTING_BROKEN مستقیماً مالک را به front-line می‌فرستند).
@@ -117,6 +124,7 @@
 - nginx vhost (`hanaso-learn.nginx.conf:38-40,55-57`): X-Frame-Options/X-Content-Type-Options/Referrer-Policy با `always` و تکرار در location (قاعده inheritance).
 
 ### ۶-۴. کلیدهای قراردادی env که نصاب پاس می‌دارد
+
 - **الزامی (گیت A3 آپدیتر):** `HANASO_WEB_IMAGE`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `HANASO_SESSION_SECRET`, `HANASO_LEGACY_TOKEN_CUTOFF` (`update-hanaso.sh:310-312` — فقط نام، هرگز مقدار).
 - **Pin/target:** `HANASO_TARGET_SHA`, `HANASO_TARGET_VERSION`, `HANASO_TARGET_BRANCH`, `HANASO_DEPLOY_SHA`, `HANASO_DEPLOY_BRANCH`, `HANASO_REPO_URL`, `HANASO_SRC_DIR`/`HANASO_REPO_DIR`, `HANASO_DEPLOY_DIR`.
 - **مسیرها/گیت‌ها:** `HANASO_PUBLIC_BASE`, `HANASO_KOTODAMA_URL`, `HANASO_LOCAL_HEALTH`, `HANASO_LOCAL_READY`, `HANASO_MIN_FREE_MB`, `HANASO_WARN_FREE_MB`, `HANASO_MIN_MEM_MB`, `HANASO_CHECKHOST_DELAY`.
@@ -124,6 +132,7 @@
 - `prepare_security_env` (`bootstrap:174-276`): secret موجود هرگز rotate نمی‌شود؛ validation هگز 32-128 و ISO-8601؛ تولید روی سرور (`openssl rand -hex 32`)؛ cutoff فقط یک‌بار now+14d؛ نوشتن atomic با backup و mode 600؛ هیچ مقداری log نمی‌شود. سناریوهای S1-S8 در `sandbox-tests/run-envprep.sh` (از جمله S5/S6 abort و S7 عدم لو رفتن secret) پوشش داده شده‌اند.
 
 ### ۶-۵. نکته M4 (Medium) — pinهای پیش‌فرض کهنه‌اند
+
 `bootstrap-hanaso.sh:52-55` (TARGET_SHA = `2574788…`، نسخه `1.0.0-hanaso20-r01`) و `update-hanaso.sh:71-73` (TARGET_SHA = `3f41f6e…`، همان نسخه hanaso20) به عهد TASK-20 اشاره می‌کنند. یک‌فرمان مستند با env override می‌رود و سالم است، اما اجرای دستیِ `bash bootstrap-hanaso.sh` بدون env **نسخهٔ کهنه hanaso20 را دیپلوی می‌کند**. برای TASK-29 (CP-6) OWNER-COMMAND.txt و pinهای پیش‌فرض باید با SHA رلیز نهایی بازتولید شوند.
 
 ---
@@ -144,31 +153,35 @@
 ## ۸. فهرست کامل یافته‌ها
 
 ### Medium (4)
-| # | یافته | محل دقیق | توضیح |
-|---|---|---|---|
-| M1 | نمره تکمیل ایستگاه client-attested است — بدون تطبیق سرور با پاسخ‌های گریدشده | `api/curriculum/station/route.ts:95-97,454,491-519` | کلاینت دستکاری‌شده می‌تواند score=1 بفرستد؛ دامنه خودکار، نه بین‌کاربری |
-| M2 | غیبت DATABASE_URL در production بی‌صدا به storeهای in-memory می‌افتد؛ /api/ready با skipped همچنان ok:true | `lib/poc/stores.ts:64-66`، `db/client.ts:56-58`، `api/ready/route.ts:43` | گیت آپدیتر می‌گیرد؛ اجرای دستی نه |
-| M3 | self-check bootstrap در عدم تطابق فقط warn می‌دهد | `infra/deploy/bootstrap-hanaso.sh:284-296` | گیت سخت فقط در one-liner است؛ invocation دستی مستقیم محافظت ضعیف‌تری دارد |
-| M4 | pinهای پیش‌فرض bootstrap/updater به رلیز کهنه hanaso20 اشاره می‌کنند | `bootstrap-hanaso.sh:52-55`، `update-hanaso.sh:71-73` | اجرای بدون env → دیپلوی نسخه کهنه؛ CP-6 باید بازتولید کند |
+
+| #   | یافته                                                                                                      | محل دقیق                                                                 | توضیح                                                                     |
+| --- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| M1  | نمره تکمیل ایستگاه client-attested است — بدون تطبیق سرور با پاسخ‌های گریدشده                               | `api/curriculum/station/route.ts:95-97,454,491-519`                      | کلاینت دستکاری‌شده می‌تواند score=1 بفرستد؛ دامنه خودکار، نه بین‌کاربری   |
+| M2  | غیبت DATABASE_URL در production بی‌صدا به storeهای in-memory می‌افتد؛ /api/ready با skipped همچنان ok:true | `lib/poc/stores.ts:64-66`، `db/client.ts:56-58`، `api/ready/route.ts:43` | گیت آپدیتر می‌گیرد؛ اجرای دستی نه                                         |
+| M3  | self-check bootstrap در عدم تطابق فقط warn می‌دهد                                                          | `infra/deploy/bootstrap-hanaso.sh:284-296`                               | گیت سخت فقط در one-liner است؛ invocation دستی مستقیم محافظت ضعیف‌تری دارد |
+| M4  | pinهای پیش‌فرض bootstrap/updater به رلیز کهنه hanaso20 اشاره می‌کنند                                       | `bootstrap-hanaso.sh:52-55`، `update-hanaso.sh:71-73`                    | اجرای بدون env → دیپلوی نسخه کهنه؛ CP-6 باید بازتولید کند                 |
 
 ### Low (8)
-| # | یافته | محل دقیق |
-|---|---|---|
-| L1 | incrementAttempts از نوع read-modify-write (lost update تحت هم‌زمانی) — فقط شمارنده | `db/repositories/curriculum.ts:125-149` |
-| L2 | هدر CSP وجود ندارد (فقط XFO/nosniff/Referrer در nginx) | `infra/deploy/learn-kotodama/hanaso-learn.nginx.conf:38-40`؛ `next.config.ts` بدون CSP |
-| L3 | /api/health اطلاعات build (commit/version/env/uptime) را عمومی افشا می‌کند — طراحی عمدی برای گیت‌های دیپلوی | `api/health/route.ts:11-26` |
-| L4 | store آنالیتیکس در production هم in-memory است (داده با restart از بین می‌رود) — صادقانه مستند | `lib/poc/stores.ts:75-78`، `lib/poc/event-store.ts:31-55` |
-| L5 | CSRF فقط به sameSite=lax + JSON content-type تکیه دارد؛ چک Origin/Referer ندارد — برای این مدل تهدید کافی | `middleware.ts:103-104` |
-| L6 | گیت‌های escape صریح (SKIP_ENV_PREP / ALLOW_DEGRADED_BASELINE / ALLOW_UNVERIFIED_INGRESS / FORCE) — مستند اما قابل دور زدن توسط اپراتور | `bootstrap:175-178`، `update:351-356,379-403,427-434` |
-| L7 | پیش‌فرض `POC_DEFAULT_USER_ID` در recordLearningEvent — خطر نهفته برای call-siteهای آینده (فعلاً همه صریح پاس می‌دهند) | `modules/curriculum/events.ts:98-101` |
-| L8 | کوکی session یک‌ساله بدون چرخش — برای محصول ناشناس قابل قبول | `middleware.ts:31-32` |
+
+| #   | یافته                                                                                                                                  | محل دقیق                                                                               |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| L1  | incrementAttempts از نوع read-modify-write (lost update تحت هم‌زمانی) — فقط شمارنده                                                    | `db/repositories/curriculum.ts:125-149`                                                |
+| L2  | هدر CSP وجود ندارد (فقط XFO/nosniff/Referrer در nginx)                                                                                 | `infra/deploy/learn-kotodama/hanaso-learn.nginx.conf:38-40`؛ `next.config.ts` بدون CSP |
+| L3  | /api/health اطلاعات build (commit/version/env/uptime) را عمومی افشا می‌کند — طراحی عمدی برای گیت‌های دیپلوی                            | `api/health/route.ts:11-26`                                                            |
+| L4  | store آنالیتیکس در production هم in-memory است (داده با restart از بین می‌رود) — صادقانه مستند                                         | `lib/poc/stores.ts:75-78`، `lib/poc/event-store.ts:31-55`                              |
+| L5  | CSRF فقط به sameSite=lax + JSON content-type تکیه دارد؛ چک Origin/Referer ندارد — برای این مدل تهدید کافی                              | `middleware.ts:103-104`                                                                |
+| L6  | گیت‌های escape صریح (SKIP_ENV_PREP / ALLOW_DEGRADED_BASELINE / ALLOW_UNVERIFIED_INGRESS / FORCE) — مستند اما قابل دور زدن توسط اپراتور | `bootstrap:175-178`، `update:351-356,379-403,427-434`                                  |
+| L7  | پیش‌فرض `POC_DEFAULT_USER_ID` در recordLearningEvent — خطر نهفته برای call-siteهای آینده (فعلاً همه صریح پاس می‌دهند)                  | `modules/curriculum/events.ts:98-101`                                                  |
+| L8  | کوکی session یک‌ساله بدون چرخش — برای محصول ناشناس قابل قبول                                                                           | `middleware.ts:31-32`                                                                  |
 
 ### موارد بررسی و تأیید سالم (بدون یافته)
+
 sign/verify زمان-ثابت، boot-error بدون secret در production، cutoff legacy fail-closed، mint فقط GET/HEAD، مهمان→401 همه‌جا، مالکیت در همه store-callها، تطبیق مالکیت attempt در progress، stripping کامل کلید پاسخ (تمرین، بلوک، rule-listening، hint)، reveal فقط در F3/correct، migrations غیرمخرب و مرتب، seed idempotent بدون لمس داده کاربر، restore ایمن، تفکیک deploy/src، backup قبل از تغییر، rollback بدون لمس DB، شاهد KOTODAMA، بدون bypass TLS، digest-pin تصاویر، بدون port عمومی برای DB، retryهای کران‌دار idempotent، مرز خطای فارسی بدون stack.
 
 ---
 
 ## ۹. توصیه‌ها (به ترتیب اولویت)
+
 1. **(M1)** در اکشن complete، نمره را سرور-محور کنید: یا شمارش پاسخ‌های سرور-گریدشده (`incrementAttempts` + خوانش outcomeها) را با score ادعایی تطبیق دهید، یا score را به‌کلی از شمارنده‌های سرور بسازید. حداقل: برای ایستگاه‌های exercise_threshold، تعداد gradeهای ثبت‌شده سرور باید ≥ تعداد آیتم‌ها باشد.
 2. **(M2)** در production، غیبت DATABASE_URL باید مثل HANASO_SESSION_SECRET خطای boot باشد (یا حداقل /api/ready با skipped گزارش fail کند).
 3. **(M4)** قبل از رلیز TASK-29، OWNER-COMMAND.txt و pinهای پیش‌فرض هر دو اسکریپت را با SHA رلیز نهایی بازتولید و sandbox-آزمایی کنید (سناریوی run-install موجود الگو است).

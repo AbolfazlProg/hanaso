@@ -53,16 +53,19 @@ function cardStation(cardId: string): Station {
 function renderRunner(station: Station, audioByWord: Record<string, { opus: string; m4a: string } | null>) {
   // the runner is driven through its props like the station page does
   return render(
-    React.createElement(StationRunner as never, {
-      chapterSlug: 'kana-foundation-01',
-      station,
-      chapter: { words: [], expressions: [] },
-      clientExercises: [],
-      dialogue: { lines: [], titleFa: '', sceneFa: '' },
-      audioByLine: {},
-      audioAvailable: false,
-      exampleAudioByWord: audioByWord,
-    } as never),
+    React.createElement(
+      StationRunner as never,
+      {
+        chapterSlug: 'kana-foundation-01',
+        station,
+        chapter: { words: [], expressions: [] },
+        clientExercises: [],
+        dialogue: { lines: [], titleFa: '', sceneFa: '' },
+        audioByLine: {},
+        audioAvailable: false,
+        exampleAudioByWord: audioByWord,
+      } as never,
+    ),
   );
 }
 
@@ -116,7 +119,7 @@ describe('BUG-008 — the rule-card listening column has real audio', () => {
     expect(screen.getByText(/صوتِ فرم‌های جدا/)).toBeDefined();
   });
 
-  it('UI: clicking a resolved chip requests THAT word\'s asset (correct file — never another)', async () => {
+  it("UI: clicking a resolved chip requests THAT word's asset (correct file — never another)", async () => {
     const { getCachedAudio } = await import('@/modules/audio/client-cache');
     const audioByWord: Record<string, { opus: string; m4a: string } | null> = {
       いしゃ: { opus: '/audio/hostwords/isha.opus', m4a: '/audio/hostwords/isha.m4a' },

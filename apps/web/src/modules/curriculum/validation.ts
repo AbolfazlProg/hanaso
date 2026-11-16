@@ -68,8 +68,10 @@ const RULES = {
    * DISPLAYED in a teaching block (prereq first-look / table / word) BEFORE its
    * first example or assessment use — in deck order.
    */
-  derivedGlyphShown: 'DERIVED-GLYPH-SHOWN (HANASO-20 — every derived form is displayed in a prior teaching block before any example/assessment use)',
-  ruleListeningShape: 'RULE-LISTENING-SHAPE (TL-14 — minimal-pair listening carries 2..3 options; the third must come from the documented error family — HANASO-21/BUG-009)',
+  derivedGlyphShown:
+    'DERIVED-GLYPH-SHOWN (HANASO-20 — every derived form is displayed in a prior teaching block before any example/assessment use)',
+  ruleListeningShape:
+    'RULE-LISTENING-SHAPE (TL-14 — minimal-pair listening carries 2..3 options; the third must come from the documented error family — HANASO-21/BUG-009)',
   passiveRun: 'PASSIVE-RUN (TL-14 — at most 2 consecutive receptive slides in a deck)',
   prereqData: 'PREREQ-DATA (TL-14 — rule-deck stations declare introducesGlyphs)',
   /*
@@ -296,8 +298,7 @@ function validateExercise(
   ].includes(ex.type);
   if (usesOptions) {
     const count = ex.options?.length ?? 0;
-    const allowed =
-      ex.type === 'listen-minimal-pair' || ex.type === 'rule-listening' ? [2, 3] : [3];
+    const allowed = ex.type === 'listen-minimal-pair' || ex.type === 'rule-listening' ? [2, 3] : [3];
     if (!allowed.includes(count)) {
       v.push({ rule: RULES.mcqThree, message: `${slug}/${ex.id}: ${count} options (allowed ${allowed.join('/')})` });
     }

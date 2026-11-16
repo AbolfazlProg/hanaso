@@ -66,7 +66,11 @@ export function AizenSeal({ animate, label, className }: AizenSealProps) {
        * reads on paper. It runs only while the ceremony plays (and settles
        * into a static ring afterwards); reduced-motion keeps it still.
        */}
-      <span aria-hidden data-aizen-seal-ring className={animate ? 'aizen-seal-ring' : 'aizen-seal-ring aizen-seal-ring-settled'}>
+      <span
+        aria-hidden
+        data-aizen-seal-ring
+        className={animate ? 'aizen-seal-ring' : 'aizen-seal-ring aizen-seal-ring-settled'}
+      >
         <svg viewBox="0 0 160 160" className="h-full w-full">
           <circle
             cx="80"

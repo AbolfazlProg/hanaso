@@ -265,19 +265,15 @@ export async function POST(req: Request) {
     const station = bundle.chapter.stations.find((s) => s.slug === payload.stationSlug);
     const exercise = bundle.chapter.exercises[payload.exerciseId];
     const inStation =
-      station?.blocks?.some(
-        (b) => (b as { exerciseIds?: string[] }).exerciseIds?.includes(payload.exerciseId),
-      ) ?? false;
+      station?.blocks?.some((b) => (b as { exerciseIds?: string[] }).exerciseIds?.includes(payload.exerciseId)) ??
+      false;
     if (!exercise || exercise.assessmentRole !== 'practice' || !inStation) {
       return NextResponse.json(
         fail({ code: 'station/unknown_exercise', message: `unknown practice exercise: ${payload.exerciseId}` }),
         { status: 404 },
       );
     }
-    return NextResponse.json(
-      ok({ hintFa: exercise.feedback.f2HintFa }),
-      { headers: { 'cache-control': 'no-store' } },
-    );
+    return NextResponse.json(ok({ hintFa: exercise.feedback.f2HintFa }), { headers: { 'cache-control': 'no-store' } });
   }
 
   if (payload.action === 'grade') {
@@ -291,9 +287,8 @@ export async function POST(req: Request) {
      * chapter), but a validation inconsistency between the two actions.
      */
     const inStation =
-      station?.blocks?.some(
-        (b) => (b as { exerciseIds?: string[] }).exerciseIds?.includes(payload.exerciseId),
-      ) ?? false;
+      station?.blocks?.some((b) => (b as { exerciseIds?: string[] }).exerciseIds?.includes(payload.exerciseId)) ??
+      false;
     if (!exercise || exercise.assessmentRole !== 'practice' || !inStation) {
       return NextResponse.json(
         fail({ code: 'station/unknown_exercise', message: `unknown practice exercise: ${payload.exerciseId}` }),
@@ -314,7 +309,11 @@ export async function POST(req: Request) {
     const revealAnswer = outcome.correct || outcome.level >= 3;
     if (!revealAnswer) {
       /* F1/F2 miss: statement/hint only — no key material leaves the server. */
-    } else if (exercise.type === 'kana-recognition' || exercise.type === 'kana-recall' || exercise.type === 'kana-listening') {
+    } else if (
+      exercise.type === 'kana-recognition' ||
+      exercise.type === 'kana-recall' ||
+      exercise.type === 'kana-listening'
+    ) {
       const item = KANA_ITEMS.find((k) => k.kanaId === exercise.targetConcept);
       const urls = item ? kanaAudioUrls(`kn-${item.kanaId}`) : null;
       if (item && urls) outcome.correctAudio = { what: item.glyph, ...urls };

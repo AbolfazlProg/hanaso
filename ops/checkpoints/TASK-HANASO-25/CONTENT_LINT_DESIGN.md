@@ -1,6 +1,7 @@
 # TASK-HANASO-25 — CONTENT LINT (Phase 5)
 
 ## Design
+
 `tests/unit/h25-content-lint.test.ts` — context-aware lint over the REAL
 bundled chapters (runs in the existing `pnpm test` CI job = already wired).
 Field-role driven (exercise type + field drives each rule; not string-greps
@@ -18,6 +19,7 @@ over the file). Rules:
 - CL-10 gate bank shape 5×5 measures (CP-01 contract; latent BUG-034)
 
 ## Verdicts
+
 - ch1 (mission scope): ZERO violations — hard gate, all must stay clean.
 - ch2 (out of scope): BASELINE recorded (CL-03b: 23 = BUG-005 family;
   CL-07: 11 = «؟» labels). Growth fails CI; shrinkage updates baseline.

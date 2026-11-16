@@ -6,13 +6,13 @@
 
 ## 1. Identity
 
-| Item | Value |
-| --- | --- |
-| Branch | `fix/TASK-HANASO-24-security` (from the product line `af49535`, NOT from the audit branch) |
-| Base | `af49535` — tip of the H22 product line (182 commits ahead of main; includes the production release 3d8b8cc) |
-| RC tip | see CHECKPOINT_LOG.md (all checkpoint SHAs pushed; the log's last row is the RC commit) |
+| Item             | Value                                                                                                                                                      |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Branch           | `fix/TASK-HANASO-24-security` (from the product line `af49535`, NOT from the audit branch)                                                                 |
+| Base             | `af49535` — tip of the H22 product line (182 commits ahead of main; includes the production release 3d8b8cc)                                               |
+| RC tip           | see CHECKPOINT_LOG.md (all checkpoint SHAs pushed; the log's last row is the RC commit)                                                                    |
 | Production today | `1.0.0-hanaso22-r01 @ 3d8b8cc` — **still the PRE-24 code: the /poc/practice answer-key leak and the IDOR pair are LIVE until this RC is deployed** (B-01). |
-| Proposed version | `1.0.0-hanaso24-r01` |
+| Proposed version | `1.0.0-hanaso24-r01`                                                                                                                                       |
 
 ## 2. What this RC changes (summary — full details in the phase docs)
 
@@ -33,14 +33,14 @@
 
 ## 3. Verification summary (all green at RC time)
 
-| Layer | Result |
-| --- | --- |
-| TypeScript / ESLint | clean |
-| Unit + Integration (in-memory) | 64 files / **755 tests** passed |
-| Integration (real PostgreSQL 18.4) | 9 files / **38 passed** + 8 documented backup-drill skips (VPS-only) |
-| Live QA (12 mandatory scenarios, real Chromium, PG-backed standalone build) | **12/12 scenarios, 51/51 checks** — independently re-run by subagent B |
-| Independent audits (3 subagents, 2 rounds) | **3/3 `DOMAIN VERDICT: PASS`** (FINAL_INDEPENDENT_VERIFICATION.md) |
-| Real-browser E2E h21/h22 vs pristine baseline | **identical outcome sets** — zero regressions from H24 (regression-evidence/) |
+| Layer                                                                       | Result                                                                        |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| TypeScript / ESLint                                                         | clean                                                                         |
+| Unit + Integration (in-memory)                                              | 64 files / **755 tests** passed                                               |
+| Integration (real PostgreSQL 18.4)                                          | 9 files / **38 passed** + 8 documented backup-drill skips (VPS-only)          |
+| Live QA (12 mandatory scenarios, real Chromium, PG-backed standalone build) | **12/12 scenarios, 51/51 checks** — independently re-run by subagent B        |
+| Independent audits (3 subagents, 2 rounds)                                  | **3/3 `DOMAIN VERDICT: PASS`** (FINAL_INDEPENDENT_VERIFICATION.md)            |
+| Real-browser E2E h21/h22 vs pristine baseline                               | **identical outcome sets** — zero regressions from H24 (regression-evidence/) |
 
 No test was removed or weakened anywhere in this mission; several were
 strengthened (learning-slice, mastery-api, middleware, learner-identity, plus
@@ -48,14 +48,14 @@ new specs), and one stale content-count test was corrected to content truth.
 
 ## 4. Deferred register (carried from FINAL_INDEPENDENT_VERIFICATION §4)
 
-| # | Item | Owner | Note |
-| --- | --- | --- | --- |
-| 1 | **B-01 — production still serves the pre-24 build** (leak + IDOR LIVE until deploy) | deploy phase | The deploy itself is the fix; see §5. |
-| 2 | B-03 = audit BUG-001: mastery gate ships 5 kana-listening items with NO promptAudio (honest-listener P(pass)=1/243; ch2 locked) — the H23 register's single Critical | content track | Needs rebank + audio attach (product decision). |
-| 3 | B-04 = audit BUG-029: f1Fa feedback text states the correct reading at first miss (~60 strings) | content track | Content rewrite. |
-| 4 | B-02 = audit BUG-031: practice write items client-judged (`accepted`), `character` crosses for the local engine | product decision | Server-side stroke grading is the follow-up; docs state the trade honestly. Evidence-only: never gates, never FSRS. |
-| 5 | Rate limiting beyond the events-props bound (e.g. unbounded `generate`) | infra follow-up | Needs product budgets; in-flight sweeping bounds the damage. |
-| 6 | A-10 eager boot-time secret assert (instrumentation.ts); B-13 legacy-bank 2-3-submission reconstruction; C-04 FOR UPDATE on attemptCount; in-repo automated RSC-flight tests | polish | All Low; A-10's risk is covered by the healthcheck + deploy gate. |
+| #   | Item                                                                                                                                                                         | Owner            | Note                                                                                                                |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 1   | **B-01 — production still serves the pre-24 build** (leak + IDOR LIVE until deploy)                                                                                          | deploy phase     | The deploy itself is the fix; see §5.                                                                               |
+| 2   | B-03 = audit BUG-001: mastery gate ships 5 kana-listening items with NO promptAudio (honest-listener P(pass)=1/243; ch2 locked) — the H23 register's single Critical         | content track    | Needs rebank + audio attach (product decision).                                                                     |
+| 3   | B-04 = audit BUG-029: f1Fa feedback text states the correct reading at first miss (~60 strings)                                                                              | content track    | Content rewrite.                                                                                                    |
+| 4   | B-02 = audit BUG-031: practice write items client-judged (`accepted`), `character` crosses for the local engine                                                              | product decision | Server-side stroke grading is the follow-up; docs state the trade honestly. Evidence-only: never gates, never FSRS. |
+| 5   | Rate limiting beyond the events-props bound (e.g. unbounded `generate`)                                                                                                      | infra follow-up  | Needs product budgets; in-flight sweeping bounds the damage.                                                        |
+| 6   | A-10 eager boot-time secret assert (instrumentation.ts); B-13 legacy-bank 2-3-submission reconstruction; C-04 FOR UPDATE on attemptCount; in-repo automated RSC-flight tests | polish           | All Low; A-10's risk is covered by the healthcheck + deploy gate.                                                   |
 
 ## 5. Deployment requirements (the deploy gate enforces #1 and #2)
 
@@ -87,7 +87,7 @@ new specs), and one stale content-count test was corrected to content truth.
    verifies the env keys, pulls `fix/TASK-HANASO-24-security`, builds, and
    brings the stack up with a healthcheck gate.
 3. Post-deploy smoke (2 minutes): `GET /` 200 · `Set-Cookie: hanaso_lid=<uuid>.<sig>;
-   HttpOnly; Secure; SameSite=lax` on a fresh browser · `GET /poc/practice` → 404 ·
+HttpOnly; Secure; SameSite=lax` on a fresh browser · `GET /poc/practice` → 404 ·
    `GET /api/progress` without a cookie → 401 · one signed-identity write+read round-trip.
 4. Rollback: the updater's existing rollback path (previous image + previous
    .env) — note that rolling BACK re-exposes the pre-24 leaks; prefer moving

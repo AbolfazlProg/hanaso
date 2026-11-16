@@ -147,7 +147,8 @@ body {
  * answers, never dead. Reduced-motion collapses to the color flash only.
  */
 @keyframes hanaso-locked-shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   20% {
@@ -408,7 +409,12 @@ body {
   position: absolute;
   inset: -16%;
   border-radius: 9999px;
-  background: radial-gradient(circle, var(--color-shu) 0%, color-mix(in srgb, var(--color-shu) 42%, transparent) 46%, transparent 72%);
+  background: radial-gradient(
+    circle,
+    var(--color-shu) 0%,
+    color-mix(in srgb, var(--color-shu) 42%, transparent) 46%,
+    transparent 72%
+  );
   opacity: 0;
   pointer-events: none;
 }

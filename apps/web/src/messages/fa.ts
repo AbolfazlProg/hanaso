@@ -52,7 +52,8 @@ export const fa = {
     recentTitle: 'نشست‌های اخیر',
     reviewNote: 'کارت‌های واجد مرور ثبت می‌شوند؛ صف مرور با موتور زمان‌بندی فعال می‌شود (هنوز فعال نیست).',
     eligibleCount: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} کارت واجد مرور ثبت شده است.`,
-    sessionProgress: (i: number, n: number) => `آیتم ${new Intl.NumberFormat('fa-IR').format(i)} از ${new Intl.NumberFormat('fa-IR').format(n)}`,
+    sessionProgress: (i: number, n: number) =>
+      `آیتم ${new Intl.NumberFormat('fa-IR').format(i)} از ${new Intl.NumberFormat('fa-IR').format(n)}`,
     checkAnswer: 'بررسی پاسخ',
     tryAgain: 'تلاش دوباره',
     continue: 'ادامه',
@@ -60,7 +61,8 @@ export const fa = {
     incorrect: 'نادرست',
     exit: 'خروج و ثبت نتیجه',
     finishTitle: 'تمرین تمام شد',
-    finishFirstTry: (c: number, n: number) => `${new Intl.NumberFormat('fa-IR').format(c)} از ${new Intl.NumberFormat('fa-IR').format(n)} پاسخ را بار اول درست گفتی.`,
+    finishFirstTry: (c: number, n: number) =>
+      `${new Intl.NumberFormat('fa-IR').format(c)} از ${new Intl.NumberFormat('fa-IR').format(n)} پاسخ را بار اول درست گفتی.`,
     finishNote: 'نتیجهٔ این تمرین ثبت شد — تمرین هیچ‌وقت نمرهٔ قبولی/مردودی ندارد؛ فقط بخشی از مسیر یادگیری توست.',
     loadingSession: 'در حال ساخت تمرین…',
     loadFailed: 'ساخت تمرین ممکن نشد؛ دوباره تلاش کن.',
@@ -419,8 +421,7 @@ export const fa = {
      * says WHICH prerequisites are missing; the runner links straight to the
      * first unmet lesson instead of a dead retry loop. */
     completionPrereqTitle: 'این درس هنوز قابل ثبت نیست',
-    completionPrereqBody:
-      'برای ثبت این درس، ابتدا باید درس‌های پیش‌نیازش کامل شوند — ترتیب یادگیری حفظ می‌شود.',
+    completionPrereqBody: 'برای ثبت این درس، ابتدا باید درس‌های پیش‌نیازش کامل شوند — ترتیب یادگیری حفظ می‌شود.',
     completionPrereqGo: 'رفتن به درس پیش‌نیاز',
     /* ---- TASK-HANASO-21 — the criterion 409 panel: the final exercise score
      * was honestly below the bar. The recovery is a redo of ONLY the final
@@ -481,7 +482,8 @@ export const fa = {
      * bank (5 per measure); «ده پرسش» was the audit's honesty finding (13/12
      * served). The FSRS claim is dropped (fsrsItems=[] — BUG-024 family). */
     gateTitle: 'دروازهٔ فهم فصل',
-    gateLead: 'آماده‌ای؟ به پرسش‌های دروازه پاسخ بده — هر پنج مهارت فصل سنجیده می‌شود. در پرسش‌های شنیداری فقط صدا داری.',
+    gateLead:
+      'آماده‌ای؟ به پرسش‌های دروازه پاسخ بده — هر پنج مهارت فصل سنجیده می‌شود. در پرسش‌های شنیداری فقط صدا داری.',
     gateReplay: 'مرور سریع فصل',
     gateStart: 'شروع آزمون فصل',
     gateSubmit: 'ثابت می‌کنم یاد گرفتم',

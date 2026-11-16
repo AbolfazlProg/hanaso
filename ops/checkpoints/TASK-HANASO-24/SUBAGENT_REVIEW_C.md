@@ -15,6 +15,7 @@ complete → replay → post-complete answer).
 ## FINDINGS
 
 ### C-01 — In-flight practice sessions leak permanently in PG (production) mode: unbounded heap growth + DEV/PROD behavior divergence [SEVERITY: High] [STATUS: CONFIRMED]
+
 - **Location:** `src/db/repositories/practice.ts:53,71` (per-instance `inFlight` map, no-op
   delete), `src/lib/poc/completions.ts:75` (fresh tx-bound instance), `src/lib/poc/stores.ts:104-109`
   (singleton holds the live map), `src/modules/practice/repository.ts:41-42` (`sweepExpired` =
@@ -42,6 +43,7 @@ complete → replay → post-complete answer).
   PG-backed in-flight store (already flagged as next mission).
 
 ### C-02 — `/api/attempts` POST is an unlocked writer to `dialogue_mastery_attempts`; racing it against the mastery gate fires a mid-tx 23505 → `PgAttemptRepository.create`'s `continue` retries on an ABORTED transaction → 25P02 → unhandled 500 [SEVERITY: Medium] [STATUS: CONFIRMED (mechanism, by experiment) / trigger requires crafted concurrency]
+
 - **Location:** `src/db/repositories/attempts.ts:79-111` (retry loop), `src/lib/poc/completions.ts:214-224`
   (tx + lock `ma:<user>:<dialogue>`), `src/app/api/attempts/route.ts:99` (unlocked, non-tx
   `getAttemptStore().create`), `src/app/api/curriculum/mastery/route.ts:124` (locked path).
@@ -66,11 +68,12 @@ complete → replay → post-complete answer).
   `/api/attempts` POST (or fold that route through `submitMasteryWithFold`-style service).
 
 ### C-03 — Sequential-replay idempotency is only tested in DEV semantics; PROD (PG) returns a contradictory `recorded:true, already:true` 200 [SEVERITY: Medium] [STATUS: CONFIRMED]
+
 - **Location:** `tests/integration/practice-completion-idempotency.spec.ts:100-101` (asserts
   404 on replay — true only in-memory), `src/app/api/practice/route.ts:328-337`
   (`recorded: true` hard-coded + `already` spread).
 - **Evidence:** Live PG probe: replay → `200 {"recorded":true,"already":true,...,
-  "newlyEligible":0}`. Fold correctly skipped (idempotency holds — positive), but (a) no PG
+"newlyEligible":0}`. Fold correctly skipped (idempotency holds — positive), but (a) no PG
   -mode route-level test covers the sequential replay path (the PG suite tests the
   concurrent duplicate at service level only), and (b) `recorded:true` on a replay is a
   misleading API contract.
@@ -81,6 +84,7 @@ complete → replay → post-complete answer).
   hard-coded `true`.
 
 ### C-04 — `attemptCount` lost updates: unlocked read-modify-write in `incrementAttempts`, and `completeStationWalk` overwrites it with a pre-tx read [SEVERITY: Low] [STATUS: CONFIRMED (source; pre-existing, not introduced by this branch)]
+
 - **Location:** `src/db/repositories/curriculum.ts:125-149` (get → +1 → upsert, no lock),
   `src/app/api/curriculum/station/route.ts:417` (`current` read) → `:495`
   (`attemptCount: current?.attemptCount ?? 0` written inside the tx).
@@ -90,10 +94,11 @@ complete → replay → post-complete answer).
   only; `progress-machine.ts:31` preserves it on re-enter).
 - **Impact:** Counter undercount/drift only; no state-machine corruption.
 - **Suggested fix:** Make the increment atomic in SQL (`set attempt_count =
-  station_progress.attempt_count + 1` on conflict) and have the complete branch preserve
+station_progress.attempt_count + 1` on conflict) and have the complete branch preserve
   (`sql`self-reference`` like `currentBlock`) or re-read attemptCount inside the unit.
 
 ### C-05 — `runInTx` has no nesting guard; a nested call would open an independent transaction on a second pooled connection, not a savepoint [SEVERITY: Low] [STATUS: CONFIRMED (mechanism) / HYPOTHESIS (no current trigger)]
+
 - **Location:** `src/db/transactions.ts:34-37`, drizzle `node-postgres/session.js:180-195`
   (`transaction()` on the pool does `pool.connect()` per tx; savepoints exist only when
   called on a tx handle, which `asTxClient`'s cast to `NodePgDatabase` discards).
@@ -108,6 +113,7 @@ complete → replay → post-complete answer).
   or throws loudly), or assert `!isTxClient(outer)` in dev.
 
 ### C-06 — Advisory-lock keys use 32-bit `hashtext` — collision surface exists but is benign; lock ordering is single-lock-per-tx (no deadlock); per-user `lo:` granularity acceptable [SEVERITY: Low] [STATUS: CONFIRMED (probe + analysis)]
+
 - **Location:** `src/lib/poc/completions.ts:37-39`.
 - **Evidence:** psql on own DB: `pg_typeof(hashtext(...))` = `integer`; 200k synthetic
   `lo:user<n>` keys → 3 colliding pairs (matches the ~2^16 birthday bound). Each tx takes
@@ -122,6 +128,7 @@ complete → replay → post-complete answer).
   `pg_advisory_xact_lock(hashtext(domain), hashtext(key))` to partition lock domains.
 
 ### C-07 — `completePracticeSession`'s "one bounded retry on unique violation" is dead code [SEVERITY: Low] [STATUS: CONFIRMED]
+
 - **Location:** `src/lib/poc/completions.ts:70-83`.
 - **Evidence:** Source: every write inside the unit uses ON CONFLICT
   (`recordCompleted` DO NOTHING, `loRepo.upsert` DO UPDATE); `pg_advisory_xact_lock` raises
@@ -132,6 +139,7 @@ complete → replay → post-complete answer).
 - **Suggested fix:** Drop the loop or keep with a comment that it's defensive only.
 
 ### C-08 — Documentation inaccuracies in DATABASE_TRANSACTION_FIX.md [SEVERITY: Low] [STATUS: CONFIRMED]
+
 - **Location:** `ops/checkpoints/TASK-HANASO-24/DATABASE_TRANSACTION_FIX.md` §3/§5;
   `src/db/repositories/practice.ts:49-50` ("ephemeral server state with a 24h TTL").
 - **Evidence:** (a) The 24h TTL is presented as a design property but `sweepExpired` has no
@@ -144,6 +152,7 @@ complete → replay → post-complete answer).
   store is unbounded until restart; correct counts; note the attempts-route gap.
 
 ### C-09 — Chapter fold lock domain is (user, dialogue) while the guarded row is (user, chapter) — safe only under the 1:1 chapter↔dialogue model [SEVERITY: Low] [STATUS: CONFIRMED (structural)]
+
 - **Location:** `src/lib/poc/completions.ts:215` vs `curriculum.ts:191-223` (full-row
   chapter upsert), content: 1:1 chapter↔dialogue (`dialogue.kana-welcome-01.yaml`,
   `dialogue.first-meeting-01.yaml` headers).
@@ -171,7 +180,7 @@ complete → replay → post-complete answer).
    use `Promise.all` over real parallel pool connections — genuine races, not sequential
    in disguise.
 3. **Idempotent practice completion is correct end-to-end in PG.** `ON CONFLICT (id) DO
-   NOTHING + returning` gives exactly-once ('recorded'/'already') even for concurrent
+NOTHING + returning` gives exactly-once ('recorded'/'already') even for concurrent
    duplicates (PG blocks the second insert on the uncommitted PK entry until the first
    commits, then the conflict resolves). Live HTTP probe: one `practice_sessions` row, 10
    `eligible_for_review` objects, replay folded nothing (`newlyEligible: 0`), no 500s.
@@ -202,18 +211,18 @@ complete → replay → post-complete answer).
 
 ## COVERAGE
 
-| Audit item | Status | Method |
-| --- | --- | --- |
-| 1. runInTx machinery, tx-cast, nesting, PgBouncer, mid-tx statement failure | Covered | drizzle source read; Experiment A (25P02); no nesting call sites (grep) |
-| 2. Advisory locks: domains, hashtext collisions, ordering, granularity | Covered | psql probes (int4, 200k-key collision count); lock-removal experiment |
-| 3. Idempotency: ON CONFLICT race window, replay skips fold, 'already' flag, station/mastery convergence | Covered | Live HTTP probe + PG suite + source |
-| 4. Lost update: LO fold vs non-tx writers | Covered | grep — only one writer exists |
-| 5. In-flight session state: answer mutation, TTL, restart, multi-instance | Covered | source + live probe; docs cross-checked (C-01/C-08) |
-| 6. Unique constraints audit | Covered | schema read, all six tables |
-| 7. Migrations additivity | Covered | branch diff of `db/` empty |
-| 8. Event store + volatile state docs | Covered | source read of store + route |
-| 9. Test quality: real races? lock-removal proof | Covered | 10× lock-removed runs (10/10 fail), 1× restored run (5/5 pass) |
-| 10. Consistency invariants | Covered w/ caveat | live probe (practice), suite (station/mastery), analysis for remediationCount drift (no live multi-remediation probe run — serialized-by-lock reasoning only) |
+| Audit item                                                                                              | Status            | Method                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. runInTx machinery, tx-cast, nesting, PgBouncer, mid-tx statement failure                             | Covered           | drizzle source read; Experiment A (25P02); no nesting call sites (grep)                                                                                       |
+| 2. Advisory locks: domains, hashtext collisions, ordering, granularity                                  | Covered           | psql probes (int4, 200k-key collision count); lock-removal experiment                                                                                         |
+| 3. Idempotency: ON CONFLICT race window, replay skips fold, 'already' flag, station/mastery convergence | Covered           | Live HTTP probe + PG suite + source                                                                                                                           |
+| 4. Lost update: LO fold vs non-tx writers                                                               | Covered           | grep — only one writer exists                                                                                                                                 |
+| 5. In-flight session state: answer mutation, TTL, restart, multi-instance                               | Covered           | source + live probe; docs cross-checked (C-01/C-08)                                                                                                           |
+| 6. Unique constraints audit                                                                             | Covered           | schema read, all six tables                                                                                                                                   |
+| 7. Migrations additivity                                                                                | Covered           | branch diff of `db/` empty                                                                                                                                    |
+| 8. Event store + volatile state docs                                                                    | Covered           | source read of store + route                                                                                                                                  |
+| 9. Test quality: real races? lock-removal proof                                                         | Covered           | 10× lock-removed runs (10/10 fail), 1× restored run (5/5 pass)                                                                                                |
+| 10. Consistency invariants                                                                              | Covered w/ caveat | live probe (practice), suite (station/mastery), analysis for remediationCount drift (no live multi-remediation probe run — serialized-by-lock reasoning only) |
 
 Not covered / limits: no load-level contention measurement of the `lo:` lock (analysis
 only); no experiment on the `ma:`-lock-vs-`/api/attempts` 500 in a live server (mechanism
@@ -236,16 +245,16 @@ match the updated doc exactly. Live probe on own port 3133 + own DB `hanaso_qa_c
 
 ### Per-finding verdicts
 
-| ID | Verdict | Evidence (all verified by me, round 2) |
-| --- | --- | --- |
-| C-01 High — in-flight leak + answered-after-complete | **FIXED** | Source: `deleteInFlight` on the interface + both impls (`modules/practice/repository.ts:88-91`, `db/repositories/practice.ts:113-115`); PG `recordCompleted` no longer touches the map; service calls `getPracticeSessionStore().deleteInFlight(stored.id)` AFTER commit (`completions.ts:86`); `sweepExpired(Date.now())` on every generate (`api/practice/route.ts:206-212`) — also grepped present in the compiled standalone chunks. **Live probe:** answer-after-complete → **404** (round 1: 200); sequential replay → **404** (round 1: 200 `recorded:true,already:true`) — PROD now matches DEV semantics; 200× generate spam → 200/200 OK, server healthy; DB consistent (1 session row, 10 eligible objects, fold exactly once). Residual (bounded, documented in the doc): abandoned sessions of a learner who never generates again persist until restart — heap bounded by the 24h window of active users. |
-| C-02 Medium — in-tx 23505 → 25P02 → unhandled 500 | **FIXED** | Source: `isRetryableTxError` (23505 \| 25P02, cause-chain aware, `attempts.ts:76-89`) wired in BOTH service loops (`completions.ts:89,239`). **Deterministic experiment through the REAL service** (one-line hook after the MAX select, /tmp copy only): unlocked writer commits attempt_no mid-tx → 23505 → `create`'s `continue` → 25P02 on the aborted tx → predicate TRUE → whole-unit retry → fresh MAX read → attempt 3 inserted → chapter `understood` → **resolved, no unhandled error** (final attempts [1,2,3]). Predicate separately proven to see 25P02 through drizzle's cause-chain wrapping. A first flawed run (hook non-idempotent) incidentally proved the retry genuinely fires. |
-| C-03 Medium — PROD replay path untested | **FIXED** | New PG test `SEQUENTIAL replay (PROD path, subagent C-03)` (`transaction-concurrency.spec.ts:107-125`): service-level replay → `'already'`, `newlyEligible: 0`, fold count exactly one (`K1.seen=1`) — passes in my run. Route-level sequential replay now 404s (live-probed; consistent with DEV). Nuance: the route-level 404 replay behavior has no automated test (verified live by me only) — minor gap, not blocking. |
-| C-04 Low — attemptCount lost updates | **PARTIALLY FIXED (acceptably bounded)** | Source: fresh in-tx `stationRepo.get` and `attemptCount: fresh.attemptCount` (`completions.ts:149-153`) — the route's stale pre-tx value is discarded. **Honest remaining window:** under READ COMMITTED, a concurrent committed `incrementAttempts` between the in-tx read and the upsert is still lost (no `FOR UPDATE`, no row lock; `incrementAttempts` itself remains an unlocked RMW). Window narrowed from the whole request span to a sub-ms in-tx span; the counter is display/telemetry only (no gating consumer) → acceptable. Full closure = `SELECT … FOR UPDATE` in the unit or an atomic SQL increment. |
-| C-05 Low — runInTx nesting guard | **FIXED** | ALS guard (`transactions.ts:26,45-51`). Experiment (/tmp copy): nested `runInTx` **throws**; two concurrent independent calls **both succeed**; 8 interleaved-by-await units all succeed — the guard distinguishes nesting from concurrency. Service-level whole-unit retries call `runInTx` from OUTSIDE the previous ALS context → unaffected (the C-02 experiment exercised exactly this). |
-| C-07 Low — practice retry dead code | **FIXED** | `isRetryableTxError` wired at `completions.ts:89`; a mid-unit statement failure followed by continued use of the aborted tx (25P02) is now a real, recognized trigger; predicate proven by experiment. |
-| C-08 Low — doc inaccuracies | **FIXED** | `DATABASE_TRANSACTION_FIX.md` now: TTL "actually ENFORCED" + zero-caller history stated; the /api/attempts unlocked-writer caveat + bounded retry stated; counts **755 / 35+8 skips** (match my runs exactly); lock-removal experiment noted. |
-| C-06, C-09 Low — accepted residuals | N/A (no action requested) | Lock-key collision / per-chapter lock domain — unchanged, still benign under the 1:1 model; correctly left as-is. |
+| ID                                                   | Verdict                                  | Evidence (all verified by me, round 2)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-01 High — in-flight leak + answered-after-complete | **FIXED**                                | Source: `deleteInFlight` on the interface + both impls (`modules/practice/repository.ts:88-91`, `db/repositories/practice.ts:113-115`); PG `recordCompleted` no longer touches the map; service calls `getPracticeSessionStore().deleteInFlight(stored.id)` AFTER commit (`completions.ts:86`); `sweepExpired(Date.now())` on every generate (`api/practice/route.ts:206-212`) — also grepped present in the compiled standalone chunks. **Live probe:** answer-after-complete → **404** (round 1: 200); sequential replay → **404** (round 1: 200 `recorded:true,already:true`) — PROD now matches DEV semantics; 200× generate spam → 200/200 OK, server healthy; DB consistent (1 session row, 10 eligible objects, fold exactly once). Residual (bounded, documented in the doc): abandoned sessions of a learner who never generates again persist until restart — heap bounded by the 24h window of active users. |
+| C-02 Medium — in-tx 23505 → 25P02 → unhandled 500    | **FIXED**                                | Source: `isRetryableTxError` (23505 \| 25P02, cause-chain aware, `attempts.ts:76-89`) wired in BOTH service loops (`completions.ts:89,239`). **Deterministic experiment through the REAL service** (one-line hook after the MAX select, /tmp copy only): unlocked writer commits attempt_no mid-tx → 23505 → `create`'s `continue` → 25P02 on the aborted tx → predicate TRUE → whole-unit retry → fresh MAX read → attempt 3 inserted → chapter `understood` → **resolved, no unhandled error** (final attempts [1,2,3]). Predicate separately proven to see 25P02 through drizzle's cause-chain wrapping. A first flawed run (hook non-idempotent) incidentally proved the retry genuinely fires.                                                                                                                                                                                                                     |
+| C-03 Medium — PROD replay path untested              | **FIXED**                                | New PG test `SEQUENTIAL replay (PROD path, subagent C-03)` (`transaction-concurrency.spec.ts:107-125`): service-level replay → `'already'`, `newlyEligible: 0`, fold count exactly one (`K1.seen=1`) — passes in my run. Route-level sequential replay now 404s (live-probed; consistent with DEV). Nuance: the route-level 404 replay behavior has no automated test (verified live by me only) — minor gap, not blocking.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| C-04 Low — attemptCount lost updates                 | **PARTIALLY FIXED (acceptably bounded)** | Source: fresh in-tx `stationRepo.get` and `attemptCount: fresh.attemptCount` (`completions.ts:149-153`) — the route's stale pre-tx value is discarded. **Honest remaining window:** under READ COMMITTED, a concurrent committed `incrementAttempts` between the in-tx read and the upsert is still lost (no `FOR UPDATE`, no row lock; `incrementAttempts` itself remains an unlocked RMW). Window narrowed from the whole request span to a sub-ms in-tx span; the counter is display/telemetry only (no gating consumer) → acceptable. Full closure = `SELECT … FOR UPDATE` in the unit or an atomic SQL increment.                                                                                                                                                                                                                                                                                                  |
+| C-05 Low — runInTx nesting guard                     | **FIXED**                                | ALS guard (`transactions.ts:26,45-51`). Experiment (/tmp copy): nested `runInTx` **throws**; two concurrent independent calls **both succeed**; 8 interleaved-by-await units all succeed — the guard distinguishes nesting from concurrency. Service-level whole-unit retries call `runInTx` from OUTSIDE the previous ALS context → unaffected (the C-02 experiment exercised exactly this).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| C-07 Low — practice retry dead code                  | **FIXED**                                | `isRetryableTxError` wired at `completions.ts:89`; a mid-unit statement failure followed by continued use of the aborted tx (25P02) is now a real, recognized trigger; predicate proven by experiment.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| C-08 Low — doc inaccuracies                          | **FIXED**                                | `DATABASE_TRANSACTION_FIX.md` now: TTL "actually ENFORCED" + zero-caller history stated; the /api/attempts unlocked-writer caveat + bounded retry stated; counts **755 / 35+8 skips** (match my runs exactly); lock-removal experiment noted.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| C-06, C-09 Low — accepted residuals                  | N/A (no action requested)                | Lock-key collision / per-chapter lock domain — unchanged, still benign under the 1:1 model; correctly left as-is.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 ### Original guarantees re-verified on new tip
 

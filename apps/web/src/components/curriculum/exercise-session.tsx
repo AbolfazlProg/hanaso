@@ -569,7 +569,8 @@ export function ExerciseSession({
     }
   }, [chapterSlug, ex, hintFa, hintLoading, stationSlug]);
 
-  const check = useCallback(async () => {    if (!ex) return;
+  const check = useCallback(async () => {
+    if (!ex) return;
     // TL-13 (A-2): the busy state is ALSO checked here so a stale-props click
     // (option selected → rapid double activation before commit) never re-enters.
     if (busy || gradingRef.current) return;

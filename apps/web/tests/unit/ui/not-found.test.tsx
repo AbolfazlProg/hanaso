@@ -14,7 +14,9 @@ describe('BUG-010 — the Persian 404', () => {
     render(<NotFound />);
     expect(screen.getByText('این صفحه پیدا نشد')).toBeDefined();
     expect((screen.getByRole('link', { name: 'بازگشت به خانه' }) as HTMLAnchorElement).getAttribute('href')).toBe('/');
-    expect((screen.getByRole('link', { name: /رفتن به مسیر یادگیری/ }) as HTMLAnchorElement).getAttribute('href')).toBe('/learn');
+    expect((screen.getByRole('link', { name: /رفتن به مسیر یادگیری/ }) as HTMLAnchorElement).getAttribute('href')).toBe(
+      '/learn',
+    );
     expect(document.body.textContent).not.toContain('This page could not be found');
   });
 });

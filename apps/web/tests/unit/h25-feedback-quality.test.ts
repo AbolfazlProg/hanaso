@@ -29,10 +29,9 @@ test('recall feedback — no doubled tails, no cryptic row hints (BUG-020)', () 
       ex.feedback.f1Fa.includes('— به شکل درست نگاه کن. — به شکل درست نگاه کن.'),
       `${ex.id}: f1Fa still carries the doubled tail`,
     ).toBe(false);
-    expect(
-      ex.feedback.f2HintFa.includes('روی همین خط از ردیفِ'),
-      `${ex.id}: f2HintFa still the cryptic row hint`,
-    ).toBe(false);
+    expect(ex.feedback.f2HintFa.includes('روی همین خط از ردیفِ'), `${ex.id}: f2HintFa still the cryptic row hint`).toBe(
+      false,
+    );
     // the f2 must carry a concrete anchor: a named confusable, the nasal fact,
     // a mnemonic — OR (TASK-26) a concrete shape description that lets the
     // learner compare strokes without any not-yet-taught glyph (CL-13-legal)
@@ -44,7 +43,7 @@ test('recall feedback — no doubled tails, no cryptic row hints (BUG-020)', () 
   }
 });
 
-test('recall feedback — ん items teach the standalone-nasal fact (the audit\'s no-row case)', () => {
+test("recall feedback — ん items teach the standalone-nasal fact (the audit's no-row case)", () => {
   for (const ex of exercises) {
     if (ex.type !== 'kana-recall') continue;
     if (ex.targetConcept === 'hira-n' || ex.targetConcept === 'kata-n') {
@@ -53,7 +52,7 @@ test('recall feedback — ん items teach the standalone-nasal fact (the audit\'
   }
 });
 
-test('listening rationales — every option\'s rationale names sounds, not shapes (the 172/173 finding)', () => {
+test("listening rationales — every option's rationale names sounds, not shapes (the 172/173 finding)", () => {
   const listening = exercises.filter((e) => e.type === 'kana-listening');
   expect(listening.length).toBeGreaterThanOrEqual(170);
   for (const ex of listening) {
@@ -86,10 +85,7 @@ test('recognition F1 — never embeds the correct reading (BUG-029 closed)', () 
       ex.feedback.f1Fa.includes(label),
       `${ex.id}: f1Fa leaks the correct reading «${label}» (f1: ${ex.feedback.f1Fa})`,
     ).toBe(false);
-    expect(
-      ex.feedback.f2HintFa.includes(label),
-      `${ex.id}: f2HintFa leaks the correct reading «${label}»`,
-    ).toBe(false);
+    expect(ex.feedback.f2HintFa.includes(label), `${ex.id}: f2HintFa leaks the correct reading «${label}»`).toBe(false);
   }
   expect(checked).toBeGreaterThanOrEqual(120); // the full leak census size
 });

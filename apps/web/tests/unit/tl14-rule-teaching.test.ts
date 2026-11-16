@@ -104,9 +104,9 @@ describe('TL-14 gates — the golden rule is mechanical (mutation fixtures)', ()
         ex.promptJaReading = 'کیو'; // taught/canonical now says کیوو elsewhere + option says کیوو
       }),
     );
-    expect(v.some((x) => x.includes('TRANSCRIPT-CONSISTENT') && x.includes('きょう') && x.includes('ex-kana-h6-dec-3'))).toBe(
-      true,
-    );
+    expect(
+      v.some((x) => x.includes('TRANSCRIPT-CONSISTENT') && x.includes('きょう') && x.includes('ex-kana-h6-dec-3')),
+    ).toBe(true);
   });
 
   it('TRANSCRIPT-CONSISTENT: the correct-option label of a decode is itself a compared reading (BUG-003, direct)', () => {
@@ -219,7 +219,14 @@ describe('TL-14 gates — the golden rule is mechanical (mutation fixtures)', ()
         });
       }),
     );
-    expect(v.some((x) => x.includes('DERIVED-GLYPH-SHOWN') && x.includes('derived form ァ') && x.includes('rd-stn-kana-k12-foreign-mut'))).toBe(true);
+    expect(
+      v.some(
+        (x) =>
+          x.includes('DERIVED-GLYPH-SHOWN') &&
+          x.includes('derived form ァ') &&
+          x.includes('rd-stn-kana-k12-foreign-mut'),
+      ),
+    ).toBe(true);
   });
 
   it('DERIVED-GLYPH-SHOWN: the REAL chapter is clean (positive fixture — all 16 audit findings fixed)', () => {

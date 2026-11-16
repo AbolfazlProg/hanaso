@@ -4,13 +4,13 @@
 
 ## Pins
 
-| Item | Value |
-| --- | --- |
-| Target release | `1.0.0-hanaso20-r01` @ `2574788c36521cec6ac0673488b769e77a8ab982` |
-| Target branch | `fix/TASK-HANASO-20-onboarding` (pushed to origin) |
-| Deploy tooling | `5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10` (bootstrap default pins joined the v11 target; verified by deploy05 P0 — OWNER-COMMAND v11 `R=` points here) |
-| Bootstrap | `infra/deploy/bootstrap-hanaso.sh` — sha256 `d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073` (default pins joined the v11 target — content change, hash re-pinned everywhere) |
-| Smoke | `scripts/smoke.sh` at the tooling commit must match the target's app expectations (deploy05 P0 checks this) |
+| Item           | Value                                                                                                                                                                                           |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Target release | `1.0.0-hanaso20-r01` @ `2574788c36521cec6ac0673488b769e77a8ab982`                                                                                                                               |
+| Target branch  | `fix/TASK-HANASO-20-onboarding` (pushed to origin)                                                                                                                                              |
+| Deploy tooling | `5870eaf3892c7cb8a1bcfa3ec058d77474e3ad10` (bootstrap default pins joined the v11 target; verified by deploy05 P0 — OWNER-COMMAND v11 `R=` points here)                                         |
+| Bootstrap      | `infra/deploy/bootstrap-hanaso.sh` — sha256 `d4736bd8d676ac10f8c2832c3888e8f2a95eff72d2088a65088a9c5d85fb2073` (default pins joined the v11 target — content change, hash re-pinned everywhere) |
+| Smoke          | `scripts/smoke.sh` at the tooling commit must match the target's app expectations (deploy05 P0 checks this)                                                                                     |
 
 ## Commit chain (code)
 

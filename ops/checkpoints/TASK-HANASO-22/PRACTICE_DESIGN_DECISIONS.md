@@ -30,26 +30,26 @@ src/components/practice/practice-session.tsx  # client island
 
 ## 2 — انواع نشست
 
-| نوع | باز شدن | ماده | اندازه (POLICY) |
-| --- | --- | --- | --- |
-| `focused` | پس از تکمیل هر ایستگاه کانا (به‌ازای ایستگاه) | گلیف/قاعدهٔ همان ایستگاه + جفت‌های مستند | 12–16 آیتم (~5–8′) |
-| `mixed` | پس از ≥۳ ایستگاه تکمیل‌شده از فصل | همهٔ آموخته‌ها، وزن‌دهی به نقاط ضعف | 16–24 آیتم (~8–12′) |
+| نوع       | باز شدن                                       | ماده                                     | اندازه (POLICY)     |
+| --------- | --------------------------------------------- | ---------------------------------------- | ------------------- |
+| `focused` | پس از تکمیل هر ایستگاه کانا (به‌ازای ایستگاه) | گلیف/قاعدهٔ همان ایستگاه + جفت‌های مستند | 12–16 آیتم (~5–8′)  |
+| `mixed`   | پس از ≥۳ ایستگاه تکمیل‌شده از فصل             | همهٔ آموخته‌ها، وزن‌دهی به نقاط ضعف      | 16–24 آیتم (~8–12′) |
 
 - Practice **داوطلبانه** است: هیچ گیت/قبولی/مردودی ندارد؛ مسیر Learn→گیت بدون آن کامل می‌شود.
 - Mixed هرگز مادهٔ آموزش‌نداده‌شده وارد نمی‌کند (generator فقط از گلیف‌های `introducedInUnit ≤ unlocked` می‌سازد — تست پایدار CI).
 
 ## 3 — ابعاد Kana (K1..K8) و آیتم‌ها
 
-| بُعد | نوع آیتم | منبع داده |
-| --- | --- | --- |
-| K1 تمایز جفت | MCQ گلیف با گزینه‌های `confusableWith` | KANA_ITEMS |
-| K2 شکل→صدا | MCQ خوانش (فارسی+لاتین) | KANA_ITEMS.romaji |
-| K3 صدا→گلیف | پخش `public/audio/kana/kn-*` → انتخاب گلیف | ۱۸۵ فایل موجود |
-| K4 رمزگشایی واژه | واژهٔ hostword → romaji | hostWord + ۳۰۷ فایل |
-| K5 مورا | شمارش مورا / جفت حداقلی | قواعد H4/H7/H13 (data) |
-| K6 نوشتن از حافظه | بوم writing engine | writing module |
-| K7 ترتیب حرکت | ردیابی KanjiVG | writing module |
-| K8 وام‌واژهٔ کاتاکانا | رمزگشایی وام‌واژهٔ آموزش‌داده | k12-foreign scope |
+| بُعد                  | نوع آیتم                                   | منبع داده              |
+| --------------------- | ------------------------------------------ | ---------------------- |
+| K1 تمایز جفت          | MCQ گلیف با گزینه‌های `confusableWith`     | KANA_ITEMS             |
+| K2 شکل→صدا            | MCQ خوانش (فارسی+لاتین)                    | KANA_ITEMS.romaji      |
+| K3 صدا→گلیف           | پخش `public/audio/kana/kn-*` → انتخاب گلیف | ۱۸۵ فایل موجود         |
+| K4 رمزگشایی واژه      | واژهٔ hostword → romaji                    | hostWord + ۳۰۷ فایل    |
+| K5 مورا               | شمارش مورا / جفت حداقلی                    | قواعد H4/H7/H13 (data) |
+| K6 نوشتن از حافظه     | بوم writing engine                         | writing module         |
+| K7 ترتیب حرکت         | ردیابی KanjiVG                             | writing module         |
+| K8 وام‌واژهٔ کاتاکانا | رمزگشایی وام‌واژهٔ آموزش‌داده              | k12-foreign scope      |
 
 - سهم ابعاد در mixed: K2/K3/K4 هسته؛ K1/K5 بر اساس ضعف؛ K6/K7 فقط داوطلبانه (setting).
 - بازخورد در Practice کوتاه‌تر از درس: تلاش ۱ غلط → گزارهٔ کوتاه (F1) + تلاش دوباره؛
@@ -60,6 +60,7 @@ src/components/practice/practice-session.tsx  # client island
 ### جداول جدید (additive migration — هیچ جدول موجودی تغییر نمی‌کند)
 
 `app.practice_sessions` (append-only):
+
 ```
 id uuid7 PK · user_id text · skill text ('kana') · kind text ('focused'|'mixed')
 scope_key text (station slug | 'chapter:kana-foundation-01')
@@ -68,6 +69,7 @@ started_at/completed_at timestamptz
 ```
 
 `app.learning_object_states` (upsert per user×object):
+
 ```
 user_id+object_id PK · object_id text ('kn-rec-hira-a' — همان شناسهٔ FSRS آینده)
 skill text · state text ('introduced'|'practiced'|'eligible_for_review')
@@ -130,10 +132,10 @@ GET  ?skill=kana → status { counts, weakObjects, eligibilityCounts }
 
 ## 8 — تقسیم فصل ۱ به دو Section
 
-| Section | ردیف‌ها | دقیق Core | نقطهٔ پایان |
-| --- | --- | --- | --- |
-| A «هیراگانا — خطِ بومی ژاپنی» | H0..H15 + M1 + opt-r-h9 | ۲۰۱ + ۱۰ (milestone) | «همهٔ واژه‌های هیراگانای جزوهٔ N5 را می‌خوانی» + Milestone خواندن |
-| B «کاتاکانا — خطِ جهانی‌ها» | K1..K13 + k12-foreign + M2 + opt-drill | ۱۶۵ + ۱۰ | «منو/برند/نامت را می‌خوانی و می‌نویسی» + Milestone منو |
+| Section                       | ردیف‌ها                                | دقیق Core            | نقطهٔ پایان                                                       |
+| ----------------------------- | -------------------------------------- | -------------------- | ----------------------------------------------------------------- |
+| A «هیراگانا — خطِ بومی ژاپنی» | H0..H15 + M1 + opt-r-h9                | ۲۰۱ + ۱۰ (milestone) | «همهٔ واژه‌های هیراگانای جزوهٔ N5 را می‌خوانی» + Milestone خواندن |
+| B «کاتاکانا — خطِ جهانی‌ها»   | K1..K13 + k12-foreign + M2 + opt-drill | ۱۶۵ + ۱۰             | «منو/برند/نامت را می‌خوانی و می‌نویسی» + Milestone منو            |
 
 - `units[]` از ۴ جزیره به ۲ Section بازساخته می‌شود (ایسلند‌ها در عنوان/هدف ردیف‌ها زنده‌اند).
 - جزیره‌ها slug جدید می‌گیرند (`section-a-hiragana`، `section-b-katakana`) — هیچ وابستگی

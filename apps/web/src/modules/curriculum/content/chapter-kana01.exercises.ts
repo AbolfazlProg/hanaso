@@ -5872,7 +5872,10 @@ export const KANA_EXERCISES: Exercise[] = [
       { id: 'c', label: '«راامِن»' },
     ],
     correctOptionId: 'c',
-    distractorRationaleFa: { a: '「ん» پایانی را جا انداخته‌ای — «راامِن» با «ن» بینی تمام می‌شود.', b: '「ん» = «ن» بینی — «آ» نیست.' },
+    distractorRationaleFa: {
+      a: '「ん» پایانی را جا انداخته‌ای — «راامِن» با «ن» بینی تمام می‌شود.',
+      b: '「ん» = «ن» بینی — «آ» نیست.',
+    },
     feedback: {
       f1Fa: '「ー» = «آ»ی کشیده و 「ん» = «ن» بینی.',
       f2HintFa: 'کانا به کانا بخوان: «ر»…',
@@ -11223,7 +11226,10 @@ export const KANA_EXERCISES: Exercise[] = [
       { id: 'c', label: '«سِن»' },
     ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: '「ん» اینجا «ن» بینی است، نه «م» — «سام» یعنی む پایانی.', c: 'مصوت ردیف «ا» است نه «اِ».' },
+    distractorRationaleFa: {
+      a: '「ん» اینجا «ن» بینی است، نه «م» — «سام» یعنی む پایانی.',
+      c: 'مصوت ردیف «ا» است نه «اِ».',
+    },
     feedback: {
       f1Fa: '「ん» خودش یک ضربهٔ کامل است.',
       f2HintFa: 'واکه‌ها را جدا بشمار: سا + ن — دومی فقط «ن» بینی است.',

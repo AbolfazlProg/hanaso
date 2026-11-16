@@ -86,8 +86,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   //    is just garbage (fresh identity on GET, guest on writes).
   // 4. state-changing request without any identity → do NOT mint (401 at the
   //    route guards); a garbage/foreign value on such a request likewise.
-  const legacyUuid =
-    existing && isRawLegacyLearnerValue(existing) && legacyReissueAllowed() ? existing : null;
+  const legacyUuid = existing && isRawLegacyLearnerValue(existing) && legacyReissueAllowed() ? existing : null;
   if (!legacyUuid && !shouldMint(request)) {
     return NextResponse.next();
   }

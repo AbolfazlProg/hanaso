@@ -42,17 +42,19 @@ const ZWNJ = /\u200c/g;
  * exactly the きょう «کیوو» vs きゅう «کیُوو» distinction (RP-02, AUD-002).
  */
 function normReading(label: string): string {
-  return label
-    .replace(/[«»]/g, '')
-    // bare-vowel diacritics carry the syllable vowel — canonicalize to ASCII
-    // vowels so mezo ≠ mizo ≠ mozo and ko+ro+ma collapses correctly.
-    .replace(/\u064E/g, 'a') // َ fatha
-    .replace(/\u0650/g, 'e') // ِ kasra (Persian "e" sound)
-    .replace(/\u064F/g, 'o') // ُ damma (Persian "o" sound)
-    .replace(PERSIAN_DIACRITICS, '')
-    .replace(ZWNJ, '')
-    .replace(/\s+/g, '')
-    .trim();
+  return (
+    label
+      .replace(/[«»]/g, '')
+      // bare-vowel diacritics carry the syllable vowel — canonicalize to ASCII
+      // vowels so mezo ≠ mizo ≠ mozo and ko+ro+ma collapses correctly.
+      .replace(/\u064E/g, 'a') // َ fatha
+      .replace(/\u0650/g, 'e') // ِ kasra (Persian "e" sound)
+      .replace(/\u064F/g, 'o') // ُ damma (Persian "o" sound)
+      .replace(PERSIAN_DIACRITICS, '')
+      .replace(ZWNJ, '')
+      .replace(/\s+/g, '')
+      .trim()
+  );
 }
 
 /** Strip the trailing meaning gloss the inventory style appends in parentheses. */

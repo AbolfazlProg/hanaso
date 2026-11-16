@@ -37,7 +37,13 @@ mkdirSync(OUT, { recursive: true });
 /* ------------------------------------------------------------------ helpers */
 
 const FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
-const faToEn = (s) => [...String(s)].map((c) => { const i = FA_DIGITS.indexOf(c); return i >= 0 ? String(i) : c; }).join('');
+const faToEn = (s) =>
+  [...String(s)]
+    .map((c) => {
+      const i = FA_DIGITS.indexOf(c);
+      return i >= 0 ? String(i) : c;
+    })
+    .join('');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const results = [];
@@ -60,8 +66,9 @@ async function clickByText(page, label, { timeout = 15000 } = {}) {
   while (Date.now() - start < timeout) {
     const clicked = await page.evaluate((lbl) => {
       const norm = (t) => (t || '').replace(/\s+/g, ' ').trim();
-      const els = [...document.querySelectorAll('button')]
-        .filter((b) => norm(b.textContent) === lbl && b.offsetParent !== null && !b.disabled);
+      const els = [...document.querySelectorAll('button')].filter(
+        (b) => norm(b.textContent) === lbl && b.offsetParent !== null && !b.disabled,
+      );
       if (els.length === 0) return false;
       els[els.length - 1].click();
       return true;
@@ -76,21 +83,24 @@ async function clickByText(page, label, { timeout = 15000 } = {}) {
 async function countButtons(page, label) {
   return page.evaluate((lbl) => {
     const norm = (t) => (t || '').replace(/\s+/g, ' ').trim();
-    return [...document.querySelectorAll('button')]
-      .filter((b) => norm(b.textContent) === lbl && b.offsetParent !== null && !b.disabled).length;
+    return [...document.querySelectorAll('button')].filter(
+      (b) => norm(b.textContent) === lbl && b.offsetParent !== null && !b.disabled,
+    ).length;
   }, label);
 }
 
 /** The walk step indicator «N / M» → { step, total } (1-based, numbers). */
 async function readStep(page) {
-  return page.evaluate(() => {
-    const els = [...document.querySelectorAll('p[aria-live="polite"]')];
-    for (const el of els) {
-      const m = (el.textContent || '').match(/([۰-۹0-9]+)\s*\/\s*([۰-۹0-9]+)/);
-      if (m) return { step: m[1], total: m[2] }; // raw strings — Persian digits are NaN for Number()
-    }
-    return null;
-  }).then((r) => (r && r.step ? { step: Number(faToEn(r.step)), total: Number(faToEn(r.total)) } : null));
+  return page
+    .evaluate(() => {
+      const els = [...document.querySelectorAll('p[aria-live="polite"]')];
+      for (const el of els) {
+        const m = (el.textContent || '').match(/([۰-۹0-9]+)\s*\/\s*([۰-۹0-9]+)/);
+        if (m) return { step: m[1], total: m[2] }; // raw strings — Persian digits are NaN for Number()
+      }
+      return null;
+    })
+    .then((r) => (r && r.step ? { step: Number(faToEn(r.step)), total: Number(faToEn(r.total)) } : null));
 }
 
 /** The exercise-session section aria-label «سؤال N از M» → index (1-based). */
@@ -104,15 +114,18 @@ async function readQuestionIndex(page) {
   return m ? Number(faToEn(m[1])) : null;
 }
 
-const panels = (page) => page.evaluate(() => ({
-  complete: !!document.querySelector('[data-station-complete]'),
-  seal: !!document.querySelector('[data-aizen-seal]'),
-  sealAnimate: !!document.querySelector('[data-aizen-seal][data-animate="true"]'),
-  failGeneric: !!document.querySelector('[data-completion-failed]:not([data-completion-failed="criterion"]):not([data-completion-failed="prerequisites"])'),
-  failCriterion: !!document.querySelector('[data-completion-failed="criterion"]'),
-  failPrereq: !!document.querySelector('[data-completion-failed="prerequisites"]'),
-  replayEnded: !!document.body.textContent?.includes('این مرور دوباره چیزی را تغییر نداد'),
-}));
+const panels = (page) =>
+  page.evaluate(() => ({
+    complete: !!document.querySelector('[data-station-complete]'),
+    seal: !!document.querySelector('[data-aizen-seal]'),
+    sealAnimate: !!document.querySelector('[data-aizen-seal][data-animate="true"]'),
+    failGeneric: !!document.querySelector(
+      '[data-completion-failed]:not([data-completion-failed="criterion"]):not([data-completion-failed="prerequisites"])',
+    ),
+    failCriterion: !!document.querySelector('[data-completion-failed="criterion"]'),
+    failPrereq: !!document.querySelector('[data-completion-failed="prerequisites"]'),
+    replayEnded: !!document.body.textContent?.includes('این مرور دوباره چیزی را تغییر نداد'),
+  }));
 
 /** Watch station API calls; returns { counts, events } — call .stop() after. */
 function watchStationApi(page) {
@@ -120,7 +133,9 @@ function watchStationApi(page) {
   const onRequest = (req) => {
     if (!req.url().includes('/api/curriculum/station')) return;
     let action = null;
-    try { action = JSON.parse(req.postData() || '{}').action ?? null; } catch {}
+    try {
+      action = JSON.parse(req.postData() || '{}').action ?? null;
+    } catch {}
     events.push({ kind: 'request', action, url: req.url() });
   };
   const onResponse = (res) => {
@@ -141,7 +156,10 @@ function watchStationApi(page) {
       return byAction;
     },
     statuses: () => events.filter((e) => e.kind === 'response').map((e) => e.status),
-    stop: () => { page.off('request', onRequest); page.off('response', onResponse); },
+    stop: () => {
+      page.off('request', onRequest);
+      page.off('response', onResponse);
+    },
   };
 }
 
@@ -163,7 +181,9 @@ async function walkStation(page, chapterSlug, stationSlug, opts = {}) {
   const exerciseBlocks = st.blocks.filter((b) => b.kind === 'exercise');
   const watch = watchStationApi(page);
   const consoleErrors = [];
-  const onConsole = (msg) => { if (msg.type() === 'error') consoleErrors.push(msg.text()); };
+  const onConsole = (msg) => {
+    if (msg.type() === 'error') consoleErrors.push(msg.text());
+  };
   page.on('console', onConsole);
 
   if (opts.interceptComplete) {
@@ -199,7 +219,10 @@ async function walkStation(page, chapterSlug, stationSlug, opts = {}) {
       const body = await page.evaluate(() => (document.body.textContent || '').replace(/\s+/g, ' ').slice(0, 120));
       console.log(`   [walk ${stationSlug}] step=${JSON.stringify(stepInfo)} url=${url} body=${body}`);
     }
-    if (!stepInfo) { await sleep(600); continue; }
+    if (!stepInfo) {
+      await sleep(600);
+      continue;
+    }
     const blockIdx = stepInfo.step - 1;
     const block = st.blocks[blockIdx];
     if (!block) throw new Error(`step ${stepInfo.step} beyond key blocks (${st.blocks.length}) for ${stationSlug}`);
@@ -217,17 +240,27 @@ async function walkStation(page, chapterSlug, stationSlug, opts = {}) {
       /* pick the option */
       const clicked = await page.evaluate((lbl) => {
         const norm = (t) => (t || '').replace(/\s+/g, ' ').trim();
-        const radios = [...document.querySelectorAll('[role="radiogroup"] button[role="radio"]')]
-          .filter((b) => !b.disabled && b.offsetParent !== null);
+        const radios = [...document.querySelectorAll('[role="radiogroup"] button[role="radio"]')].filter(
+          (b) => !b.disabled && b.offsetParent !== null,
+        );
         const target = radios.find((b) => norm(b.textContent) === lbl);
-        if (target) { target.click(); return true; }
+        if (target) {
+          target.click();
+          return true;
+        }
         return false;
       }, label);
-      if (!clicked) { await sleep(500); continue; }
+      if (!clicked) {
+        await sleep(500);
+        continue;
+      }
       await sleep(250);
 
       /* submit */
-      if (!(await clickByText(page, 'بررسی پاسخ', { timeout: 4000 }))) { await sleep(500); continue; }
+      if (!(await clickByText(page, 'بررسی پاسخ', { timeout: 4000 }))) {
+        await sleep(500);
+        continue;
+      }
 
       /* wrong → feedback (never auto-advances): retry correctly */
       if (deliberateWrong) {
@@ -237,13 +270,20 @@ async function walkStation(page, chapterSlug, stationSlug, opts = {}) {
           await sleep(500);
           const ok2 = await page.evaluate((lbl) => {
             const norm = (t) => (t || '').replace(/\s+/g, ' ').trim();
-            const radios = [...document.querySelectorAll('[role="radiogroup"] button[role="radio"]')]
-              .filter((b) => !b.disabled && b.offsetParent !== null);
+            const radios = [...document.querySelectorAll('[role="radiogroup"] button[role="radio"]')].filter(
+              (b) => !b.disabled && b.offsetParent !== null,
+            );
             const target = radios.find((b) => norm(b.textContent) === lbl);
-            if (target) { target.click(); return true; }
+            if (target) {
+              target.click();
+              return true;
+            }
             return false;
           }, q.correctLabel);
-          if (!ok2) { await sleep(500); continue; }
+          if (!ok2) {
+            await sleep(500);
+            continue;
+          }
           await sleep(250);
           await clickByText(page, 'بررسی پاسخ', { timeout: 4000 });
         }
@@ -256,10 +296,16 @@ async function walkStation(page, chapterSlug, stationSlug, opts = {}) {
       while (Date.now() - t0 < 14000) {
         await sleep(400);
         const pn = await panels(page);
-        if (pn.complete || pn.failCriterion || pn.failGeneric || pn.failPrereq || pn.replayEnded) { advanced = true; break; }
+        if (pn.complete || pn.failCriterion || pn.failGeneric || pn.failPrereq || pn.replayEnded) {
+          advanced = true;
+          break;
+        }
         const nxt = await readQuestionIndex(page);
         const stp = await readStep(page);
-        if (nxt !== qIdx || (stp && stp.step - 1 !== blockIdx)) { advanced = true; break; }
+        if (nxt !== qIdx || (stp && stp.step - 1 !== blockIdx)) {
+          advanced = true;
+          break;
+        }
         /* manual «ادامه» if the timer somehow stalled */
         if (Date.now() - t0 > 6000) {
           await clickByText(page, 'ادامه', { timeout: 1000 });
@@ -276,7 +322,10 @@ async function walkStation(page, chapterSlug, stationSlug, opts = {}) {
       break;
     }
     const ok = await clickByText(page, 'ادامه', { timeout: 8000 });
-    if (!ok) { await sleep(700); continue; }
+    if (!ok) {
+      await sleep(700);
+      continue;
+    }
     await sleep(700);
     if (blockIdx !== currentBlockIdx) currentBlockIdx = blockIdx;
   }
@@ -302,18 +351,27 @@ async function fastForward(page, chapterSlug, stationSlugs) {
     await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
     await sleep(800);
   }
-  return page.evaluate(async ({ base, chapter, slugs }) => {
-    const out = [];
-    for (const slug of slugs) {
-      const res = await fetch(`${base}/api/curriculum/station`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'complete', chapterSlug: chapter, stationSlug: slug, score: 1, taskCompleted: true }),
-      });
-      out.push({ slug, status: res.status });
-    }
-    return out;
-  }, { base: BASE, chapter: chapterSlug, slugs: stationSlugs });
+  return page.evaluate(
+    async ({ base, chapter, slugs }) => {
+      const out = [];
+      for (const slug of slugs) {
+        const res = await fetch(`${base}/api/curriculum/station`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            action: 'complete',
+            chapterSlug: chapter,
+            stationSlug: slug,
+            score: 1,
+            taskCompleted: true,
+          }),
+        });
+        out.push({ slug, status: res.status });
+      }
+      return out;
+    },
+    { base: BASE, chapter: chapterSlug, slugs: stationSlugs },
+  );
 }
 
 const kanaStations = key.stations.filter((s) => s.slug.startsWith('stn-kana-')).map((s) => s.slug);
@@ -323,14 +381,18 @@ const ffUpTo = (last) => kanaStations.slice(0, kanaStations.indexOf(last) + 1);
 async function passMasteryGate(page) {
   const answers = {};
   for (const q of key.mastery['kana-foundation-01']) answers[q.id] = q.answer;
-  return page.evaluate(async ({ base, answers }) => {
-    const r = await fetch(`${base}/api/curriculum/mastery`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ chapterSlug: 'kana-foundation-01', answers }),
-    });    const body = await r.json().catch(() => null);
-    return { status: r.status, outcome: body?.data?.outcome };
-  }, { base: BASE, answers });
+  return page.evaluate(
+    async ({ base, answers }) => {
+      const r = await fetch(`${base}/api/curriculum/mastery`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ chapterSlug: 'kana-foundation-01', answers }),
+      });
+      const body = await r.json().catch(() => null);
+      return { status: r.status, outcome: body?.data?.outcome };
+    },
+    { base: BASE, answers },
+  );
 }
 
 /* ------------------------------------------------------------------ run */
@@ -345,7 +407,7 @@ try {
     const watch = watchStationApi(page);
     await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
     await sleep(1500);
-    const cookieMinted = (await ctxA.cookies()).some((c) => c.name === "hanaso_lid");
+    const cookieMinted = (await ctxA.cookies()).some((c) => c.name === 'hanaso_lid');
     note('S1.1 first visit: middleware mints the per-browser learner id', cookieMinted);
     await shot(page, 's1-home-firstvisit');
 
@@ -353,10 +415,17 @@ try {
       const a = [...document.querySelectorAll('a')].find((x) => (x.textContent || '').includes('شروع یادگیری'));
       return a ? a.getAttribute('href') : null;
     });
-    note('S1.2 the start CTA targets the FIRST lesson (stn-kana-h0)', cta === '/learn/kana-foundation-01/journey/stn-kana-h0', cta);
+    note(
+      'S1.2 the start CTA targets the FIRST lesson (stn-kana-h0)',
+      cta === '/learn/kana-foundation-01/journey/stn-kana-h0',
+      cta,
+    );
 
     const r = await walkStation(page, 'kana-foundation-01', 'stn-kana-h0');
-    note('S1.3 h0 walked & completed with NO error panel', r.panels.complete && !r.panels.failGeneric && !r.panels.failCriterion);
+    note(
+      'S1.3 h0 walked & completed with NO error panel',
+      r.panels.complete && !r.panels.failGeneric && !r.panels.failCriterion,
+    );
     note('S1.4 the AIZEN seal appears with the FRESH ceremony (data-animate)', r.panels.seal && r.sealAnimate === true);
     await shot(page, 's1-h0-seal-fresh');
     const completes = r.api.counts.complete ?? 0;
@@ -371,7 +440,10 @@ try {
       const t0 = Date.now();
       while (Date.now() - t0 < 10000) {
         await sleep(400);
-        if (page.url().includes('/journey')) { mapUrl = page.url(); break; }
+        if (page.url().includes('/journey')) {
+          mapUrl = page.url();
+          break;
+        }
       }
       await sleep(1200);
     }
@@ -386,12 +458,16 @@ try {
     await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
     await sleep(1500);
     const homeState = await page.evaluate(() => {
-      const primary = [...document.querySelectorAll('a')].find((a) => (a.textContent || '').match(/شروع یادگیری|ادامهٔ درس|شروع درس بعدی|دروازهٔ فهم/));
+      const primary = [...document.querySelectorAll('a')].find((a) =>
+        (a.textContent || '').match(/شروع یادگیری|ادامهٔ درس|شروع درس بعدی|دروازهٔ فهم/),
+      );
       return primary ? { label: (primary.textContent || '').trim(), href: primary.getAttribute('href') } : null;
     });
-    note('S1.9 home after completion shows the NEXT lesson (own progress kept)',
+    note(
+      'S1.9 home after completion shows the NEXT lesson (own progress kept)',
       !!homeState && homeState.label === 'شروع درس بعدی' && (homeState.href || '').includes('stn-kana-h1'),
-      JSON.stringify(homeState));
+      JSON.stringify(homeState),
+    );
     await shot(page, 's1-home-after-h0');
     const watch2 = watchStationApi(page);
     await page.goto(`${BASE}/learn/kana-foundation-01/journey/stn-kana-h0`, { waitUntil: 'domcontentloaded' });
@@ -410,16 +486,28 @@ try {
     const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 } });
     const page = await ctx.newPage();
     const ff = await fastForward(page, 'kana-foundation-01', ffUpTo('stn-kana-k7'));
-    note('S2.1 honest API fast-forward of prerequisites h0..k7 (all 200)', ff.every((x) => x.status === 200), `${ff.length} stations`);
+    note(
+      'S2.1 honest API fast-forward of prerequisites h0..k7 (all 200)',
+      ff.every((x) => x.status === 200),
+      `${ff.length} stations`,
+    );
 
     const r = await walkStation(page, 'kana-foundation-01', 'stn-kana-k8');
-    note('S2.2 PERFECT walk of stn-kana-k8 completes (the owner-bug regression: stale auto-next scored 2/3 → 409 forever)', r.panels.complete, JSON.stringify(r.api.counts));
+    note(
+      'S2.2 PERFECT walk of stn-kana-k8 completes (the owner-bug regression: stale auto-next scored 2/3 → 409 forever)',
+      r.panels.complete,
+      JSON.stringify(r.api.counts),
+    );
     note('S2.3 NO 409 / failure panel on the k8 walk', !r.panels.failCriterion && !r.panels.failGeneric);
     note('S2.4 the k8 seal stamped with the fresh ceremony', r.panels.seal && r.sealAnimate === true);
     await shot(page, 's2-k8-seal-fresh');
     const bad = r.api.statuses.filter((s) => s >= 400);
     note('S2.5 zero 4xx/5xx during the k8 walk', bad.length === 0, JSON.stringify(bad));
-    note('S2.6 no console errors during the k8 walk', r.consoleErrors.length === 0, r.consoleErrors.slice(0, 2).join(' | '));
+    note(
+      'S2.6 no console errors during the k8 walk',
+      r.consoleErrors.length === 0,
+      r.consoleErrors.slice(0, 2).join(' | '),
+    );
     await page.close();
     await ctx.close();
   }
@@ -430,7 +518,10 @@ try {
     const page = await ctx.newPage();
     await fastForward(page, 'kana-foundation-01', ffUpTo('stn-kana-k12'));
     const r = await walkStation(page, 'kana-foundation-01', 'stn-kana-k12-foreign');
-    note('S3.1 PERFECT walk of stn-kana-k12-foreign completes (the 1/2-trap regression)', r.panels.complete && !r.panels.failCriterion);
+    note(
+      'S3.1 PERFECT walk of stn-kana-k12-foreign completes (the 1/2-trap regression)',
+      r.panels.complete && !r.panels.failCriterion,
+    );
     note('S3.2 the k12-foreign seal ceremony', r.panels.seal && r.sealAnimate === true);
     await shot(page, 's3-k12foreign-seal');
     await page.close();
@@ -442,11 +533,23 @@ try {
     const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 } });
     const page = await ctx.newPage();
     /* unlock fm01 the honest way: core kana path + the mastery gate passed with correct answers */
-    await fastForward(page, 'kana-foundation-01', kanaStations.filter((s) => s !== 'stn-kana-opt-r-h9' && s !== 'stn-kana-opt-drill'));
+    await fastForward(
+      page,
+      'kana-foundation-01',
+      kanaStations.filter((s) => s !== 'stn-kana-opt-r-h9' && s !== 'stn-kana-opt-drill'),
+    );
     const gate = await passMasteryGate(page);
-    note('S4.0 the kana mastery gate passed via real API (fm01 unlocked)', gate.status === 201 && gate.outcome === 'passed', JSON.stringify(gate));
+    note(
+      'S4.0 the kana mastery gate passed via real API (fm01 unlocked)',
+      gate.status === 201 && gate.outcome === 'passed',
+      JSON.stringify(gate),
+    );
     const r = await walkStation(page, 'first-meeting-01', 'stn-fm01-01-anchor');
-    note('S4.1 stn-fm01-01-anchor (viewed→0.6 check, OBS-001) completes on a perfect walk', r.panels.complete && !r.panels.failCriterion, JSON.stringify(r.api.counts));
+    note(
+      'S4.1 stn-fm01-01-anchor (viewed→0.6 check, OBS-001) completes on a perfect walk',
+      r.panels.complete && !r.panels.failCriterion,
+      JSON.stringify(r.api.counts),
+    );
     note('S4.2 the fm01 anchor seal ceremony', r.panels.seal && r.sealAnimate === true);
     await shot(page, 's4-fm01-anchor-seal');
     await page.close();
@@ -479,8 +582,15 @@ try {
     const page = await ctx.newPage();
     await fastForward(page, 'kana-foundation-01', ffUpTo('stn-kana-k12'));
     const r1 = await walkStation(page, 'kana-foundation-01', 'stn-kana-k12-foreign', { wrongFinalBlock: true });
-    note('S5.1a a wrong-answered final block still COMPLETES the lesson (no punitive grading in Learn)', r1.panels.complete && !r1.panels.failCriterion && !r1.panels.failGeneric, JSON.stringify(r1.api.counts));
-    note('S5.1b no criterion/409 panel appears (the gate is the only judge)', !r1.panels.failCriterion && !r1.panels.failGeneric);
+    note(
+      'S5.1a a wrong-answered final block still COMPLETES the lesson (no punitive grading in Learn)',
+      r1.panels.complete && !r1.panels.failCriterion && !r1.panels.failGeneric,
+      JSON.stringify(r1.api.counts),
+    );
+    note(
+      'S5.1b no criterion/409 panel appears (the gate is the only judge)',
+      !r1.panels.failCriterion && !r1.panels.failGeneric,
+    );
     await shot(page, 's5-wrong-walk-still-completes');
     await page.close();
     await ctx.close();
@@ -494,11 +604,16 @@ try {
     let failFirst = true;
     const r = await walkStation(page, 'kana-foundation-01', 'stn-kana-k8', {
       interceptComplete: async (route) => {
-        if (failFirst) { failFirst = false; await route.abort('connectionfailed'); }
-        else await route.continue();
+        if (failFirst) {
+          failFirst = false;
+          await route.abort('connectionfailed');
+        } else await route.continue();
       },
     });
-    note('S5.2a an aborted completion shows the honest failure panel (no fake success)', r.panels.failGeneric && !r.panels.complete);
+    note(
+      'S5.2a an aborted completion shows the honest failure panel (no fake success)',
+      r.panels.failGeneric && !r.panels.complete,
+    );
     await shot(page, 's5-network-failure-panel');
     /* the in-place retry is OUTSIDE the walker: click «تلاش دوباره برای ثبت» */
     const retried = await clickByText(page, 'تلاش دوباره برای ثبت', { timeout: 8000 });
@@ -508,7 +623,10 @@ try {
       while (Date.now() - t0 < 15000) {
         await sleep(500);
         const p = await panels(page);
-        if (p.complete) { recovered = true; break; }
+        if (p.complete) {
+          recovered = true;
+          break;
+        }
       }
     }
     note('S5.2b the in-place retry («تلاش دوباره برای ثبت») recovers the completion', recovered);
@@ -531,7 +649,11 @@ try {
     await fastForward(page, 'kana-foundation-01', ffUpTo('stn-kana-k7'));
     /* walk k8 to the final wrap-up block, then STOP (no completion fired) */
     const r1 = await walkStation(page, 'kana-foundation-01', 'stn-kana-k8', { stopBeforeComplete: true });
-    note('S5.3a walk parked on the final block (resume anchor armed, no complete yet)', (r1.api.counts.complete ?? 0) === 0, JSON.stringify(r1.api.counts));
+    note(
+      'S5.3a walk parked on the final block (resume anchor armed, no complete yet)',
+      (r1.api.counts.complete ?? 0) === 0,
+      JSON.stringify(r1.api.counts),
+    );
     await page.reload({ waitUntil: 'domcontentloaded' });
     await sleep(2200);
     const resumed = await page.evaluate(() => document.body.textContent?.includes('از همان‌جا ادامه دادی'));
@@ -563,7 +685,11 @@ try {
     await sleep(4000);
     const p = await panels(page);
     const n = watch.counts().complete ?? 0;
-    note('S5.4 double-click on the final advance fires exactly ONE complete (single-flight)', p.complete && n === 1, `complete=${n}`);
+    note(
+      'S5.4 double-click on the final advance fires exactly ONE complete (single-flight)',
+      p.complete && n === 1,
+      `complete=${n}`,
+    );
     note('S5.4b exactly one seal (no duplicate stamps)', p.seal);
     watch.stop();
     await page.close();
@@ -576,17 +702,38 @@ try {
     const page = await ctx.newPage();
     await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
     await sleep(1000);
-    const res = await page.evaluate(async ({ base }) => {
-      const r = await fetch(`${base}/api/curriculum/station`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: 'stn-kana-h2', score: 1 }),
-      });
-      const body = await r.json().catch(() => null);
-      return { status: r.status, code: body?.error?.code, msg: body?.error?.message, prereqs: body?.error?.details?.prerequisites?.map((p) => p.slug) };
-    }, { base: BASE });
-    note('S5.5a completing a prereq-locked station returns the structured 409', res.status === 409 && res.code === 'station/prerequisites_not_met', JSON.stringify(res));
-    note('S5.5b the Persian message names the unmet lesson and the payload is ordered', !!res.msg?.includes('کامل') && Array.isArray(res.prereqs) && res.prereqs[0] === 'stn-kana-h1', JSON.stringify(res.prereqs));
+    const res = await page.evaluate(
+      async ({ base }) => {
+        const r = await fetch(`${base}/api/curriculum/station`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            action: 'complete',
+            chapterSlug: 'kana-foundation-01',
+            stationSlug: 'stn-kana-h2',
+            score: 1,
+          }),
+        });
+        const body = await r.json().catch(() => null);
+        return {
+          status: r.status,
+          code: body?.error?.code,
+          msg: body?.error?.message,
+          prereqs: body?.error?.details?.prerequisites?.map((p) => p.slug),
+        };
+      },
+      { base: BASE },
+    );
+    note(
+      'S5.5a completing a prereq-locked station returns the structured 409',
+      res.status === 409 && res.code === 'station/prerequisites_not_met',
+      JSON.stringify(res),
+    );
+    note(
+      'S5.5b the Persian message names the unmet lesson and the payload is ordered',
+      !!res.msg?.includes('کامل') && Array.isArray(res.prereqs) && res.prereqs[0] === 'stn-kana-h1',
+      JSON.stringify(res.prereqs),
+    );
     await page.close();
     await ctx.close();
   }
@@ -595,13 +742,18 @@ try {
   {
     const page = await ctxA.newPage();
     const watch = watchStationApi(page);
-    await page.goto(`${BASE}/learn/kana-foundation-01/journey/stn-kana-h0?mode=review`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${BASE}/learn/kana-foundation-01/journey/stn-kana-h0?mode=review`, {
+      waitUntil: 'domcontentloaded',
+    });
     await sleep(1500);
     const badge = await page.evaluate(() => document.body.textContent?.includes('مرور'));
     note('S5.6a replay mode opens the completed station with the review badge', !!badge);
     const r = await walkStation(page, 'kana-foundation-01', 'stn-kana-h0', {});
     note('S5.6b the replay end shows the honest "nothing changed" panel', r.panels.replayEnded || r.panels.complete);
-    note('S5.6c replay fires NO complete request and stamps NO new seal', (watch.counts().complete ?? 0) === 0 && !(r.panels.seal && r.sealAnimate));
+    note(
+      'S5.6c replay fires NO complete request and stamps NO new seal',
+      (watch.counts().complete ?? 0) === 0 && !(r.panels.seal && r.sealAnimate),
+    );
     await shot(page, 's5-replay-end');
     watch.stop();
     await page.close();
@@ -612,24 +764,48 @@ try {
     const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 } });
     const page = await ctx.newPage();
     await fastForward(page, 'kana-foundation-01', ffUpTo('stn-kana-k8'));
-    const first = await page.evaluate(async ({ base }) => {
-      /* TASK-HANASO-22: k9 is a task_completed station (de-scored) — the honest
-       * completion contract carries taskCompleted:true; the idempotency under
-       * test is the SECOND call getting already:true. */
-      const r = await fetch(`${base}/api/curriculum/station`, {
-        method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: 'stn-kana-k9', score: 1, taskCompleted: true }),
-      });
-      return { status: r.status, already: (await r.json().catch(() => null))?.data?.already };
-    }, { base: BASE });
-    const second = await page.evaluate(async ({ base }) => {
-      const r = await fetch(`${base}/api/curriculum/station`, {
-        method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ action: 'complete', chapterSlug: 'kana-foundation-01', stationSlug: 'stn-kana-k9', score: 1, taskCompleted: true }),
-      });
-      return { status: r.status, already: (await r.json().catch(() => null))?.data?.already };
-    }, { base: BASE });
-    note('S5.7 a repeated complete is idempotent (200 + already:true)', first.status === 200 && second.status === 200 && second.already === true, JSON.stringify({ first, second }));
+    const first = await page.evaluate(
+      async ({ base }) => {
+        /* TASK-HANASO-22: k9 is a task_completed station (de-scored) — the honest
+         * completion contract carries taskCompleted:true; the idempotency under
+         * test is the SECOND call getting already:true. */
+        const r = await fetch(`${base}/api/curriculum/station`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            action: 'complete',
+            chapterSlug: 'kana-foundation-01',
+            stationSlug: 'stn-kana-k9',
+            score: 1,
+            taskCompleted: true,
+          }),
+        });
+        return { status: r.status, already: (await r.json().catch(() => null))?.data?.already };
+      },
+      { base: BASE },
+    );
+    const second = await page.evaluate(
+      async ({ base }) => {
+        const r = await fetch(`${base}/api/curriculum/station`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            action: 'complete',
+            chapterSlug: 'kana-foundation-01',
+            stationSlug: 'stn-kana-k9',
+            score: 1,
+            taskCompleted: true,
+          }),
+        });
+        return { status: r.status, already: (await r.json().catch(() => null))?.data?.already };
+      },
+      { base: BASE },
+    );
+    note(
+      'S5.7 a repeated complete is idempotent (200 + already:true)',
+      first.status === 200 && second.status === 200 && second.already === true,
+      JSON.stringify({ first, second }),
+    );
     await page.close();
     await ctx.close();
   }
@@ -642,10 +818,16 @@ try {
     await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
     await sleep(1500);
     const kept = await page.evaluate(() => {
-      const primary = [...document.querySelectorAll('a')].find((a) => (a.textContent || '').match(/شروع یادگیری|ادامهٔ درس|شروع درس بعدی|دروازهٔ فهم/));
+      const primary = [...document.querySelectorAll('a')].find((a) =>
+        (a.textContent || '').match(/شروع یادگیری|ادامهٔ درس|شروع درس بعدی|دروازهٔ فهم/),
+      );
       return primary ? (primary.textContent || '').trim() : null;
     });
-    note('S5.8a the SAME identity in a fresh context keeps its progress (next-lesson state, not start)', kept === 'شروع درس بعدی', kept);
+    note(
+      'S5.8a the SAME identity in a fresh context keeps its progress (next-lesson state, not start)',
+      kept === 'شروع درس بعدی',
+      kept,
+    );
     await page.close();
     await ctx2.close();
 
@@ -657,7 +839,7 @@ try {
       const t = document.body.textContent || '';
       return !t.includes('ادامهٔ یادگیری') && (t.includes('شروع یادگیری') || t.includes('شروع'));
     });
-    note('S5.8b a cookie-less GUEST sees the clean empty state (no other user\'s progress)', guestClean);
+    note("S5.8b a cookie-less GUEST sees the clean empty state (no other user's progress)", guestClean);
     await pg.close();
     await ctxG.close();
   }

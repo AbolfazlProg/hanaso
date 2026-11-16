@@ -27,10 +27,7 @@ export default function NotFound() {
           <Home aria-hidden className="size-4" />
           {fa.notFound.backHome}
         </Link>
-        <Link
-          href="/learn"
-          className="flex w-fit items-center gap-1 text-small text-ai underline underline-offset-4"
-        >
+        <Link href="/learn" className="flex w-fit items-center gap-1 text-small text-ai underline underline-offset-4">
           <Compass aria-hidden className="size-4" />
           {fa.notFound.goLearn}
         </Link>
