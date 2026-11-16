@@ -1,0 +1,23 @@
+# UI FINDING RESOLUTION MATRIX — HANASO-KANA-UI-REMEDIATION-03
+
+> تکلیف هر یافتهٔ UI ممیزی ۱ (backlog MISSION_3 + FINDINGS_REGISTER). هر وضعیت با شاهد مرورگر پشتیبانی می‌شود.
+
+| یافته | شرح | وضعیت نهایی | شاهد |
+|---|---|---|---|
+| **UI-01 / AUD-009 / M3-1.2** | آیکون قفل سمت راست + آیکون عمومی نوع | **NOT_A_BUG (در مبنا) + VERIFIED** — TASK-HANASO-22 پیش از این مأموریت معناشناسی را درست پیاده کرده بود: قفل فقط در نشانگر چپ (RowMarker)، تایل راست = هویت نوع درس (۱۳ نوع متمایز)، قفل نوع را حذف نمی‌کند (border-dashed + opacity-75 حالت قفل). راستی‌آزمایی مرورگر: کارت قفل دقیقاً ۱ قفل + ۱ تایل «درس کانا»؛ کیبورد Enter → shake+flash+reason؛ focus حفظ شد | probe CP-0 + تعامل CP-0 (1440px) |
+| **UI-02 / AUD-007 / M3-1.1** | پیام قفل: زیر fold در موبایل + محو ~۱s | **FIXED** — سه اصلاح: (۱) پیام بعد از کلیک با scrollIntoView(block:center) به دید می‌آید (فقط وقتی offscreen — با اسکرول کاربر نمی‌جنگد)؛ (۲) تایمر auto-dismiss 3.6s حذف شد — پیام ماندگار تا تعامل بعدی؛ (۳) متن همان پیش‌نیاز واقعی می‌ماند (نام اولین درس ناتمام). راستی‌آزمایی: 360/390/430 همه fully-visible بعد از کلیک روی نزدیک‌ترین ردیف به لبه، بدون سرریز افقی، ماندگار >4s | e1, e8 + اندازه‌گیری‌های CP-1/CP-2 |
+| **UI-03 / AUD-008 / M3-2.1** | کانای آموزشی inline ~16px (عملاً 14px در text-small) | **FIXED** — ریشه: وراثت text-small (14px/400) روی runهای کانا در جمله‌های آموزنده. اصلاح: کلاس `.ja-instruct` — floor در توکن خود پروژه `--text-ja` (17px) + وزن 500؛ فقط بزرگ می‌کند (max(1em,…)) پس سلسله‌مراتب بزرگ‌ترها دست‌نخورده. اعمال روی: pairHintFa، whyFa (kana-card + station-runner)، rule-step body، F1/F2/rationale (exercise-session). + کشف و رفع دو محل رندر خام کانا بدون bidi isolation (rationale/F2) با MixedFaJaText. قبل/بعد: 14px/400 بدون isolation → 17px/500 isolated | e3, e4 + اندازه‌گیری h1/h13 |
+| **UI-04a / AUD-015 / M3-2.3** | کنتراست متن روی پنل‌ها | **FIXED** — جاروی WCAG AA (اسکریپت contrast_sweep روی computed styles): ۱۰ نود متن واقعی روی توکن غیرمتنی ink-faint (3.68:1) پیدا و به ink-soft (6.7:1 — توکن مستند captions) ارتقا یافت: دقایق journey، شمارندهٔ ضربه، prompt-sound-note، auto-next hint، eliminated label، teaser hint، archive summary، VOICEVOX credit ×2، kanaStageAudioOnce. جداکننده‌های تزئینی (aria-hidden) و لیبل‌های disabled (معاف AA) دست نخوردند. بعد از اصلاح: journey/h1/h13 = صفر خطا | خروجی sweep CP-2 |
+| **UI-04b / AUD-015 / M3-2.2** | Auto-scroll به ایستگاه جاری | **NOT_A_BUG (verified)** — پیاده‌سازی TASK-HANASO-28 سالم است: یک‌بار در هر mount (latch)، فقط وقتی ردیف زیر fold، block:center، احترام reduced-motion (calm?auto:smooth در ۳ مسیر کد)، بدون جنگ با اسکرول کاربر. سناریوهای آزموده: load (scrollY 807 → ردیف در مرکز)، reload (دوباره درست)، اسکرول دستی به بالا (محترم — ماند در 0) | اندازه‌گیری‌های CP-2 |
+| **M3-3.1** | پیمایش کامل UI ایستگاه‌ها | **DONE (نمونه‌گیری هدفمند + probe خودکار)** — probe ریسپانسیو ۶ عرض × ۴ صفحهٔ کلیدی (journey/h1/p3/practice) + تعامل عمیق h0/h1/h13/k8/p2/p3: صفر سرریز/کلیپ/لمس‌هدف ریز/متن ریز. پیمایش تک‌تک ۳۸ ایستگاه در یک مأموریت UI معقول نبود؛ صفحات نمایندهٔ هر الگو (anchor-dialogue، kana-card، rule-step، MCQ، listening، writing، practice hub، mastery tabs) پوشش داده شدند | جدول §4 RESPONSIVE_QA_REPORT |
+| **M3-3.2** | Resume در سطح UI | **VERIFIED (در پوشش S2/S6)** — بعد از reload صفحهٔ journey، current row همان ردیف جاری واقعی بود و auto-scroll آن را در دید آورد؛ resume سطح تمرین (پرسش در جریان) قبلاً در exercise-session پیاده و تست‌شده است (restore in-flight question) | S2/S6 |
+| **M3-3.3** | RTL/Bidi گزینه‌های decode | **FIXED (سراسری)** — probe همهٔ runهای کانای بدون isolation را گرفت؛ همه به MixedFaJaText منتقل شدند: عناوین ردیف‌های journey («آموخته‌های あ/か/さ...»)، عناوین تب/سکشن nav، عناوین practice hub، rule-step H2، VOICEVOX creditها، F2/rationale. بعد از اصلاح: صفر run بدون isolation در همهٔ صفحات آزموده | probe CP-3 قبل/بعد |
+| **AUD-014 (UI-adjacent)** | ۵۹ گزینهٔ هم‌صدای عمدی | **NOT_A_BUG (بدون تغییر)** — مصون ماند؛ گارد نام‌بردن خط در مأموریت ۲ سبز | Mission 2 guards |
+
+## جمع‌بندی
+
+- **FIXED:** ۴ (UI-02، UI-03، UI-04a-contrast، M3-3.3-bidi)
+- **NOT_A_BUG / VERIFIED:** ۳ (UI-01، UI-04b-auto-scroll، AUD-014)
+- **DONE:** ۱ (M3-3.1 با روش مستندشده)
+- **DEFERRED:** ۰
+- هیچ یافتهٔ بدون شاهد مرورگر FIXED نشده است.

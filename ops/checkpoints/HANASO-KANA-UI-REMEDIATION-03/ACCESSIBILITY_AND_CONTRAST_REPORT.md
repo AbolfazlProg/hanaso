@@ -1,0 +1,51 @@
+# ACCESSIBILITY AND CONTRAST REPORT — HANASO-KANA-UI-REMEDIATION-03
+
+## ۱. روش سنجش کنتراست
+
+- ابزار: `scripts/contrast_sweep.py` + dump زندهٔ computed styles از مرورگر (bg نزدیک‌ترین والد opaque، نرمال‌سازی oklab→rgb، آلفا composite روی paper).
+- معیار: WCAG 2.1 AA — متن عادی 4.5:1؛ متن بزرگ (≥24px یا ≥18.66px bold) و اجزای UI 3:1؛ کنترل‌های disabled معاف.
+
+## ۲. یافته‌ها و اصلاحات (۱۰ نود متن + ۱ پنل)
+
+| عنصر | قبل | اصلاح | بعد |
+|---|---|---|---|
+| دقایق ردیف journey (۱۲′/۱۴′) | 3.68:1 (ink-faint) | → ink-soft | 6.7:1 ✓ |
+| شمارندهٔ ضربه h1 (۱/۳ ضربه) | 3.68:1 | → ink-soft | 6.7:1 ✓ |
+| یادداشت صدای پرامپت | 3.68:1 | → ink-soft | 6.7:1 ✓ |
+| hint خودکار بعدی | 3.68:1 | → ink-soft | 6.7:1 ✓ |
+| لیبل گزینهٔ حذف‌شده | 3.68:1 | → ink-soft | 6.7:1 ✓ |
+| teaser hint / archive summary | 3.68:1 | → ink-soft | 6.7:1 ✓ |
+| اعتبار VOICEVOX ×2 + audio-once | 3.68:1 | → ink-soft | 6.7:1 ✓ |
+| **متن دلیل قفل** | **4.37:1 (shu روی surface-warm)** | → shu-deep + bold | **5.8:1 ✓** |
+
+ریشهٔ الگو: توکن `--color-ink-faint` در tokens.css خودش «non-text only (3.6:1)» مستند است ولی ۱۰ نود متن از آن استفاده می‌کردند. اصلاح = استفاده از توکن درست (`ink-soft` — «captions 6.4:1»). **پالت و هویت AIZEN دست‌نخورد.**
+
+معاف‌های عمدی (مستند): جداکنندهٔ تزئینی `|` (aria-hidden، غیراطلاعاتی)؛ لیبل‌های disabled (AA exemption)؛ نشانگرهای شکلی (shape+marker — کنتراست غیرمتنی ≥3 برقرار).
+
+## ۳. نتیجهٔ نهایی sweep
+
+| صفحه | نودها | خطا |
+|---|---|---|
+| journey (390) | 27 | **0** |
+| stn-kana-h1 (390) | 24 | **0** |
+| stn-kana-h13 (390) | 22 | **0** |
+
+## ۴. دسترس‌پذیری تعامل
+
+| جنبه | وضعیت | شاهد |
+|---|---|---|
+| ردیف قفل = دکمهٔ واقعی با aria-label («... — قفل») | از قبل + تأیید | snapshot CP-0 |
+| پیام قفل: role=status + aria-live=polite | حفظ شد | DOM |
+| تایل نوع: role=img + aria-label («درس کانا») — هویت فقط با رنگ/شکل نیست | از قبل + تأیید | probe |
+| کیبورد: focus-visible روی همهٔ دکمه‌ها/لینک‌ها؛ Enter روی ردیف قفل → بازخورد کامل | تأیید تعاملی | CP-0 |
+| focus بعد از بازخورد قفل روی دکمه ماند (گم نشدن focus) | تأیید | CP-0 |
+| reduced-motion: shake خاموش (CSS:183)، auto-scroll/scroll-reason با `calm?auto:smooth` | code+CSS verified (سه مسیر: خطوط 336/355/370 section-journey) | grep + CSS |
+| نرمال‌سازی رنگ‌فضای oklab در ابزار سنجش (نه فقط rgb) | ابزار | contrast_sweep.py |
+| bidi: همهٔ runهای کانای visible داخل جزیره‌های `.ja-block/bdi` | probe صفر | CP-3 |
+| متن <12px | صفر | probe ۶ عرض |
+
+## ۵. محدودیت
+
+- سنجش با صفحه‌های نماینده در 390px انجام شد (کنتراست مستقل از عرض است؛ فقط متن‌های شرطی عرض — دقایق sm:hidden — جداگانه در 390 چک شدند).
+- screen reader واقعی (NVDA/VoiceOver) در sandbox موجود نیست؛ aria_roles/labels به‌صورت ساختاری راستی‌آزمایی شد.
+- شبیه‌سازی OS-level prefers-reduced-motion از agent-browser این نسخه پشتیبانی نمی‌شد (`emulate` ناموجود)؛ مسیرها با بازبینی کد + CSS تأیید شدند — به‌عنوان محدودیت صادقانه ثبت می‌شود.
