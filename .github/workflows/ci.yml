@@ -144,7 +144,6 @@ jobs:
           echo "$health" | grep -q '"ok":true' || { echo "health not ok"; exit 1; }
           echo "$health" | grep -q '"service":"hanaso-web"' || { echo "wrong service"; exit 1; }
           echo "smoke (DB-less contract): ALL GREEN"
-          '
 
   docker:
     name: image → GHCR (tag = SHA)
