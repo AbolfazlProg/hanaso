@@ -1,0 +1,44 @@
+# VPS CONNECTION TEST REPORT — read-only probe from GitHub Actions Runner
+
+> گام ۴-۵ دستور مالک (تست اتصال Runner→VPS، فقط احراز هویت/شناسایی، بدون هیچ تغییری).
+
+## ماتریس دو اکانت GitHub (تست مستقل، بدون عارضهٔ جانبی)
+
+| قابلیت | توکن A | توکن B |
+|---|---|---|
+| هویت | `shorbame-arch` | `AbolfazlProg` (مالک ریپو) |
+| خواندن ریپو (`ls-remote`) | ✅ | ✅ |
+| Push / ایجاد branch / مدیریت workflow | ❌ 403 | ✅ (probe branch ساخته و بلافاصله پاک شد) |
+| `workflow_dispatch` | ❌ 403 | ✅ (422 روی ref آزمایشی = مجاز) |
+| Actions Secrets API | ❌ 403 | ✅ (200؛ ۴ secret موجود) |
+
+**تصمیم (طبق دستور مالک: «از اکانتی استفاده کن که بتواند عملیات را کامل انجام دهد»):** همهٔ عملیات با توکن B (اکانت مالک). توکن A صرفاً خواندنی بود و استفاده نشد. اسکریپت تست: `scripts/token_matrix.py`.
+
+## تست اتصال واقعی Runner→VPS (read-only)
+
+- Workflow: `.github/workflows/vps-connection-test.yml` (کامیت `12daa34`)
+- قرارداد فقط-خواندنی: هیچ فایل/سرویسی تغییر/ریستارت نمی‌شود؛ فقط `hostname`، `uptime`، `docker ps`، `docker inspect`، `ls /opt/hanaso`
+- احراز هویت: رمز فقط از Secret `VPS_PASSWORD` از طریق env `SSHPASS` (در لاگ `***`)
+
+**نتیجهٔ اجرا:** [run 43860840907](https://github.com/AbolfazlProg/hanaso/actions/runs/43860840907) → **failure در pre-check TCP:**
+
+```
+##[error]VPS port *** unreachable from this runner
+```
+
+## جمع شواهد مسدودیت VPS:22 (۴ مسیر مستقل)
+
+| # | مبدا | نتیجه |
+|---|---|---|
+| ۱ | سندباکس (raw TCP) | timeout — در حالی که gitlab.com:22 از همان سندباکس باز است ⇒ محدودیت سمت VPS |
+| ۲-۳ | دو runner ابری گیتهاب (Azure، IP متفاوت) در deploy workflow | `ssh: connect … timed out` |
+| ۴ | runner سوم در probe اختصاصی این بار | timeout در TCP pre-check |
+
+پورت‌های جایگزین (2222/8443/2200/10000/22222) بسته، IPv6 موجود نیست، webhook/cron دپلوی روی VPS وجود ندارد.
+
+**نتیجهٔ فنی قطعی:** فایروال VPS فقط SSH از IPهای مجاز (IP مالک) می‌پذیرد. این رفتار امنیتی درست است؛ برای دپلوی خودکار از Actions باید یکی از این دو مسیر توسط مالک باز شود:
+
+1. **باز کردن موقت SSH به NAT pool سندباکس** (`8.212.10.159`، `47.57.0.0/16` — چرخشی): آن‌وقت مستقیم و بدون واسطه دپلوی می‌کنم. باز کردن به رنج‌های Actions گیتهاب عملی نیست (۸٬۳۵۰ CIDR).
+2. **مسیر pull-based**: همان الگویی که امروز صبح جواب داد — سرور خودش artifactهای پین‌شده را از GitHub می‌کشد (جزئیات در GITHUB_ACTIONS_DEPLOYMENT_REPORT.md).
+
+هیچ‌کدام از اقدامات غیرمستند (دستکاری دستی فایل‌های سرور بدون زنجیرهٔ git، افزودن backdoor/cron جدید) انجام نشد — طبق قواعد امنیتی مأموریت.
