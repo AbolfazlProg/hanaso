@@ -74,8 +74,9 @@ jobs:
           set -euo pipefail
           SHA='${{ inputs.target_sha }}'
           VER='${{ inputs.target_version }}'
-          UPDATER_SHA="$(curl -fsS "https://api.github.com/repos/AbolfazlProg/hanaso/commits?path=infra/deploy/update-hanaso.sh&per_page=1" | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["sha"])')"
-          echo "updater ref (latest commit touching infra/deploy/update-hanaso.sh): $UPDATER_SHA"
+          # immutable: the updater runs from EXACTLY the commit this workflow was dispatched on
+          UPDATER_SHA="${{ github.sha }}"
+          echo "updater pinned at the dispatch commit: $UPDATER_SHA"
           export SSHPASS
           # StrictHostKeyChecking=accept-new: first-use TOFU; password via SSHPASS env (not argv, not logged)
           sshpass -e ssh -p "${{ secrets.VPS_SSH_PORT }}" -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/tmp/gh_known_hosts -o ConnectTimeout=25 \
