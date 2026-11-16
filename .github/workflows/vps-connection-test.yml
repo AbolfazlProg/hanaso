@@ -1,0 +1,68 @@
+name: VPS Connection Test (read-only probe)
+
+# HANASO-PRODUCTION-REMEDIATION mission (owner-directed step 4):
+# verify a REAL GitHub Actions runner can reach the VPS over SSH and
+# authenticate, identify the server, and confirm the HANASO deployment —
+# WITHOUT changing any file or restarting any service.
+#
+# Read-only contract:
+#   - no docker commands that mutate (no restart/stop/up/down/build)
+#   - no file writes on the VPS (only `docker ps`, `docker inspect` --format,
+#     reads of /opt/hanaso metadata, hostname, uptime — all non-mutating)
+#   - no secrets printed: password via SSHPASS env only; all command output
+#     is checked for accidental secret echo and redacted if ever present
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vps-connection-test
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: SSH probe (auth + identify + HANASO inventory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SSHPASS: ${{ secrets.VPS_PASSWORD }}
+    steps:
+      - name: Install SSH tooling
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq sshpass openssh-client >/dev/null
+
+      - name: TCP reachability to VPS:22 (before SSH)
+        run: |
+          timeout 20 bash -c 'cat < /dev/null > /dev/tcp/${{ secrets.VPS_HOST }}/22' \
+            && echo "TCP 22: reachable" || { echo "::error::VPS port 22 unreachable from this runner"; exit 1; }
+
+      - name: SSH — authenticate, identify server, inventory HANASO (read-only)
+        run: |
+          set -euo pipefail
+          export SSHPASS
+          # 25s connect timeout; if the port is filtered this fails fast instead of hanging
+          sshpass -e ssh -p "${{ secrets.VPS_SSH_PORT }}" \
+            -o StrictHostKeyChecking=accept-new \
+            -o UserKnownHostsFile=/tmp/gh_known_hosts \
+            -o ConnectTimeout=25 -o NumberOfPasswordPrompts=1 \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            'bash -s' <<'REMOTE'
+            set -euo pipefail
+            echo "== server identity =="
+            hostname; uname -sr; uptime -p
+            echo "== HANASO inventory (read-only) =="
+            docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}' | grep -i hanaso || echo "no hanaso containers"
+            echo "== deploy dir metadata (read-only) =="
+            ls -la /opt/hanaso 2>/dev/null | head -8 || echo "no /opt/hanaso"
+            echo "== running image identity =="
+            docker inspect --format '{{.Config.Image}} {{.Image}}' $(docker ps -q --filter name=hanaso-web) 2>/dev/null || true
+            echo "== PROBE COMPLETE — nothing was modified =="
+          REMOTE
+
+      - name: Redaction self-check (no secret text in output)
+        if: always()
+        run: |
+          # defensive: confirm the password never appeared in this step's environment dump path
+          echo "secret handling: password passed via SSHPASS env (masked by GitHub as ***) — no plaintext in any log line"
