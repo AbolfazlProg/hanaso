@@ -240,7 +240,7 @@ export function JourneyHome(props: JourneyHomeProps) {
           <p className="mt-1 max-w-prose text-small leading-[var(--leading-fa)] text-ink-soft">
             {reveal.teaser.topicFa}
           </p>
-          <p className="mt-3 text-caption text-ink-faint">{fa.curriculum.teaserHint}</p>
+          <p className="mt-3 text-caption text-ink-soft">{fa.curriculum.teaserHint}</p>
         </aside>
       ) : null}
 
@@ -249,7 +249,7 @@ export function JourneyHome(props: JourneyHomeProps) {
         <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 px-4 py-3 text-body font-bold text-ink marker:hidden">
           <LibraryBig aria-hidden className="size-5 text-ink-soft" />
           {fa.curriculum.archiveTitle}
-          <span className="ms-auto text-caption text-ink-faint">{fa.curriculum.archiveSummary}</span>
+          <span className="ms-auto text-caption text-ink-soft">{fa.curriculum.archiveSummary}</span>
         </summary>
         <div className="border-t border-ink-faint/50 px-4 py-3">
           {reveal.archive.length === 0 ? (

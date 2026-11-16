@@ -442,7 +442,7 @@ export function KanaCard({
           {readingLatin}
         </span>
         {audioUrls ? (
-          <span className="text-caption text-ink-faint">{fa.curriculum.kanaStageAudioOnce}</span>
+          <span className="text-caption text-ink-soft">{fa.curriculum.kanaStageAudioOnce}</span>
         ) : (
           <span className="flex items-center gap-1 text-caption text-ink-faint">
             <Ear aria-hidden className="size-3" />
@@ -762,7 +762,7 @@ export function KanaCard({
                   />
                 );
               })}
-              <span className="text-caption text-ink-faint">
+              <span className="text-caption text-ink-soft">
                 {faNum(currentStrokeIndex + 1)} / {faNum(totalStrokes)} {fa.curriculum.kanaStrokesWord}
               </span>
             </div>

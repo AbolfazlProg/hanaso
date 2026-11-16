@@ -504,7 +504,9 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                 </p>
                 <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">{row.objectiveFa}</p>
               </div>
-              <span className="flex shrink-0 items-center gap-2 text-caption text-ink-faint">
+              {/* UI-04/AUD-015: minutes are real text — ink-faint is documented
+                  non-text-only (3.6:1); ink-soft is the caption token (6.7:1 AA). */}
+              <span className="flex shrink-0 items-center gap-2 text-caption text-ink-soft">
                 <span className="sm:hidden" aria-hidden>{fa.curriculum.rowMinutesShort(row.estMinutes)}</span>
                 <span className="hidden sm:inline">{fa.curriculum.rowMinutes(row.estMinutes)}</span>
                 {/* TASK-HANASO-22: the RIGHT tile is the CONTENT IDENTITY (never a

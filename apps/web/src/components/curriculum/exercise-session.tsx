@@ -711,7 +711,7 @@ export function ExerciseSession({
             ariaLabel={fa.curriculum.exHearQuestionSoundAria}
             dataAttr="prompt"
           />
-          <span className="text-caption leading-[var(--leading-fa)] text-ink-faint">
+          <span className="text-caption leading-[var(--leading-fa)] text-ink-soft">
             {fa.curriculum.exPromptSoundNote}
           </span>
         </div>
@@ -1072,7 +1072,7 @@ export function ExerciseSession({
           </button>
         )}
         {feedback?.correct && !isLast && (
-          <span aria-hidden className="self-center text-caption text-ink-faint" data-autonext-hint>
+          <span aria-hidden className="self-center text-caption text-ink-soft" data-autonext-hint>
             {fa.curriculum.autoNextHint}
           </span>
         )}
@@ -1156,7 +1156,7 @@ export function OptionRow({ options, selected, eliminated, locked, onSelect, ver
               </span>
             )}
             {isEliminated && (
-              <span className="mt-1 block text-caption text-ink-faint">{fa.curriculum.eliminatedOption}</span>
+              <span className="mt-1 block text-caption text-ink-soft">{fa.curriculum.eliminatedOption}</span>
             )}
           </button>
         );
