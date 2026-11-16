@@ -69,7 +69,7 @@
 set -euo pipefail
 
 TARGET_SHA="${HANASO_TARGET_SHA:-df67d6af58544731b83b3396a3858eaefad2b674}"
-TARGET_VERSION="${HANASO_TARGET_VERSION:-1.1.0-hanaso29-r01}"
+TARGET_VERSION="${HANASO_TARGET_VERSION:-1.1.0-hanaso30-r01}"
 TARGET_BRANCH="${HANASO_TARGET_BRANCH:-fix/TASK-HANASO-20-onboarding}"
 REPO_URL="${HANASO_REPO_URL:-https://github.com/AbolfazlProg/hanaso.git}"
 SRC_DIR="${HANASO_SRC_DIR:-${HANASO_REPO_DIR:-/opt/hanaso-src}}"   # HANASO_REPO_DIR = v1 legacy alias
