@@ -201,6 +201,21 @@ body {
   font-family: var(--font-ja-ud);
 }
 
+/*
+ * HANASO-KANA-UI-REMEDIATION-03 (UI-03 / AUD-008) — instructional inline kana.
+ * Distinction glyphs embedded in TEACHING sentences (ぬ vs め، あ vs お…) used
+ * to inherit text-small (14px/400) from their Persian parent — too small to
+ * actually tell the pair apart. This companion class floors every inline
+ * Japanese run at the project's own JP body token (--text-ja, 17px) with a
+ * medium weight, without touching the Persian scale around it. It only ever
+ * ENLARGES (min, not fixed) so larger parents keep their hierarchy.
+ */
+.ja-instruct .ja-block,
+.ja-block.ja-instruct {
+  font-size: max(1em, var(--text-ja));
+  font-weight: 500;
+}
+
 /* -- FuriganaText (spike M0-08 §6-2 — verbatim contract) ------------------- */
 .fg {
   /* ریشهٔ FuriganaText — جزیرهٔ LTR اجباری (شرط صحت، نه سلیقه) */

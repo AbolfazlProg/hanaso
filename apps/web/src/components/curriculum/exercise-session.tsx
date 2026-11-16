@@ -35,6 +35,7 @@ import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { mergeEliminated } from '@/modules/curriculum/station-walk';
 import { JaBlock } from '@/components/patterns/ja-block';
+import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import { getCachedAudio, preloadAudio, reportPlaybackError } from '@/modules/audio/client-cache';
 import { LineAudioButton } from './line-audio-button';
 
@@ -955,13 +956,13 @@ export function ExerciseSession({
           {/* the teaching copy — never a duplicate of the status title (the
               server's first-try correct copy is exactly «درست!») */}
           {feedback.feedbackFa !== fa.curriculum.correct && (
-            <p className="text-body leading-[var(--leading-fa)]">{feedback.feedbackFa}</p>
+            <p className="ja-instruct text-body leading-[var(--leading-fa)]">{feedback.feedbackFa}</p>
           )}
           {/* TASK-HANASO-20 (BUG-007): the picked distractor's OWN rationale —
               why *this* choice is wrong, straight under the ladder line. */}
           {feedback.distractorRationaleFa && (
-            <p data-distractor-rationale className="text-small leading-[var(--leading-fa)] text-ink-soft">
-              {feedback.distractorRationaleFa}
+            <p data-distractor-rationale className="ja-instruct text-small leading-[var(--leading-fa)] text-ink-soft">
+              <MixedFaJaText text={feedback.distractorRationaleFa} />
             </p>
           )}
           {feedback.reveal && (
@@ -1017,11 +1018,11 @@ export function ExerciseSession({
           {hintFa !== null && !feedback.correct && (
             <p
               role="status"
-              className="rounded-md border border-ai/40 bg-indigo-wash/30 p-3 text-small leading-[var(--leading-fa)] text-ink"
+              className="ja-instruct rounded-md border border-ai/40 bg-indigo-wash/30 p-3 text-small leading-[var(--leading-fa)] text-ink"
               data-testid="hint-text"
             >
               <span className="font-bold">{fa.curriculum.showHint}: </span>
-              {hintFa}
+              <MixedFaJaText text={hintFa} />
             </p>
           )}
         </div>

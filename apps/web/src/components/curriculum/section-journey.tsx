@@ -237,14 +237,18 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
   const firstRender = useRef(true);
 
   /* TASK-HANASO-22 — the locked-row click feedback state: which row shakes,
-   * and the honest Persian notice (with the first unmet prerequisite). */
+   * and the honest Persian notice (with the first unmet prerequisite).
+   *
+   * HANASO-KANA-UI-REMEDIATION-03 (UI-02 / AUD-007): the notice must be READ.
+   *  - it scrolls the row's notice into view when the click happened near the
+   *    fold (mobile measured: the reason used to render up to ~99px BELOW the
+   *    viewport — the learner only saw the shake);
+   *  - it PERSISTS (no short auto-dismiss): the row keeps its explanation
+   *    until another row is clicked or the learner navigates away — matching
+   *    the journey backlog's «state درون‌خطی ماندگار تا تعامل بعدی».
+   * The 3.6s auto-dismiss timer is therefore removed. */
   const [lockedFeedback, setLockedFeedback] = useState<{ slug: string; message: string } | null>(null);
-  const lockedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => {
-    return () => {
-      if (lockedTimerRef.current !== null) clearTimeout(lockedTimerRef.current);
-    };
-  }, []);
+  const lockedReasonRef = useRef<HTMLParagraphElement | null>(null);
 
   const onLockedClick = useCallback((row: SectionRowDto) => {
     const first = row.blockedByTitlesFa?.[0];
@@ -252,9 +256,21 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
       ? `این درس هنوز باز نشده — برای باز کردنش، ابتدا «${first}» را کامل کن.`
       : 'این درس هنوز باز نشده — درس‌های پیش از آن را کامل کن.';
     setLockedFeedback({ slug: row.slug, message });
-    if (lockedTimerRef.current !== null) clearTimeout(lockedTimerRef.current);
-    lockedTimerRef.current = setTimeout(() => setLockedFeedback(null), 3600);
   }, []);
+
+  /* once the notice renders: bring it into view (calm = instant jump).
+   * Only when it actually sits below the fold or off-screen — never fights
+   * a learner who already sees the row (same rule as the TASK-28 auto-scroll). */
+  useEffect(() => {
+    if (!lockedFeedback) return;
+    const el = lockedReasonRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const offscreen = rect.top < 0 || rect.bottom > window.innerHeight;
+    if (!offscreen) return;
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' });
+  }, [lockedFeedback]);
 
   /* live refresh on tab focus (walk state changed in another tab) */
   const nextStationSlugRef = useRef(nextStationSlug);
@@ -531,10 +547,13 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
               )}
               {lockedFeedback?.slug === row.slug ? (
                 <p
+                  ref={lockedReasonRef}
                   role="status"
                   aria-live="polite"
                   data-locked-reason
-                  className="feedback-in border-t border-ink-faint/40 bg-surface-warm px-4 py-2.5 text-small leading-[var(--leading-fa)] text-shu sm:px-5"
+                  /* UI-03/UI-04: shu-deep passes AA (5.8:1) on surface-warm where
+                   * the flash color shu itself measured 4.37:1. */
+                  className="feedback-in border-t border-ink-faint/40 bg-surface-warm px-4 py-2.5 text-small font-bold leading-[var(--leading-fa)] text-shu-deep sm:px-5"
                 >
                   {lockedFeedback.message}
                 </p>

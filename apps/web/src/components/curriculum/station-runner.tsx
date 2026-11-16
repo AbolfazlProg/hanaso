@@ -1684,7 +1684,7 @@ function BlockView({
             <Sparkles aria-hidden className="size-5" />
             {block.titleFa}
           </h2>
-          <p className="mt-3 text-body leading-[var(--leading-fa)] text-ink">
+          <p className="ja-instruct mt-3 text-body leading-[var(--leading-fa)] text-ink">
             <MixedFaJaText text={block.bodyFa} />
           </p>
         </section>
@@ -1985,7 +1985,7 @@ function BlockView({
                   {example.reading}
                 </p>
                 <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{example.fa}</p>
-                <p className="mt-1 text-small text-ink-soft">
+                <p className="ja-instruct mt-1 text-small text-ink-soft">
                   <MixedFaJaText text={example.whyFa} />
                 </p>
                 {/* Addendum-5 §6 — a SHORT pronunciation guide, authored ONLY for

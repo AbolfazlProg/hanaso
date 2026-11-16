@@ -549,7 +549,10 @@ export function KanaCard({
           ))}
         </div>
         {mn.pairHintFa ? (
-          <p className="mt-3 text-small leading-[var(--leading-fa)] text-ink">
+          /* UI-03/AUD-008: the distinction glyphs (ぬ/め…) in this teaching
+           * sentence must be readable — ja-instruct floors the kana runs at
+           * --text-ja (17px) instead of the inherited 14px. */
+          <p className="ja-instruct mt-3 text-small leading-[var(--leading-fa)] text-ink">
             <MixedFaJaText text={mn.pairHintFa} />
           </p>
         ) : null}
@@ -631,7 +634,7 @@ export function KanaCard({
       ) : null}
       <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{ex.meaningFa}</p>
       {ex.whyFa ? (
-        <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
+        <p className="ja-instruct mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
           <MixedFaJaText text={ex.whyFa} />
         </p>
       ) : null}
