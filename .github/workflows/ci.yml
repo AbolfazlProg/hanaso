@@ -195,12 +195,19 @@ jobs:
 
       - name: Write the compose env file (throwaway — never committed)
         run: |
+          # HANASO-PRODUCTION-REMEDIATION: TASK-HANASO-24 CP-07a (14d9d3a, Nov 13)
+          # made the production web container refuse requests without
+          # HANASO_SESSION_SECRET (per-request 500). The VPS .env carries the real
+          # secret; this throwaway CI env needs an ephemeral one (openssl, per-run,
+          # never a real value — same pattern as the DB-less smoke step).
           cat > infra/deploy/learn-kotodama/.env <<'EOF'
           HANASO_WEB_IMAGE=hanaso:compose-smoke
+          HANASO_SESSION_SECRET=ephemeral-compose-smoke-secret-PLACEHOLDER
           POSTGRES_USER=hanaso
           POSTGRES_PASSWORD=hanaso-compose-smoke
           POSTGRES_DB=hanaso
           EOF
+          sed -i "s/ephemeral-compose-smoke-secret-PLACEHOLDER/$(openssl rand -hex 32)/" infra/deploy/learn-kotodama/.env
 
       - name: Staged bring-up 1/2 — postgres, then pgbouncer (healthcheck proves pg_isready ships)
         run: |
