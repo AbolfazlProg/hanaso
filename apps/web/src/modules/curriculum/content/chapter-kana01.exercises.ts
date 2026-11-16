@@ -11145,13 +11145,13 @@ export const KANA_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'کدام واژه یعنی «امروز»؟',
     options: [
-      { id: 'a', label: 'きよう' },
+      { id: 'a', label: 'かいしゃ' },
       { id: 'b', label: 'きょう' },
       { id: 'c', label: 'きょ' },
     ],
     correctOptionId: 'b',
     distractorRationaleFa: {
-      a: '「よ» بزرگ است — «کی‌یو» می‌شود، «کیوو» نه.',
+      a: '«کای‌شا» = شرکت — واژهٔ دیگری از همین درس.',
       c: 'این فقط «کیو» است — 「う» آخر جا افتاده.',
     },
     feedback: {
@@ -11169,12 +11169,12 @@ export const KANA_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'کدام واژه یعنی «پزشک»؟',
     options: [
-      { id: 'a', label: 'いしや' },
+      { id: 'a', label: 'しゃしん' },
       { id: 'b', label: 'いしゃ' },
       { id: 'c', label: 'しゃい' },
     ],
     correctOptionId: 'b',
-    distractorRationaleFa: { a: '「しや» بزرگ = ای-شی-یا.', c: 'ترتیب واج‌ها را ببین.' },
+    distractorRationaleFa: { a: '«شاشِن» = عکس — واژهٔ دیگری از همین درس.', c: 'ترتیب واج‌ها را ببین.' },
     feedback: {
       f1Fa: 'فشرده یا جدا؟',
       f2HintFa: 'ای-شا.',
@@ -11449,12 +11449,12 @@ export const KANA_EXERCISES: Exercise[] = [
     options: [
       { id: 'a', label: 'いしょ' },
       { id: 'b', label: 'いっしょ' },
-      { id: 'c', label: 'いっしよ' },
+      { id: 'c', label: 'さっき' },
     ],
     correctOptionId: 'b',
     distractorRationaleFa: {
       a: 'فشار っ جا افتاده — این واژهٔ دیگری است/ناموجود.',
-      c: '「よ» بزرگ است؛ «شو» فشرده لازم است.',
+      c: '«ساک‌کی» = همین الان — واژهٔ دیگری از همین درس.',
     },
     feedback: {
       f1Fa: 'یک っ کوچک و یک ょ کوچک — هر دو را ببین.',

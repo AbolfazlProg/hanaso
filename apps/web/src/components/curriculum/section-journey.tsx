@@ -479,7 +479,18 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
           const rowRef = isCurrent && !autoScrolledRef.current ? currentRowRef : undefined;
           const body = (
             <>
-              <RowMarker action={row.action} flash={shaking} />
+              {/* PRODUCTION-REMEDIATION §3.1 (RTL fix): in dir=rtl the FIRST DOM
+               * child renders on the visual RIGHT. The station-type tile goes
+               * FIRST (visual right = the identity side), the access marker
+               * (lock/start/continue/done) goes LAST (visual left) — matching
+               * the owner-approved semantics: left = lock state, right = type. */}
+              <span className="flex shrink-0 items-center gap-2 text-caption text-ink-soft">
+                <span className="sm:hidden" aria-hidden>{fa.curriculum.rowMinutesShort(row.estMinutes)}</span>
+                <span className="hidden sm:inline">{fa.curriculum.rowMinutes(row.estMinutes)}</span>
+                {/* TASK-HANASO-22: this tile is the CONTENT IDENTITY (never a
+                    second lock — the duplicate-lock fix). Locked stays recognizable. */}
+                <ContentTypeTile kind={row.contentKind} locked={locked} />
+              </span>
               <div className="min-w-0 flex-1">
                 <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-body font-bold text-ink">
                   <MixedFaJaText text={row.titleFa} />
@@ -505,15 +516,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                 </p>
                 <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft"><MixedFaJaText text={row.objectiveFa} /></p>
               </div>
-              {/* UI-04/AUD-015: minutes are real text — ink-faint is documented
-                  non-text-only (3.6:1); ink-soft is the caption token (6.7:1 AA). */}
-              <span className="flex shrink-0 items-center gap-2 text-caption text-ink-soft">
-                <span className="sm:hidden" aria-hidden>{fa.curriculum.rowMinutesShort(row.estMinutes)}</span>
-                <span className="hidden sm:inline">{fa.curriculum.rowMinutes(row.estMinutes)}</span>
-                {/* TASK-HANASO-22: the RIGHT tile is the CONTENT IDENTITY (never a
-                    second lock — the duplicate-lock fix). Locked stays recognizable. */}
-                <ContentTypeTile kind={row.contentKind} locked={locked} />
-              </span>
+              <RowMarker action={row.action} flash={shaking} />
             </>
           );
 
