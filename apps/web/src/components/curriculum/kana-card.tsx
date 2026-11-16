@@ -994,7 +994,7 @@ export function KanaCard({
           >
             مجوز
           </a>
-          {' · '}صدا: VOICEVOX:ぞん子
+          {' · '}صدا: <MixedFaJaText text="VOICEVOX:ぞん子" />
         </p>
       </details>
 

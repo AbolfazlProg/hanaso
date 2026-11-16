@@ -1682,7 +1682,7 @@ function BlockView({
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <h2 className="flex items-center gap-2 text-h3 font-bold text-indigo">
             <Sparkles aria-hidden className="size-5" />
-            {block.titleFa}
+            <MixedFaJaText text={block.titleFa} />
           </h2>
           <p className="ja-instruct mt-3 text-body leading-[var(--leading-fa)] text-ink">
             <MixedFaJaText text={block.bodyFa} />

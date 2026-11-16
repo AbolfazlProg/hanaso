@@ -55,6 +55,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { fa } from '@/messages/fa';
+import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 
 /* ------------------------------------------------------------------ DTOs */
 
@@ -437,7 +438,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
         {section.goalFa ? (
           <p className="relative mt-3 max-w-prose text-small leading-[var(--leading-fa)] text-indigo-mist">
             <span className="font-bold text-paper">{fa.curriculum.sectionGoalLabel}: </span>
-            {section.goalFa}
+            <MixedFaJaText text={section.goalFa} />
           </p>
         ) : null}
         <p className="relative mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-caption text-indigo-mist">
@@ -481,7 +482,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
               <RowMarker action={row.action} flash={shaking} />
               <div className="min-w-0 flex-1">
                 <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-body font-bold text-ink">
-                  {row.titleFa}
+                  <MixedFaJaText text={row.titleFa} />
                   {isCurrent ? (
                     <span className="inline-flex items-center gap-1 rounded-full border border-indigo/40 bg-indigo-wash px-2 py-0.5 text-caption font-bold text-indigo">
                       <MapPin aria-hidden className="size-3" />
@@ -502,7 +503,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                     </span>
                   ) : null}
                 </p>
-                <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">{row.objectiveFa}</p>
+                <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft"><MixedFaJaText text={row.objectiveFa} /></p>
               </div>
               {/* UI-04/AUD-015: minutes are real text — ink-faint is documented
                   non-text-only (3.6:1); ink-soft is the caption token (6.7:1 AA). */}
@@ -579,7 +580,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
             <ArrowRight aria-hidden className="size-5 shrink-0 text-ink-soft" />
             <span className="min-w-0">
               <span className="block text-caption text-ink-soft">{fa.curriculum.sectionPrev}</span>
-              <span className="block truncate text-body font-bold text-ink">{prev.titleFa}</span>
+              <span className="block truncate text-body font-bold text-ink"><MixedFaJaText text={prev.titleFa} /></span>
             </span>
           </button>
         ) : (
@@ -600,7 +601,7 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                 {fa.curriculum.sectionNext}
                 {next.status === 'locked' ? ` — ${fa.curriculum.sectionStatusLocked}` : ''}
               </span>
-              <span className="block truncate text-body font-bold">{next.titleFa}</span>
+              <span className="block truncate text-body font-bold"><MixedFaJaText text={next.titleFa} /></span>
               {next.status === 'locked' ? (
                 <span className="block text-caption text-indigo-mist">{fa.curriculum.sectionNextLockedHint}</span>
               ) : null}

@@ -14,6 +14,7 @@
 import { useState } from 'react';
 import { ArrowLeft, CircleCheck, MessageCircleQuestion, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
+import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 import type { Station } from '@/modules/curriculum/types';
 import { DialogueScene } from '@/app/poc/dialogue/dialogue-scene';
@@ -155,7 +156,8 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
       {bundle.audio.audioSource === 'voicevox' && bundle.audio.voiceCredits?.length ? (
         <p className="flex items-center gap-1.5 text-caption text-ink-soft">
           <Volume2 aria-hidden className="size-3.5 shrink-0" />
-          صداها با موتور VOICEVOX از پیش تولید شده‌اند — {bundle.audio.voiceCredits.join('・')}
+          صداها با موتور VOICEVOX از پیش تولید شده‌اند —{' '}
+          <MixedFaJaText text={bundle.audio.voiceCredits.join('・')} />
         </p>
       ) : null}
 

@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { SiteNav } from '@/components/site-nav';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { fa } from '@/messages/fa';
+import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import { loadChapterBundle } from '@/modules/curriculum/server';
 import { stationAvailability } from '@/modules/curriculum/journey';
 import { getLearningObjectStore, getPracticeSessionStore, getStationProgressStore } from '@/lib/poc/stores';
@@ -98,7 +99,7 @@ export default async function PracticePage() {
                 aria-disabled="true"
                 className="flex flex-col gap-1 rounded-2xl border border-dashed border-line p-4 opacity-70"
               >
-                <span className="text-body font-bold text-ink-soft">{s.titleFa}</span>
+                <span className="text-body font-bold text-ink-soft"><MixedFaJaText text={s.titleFa} /></span>
                 <span className="text-small text-ink-soft">{fa.practice.lockedHint}</span>
               </div>
             ) : (
@@ -108,7 +109,7 @@ export default async function PracticePage() {
                 className="group flex flex-col gap-1 rounded-2xl border border-line bg-paper p-4 transition-colors hover:border-indigo"
               >
                 <span className="flex items-center gap-2">
-                  <span className="text-body font-bold text-indigo group-hover:underline">{s.titleFa}</span>
+                  <span className="text-body font-bold text-indigo group-hover:underline"><MixedFaJaText text={s.titleFa} /></span>
                   {s.completed && <span className="text-small text-sky">{fa.practice.doneLabel}</span>}
                 </span>
                 <span className="text-small text-ink-soft">{s.objectiveFa}</span>
