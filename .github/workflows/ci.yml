@@ -127,25 +127,23 @@ jobs:
           done
           if [ "$READY" -ne 1 ]; then echo "server not healthy on :3100" >&2; exit 1; fi
           # HANASO-PRODUCTION-REMEDIATION: scripts/smoke.sh asserts /api/ready
-          # ok:true — the VPS contract (DB present). THIS step's contract is the
-          # opposite ("no DATABASE_URL"), and after TASK-HANASO-29 (Nov 13) the
-          # correct expectation there is the HONEST 503 (production must never
-          # call a DATABASE-less process "ready"). Assert both sides explicitly:
-          # boot proof + honest readiness refusal + home render.
+          # ok:true + home render — the VPS/compose contract (DB present). THIS
+          # step's contract is the opposite ("no DATABASE_URL"), and after
+          # TASK-HANASO-29 (Nov 13) the honest expectations there are:
+          #   /api/health -> ok:true (boot proof)
+          #   /api/ready  -> 503 ok:false (production refuses DATABASE-less readiness)
+          #   /           -> 500 assertProductionDatabase (home render needs the
+          #                   progress store; covered WITH a DB by compose-smoke
+          #                   and the VPS updater gates instead)
           READY_CODE=$(curl -s -o /tmp/ready.json -w '%{http_code}' http://127.0.0.1:3100/api/ready)
           [ "$READY_CODE" = "503" ] || { echo "::error::/api/ready expected honest 503 without DATABASE_URL, got $READY_CODE"; exit 1; }
           grep -q '"ok":false' /tmp/ready.json || { echo "::error::/api/ready body must be ok:false"; cat /tmp/ready.json; exit 1; }
-          bash -c '
-            set -euo pipefail
-            BASE=http://127.0.0.1:3100
-            health=$(curl -fsS "$BASE/api/health")
-            echo "$health" | grep -q "\"ok\":true" || { echo "health not ok"; exit 1; }
-            echo "$health" | grep -q "\"service\":\"hanaso-web\"" || { echo "wrong service"; exit 1; }
-            page=$(curl -fsS "$BASE/")
-            echo "$page" | grep -q "dir=\"rtl\"" || { echo "home missing RTL shell"; exit 1; }
-            echo "$page" | grep -q "قدم بعدی" || { echo "home missing learner dashboard card"; exit 1; }
-            echo "$page" | grep -q "href=\"/learn" || { echo "home missing /learn CTA"; exit 1; }
-            echo "smoke (DB-less contract): ALL GREEN"
+          HOME_CODE=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3100/)
+          [ "$HOME_CODE" = "500" ] || { echo "::error::home expected honest 500 (assertProductionDatabase) without DATABASE_URL, got $HOME_CODE"; exit 1; }
+          health=$(curl -fsS http://127.0.0.1:3100/api/health)
+          echo "$health" | grep -q '"ok":true' || { echo "health not ok"; exit 1; }
+          echo "$health" | grep -q '"service":"hanaso-web"' || { echo "wrong service"; exit 1; }
+          echo "smoke (DB-less contract): ALL GREEN"
           '
 
   docker:
