@@ -1,0 +1,93 @@
+# MISSION CLOSURE — گزارش یکپارچهٔ سه‌مأموریتی اصلاح فصل ۱ کانا (§11)
+
+> جمع‌بندی نهایی: ممیزی (Mission 1) → اصلاح محتوا (Mission 2) → اصلاح UI/UX + Release (Mission 3).
+> تاریخ: ۲۰۲۶-۱۱-۱۶
+
+## ۱. Mission 1 — ممیزی (HANASO-KANA-AUDIT-01، شاخهٔ audit/HANASO-KANA-AUDIT-01)
+
+۱۵ یافتهٔ ثبت‌شده + شواهد (۱۲ اسکرین‌شات + سه subagent مستقل + inventory ماشینی ۱۰۰٪ پوشش ۵۸۶ تمرین/۹۲ گلیف/۳۸ ایستگاه). همهٔ یافته‌ها در مأموریت‌های بعدی تعیین‌تکلیف شدند (جدول §۲ و §۳).
+
+## ۲. Mission 2 — اصلاح محتوا (fix/HANASO-KANA-CONTENT-REMEDIATION-02، tip `3bd81c20209f2e02a19e5ba7cdb9123f6808e800`)
+
+| یافته | تعیین‌تکلیف نهایی |
+|---|---|
+| AUD-001 (چندپاسخگی) | **FIXED** + گارد؛ ۳+۷ مورد (گارد ۷ مورد پنهان را کشید) |
+| AUD-002 (تصادم کیوو) | **FIXED** + گارد یکتایی |
+| AUD-003 (hint افشاگر) | **FIXED** + گارد |
+| AUD-004 (دریفت نگارش) | **FIXED** + گارد + TL-14 |
+| AUD-005 (موتور romaji) | **FIXED** (بازنویسی ترکیبی) + تست |
+| AUD-006 (نشت شکل) | **FIXED** (۸.۸٪→۱.۵٪) + گارد آستانه‌ای |
+| AUD-010 (گیت تکراری) | **FIXED** + گارد |
+| AUD-011 (ん-labial) | **FIXED** (منبع‌دار: [m] قبل labial — Wikipedia Japanese phonology §Moraic nasal + Hepburn) |
+| AUD-012 (hostWord) | **FIXED** (مستندسازی انتخاب آموزشی در رجیستری) |
+| AUD-013 (ヲ) | **FIXED** (parity note) |
+| AUD-014 (۵۹ مورد عمدی) | **NOT_A_BUG** + گارد نام‌بردن خط |
+| AUD-007/008/009/015 | → Mission 3 (جدول §۳) |
+
+تطبیق عددی ۱۲/۴ در `MISSION_2_STATUS_RECONCILIATION.md` (AUD-011 دوبار شمرده شده بود).
+
+## ۳. Mission 3 — اصلاح UI/UX (fix/HANASO-KANA-UI-REMEDIATION-03، tip: کامیت FINAL این پوشه)
+
+| یافته UI | تعیین‌تکلیف نهایی |
+|---|---|
+| UI-01/AUD-009 (آیکون قفل/نوع) | **NOT_A_BUG (از مبنا) + VERIFIED** (دسکتاپ/کیبورد/Enter/flash) |
+| UI-02/AUD-007 (پیام قفل موبایل) | **FIXED** — scroll-into-view + ماندگار (تایمر 3.6s حذف)؛ ۳۶۰/۳۹۰/۴۳۰ |
+| UI-03/AUD-008 (کانای آموزنده) | **FIXED** — 14px→17px/500 (توکن --text-ja) + isolation rationale/F2 |
+| UI-04a/AUD-015 (کنتراست) | **FIXED** — ۱۱ نود (ink-faint→ink-soft روی متن؛ پیام قفل 5.8:1)؛ sweep صفر خطا |
+| UI-04b/AUD-015 (auto-scroll) | **NOT_A_BUG** — verify سه سناریو |
+| M3-3.1 (پیمایش کامل) | **DONE** (probe خودکار + صفحات نمایندهٔ هر الگو) |
+| M3-3.2 (resume) | **VERIFIED** |
+| M3-3.3 (bidi گزینه‌ها) | **FIXED (سراسری)** — صفر unisolated |
+
+## ۴. بازبینی Native فارسی باقی‌مانده
+
+۸ رشتهٔ مشخص با مرجع دقیق در `OWNER-REVIEW.md` §۱ (همه لحنی/اصطلاحی؛ QA ماشینی سبز، شیواحی نیازمند چشم بومی). **مانع release candidate نیست.**
+
+## ۵. معوق‌ها (Deferred با دلیل)
+
+در `OWNER-REVIEW.md` §۳ — چهار مورد، هیچ‌کدام مانع انتشار: reduced-motion شبیه‌سازی OS-level، journey کامل ۲۵ ایستگاه در sandbox، hostWordهای ۸ گلیف (قید TTS)، و خود Native review.
+
+## ۶. نتایج نهایی
+
+| حوزه | نتیجه |
+|---|---|
+| تست‌ها | **۷۷ فایل / ۸۵۶ PASS** |
+| گاردهای یکپارچگی (Mission 2) | **۴۱/۴۱** (معادل بازممیزی ۵۸۶) |
+| TypeScript / ESLint | پاک / پاک |
+| Production build | موفق (exit 0) |
+| مرورگر (۱۰ سناریو) | ۱۰/۱۰ |
+| ریسپانسیو (۶ عرض × ۴ صفحه) | ۲۴/۲۴ پاک |
+| کنتراست WCAG AA | ۰ خطا (۷۳ نود) |
+| bidi | ۰ unisolated |
+| شواهد تصویری | e1–e8 (غیر blank، commit شده) |
+
+## ۷. Release نهایی
+
+| پین | مقدار |
+|---|---|
+| نسخه | `1.1.0-hanaso30-r01` |
+| کامیت محصول (۴۰ کاراکتر) | `d822e1ca1fd483de9625e72997392a0d55a043d3` |
+| شاخه | `fix/HANASO-KANA-UI-REMEDIATION-03` |
+| Bootstrap/Installer SHA | `675496dbd9c93778473fa12c0a56848cd740dd34` |
+| SHA-256 bootstrap | `c1b1a01dc9c2e5347458e16b207d0469603d97bd86376e5e781d86bf8ccb37f0` |
+| دستور مالک | `OWNER-COMMAND.txt` — تست‌شده در sandbox (دانلود/گیت/پین/integrity/TASK-24 idempotent) |
+
+GitHub Release: ایجاد نشد (خارج از جریان مستند پروژه؛ release از طریق شاخهٔ push شده + دستور پین‌شده طبق الگوی TASK-29). URL واقعی موجود نیست — ادعایی هم نمی‌شود.
+
+## ۸. Checkpointها
+
+- Mission 2: ۶ کامیت push (تا `3bd81c2`).
+- Mission 3: CP-0 `402182a`، CP-1 `d05c716`، CP-2 `9609a55`، CP-3 `3285aea`، مستندات `d822e1c`، pin-refresh `675496d` + کامیت FINAL این پوشه = **۷ کامیت push شده** (به‌علاوهٔ branch-init در remote).
+- همهٔ checkpointها با SHA/فایل‌ها/تست‌ها/نتایج/blocker/اقدام بعدی در CURRENT_STATE.md ثبت شده‌اند.
+
+## ۹. وضعیت Production
+
+- **Deploy اجرا نشد** — طبق §10.6.
+- **هیچ دادهٔ تولیدی تغییر نکرد. هیچ سرویس مشترکی (KOTODAMA/PostgreSQL مشترک/BBB/FreeSWITCH/VOICEVOX/Nginx/HAProxy/Volumeها) لمس نشد.**
+- دستور دقیق و تست‌شده در پاسخ نهایی آمده است؛ اجرای آن با مالک است.
+
+## ۱۰. جمع‌بندی صادقانه
+
+- ۱۲ یافتهٔ محتوایی Mission 2 + ۴ یافتهٔ UI Mission 3 همگی FIXED یا مستند NOT_A_BUG/DONE شدند؛ **۰ یافتهٔ باز در دامنهٔ دو مأموریت اصلاح.**
+- ۴ مورد معوق با دلیل و «غیرمانع» ثبت شدند + ۸ رشتهٔ Native-review.
+- هیچ مأموریت کدنویسی دیگری برای بستن سکانس اصلاح فصل ۱ کانا لازم نیست — تنها کار انسانی باقی‌مانده: مرور ۵ دقیقه‌ای مالک (OWNER-REVIEW §۱) و اجرای دستور به‌روزرسانی در زمان انتخابی مالک.

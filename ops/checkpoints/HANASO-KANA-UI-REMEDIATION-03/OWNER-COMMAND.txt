@@ -1,0 +1,82 @@
+# OWNER-COMMAND.txt — HANASO Chapter 1 Kana نهایی (1.1.0-hanaso30-r01)
+
+> **دستور تک‌خطی/تک‌بلوکی به‌روزرسانی نهایی HANASO روی VPS** — حاوی هر دو مأموریت اصلاح محتوا (Mission 2) و UI (Mission 3) + همهٔ گاردها.
+> این همان بلوکی است که در پاسخ نهایی هم آمده است. بدون هیچ Placeholder، بدون هیچ Secret.
+
+## دستور (روی سرور، به‌عنوان root، کپی و اجرا کنید — کامل تا خط `HANASO-V17`)
+
+```bash
+bash -s -- <<'HANASO-V17'
+set -euo pipefail
+H=AbolfazlProg/hanaso
+P=infra/deploy/bootstrap-hanaso.sh
+R=675496dbd9c93778473fa12c0a56848cd740dd34
+W=c1b1a01dc9c2e5347458e16b207d0469603d97bd86376e5e781d86bf8ccb37f0
+D=d822e1ca1fd483de9625e72997392a0d55a043d3
+V=1.1.0-hanaso30-r01
+T=/tmp/hanaso-bootstrap-h30.sh
+
+echo "[hanaso] 1/3  download bootstrap (ref $R) via api.github.com"
+GOT=""
+if curl -fsSL --connect-timeout 10 --max-time 60 \
+        -H "Accept: application/vnd.github.raw" \
+        "https://api.github.com/repos/$H/contents/$P?ref=$R" -o "$T"; then
+  GOT="api.github.com"
+else
+  echo "[hanaso]    api.github.com failed (real curl error above) — trying codeload.github.com"
+  X="$(mktemp -d /tmp/hanaso-dl.XXXXXX)"
+  if curl -fsSL --connect-timeout 10 --max-time 300 \
+       "https://codeload.github.com/$H/tar.gz/$R" -o "$X/src.tgz"; then
+    if ! tar -xzf "$X/src.tgz" -C "$X" "hanaso-$R/$P"; then
+      echo "ERROR: codeload tarball fetched but extraction FAILED (tar error above) — NOTHING was executed or changed" >&2
+      exit 1
+    fi
+    mv "$X/hanaso-$R/$P" "$T"
+    rm -rf "$X"
+    GOT="codeload.github.com"
+  else
+    echo "ERROR: ALL bootstrap download paths failed (api.github.com and codeload.github.com) — the real curl errors are printed above; NOTHING was executed or changed" >&2
+    exit 1
+  fi
+fi
+echo "[hanaso]    bootstrap delivered via ${GOT}"
+
+echo "[hanaso] 2/3  verify SHA-256 — nothing runs unless it matches"
+echo "$W  $T" | sha256sum -c -
+
+echo "[hanaso] 3/3  start installer — deploy target: $D ($V)"
+HANASO_DEPLOY_SHA="$R" HANASO_TARGET_SHA="$D" HANASO_TARGET_VERSION="$V" bash "$T" "$@"
+HANASO-V17
+```
+
+## زیرفرمان‌های اختیاری
+
+خط اول را به این شکل‌ها تغییر دهید (بقیهٔ بلوک ثابت):
+
+```bash
+bash -s -- status <<'HANASO-V17'      # گزارش فقط-خواندنی سلامت سه‌سطحی
+bash -s -- rollback <<'HANASO-V17'    # بازگشت به image قبلی (دیتابیس دست‌نخورده)
+```
+
+## پین‌های ثبت‌شده (Immutable — بدون تأیید مالک عوض نشوند)
+
+| پین | مقدار |
+|---|---|
+| نسخهٔ محصول | `1.1.0-hanaso30-r01` |
+| کامیت هدف محصول (product release) | `d822e1ca1fd483de9625e72997392a0d55a043d3` (شاخهٔ `fix/HANASO-KANA-UI-REMEDIATION-03`) |
+| مرجع bootstrap/updater (HANASO_DEPLOY_SHA) | `675496dbd9c93778473fa12c0a56848cd740dd34` |
+| SHA-256 فایل bootstrap | `c1b1a01dc9c2e5347458e16b207d0469603d97bd86376e5e781d86bf8ccb37f0` |
+| شاخهٔ release | `fix/HANASO-KANA-UI-REMEDIATION-03` — tip همین شاخه |
+
+## نکات غیر-سری اجرا
+
+1. **بدون Credential:** مخزن عمومی است؛ هیچ Token/Password/Deploy Key لازم نیست و پرسیده نمی‌شود.
+2. **Preserve خودکار:** مقادیر موجود `HANASO_SESSION_SECRET` و `HANASO_LEGACY_TOKEN_CUTOFF` در `/opt/hanaso/.env` هرگز چرخش/تمدید نمی‌شوند (تست‌شده — §10.4). مقادیر غایب فقط در همان‌جا ساخته می‌شوند (پشتیبان + mode 600).
+3. **Fail-safe:** اگر کلیدهای TASK-24 نامعتبر باشند، updater با پیام دقیق متوقف می‌شود؛ هیچ جایگزینیِ خاموش‌وشانه انجام نمی‌شود.
+4. **ایزوله:** فقط پروژهٔ HANASO — KOTODAMA، PostgreSQL مشترک، BBB، FreeSWITCH، VOICEVOX، Nginx، HAProxy و Volumeهای مشترک هرگز لمس نمی‌شوند (تفکیک `/opt/hanaso` در برابر `/opt/hanaso-src`).
+5. **داده:** هیچ Progress/دادهٔ کاربری حذف یا Reset نمی‌شود؛ Migration این انتشار: هیچ (صفر تغییر schema).
+6. **رول‌بک:** `bash -s -- rollback` با همان بلوک — به image قبلی، دیتابیس دست‌نخورده.
+
+## تست sandbox همین دستور (۱۴۰۲-۱۱-۲۶ / 2026-11-16)
+
+مسیر کاملِ همین بلوک با همین مقادیر اجرا شد: دانلود (مسیر اول 403 rate-limit سندباکس → failover خودکار codeload موفق) → گیت SHA-256 `OK` → clone ناشناس → verify هر دو پین (`updater 675496dbd…` + `target d822e1ca…`) → integrity بایت‌به‌بایت bootstrap → اجرای updater از worktree پین‌شده → آماده‌سازی TASK-24 در fixture (secret تولید شد، cutoff موجود PRESERVED، اجرای دوم idempotent، بدون duplicate key) → در محیط بدون VPS متوقف شد با پیام fail-safe («an existing directory was NOT touched»). مراحل Docker-محور (build/up/healthcheck) فقط روی خود VPS قابل اجراست — طبق سیاست، deploy تولیدی اجرا نشد.

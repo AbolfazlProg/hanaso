@@ -1,56 +1,49 @@
-# HANASO-KANA-UI-REMEDIATION-03 — CURRENT STATE
+# HANASO-KANA-UI-REMEDIATION-03 — CURRENT STATE (FINAL)
 
-> وضعیت زندهٔ مأموریت ۳ (UI/UX نهایی فصل ۱ کانا). پس از هر فاز به‌روزرسانی و Push می‌شود.
+> وضعیت: **MISSION COMPLETE — RELEASE CANDIDATE READY (1.1.0-hanaso30-r01)** ✅
 
-## پارامترهای مأموریت
+## پارامترها
 
 | پارامتر | مقدار |
 |---|---|
 | شاخه | `fix/HANASO-KANA-UI-REMEDIATION-03` |
-| مبنا (SHA کامل) | `3bd81c20209f2e02a19e5ba7cdb9123f6808e800` (tip مأموریت ۲ — verify شد از origin) |
-| مصون‌ها | همهٔ اصلاحات محتوایی مأموریت ۲، گاردها، ۵۸۶ تمرین، منطق نمره/پیشرفت، FSRS |
-| دامنه | فقط UI/UX: UI-01 (آیکون قفل/نوع)، UI-02 (توضیح قفل موبایل)، UI-03 (خوانایی کانای آموزنده)، UI-04 (AUD-015 کنتراست/auto-scroll) + QA ریسپانسیو کامل |
+| مبنا | `3bd81c20209f2e02a19e5ba7cdb9123f6808e800` (tip Mission 2، origin-verified) |
+| Release | نسخهٔ `1.1.0-hanaso30-r01` · محصول `d822e1ca1fd483de9625e72997392a0d55a043d3` · bootstrap `675496dbd9c93778473fa12c0a56848cd740dd34` · SHA256 `c1b1a01dc9c2e5347458e16b207d0469603d97bd86376e5e781d86bf8ccb37f0` |
+| دامنه | فقط UI/UX (UI-01..04 + AUD-015) + QA ریسپانسیو + release prep |
 
-## وضعیت: IN_PROGRESS
+## Checkpointها (همه push شده)
 
-## فازها
+| CP | SHA | محتوا | تست‌ها | نتیجه |
+|---|---|---|---|---|
+| CP-0 | `402182a` | شاخه + بازتولید زندهٔ مسائل (UI-02 fold 99px/3.6s؛ UI-03 ریشه 14px؛ UI-04 کنتراست 4.37:1؛ UI-01 سالم) | مرورگر 390/1440 | مسائل مستند |
+| CP-1 | `d05c716` | UI-02/03/04-core + MISSION_2_STATUS_RECONCILIATION | مرورگر ۳۶۰/۳۹۰/۴۳۰ + tsc | همه PASS |
+| CP-2 | `9609a55` | جاروی کنتراست (۱۱ نود FIXED، sweep صفر خطا) + auto-scroll verified → AUD-015 طبقه‌بندی شد | sweep + سناریوها | PASS |
+| CP-3 | `3285aea` | probe ریسپانسیو ۶×۴ (۲۴/۲۴ پاک) + bidi isolation سراسری + e1–e6 | probe + tsc | PASS |
+| §8 | `d822e1c` | ۸ سند مأموریت (ماتریس/پیاده‌سازی/ریسپانسیو/a11y/مرورگر/رگرسیون/شاهد/تأیید نهایی) | — | — |
+| pin | `675496d` | pin-refresh installer (defaults → hanaso30) + SYNTAX-OK | bash -n | OK |
+| FINAL | (این کامیت) | OWNER-COMMAND.txt + OWNER-REVIEW + RELEASE_CANDIDATE + MISSION_CLOSURE + CURRENT_STATE | رگرسیون کامل + تست sandbox دستور | همه PASS |
 
-1. **CP-0** (این کامیت): شاخه + CURRENT_STATE + بازتولید مسائل در مرورگر (تکمیل شد — نتایج زیر).
-2. MISSION_2_STATUS_RECONCILIATION.md
-3. اصلاح UI-02 + UI-03 + UI-04-contrast (کوچک‌ترین اصلاح درست) + راستی‌آزمایی مرورگر before/after
-4. UI-04 auto-scroll investigation + طبقه‌بندی AUD-015
-5. QA ریسپانسیو کامل ۶ viewport + سناریوهای ۱۰گانهٔ مرورگر
-6. رگرسیون کامل (تست‌ها/گاردها/tsc/lint/build/586)
-7. مستندات ۱۰گانه + Release prep (§10) + OWNER-COMMAND
-8. گزارش پایانی یکپارچه (§11)
+## رگرسیون نهایی
 
-## نتایج بازتولید (CP-0 — شواهد زنده، dev server :3470)
+`77 files / 856 tests PASS` · گاردهای Mission 2 `41/41` (معادل ۵۸۶-validation) · tsc پاک · ESLint پاک · build موفق (exit 0؛ اولین اجرا OAM sandbox بود) · مرورگر ۱۰/۱۰ سناریو · ریسپانسیو ۲۴/۲۴ · کنتراست صفر خطا · bidi صفر unisolated.
 
-### UI-01 — معناشناسی آیکون: ✅ از قبل درست (احتیاط: فقط راستی‌آزمایی مستند)
-- کارت قفل: ۱ آیکون قفل (چپ/RowMarker) + ۱ تایل هویت نوع (راست/ContentTypeTile «درس کانا») — بدون قفل تکراری
-- کیبورد: focus + Enter → reason + shake + flash اعمال شد؛ focus روی دکمه ماند
-- reduced-motion: shake خاموش می‌شود (globals.css:183)، flash می‌ماند (عمدی — بازخورد بدون حرکت)
+## تست sandbox دستور مالک (عین همان مقادیر)
 
-### UI-02 — توضیح قفل موبایل: ❌ باگ بازتولید شد (390×844)
-- ردیف قفل نزدیک لبهٔ پایین (قاعدهٔ طول مصوت): پیام **۹۹px زیر fold** — کاربر فقط shake می‌بیند
-- ردیف‌های بالاتر: پیام داخل viewport (top 664–755) — درست
-- پیام بعد از **۳.۶ ثانیه** خودکار محو می‌شود (setTimeout 3600) — برای خواندن + یافتن پیش‌نیاز کوتاه است
-- متن پیام درست است: نام اولین پیش‌نیاز واقعی («ابتدا «ردیف あ» را کامل کن»)
+دانلود (api 403 سندباکس → failover codeload ✓) → گیت SHA-256 ✓ → clone ناشناس ✓ → verify دو پین ✓ → integrity بایت‌به‌بایت ✓ → TASK-24 env-prep در fixture (cutoff PRESERVED، secret GENERATED بدون echo) ✓ → idempotency دوبار ✓ → توقف fail-safe در محیط بدون VPS ✓. مراحل Docker فقط روی VPS.
 
-### UI-03 — کانای inline آموزنده: ❌ مشکل واقعی ریشه‌یابی شد (390×844، ایستگاه h1)
-- گلیف‌های تمایزی داخل جملات توضیحی (مثل «あ فقط یک پیچ دارد؛ お دو تا گردی دارد») با ارث‌بری `text-small` = **14px وزن 400** رندر می‌شوند — دقت تمایز ぬ/め/あ/お در این اندازه سخت است
-- مقیاس تایپ خود پروژه `--text-ja: 17px` دارد که برای متن JP تعریف شده ولی اینجا اعمال نشده
-- گلیف‌های نمایشی بزرگ (28px) و lead (18px) سالم‌اند — مشکل فقط متن آموزندهٔ درون‌جمله‌ای است
+## تعیین‌تکلیف یافته‌ها (جزئیات: UI_FINDING_RESOLUTION_MATRIX + MISSION_CLOSURE)
 
-### UI-04 — کنتراست: ❌ یک نقص AA واقعی
-- متن reason قفل: `--color-shu` (#c2401c) روی surface-warm (#f0ebdf) = **4.37:1** (AA normal = 4.5)
-- اصلاح بدون تغییر پالت: `--color-shu-deep` (#a33317) = **5.8:1** ✓ (توکن موجود، برای متن CTA تعریف شده)
-- auto-scroll: پیاده‌سازی TASK-HANASO-28 موجود (scroll یک‌بارهٔ latch، block:center، احترام به reduced-motion، فقط زیر fold) — باید در سناریوهای کامل راستی‌آزمایی و طبقه‌بندی شود
+- **FIXED:** UI-02، UI-03، UI-04-کنتراست، bidi — ۴ مورد (به‌علاوهٔ ۱۲ یافتهٔ Mission 2)
+- **NOT_A_BUG/VERIFIED:** UI-01، UI-04-auto-scroll، AUD-014 — ۳ مورد
+- **DONE:** پیمایش代表性 M3-3.1
+- **DEFERRED:** ۰ در دامنه؛ ۴ مورد غیرمانع در OWNER-REVIEW §۳ + ۸ رشتهٔ Native-review §۱
 
-## قواعد حفاظت (§5 مأموریت)
+## مرز استقرار
 
-هیچ تغییری در محتوا/گزینه/کلید/hint/منطق؛ فقط کلاس‌های CSS و JSX ارائه. گاردهای مأموریت ۲ باید سبز بمانند.
+Production deploy اجرا نشد؛ دادهٔ تولیدی و سرویس‌های مشترک دست‌نخورده. دستور آمادهٔ مالک: `OWNER-COMMAND.txt` (و در پاسخ نهایی).
 
-## تاریخچهٔ Checkpointها
+## اقدام بعدی (مالک)
 
-- CP-0: شاخه ساخته شد؛ سه مشکل بازتولید و مستند شد (UI-02 fold+persistence، UI-03 اندازه، UI-04 کنتراست)؛ UI-01 سالم تأیید شد.
+1. مرور ۵ دقیقه‌ای OWNER-REVIEW §۱ (۸ رشتهٔ فارسی — اختیاری ویرایش).
+2. اجرای بلوک OWNER-COMMAND روی VPS هر زمان که خواست.
+3. پس از deploy: smoke طبق RELEASE_CANDIDATE §10.1.8-9.
