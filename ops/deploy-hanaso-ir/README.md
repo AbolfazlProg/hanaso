@@ -13,12 +13,12 @@
 
 ## اسکریپت‌ها
 
-| فایل | کار | تغییرات |
-| --- | --- | --- |
-| `01-recon.sh` | شناسنامهٔ سرور: OS/CPU/RAM/disk/ports/سرویس‌ها/ساختار nginx (فقط خطوط ساختاری، نه dump کامل) | فقط-خواندنی |
-| `02-install-deploy.sh` | docker+compose-v2 → clone در `/opt/hanaso-src` و checkout پین `e2ae9d9…` (1.1.0-hanaso32-r01) → تولید `.env` با openssl روی خود سرور (فقط git-ignored path) → build/pull image → postgres → pgbouncer → migrate → web+worker → health gate → بررسی worker schedules → boot persistence | نصب/استقرار کامل |
-| `03-nginx-https.sh` | بکاپ `/etc/nginx` → vhost جدید `hanaso.ir` (proxy به 127.0.0.1:3100) → `nginx -t` + reload → certbot Let's Encrypt → verify https → بررسی سلامت پنل ops (قرارداد: دست‌نخوردن) | فقط افزودن vhost جدید |
-| `04-status.sh` | اسنپ‌شات وضعیت پس از استقرار (کونتینرها/health/cert/logها) | فقط-خواندنی |
+| فایل                   | کار                                                                                                                                                                                                                                                                                    | تغییرات               |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| `01-recon.sh`          | شناسنامهٔ سرور: OS/CPU/RAM/disk/ports/سرویس‌ها/ساختار nginx (فقط خطوط ساختاری، نه dump کامل)                                                                                                                                                                                           | فقط-خواندنی           |
+| `02-install-deploy.sh` | docker+compose-v2 → clone در `/opt/hanaso-src` و checkout پین `e2ae9d9…` (1.1.0-hanaso32-r01) → تولید `.env` با openssl روی خود سرور (فقط git-ignored path) → build/pull image → postgres → pgbouncer → migrate → web+worker → health gate → بررسی worker schedules → boot persistence | نصب/استقرار کامل      |
+| `03-nginx-https.sh`    | بکاپ `/etc/nginx` → vhost جدید `hanaso.ir` (proxy به 127.0.0.1:3100) → `nginx -t` + reload → certbot Let's Encrypt → verify https → بررسی سلامت پنل ops (قرارداد: دست‌نخوردن)                                                                                                          | فقط افزودن vhost جدید |
+| `04-status.sh`         | اسنپ‌شات وضعیت پس از استقرار (کونتینرها/health/cert/logها)                                                                                                                                                                                                                             | فقط-خواندنی           |
 
 ## سیاست Secretها
 
