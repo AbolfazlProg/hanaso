@@ -201,7 +201,7 @@ export const engineStationSchema = z.object({
         })
         .optional(),
     })
-    .default({}),
+    .default({ practiceStationIds: [] }),
   fsrsItems: z.array(z.string()).default([]),
   sourceRef: lessonSourceRefSchema.optional(),
   flags: z.array(draftFlagSchema).default([]),
@@ -235,6 +235,7 @@ export const engineDialogueLineSchema = z.object({
   origin: z.enum(['prior', 'target', 'guessable', 'transfer_keyword']),
   originNoteFa: z.string().max(160).optional(),
   sourceRef: lessonSourceRefSchema.optional(),
+  flags: z.array(draftFlagSchema).default([]),
 });
 export type EngineDialogueLine = z.infer<typeof engineDialogueLineSchema>;
 

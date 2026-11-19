@@ -111,7 +111,11 @@ export function parseBooklet(md: string, artifactId: string): BookletDraft {
   const lessonSplit = md.split(/^## درس\s+(\S+)\s*—\s*(.+)$/gm);
   // lessonSplit: [pre, num1, title1, body1, num2, title2, body2, ..., tail]
   for (let i = 1; i < lessonSplit.length; i += 3) {
-    const no = Number(String(lessonSplit[i]).replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))).trim());
+    const no = Number(
+      String(lessonSplit[i])
+        .replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+        .trim(),
+    );
     const titleJa = (lessonSplit[i + 1] ?? '').trim();
     const body = lessonSplit[i + 2] ?? '';
     const lesson: BookletLesson = {
@@ -132,7 +136,6 @@ export function parseBooklet(md: string, artifactId: string): BookletDraft {
     let currentItemNo = 0;
     let lastSpeaker = '';
     let grammarPattern: BookletGrammarPattern | null = null;
-    let lastBumpooNo = 0;
 
     for (const raw of body.split('\n')) {
       page = pageOf(raw, page);
@@ -141,19 +144,42 @@ export function parseBooklet(md: string, artifactId: string): BookletDraft {
       if (!line || line.startsWith('>')) continue;
 
       // section switches (roman numeral headers — OCR variants tolerated)
-      if (/(もくひょう|mokuhyoo)/.test(line) && /Ⅰ|レッスン/.test(line)) { section = 'goals'; currentItemNo = 0; continue; }
-      if (/かいわ|kaiwa/.test(line) && /Ⅱ/.test(line)) { section = 'kaiwa'; conversationIndex = 0; continue; }
-      if (/(ごい|goi)/.test(line) && /Ⅲ/.test(line)) { section = 'goi'; currentItemNo = 0; continue; }
-      if (/(ひょうげん|hyoogen)/.test(line) && /Ⅳ/.test(line)) { section = 'hyoogen'; currentItemNo = 0; continue; }
-      if (/(ぶんぽう|bumpoo)/.test(line) && /Ⅴ/.test(line)) { section = 'bumpoo'; currentItemNo = 0; continue; }
-      if (/^[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]/.test(line) && section !== 'other') { section = 'other'; continue; }
+      if (/(もくひょう|mokuhyoo)/.test(line) && /Ⅰ|レッスン/.test(line)) {
+        section = 'goals';
+        currentItemNo = 0;
+        continue;
+      }
+      if (/かいわ|kaiwa/.test(line) && /Ⅱ/.test(line)) {
+        section = 'kaiwa';
+        conversationIndex = 0;
+        continue;
+      }
+      if (/(ごい|goi)/.test(line) && /Ⅲ/.test(line)) {
+        section = 'goi';
+        currentItemNo = 0;
+        continue;
+      }
+      if (/(ひょうげん|hyoogen)/.test(line) && /Ⅳ/.test(line)) {
+        section = 'hyoogen';
+        currentItemNo = 0;
+        continue;
+      }
+      if (/(ぶんぽう|bumpoo)/.test(line) && /Ⅴ/.test(line)) {
+        section = 'bumpoo';
+        currentItemNo = 0;
+        continue;
+      }
+      if (/^[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]/.test(line) && section !== 'other') {
+        section = 'other';
+        continue;
+      }
       if (/^---$/.test(line)) continue;
 
       if (section === 'goals') {
         const m = line.match(/^(\d+)[.．]\s*(.*)$/);
         if (m) {
           currentItemNo = Number(m[1]);
-          const { ja, en } = splitNumberedItem(m[2]);
+          const { ja, en } = splitNumberedItem(m[2] ?? '');
           if (ja) lesson.goals.push({ no: currentItemNo, ja, en });
         } else if (lesson.goals.length > 0 && JP.test(line)) {
           // continuation line of the current goal (ocr splits) — append ja
@@ -167,7 +193,7 @@ export function parseBooklet(md: string, artifactId: string): BookletDraft {
         const speakerLine = line.match(/^([^\s：:]{1,20})\s*[：:]\s*(.*)$/);
         if (speakerLine && JP.test(speakerLine[2] ?? '')) {
           // JP turn line: speaker + japanese text
-          lastSpeaker = speakerLine[1];
+          lastSpeaker = speakerLine[1] ?? '';
           lesson.conversation.push({
             speaker: lastSpeaker,
             ja: (speakerLine[2] ?? '').trim(),
@@ -191,7 +217,7 @@ export function parseBooklet(md: string, artifactId: string): BookletDraft {
           // pattern (numbering restarts under each pattern — content rule beats
           // number heuristics; anti-invention: keep grouping).
           if (section === 'bumpoo') {
-            const { ja } = splitNumberedItem(m[2]);
+            const { ja } = splitNumberedItem(m[2] ?? '');
             const isPattern = /^[NVＮＶ]\d|[～〜]|〔/.test(ja);
             if (!isPattern && grammarPattern) {
               if (ja && JP.test(ja) && ja.length > 3) grammarPattern.examplesJa.push(ja);
@@ -199,7 +225,7 @@ export function parseBooklet(md: string, artifactId: string): BookletDraft {
             }
           }
           if (section === 'goi') {
-            const { ja, romaji, en } = splitNumberedItem(m[2]);
+            const { ja, romaji, en } = splitNumberedItem(m[2] ?? '');
             if (ja) {
               lesson.vocabulary.push({
                 no: currentItemNo,
@@ -212,16 +238,22 @@ export function parseBooklet(md: string, artifactId: string): BookletDraft {
               });
             }
           } else if (section === 'hyoogen') {
-            const { ja, en } = splitNumberedItem(m[2]);
+            const { ja, en } = splitNumberedItem(m[2] ?? '');
             if (ja) lesson.expressions.push({ no: currentItemNo, ja, en, page });
           } else {
-            const { ja } = splitNumberedItem(m[2]);
+            const { ja } = splitNumberedItem(m[2] ?? '');
             if (ja) {
               grammarPattern = { no: currentItemNo, patternJa: ja, examplesJa: [], page };
               lesson.grammar.push(grammarPattern);
             }
           }
-        } else if (section === 'bumpoo' && grammarPattern && JP.test(line) && !/^\d/.test(line) && !ROMAJI.test(line.split(' ')[0] ?? '')) {
+        } else if (
+          section === 'bumpoo' &&
+          grammarPattern &&
+          JP.test(line) &&
+          !/^\d/.test(line) &&
+          !ROMAJI.test(line.split(' ')[0] ?? '')
+        ) {
           // example sentence of the current grammar pattern
           const cleaned = line.replace(/[A-Za-z].*$/, '').trim();
           if (JP.test(cleaned) && cleaned.length > 3) grammarPattern.examplesJa.push(cleaned);
@@ -235,7 +267,14 @@ export function parseBooklet(md: string, artifactId: string): BookletDraft {
   // global N5 lists (tail of the file)
   const tail = lessonSplit[lessonSplit.length - 1] ?? '';
   globalLists = {
-    grammar: (tail.match(/^## فهرست کل گرامر/) ? tail.split(/^## فهرست کل گرامر/)[1]?.split(/^## /)[0]?.split('\n').filter((l) => l.trim() && !l.startsWith('#')).length : 0) ?? 0,
+    grammar:
+      (tail.match(/^## فهرست کل گرامر/)
+        ? tail
+            .split(/^## فهرست کل گرامر/)[1]
+            ?.split(/^## /)[0]
+            ?.split('\n')
+            .filter((l) => l.trim() && !l.startsWith('#')).length
+        : 0) ?? 0,
     vocabulary: 0,
     expressions: 0,
   };

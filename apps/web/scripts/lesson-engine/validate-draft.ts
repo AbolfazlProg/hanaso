@@ -4,7 +4,11 @@
  */
 import { readFileSync } from 'node:fs';
 import { parse } from 'yaml';
-import { engineChapterSchema, validateEngineChapter, formatValidatorReport } from '../../src/modules/lesson-engine/index';
+import {
+  engineChapterSchema,
+  validateEngineChapter,
+  formatValidatorReport,
+} from '../../src/modules/lesson-engine/index';
 
 const [, , input, modeFlag] = process.argv;
 if (!input) {

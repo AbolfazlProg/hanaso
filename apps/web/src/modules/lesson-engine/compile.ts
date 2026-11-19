@@ -16,6 +16,7 @@
 import type {
   Chapter,
   ChapterUnit,
+  CompletionCriteria,
   Exercise,
   Station,
   TeachingBlock,
@@ -23,13 +24,7 @@ import type {
   GrammarCluster,
 } from '@/modules/curriculum/types';
 import { ENGINE_CONFIG } from './engine-config';
-import type {
-  EngineChapter,
-  EngineInteraction,
-  EngineStation,
-  EngineStep,
-  ValidatorFinding,
-} from './types';
+import type { EngineChapter, EngineStation, EngineStep, ValidatorFinding } from './types';
 
 const INTERACTION_TO_EXERCISE: Record<string, Exercise['type']> = {
   select: 'meaning-select',
@@ -91,7 +86,14 @@ function compileInteraction(
   const exercise: Exercise = {
     id: exerciseId,
     type: exType,
-    targetSkill: station.domain === 'vocab' ? 'vocab' : station.domain === 'grammar' ? 'grammar' : station.domain === 'kana' ? 'structure' : 'listening',
+    targetSkill:
+      station.domain === 'vocab'
+        ? 'vocab'
+        : station.domain === 'grammar'
+          ? 'grammar'
+          : station.domain === 'kana'
+            ? 'structure'
+            : 'listening',
     targetConcept: `${chapter.id}:${station.id}:${step.goal}`,
     assessesConcepts: [],
     lineRef: step.card?.lineRef,
@@ -110,13 +112,18 @@ function compileInteraction(
       it.type === 'order_build' || it.type === 'transform' || it.type === 'sort'
         ? (it.tiles ?? []).map((t, i) => ({ id: `t${i}`, ja: t }))
         : undefined,
-    correctOrder: it.type === 'order_build' || it.type === 'transform' || it.type === 'sort' ? (it.tiles ?? []).map((_t, i) => `t${i}`) : undefined,
+    correctOrder:
+      it.type === 'order_build' || it.type === 'transform' || it.type === 'sort'
+        ? (it.tiles ?? []).map((_t, i) => `t${i}`)
+        : undefined,
     chips:
       it.type === 'order_build' && (it.extraTiles?.length ?? 0) > 0
         ? [...(it.tiles ?? []), ...(it.extraTiles ?? [])].map((t, i) => ({ id: `c${i}`, ja: t }))
         : undefined,
     acceptedChipOrder:
-      it.type === 'order_build' && (it.extraTiles?.length ?? 0) > 0 ? (it.tiles ?? []).map((_t, i) => `c${i}`) : undefined,
+      it.type === 'order_build' && (it.extraTiles?.length ?? 0) > 0
+        ? (it.tiles ?? []).map((_t, i) => `c${i}`)
+        : undefined,
     distractorRationaleFa: it.distractorReasons,
     feedback: {
       f1Fa: it.feedbackCorrectFa ?? 'درست بود!',
@@ -163,7 +170,12 @@ function compileStation(
   const minutes = Math.max(3, Math.min(15, Math.round(station.steps.length * 0.75)));
   const compiled: Station = {
     slug: station.id,
-    type: station.type === 'review' ? 'review' : station.type === 'practice' ? 'practice' : mapDomainToStationType(station.domain),
+    type:
+      station.type === 'review'
+        ? 'review'
+        : station.type === 'practice'
+          ? 'practice'
+          : mapDomainToStationType(station.domain),
     titleFa: station.intro?.textFa?.slice(0, 60) ?? station.objectiveFa.slice(0, 60),
     objectiveFa: station.objectiveFa,
     core: !station.id.startsWith('stn-opt'),
@@ -174,7 +186,9 @@ function compileStation(
     teachesConcepts: station.steps.map((s) => `${chapter.id}:${station.id}:${s.goal}`),
     estMinutes: minutes,
     estLoad: minutes > 10 ? 'heavy' : minutes > 6 ? 'medium' : 'light',
-    completion: station.completion,
+    completion: (station.completion.kind === 'exercise_threshold'
+      ? { kind: 'exercise_threshold', threshold: station.completion.threshold ?? 0.7 }
+      : station.completion) as CompletionCriteria,
     mastery: { threshold: 0.7 },
     blocks,
     fsrsItems: station.fsrsItems,
@@ -219,6 +233,9 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     readingKana: v.reading,
     romaji: v.romaji ?? v.reading.toLowerCase(),
     meaningFa: v.meaningFa,
+    // the word as it appears in its source line — drafts carry the surface (the
+    // agent refines during dialogue YAML authoring; vocab-card EQA-6 re-checks)
+    surfaceInLine: v.surface,
     noteFa: v.flags.length > 0 ? `پرچم‌ها: ${v.flags.join(', ')}` : undefined,
     lineRef:
       v.dialogueLineIndex !== undefined && draft.dialogue[v.dialogueLineIndex]
@@ -231,9 +248,7 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     id: g.id,
     pattern: g.patternJa,
     titleFa: g.functionFa,
-    lineRefs: draft.dialogue
-      .map((_l, i) => `s-${draft.id}-l${i + 1}`)
-      .slice(0, 1),
+    lineRefs: draft.dialogue.map((_l, i) => `s-${draft.id}-l${i + 1}`).slice(0, 1),
     fsrs: { gr: `gr-${g.id}` },
   }));
 
@@ -262,7 +277,16 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
 
   const chapter: Chapter = {
     slug: draft.id,
-    levelCode: draft.level === 'H0' ? 'L1' : draft.level === 'H1' ? 'L2' : draft.level === 'H2' ? 'L3' : draft.level === 'H3' ? 'L4' : 'L5',
+    levelCode:
+      draft.level === 'H0'
+        ? 'L1'
+        : draft.level === 'H1'
+          ? 'L2'
+          : draft.level === 'H2'
+            ? 'L3'
+            : draft.level === 'H3'
+              ? 'L4'
+              : 'L5',
     titleFa: draft.titleFa,
     canDoFa: draft.canDoFa,
     summaryFa: `draft از جزوهٔ N5 درس ${draft.bookletLesson} — ${draft.bookletSourceFile}`,
@@ -288,7 +312,8 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
   findings.push({
     rule: 'C-DIALOGUE',
     severity: 'soft',
-    message: 'مکالمهٔ draft به YAML مکالمهٔ runtime منتقل نشده — انتشار نیازمند ساخت dialogue YAML + صوت است (ماژول dialogue دست‌نخورده).',
+    message:
+      'مکالمهٔ draft به YAML مکالمهٔ runtime منتقل نشده — انتشار نیازمند ساخت dialogue YAML + صوت است (ماژول dialogue دست‌نخورده).',
     location: 'chapter.dialogue',
   });
   return { chapter, findings };

@@ -6,14 +6,14 @@
 
 ## ۱. معماری محتوایی سه‌سطحی (فصل/درس/ایستگاه)
 
-| قاعده | منبع | شدت |
-|---|---|---|
-| فصل = قِشر، درس = بُعد زمانی، آموزه = دادهٔ اتمی؛ ۱۱ فیلد درس | `curriculum/chapter-blueprint.md` §۲ | ساختار |
-| فیلدهای الزامی فصل: can_do، level، dialogue (شخصیت/رابطه/مکان + متن + صوت ۲ نسخه از A2+)، target_vocab با نقش در مکالمه، target_grammar ≤۲، target_kanji ۱۰–۱۵، prerequisites، lessons (نقشهٔ ۱۳-مرحله)، practice_stations، review_targets ۶۰/۴۰، assessment، final_task، cultural_note ≤۲ | `chapter-blueprint.md` §۱ | HARD |
-| مدل ۱۳-مرحلهٔ فصل با ادغام‌های مجاز (۹ با ۷/۸؛ ۴–۵ در یک ایستگاه شنیدار) | `curriculum/conversation-centered-learning.md` §۳ | HARD |
-| درس: micro_objective / prerequisite / new_knowledge / explanation / examples(۶ نوع) / guided_practice / independent_practice / skill_link / feedback_design / completion_check / next_link | `chapter-blueprint.md` §۲ | ساختار |
-| قاعدهٔ ضدتکرار: هر داده یک خانهٔ تعریف (ID یکتا + first_def_chapter)؛ بقیه = ارجاع | `chapter-blueprint.md` §سازگاری | HARD |
-| آرکی‌تایپ فصل: C-Dialogue / C-Kanji (از H2) / C-Review، نسبت ۴:۱ | `chapter-blueprint.md` §انواع | SOFT |
+| قاعده                                                                                                                                                                                                                                                                                      | منبع                                              | شدت    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- | ------ |
+| فصل = قِشر، درس = بُعد زمانی، آموزه = دادهٔ اتمی؛ ۱۱ فیلد درس                                                                                                                                                                                                                              | `curriculum/chapter-blueprint.md` §۲              | ساختار |
+| فیلدهای الزامی فصل: can_do، level، dialogue (شخصیت/رابطه/مکان + متن + صوت ۲ نسخه از A2+)، target_vocab با نقش در مکالمه، target_grammar ≤۲، target_kanji ۱۰–۱۵، prerequisites، lessons (نقشهٔ ۱۳-مرحله)، practice_stations، review_targets ۶۰/۴۰، assessment، final_task، cultural_note ≤۲ | `chapter-blueprint.md` §۱                         | HARD   |
+| مدل ۱۳-مرحلهٔ فصل با ادغام‌های مجاز (۹ با ۷/۸؛ ۴–۵ در یک ایستگاه شنیدار)                                                                                                                                                                                                                   | `curriculum/conversation-centered-learning.md` §۳ | HARD   |
+| درس: micro_objective / prerequisite / new_knowledge / explanation / examples(۶ نوع) / guided_practice / independent_practice / skill_link / feedback_design / completion_check / next_link                                                                                                 | `chapter-blueprint.md` §۲                         | ساختار |
+| قاعدهٔ ضدتکرار: هر داده یک خانهٔ تعریف (ID یکتا + first_def_chapter)؛ بقیه = ارجاع                                                                                                                                                                                                         | `chapter-blueprint.md` §سازگاری                   | HARD   |
+| آرکی‌تایپ فصل: C-Dialogue / C-Kanji (از H2) / C-Review، نسبت ۴:۱                                                                                                                                                                                                                           | `chapter-blueprint.md` §انواع                     | SOFT   |
 
 ## ۲. ایستگاه (Station Blueprint)
 
