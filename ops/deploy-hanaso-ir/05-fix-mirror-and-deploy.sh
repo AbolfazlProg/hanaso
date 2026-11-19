@@ -36,10 +36,16 @@ systemctl restart docker
 sleep 3
 docker info 2>/dev/null | grep -A2 "Registry Mirrors" || true
 
-step "3. pre-pull pinned base images (through mirror)"
-docker pull "postgres:18-alpine@sha256:10a5c69a83035ab5239f5620d708520e8b28f5aa1f2b20143e6024532edadfb5" || { echo "postgres pull FAILED"; exit 1; }
-docker pull "edoburu/pgbouncer:v1.26.1-p0@sha256:488422e38cff9128950d0d65d8963fcd306e6ac589a724398b6eb8e294e94d624" || { echo "pgbouncer pull FAILED"; exit 1; }
+step "3. pre-pull pinned base images (refs read DIRECTLY from the compose file — no hand-copied digests)"
+cd "$COMPOSE_DIR"
+PULL_FAIL=0
+for IMG in $(grep -E '^[[:space:]]+image:' docker-compose.shared-vps.yml | grep -v 'HANASO_WEB_IMAGE' | awk '{print $2}'); do
+  echo "pull: $IMG"
+  docker pull "$IMG" || { echo "PULL FAILED: $IMG"; PULL_FAIL=1; }
+done
+[ "$PULL_FAIL" = 0 ] || exit 1
 docker pull "node:24-alpine" || { echo "node pull FAILED"; exit 1; }
+echo "base images OK"
 
 step "4. build web image (pinned release)"
 docker build -f "$SRC/infra/docker/Dockerfile" \
