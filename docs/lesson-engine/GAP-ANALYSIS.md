@@ -1,0 +1,37 @@
+# Lesson Engine — تحلیل شکاف: Teaching Framework ↔ محصول HANASO
+
+> فاز ۲ — مأموریت Lesson Engine. سمت فریم‌ورک: `docs/lesson-engine/REQUIREMENTS.md`.
+> سمت محصول: ممیزی repo @ 1d657b3 (commit پیش از این سند).
+
+## ۱. موجود و قابل‌استفاده (بازنویسی ممنوع)
+
+| دارایی محصول | تطابق با فریم‌ورک | وضعیت |
+|---|---|---|
+| StationRunner + ۱۷ نوع TeachingBlock + ۱۷ نوع Exercise، نمره‌دهی سمت سرور، حذف کلید پاسخ از کلاینت (SKL-013) | StationRunner واحد (D-0011) — تعامل‌های فریم‌ورک همان‌ها هستند (mcq→Select/Listen-Choose/Judge، cloze→Complete، word-order→Order، produce-template→Build، kana-decode→Transform…) | ✅ کامل |
+| EQA-1..7 (`modules/curriculum/eqa/`) — پیش‌نیاز/مدل آموخته‌شده، تعادل تعامل، recall-first ≥۶۰٪، توازن جواب، پوشش objective، کامل بودن کارت واژه، آستانه‌ها فقط از level_policy | هستهٔ اعتبارسنج آموزشی (QC فریم‌ورک) | ✅ در CI |
+| validation.ts (prereqOrder، caps، oneObjective، duplicateSlug…) + glyph-budget + تست‌های محتوا (two-correct، feedback-quality، audio-inventory…) | QC فصل §۲۶ (بخش بزرگی از آن) | ✅ در CI |
+| hint ladder f1Fa/f2HintFa/f3ExplainFa + F0/F4 موتوری | نردبان H1–H3 (§۴.۳) | ✅ موجود |
+| FSRS + `/api/review/*` + enrollment در completion | SRS (افق ۷/۳۰ واژه، ۱۴/۶۰ کانجی) | ✅ (مأموریت قبلی) |
+| dialogue YAML schema (شخصیت/خط/token/fa/emotion/gap) + رجیستری صوت ۴گانه | مکالمهٔ محوری + صوت دو نسخه (A2+) | ✅ |
+| ۲ فصل موجود: kana-foundation-01 (۳۸ ایستگاه) + first-meeting-01 (۲۲ ایستگاه «わたしは学生です» = درس ۱ جزوهٔ N5) | فصل‌های C-Kana و C-Dialogue | ✅ منتشر |
+| LevelPolicy L1–L7 با caps | قواعد سطح H0–H4 | ✅ |
+
+## ۲. شکاف‌ها (چیزهایی که باید ساخته شود)
+
+| # | شکاف | شواهد فریم‌ورک | راه‌حل این مأموریت |
+|---|---|---|---|
+| G1 | **فرمت نگارش اعلانی نداریم** — محتوا = ماژول TS دست‌ساز + اسکریپت‌های پایتونِ یک‌بارمصرف؛ ایجنت نمی‌تواند درس تولید کند بدون کدنویسی | station-blueprint §۵ (YAML data spec) | schema زود `lesson-engine/` + کامپایلر YAML→فرمت runtime (D-0011: موتور موازی ممنوع) |
+| G2 | **ردیابی منبع جزوه نیست** — هیچ فیلد booklet/source/evidence در انواع محتوا؛ provenance فقط کامنت هدر فایل | QC #۷ (SOURCE-xx) + قاعدهٔ ضدتکرار | فیلد `sourceRef` اجباری در schema موتور + validator integrity |
+| G3 | **قواعد فلوکش حوزه‌ای اعتبارسنجی نمی‌شوند** — EQA ترتیب گام‌های G/V/K/L را نمی‌سنجد | G0→G7/V0→V7/K0→K6/L0→L5 | Pedagogical Validator (فاز ۵) — قواعد فلوکش + tier + سه‌منشأ + پوشش |
+| G4 | **سه‌منشأ مکالمه و پوشش ≥۹۵٪ ماشینی نیست** | conversation-centered §۲.۳ + vocabulary §۷ | rule سه‌منشأ در validator (حالت draft برای محتوای جدید) |
+| G5 | **abstraction لایهٔ درس (Lesson) صریح نیست** — journey = chapter→station؛ ۱۱ فیلد درس فریم‌ورک نداریم | chapter-blueprint §۲ | LessonBlueprint در schema (درس = گروه ایستگاه‌ها با micro_objective و اتصال) — سازگار با `ChapterUnit` موجود |
+| G6 | **ابزار جزوه→درس نیست** | مأموریت فاز ۴ | `parse-booklet` + `draft-chapter` (CLI، با sourceRef صفحه‌ای و پرچم needs_review؛ هیچ اختراعی) |
+| G7 | **اسکلت فصل بعدی + مستند ایجنت** | مأموریت فاز ۶ | skeleton YAML برای درس ۲ جزوهٔ N5 «この人は誰ですか» + `AGENT-PRODUCTION-GUIDE.md` |
+
+## ۳. تصمیم‌های طراحی (مطابق محدودیت‌های مأموریت)
+
+1. **بدون موتور موازی (D-0011):** YAML نگارش‌محور → کامپایلر → همان فرمت runtime (Station/TeachingBlock/Exercise). StationRunner دست‌نخورده.
+2. **افزودنی-first:** هیچ فصل/فایل موجود تغییر نمی‌کند؛ validator در «حالت محصول» روی فصل‌های فعلی فقط قواعد مشترک با EQA را تکرار می‌کند (بدون fail جدید) و قواعد فریم‌ورک‌محور در «حالت draft» روی محتوای جدید اعمال می‌شود.
+3. **zod (نسخهٔ موجود ^4.6.7)** برای schema؛ YAML با `yaml` موجود؛ بدون وابستگی جدید.
+4. اعداد کالیبره‌پذیر در `engine.config.ts` (Q-017/020/…) — نه هاردکد.
+5. اسکلت فصل: تفسیر — فصل ۰۲ در محصول موجود است؛ «فصل دوم مأموریت» = **درس بعدی جزوه N5 (درس ۲ «この人は誰ですか» → فصل ۰۳ draft)** که فقط اسکلت است و منتشر نمی‌شود.
