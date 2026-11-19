@@ -82,8 +82,8 @@ describe('PgFsrsReviewStore — enrollment, queue, idempotent submit', () => {
   it('queues due cards for the owner only (user isolation)', async () => {
     // the previous proof pushed this card's due 3 days forward — bring it back
     // to now so the due-scan has something to serve (each proof owns its state)
-    await getDbClient().db
-      .update(fsrsCards)
+    await getDbClient()
+      .db.update(fsrsCards)
       .set({ due: new Date() })
       .where(sql`${fsrsCards.userId} = ${UA} and ${fsrsCards.itemId} = ${ENTRY_A.itemId}`);
     const due = await store.listDue(UA, new Date(), 20);
