@@ -3,6 +3,7 @@ import { fail, ok } from '@/modules/shared';
 import { ProgressTransitionError, applyProgressEvent } from '@/modules/progress';
 import { progressInputSchema } from '@/modules/progress';
 import { getAttemptStore, getProgressStore } from '@/lib/poc/stores';
+import { NoUnitAnchorError } from '@/db/repositories/progress';
 import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 
 /**
@@ -100,10 +101,25 @@ export async function POST(req: Request) {
   try {
     const next = applyProgressEvent(current, dialogueId, userId, event, { attemptOutcome });
     const saved = next === current ? current : await store.upsert(next);
-    return NextResponse.json(ok({ progress: saved, event }), { status: 201 });
+    return NextResponse.json(ok({ progress: saved, event, applied: true }), { status: 201 });
   } catch (err) {
     if (err instanceof ProgressTransitionError) {
       return NextResponse.json(fail({ code: err.code, message: err.message, details: err.details }), { status: 400 });
+    }
+    if (err instanceof NoUnitAnchorError) {
+      // HANASO-IR production QA: chapter dialogues (kana-welcome-01) have no
+      // B_lesson anchor BY DESIGN — their runtime step events are accepted and
+      // acknowledged here; only the A→D unit upsert is inapplicable (the
+      // repository sentinel is a programming-error tripwire, not a 500).
+      return NextResponse.json(
+        ok({
+          progress: null,
+          event,
+          applied: false,
+          note: 'chapter dialogue has no unit anchor (by design) — event accepted without unit upsert',
+        }),
+        { status: 200 },
+      );
     }
     throw err;
   }

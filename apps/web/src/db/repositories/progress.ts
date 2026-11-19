@@ -49,6 +49,21 @@ const progressColumns = {
   dialogueSlug: dialogues.slug,
 };
 
+/**
+ * HANASO-IR production QA (2026-11-19): typed form of the TASK-HANASO-21
+ * sentinel below. Chapter dialogues (kana-welcome-01) carry no B_lesson anchor
+ * BY DESIGN — their runtime step events must not drive the A→D unit upsert.
+ * The API route catches THIS class (never a string match) and acknowledges the
+ * event without a unit write, so the sentinel stays a true programming-error
+ * tripwire instead of a runtime 500 on an expected condition.
+ */
+export class NoUnitAnchorError extends Error {
+  constructor(slug: string) {
+    super(`dialogue ${slug} has no B_lesson anchor — the A→D unit progress upsert does not apply to chapter dialogues`);
+    this.name = 'NoUnitAnchorError';
+  }
+}
+
 export class PgProgressRepository implements ProgressRepository {
   constructor(private readonly client: DbClient) {}
 
@@ -69,10 +84,10 @@ export class PgProgressRepository implements ProgressRepository {
       /* TASK-HANASO-21: CHAPTER dialogues resolve with a NULL anchor (no
        * B_lesson row by design). The PoC A→D unit progress only exists for
        * anchor-bearing dialogues (cafe-morning-01) — a chapter dialogue here
-       * is a programming error, said clearly instead of a NULL-FK crash. */
-      throw new Error(
-        `dialogue ${ref.slug} has no B_lesson anchor — the A→D unit progress upsert does not apply to chapter dialogues`,
-      );
+       * is a programming error, said clearly instead of a NULL-FK crash.
+       * Typed since HANASO-IR production QA so the API route can branch on
+       * the expected condition (see NoUnitAnchorError). */
+      throw new NoUnitAnchorError(ref.slug);
     }
     const [row] = await this.client.db
       .insert(lessonProgress)
