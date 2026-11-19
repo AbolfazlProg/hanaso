@@ -8,9 +8,11 @@ LOG="$MDIR/resume.log"
 PIN_SHA="e2ae9d96e7bab9e38bb15124df6bfd3c788e984e"
 SRC="/opt/hanaso-src"
 COMPOSE_DIR="$SRC/infra/deploy/learn-kotodama"
-# copy the committed override into the compose dir (compose -f paths can point anywhere,
-# but keeping it next to the base file keeps commands short)
-cp "$SRC/ops/deploy-hanaso-ir/docker-compose.hanaso-ir-1core.yml" "$COMPOSE_DIR/" 2>/dev/null || true
+# the server checkout is pinned to the PRODUCT commit (pre-dates this deploy dir), so
+# fetch the override straight from the deploy branch instead of copying from $SRC
+OV_URL="https://raw.githubusercontent.com/AbolfazlProg/hanaso/66366ed/ops/deploy-hanaso-ir/docker-compose.hanaso-ir-1core.yml"
+curl -fsSL "$OV_URL" -o "$COMPOSE_DIR/docker-compose.hanaso-ir-1core.yml" || { echo "override fetch FAILED"; exit 1; }
+echo "override in place: $(grep -c 'cpus' "$COMPOSE_DIR/docker-compose.hanaso-ir-1core.yml") cpus entries"
 
 CF="-f docker-compose.shared-vps.yml -f docker-compose.hanaso-ir-1core.yml"
 
