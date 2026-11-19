@@ -30,7 +30,7 @@
  * Aizen signatures (DD-084): indigo structural frames, seigaiha wave band on
  * the section plaque, state = shape + marker (never color alone), no emoji.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -41,7 +41,6 @@ import {
   CircleCheck,
   Compass,
   Headphones,
-  Languages,
   Layers,
   Lock,
   MessageCircle,
@@ -51,11 +50,11 @@ import {
   Shapes,
   ShieldCheck,
   Target,
-  type LucideIcon,
   MapPin,
 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
+import { KanaMarkIcon } from '@/components/curriculum/kana-mark-icon';
 
 /* ------------------------------------------------------------------ DTOs */
 
@@ -126,9 +125,18 @@ export interface SectionJourneyProps {
 
 /* ------------------------------------------------------------------ identity icons */
 
-const CONTENT_KIND_ICON: Record<StationContentKind, LucideIcon> = {
+/**
+ * HANASO-IR owner fix (item 5): kana rows carry the OWNED KanaMarkIcon (the
+ * hand-drawn あ brush mark) — the stock lucide `Languages` bubbles read as the
+ * Google Translate logo and were rejected. The map widens to a plain
+ * component type so the custom mark sits beside the lucide set unchanged.
+ */
+const CONTENT_KIND_ICON: Record<
+  StationContentKind,
+  ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>
+> = {
   anchor: Compass,
-  kana: Languages,
+  kana: KanaMarkIcon,
   milestone: Award,
   vocab: BookOpen,
   grammar: Shapes,
@@ -434,29 +442,29 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
         aria-label={section.titleFa}
         className="relative overflow-hidden rounded-md border-2 border-indigo bg-card shadow-[var(--shadow-card)]"
       >
-        {/* ---- section plaque: seigaiha band + title + goal + honest status ---- */}
-        <header className="relative bg-indigo p-5 text-paper sm:p-6">
-          <span aria-hidden className="seigaiha pointer-events-none absolute inset-0 opacity-70" />
-          <div className="relative flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span className="rounded-full border border-indigo-mist/60 px-3 py-0.5 text-caption text-indigo-mist">
-              {fa.curriculum.sectionBadge}
-            </span>
-            <h2 className="text-h2 font-black">{section.titleFa}</h2>
-          </div>
+        {/* ---- section header (HANASO-IR owner redesign, 2026-11-19): the old
+            dark indigo plaque + seigaiha texture behind the title/goal/status
+            hurt readability (the owner's «پس‌زمینه بنفش نامناسب» audit). The
+            header is now QUIET TYPOGRAPHY on the panel's own flat surface —
+            strong ink title, readable goal, honest status — separated from the
+            rows by one hairline. NO background boxes, NO decorative frames
+            behind the texts (the owner's explicit rule). ---- */}
+        <header className="border-b border-ink-faint/40 p-5 sm:p-6">
+          <h2 className="text-h2 font-black text-ink">{section.titleFa}</h2>
           {section.goalFa ? (
-            <p className="relative mt-3 max-w-prose text-small leading-[var(--leading-fa)] text-indigo-mist">
-              <span className="font-bold text-paper">{fa.curriculum.sectionGoalLabel}: </span>
+            <p className="mt-3 max-w-prose text-body leading-[var(--leading-fa)] text-ink-soft">
+              <span className="font-bold text-ink">{fa.curriculum.sectionGoalLabel}: </span>
               <MixedFaJaText text={section.goalFa} />
             </p>
           ) : null}
-          <p className="relative mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-caption text-indigo-mist">
+          <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-caption text-ink-soft">
             {section.status === 'completed' ? (
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1.5 text-success">
                 <CircleCheck aria-hidden className="size-4" />
                 {fa.curriculum.sectionStatusCompleted}
               </span>
             ) : section.status === 'locked' ? (
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1.5 text-ink-faint">
                 <Lock aria-hidden className="size-4" />
                 {fa.curriculum.sectionStatusLocked}
               </span>

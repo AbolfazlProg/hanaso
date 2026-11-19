@@ -232,6 +232,48 @@ describe('WritingCanvas — pointer input + judging (real engine, real data)', (
   });
 });
 
+// ---------------------------------------------------------------- canvas: zero-spoiler rule
+
+/**
+ * HANASO-IR owner fix (2026-11-19) — «این اسپویل باید کاملاً حذف شود و فقط با
+ * درخواست صریح کاربر نمایش داده شود؛ حتی نمایش یک‌فریمی هم قابل‌قبول نیست».
+ * The free-mode guide (dashed path + start dot + direction arrow) is ONLY an
+ * explicit, per-stroke help flash: the moment a stroke is judged, the window
+ * dies IN THE SAME BATCH as the attempt advance, so the NEXT stroke's guide
+ * can never paint — not even for one frame.
+ */
+describe('WritingCanvas — zero-spoiler (help flash never leaks onto the next stroke)', () => {
+  /** The guide block markup: the dashed standard-stroke path. */
+  const guidePaths = (container: HTMLElement) => container.querySelectorAll('path[stroke-dasharray="0.042 0.065"]');
+
+  it('free mode: help request shows the guide ONLY for the requested stroke — an accepted stroke kills it in the same commit', async () => {
+    const onJudgement = vi.fn();
+    const { container, rerender } = render(
+      <WritingCanvas character="あ" mode="free" hintSignal={0} onJudgement={onJudgement} />,
+    );
+    const svg = await waitFor(() => getCanvasSvg(container));
+    // no guide without an explicit request
+    expect(guidePaths(container).length).toBe(0);
+
+    // EXPLICIT help request → the guide appears for stroke 1
+    rerender(<WritingCanvas character="あ" mode="free" hintSignal={1} onJudgement={onJudgement} />);
+    await waitFor(() => expect(guidePaths(container).length).toBe(1));
+
+    // the learner draws stroke 1 faithfully → accepted; the hint window must
+    // die WITH the attempt advance — stroke 2's guide never renders (poll a
+    // few frames to prove it is not a one-frame race in either direction)
+    await drawFaithful(svg, A_DATA.medians[0]!, () => onJudgement.mock.calls.length >= 1);
+    expect(onJudgement).toHaveBeenCalledTimes(1);
+    expect(guidePaths(container).length).toBe(0);
+    await new Promise((r) => setTimeout(r, 220));
+    expect(guidePaths(container).length).toBe(0);
+    // and it stays gone until the learner explicitly asks again
+    rerender(<WritingCanvas character="あ" mode="free" hintSignal={1} onJudgement={onJudgement} />);
+    await new Promise((r) => setTimeout(r, 60));
+    expect(guidePaths(container).length).toBe(0); // same signal value — no new request
+  });
+});
+
 // ---------------------------------------------------------------- canvas: repeatability
 
 describe('WritingCanvas — repeatability (rapid interactions never kill the surface)', () => {

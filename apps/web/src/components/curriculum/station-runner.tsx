@@ -25,8 +25,6 @@ import {
   PlayCircle,
   RotateCcw,
   Sparkles,
-  Volume2,
-  VolumeX,
 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { AizenSeal } from '@/components/curriculum/aizen-seal';
@@ -366,38 +364,13 @@ function playSealStampSound() {
 }
 
 /**
- * TASK-HANASO-28: a quiet ghost icon-button in the message row (NOT on the
- * seal stage) — the ceremonial composition stays clean; the mute affordance
- * is one tab-stop after the announcement, with a tooltip-style aria-label.
+ * TASK-HANASO-28: the stamp-sound MUTE UI is intentionally GONE
+ * (HANASO-IR owner fix 2026-11-19, item 4 — no speaker icon beside the seal,
+ * anywhere in the celebration composition). The persisted mute preference
+ * (SEAL_SFX_KEY) is still honored by playSealStampSound for anyone who set it
+ * before; the sound simply plays for everyone else, exactly once per fresh
+ * completion.
  */
-function SealSoundToggle() {
-  const [muted, setMuted] = useState<boolean>(false);
-  useEffect(() => {
-    setMuted(readSealSfxMuted());
-  }, []);
-  const toggle = useCallback(() => {
-    const next = !muted;
-    setMuted(next);
-    try {
-      window.localStorage.setItem(SEAL_SFX_KEY, next ? '1' : '0');
-    } catch {
-      /* storage unavailable — the in-memory toggle still works this session */
-    }
-  }, [muted]);
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      data-testid="seal-sound-toggle"
-      aria-label={muted ? 'پخش صدای مهر' : 'قطع صدای مهر'}
-      title={muted ? 'پخش صدای مهر' : 'قطع صدای مهر'}
-      className="grid size-8 shrink-0 place-items-center rounded-full border border-ink-faint bg-card text-ink-soft transition-colors hover:border-ai hover:text-ai focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-    >
-      {muted ? <VolumeX aria-hidden className="size-4" /> : <Volume2 aria-hidden className="size-4" />}
-    </button>
-  );
-}
-
 export function StationRunner(props: StationRunnerProps) {
   const {
     station,
@@ -1274,18 +1247,20 @@ export function StationRunner(props: StationRunnerProps) {
            */}
           {/*
            * TASK-HANASO-28 — the celebration stage, upgraded: a bigger frame
-           * (size-48 / md:size-56) with the ink-ring breathing room, and NO
-           * speaker button on the stage — the sound toggle moved into the
-           * message row so the ceremonial composition stays pure. The seal
+           * with the ink-ring breathing room, and NO sound control anywhere in
+           * the stamp composition (HANASO-IR owner fix 2026-11-19, item 4 — the
+           * speaker icon is REMOVED from beside the seal completely; the stamp
+           * sound itself still honors the persisted mute preference). The seal
            * stamps ONLY on fresh completion; revisit/replay stays settled.
+           * Spacing: generous padding above/below the frame so the seal never
+           * touches the box edge or the message line.
            */}
-          <span className="relative mx-auto block size-48 p-2 md:size-56" data-aizen-seal-frame>
+          <span className="relative mx-auto block size-48 p-5 md:size-56 md:p-6" data-aizen-seal-frame>
             <AizenSeal animate={freshCompletion} label={fa.curriculum.sealLabel} className="h-full w-full" />
           </span>
-          <p className="flex items-center justify-center gap-2 text-body font-bold text-success">
+          <p className="mt-2 flex items-center justify-center gap-2 text-body font-bold text-success">
             <CheckCircle2 aria-hidden className="size-5" />
             {fa.curriculum.stationCompletedMessage}
-            <SealSoundToggle />
           </p>
           <ul className="flex flex-wrap items-center justify-center gap-2" data-lesson-achievements>
             {lessonAchievements.map((a) => (

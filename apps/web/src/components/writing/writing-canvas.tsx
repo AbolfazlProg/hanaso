@@ -296,6 +296,17 @@ export function WritingCanvas({
   /** §2 — a numbered teaching replay is running (any stage). */
   const [replaying, setReplaying] = useState(false);
   const [hintFlash, setHintFlash] = useState(0);
+  /**
+   * HANASO-IR owner fix (2026-11-19) — the hint flash is SCOPED TO THE STROKE IT
+   * WAS REQUESTED FOR: `hintStroke` freezes the expected index captured at the
+   * moment the learner explicitly asked for help. The free-mode guide renders
+   * ONLY while `hintFlash > 0 && attempt.expectedIndex === hintStroke`, and
+   * finishStroke clears BOTH in the same batch as the attempt advance — so the
+   * frame that accepts stroke N can never render stroke N+1's path/start dot/
+   * arrow, not even for one frame (the owner's zero-spoiler rule: guidance is
+   * shown only on an explicit request, for the stroke it was requested for).
+   */
+  const [hintStroke, setHintStroke] = useState<number | null>(null);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const liveRef = useRef<Point[]>([]);
@@ -373,6 +384,10 @@ export function WritingCanvas({
     drawingRef.current = false;
     setDemo({ stroke: -1, shown: [] });
     setMorphInk([]);
+    /* HANASO-IR: a fresh attempt starts with NO help state — any hint window
+     * from the previous attempt dies with it (zero-spoiler rule). */
+    setHintFlash(0);
+    setHintStroke(null);
     // charData intentionally not a dep — only read for the soft clear above
   }, [availability, character, mode, restartSignal]);
 
@@ -438,6 +453,10 @@ export function WritingCanvas({
     // absorbed — the running animation is NEVER cancelled, no double run.
     if (replayBusyRef.current) return;
     replayBusyRef.current = true;
+    /* a teaching replay replaces the whole canvas view — any help flash dies
+     * with it (zero-spoiler rule); the learner can ask again afterwards. */
+    setHintFlash(0);
+    setHintStroke(null);
     setReplaying(true);
     replayStopRef.current = runTeachingLoop({ isReplay: true, kind: 'demo' });
     // No cleanup-on-rerun: a later signal must not kill the in-flight replay.
@@ -457,10 +476,15 @@ export function WritingCanvas({
   // ---------------------------------------------------------------- hint flash
   useEffect(() => {
     if (hintSignal === 0) return;
+    // freeze the stroke this help request belongs to (the CURRENT expected one)
+    setHintStroke(Math.min(attemptRef.current.expectedIndex, totalStrokes - 1));
     setHintFlash((n) => n + 1);
-    const t = setTimeout(() => setHintFlash(0), 1400);
+    const t = setTimeout(() => {
+      setHintFlash(0);
+      setHintStroke(null);
+    }, 1400);
     return () => clearTimeout(t);
-  }, [hintSignal]);
+  }, [hintSignal, totalStrokes]);
 
   // ---------------------------------------------------------------- pointer input
   const toCharSpace = useCallback((clientX: number, clientY: number): Point | null => {
@@ -491,6 +515,13 @@ export function WritingCanvas({
     const { state: next, done } = applyJudgement(state, judgement, totalStrokes);
     attemptRef.current = next;
     setAttempt(next);
+    /* HANASO-IR zero-spoiler rule: the moment the attempt advances (accepted OR
+     * retried), any lingering help flash dies IN THE SAME BATCH — the next
+     * render can never paint the NEW expected stroke's guide, because
+     * `hintFlash` is already 0 and `hintStroke` already null in that commit.
+     * Guidance returns only via an explicit new help request. */
+    setHintFlash(0);
+    setHintStroke(null);
     if (judgement.judge === 'accepted' || judgement.judge === 'accepted_with_hint') {
       // Addendum-5 §2 — per-stroke replacement as a MORPH: the raw hand ink is
       // NOT erased and re-drawn; it stays exactly where the hand left it and is
@@ -767,38 +798,43 @@ export function WritingCanvas({
         </g>
       )}
 
-      {/* guided: dashed guide for the expected stroke + start marker + arrow */}
-      {(guided || (practiceMode === 'free' && hintFlash > 0 && !attemptDone)) && guideMedian.length >= 2 && (
-        <>
-          <path
-            d={charData.strokes[expected]!}
-            fill="none"
-            stroke="currentColor"
-            className="text-ai"
-            strokeWidth={GUIDE_WIDTH}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity={practiceMode === 'free' ? 0.5 : 0.55}
-            pathLength={1}
-            strokeDasharray="0.042 0.065"
-          />
-          <circle
-            cx={guideMedian[0]!.x}
-            cy={guideMedian[0]!.y}
-            r={30}
-            fill="currentColor"
-            className="text-shu"
-            opacity={0.92}
-          >
-            <animate attributeName="r" values="26;34;26" dur="1.6s" repeatCount="indefinite" />
-          </circle>
-          {arrow && (
-            <g transform={`translate(${arrow.tip.x} ${arrow.tip.y}) rotate(${arrow.angleDeg})`} opacity={0.85}>
-              <path d="M0,0 L-38,-20 L-30,0 L-38,20 Z" fill="currentColor" className="text-shu" />
-            </g>
-          )}
-        </>
-      )}
+      {/* guided: dashed guide for the expected stroke + start marker + arrow.
+          free mode: ONLY an explicit, per-stroke help flash — scoped to the
+          stroke it was requested for (hintStroke === expected) so the window
+          can never spill onto the next stroke (zero-frame spoiler rule). */}
+      {(guided ||
+        (practiceMode === 'free' && hintFlash > 0 && !attemptDone && hintStroke !== null && hintStroke === expected)) &&
+        guideMedian.length >= 2 && (
+          <>
+            <path
+              d={charData.strokes[expected]!}
+              fill="none"
+              stroke="currentColor"
+              className="text-ai"
+              strokeWidth={GUIDE_WIDTH}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={practiceMode === 'free' ? 0.5 : 0.55}
+              pathLength={1}
+              strokeDasharray="0.042 0.065"
+            />
+            <circle
+              cx={guideMedian[0]!.x}
+              cy={guideMedian[0]!.y}
+              r={30}
+              fill="currentColor"
+              className="text-shu"
+              opacity={0.92}
+            >
+              <animate attributeName="r" values="26;34;26" dur="1.6s" repeatCount="indefinite" />
+            </circle>
+            {arrow && (
+              <g transform={`translate(${arrow.tip.x} ${arrow.tip.y}) rotate(${arrow.angleDeg})`} opacity={0.85}>
+                <path d="M0,0 L-38,-20 L-30,0 L-38,20 Z" fill="currentColor" className="text-shu" />
+              </g>
+            )}
+          </>
+        )}
 
       {/* the learner's live pen stroke */}
       {live.length >= 1 && (

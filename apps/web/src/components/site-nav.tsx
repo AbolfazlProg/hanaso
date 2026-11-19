@@ -20,10 +20,10 @@
  * (no emoji), state = weight + underline (never color alone).
  */
 import Link from 'next/link';
-import { Dumbbell, Home, Map } from 'lucide-react';
+import { Home, Map } from 'lucide-react';
 import { fa } from '@/messages/fa';
 
-export type NavDestination = 'home' | 'learn' | 'practice';
+export type NavDestination = 'home' | 'learn';
 
 export interface SiteNavProps {
   active: NavDestination;
@@ -32,9 +32,10 @@ export interface SiteNavProps {
 const DESTINATIONS: { key: NavDestination; href: string; label: string; Icon: typeof Home }[] = [
   { key: 'home', href: '/', label: fa.nav.home, Icon: Home },
   { key: 'learn', href: '/learn', label: fa.nav.journey, Icon: Map },
-  /* TASK-HANASO-22: the practice surface is REAL — the nav grows by data
-   * (still no review/library entries: those engines do not exist yet). */
-  { key: 'practice', href: '/practice', label: fa.nav.practice, Icon: Dumbbell },
+  /* HANASO-IR owner fix (2026-11-19, item 3): the standalone /practice hub is
+   * GONE — practice lives in the journey's own exercise stations (stn-kana-p1..p4),
+   * reachable as rows of the learning path. No independent practice surface in
+   * the nav (old /practice links redirect to the journey map). */
 ];
 
 export function SiteNav({ active }: SiteNavProps) {
