@@ -1,0 +1,11 @@
+# HANASO-IR host-specific compose OVERRIDE — the new dedicated server has 1 CPU core,
+# while docker-compose.shared-vps.yml (written for the old multi-core shared VPS) sets
+# cpus: 1.5 on web/postgres, which docker rejects on a 1-core host
+# ("range of CPUs is from 0.01 to 1.00"). Everything else (mem_limits, ports, volumes,
+# healthchecks, restart policies) is inherited from the base file unchanged.
+# Usage: docker compose -f docker-compose.shared-vps.yml -f docker-compose.hanaso-ir-1core.yml ...
+services:
+  web:
+    cpus: 1.0
+  postgres:
+    cpus: 1.0
