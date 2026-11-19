@@ -305,6 +305,41 @@ export const engineKanjiItemSchema = z.object({
 });
 export type EngineKanjiItem = z.infer<typeof engineKanjiItemSchema>;
 
+/* ---- REBUILD-02 additive schemas (documented in CHAPTER-02-REBUILD-MAP §۷) ---- */
+
+/** Formulaic expression (whole-chunk-first — grammar-interaction §۵; booklet Ⅳ). */
+export const engineExpressionSchema = z.object({
+  id: z.string().min(1).max(60),
+  ja: z.string().min(1).max(120),
+  reading: z.string().max(120),
+  functionFa: z.string().min(1).max(160),
+  formalityFa: z.string().max(60),
+  replyFa: z.string().max(160),
+  lineRef: z.string().max(80).optional(),
+  sourceRef: lessonSourceRefSchema.optional(),
+});
+export type EngineExpression = z.infer<typeof engineExpressionSchema>;
+
+/** Chapter mastery-bank item (blueprint §۱ assessment layer; product rule
+ *  MASTERY-SWITCHES needs ≥2 items per M1..M5; compiled OUTSIDE walk blocks). */
+export const engineMasteryItemSchema = z.object({
+  id: z.string().min(1).max(60),
+  measure: z.enum(['M1', 'M2', 'M3', 'M4', 'M5']),
+  measureLabelFa: z.string().max(120),
+  /** Weakness return path (DD-048 point-return). */
+  returnStationId: z.string().max(60).optional(),
+  type: z.enum(['select', 'listen_choose', 'judge']).default('select'),
+  targetSkill: z.enum(['vocab', 'grammar', 'listening', 'expression', 'production', 'structure']).default('listening'),
+  promptFa: z.string().min(1).max(200),
+  promptJa: z.string().max(200).optional(),
+  lineRef: z.string().max(80).optional(),
+  options: z.array(engineOptionSchema).max(4),
+  correctOptionId: z.string().min(1),
+  hints: z.array(z.string().max(200)).max(3).default([]),
+  feedbackWrongFa: z.string().max(300).optional(),
+});
+export type EngineMasteryItem = z.infer<typeof engineMasteryItemSchema>;
+
 /** The chapter-level draft — everything an agent fills from a booklet lesson. */
 export const engineChapterSchema = z.object({
   engineVersion: z.literal(1),
@@ -327,6 +362,18 @@ export const engineChapterSchema = z.object({
   stations: z.array(engineStationSchema).max(40),
   finalTask: z.object({ descriptionFa: z.string().max(400), sourceRef: lessonSourceRefSchema.optional() }).optional(),
   culturalNote: z.array(z.object({ textFa: z.string().max(300), sourceRef: lessonSourceRefSchema.optional() })).max(2),
+  /** REBUILD-02 (documented additive): reuse an EXISTING runtime dialogue asset
+   *  (its YAML + audio manifest) instead of generating a new dialogue — the
+   *  chapter's dialogueSlug and line ids resolve to that asset. Absent →
+   *  compile expects a new dialogue YAML (publish task builds it). */
+  runtimeDialogueSlug: z.string().optional(),
+  /** REBUILD-02 (documented additive): publish-intent prerequisite; the DRAFT
+   *  stays walkable without access gating — the publish task re-checks it. */
+  prerequisiteChapterSlug: z.string().optional(),
+  /** REBUILD-02 (documented additive — blueprint §۱ assessment layer). */
+  masteryBank: z.array(engineMasteryItemSchema).max(24).default([]),
+  /** REBUILD-02 (documented additive — blueprint §۱ expressions domain). */
+  expressions: z.array(engineExpressionSchema).max(12).default([]),
   productionAudit: z
     .object({
       coveragePercent: z.number().min(0).max(100).optional(),

@@ -22,6 +22,7 @@ import type {
   TeachingBlock,
   VocabItem,
   GrammarCluster,
+  ExpressionItem,
 } from '@/modules/curriculum/types';
 import { ENGINE_CONFIG } from './engine-config';
 import type { EngineChapter, EngineStation, EngineStep, ValidatorFinding } from './types';
@@ -74,11 +75,13 @@ function compileInteraction(
   const exType = INTERACTION_TO_EXERCISE[it.type] ?? 'meaning-select';
   const exerciseId = `ex-${station.id}-${step.id}`;
   const options = (it.options ?? []).map((o) => ({ id: o.id, label: o.ja ?? o.label }));
-  if (options.length > 0 && options.length !== 3) {
+  // REBUILD-02: the runtime rule MCQ-THREE is a HARD content gate (validation.ts)
+  // — surface it at compile time with the same severity.
+  if ((it.type === 'select' || it.type === 'listen_choose' || it.type === 'judge') && options.length !== 3) {
     findings.push({
-      rule: 'C-OPTIONS',
-      severity: 'soft',
-      message: 'runtime MCQ convention = 3 options (QUESTION §۲-۳) — کم/زیاد بودن با آزمون مرورگر چک شود.',
+      rule: 'C-MCQ-THREE',
+      severity: 'hard',
+      message: `تعامل MCQ دقیقاً ۳ گزینه لازم دارد (قاعدهٔ محصول MCQ-THREE) — الان ${options.length}.`,
       location: `station[${station.id}].${step.id}`,
     });
   }
@@ -139,6 +142,7 @@ function compileInteraction(
 /** Compile one station (steps → blocks + exercises). */
 function compileStation(
   chapter: EngineChapter,
+  dialogueSlug: string,
   station: EngineStation,
   order: number,
   findings: ValidatorFinding[],
@@ -157,6 +161,32 @@ function compileStation(
   }
   station.steps.forEach((step) => {
     if (step.card?.lineRef) lineRefs.add(step.card.lineRef);
+    // REBUILD-02: the listening flow's predict/verify steps lower to the
+    // EXISTING dialogue-player block (its prediction spec + transcript reveal)
+    // instead of a passive scene — keeps PASSIVE-RUN honest on anchor decks.
+    if (step.interaction && step.goal === 'predict') {
+      const it = step.interaction;
+      blocks.push({
+        kind: 'dialogue-player',
+        id: `dp-${step.id}`,
+        focusLineRefs: step.card?.lineRef ? [step.card.lineRef] : [],
+        prediction: {
+          questionFa: it.promptFa,
+          options: (it.options ?? []).map((o) => ({ id: o.id, label: o.ja ?? o.label })),
+          correctOptionId: typeof it.correct === 'string' ? it.correct : undefined,
+          revealFa: it.feedbackWrongFa ?? 'پس از شنیدن مقایسه کن.',
+        },
+      } as TeachingBlock);
+      return;
+    }
+    if (!step.interaction && step.goal === 'verify') {
+      blocks.push({
+        kind: 'dialogue-player',
+        id: `dp-${step.id}`,
+        focusLineRefs: step.card?.lineRef ? [step.card.lineRef] : [],
+      } as TeachingBlock);
+      return;
+    }
     if (step.interaction) {
       const { block, exercise } = compileInteraction(chapter, station, step, order, findings);
       blocks.push(block);
@@ -227,6 +257,11 @@ function mapDomainToStationType(domain: EngineStation['domain']): Station['type'
 export function compileEngineChapter(draft: EngineChapter): CompileResult {
   const findings: ValidatorFinding[] = [];
 
+  // REBUILD-02: the draft may REUSE an existing runtime dialogue asset — line
+  // ids then live under that slug (s-<dialogueSlug>-lN), not the chapter slug.
+  const dialogueSlug = draft.runtimeDialogueSlug ?? draft.id;
+  const lineId = (n: number) => `s-${dialogueSlug}-l${n}`;
+
   const words: VocabItem[] = draft.vocabulary.map((v) => ({
     id: v.id,
     term: v.surface,
@@ -239,7 +274,7 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     noteFa: v.flags.length > 0 ? `پرچم‌ها: ${v.flags.join(', ')}` : undefined,
     lineRef:
       v.dialogueLineIndex !== undefined && draft.dialogue[v.dialogueLineIndex]
-        ? `s-${draft.id}-l${v.dialogueLineIndex + 1}`
+        ? lineId(v.dialogueLineIndex + 1)
         : '',
     fsrs: { w: `w-${v.id}`, s: `s-${v.id}` },
   }));
@@ -248,15 +283,27 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     id: g.id,
     pattern: g.patternJa,
     titleFa: g.functionFa,
-    lineRefs: draft.dialogue.map((_l, i) => `s-${draft.id}-l${i + 1}`).slice(0, 1),
+    lineRefs: [lineId(1)],
     fsrs: { gr: `gr-${g.id}` },
+  }));
+
+  // REBUILD-02: formulaic expressions → the runtime six-column ExpressionItem.
+  const expressions: ExpressionItem[] = draft.expressions.map((e) => ({
+    id: e.id,
+    ja: e.ja,
+    reading: e.reading,
+    functionFa: e.functionFa,
+    formalityFa: e.formalityFa,
+    replyFa: e.replyFa,
+    lineRef: e.lineRef ?? lineId(1),
+    fsrs: { chrk: `chrk-${e.id}` },
   }));
 
   let order = 0;
   const stations: Station[] = [];
   const allExercises: Record<string, Exercise> = {};
   draft.stations.forEach((station) => {
-    const { station: compiled, exercises } = compileStation(draft, station, order, findings);
+    const { station: compiled, exercises } = compileStation(draft, dialogueSlug, station, order, findings);
     order += 1;
     stations.push(compiled);
     exercises.forEach((e) => {
@@ -264,16 +311,52 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     });
   });
 
-  // dialogue lines are compiled as lineRefs on stations; the runtime dialogue
-  // YAML + audio remain the DIALOGUE pipeline's job (module boundary) — the
-  // compiler records the expected slug for the dialogue module to consume.
-  const dialogueSlug = draft.id; // 1:1 anchor (DD-090)
+  // REBUILD-02: the mastery bank compiles to mastery_* exercises OUTSIDE walk
+  // blocks (product rule MASTERY-POOL) — the assessment page consumes them via
+  // the chapter mastery bank (weights/weakPointMap/labels).
+  const weakPointMap: Record<string, string[]> = {};
+  const measureLabels: Partial<Record<'M1' | 'M2' | 'M3' | 'M4' | 'M5', string>> = {};
+  draft.masteryBank.forEach((m) => {
+    const exercise: Exercise = {
+      id: m.id,
+      type: m.type === 'listen_choose' ? 'audio-meaning' : m.type === 'judge' ? 'response-select' : 'meaning-select',
+      targetSkill: m.targetSkill,
+      targetConcept: `${draft.id}:mastery:${m.measure}`,
+      assessesConcepts: [],
+      lineRef: m.lineRef,
+      difficulty: 2,
+      promptFa: m.promptFa,
+      promptJa: m.promptJa,
+      audioLineRef: m.lineRef,
+      options: m.options.map((o) => ({ id: o.id, label: o.ja ?? o.label })),
+      correctOptionId: m.correctOptionId,
+      distractorRationaleFa: undefined,
+      feedback: {
+        f1Fa: 'درست بود!',
+        f2HintFa: m.hints[0] ?? m.feedbackWrongFa ?? 'با یادآور محتوایی دوباره تلاش کن.',
+        f3ExplainFa: m.hints[2] ?? m.feedbackWrongFa ?? 'توضیح با مثال حل‌شده در ایستگاه بازگشت.',
+      },
+      assessmentRole: `mastery_${m.measure}`,
+    };
+    allExercises[m.id] = exercise;
+    measureLabels[m.measure] = m.measureLabelFa;
+    if (m.returnStationId) {
+      const acc = weakPointMap[m.measure] ?? [];
+      if (!acc.includes(m.returnStationId)) acc.push(m.returnStationId);
+      weakPointMap[m.measure] = acc;
+    }
+  });
+
   const units: ChapterUnit[] = draft.lessons.map((l) => ({
     slug: l.id,
     titleFa: l.microObjectiveFa.slice(0, 80),
     summaryFa: l.skillLinkFa,
     stationSlugs: l.stationIds,
   }));
+
+  // EST-MINUTES honesty (HANASO-21): the declared chapter total equals the
+  // station sum — never an independent number.
+  const estMinutes = stations.reduce((acc, st) => acc + st.estMinutes, 0);
 
   const chapter: Chapter = {
     slug: draft.id,
@@ -292,28 +375,29 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     summaryFa: `draft از جزوهٔ N5 درس ${draft.bookletLesson} — ${draft.bookletSourceFile}`,
     dialogueSlug,
     orderInLevel: draft.bookletLesson,
-    estMinutes: draft.stations.length * 6,
-    estLoad: 'medium',
+    estMinutes,
+    estLoad: estMinutes > 60 ? 'heavy' : estMinutes > 45 ? 'medium' : 'light',
     sceneFa: draft.dialogue[0]?.fa ?? '',
     words,
     grammar,
-    expressions: [],
+    expressions,
     stations,
     exercises: allExercises,
     mastery: {
       weights: { M1: 0.2, M2: 0.2, M3: 0.2, M4: 0.2, M5: 0.2 },
-      weakPointMap: {},
-      measureLabelsFa: { M1: 'درس ۱', M2: 'درس ۲', M3: 'درس ۳', M4: 'درس ۴', M5: 'درس ۵' },
+      weakPointMap,
+      measureLabelsFa: measureLabels,
     } as Chapter['mastery'],
     units,
-    prerequisiteChapterSlug: undefined,
+    prerequisiteChapterSlug: draft.prerequisiteChapterSlug,
   };
 
   findings.push({
     rule: 'C-DIALOGUE',
     severity: 'soft',
-    message:
-      'مکالمهٔ draft به YAML مکالمهٔ runtime منتقل نشده — انتشار نیازمند ساخت dialogue YAML + صوت است (ماژول dialogue دست‌نخورده).',
+    message: draft.runtimeDialogueSlug
+      ? `مکالمهٔ runtime بازاستفاده شد: ${draft.runtimeDialogueSlug} (صوت و cast همان دارایی موجود).`
+      : 'مکالمهٔ draft به YAML مکالمهٔ runtime منتقل نشده — انتشار نیازمند ساخت dialogue YAML + صوت است (ماژول dialogue دست‌نخورده).',
     location: 'chapter.dialogue',
   });
   return { chapter, findings };

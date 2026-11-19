@@ -62,7 +62,11 @@ function isOrderedSubsequence(steps: EngineStep[], order: string[]): boolean {
         break;
       }
     }
-    if (found >= 0) cursor = found + 1;
+    // REBUILD-02 fix: the flow rules permit REPEATED steps at the same position
+    // (multiple example interactions, merged same-goal cards — station-blueprint
+    // §۲ merges + G4's ≥3 examples) — so the cursor stays at the matched entry
+    // instead of passing it; earlier goals still fail (no backward jumps).
+    if (found >= 0) cursor = found;
     else return false; // a goal not in the flow at/after cursor → order violation
   }
   return true;

@@ -4,6 +4,9 @@
  * dialogue-anchored content validation at load time (fail fast on content drift).
  */
 import { getChapterByDialogueSlug, getChapter, listChapters } from './content';
+import { readFileSync } from 'node:fs';
+import { parse as parseYaml } from 'yaml';
+import { engineChapterSchema, compileEngineChapter } from '../../modules/lesson-engine';
 import { LEVELS_BY_CODE } from './content/levels';
 import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import {
@@ -44,13 +47,42 @@ function checkCourseChainOnce(): void {
   }
 }
 
+/**
+ * REBUILD-02 — DRAFT chapter lookup (walkable preview, NOT published).
+ *
+ * Draft chapters authored with the Lesson Engine (content/lesson-engine/*.yaml)
+ * resolve here through compileEngineChapter — the D-0011 path: the EXISTING
+ * runtime Chapter shape, then the SAME validateChapter gates below. They are
+ * deliberately ABSENT from content/index.ts CHAPTERS, so the journey home, the
+ * reveal plan and the course chain never see them — access is by direct URL
+ * only (owner preview / walkthrough testing). PUBLISH = generate a real content
+ * module from the same YAML and register it in CHAPTERS.
+ */
+function getDraftChapter(slug: string): Chapter | null {
+  if (!/^[a-z0-9-]+$/.test(slug)) return null;
+  try {
+    const parsed = engineChapterSchema.safeParse(parseYaml(readFileSync(`content/lesson-engine/${slug}.yaml`, 'utf8')));
+    if (!parsed.success) {
+      throw new Error(`draft schema invalid: ${JSON.stringify(parsed.error.flatten())}`);
+    }
+    const { chapter, findings } = compileEngineChapter(parsed.data);
+    const hard = findings.filter((f) => f.severity === 'hard');
+    if (hard.length > 0) {
+      throw new Error(`draft compile has hard findings: ${hard.map((f) => f.rule).join(', ')}`);
+    }
+    return chapter;
+  } catch {
+    return null; // no such draft / unreadable — normal slug fallthrough
+  }
+}
+
 /** Load one chapter with its anchor dialogue; validates content on first load. */
 export function loadChapterBundle(slug: string): ChapterBundle {
   const cached = bundleCache.get(slug);
   if (cached) return cached;
 
   checkCourseChainOnce();
-  const chapter = getChapter(slug);
+  const chapter = getChapter(slug) ?? getDraftChapter(slug);
   if (!chapter) throw new Error(`unknown chapter: ${slug}`);
   const level = LEVELS_BY_CODE[chapter.levelCode];
   if (!level) throw new Error(`chapter ${slug} references unknown level ${chapter.levelCode}`);
