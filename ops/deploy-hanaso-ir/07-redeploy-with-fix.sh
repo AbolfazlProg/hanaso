@@ -8,7 +8,7 @@ MDIR="/var/www/html/m-2cbd294f"
 LOG="$MDIR/redeploy.log"
 FIX_SHA="bbe328d"
 FIX_SHA_FULL="$(git -C /opt/hanaso-src rev-parse "origin/feat/HANASO-IR-PROD-DEPLOY" 2>/dev/null || echo "")"
-PIN_VERSION="1.1.0-hanaso33-r01"
+PIN_VERSION="1.1.0-hanaso34-r01"
 SRC="/opt/hanaso-src"
 COMPOSE_DIR="$SRC/infra/deploy/learn-kotodama"
 
