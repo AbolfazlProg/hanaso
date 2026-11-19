@@ -54,7 +54,7 @@ step "3b. migrate (additive schema — 0005 fsrs_cards/fsrs_revlogs/learning_eve
 # runs BEFORE the new image serves: the new code lazily reads the new tables.
 # Additive migration — the OLD image ignores the new tables, so a migration that
 # succeeded but a build that failed still leaves the running version healthy.
-docker compose -f docker-compose.shared-vps.yml --env-file .env run --rm migrate || { echo "MIGRATE FAILED"; exit 1; }
+docker compose $CF --env-file .env run --rm migrate || { echo "MIGRATE FAILED"; exit 1; }
 # sanity: the three new tables must exist (informational only)
 docker exec hanaso-postgres psql -U "${POSTGRES_USER:-hanaso}" -d "${POSTGRES_DB:-hanaso}" -c "\dt app.*" 2>/dev/null | grep -E "fsrs_cards|fsrs_revlogs|learning_events" || echo "(table check skipped — verify in logs)"
 
