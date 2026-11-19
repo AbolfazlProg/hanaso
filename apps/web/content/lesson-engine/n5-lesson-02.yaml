@@ -4,15 +4,15 @@ id: n5-lesson-02
 bookletLesson: 2
 bookletSourceFile: N5-02.pdf
 titleJa: この人は誰ですか
-titleFa: "TODO: عنوان فارسی فصل (درس 2 جزوهٔ N5)"
-canDoFa: "TODO: Can-do فصل بر اساس اهداف جزوه: 「この」、「その」、「あの」の つかいかた؛ 「これ」、「それ」、「あれ」の つかいかた؛ かぞくの よびかたと にんずうの かぞえかた"
+titleFa: 'TODO: عنوان فارسی فصل (درس 2 جزوهٔ N5)'
+canDoFa: 'TODO: Can-do فصل بر اساس اهداف جزوه: 「この」、「その」、「あの」の つかいかた؛ 「これ」、「それ」、「あれ」の つかいかた؛ かぞくの よびかたと にんずうの かぞえかた'
 level: H1
 archetype: C-Dialogue
 characters:
   - name: ラジ
-    roleFa: "TODO: نقش و رابطهٔ شخصیت (برای سطح رسمیت)"
+    roleFa: 'TODO: نقش و رابطهٔ شخصیت (برای سطح رسمیت)'
   - name: あんどう
-    roleFa: "TODO: نقش و رابطهٔ شخصیت (برای سطح رسمیت)"
+    roleFa: 'TODO: نقش و رابطهٔ شخصیت (برای سطح رسمیت)'
 dialogue:
   - speaker: ラジ
     textJa: ごめんください。
@@ -223,7 +223,7 @@ vocabulary:
     surface: いいえ
     reading: いいえ
     romaji: iie
-    meaningFa: "TODO معنی فارسی (کتاب: no)"
+    meaningFa: 'TODO معنی فارسی (کتاب: no)'
     tier: T1
     collocations: []
     sourceRef:
@@ -238,7 +238,7 @@ vocabulary:
     surface: おなじ 同じ
     reading: おなじ 同じ
     romaji: onaji
-    meaningFa: "TODO معنی فارسی (کتاب: same)"
+    meaningFa: 'TODO معنی فارسی (کتاب: same)'
     tier: T1
     collocations: []
     sourceRef:
@@ -253,7 +253,7 @@ vocabulary:
     surface: かいしゃ 会社
     reading: かいしゃ 会社
     romaji: kaisha
-    meaningFa: "TODO معنی فارسی (کتاب: company)"
+    meaningFa: 'TODO معنی فارسی (کتاب: company)'
     tier: T1
     collocations: []
     sourceRef:
@@ -268,7 +268,7 @@ vocabulary:
     surface: しごと 仕事
     reading: しごと 仕事
     romaji: shigoto
-    meaningFa: "TODO معنی فارسی (کتاب: work)"
+    meaningFa: 'TODO معنی فارسی (کتاب: work)'
     tier: T2
     collocations: []
     sourceRef:
@@ -283,7 +283,7 @@ vocabulary:
     surface: しりょう 資料
     reading: しりょう 資料
     romaji: shiryoo
-    meaningFa: "TODO معنی فارسی (کتاب: information / materials)"
+    meaningFa: 'TODO معنی فارسی (کتاب: information / materials)'
     tier: T2
     collocations: []
     sourceRef:
@@ -298,7 +298,7 @@ vocabulary:
     surface: ざっし 雑誌
     reading: ざっし 雑誌
     romaji: zasshi
-    meaningFa: "TODO معنی فارسی (کتاب: magazine)"
+    meaningFa: 'TODO معنی فارسی (کتاب: magazine)'
     tier: T2
     collocations: []
     sourceRef:
@@ -313,7 +313,7 @@ vocabulary:
     surface: しんぶん 新聞
     reading: しんぶん 新聞
     romaji: shimbun
-    meaningFa: "TODO معنی فارسی (کتاب: newspaper)"
+    meaningFa: 'TODO معنی فارسی (کتاب: newspaper)'
     tier: T2
     collocations: []
     sourceRef:
@@ -328,7 +328,7 @@ vocabulary:
     surface: しゃしん 写真
     reading: しゃしん 写真
     romaji: shashin
-    meaningFa: "TODO معنی فارسی (کتاب: photograph)"
+    meaningFa: 'TODO معنی فارسی (کتاب: photograph)'
     tier: T2
     collocations: []
     sourceRef:
@@ -343,7 +343,7 @@ vocabulary:
     surface: かさ 傘
     reading: かさ 傘
     romaji: kasa
-    meaningFa: "TODO معنی فارسی (کتاب: umbrella)"
+    meaningFa: 'TODO معنی فارسی (کتاب: umbrella)'
     tier: T2
     collocations: []
     sourceRef:
@@ -358,7 +358,7 @@ vocabulary:
     surface: かばん 鞄
     reading: かばん 鞄
     romaji: kaban
-    meaningFa: "TODO معنی فارسی (کتاب: bag)"
+    meaningFa: 'TODO معنی فارسی (کتاب: bag)'
     tier: T2
     collocations: []
     sourceRef:
@@ -373,7 +373,7 @@ vocabulary:
     surface: あした 明日
     reading: あした 明日
     romaji: ashita
-    meaningFa: "TODO معنی فارسی (کتاب: tomorrow)"
+    meaningFa: 'TODO معنی فارسی (کتاب: tomorrow)'
     tier: T2
     collocations: []
     sourceRef:
@@ -388,7 +388,7 @@ vocabulary:
     surface: ああ
     reading: ああ
     romaji: aa
-    meaningFa: "TODO معنی فارسی (کتاب: Ah! / Oh!)"
+    meaningFa: 'TODO معنی فارسی (کتاب: Ah! / Oh!)'
     tier: T2
     collocations: []
     sourceRef:
@@ -403,7 +403,7 @@ vocabulary:
     surface: どうぞ
     reading: どうぞ
     romaji: doozo
-    meaningFa: "TODO معنی فارسی (کتاب: please, here you are)"
+    meaningFa: 'TODO معنی فارسی (کتاب: please, here you are)'
     tier: T2
     collocations: []
     sourceRef:
@@ -418,7 +418,7 @@ vocabulary:
     surface: はいる 入る
     reading: はいる 入る
     romaji: hairu
-    meaningFa: "TODO معنی فارسی (کتاب: to enter)"
+    meaningFa: 'TODO معنی فارسی (کتاب: to enter)'
     tier: T2
     collocations: []
     sourceRef:
@@ -433,7 +433,7 @@ vocabulary:
     surface: おちゃ お茶
     reading: おちゃ お茶
     romaji: ocha
-    meaningFa: "TODO معنی فارسی (کتاب: tea)"
+    meaningFa: 'TODO معنی فارسی (کتاب: tea)'
     tier: T2
     collocations: []
     sourceRef:
@@ -448,7 +448,7 @@ vocabulary:
     surface: みず 水
     reading: みず 水
     romaji: mizu
-    meaningFa: "TODO معنی فارسی (کتاب: water)"
+    meaningFa: 'TODO معنی فارسی (کتاب: water)'
     tier: T2
     collocations: []
     sourceRef:
@@ -463,7 +463,7 @@ vocabulary:
     surface: こうちゃ 紅茶
     reading: こうちゃ 紅茶
     romaji: koocha
-    meaningFa: "TODO معنی فارسی (کتاب: black tea)"
+    meaningFa: 'TODO معنی فارسی (کتاب: black tea)'
     tier: T2
     collocations: []
     sourceRef:
@@ -478,7 +478,7 @@ vocabulary:
     surface: ジュース
     reading: ジュース
     romaji: juusu
-    meaningFa: "TODO معنی فارسی (کتاب: juice)"
+    meaningFa: 'TODO معنی فارسی (کتاب: juice)'
     tier: T2
     collocations: []
     sourceRef:
@@ -493,7 +493,7 @@ vocabulary:
     surface: この
     reading: この
     romaji: kono
-    meaningFa: "TODO معنی فارسی (کتاب: this)"
+    meaningFa: 'TODO معنی فارسی (کتاب: this)'
     tier: T2
     collocations: []
     sourceRef:
@@ -508,7 +508,7 @@ vocabulary:
     surface: その
     reading: その
     romaji: sono
-    meaningFa: "TODO معنی فارسی (کتاب: that)"
+    meaningFa: 'TODO معنی فارسی (کتاب: that)'
     tier: T2
     collocations: []
     sourceRef:
@@ -523,7 +523,7 @@ vocabulary:
     surface: あの
     reading: あの
     romaji: ano
-    meaningFa: "TODO معنی فارسی (کتاب: that)"
+    meaningFa: 'TODO معنی فارسی (کتاب: that)'
     tier: T2
     collocations: []
     sourceRef:
@@ -538,7 +538,7 @@ vocabulary:
     surface: どの
     reading: どの
     romaji: dono
-    meaningFa: "TODO معنی فارسی (کتاب: which)"
+    meaningFa: 'TODO معنی فارسی (کتاب: which)'
     tier: T2
     collocations: []
     sourceRef:
@@ -553,7 +553,7 @@ vocabulary:
     surface: これ
     reading: これ
     romaji: kore
-    meaningFa: "TODO معنی فارسی (کتاب: this)"
+    meaningFa: 'TODO معنی فارسی (کتاب: this)'
     tier: T2
     collocations: []
     sourceRef:
@@ -568,7 +568,7 @@ vocabulary:
     surface: それ
     reading: それ
     romaji: sore
-    meaningFa: "TODO معنی فارسی (کتاب: that)"
+    meaningFa: 'TODO معنی فارسی (کتاب: that)'
     tier: T2
     collocations: []
     sourceRef:
@@ -582,7 +582,7 @@ vocabulary:
 grammar:
   - id: g-n5-lesson-02-01
     patternJa: ね
-    functionFa: "TODO: کارکرد ارتباطی (A1 — از دل مکالمه)"
+    functionFa: 'TODO: کارکرد ارتباطی (A1 — از دل مکالمه)'
     commonErrors: []
     examples:
       - ja: あしたの しごとの しりょうですね。
@@ -602,7 +602,7 @@ grammar:
 kanji: []
 lessons:
   - id: les-n5-lesson-02-1
-    microObjectiveFa: "TODO: درس ۱ — مکالمه (اهداف جزوه: 「この」、「その」、「あの」の つかいかた، 「これ」、「それ」、「あれ」の つかいかた)"
+    microObjectiveFa: 'TODO: درس ۱ — مکالمه (اهداف جزوه: 「この」、「その」、「あの」の つかいかた، 「これ」、「それ」、「あれ」の つかいかた)'
     stages:
       - 1
       - 2
@@ -620,7 +620,7 @@ lessons:
     flags:
       - needs_review
   - id: les-n5-lesson-02-2
-    microObjectiveFa: "TODO: درس ۲ — واژگان و گرامر (مراحل ۷–۸ مدل ۱۳-مرحله)"
+    microObjectiveFa: 'TODO: درس ۲ — واژگان و گرامر (مراحل ۷–۸ مدل ۱۳-مرحله)'
     stages:
       - 7
       - 8
@@ -637,7 +637,7 @@ lessons:
     flags:
       - needs_review
   - id: les-n5-lesson-02-3
-    microObjectiveFa: "TODO: درس ۳ — تمرین مستقل، بازگشت و انتقال (مراحل ۱۰–۱۳)"
+    microObjectiveFa: 'TODO: درس ۳ — تمرین مستقل، بازگشت و انتقال (مراحل ۱۰–۱۳)'
     stages:
       - 10
       - 11
@@ -657,14 +657,14 @@ stations:
   - id: stn-n5-lesson-02-01-anchor
     domain: anchor
     type: teaching
-    objectiveFa: "TODO: هدف مکالمهٔ فصل را از اهداف جزوه (Ⅰ) تکمیل کن"
+    objectiveFa: 'TODO: هدف مکالمهٔ فصل را از اهداف جزوه (Ⅰ) تکمیل کن'
     prerequisites: []
     steps:
       - id: s1
         goal: intro
         stage: teach
         card:
-          textFa: "TODO: صحنه + شخصیت‌ها از مکالمهٔ جزوه"
+          textFa: 'TODO: صحنه + شخصیت‌ها از مکالمهٔ جزوه'
         interaction: null
         transition: on_view
         skippable: false
@@ -679,7 +679,7 @@ stations:
         goal: predict
         stage: teach
         card:
-          textFa: "TODO: پیش‌بینی از صحنه — بدون پاسخ غلط (L0)"
+          textFa: 'TODO: پیش‌بینی از صحنه — بدون پاسخ غلط (L0)'
         interaction: null
         transition: on_view
         skippable: false
@@ -688,7 +688,7 @@ stations:
         goal: gist
         stage: teach
         card:
-          textFa: "TODO: شنیدن سراسری + سؤال gist (L1)"
+          textFa: 'TODO: شنیدن سراسری + سؤال gist (L1)'
           lineRef: n5-lesson-02-l1
         interaction: null
         transition: on_view
@@ -698,7 +698,7 @@ stations:
         goal: targeted
         stage: teach
         card:
-          textFa: "TODO: شنیدن هدفمند (L2) — سؤال جزئی از جزوه"
+          textFa: 'TODO: شنیدن هدفمند (L2) — سؤال جزئی از جزوه'
         interaction: null
         transition: on_view
         skippable: false
@@ -708,7 +708,7 @@ stations:
         goal: verify
         stage: teach
         card:
-          textFa: "TODO: transcript فقط بعد از ≥۲ شنیدن (D-0007)"
+          textFa: 'TODO: transcript فقط بعد از ≥۲ شنیدن (D-0007)'
           lineRef: n5-lesson-02-l1
         interaction: null
         transition: on_view
@@ -720,7 +720,7 @@ stations:
         stage: teach
         interaction:
           type: select
-          promptFa: "TODO: Exit Check مکالمه (از objective فصل)"
+          promptFa: 'TODO: Exit Check مکالمه (از objective فصل)'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -751,7 +751,7 @@ stations:
   - id: stn-n5-lesson-02-02-vocab
     domain: vocab
     type: teaching
-    objectiveFa: "TODO: هدف ایستگاه واژگان (T1 واژه‌های کلیدی جزوه Ⅲ)"
+    objectiveFa: 'TODO: هدف ایستگاه واژگان (T1 واژه‌های کلیدی جزوه Ⅲ)'
     prerequisites:
       - stn-n5-lesson-02-01-anchor
     steps:
@@ -759,7 +759,7 @@ stations:
         goal: encounter
         stage: teach
         card:
-          textFa: "TODO: مواجهه در خط مکالمه + های‌لایت واژهٔ T1"
+          textFa: 'TODO: مواجهه در خط مکالمه + های‌لایت واژهٔ T1'
         interaction: null
         transition: auto_after_audio
         skippable: false
@@ -768,7 +768,7 @@ stations:
         goal: form
         stage: teach
         card:
-          textFa: "TODO: فرم+صدا (Listen-Choose حداقل‌جفتی)"
+          textFa: 'TODO: فرم+صدا (Listen-Choose حداقل‌جفتی)'
         interaction: null
         transition: on_view
         skippable: false
@@ -778,7 +778,7 @@ stations:
         stage: teach
         interaction:
           type: select
-          promptFa: "TODO: Select معنا (distractor از هم‌حوزهٔ فصل)"
+          promptFa: 'TODO: Select معنا (distractor از هم‌حوزهٔ فصل)'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -795,7 +795,7 @@ stations:
         stage: teach
         interaction:
           type: select
-          promptFa: "TODO: موقعیت طبیعی/نامناسب (V3 — فقط T1)"
+          promptFa: 'TODO: موقعیت طبیعی/نامناسب (V3 — فقط T1)'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -812,7 +812,7 @@ stations:
         stage: teach
         interaction:
           type: complete
-          promptFa: "TODO: Complete فریم particle"
+          promptFa: 'TODO: Complete فریم particle'
         transition: on_correct_or_revealed
         skippable: false
         flags: []
@@ -821,7 +821,7 @@ stations:
         stage: guided
         interaction:
           type: order_build
-          promptFa: "TODO: Build هدایت‌شده (V6) — تایل‌ها + ۱ اضافی"
+          promptFa: 'TODO: Build هدایت‌شده (V6) — تایل‌ها + ۱ اضافی'
         transition: on_correct_or_revealed
         skippable: false
         flags: []
@@ -830,7 +830,7 @@ stations:
         stage: teach
         interaction:
           type: select
-          promptFa: "TODO: Exit مشترک واژگان"
+          promptFa: 'TODO: Exit مشترک واژگان'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -864,7 +864,7 @@ stations:
   - id: stn-n5-lesson-02-03-grammar
     domain: grammar
     type: teaching
-    objectiveFa: "TODO: هدف ایستگاه گرامر (≤۲ ساختار — از Ⅴ جزوه)"
+    objectiveFa: 'TODO: هدف ایستگاه گرامر (≤۲ ساختار — از Ⅴ جزوه)'
     prerequisites:
       - stn-n5-lesson-02-02-vocab
     steps:
@@ -872,7 +872,7 @@ stations:
         goal: notice
         stage: teach
         card:
-          textFa: "TODO: G0 بازپخش خط مکالمه + های‌لایت ساختار هدف"
+          textFa: 'TODO: G0 بازپخش خط مکالمه + های‌لایت ساختار هدف'
         interaction: null
         transition: auto_after_audio
         skippable: false
@@ -882,7 +882,7 @@ stations:
         stage: teach
         interaction:
           type: select
-          promptFa: "TODO: G1 کارکرد اول (Select موقعیت)"
+          promptFa: 'TODO: G1 کارکرد اول (Select موقعیت)'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -899,7 +899,7 @@ stations:
         stage: teach
         interaction:
           type: complete
-          promptFa: "TODO: G2+G3 فرمول + Complete particle"
+          promptFa: 'TODO: G2+G3 فرمول + Complete particle'
         transition: on_correct_or_revealed
         skippable: false
         flags: []
@@ -908,7 +908,7 @@ stations:
         stage: teach
         interaction:
           type: listen_choose
-          promptFa: "TODO: G4 مثال anchor از مکالمه + مثال‌های متنوع"
+          promptFa: 'TODO: G4 مثال anchor از مکالمه + مثال‌های متنوع'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -925,7 +925,7 @@ stations:
         stage: guided
         interaction:
           type: order_build
-          promptFa: "TODO: G6 تولید هدایت‌شده (تایل‌ها از واژگان فصل)"
+          promptFa: 'TODO: G6 تولید هدایت‌شده (تایل‌ها از واژگان فصل)'
         transition: on_correct_or_revealed
         skippable: false
         flags: []
@@ -934,7 +934,7 @@ stations:
         stage: teach
         interaction:
           type: select
-          promptFa: "TODO: G7 بازگشت به مکالمه + Exit"
+          promptFa: 'TODO: G7 بازگشت به مکالمه + Exit'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -970,7 +970,7 @@ stations:
   - id: stn-n5-lesson-02-04-practice
     domain: practice
     type: practice
-    objectiveFa: "TODO: بازیابی درهم‌آمیخته ۶۰/۴۰ (۸–۱۵ آیتم، بدون hint)"
+    objectiveFa: 'TODO: بازیابی درهم‌آمیخته ۶۰/۴۰ (۸–۱۵ آیتم، بدون hint)'
     prerequisites:
       - stn-n5-lesson-02-03-grammar
     steps:
@@ -979,7 +979,7 @@ stations:
         stage: independent
         interaction:
           type: select
-          promptFa: "TODO: آیتم بازیابی مستقل 1 (بدون hint — سیاست Independent)"
+          promptFa: 'TODO: آیتم بازیابی مستقل 1 (بدون hint — سیاست Independent)'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -996,7 +996,7 @@ stations:
         stage: independent
         interaction:
           type: complete
-          promptFa: "TODO: آیتم بازیابی مستقل 2 (بدون hint — سیاست Independent)"
+          promptFa: 'TODO: آیتم بازیابی مستقل 2 (بدون hint — سیاست Independent)'
           correct: opt1
         transition: on_correct_or_revealed
         skippable: false
@@ -1006,7 +1006,7 @@ stations:
         stage: independent
         interaction:
           type: listen_choose
-          promptFa: "TODO: آیتم بازیابی مستقل 3 (بدون hint — سیاست Independent)"
+          promptFa: 'TODO: آیتم بازیابی مستقل 3 (بدون hint — سیاست Independent)'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -1023,7 +1023,7 @@ stations:
         stage: independent
         interaction:
           type: order_build
-          promptFa: "TODO: آیتم بازیابی مستقل 4 (بدون hint — سیاست Independent)"
+          promptFa: 'TODO: آیتم بازیابی مستقل 4 (بدون hint — سیاست Independent)'
           correct: opt1
         transition: on_correct_or_revealed
         skippable: false
@@ -1033,7 +1033,7 @@ stations:
         stage: independent
         interaction:
           type: select
-          promptFa: "TODO: آیتم بازیابی مستقل 5 (بدون hint — سیاست Independent)"
+          promptFa: 'TODO: آیتم بازیابی مستقل 5 (بدون hint — سیاست Independent)'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -1050,7 +1050,7 @@ stations:
         stage: independent
         interaction:
           type: order_build
-          promptFa: "TODO: آیتم بازیابی مستقل 6 (بدون hint — سیاست Independent)"
+          promptFa: 'TODO: آیتم بازیابی مستقل 6 (بدون hint — سیاست Independent)'
           correct: opt1
         transition: on_correct_or_revealed
         skippable: false
@@ -1060,7 +1060,7 @@ stations:
         stage: independent
         interaction:
           type: complete
-          promptFa: "TODO: آیتم بازیابی مستقل 7 (بدون hint — سیاست Independent)"
+          promptFa: 'TODO: آیتم بازیابی مستقل 7 (بدون hint — سیاست Independent)'
           correct: opt1
         transition: on_correct_or_revealed
         skippable: false
@@ -1070,7 +1070,7 @@ stations:
         stage: independent
         interaction:
           type: judge
-          promptFa: "TODO: آیتم بازیابی مستقل 8 (بدون hint — سیاست Independent)"
+          promptFa: 'TODO: آیتم بازیابی مستقل 8 (بدون hint — سیاست Independent)'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -1094,7 +1094,7 @@ stations:
   - id: stn-n5-lesson-02-05-transfer
     domain: transfer
     type: review
-    objectiveFa: "TODO: Transfer Task — مکالمهٔ جدید با همان Can-do (مرحلهٔ ۱۳)"
+    objectiveFa: 'TODO: Transfer Task — مکالمهٔ جدید با همان Can-do (مرحلهٔ ۱۳)'
     prerequisites:
       - stn-n5-lesson-02-04-practice
     steps:
@@ -1102,7 +1102,7 @@ stations:
         goal: transfer_intro
         stage: teach
         card:
-          textFa: "TODO: موقعیت جدید (شخصیت/مکان متفاوت)"
+          textFa: 'TODO: موقعیت جدید (شخصیت/مکان متفاوت)'
         interaction: null
         transition: on_view
         skippable: false
@@ -1112,7 +1112,7 @@ stations:
         stage: independent
         interaction:
           type: select
-          promptFa: "TODO: وظیفهٔ انتقال — سنجه: gist + تولید"
+          promptFa: 'TODO: وظیفهٔ انتقال — سنجه: gist + تولید'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -1129,7 +1129,7 @@ stations:
         stage: teach
         interaction:
           type: select
-          promptFa: "TODO: جمع‌بندی فصل"
+          promptFa: 'TODO: جمع‌بندی فصل'
           options:
             - id: opt1
               label: TODO گزینهٔ ۱
@@ -1150,8 +1150,9 @@ stations:
     flags:
       - needs_review
 finalTask:
-  descriptionFa: "TODO: Transfer Task از موقعیت جدید — مبتنی بر اهداف جزوه: 「この」、「その」、「あの」の つかいかた؛ 「これ」、「それ」、「あれ」の つかいかた؛
-    かぞくの よびかたと にんずうの かぞえかた"
+  descriptionFa:
+    'TODO: Transfer Task از موقعیت جدید — مبتنی بر اهداف جزوه: 「この」、「その」、「あの」の つかいかた؛ 「これ」、「それ」、「あれ」の つかいかた؛
+    かぞくの よびかたと にんずうの かぞえかた'
   sourceRef:
     artifact: n5-booklet
     lesson: 2

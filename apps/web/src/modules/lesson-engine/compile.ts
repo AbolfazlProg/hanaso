@@ -273,9 +273,7 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     surfaceInLine: v.surface,
     noteFa: v.flags.length > 0 ? `پرچم‌ها: ${v.flags.join(', ')}` : undefined,
     lineRef:
-      v.dialogueLineIndex !== undefined && draft.dialogue[v.dialogueLineIndex]
-        ? lineId(v.dialogueLineIndex + 1)
-        : '',
+      v.dialogueLineIndex !== undefined && draft.dialogue[v.dialogueLineIndex] ? lineId(v.dialogueLineIndex + 1) : '',
     fsrs: { w: `w-${v.id}`, s: `s-${v.id}` },
   }));
 

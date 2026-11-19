@@ -107,7 +107,12 @@ function stationSkeletons(l: BookletLesson, chapterSlug: string): EngineStationI
           id: 's6',
           goal: 'exit',
           stage: 'teach',
-          interaction: { type: 'select', promptFa: 'TODO: Exit Check مکالمه (از objective فصل)', options: todoOptions(), correct: 'opt1' },
+          interaction: {
+            type: 'select',
+            promptFa: 'TODO: Exit Check مکالمه (از objective فصل)',
+            options: todoOptions(),
+            correct: 'opt1',
+          },
           transition: 'on_correct_or_revealed',
         },
       ],
@@ -143,14 +148,24 @@ function stationSkeletons(l: BookletLesson, chapterSlug: string): EngineStationI
           id: 'v2',
           goal: 'meaning',
           stage: 'teach',
-          interaction: { type: 'select', promptFa: 'TODO: Select معنا (distractor از هم‌حوزهٔ فصل)', options: todoOptions(), correct: 'opt1' },
+          interaction: {
+            type: 'select',
+            promptFa: 'TODO: Select معنا (distractor از هم‌حوزهٔ فصل)',
+            options: todoOptions(),
+            correct: 'opt1',
+          },
           transition: 'on_correct_or_revealed',
         },
         {
           id: 'v3',
           goal: 'situation',
           stage: 'teach',
-          interaction: { type: 'select', promptFa: 'TODO: موقعیت طبیعی/نامناسب (V3 — فقط T1)', options: todoOptions(), correct: 'opt1' },
+          interaction: {
+            type: 'select',
+            promptFa: 'TODO: موقعیت طبیعی/نامناسب (V3 — فقط T1)',
+            options: todoOptions(),
+            correct: 'opt1',
+          },
           transition: 'on_correct_or_revealed',
         },
         {
@@ -200,7 +215,12 @@ function stationSkeletons(l: BookletLesson, chapterSlug: string): EngineStationI
           id: 'g1',
           goal: 'function',
           stage: 'teach',
-          interaction: { type: 'select', promptFa: 'TODO: G1 کارکرد اول (Select موقعیت)', options: todoOptions(), correct: 'opt1' },
+          interaction: {
+            type: 'select',
+            promptFa: 'TODO: G1 کارکرد اول (Select موقعیت)',
+            options: todoOptions(),
+            correct: 'opt1',
+          },
           transition: 'on_correct_or_revealed',
         },
         {
@@ -214,7 +234,12 @@ function stationSkeletons(l: BookletLesson, chapterSlug: string): EngineStationI
           id: 'g3',
           goal: 'examples',
           stage: 'teach',
-          interaction: { type: 'listen_choose', promptFa: 'TODO: G4 مثال anchor از مکالمه + مثال‌های متنوع', options: todoOptions(), correct: 'opt1' },
+          interaction: {
+            type: 'listen_choose',
+            promptFa: 'TODO: G4 مثال anchor از مکالمه + مثال‌های متنوع',
+            options: todoOptions(),
+            correct: 'opt1',
+          },
           transition: 'on_correct_or_revealed',
         },
         {
@@ -228,7 +253,12 @@ function stationSkeletons(l: BookletLesson, chapterSlug: string): EngineStationI
           id: 'g5',
           goal: 'exit',
           stage: 'teach',
-          interaction: { type: 'select', promptFa: 'TODO: G7 بازگشت به مکالمه + Exit', options: todoOptions(), correct: 'opt1' },
+          interaction: {
+            type: 'select',
+            promptFa: 'TODO: G7 بازگشت به مکالمه + Exit',
+            options: todoOptions(),
+            correct: 'opt1',
+          },
           transition: 'on_correct_or_revealed',
         },
       ],
@@ -264,7 +294,9 @@ function stationSkeletons(l: BookletLesson, chapterSlug: string): EngineStationI
           interaction: {
             type: rotation[i % rotation.length]!,
             promptFa: `TODO: آیتم بازیابی مستقل ${i + 1} (بدون hint — سیاست Independent)`,
-            options: ['select', 'listen_choose', 'judge'].includes(rotation[i % rotation.length]!) ? todoOptions() : undefined,
+            options: ['select', 'listen_choose', 'judge'].includes(rotation[i % rotation.length]!)
+              ? todoOptions()
+              : undefined,
             correct: 'opt1',
           },
           transition: 'on_correct_or_revealed' as const,
@@ -293,7 +325,12 @@ function stationSkeletons(l: BookletLesson, chapterSlug: string): EngineStationI
           id: 't2',
           goal: 'transfer_task',
           stage: 'independent',
-          interaction: { type: 'select', promptFa: 'TODO: وظیفهٔ انتقال — سنجه: gist + تولید', options: todoOptions(), correct: 'opt1' },
+          interaction: {
+            type: 'select',
+            promptFa: 'TODO: وظیفهٔ انتقال — سنجه: gist + تولید',
+            options: todoOptions(),
+            correct: 'opt1',
+          },
           transition: 'on_correct_or_revealed',
         },
         {

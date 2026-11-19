@@ -11,16 +11,32 @@ import { LEVELS_BY_CODE } from '../../src/modules/curriculum/content/levels';
 import { loadDialogueBundle } from '../../src/lib/poc/dialogue-bundle';
 
 const [, , input] = process.argv;
-if (!input) { console.error('usage: tsx check-product.ts <draft.yaml>'); process.exit(2); }
+if (!input) {
+  console.error('usage: tsx check-product.ts <draft.yaml>');
+  process.exit(2);
+}
 const draft = engineChapterSchema.parse(parse(readFileSync(input, 'utf8')));
 const { chapter } = compileEngineChapter(draft);
 const level = LEVELS_BY_CODE[chapter.levelCode];
-if (!level) { console.error('unknown level', chapter.levelCode); process.exit(1); }
+if (!level) {
+  console.error('unknown level', chapter.levelCode);
+  process.exit(1);
+}
 const bundle = loadDialogueBundle(chapter.dialogueSlug);
 const lineIds = bundle.dialogue.lines.map((l) => l.id);
 const v = [...validateChapter(chapter, level), ...validateChapterAgainstDialogue(chapter, level, lineIds)];
 if (v.length === 0) {
-  console.log('PRODUCT VALIDATION: PASS —', chapter.stations.length, 'stations,', Object.keys(chapter.exercises).length, 'exercises,', chapter.words.length, 'words,', chapter.grammar.length, 'grammar clusters');
+  console.log(
+    'PRODUCT VALIDATION: PASS —',
+    chapter.stations.length,
+    'stations,',
+    Object.keys(chapter.exercises).length,
+    'exercises,',
+    chapter.words.length,
+    'words,',
+    chapter.grammar.length,
+    'grammar clusters',
+  );
 } else {
   console.log('PRODUCT VALIDATION FAILURES (' + v.length + '):');
   for (const x of v) console.log(`- [${x.rule}] ${x.message}`);
