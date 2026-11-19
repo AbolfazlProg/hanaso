@@ -90,8 +90,36 @@ export const FSRS_NOT_INTEGRATED: FsrsReviewPort = {
   },
 };
 
-/** The active port — swap to the real engine in M2 without touching content. */
-export const fsrsPort: FsrsReviewPort = FSRS_NOT_INTEGRATED;
+/*
+ * Owner-pass 2026-11-19 — the port WENT LIVE (mission «تکمیل APIهای بخش یادگیری»):
+ * the persistence layer is app.fsrs_cards + app.fsrs_revlogs
+ * (./review-store.ts), enrollment is station-completion-driven, and the review
+ * API routes (GET /api/review/queue · POST /api/review — the contract table in
+ * docs/architecture/API-AND-EVENTS.md) serve it. The store getter is imported
+ * lazily-safe via a static import (no runtime cycle: review-store only uses
+ * TYPE imports from this file) and resolves the DATABASE_URL-switched store at
+ * CALL time — RSC bundles and unit tests never touch a database unless a
+ * review operation actually runs.
+ */
+import { getFsrsReviewStore } from '@/lib/poc/stores';
+
+/** The LIVE port — real persistence, same surface as the contract promised. */
+export const PG_FSRS_PORT: FsrsReviewPort = {
+  engine: 'FSRS-6',
+  status: 'integrated',
+  async getReviewQueue(userId: string) {
+    const items = await getFsrsReviewStore().listDue(userId, new Date(), 20);
+    return items.map((it) => ({ itemId: it.itemId, dueAt: it.dueAt }));
+  },
+  async recordRetrieval(userId: string, itemId: string, rating: FsrsRating) {
+    // One retrieval per lesson/gate answer — a fresh uuidv7 idempotency key per
+    // call (the API submission path uses the client's explicit clientReviewId).
+    await getFsrsReviewStore().submit(userId, { itemId, rating, clientReviewId: crypto.randomUUID() }, new Date());
+  },
+};
+
+/** The active port — swapped to the real engine in M2 WITHOUT touching content (done). */
+export const fsrsPort: FsrsReviewPort = PG_FSRS_PORT;
 
 /**
  * Aggregate a chapter's full card inventory from its shipped data (pure — works

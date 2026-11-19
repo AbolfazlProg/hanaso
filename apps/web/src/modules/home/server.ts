@@ -8,7 +8,7 @@
  */
 import { listChapters, resolveLearnerJourney } from '@/modules/curriculum/server';
 import { courseOrder } from '@/modules/curriculum/reveal';
-import { getStationProgressStore } from '@/lib/poc/stores';
+import { getStationProgressStore, getFsrsReviewStore } from '@/lib/poc/stores';
 import { fsrsPort } from '@/modules/fsrs/integration';
 import { parseActivityAt } from '@/modules/curriculum/resume-policy';
 import { resolveHomeView, faDateLine, type HomeView, type HomeCourseFacts, type HomeReviewFacts } from './home-view';
@@ -87,12 +87,19 @@ export async function resolveHome(userId: string): Promise<HomeRender> {
     lastChapterTitleFa: chapters.length > 0 ? chapters[chapters.length - 1]!.titleFa : null,
   };
 
-  /* ---- review facts — HONEST: the engine is not integrated yet, so no
-   * count exists; the view renders the queue-pending note, never a fake
-   * number (mission §3.2 + FSRS_INTEGRATION_CONTRACT). ---- */
+  /* ---- review facts — LIVE (owner-pass 2026-11-19): the FSRS engine is
+   * integrated and the due count is REAL; an empty queue stays an honest 0. ---- */
+  let reviewDueCount = 0;
+  try {
+    reviewDueCount = await getFsrsReviewStore().countDue(userId, new Date());
+  } catch {
+    // A review-store outage must never fail the whole dashboard — the view
+    // degrades to the queue-pending note (still no fake number).
+    reviewDueCount = 0;
+  }
   const reviewFacts: HomeReviewFacts = {
     fsrsActive: fsrsPort.status === 'integrated',
-    dueCount: 0,
+    dueCount: reviewDueCount,
   };
 
   const nowMs = Date.now();

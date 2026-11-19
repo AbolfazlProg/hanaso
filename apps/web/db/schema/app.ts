@@ -22,6 +22,7 @@
  */
 import { sql } from 'drizzle-orm';
 import {
+  boolean,
   index,
   integer,
   jsonb,
@@ -238,4 +239,118 @@ export const learningObjectStates = app.table(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.objectId] }), index('learning_object_states_user_idx').on(t.userId)],
+);
+
+/* --------------------------------------------------------- fsrs_cards (M2 / OTD-001) */
+/**
+ * Per-user FSRS card state (fsrs-architecture §۱): ONE row per (user, item) —
+ * the ts-fsrs `Card` lives as jsonb, with `due`/`state` lifted into indexed
+ * columns for the queue scan. `item_id` is the STABLE content id the inventory
+ * ships (`w-watashi`, `gr-desu-identity`, `kn-rec-hira-a`) — never order-based.
+ * Enrollment is station-completion-driven (DD-095 §۲, wave 1) via ON CONFLICT
+ * DO NOTHING — re-completing a station never resets a card's schedule.
+ */
+export const fsrsCards = app.table(
+  'fsrs_cards',
+  {
+    userId: text('user_id').notNull(),
+    /** Stable content id — same id space as fsrsItems / learning_object_states. */
+    itemId: text('item_id').notNull(),
+    /** 'w' | 's' | 'w-p' | 's-line' | 'gr' | 'chrk' | 'kn' (inventory enum). */
+    kind: text('kind').notNull(),
+    /** 1 = recognition (station end), 2 = productive direction (declared data). */
+    wave: integer('wave').notNull().default(1),
+    /** The station whose completion enrolled this card (traceability). */
+    enrolledStation: text('enrolled_station'),
+    /** First-encounter dialogue line (fsrs contract §۴ — context review). */
+    contextLineId: text('context_line_id'),
+    /** ts-fsrs v6 Card (due, stability, difficulty, reps, lapses, state, last_review). */
+    card: jsonb('card').$type<import('ts-fsrs').Card>().notNull(),
+    /** Lifted from card.due — the queue scan column (indexed, absolute UTC). */
+    due: timestamp('due', { withTimezone: true }).notNull(),
+    /** Lifted ts-fsrs state: 0=New 1=Learning 2=Review 3=Relearning. */
+    cardState: integer('card_state').notNull().default(0),
+    enrolledAt: timestamp('enrolled_at', { withTimezone: true }).notNull().defaultNow(),
+    lastReviewAt: timestamp('last_review_at', { withTimezone: true }),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.itemId] }), index('fsrs_cards_due_idx').on(t.userId, t.due)],
+);
+
+/* --------------------------------------------------------- fsrs_revlogs (M2 / OTD-001) */
+/**
+ * Append-only FSRS review log (fsrs-architecture §۲ — the honest evidence, the
+ * replay source and the analytics base for review behavior). `client_review_id`
+ * (uuidv7 from the client) is UNIQUE across the table: a retried submit is an
+ * ON CONFLICT DO NOTHING — the review is NEVER applied twice (mission rule:
+ * جلوگیری از ثبت تکراری). Ratings map AC-945: again/hard/good/easy.
+ */
+export const fsrsRevlogs = app.table(
+  'fsrs_revlogs',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    userId: text('user_id').notNull(),
+    itemId: text('item_id').notNull(),
+    /** Client-generated uuidv7 — the idempotency key (contract: clientReviewId). */
+    clientReviewId: uuid('client_review_id').notNull(),
+    /** 'again' | 'hard' | 'good' | 'easy' (AC-945 mapping). */
+    rating: text('rating').notNull(),
+    /** ts-fsrs numeric grade 1..4 (again=1 … easy=4). */
+    grade: integer('grade').notNull(),
+    /** Card state before / after the review (jsonb ts-fsrs Card). */
+    cardBefore: jsonb('card_before').notNull(),
+    cardAfter: jsonb('card_after').notNull(),
+    /** Lifted from the post-review card — the next time this card is due. */
+    dueAfter: timestamp('due_after', { withTimezone: true }).notNull(),
+    /** Server clock of the accept (the schedule math uses the client ts-fsrs now). */
+    reviewedAt: timestamp('reviewed_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('fsrs_revlogs_client_review_id_key').on(t.clientReviewId),
+    index('fsrs_revlogs_user_idx').on(t.userId, t.reviewedAt),
+    index('fsrs_revlogs_item_idx').on(t.userId, t.itemId),
+  ],
+);
+
+/* ----------------------------------------------------- learning_events (owner-pass 2026-11-19) */
+/**
+ * DURABLE learning-behavior event log (the owner's monitoring mandate: «نظارت
+ * خیلی شدید بر روند دانش‌آموز» — where learners stall, how they practice).
+ * Append-only; written BOTH by server-side emitters (critical events — grading,
+ * gates, review results) and the client batch endpoint (behavioral signals),
+ * always stamped with the caller's learner id. `quarantined` marks names outside
+ * the frozen registry (ADR-016: unknown ⇒ quarantine, never dropped silently) so
+ * the future admin panel can audit the taxonomy drift. Retention is swept daily
+ * by the worker (HANASO_EVENTS_RETENTION_DAYS, default 180 — OQ-020/021 policy).
+ * PRIVACY: no free text / PII — zod-bounded props only; analytics consumers must
+ * aggregate with k≥10 before exposing counts (API-AND-EVENTS.md).
+ */
+export const learningEvents = app.table(
+  'learning_events',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    userId: text('user_id').notNull(),
+    /** object_action snake_case — frozen registry names; unknown names quarantine. */
+    name: text('name').notNull(),
+    /** Flat, bounded props (≤16 keys / ≤4KB) — the event contract payload. */
+    props: jsonb('props')
+      .notNull()
+      .default(sql`'{}'::jsonb`),
+    /** 'server' (trust-boundary emitters) | 'client' (behavioral signals via POST /api/events). */
+    source: text('source').notNull().default('client'),
+    /** true = name outside the registry (kept, flagged — never silently dropped). */
+    quarantined: boolean('quarantined').notNull().default(false),
+    /** Client clock when provided (batch events carry their local timestamp); server stamp otherwise. */
+    occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull().defaultNow(),
+    receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('learning_events_user_idx').on(t.userId, t.occurredAt),
+    index('learning_events_name_idx').on(t.name, t.receivedAt),
+    index('learning_events_received_idx').on(t.receivedAt),
+  ],
 );

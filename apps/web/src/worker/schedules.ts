@@ -14,6 +14,9 @@ export const JOB_BACKUP_CRON = '30 3 * * *'; // 03:30 — nightly pg_dump + veri
 export const JOB_DB_VERIFY = 'ops.db-verify';
 export const JOB_DB_VERIFY_CRON = '0 4 * * *'; // 04:00 — consistency counts after the backup
 
+export const JOB_EVENTS_RETENTION = 'ops.events-retention';
+export const JOB_EVENTS_RETENTION_CRON = '10 4 * * *'; // 04:10 — durable learning_events retention sweep
+
 /** Crons fire in the users' timezone (owner + learners are in Iran). */
 export const JOB_TZ = 'Asia/Tehran';
 
@@ -21,4 +24,5 @@ export const JOB_TZ = 'Asia/Tehran';
 export const WORKER_SCHEDULES: ReadonlyArray<{ name: string; cron: string }> = [
   { name: JOB_BACKUP, cron: JOB_BACKUP_CRON },
   { name: JOB_DB_VERIFY, cron: JOB_DB_VERIFY_CRON },
+  { name: JOB_EVENTS_RETENTION, cron: JOB_EVENTS_RETENTION_CRON },
 ];

@@ -1,84 +1,125 @@
-import { NextResponse } from 'next/server';
-import { pocEventSchema } from '@/lib/poc/event-store';
-import { getEventStore } from '@/lib/poc/stores';
-import { fail, ok } from '@/modules/shared';
-import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
-
 /**
- * POST /api/events — analytics sink for the PoC (TASK-DLG-POC-01 «ثبت نتیجهٔ تعامل»).
- * Structure mirrors ADR-016 events.yaml entries: { name: object_action, props }.
- * GET returns the last events + count (PoC observability only).
+ * HANASO — /api/events (owner-pass 2026-11-19 — the durable analytics layer).
  *
- * TASK-HANASO-24 (RC-5 — audit T1-B-07):
- *  - POST requires a valid session identity (guest → 401): the pre-24 endpoint
- *    was an unauthenticated unbounded write into the shared ring (anonymous
- *    spam / row-growth vector). Server-side emitters (recordLearningEvent) are
- *    unaffected — they never cross HTTP.
- *  - GET no longer discloses `user_id` per event (it listed every learner's
- *    identity); the observability payload keeps name/props/at only.
+ * UPGRADED per the API-AND-EVENTS.md contract (`POST /api/events` batch ≤ 25):
+ *  - POST now accepts BOTH shapes: the legacy single event `{name, props}` and
+ *    the batch `{events: [{name, props, occurredAt?}]}` (≤25) — old clients
+ *    keep working (additive-first versioning).
+ *  - Events land in the DURABLE app.learning_events table (the monitoring
+ *    mandate: learner behavior survives restarts and feeds the future admin
+ *    panel) AND, for single-event posts, the legacy in-memory ring (unchanged
+ *    PoC observability path).
+ *  - ADR-016 quarantine: a name outside the frozen registry (event-names.ts)
+ *    is KEPT with quarantined=true — visible and auditable, never silently
+ *    dropped — and the batch responds 202 with per-shape counts.
+ *  - GET stays caller-scoped (identity check + user_id stripped) and now reads
+ *    the DURABLE rows (the restart-proof observability path).
+ *  - bounded writes (TASK-HANASO-24 keeps holding): name regex + props ≤16
+ *    keys/4KB per event; batch ≤25 — the same bounds the DB schema documents.
  */
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+
+import { jsonEnvelope, readJson, requireLearner, validationFailed } from '@/lib/api/guard';
+import { getEventStore, getLearningEventsStore } from '@/lib/poc/stores';
+import { ok, fail } from '@/modules/shared';
+
 export const dynamic = 'force-dynamic';
 
-function noIdentity(): NextResponse {
-  return NextResponse.json(
-    fail({
-      code: 'learner/no_identity',
-      message: 'شناسهٔ زبان‌آموز یافت نشد — کوکی «hanaso_lid» باید توسط مرورگر پذیرفته شود.',
-    }),
-    { status: 401, headers: { 'cache-control': 'no-store' } },
-  );
-}
+/** The per-event schema (same bounds as lib/poc/event-store.ts — TASK-HANASO-24). */
+const eventSchema = z.object({
+  name: z.string().regex(/^[a-z][a-z0-9]*(_[a-z0-9]+)+$/, 'event name must be object_action snake_case'),
+  props: z
+    .record(z.string().max(64), z.unknown())
+    .refine(
+      (p: Record<string, unknown>) => Object.keys(p).length <= 16 && JSON.stringify(p).length <= 4096,
+      'props too large (max 16 keys / 4KB serialized)',
+    )
+    .default({}),
+  /** Optional client clock (ISO) — behavioral timelines survive offline batching. */
+  occurredAt: z.string().datetime({ offset: true }).optional(),
+});
 
-export async function POST(req: Request) {
-  const userId = resolveLearnerIdFromRequest(req);
-  if (userId === GUEST_LEARNER_ID) return noIdentity();
-  let body: unknown;
+const batchSchema = z.object({
+  events: z.array(eventSchema).min(1).max(25, 'بستهٔ رویداد حداکثر ۲۵ آیتم است.'),
+});
+
+const singleSchema = eventSchema;
+
+export async function POST(req: Request): Promise<NextResponse> {
+  const guard = requireLearner(req);
+  if (!guard.ok) return guard.response;
+
+  const body = await readJson(req);
+  if (!body.ok) return body.response;
+
+  // Two accepted shapes — batch (contract) first, then the legacy single event.
+  const asBatch = batchSchema.safeParse(body.body);
+  if (asBatch.success) {
+    try {
+      const result = await getLearningEventsStore().record({
+        userId: guard.userId,
+        source: 'client',
+        events: asBatch.data.events.map((e) => ({
+          name: e.name,
+          props: e.props,
+          occurredAt: e.occurredAt ? new Date(e.occurredAt) : undefined,
+        })),
+      });
+      // 202 Accepted per the contract: unknown names quarantine (kept + flagged).
+      return jsonEnvelope(
+        {
+          ok: true,
+          data: {
+            received: result.stored,
+            accepted: result.stored,
+            quarantined: result.quarantined,
+          },
+        },
+        202,
+      );
+    } catch (err) {
+      console.error('[hanaso/analytics] batch record failed', err);
+      return jsonEnvelope(
+        fail({ code: 'events/persist_failed', message: 'ثبت رویدادها ناموفق بود — بعداً تلاش کنید.' }),
+        500,
+      );
+    }
+  }
+
+  const asSingle = singleSchema.safeParse(body.body);
+  if (!asSingle.success) return validationFailed('events', asSingle.error.flatten());
+
+  // Legacy single-event path — durable record + the unchanged in-memory ring.
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json(fail({ code: 'events/invalid_json', message: 'body must be JSON' }), {
-      status: 400,
+    await getLearningEventsStore().record({
+      userId: guard.userId,
+      source: 'client',
+      events: [{ name: asSingle.data.name, props: asSingle.data.props }],
     });
+    const event = getEventStore().record(asSingle.data.name, { ...asSingle.data.props, user_id: guard.userId });
+    return jsonEnvelope(ok({ recorded: true, at: event.at, total: getEventStore().count() }), 201);
+  } catch (err) {
+    console.error('[hanaso/analytics] record failed', err);
+    return jsonEnvelope(
+      fail({ code: 'events/persist_failed', message: 'ثبت رویداد ناموفق بود — بعداً تلاش کنید.' }),
+      500,
+    );
   }
-
-  const parsed = pocEventSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(fail({ code: 'events/validation_failed', message: parsed.error.message }), {
-      status: 400,
-    });
-  }
-
-  /*
-   * TASK-HANASO-24 (B-05): client-posted events are stamped with the CALLER's
-   * identity (same contract as the server-side emitter) so the caller-scoped
-   * GET can list them — and ONLY them.
-   */
-  const event = getEventStore().record(parsed.data.name, { ...parsed.data.props, user_id: userId });
-  return NextResponse.json(ok({ recorded: true, at: event.at, total: getEventStore().count() }), {
-    status: 201,
-  });
 }
 
-export async function GET(req: Request) {
+export async function GET(req: Request): Promise<NextResponse> {
   /*
-   * TASK-HANASO-24 (subagent B-05): the observability listing now REQUIRES a
-   * valid session identity AND is caller-scoped — pre-24 any anonymous visitor
-   * read the shared ring (other learners' activity streams). Server-side
-   * emitters stamp `user_id` into props (modules/curriculum/events.ts); the
-   * listing returns ONLY the caller's own events, with user_id stripped.
+   * Caller-scoped observability (the TASK-HANASO-24 IDOR fix, now durable):
+   * a valid session sees ONLY its own recent events, user_id stripped.
    */
-  const userId = resolveLearnerIdFromRequest(req);
-  if (userId === GUEST_LEARNER_ID) return noIdentity();
-  const store = getEventStore();
-  const events = store
-    .list(50)
-    .filter((e) => (e.props as Record<string, unknown>).user_id === userId)
-    .map((e) => {
-      const { user_id: _userId, ...props } = e.props as Record<string, unknown>;
-      void _userId;
-      return { name: e.name, at: e.at, props };
-    });
-  return NextResponse.json(ok({ total: events.length, events }), {
-    headers: { 'cache-control': 'no-store' },
-  });
+  const guard = requireLearner(req);
+  if (!guard.ok) return guard.response;
+  try {
+    const events = await getLearningEventsStore().listForUser(guard.userId, 50);
+    return jsonEnvelope(ok({ total: events.length, events }), 200);
+  } catch (err) {
+    console.error('[hanaso/analytics] list failed', err);
+    return jsonEnvelope(fail({ code: 'events/list_failed', message: 'خواندن رویدادها ناموفق بود.' }), 500);
+  }
 }

@@ -14,43 +14,17 @@
  * routes that already own grading/progress), never fabricated client-side.
  */
 import { getEventStore } from '@/lib/poc/stores';
+import { getLearningEventsStore } from '@/lib/poc/stores';
+import { recordLearningEventsSafe } from '@/modules/analytics/store';
 import { POC_DEFAULT_USER_ID } from '@/lib/poc/principal';
 
-/** The frozen event-name registry the lesson system may emit (blueprint §۸ + 05A §۷). */
-export const LEARNING_EVENTS = [
-  // chapter/unit flow
-  'chapter_started',
-  'chapter_completed',
-  'unit_checkpoint_completed',
-  // station flow
-  'station_entered',
-  'station_exited',
-  'station_completed',
-  'optional_station_entered',
-  // exercises + feedback ladder (issue #106 signals)
-  'exercise_answered',
-  'exercise_weak_point',
-  // dialogue encounter (A / reconnect / return)
-  'dialogue_encounter_ended',
-  'line_replayed',
-  'line_translation_revealed',
-  'prediction_answered',
-  // mastery gate
-  'gate_measure_completed',
-  'remediation_triggered',
-  // production
-  'integration_submitted',
-  // FSRS (enrollment is data + event; the engine itself = not-integrated)
-  'fsrs_cards_enrolled',
-  // kana chapter (05A §۷)
-  'kana_gate_measure_completed',
-  'reading_word_played',
-  'mnemonic_revealed',
-  // handwriting practice (TASK-LEARNING-07 / DD-105/DD-111 — practice layer, never a gate)
-  'writing_practice_completed',
-] as const;
+// The frozen registry + payload types live in event-names.ts (pure data, shared
+// with the durable analytics store — no import cycle). All existing exports
+// stay identical so every emitter caller is untouched.
+import { LEARNING_EVENTS, type LearningEventName } from './event-names';
 
-export type LearningEventName = (typeof LEARNING_EVENTS)[number];
+export { LEARNING_EVENTS };
+export type { LearningEventName };
 
 /** Payload contracts per event (minimal, PII-free — blueprint §۸). */
 export interface LearningEventPayloads {
@@ -70,7 +44,13 @@ export interface LearningEventPayloads {
   gate_measure_completed: { chapter_id: string; measure: string; score: number; attempt_loop: number };
   remediation_triggered: { chapter_id: string; measure: string; target_station_id: string };
   integration_submitted: { chapter_id: string; station_id: string; used_template: boolean };
-  fsrs_cards_enrolled: { chapter_id: string; station_id: string; items: string[]; engine: 'not-integrated' };
+  fsrs_cards_enrolled: {
+    chapter_id: string;
+    station_id: string;
+    items: string[];
+    engine: 'not-integrated' | 'FSRS-6';
+    enrolled_count: number;
+  };
   kana_gate_measure_completed: { measure: string; score: number; attempt_loop: number };
   reading_word_played: { word: string };
   mnemonic_revealed: { kana_id: string };
@@ -88,12 +68,26 @@ export interface LearningEventPayloads {
     completed: boolean;
     duration_ms: number;
   };
+  /** Review engine retrieval (owner-pass 2026-11-19) — outcome only, no schedule math crosses. */
+  review_logged: {
+    item_id: string;
+    rating: 'again' | 'hard' | 'good' | 'easy';
+    outcome: 'applied' | 'duplicate' | 'unknown_item';
+    due_after?: string;
+  };
 }
 
 /**
  * Record one learning event server-side (trust boundary). Never throws into the
  * caller's flow — analytics must not break learning (S-5 spirit); failures are
  * swallowed after being logged by the store itself.
+ *
+ * Owner-pass 2026-11-19: the event now lands in BOTH layers — the in-memory
+ * ring (existing observability path, untouched) and the DURABLE
+ * app.learning_events table (the monitoring mandate: survive restarts, feed the
+ * future admin panel). The durable write is best-effort and awaited lazily —
+ * callers never block on analytics beyond the store's own latency budget, and
+ * a store outage degrades to a console error, never a failed learning action.
  */
 export function recordLearningEvent<K extends LearningEventName>(
   name: K,
@@ -103,6 +97,12 @@ export function recordLearningEvent<K extends LearningEventName>(
   try {
     const store = getEventStore();
     store.record(name, { ...props, user_id: userId });
+    // Durable layer — fire-and-forget with an explicit error guard inside.
+    void recordLearningEventsSafe(getLearningEventsStore(), {
+      userId,
+      source: 'server',
+      events: [{ name, props: { ...props } }],
+    });
   } catch {
     // Analytics outage must never fail a learning action.
   }

@@ -4,17 +4,18 @@
 
 ## REST surface (fixed — anything else is a Server Action)
 
-| Endpoint                                              | Auth                | Purpose                                                            |
-| ----------------------------------------------------- | ------------------- | ------------------------------------------------------------------ |
-| `GET /api/health`                                     | public              | Liveness + build info (version, SHA)                               |
-| `GET /api/ready`                                      | public              | Readiness (dependencies; DB check from M0-10)                      |
-| `/api/auth/[...all]`                                  | public              | better-auth routes                                                 |
-| `GET /api/review/queue` · `POST /api/review`          | private             | FSRS queue + idempotent submit (`clientReviewId` uuidv7) — OTD-001 |
-| `GET /api/search?q=`                                  | private             | Short-cache search                                                 |
-| `GET /api/export/:jobId`                              | private             | Data export download                                               |
-| `POST /api/events`                                    | private             | Analytics batch ≤25                                                |
-| `POST /api/admin/content/*`                           | owner-gated         | Admin ops (ADR-017)                                                |
-| `POST /api/internal/revalidate` · `/api/internal/rum` | service token / own | Worker-only cache invalidation · web-vitals ingestion              |
+| Endpoint                                              | Auth                | Purpose                                                                                                 |
+| ----------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------- |
+| `GET /api/health`                                     | public              | Liveness + build info (version, SHA)                                                                    |
+| `GET /api/ready`                                      | public              | Readiness (dependencies; DB check from M0-10)                                                           |
+| `/api/auth/[...all]`                                  | public              | better-auth routes                                                                                      |
+| `GET /api/review/queue` · `POST /api/review`          | private             | FSRS queue + idempotent submit (`clientReviewId` uuidv7) — OTD-001 — **LIVE (owner-pass 2026-11-19)**   |
+| `GET /api/me/learning-summary`                        | private             | «پنل من» progress facts (journey/course/review/weak/practice/events) — **LIVE (owner-pass 2026-11-19)** |
+| `GET /api/search?q=`                                  | private             | Short-cache search                                                                                      |
+| `GET /api/export/:jobId`                              | private             | Data export download                                                                                    |
+| `POST /api/events`                                    | private             | Analytics batch ≤25                                                                                     |
+| `POST /api/admin/content/*`                           | owner-gated         | Admin ops (ADR-017)                                                                                     |
+| `POST /api/internal/revalidate` · `/api/internal/rum` | service token / own | Worker-only cache invalidation · web-vitals ingestion                                                   |
 
 ## Error envelope (single contract)
 
@@ -32,6 +33,13 @@ Additive-first: new optional fields allowed; breaking change = new endpoint/vers
 
 ## Event taxonomy (summary)
 
-- Single source: `events.yaml` (registered in CI from M1 "Analytics v0"; unknown event ⇒ quarantine + 202).
+- Single source: `modules/curriculum/event-names.ts` (the frozen registry; the
+  planned `events.yaml` CI gate stays an M6 item) — **unknown client event ⇒
+  quarantine + 202, kept and flagged in `app.learning_events` (owner-pass
+  2026-11-19: events are DURABLE now, the in-memory ring is dev-observability only).**
 - Naming `object_verb` past tense; flat typed properties; **critical events (exercise/gate/review/auth results) server-side only**.
 - Privacy: `user_pseudo_id` = HMAC-SHA256(user_id, secret); PII blacklist (free text, emails, note contents, search strings) enforced in CI; aggregation k≥10.
+- Retention: `app.learning_events` swept daily by the worker (`ops.events-retention`, 04:10 Asia/Tehran) — `HANASO_EVENTS_RETENTION_DAYS` (default 180) — mechanism live since the owner-pass; the final policy number is OQ-020/021.
+
+Full per-endpoint contract (request/response examples, idempotency, retention,
+privacy rules): **`docs/api/learning-api-contract.md`**.

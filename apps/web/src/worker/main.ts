@@ -17,7 +17,16 @@
 import { PgBoss, type Job } from 'pg-boss';
 import { runBackup } from './backup';
 import { runDbVerify } from './verify';
-import { JOB_BACKUP, JOB_BACKUP_CRON, JOB_DB_VERIFY, JOB_DB_VERIFY_CRON, JOB_TZ } from './schedules';
+import {
+  JOB_BACKUP,
+  JOB_BACKUP_CRON,
+  JOB_DB_VERIFY,
+  JOB_DB_VERIFY_CRON,
+  JOB_EVENTS_RETENTION,
+  JOB_EVENTS_RETENTION_CRON,
+  JOB_TZ,
+} from './schedules';
+import { runEventsRetention } from './events-retention';
 
 function requiredEnv(name: string): string {
   const value = process.env[name];
@@ -53,6 +62,7 @@ export async function main(): Promise<void> {
   // pg-boss 12: queues must exist before send/work/schedule (createQueue is idempotent).
   await boss.createQueue(JOB_BACKUP);
   await boss.createQueue(JOB_DB_VERIFY);
+  await boss.createQueue(JOB_EVENTS_RETENTION);
 
   await boss.work(JOB_BACKUP, { pollingIntervalSeconds: 15 }, async (jobs: Job<null>[]) => {
     let outcome: Awaited<ReturnType<typeof runBackup>> | null = null;
@@ -72,13 +82,23 @@ export async function main(): Promise<void> {
     return report;
   });
 
+  await boss.work(JOB_EVENTS_RETENTION, { pollingIntervalSeconds: 15 }, async (jobs: Job<null>[]) => {
+    let report: Awaited<ReturnType<typeof runEventsRetention>> | null = null;
+    for (const job of jobs) {
+      report = await runEventsRetention();
+      log(JOB_EVENTS_RETENTION, `events retention ok (job ${job.id})`, report);
+    }
+    return report;
+  });
+
   // Idempotent upserts on every boot (pg-boss scheduling docs) — tz pinned to the users' zone.
   await boss.schedule(JOB_BACKUP, JOB_BACKUP_CRON, null, { tz: JOB_TZ });
   await boss.schedule(JOB_DB_VERIFY, JOB_DB_VERIFY_CRON, null, { tz: JOB_TZ });
+  await boss.schedule(JOB_EVENTS_RETENTION, JOB_EVENTS_RETENTION_CRON, null, { tz: JOB_TZ });
 
   log(
     'worker',
-    `started — jobs: ${JOB_BACKUP} (${JOB_BACKUP_CRON} ${JOB_TZ}), ${JOB_DB_VERIFY} (${JOB_DB_VERIFY_CRON} ${JOB_TZ})`,
+    `started — jobs: ${JOB_BACKUP} (${JOB_BACKUP_CRON}), ${JOB_DB_VERIFY} (${JOB_DB_VERIFY_CRON}), ${JOB_EVENTS_RETENTION} (${JOB_EVENTS_RETENTION_CRON}) @ ${JOB_TZ}`,
   );
 
   const shutdown = async (signal: string) => {

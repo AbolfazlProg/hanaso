@@ -28,6 +28,12 @@ import { PgLearningObjectRepository, PgPracticeSessionRepository } from '@/db/re
 import type { PocEvent } from './event-store';
 import { InMemoryEventStore } from './event-store';
 import { assertProductionDatabase, databaseConfigured, getDbClient } from '@/db/client';
+import { createFsrsReviewStore, InMemoryFsrsReviewStore, type FsrsReviewStore } from '@/modules/fsrs/review-store';
+import {
+  createLearningEventsStore,
+  InMemoryLearningEventsStore,
+  type LearningEventsStore,
+} from '@/modules/analytics/store';
 
 /*
  * TASK-LEARNING-08 (WP-5): the singletons live on globalThis — Next dev
@@ -47,6 +53,8 @@ const storeCache = globalThis as typeof globalThis & {
     chapterProgressStore: ChapterProgressRepository | null;
     practiceSessionStore: PracticeSessionRepository | null;
     learningObjectStore: LearningObjectRepository | null;
+    fsrsReviewStore: FsrsReviewStore | null;
+    learningEventsStore: LearningEventsStore | null;
   };
 };
 storeCache.__hanasoStores ??= {
@@ -57,6 +65,8 @@ storeCache.__hanasoStores ??= {
   chapterProgressStore: null,
   practiceSessionStore: null,
   learningObjectStore: null,
+  fsrsReviewStore: null,
+  learningEventsStore: null,
 };
 const singletons = storeCache.__hanasoStores;
 
@@ -134,6 +144,26 @@ export function getLearningObjectStore(): LearningObjectRepository {
   return singletons.learningObjectStore;
 }
 
+/* ------------------------------------------------------------------ owner-pass 2026-11-19 */
+/* The two NEW learning-domain stores (review engine + durable events) follow the
+ * exact same DATABASE_URL switch + globalThis singleton contract as the ones above. */
+
+/** FSRS review engine persistence (M2 / OTD-001 — modules/fsrs/review-store.ts). */
+export function getFsrsReviewStore(): FsrsReviewStore {
+  assertStoreBackend();
+  singletons.fsrsReviewStore ??= usingPostgresStores() ? createFsrsReviewStore() : new InMemoryFsrsReviewStore();
+  return singletons.fsrsReviewStore;
+}
+
+/** Durable learning-behavior events (owner-pass monitoring mandate — modules/analytics/store.ts). */
+export function getLearningEventsStore(): LearningEventsStore {
+  assertStoreBackend();
+  singletons.learningEventsStore ??= usingPostgresStores()
+    ? createLearningEventsStore()
+    : new InMemoryLearningEventsStore();
+  return singletons.learningEventsStore;
+}
+
 /** TEST-ONLY: drop cached singletons (switch env between unit/integration runs). */
 export function resetStoresForTests(): void {
   singletons.attemptStore = null;
@@ -143,6 +173,8 @@ export function resetStoresForTests(): void {
   singletons.chapterProgressStore = null;
   singletons.practiceSessionStore = null;
   singletons.learningObjectStore = null;
+  singletons.fsrsReviewStore = null;
+  singletons.learningEventsStore = null;
 }
 
 export type { PocEvent };

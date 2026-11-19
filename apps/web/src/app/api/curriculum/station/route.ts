@@ -15,6 +15,8 @@ import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
 import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { recordLearningEvent } from '@/modules/curriculum/events';
+import { listChapterCards, fsrsPort } from '@/modules/fsrs/integration';
+import { getFsrsReviewStore } from '@/lib/poc/stores';
 import { resumeFreshness, parseActivityAt } from '@/modules/curriculum/resume-policy';
 import { completeStationWalk } from '@/lib/poc/completions';
 import type { StationState } from '@/modules/curriculum/types';
@@ -574,8 +576,10 @@ export async function POST(req: Request) {
     coreSlugs: bundle.chapter.stations.filter((s) => s.core).map((s) => s.slug),
   });
 
-  // TASK-LEARNING-06: analytics contract — completion + FSRS enrollment data
-  // (engine honestly marked not-integrated; the future engine replays these).
+  // TASK-LEARNING-06: analytics contract — completion + FSRS enrollment data.
+  // Owner-pass 2026-11-19: enrollment is now REAL (app.fsrs_cards — the review
+  // engine went live): the station's inventory cards (DD-095 §۲ — wave 1 at
+  // station end) enroll idempotently; re-completing never resets schedules.
   recordLearningEvent(
     'station_completed',
     {
@@ -586,13 +590,34 @@ export async function POST(req: Request) {
     userId,
   );
   if (station.fsrsItems.length > 0) {
+    const stationCards = listChapterCards(bundle.chapter).filter((c) => c.enrollStationSlug === station.slug);
+    let enrolledCount = 0;
+    try {
+      const result = await getFsrsReviewStore().enroll(
+        userId,
+        stationCards.map((c) => ({
+          itemId: c.itemId,
+          kind: c.kind,
+          wave: c.wave,
+          enrollStationSlug: c.enrollStationSlug,
+          contextLineId: c.sourceDialogueLineId,
+        })),
+        new Date(),
+      );
+      enrolledCount = result.enrolled.length;
+    } catch (err) {
+      // Enrollment failure must never fail a completed walk — the event keeps
+      // the honest count so the engine can replay enrollments from the log.
+      console.error('[hanaso/review] enrollment failed', err);
+    }
     recordLearningEvent(
       'fsrs_cards_enrolled',
       {
         chapter_id: payload.chapterSlug,
         station_id: station.slug,
         items: station.fsrsItems,
-        engine: 'not-integrated',
+        engine: fsrsPort.status === 'integrated' ? 'FSRS-6' : 'not-integrated',
+        enrolled_count: enrolledCount,
       },
       userId,
     );
