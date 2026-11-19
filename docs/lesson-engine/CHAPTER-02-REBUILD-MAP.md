@@ -90,3 +90,10 @@ M1 سلام/عبارات · M2 هویت です · M3 پرسش/پاسخ · M4 م�
 - صوت: l1–l8 واقعی (VOICEVOX)؛ l9–l13 placeholder صادقانه (تسک صوت موجود) — پرچم `audio_pending`.
 - انتشار: `published:false`؛ `DRAFT_CHAPTERS` + fallback در `getChapter`؛ journey فهرست نمی‌کند؛ URL مستقیم walk می‌شود. پیش‌نیاز فصل برای پیش‌نمایش خالی است و در انتشار به `kana-foundation-01` بسته می‌شود.
 - تغییرات موتور (مستند، افزودنی): `runtimeDialogueSlug` (بازاستفاده دارایی مکالمه)، mapping گام‌های predict/verify به dialogue-player، `masteryBank` (لایهٔ ارزیابی فصل — فیلد الزامی blueprint که در موتور جا مانده بود)، estMinutes=sum ایستگاه‌ها، گزینه‌های MCQ دقیقاً ۳ (قاعدهٔ محصول).
+
+## ۸. یادداشت بهداشت کامیت (BUG-011)
+
+کامیت `style: prettier on lesson-engine rebuild files` (7dc1289) صرفاً sweep قالب‌بندی
+پرتییر بود اما چون `compile.ts` را هم لمس می‌کرد، گیت بهداشت را فعال کرد. waiver رسمی:
+`hygiene-waiver: prettier --write format-only sweep` — تغییر رفتار صفر (قابل‌مقایسه با
+کامیت قبل). این یادداشت سابقهٔ قابل‌بررسی آن را نگه می‌دارد.
