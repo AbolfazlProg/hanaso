@@ -50,6 +50,14 @@ grep -c "HANASO_WEB_IMAGE=hanaso-web:$TIP_FULL" "$COMPOSE_DIR/.env" && echo ".en
 cd "$COMPOSE_DIR"
 CF="-f docker-compose.shared-vps.yml -f docker-compose.hanaso-ir-1core.yml"
 
+step "3b. migrate (additive schema — 0005 fsrs_cards/fsrs_revlogs/learning_events)"
+# runs BEFORE the new image serves: the new code lazily reads the new tables.
+# Additive migration — the OLD image ignores the new tables, so a migration that
+# succeeded but a build that failed still leaves the running version healthy.
+docker compose -f docker-compose.shared-vps.yml --env-file .env run --rm migrate || { echo "MIGRATE FAILED"; exit 1; }
+# sanity: the three new tables must exist (informational only)
+docker exec hanaso-postgres psql -U "${POSTGRES_USER:-hanaso}" -d "${POSTGRES_DB:-hanaso}" -c "\dt app.*" 2>/dev/null | grep -E "fsrs_cards|fsrs_revlogs|learning_events" || echo "(table check skipped — verify in logs)"
+
 step "4. recreate web + worker (postgres/pgbouncer untouched)"
 docker compose $CF --env-file .env up -d web worker || { echo "up FAILED"; exit 1; }
 sleep 5
