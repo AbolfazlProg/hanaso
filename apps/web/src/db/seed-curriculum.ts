@@ -12,9 +12,13 @@
  */
 import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { Pool } from 'pg';
+import { parse as parseYaml } from 'yaml';
 import { listChapters } from '@/modules/curriculum/content';
 import { LEVEL_POLICIES } from '@/modules/curriculum/content/levels';
+import type { Chapter } from '@/modules/curriculum/types';
+import { compileEngineChapter, engineChapterSchema } from '@/modules/lesson-engine';
 import * as schema from '../../db/schema';
 import { dialogueContentId, dialogueLineContentId, lessonContentId, levelContentId, unitContentId } from './ids';
 import { runSeed as seedDialogueBase, clearSeededContent as clearDialogueBase } from './seed';
@@ -58,14 +62,11 @@ export async function seedLevels(db: ReturnType<typeof drizzle>): Promise<number
   return count;
 }
 
-/** Seed one chapter's unit row + station rows (idempotent). */
-export async function seedChapter(
+/** Seed one chapter's unit row + station rows (idempotent) — from a compiled Chapter. */
+async function seedChapterObject(
   db: ReturnType<typeof drizzle>,
-  chapterSlug: string,
+  chapter: Chapter,
 ): Promise<{ unitId: string; stations: number }> {
-  const chapter = listChapters().find((c) => c.slug === chapterSlug);
-  if (!chapter) throw new Error(`unknown chapter for seed: ${chapterSlug}`);
-
   const dialogueUuid = dialogueContentId(chapter.dialogueSlug);
   const unitUuid = unitContentId(chapter.slug);
   const levelUuid = levelContentId(chapter.levelCode);
@@ -153,6 +154,55 @@ export async function seedChapter(
   return { unitId: unitUuid, stations: stationCount };
 }
 
+/** Seed one chapter by registry slug (idempotent) — published chapters only. */
+export async function seedChapter(
+  db: ReturnType<typeof drizzle>,
+  chapterSlug: string,
+): Promise<{ unitId: string; stations: number }> {
+  const chapter = listChapters().find((c) => c.slug === chapterSlug);
+  if (!chapter) throw new Error(`unknown chapter for seed: ${chapterSlug}`);
+  return seedChapterObject(db, chapter);
+}
+
+/**
+ * FINALIZATION FIX — load the Lesson-Engine draft chapters (content/lesson-engine/*.yaml)
+ * and lower them through the SAME compile path the runtime uses. Their station rows
+ * must exist in `content.lessons` before a preview-mode progress write, because
+ * `app.station_progress.station_id` carries an FK into `content.lessons` — without
+ * the rows every draft-station answer 500s (FK 23503), which broke the owner's
+ * chapter-02 preview walkthrough on production (2026-11-20).
+ *
+ * Same relative path convention as modules/curriculum/server.ts getDraftChapter.
+ * Skips unreadable/invalid drafts — a broken draft must never break the seed.
+ */
+export function loadDraftChapters(): Chapter[] {
+  const dir = 'content/lesson-engine';
+  if (!existsSync(dir)) return [];
+  const chapters: Chapter[] = [];
+  for (const file of readdirSync(dir).sort()) {
+    if (!file.endsWith('.yaml')) continue;
+    try {
+      const parsed = engineChapterSchema.safeParse(parseYaml(readFileSync(`${dir}/${file}`, 'utf8')));
+      if (!parsed.success) continue;
+      const { chapter, findings } = compileEngineChapter(parsed.data);
+      if (findings.some((f) => f.severity === 'hard')) continue;
+      chapters.push(chapter);
+    } catch {
+      // unreadable draft — skip, never break the seed
+    }
+  }
+  return chapters;
+}
+
+/**
+ * Opt-in draft seeding: set SEED_LESSON_ENGINE_DRAFTS=1 in the deploy env so the
+ * migrate step creates the draft stations' rows. Default OFF — CI/integration
+ * counts and every normal deployment stay exactly as before.
+ */
+export function draftSeedingEnabled(): boolean {
+  return process.env.SEED_LESSON_ENGINE_DRAFTS === '1';
+}
+
 /** Full curriculum seed (levels + every bundled chapter). */
 export async function runCurriculumSeed(options: {
   url: string;
@@ -167,7 +217,8 @@ export async function runCurriculumSeed(options: {
     const db = drizzle(pool);
     // dialogue base rows (characters/dialogues/lines) for every chapter — the
     // B_lesson anchor is skipped for them (stations are the chapter's lessons)
-    const dialogueSlugs = listChapters().map((c) => c.dialogueSlug);
+    const drafts = draftSeedingEnabled() ? loadDraftChapters() : [];
+    const dialogueSlugs = [...listChapters().map((c) => c.dialogueSlug), ...drafts.map((c) => c.dialogueSlug)];
     await seedDialogueBase({
       url: options.url,
       extraDialogueSlugs: dialogueSlugs,
@@ -179,6 +230,13 @@ export async function runCurriculumSeed(options: {
     let stations = 0;
     for (const chapter of listChapters()) {
       const result = await seedChapter(db, chapter.slug);
+      units += 1;
+      stations += result.stations;
+    }
+    // draft chapters seed AFTER the published ones (same idempotent upserts);
+    // their dialogue slugs may already be present — seedDialogueBase is idempotent.
+    for (const chapter of drafts) {
+      const result = await seedChapterObject(db, chapter);
       units += 1;
       stations += result.stations;
     }
