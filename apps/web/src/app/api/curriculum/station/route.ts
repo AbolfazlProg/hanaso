@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { fail, ok } from '@/modules/shared';
 import { getStationProgressStore } from '@/lib/poc/stores';
 import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
-import { loadChapterBundle } from '@/modules/curriculum/server';
+import { loadChapterBundle, isDraftChapter } from '@/modules/curriculum/server';
+import { hasPreviewAccessFromRequest } from '@/lib/preview';
 import {
   applyStationEvent,
   stationMeetsCompletion,
@@ -193,6 +194,15 @@ export async function POST(req: Request) {
     bundle = loadChapterBundle(payload.chapterSlug);
   } catch (err) {
     return NextResponse.json(fail({ code: 'station/unknown_chapter', message: (err as Error).message }), {
+      status: 404,
+    });
+  }
+  // PREVIEW MODE (FINALIZATION): an UNPUBLISHED draft chapter is served through
+  // loadChapterBundle for the owner's preview — for everyone else the walk API
+  // must 404 it, or the direct-URL gate would be cosmetic (grading responses
+  // would leak draft content to any learner id).
+  if (isDraftChapter(payload.chapterSlug) && !hasPreviewAccessFromRequest(req)) {
+    return NextResponse.json(fail({ code: 'station/unknown_chapter', message: 'unknown chapter' }), {
       status: 404,
     });
   }

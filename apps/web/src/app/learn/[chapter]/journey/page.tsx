@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { loadChapterBundle, chapterAccessStatus, resolveLearnerJourney } from '@/modules/curriculum/server';
+import { hasPreviewAccess } from '@/lib/preview';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
@@ -55,7 +56,9 @@ export default async function JourneyPage({
     );
   }
 
-  const home = await resolveLearnerJourney(learnerId, slug);
+  // PREVIEW MODE: the owner reviews with the section/station locks bypassed.
+  const previewActive = await hasPreviewAccess();
+  const home = await resolveLearnerJourney(learnerId, slug, { preview: previewActive });
   const nextStationTitle =
     home.nextStationSlug !== null
       ? (chapter.stations.find((st) => st.slug === home.nextStationSlug)?.titleFa ?? null)

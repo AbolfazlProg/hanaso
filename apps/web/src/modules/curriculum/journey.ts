@@ -59,7 +59,11 @@ export function stationAvailability(
   station: Station,
   states: Map<string, StationState>,
   allStations: Station[],
+  opts?: { unlockAll?: boolean },
 ): { availability: StationAvailability; blockedBy: string[] } {
+  // PREVIEW MODE (FINALIZATION): owner review bypasses lock DISPLAY only — the
+  // stored state, walk order and normal-user logic are untouched.
+  if (opts?.unlockAll) return { availability: 'available', blockedBy: [] };
   const state = states.get(station.slug);
   if (state) {
     return { availability: state.status, blockedBy: [] };
@@ -80,12 +84,13 @@ export function resolveJourney(
   level: LevelPolicy,
   stationStates: StationState[],
   chapterState: ChapterState | null,
+  opts?: { unlockAll?: boolean },
 ): Journey {
   const states = new Map(stationStates.map((s) => [s.stationSlug, s]));
   const ordered = orderedStations(chapter);
 
   const nodes: JourneyNode[] = ordered.map((station) => {
-    const { availability, blockedBy } = stationAvailability(station, states, chapter.stations);
+    const { availability, blockedBy } = stationAvailability(station, states, chapter.stations, opts);
     return { station, availability, blockedBy };
   });
 

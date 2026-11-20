@@ -4,7 +4,8 @@
  * dialogue-anchored content validation at load time (fail fast on content drift).
  */
 import { getChapterByDialogueSlug, getChapter, listChapters } from './content';
-import { readFileSync } from 'node:fs';
+import { hasPreviewAccess } from '@/lib/preview';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import { engineChapterSchema, compileEngineChapter } from '../../modules/lesson-engine';
 import { LEVELS_BY_CODE } from './content/levels';
@@ -110,6 +111,44 @@ export function listChapterSummaries(): { slug: string; titleFa: string; levelCo
 }
 
 /**
+ * PREVIEW MODE (FINALIZATION): is `slug` a Lesson-Engine draft? Filename check
+ * only (no YAML parse) — cheap enough for per-request gating.
+ */
+export function isDraftChapter(slug: string): boolean {
+  if (!/^[a-z0-9-]+$/.test(slug)) return false;
+  try {
+    return existsSync(`content/lesson-engine/${slug}.yaml`);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * PREVIEW MODE (FINALIZATION): the Lesson-Engine drafts (content/lesson-engine/*.yaml)
+ * as summaries for the owner's preview index — reads the YAML straight from the
+ * content dir (server-only). Never used by normal-user surfaces.
+ */
+export function listDraftChapterSummaries(): { slug: string; titleFa: string; levelCode: string }[] {
+  const out: { slug: string; titleFa: string; levelCode: string }[] = [];
+  try {
+    const dir = 'content/lesson-engine';
+    for (const f of readdirSync(dir)) {
+      if (!f.endsWith('.yaml')) continue;
+      const slug = f.replace(/\.yaml$/, '');
+      try {
+        const chapter = getDraftChapter(slug);
+        if (chapter) out.push({ slug: chapter.slug, titleFa: chapter.titleFa, levelCode: chapter.levelCode });
+      } catch {
+        // unreadable draft — skip, never break the home page
+      }
+    }
+  } catch {
+    // no draft dir — normal deployments
+  }
+  return out;
+}
+
+/**
  * TASK-LEARNING-06 (DD-117/120 — OQ-053): chapter-level soft prerequisite.
  * A chapter declaring `prerequisiteChapterSlug` stays LOCKED (journey/entry
  * gated at the page/API layer) until the prerequisite chapter reaches
@@ -120,6 +159,16 @@ export async function chapterAccessStatus(
   chapter: Chapter,
   userId: string,
 ): Promise<{ locked: boolean; prerequisiteSlug: string | null; prerequisiteTitleFa: string | null }> {
+  // PREVIEW MODE: the owner browses with prereq gates bypassed (view-level only).
+  if (await hasPreviewAccess()) {
+    return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
+  }
+  // A Lesson-Engine draft is UNPUBLISHED content: without the preview cookie it
+  // is locked for EVERY user (direct-URL leak closed — loadChapterBundle resolves
+  // drafts, so the access layer must be the gate).
+  if (isDraftChapter(chapter.slug)) {
+    return { locked: true, prerequisiteSlug: null, prerequisiteTitleFa: 'درس منتشرنشده — فقط با حالت پیش‌نمایش مالک قابل مشاهده است' };
+  }
   if (!chapter.prerequisiteChapterSlug) {
     return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
   }
@@ -161,7 +210,11 @@ export interface LearnerJourneyHome {
   stationStates: StationState[];
 }
 
-export async function resolveLearnerJourney(userId: string, chapterSlug?: string): Promise<LearnerJourneyHome> {
+export async function resolveLearnerJourney(
+  userId: string,
+  chapterSlug?: string,
+  opts?: { preview?: boolean },
+): Promise<LearnerJourneyHome> {
   checkCourseChainOnce();
   const chapters = courseOrder(listChapters());
   const chapterStore = (await import('@/lib/poc/stores')).getChapterProgressStore();
@@ -184,7 +237,9 @@ export async function resolveLearnerJourney(userId: string, chapterSlug?: string
     chapter.stations.map((s) => s.slug),
   );
   const chapterState = states.get(chapter.slug) ?? null;
-  const journey = resolveJourney(chapter, level, stationStates, chapterState);
+  const journey = resolveJourney(chapter, level, stationStates, chapterState, {
+    unlockAll: opts?.preview === true,
+  });
 
   // Second pass: the teaser threshold needs the ACTIVE chapter's core counters.
   const activeIsTarget = targetSlug === firstPass.activeSlug;

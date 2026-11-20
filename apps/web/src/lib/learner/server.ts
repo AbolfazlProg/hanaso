@@ -30,6 +30,7 @@
 import { cookies } from 'next/headers';
 import { LEARNER_COOKIE_NAME, isLearnerId } from './identity';
 import { verifySessionTokenSync } from './session-node';
+import { hasPreviewAccessFromRequest, previewCookieValid, previewLearnerId } from '@/lib/preview';
 
 export { LEARNER_COOKIE_NAME, isLearnerId };
 export { signSessionTokenSync, verifySessionTokenSync } from './session-node';
@@ -62,7 +63,12 @@ function safeDecode(raw: string): string {
  */
 export async function resolveLearnerId(): Promise<string> {
   const jar = await cookies();
-  return resolveSessionTokenValue(safeDecode(jar.get(LEARNER_COOKIE_NAME)?.value ?? ''));
+  const resolved = resolveSessionTokenValue(safeDecode(jar.get(LEARNER_COOKIE_NAME)?.value ?? ''));
+  // PREVIEW MODE (FINALIZATION): the owner's preview cookie remaps EVERY read AND
+  // write to the pv- namespace — the real learner's progress is never touched
+  // while the owner browses with locks bypassed.
+  if (previewCookieValid(jar.get('hanaso_preview')?.value)) return previewLearnerId(resolved);
+  return resolved;
 }
 
 /**
@@ -83,7 +89,10 @@ export function resolveLearnerIdFromRequest(req: Request): string {
   const re = new RegExp(`(?:^|;\\s*)${LEARNER_COOKIE_NAME}=([^;]+)`, 'g');
   let last: string | null = null;
   for (const m of header.matchAll(re)) last = m[1] ?? null;
-  return resolveSessionTokenValue(last ? safeDecode(last) : null);
+  const resolved = resolveSessionTokenValue(last ? safeDecode(last) : null);
+  // PREVIEW MODE: same pv- remap on the route-handler seam (station walk API etc.).
+  if (hasPreviewAccessFromRequest(req)) return previewLearnerId(resolved);
+  return resolved;
 }
 
 /** Shared policy: verify the signature (constant-time) → uuid | guest. */
