@@ -2855,8 +2855,7 @@ stations:
         card:
           lineRef: s-first-meeting-01-l7
     completion:
-      kind: exercise_threshold
-      threshold: 0.7
+      kind: task_completed
     connections:
       practiceStationIds: []
       conversation: {}
