@@ -41,7 +41,9 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-h0-wrapup',
         titleFa: 'خوش‌آمد و سه خط ژاپنی — جمع‌بندی',
-        itemsFa: ['کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.'],
+        itemsFa: [// Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.'],
       },
     ],
     fsrsItems: [],
@@ -188,7 +190,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: あ(آ)، い(ای)، う(او)، え(اِ)، お(اُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 5 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -325,7 +329,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: か(کا)، き(کی)، く(کو)، け(که)، こ(کُ)',
           '8 واژهٔ واقعی تازه خواندنی شد — مجموع 13 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -465,7 +471,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: さ(سا)، し(شی)، す(سو)، せ(سه)، そ(سُ)',
           '6 واژهٔ واقعی تازه خواندنی شد — مجموع 19 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -953,7 +961,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '1 کانای جدید: ん(ن) — یک مورای کامل، نه «ن»ی سبک.',
           'شمارش ضربه را تمرین کردی: さん (۲)، せんせい (۴).',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1096,7 +1106,9 @@ export const KANA_STATIONS: Station[] = [
            * Validated against the evaluation's own ground truth: k11 = 5,
            * k10 = 1. */
           '8 واژهٔ واقعی تازه خواندنی شد — مجموع 32 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1234,7 +1246,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: た(تا)، ち(چی)، つ(تسو)، て(ته)، と(تُ)',
           '7 واژهٔ واقعی تازه خواندنی شد — مجموع 39 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1382,7 +1396,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: ま(ما)، み(می)، む(مو)، め(مه)، も(مُ)',
           '6 واژهٔ واقعی تازه خواندنی شد — مجموع 45 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1549,7 +1565,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: ら(را)، り(ری)، る(رو)، れ(ره)، ろ(رُ)',
           '7 واژهٔ واقعی تازه خواندنی شد — مجموع 52 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1743,7 +1761,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: は(ها)، ひ(هی)، ふ(فو)، へ(هه)، ほ(هُ)',
           '8 واژهٔ واقعی تازه خواندنی شد — مجموع 60 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1850,7 +1870,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '3 کانای جدید: や(یا)، ゆ(یو)، よ(یُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 65 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -2522,7 +2544,9 @@ export const KANA_STATIONS: Station[] = [
         titleFa: 'ردیف ア + طرحوارهٔ قرینه‌گری — جمع‌بندی',
         itemsFa: [
           '5 کانای جدید: ア(آ)، イ(ای)، ウ(او)، エ(اِ)، オ(اُ)',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -2658,7 +2682,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: タ(تا)، チ(چی)، ツ(تسو)، テ(ته)، ト(تُ)',
           '4 واژهٔ واقعی تازه خواندنی شد — مجموع 81 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -2767,7 +2793,9 @@ export const KANA_STATIONS: Station[] = [
           // Part-2 الف (translit-standard.ts): ル=«رو» but ロ=«رُ» — the old line rendered both as «رو».
           '5 کانای جدید: ラ(را)، リ(ری)، ル(رو)، レ(ره)، ロ(رُ)',
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 84 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -2907,7 +2935,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: サ(سا)، シ(شی)، ス(سو)، セ(سه)، ソ(سُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 89 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3057,7 +3087,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: ハ(ها)، ヒ(هی)، フ(فو)، ヘ(هه)، ホ(هُ)',
           '8 واژهٔ واقعی تازه خواندنی شد — مجموع 97 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3168,7 +3200,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '1 کانای جدید: ン(ن)',
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 100 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3294,7 +3328,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: カ(کا)، キ(کی)، ク(کو)، ケ(که)، コ(کُ)',
           '4 واژهٔ واقعی تازه خواندنی شد — مجموع 104 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3589,7 +3625,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: マ(ما)، ミ(می)، ム(مو)، メ(مه)، モ(مُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 111 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3669,7 +3707,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '3 کانای جدید: ヤ(یا)، ユ(یو)، ヨ(یُ)',
           '1 واژهٔ واقعی تازه خواندنی شد — مجموع 112 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3810,7 +3850,9 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: ナ(نا)، ニ(نی)، ヌ(نو)، ネ(نه)، ノ(نُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 117 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3916,7 +3958,9 @@ export const KANA_STATIONS: Station[] = [
           '2 کانای جدید: ワ(وا)، ヲ(اُ)',
           'ترکیب خارجی (ファ/ティ/ヴ) در ایستگاه بعدی آموزش داده می‌شود — اینجا فقط ردیف ワ.',
           '1 واژهٔ واقعی تازه خواندنی شد — مجموع 118 واژه از جزوهٔ N5.',
-          'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -4155,7 +4199,9 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-k13-wrapup',
         titleFa: 'آشتی دو خط + نامِ خودت — جمع‌بندی',
-        itemsFa: ['کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.'],
+        itemsFa: [// Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.'],
       },
     ],
     fsrsItems: [],
@@ -4248,7 +4294,9 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-opt-r-h9-wrapup',
         titleFa: 'مرور ایستگاه‌های فاز ۱ (اختیاری) — جمع‌بندی',
-        itemsFa: ['کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.'],
+        itemsFa: [// Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.'],
       },
     ],
     fsrsItems: [],
@@ -4301,7 +4349,9 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-opt-drill-wrapup',
         titleFa: 'دریل آزاد کانا (اختیاری) — جمع‌بندی',
-        itemsFa: ['کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.'],
+        itemsFa: [// Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+          // (enrollment happened at station completion) and points at the real /review runner.
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.'],
       },
     ],
     fsrsItems: [],
