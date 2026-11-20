@@ -464,6 +464,23 @@ export type TeachingBlock =
       /** The wrap-up block the finish action jumps to. */
       finishTargetBlockId: string;
     }
+  | {
+      /**
+       * Part-2 و — the k13 NAME-KATAKANA experience. The ACCEPTED answer is
+       * computed at RUNTIME from the learner's own input by the pure local
+       * engine (kana-name.ts) — no stored key exists, nothing to strip (the
+       * transport passes the block whole). The block gates the walk forward
+       * like writing-practice (a required interaction, practice-layer only —
+       * NEVER a mastery gate, DD-106).
+       */
+      kind: 'name-katakana';
+      id: string;
+      titleFa: string;
+      /** Why the Latin/Finglish input gives the better suggestion (the honest pedagogy). */
+      bodyFa: string;
+      /** Extra distractor cards in the tray (on top of the required morae). */
+      extrasCount: number;
+    }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
 
 /* ------------------------------------------------------------------ rule slides (TASK-LEARNING-14) */

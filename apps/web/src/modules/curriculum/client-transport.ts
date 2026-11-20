@@ -158,6 +158,15 @@ export type ClientTeachingBlock =
       finishLabelFa: string;
       finishTargetBlockId: string;
     }
+  | {
+      /** Part-2 و: the name builder — the answer is computed client-side from
+       *  the learner's own input (kana-name.ts); no key ever exists to strip. */
+      kind: 'name-katakana';
+      id: string;
+      titleFa: string;
+      bodyFa: string;
+      extrasCount: number;
+    }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
 
 export interface ClientStation {
@@ -255,6 +264,14 @@ function stripBlock(block: TeachingBlock): ClientTeachingBlock {
         options: block.options,
         finishLabelFa: block.finishLabelFa,
         finishTargetBlockId: block.finishTargetBlockId,
+      };
+    case 'name-katakana':
+      return {
+        kind: 'name-katakana',
+        id: block.id,
+        titleFa: block.titleFa,
+        bodyFa: block.bodyFa,
+        extrasCount: block.extrasCount,
       };
     case 'character-scene':
       return {
