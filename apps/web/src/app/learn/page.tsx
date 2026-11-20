@@ -1,5 +1,5 @@
 import { resolveLearnerId } from '@/lib/learner/server';
-import { hasPreviewAccess, previewModeEnabled } from '@/lib/preview';
+import { hasPreviewAccess } from '@/lib/preview';
 import { resolveLearnerJourney, listChapterSummaries, listDraftChapterSummaries } from '@/modules/curriculum/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { SiteNav } from '@/components/site-nav';
