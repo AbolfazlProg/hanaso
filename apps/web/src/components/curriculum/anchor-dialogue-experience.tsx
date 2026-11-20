@@ -12,6 +12,7 @@
  * NOT in the client payload (SKL-013), unlike station blocks.
  */
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, CircleCheck, MessageCircleQuestion, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
@@ -54,6 +55,15 @@ export interface AnchorDialogueExperienceProps {
 export function AnchorDialogueExperience({ chapterSlug, station, bundle }: AnchorDialogueExperienceProps) {
   const playerBlock = station.blocks.find((b): b is PredictionBlock => b.kind === 'dialogue-player');
   const prediction = playerBlock?.prediction;
+  const router = useRouter();
+  /*
+   * Part-2 ط (NOTE-BUG1 — the audit's h0 finding): the old CTA completed the
+   * WHOLE anchor station from the dialogue page — the walk's wrap-up block
+   * (step 3/3) NEVER rendered. The CTA now anchors the walk at the wrap-up
+   * block and returns the learner to the station walk, which completes
+   * honestly through its own flow.
+   */
+  const wrapUpBlock = [...station.blocks].reverse().find((b) => b.kind === 'wrap-up');
   const [picked, setPicked] = useState<string | null>(null);
   const [correct, setCorrect] = useState<boolean | null>(null);
   const [revealFa, setRevealFa] = useState<string | null>(null);
@@ -94,6 +104,23 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
   const complete = async () => {
     setPosting(true);
     try {
+      if (wrapUpBlock) {
+        // anchor the walk at the wrap-up (step 3/3) and return to the lesson —
+        // the station completes THERE, never from the dialogue page (NOTE-BUG1).
+        await fetch('/api/curriculum/station', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            action: 'progress',
+            chapterSlug,
+            stationSlug: station.slug,
+            currentBlockId: wrapUpBlock.id,
+          }),
+        });
+        router.push(`/learn/${chapterSlug}/journey/${station.slug}?block=${wrapUpBlock.id}`);
+        return;
+      }
+      // no wrap-up in this station's data → the viewed-completion stays legal
       await fetch('/api/curriculum/station', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -167,7 +194,7 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
           disabled={posting}
           className="flex h-14 items-center justify-center gap-3 rounded-md bg-indigo px-6 text-lead font-black text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
         >
-          {posting ? fa.common.loading : fa.curriculum.startChapter}
+          {posting ? fa.common.loading : fa.curriculum.continueLessonCta}
           <ArrowLeft aria-hidden className="size-5" />
         </button>
       ) : (

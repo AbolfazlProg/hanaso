@@ -40,10 +40,10 @@ export default async function StationPage({
   searchParams,
 }: {
   params: Promise<{ chapter: string; station: string }>;
-  searchParams: Promise<{ mode?: string; restart?: string }>;
+  searchParams: Promise<{ mode?: string; restart?: string; block?: string }>;
 }) {
   const { chapter: chapterSlug, station: stationSlug } = await params;
-  const { mode, restart } = await searchParams;
+  const { mode, restart, block } = await searchParams;
   let bundle;
   try {
     bundle = loadChapterBundle(chapterSlug);
@@ -90,6 +90,25 @@ export default async function StationPage({
   const mapHref = sectionSlug ? `/learn/${chapterSlug}/journey?s=${sectionSlug}` : `/learn/${chapterSlug}/journey`;
   const replayMode = mode === 'review';
   const restartRequested = restart === '1';
+
+  /*
+   * Part-2 ط (the ?block= deep link — the anchor-dialogue CTA's return path):
+   * the dialogue page anchors the walk at the wrap-up block and routes back
+   * here. A validated block id moves the walk POINTER only (client-side walk
+   * position, the same trust level as the resume anchor) — it grants no
+   * progress: completion still runs the ordinary walk/completion flow.
+   */
+  const initialBlockId =
+    block && station.blocks.some((b) => b.id === block) ? block : undefined;
+
+  /*
+   * Part-2 ط (G1 truly in the execution path): when THIS is the last core
+   * station, its completion screen's primary CTA leads STRAIGHT to the
+   * chapter gate (the assessment page) — «دروازهٔ فصل در انتظار توست» stops
+   * being a dead promise one hop away on the map.
+   */
+  const lastCore = [...chapter.stations].sort((a, b) => a.order - b.order).reverse().find((st) => st.core);
+  const gateOpen = station.core && lastCore?.slug === station.slug;
 
   /*
    * TASK-HANASO-27 (F4 cross-station): practice stations reference teaching
@@ -282,6 +301,8 @@ export default async function StationPage({
           hostWordAudioByKanaId={hostWordAudioByKanaId}
           exampleAudioByWord={exampleAudioByWord}
           nextCoreStation={nextCoreStation ? { slug: nextCoreStation.slug, titleFa: nextCoreStation.titleFa } : null}
+          gateOpen={gateOpen}
+          initialBlockId={initialBlockId}
           replayMode={replayMode}
           restartRequested={restartRequested}
           mapHref={mapHref}

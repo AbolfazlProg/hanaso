@@ -12188,4 +12188,83 @@ export const KANA_EXERCISES: Exercise[] = [
     },
     assessmentRole: 'practice',
   },
+  /* ---------------- Part-2 د — menu-context comprehension ----------------
+   * The same artifacts the learner just read on the café board — the question
+   * is now ON the menu (which item answers the given need). The clue lives in
+   * the board (glossed); these items check the reading, not a guess. */
+  {
+    id: 'ex-kana-m2-menu-pc',
+    type: 'meaning-select',
+    targetSkill: 'vocab',
+    targetConcept: 'kana-realworld-reading',
+    assessesConcepts: ['kata-ha', 'kata-so', 'kata-ko', 'kata-n'],
+    difficulty: 3,
+    promptFa: 'در تابلوی فروشگاه، کدام آیتم «رایانهٔ شخصی» است؟',
+    options: [
+      { id: 'a', label: 'パソコン' },
+      { id: 'b', label: 'エアコン' },
+      { id: 'c', label: 'カラオケ' },
+    ],
+    correctOptionId: 'a',
+    distractorRationaleFa: {
+      b: 'エアコン = کولر — با エ شروع می‌شود.',
+      c: 'カラオケ = کارائوکه — با カ شروع می‌شود.',
+    },
+    feedback: {
+      f1Fa: 'پ+ソ+コ+ン — «پاسُکُن».',
+      f2HintFa: 'کوتاه‌شدهٔ personal computer — همان آیتمی که زیرش «رایانهٔ شخصی» نوشته بود.',
+      f3ExplainFa: 'パソコン = رایانهٔ شخصی — آیتم تابلوی فروشگاه.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-kana-m2-menu-coffee',
+    type: 'meaning-select',
+    targetSkill: 'vocab',
+    targetConcept: 'kana-realworld-reading',
+    assessesConcepts: ['kata-ko', 'kata-hi', 'kata-i'],
+    difficulty: 2,
+    promptFa: 'در منوی کافه، کدام آیتم «قهوه» است؟',
+    options: [
+      { id: 'a', label: 'コーヒー' },
+      { id: 'b', label: 'サンドイッチ' },
+      { id: 'c', label: 'テスト' },
+    ],
+    correctOptionId: 'a',
+    distractorRationaleFa: {
+      b: 'サンドイッチ = ساندویچ — آیتم غذای منو.',
+      c: 'テスト = آزمون — برگهٔ سفارشِ تستِ طعم، نه نوشیدنی.',
+    },
+    feedback: {
+      f1Fa: 'コ+ー+ヒ+ー — «کووهیی».',
+      f2HintFa: 'کشش ー در هر دو بخش — همان خط اول منو.',
+      f3ExplainFa: 'コーヒー = قهوه — آیتم منوی کافه.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-kana-m2-menu-sand',
+    type: 'meaning-select',
+    targetSkill: 'vocab',
+    targetConcept: 'kana-realworld-reading',
+    assessesConcepts: ['kata-sa', 'kata-n', 'kata-to', 'kata-i', 'kata-chi'], // ド = ト+゛ — the base glyph concept
+    difficulty: 3,
+    promptFa: 'کدام آیتم منو با «س» شروع می‌شود و «ساندویچ» است؟',
+    options: [
+      { id: 'a', label: 'テスト' },
+      { id: 'b', label: 'サンドイッチ' },
+      { id: 'c', label: 'パソコン' },
+    ],
+    correctOptionId: 'b',
+    distractorRationaleFa: {
+      a: 'テスト با テ شروع می‌شود — آزمون است.',
+      c: 'パソコン با パ شروع می‌شود — رایانهٔ شخصی.',
+    },
+    feedback: {
+      f1Fa: 'サ+ン+ド+イ+ッ+チ — «ساندویچ».',
+      f2HintFa: 'با サ («سا») شروع می‌شود و ّ (سوکوئون) وسطش هست.',
+      f3ExplainFa: 'サンドイッチ = ساندویچ — آیتم منوی کافه.',
+    },
+    assessmentRole: 'practice',
+  },
 ];

@@ -2443,7 +2443,44 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-m1-scene',
         titleFa: 'ایستگاه واقعی — برگهٔ خواندن هیراگانا',
         bodyFa:
-          'تا اینجا همهٔ صداهای پایهٔ هیراگانا و قواعدش را آموخته‌ای. در این ایستگاه هیچ چیز تازه‌ای آموزش داده نمی‌شود — فقط می‌خوانی: واژه‌های واقعیِ ژاپنی که تک‌تک اجزایش را می‌شناسی. این همان کاری است که یک ژاپنی‌دانی که تازه راه افتاده، هر روز با پیام‌ها و تابلوهای ساده می‌کند.',
+          'تا اینجا همهٔ صداهای پایهٔ هیراگانا و قواعدش را آموخته‌ای. در این ایستگاه هیچ چیز تازه‌ای آموزش داده نمی‌شود — فقط می‌خوانی: یک پست‌کارت واقعی از دوستت میکی که از توکیو برایت فرستاده، با واژه‌هایی که تک‌تک اجزایش را می‌شناسی. این همان کاری است که یک ژاپنی‌دانی که تازه راه افتاده، هر روز با پیام‌ها و تابلوهای ساده می‌کند.',
+      },
+      {
+        /*
+         * Part-2 ط (the summary promises «از پیام دوستت تا تابلوی ایستگاه» —
+         * the delivery was six bare word-cards): the FRIEND'S POSTCARD now
+         * leads — a real artifact whose every line is a TAUGHT word. Bare
+         * board (showGloss:false): the gloss would be the answer to the decode
+         * exercises below; the learner reads the artifact first, then proves
+         * the readings in the exercises.
+         */
+        kind: 'realworld-board',
+        id: 'blk-stn-kana-m1-postcard',
+        titleFa: 'پست‌کارتِ میکی از توکیو',
+        captionFa:
+          'یک پست‌کارت به دستت رسیده: عکس‌های سفر با نوشته‌های کوتاهِ هیراگانایی زیرشان — همان واژه‌هایی که در این بخش خواندی.',
+        showGloss: false,
+        panels: [
+          {
+            titleFa: 'روی کارت — سلامِ میکی',
+            leadJa: 'こんにちは！',
+            items: [
+              { ja: 'ねこ', sideJa: '' },
+              { ja: 'すし', sideJa: '' },
+            ],
+          },
+          {
+            titleFa: 'عکس‌های سفر — نوشتهٔ زیر عکس‌ها',
+            leadJa: 'おおきい！', // the taught h4 reading example — nothing new
+
+            items: [
+              { ja: 'いぬ', sideJa: '' },
+              { ja: 'えき', sideJa: '' },
+              { ja: 'みず', sideJa: '' },
+              { ja: 'ともだち', sideJa: '' },
+            ],
+          },
+        ],
       },
       {
         kind: 'exercise',
@@ -4230,7 +4267,44 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-m2-scene',
         titleFa: 'ایستگاه واقعی — منو و تابلوی کاتاکانا',
         bodyFa:
-          'کاتاکانا خطِ وام‌واژه‌هاست: برندها، منوها و واژه‌هایی که از زبان‌های دیگر آمده‌اند. در این ایستگاه شش واژهٔ واقعی می‌خوانی که همه با کاتاکانای آموخته‌شدهٔ خودت نوشته شده‌اند — درست مثل روزی که سر میز یک کافهٔ توکیویی می‌نشینی.',
+          'کاتاکانا خطِ وام‌واژه‌هاست: برندها، منوها و واژه‌هایی که از زبان‌های دیگر آمده‌اند. در این ایستگاه یک کافهٔ واقعی توکیویی می‌خوانی — منوی رستوران و تابلوی فروشگاه الکترونیک‌فروشیِ آن‌سوی خیابان. همهٔ آیتم‌ها یا با کاتاکانای آموخته‌شدهٔ خودت نوشته شده‌اند یا — مثل هر منوی دوزبانهٔ واقعی — معنی‌شان زیرش هست؛ بعد از دیدنِ صحنه، همان آیتم‌ها را در تمرین می‌شناسی.',
+      },
+      {
+        /*
+         * Part-2 د (evaluation: «منو و تابلو» was delivered as six isolated
+         * word-cards): the REAL artifact now leads — a café menu + the
+         * electronics-shop signboard of the same street, bilingual-menu style.
+         * Every assessed word appears here FIRST with its clue (gloss) — the
+         * untaught-vocabulary-guess hole is closed by construction.
+         */
+        kind: 'realworld-board',
+        id: 'blk-stn-kana-m2-board',
+        titleFa: 'کافهٔ خیابان ساکورا — منوی پیشخوان',
+        captionFa:
+          'ظهرِ توکیوست؛ شما وارد کافهٔ کوچکی می‌شوید. روی پیشخوان منوی دوزبانه‌ای ایستاده — و از پنجرهٔ روبه‌رو، تابلوی فروشگاه الکترونیکی به خیابان نگاه می‌کند.',
+        showGloss: true,
+        panels: [
+          {
+            titleFa: 'منوی کافه (ドリンクメニュー)',
+            leadJa: 'コーヒー・セット',
+            items: [
+              { ja: 'コーヒー', glossFa: 'قهوه', sideJa: '４５０' },
+              { ja: 'サンドイッチ', glossFa: 'ساندویچ', sideJa: '５２۰' },
+              { ja: 'ラジオ', glossFa: 'رادیو — موسیقی پس‌زمینهٔ کافه', sideJa: '' },
+              { ja: 'テスト', glossFa: 'آزمون — برگهٔ سفارش تستِ طعم امروز', sideJa: '' },
+            ],
+          },
+          {
+            titleFa: 'تابلوی فروشگاه روبه‌رو (エレクトロニクス)',
+            leadJa: '本日営業',
+            items: [
+              { ja: 'パソコン', glossFa: 'رایانهٔ شخصی', sideJa: 'セール' },
+              { ja: 'エアコン', glossFa: 'کولر', sideJa: 'セール' },
+              { ja: 'カラオケ', glossFa: 'کارائوکه — دستگاه چندرسانه‌ای', sideJa: '新入荷' },
+              { ja: 'ドア', glossFa: 'در — برچسبِ «درِ خودکار»', sideJa: 'オート' },
+            ],
+          },
+        ],
       },
       {
         kind: 'exercise',
@@ -4245,11 +4319,20 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        // Part-2 د: the BOARD-context items — reading comprehension ON the menu
+        // (which item of the real board matches the given gloss), graded like
+        // every bank exercise. These are the second read of the SAME artifacts.
+        kind: 'exercise',
+        id: 'blk-stn-kana-m2-menu',
+        exerciseIds: ['ex-kana-m2-menu-pc', 'ex-kana-m2-menu-coffee', 'ex-kana-m2-menu-sand'],
+      },
+      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-m2-wrapup',
         titleFa: 'ایستگاه واقعی — جمع‌بندی',
         itemsFa: [
-          'وام‌واژه‌های واقعی را با کاتاکانا خواندی',
+          'منو و تابلوی واقعی خواندی — همان کاری که روز اول توکیو می‌کنی',
+          'وام‌واژه‌های واقعی را با کاتاکانا شناختی و در صحنه‌شان جای گرفتی',
           'دو خط ژاپنی (هیراگانا و کاتاکانا) را از هم تشخیص می‌دهی',
           'مسیر کانای تو کامل شد — دروازهٔ فصل در انتظار توست',
         ],
