@@ -412,6 +412,33 @@ export type TeachingBlock =
       id: string;
       taskId: string;
     }
+  | {
+      /**
+       * Part-2 د/ط — a REAL-WORLD reading artifact (the café menu, the
+       * signboard, the friend's postcard) rendered as ONE board: panels of
+       * Japanese items with optional Persian glosses. Purely receptive — the
+       * exercises after it read FROM it. `showGloss` decides the honest
+       * treatment: glossed (the bilingual-tourist-menu clue — m2) or bare
+       * (the decode challenge of taught words — m1).
+       */
+      kind: 'realworld-board';
+      id: string;
+      titleFa: string;
+      captionFa?: string;
+      showGloss: boolean;
+      panels: {
+        titleFa: string;
+        /** Japanese line under the panel title (a menu heading, a postcard line). */
+        leadJa?: string;
+        items: {
+          ja: string;
+          /** Persian gloss (bilingual-menu style) — only rendered when showGloss. */
+          glossFa?: string;
+          /** The small right-hand detail of a real board (price, 〜あります). */
+          sideJa?: string;
+        }[];
+      }[];
+    }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
 
 /* ------------------------------------------------------------------ rule slides (TASK-LEARNING-14) */

@@ -135,6 +135,19 @@ export type ClientTeachingBlock =
       }[];
     }
   | { kind: 'listening-task'; id: string; taskId: string }
+  | {
+      /** Part-2 د/ط: the real-world board — pure display, no answer material. */
+      kind: 'realworld-board';
+      id: string;
+      titleFa: string;
+      captionFa?: string;
+      showGloss: boolean;
+      panels: {
+        titleFa: string;
+        leadJa?: string;
+        items: { ja: string; glossFa?: string; sideJa?: string }[];
+      }[];
+    }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
 
 export interface ClientStation {
@@ -210,6 +223,18 @@ function stripBlock(block: TeachingBlock): ClientTeachingBlock {
         ...(block.word ? { word: block.word } : {}),
         ...(block.miniTable ? { miniTable: block.miniTable } : {}),
         ask: block.ask ? { questionFa: block.ask.questionFa, options: block.ask.options } : undefined,
+      };
+    /* Part-2 د/ط: the realworld-board is PURE DISPLAY — every field is
+       learner-facing content (item surfaces + authored glosses); there is no
+       answer key to strip. The explicit case documents that decision. */
+    case 'realworld-board':
+      return {
+        kind: 'realworld-board',
+        id: block.id,
+        titleFa: block.titleFa,
+        captionFa: block.captionFa,
+        showGloss: block.showGloss,
+        panels: block.panels,
       };
     case 'character-scene':
       return {
