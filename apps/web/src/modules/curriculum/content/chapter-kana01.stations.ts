@@ -41,9 +41,11 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-h0-wrapup',
         titleFa: 'خوش‌آمد و سه خط ژاپنی — جمع‌بندی',
-        itemsFa: [// Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+        itemsFa: [
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
           // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.'],
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
+        ],
       },
     ],
     fsrsItems: [],
@@ -4251,9 +4253,11 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-k13-wrapup',
         titleFa: 'آشتی دو خط + نامِ خودت — جمع‌بندی',
-        itemsFa: [// Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+        itemsFa: [
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
           // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.'],
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
+        ],
       },
     ],
     fsrsItems: [],
@@ -4392,9 +4396,11 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-opt-r-h9-wrapup',
         titleFa: 'مرور ایستگاه‌های فاز ۱ (اختیاری) — جمع‌بندی',
-        itemsFa: [// Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+        itemsFa: [
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
           // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.'],
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
+        ],
       },
     ],
     fsrsItems: [],
@@ -4541,9 +4547,11 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-opt-drill-wrapup',
         titleFa: 'دریل آزاد کانا (اختیاری) — جمع‌بندی',
-        itemsFa: [// Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
+        itemsFa: [
+          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
           // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.'],
+          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
+        ],
       },
     ],
     fsrsItems: [],

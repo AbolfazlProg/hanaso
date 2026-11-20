@@ -110,10 +110,16 @@ export function NameKatakana({
     setHints(n);
     if (n === 1) {
       setVerdict(
-        v.countMatches ? fa.curriculum.nameHintCount(suggestion.morae.length) : fa.curriculum.nameHintCount(suggestion.morae.length),
+        v.countMatches
+          ? fa.curriculum.nameHintCount(suggestion.morae.length)
+          : fa.curriculum.nameHintCount(suggestion.morae.length),
       );
     } else if (n === 2) {
-      setVerdict(v.firstMismatch !== null ? fa.curriculum.nameHintFirst(v.firstMismatch + 1) : fa.curriculum.nameHintCount(suggestion.morae.length));
+      setVerdict(
+        v.firstMismatch !== null
+          ? fa.curriculum.nameHintFirst(v.firstMismatch + 1)
+          : fa.curriculum.nameHintCount(suggestion.morae.length),
+      );
     } else {
       setReveal(true);
       setVerdict(fa.curriculum.nameReveal);
@@ -231,7 +237,9 @@ export function NameKatakana({
                     setUsedIdx((s) => new Set(s).add(i));
                   }}
                   className={`flex size-14 items-center justify-center rounded-md border-2 text-h3 font-black transition-colors ${
-                    used ? 'border-ink-faint bg-surface-sunken text-ink-faint' : 'border-ink bg-paper text-ink hover:border-indigo hover:bg-indigo-wash'
+                    used
+                      ? 'border-ink-faint bg-surface-sunken text-ink-faint'
+                      : 'border-ink bg-paper text-ink hover:border-indigo hover:bg-indigo-wash'
                   }`}
                 >
                   {card.kana}
@@ -284,7 +292,9 @@ export function NameKatakana({
           {reveal ? (
             <div className="rounded-md bg-surface-warm p-4">
               <p className="text-caption text-ink-faint">{fa.curriculum.nameSuggestNote}</p>
-              <JaBlock className="mt-2 text-h3 font-black">{suggestion ? suggestion.morae.map((m) => m.kana).join('') : ''}</JaBlock>
+              <JaBlock className="mt-2 text-h3 font-black">
+                {suggestion ? suggestion.morae.map((m) => m.kana).join('') : ''}
+              </JaBlock>
             </div>
           ) : null}
 
@@ -292,7 +302,11 @@ export function NameKatakana({
             <div className="flex flex-wrap items-center gap-3">
               <CircleCheck aria-hidden className="size-5 text-success" />
               <span className="text-body font-bold text-success">{fa.curriculum.nameDone}</span>
-              <button type="button" onClick={onNameDone} className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep">
+              <button
+                type="button"
+                onClick={onNameDone}
+                className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+              >
                 {fa.curriculum.nameContinueCta}
                 <ArrowLeft aria-hidden className="size-4" />
               </button>
