@@ -199,9 +199,17 @@ describe('TL-13 A-3 — a failed completion is honest + retryable', () => {
         fireEvent.click(forward);
       });
     }
-    await waitFor(() => {
-      expect(screen.getByText('ثبت پایان ایستگاه ناموفق بود'));
-    });
+    /* PART1-FIX-1: the completion POST now carries a bounded auto-retry for
+     * 5xx/transport failures (2 re-sends, ~4.5s total) before the honest
+     * failure panel appears — the outage is retried BEFORE the learner is
+     * asked to do anything. The assertion window therefore covers the retry
+     * window. */
+    await waitFor(
+      () => {
+        expect(screen.getByText('ثبت پایان ایستگاه ناموفق بود'));
+      },
+      { timeout: 8000 },
+    );
     expect(screen.getByRole('button', { name: 'تلاش دوباره برای ثبت' }));
     expect(completeCalls).toBeGreaterThanOrEqual(1);
     // the retry succeeds once the server is healthy again.
