@@ -22,3 +22,5 @@ apps/web/vendor/kanjivg-kana/
 
 # agent handoff/work records (engineering notes, not product code)
 agent-ctx/
+public/audio/**
+content/lesson-engine/**

@@ -167,7 +167,11 @@ export async function chapterAccessStatus(
   // is locked for EVERY user (direct-URL leak closed — loadChapterBundle resolves
   // drafts, so the access layer must be the gate).
   if (isDraftChapter(chapter.slug)) {
-    return { locked: true, prerequisiteSlug: null, prerequisiteTitleFa: 'درس منتشرنشده — فقط با حالت پیش‌نمایش مالک قابل مشاهده است' };
+    return {
+      locked: true,
+      prerequisiteSlug: null,
+      prerequisiteTitleFa: 'درس منتشرنشده — فقط با حالت پیش‌نمایش مالک قابل مشاهده است',
+    };
   }
   if (!chapter.prerequisiteChapterSlug) {
     return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
