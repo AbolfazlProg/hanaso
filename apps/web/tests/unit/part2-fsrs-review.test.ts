@@ -28,9 +28,6 @@ const UUID_B = 'bbbb1111-2222-4333-8444-555555555555';
 const cookieFor = (id: string) => `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(id)}`;
 const BASE = 'http://localhost/api';
 
-const cookieA = cookieFor(UUID_A);
-const cookieB = cookieFor(UUID_B);
-
 function stationReq(id: string, body: unknown): Request {
   return new Request(BASE + '/curriculum/station', {
     method: 'POST',
