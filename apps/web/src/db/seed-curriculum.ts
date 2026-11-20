@@ -67,41 +67,54 @@ export async function seedLevels(db: ReturnType<typeof drizzle>): Promise<number
 async function seedChapterObject(
   db: ReturnType<typeof drizzle>,
   chapter: Chapter,
+  opts: { withUnitRow?: boolean } = {},
 ): Promise<{ unitId: string; stations: number }> {
   const dialogueUuid = dialogueContentId(chapter.dialogueSlug);
   const unitUuid = unitContentId(chapter.slug);
   const levelUuid = levelContentId(chapter.levelCode);
 
-  await db
-    .insert(schema.units)
-    .values({
-      id: unitUuid,
-      slug: chapter.slug,
-      levelId: levelUuid,
-      titleFa: chapter.titleFa,
-      canDoFa: chapter.canDoFa,
-      summaryFa: chapter.summaryFa,
-      dialogueId: dialogueUuid,
-      orderInLevel: chapter.orderInLevel,
-      estMinutes: chapter.estMinutes,
-      estLoad: chapter.estLoad,
-      bandArc: chapter.bandArc ?? null,
-    })
-    .onConflictDoUpdate({
-      target: schema.units.slug,
-      set: {
-        levelId: sql`excluded.level_id`,
-        titleFa: sql`excluded.title_fa`,
-        canDoFa: sql`excluded.can_do_fa`,
-        summaryFa: sql`excluded.summary_fa`,
-        dialogueId: sql`excluded.dialogue_id`,
-        orderInLevel: sql`excluded.order_in_level`,
-        estMinutes: sql`excluded.est_minutes`,
-        estLoad: sql`excluded.est_load`,
-        bandArc: sql`excluded.band_arc`,
-        updatedAt: sql`now()`,
-      },
-    });
+  /*
+   * FINALIZATION FIX (2026-11-20): Lesson-Engine DRAFT chapters skip the units row.
+   * `content.units.dialogue_id` is NOT NULL + UNIQUE (units_dialogue_id_key — DD-090
+   * one dialogue anchors one unit), and the chapter-02 rebuild draft legitimately
+   * shares the `first-meeting-01` dialogue with the published chapter → a draft
+   * units row is impossible without breaking that contract. Draft lesson rows only
+   * exist so `app.station_progress.station_id` (FK → content.lessons.id) can record
+   * preview progress; `lessons.unit_id` is a LOGICAL ref (no FK), so pointing the
+   * draft stations at the draft's deterministic unit uuid with no units row is safe.
+   */
+  if (opts.withUnitRow !== false) {
+    await db
+      .insert(schema.units)
+      .values({
+        id: unitUuid,
+        slug: chapter.slug,
+        levelId: levelUuid,
+        titleFa: chapter.titleFa,
+        canDoFa: chapter.canDoFa,
+        summaryFa: chapter.summaryFa,
+        dialogueId: dialogueUuid,
+        orderInLevel: chapter.orderInLevel,
+        estMinutes: chapter.estMinutes,
+        estLoad: chapter.estLoad,
+        bandArc: chapter.bandArc ?? null,
+      })
+      .onConflictDoUpdate({
+        target: schema.units.slug,
+        set: {
+          levelId: sql`excluded.level_id`,
+          titleFa: sql`excluded.title_fa`,
+          canDoFa: sql`excluded.can_do_fa`,
+          summaryFa: sql`excluded.summary_fa`,
+          dialogueId: sql`excluded.dialogue_id`,
+          orderInLevel: sql`excluded.order_in_level`,
+          estMinutes: sql`excluded.est_minutes`,
+          estLoad: sql`excluded.est_load`,
+          bandArc: sql`excluded.band_arc`,
+          updatedAt: sql`now()`,
+        },
+      });
+  }
 
   let stationCount = 0;
   for (const station of chapter.stations) {
@@ -241,11 +254,11 @@ export async function runCurriculumSeed(options: {
       units += 1;
       stations += result.stations;
     }
-    // draft chapters seed AFTER the published ones (same idempotent upserts);
-    // their dialogue slugs may already be present — seedDialogueBase is idempotent.
+    // draft chapters seed AFTER the published ones (same idempotent lesson upserts);
+    // NO units row for drafts — units_dialogue_id_key (DD-090) forbids a second unit
+    // on the shared dialogue, and drafts only need lesson rows for the progress FK.
     for (const chapter of drafts) {
-      const result = await seedChapterObject(db, chapter);
-      units += 1;
+      const result = await seedChapterObject(db, chapter, { withUnitRow: false });
       stations += result.stations;
     }
     return { levels, units, stations, dialogueSlug: dialogueSlugs[0] ?? '' };
