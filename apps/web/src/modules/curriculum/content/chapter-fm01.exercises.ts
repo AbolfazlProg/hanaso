@@ -50,7 +50,7 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'این واژه «من» است — به کارت واژه برگرد و دوباره گوش بده.',
+      f1Fa: 'به کارت واژه برگرد و دوباره گوش بده — این واژه اولِ خط ۳ و دربارهٔ خودِ گوینده است.',
       f2HintFa: 'اولین واژهٔ خط ۳؛ دربارهٔ خودِ گوینده.',
       f3ExplainFa: 'わたし = من (ضمیر اول شخص).',
     },
@@ -71,8 +71,16 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'ملیتی که شنیدی «ژاپنی» بود — にほん را با ちゅうごک قاطی نکن.',
-      f2HintFa: 'ni-ho-n-ji-n؛ در خط ۳ یامادا دربارهٔ خودش می‌گوید.',
+      /*
+       * UX-AUDIT #138/#139/#140 (data fixes): く was a PERSIAN ک (U+06A9);
+       * the F1 line NAMED the answer («ژاپنی بود») — a leak the retry could
+       * be copied from; and the hint used Latin romaji («ni-ho-n-ji-n»)
+       * against the Persian translit standard. All three fixed here; the
+       * content-contract CI gate keeps every future chapter inside the rules
+       * (Japanese charset, no answer leak in F1/F2, Persian translit).
+       */
+      f1Fa: 'به ملیتِ خط ۳ گوش کن — にほんじん و ちゅうごくじん را قاطی نکن.',
+      f2HintFa: 'نی‌هون‌جین؛ در خط ۳ یامادا دربارهٔ خودش می‌گوید.',
       f3ExplainFa: 'にほんじん = ژاپنی (اهل ژاپن).',
     },
     assessmentRole: 'practice',
@@ -93,8 +101,10 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: '«چینی» بود — دقت کن: chuugoku دو واکهٔ کشیده دارد.',
-      f2HintFa: 'ملیتی که سورا دربارهٔ خودش تأیید می‌کند (خط ۶).',
+      /* UX-AUDIT #139 (data): the F1 line named the answer («چینی بود»). */
+      f1Fa: 'به ملیتی گوش کن که سورا دربارهٔ خودش می‌گوید — کانای «چ» کشیده را با «جو» قاطی نکن.',
+      /* UX-AUDIT #138 (data): ちゅうごく has ONE long vowel (ちゅう) — not two. */
+      f2HintFa: 'دقت کن: در چیووگوکو فقط واکهٔ «چیوو» کشیده است — ごく کوتاه می‌آید.',
       f3ExplainFa: 'ちゅうごくじん = چینی (اهل چین).',
     },
     assessmentRole: 'practice',
@@ -118,7 +128,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'معلم = せんせい — ربط کار/مکان را قاطی نکن.',
     },
     feedback: {
-      f1Fa: '「だいがく» یعنی دانشگاه.',
+      f1Fa: 'به کارت واژه برگرد — این واژه محلِ کارِ علیِ استاد است؛ «د» با صدا، «گ» هم.',
       f2HintFa: 'محل کارِ علیِ استاد — だいがくの せんせい.',
       f3ExplainFa: 'だいがく = دانشگاه (الگو: だい=بزرگ + がく=مکتب/علم).',
     },
@@ -144,7 +154,9 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'ちゅうごくじん در خط ۵ و ۶ است، نه ۸.',
     },
     feedback: {
-      f1Fa: 'درست! نوبت ۸ دربارهٔ علی است: イランじんです.',
+      /* UX-AUDIT #139 (data): a WRONG-path F1 line began with «درست!» — the
+       * verdict belongs to the feedback engine, never inside authored copy. */
+      f1Fa: 'به خط ۸ گوش کن — جملهٔ دربارهٔ علی، نه یامادا.',
       f2HintFa: 'یامادا سه جمله دربارهٔ علی می‌گوید؛ ملیت او کدام است؟',
       f3ExplainFa: 'خط ۸: アリさん です。イランじん です。だいがくの せんせい です。',
     },
@@ -170,8 +182,8 @@ export const FM01_EXERCISES: Exercise[] = [
     correctOrder: ['c1', 'c2', 'c3'],
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'ترتیب درست: موضوع → هویت → です.',
-      f2HintFa: '«من» اول می‌آید و は آخرش؛ です همیشه پایان.',
+      f1Fa: 'ترتیب درست: اول موضوع، بعد هویت — پایان‌بندی مؤدانه در انتها.',
+      f2HintFa: '«من» اول می‌آید و は بعدش؛ پایان‌بندی مؤدانه همیشه آخر است.',
       f3ExplainFa: 'わたしは ちゅうごくじんです = من چینی‌ام (AはBです).',
     },
     assessmentRole: 'practice',
@@ -234,7 +246,9 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 2,
     promptFa: 'بساز: «[نام تو] دانشجو است» — جای نام، چیپ نام را بگذار',
     chips: [
-      { id: 'n1', ja: 'NAME' },
+      /* UX-AUDIT #143: the name slot uses the engine's ___NAME___ convention —
+       * the client renders a Persian-labelled input (never the literal 'NAME'). */
+      { id: 'n1', ja: '___NAME___' },
       { id: 'n2', ja: 'は' },
       { id: 'n3', ja: 'がくせい' },
       { id: 'n4', ja: 'です' },
@@ -511,7 +525,7 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'واکهٔ پایانی در ژاپنی کشیده است: sen-see.',
+      f1Fa: 'واکهٔ پایانی در ژاپنی کشیده است: せんせい (سِنسِی).',
       f2HintFa: 'دو مورا: せ+んせ+い — آخرین واکه کامل شنیده می‌شود.',
       f3ExplainFa: 'せんせい = sensee — کوتاه‌کردن واکه یعنی واژهٔ دیگری/بی‌معنا.',
     },
@@ -533,7 +547,7 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'uu کشیده است: chuu-goku.',
+      f1Fa: 'واکهٔ «او» در میانه کشیده است: ちゅうごく (چیووگوکو).',
       f2HintFa: 'دو مورا در میانه: ちゅ+う — «اوی» بلند.',
       f3ExplainFa: 'ちゅうごく = chuugoku — طول واکه معنا را عوض می‌کند.',
     },
@@ -690,7 +704,7 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'sensee — واکهٔ آخر کشیده.',
+      f1Fa: 'واکهٔ آخر せんせい کشیده است (سِنسِی).',
       f2HintFa: 'せ+ん+せ+い: چهار مورا.',
       f3ExplainFa: 'せんせい (sensee) = استاد.',
     },
@@ -780,9 +794,9 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'nihonjin', 'nihonjen', 'ninhonjin', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'واکهٔ آخر e نیست.', c: 'ん این‌جا خیشومیِ سبک است — nihon.' },
+    distractorRationaleFa: { b: 'واکهٔ آخر «اِ» نیست.', c: 'ん این‌جا خیشومیِ سبک است — にほん (نی‌هون).' },
     feedback: {
-      f1Fa: 'ni-ho-n-ji-n.',
+      f1Fa: 'موراها را کامل بگو: にほんじん (نی‌هون‌جین).',
       f2HintFa: 'に+ほ+ん+じ+ん.',
       f3ExplainFa: 'にほんじん = nihonjin = ژاپنی.',
     },
@@ -804,7 +818,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'かんこくじん = کره‌ای — ん خیشومی را کامل بگو.',
-      f2HintFa: 'ka-n-ko-ku-ji-n.',
+      f2HintFa: 'موراها را کامل بگو: かんこくじん (کان‌کوکوجین).',
       f3ExplainFa: 'かんこくじん = کره‌ای (اهل کره).',
     },
     assessmentRole: 'practice',
@@ -1101,7 +1115,7 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'ん کامل ادا می‌شود: ka-n-ko-ku.',
+      f1Fa: 'ん کامل ادا می‌شود: かんこく (کان‌کوکو).',
       f2HintFa: 'یک مورای خیشومی در میانه هست.',
       f3ExplainFa: 'かんこく = kankoku — بدون ん واژهٔ دیگری می‌شود.',
     },
@@ -1284,9 +1298,12 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'daigaku', 'daigaki', 'digaku', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'ک پایانی k نیست — く.', c: 'موراها را کامل بگو: da-i-ga-ku.' },
+    distractorRationaleFa: {
+      b: '«ک» پایانی با く می‌آید، نه با کنسونان لاتین.',
+      c: 'موراها را کامل بگو: だいがく (دایگاکو).',
+    },
     feedback: {
-      f1Fa: 'da-i-ga-ku.',
+      f1Fa: 'موراها را کامل بگو: だいがく (دایگاکو).',
       f2HintFa: 'だ+い+が+く.',
       f3ExplainFa: 'だいがく = daigaku = دانشگاه.',
     },
@@ -1308,7 +1325,7 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: { b: 'ん را نیفکن!', c: 'く را رها نکن.' },
     feedback: {
-      f1Fa: 'ka-n-ko-ku-ji-n.',
+      f1Fa: 'موراها را کامل بگو: かんこくじん (کان‌کوکوجین).',
       f2HintFa: 'か+ん+こ+く+じ+ん.',
       f3ExplainFa: 'かんこくじん = kankokujin = کره‌ای.',
     },
@@ -1499,7 +1516,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'کشش با «اِ» نوشته شد (せんせえ)؛ در این واژه کشش با «ی» نوشته می‌شود (え+い).',
     },
     feedback: {
-      f1Fa: 'واکهٔ پایانی بلند است: sen-see.',
+      f1Fa: 'واکهٔ پایانی بلند است: せんせい (سِنسِی).',
       f2HintFa: 'せ+ん+せ+い — چهار مورا.',
       f3ExplainFa: 'せんせい = sensee = استاد.',
     },

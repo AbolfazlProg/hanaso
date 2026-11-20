@@ -4,7 +4,7 @@ import { previewUnlockAll, unlockAllMode } from '@/lib/preview';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
-import { SiteNav } from '@/components/site-nav';
+import { SiteNav, resolveReviewDueCount } from '@/components/site-nav';
 
 /**
  * /learn/[chapter]/journey — TASK-HANASO-16: the one-section-at-a-time journey
@@ -30,6 +30,7 @@ export default async function JourneyPage({
 }) {
   const { chapter: slug } = await params;
   const { s } = await searchParams;
+  const reviewDueCount = await resolveReviewDueCount();
 
   let bundle;
   try {
@@ -46,7 +47,7 @@ export default async function JourneyPage({
   if (access.locked) {
     return (
       <>
-        <SiteNav active="learn" />
+        <SiteNav active="learn" reviewDueCount={reviewDueCount} />
         <ChapterLockedNotice
           chapterTitleFa={chapter.titleFa}
           prerequisiteSlug={access.prerequisiteSlug}
@@ -71,7 +72,7 @@ export default async function JourneyPage({
       {/* TASK-HANASO-17 §۴: the chapter MAP is a top-level page — the site nav
        * renders here (desktop bar + mobile bottom tabs). The station pages
        * stay immersive (nav never renders inside a lesson). */}
-      <SiteNav active="learn" />
+      <SiteNav active="learn" reviewDueCount={reviewDueCount} />
       <JourneyHome
         chapterSlug={home.chapter.slug}
         chapterTitleFa={home.chapter.titleFa}

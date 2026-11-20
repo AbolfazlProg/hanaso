@@ -24,6 +24,7 @@
  *   teaches links, finish CTA without onFinish) — the PoC routes stay dev-only.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { readSubtitleDefault, readAudioSpeedDefault } from '@/lib/learner/preferences';
 import { useRouter } from 'next/navigation';
 import { Pause, Play, RotateCcw, SkipBack, SkipForward } from 'lucide-react';
 import { BrowserAudioBackend, JointTurnBackend } from '@/modules/audio';
@@ -105,8 +106,15 @@ export function DialogueScene({
   const router = useRouter();
   const [status, setStatus] = useState<PlaybackStatus>('idle');
   const [activeIndex, setActiveIndex] = useState(-1);
-  // KB dialogue-based-learning-model §۲/§۴: translation toggle DEFAULTS OFF (comprehension-first).
+  // KB dialogue-based-learning-model §۲/§۴: translation toggle DEFAULTS OFF
+  // (comprehension-first).
+  // UX-AUDIT #144: the learner's device DEFAULT (settings → زیرنویس فارسی)
+  // seeds the initial state — a beginner who chose «روشن» no longer re-toggles
+  // every dialogue. Explicit §۲/§۴ comprehension-first remains the no-settings
+  // default (false).
   const [showFa, setShowFa] = useState(false);
+  // UX-AUDIT #144: the speed default (settings → سرعت پیش‌فرض صوت) seeds the
+  // dialogue player's rate too (slow = 0.75×).
   const [speed, setSpeed] = useState<0.75 | 1>(1);
   const [banner, setBanner] = useState<BannerError | null>(null);
   const [lastLineSeen, setLastLineSeen] = useState(false);
@@ -132,6 +140,13 @@ export function DialogueScene({
   }, [characters]);
 
   const lastLineIndex = dialogue.lines.length - 1;
+
+  // UX-AUDIT #144 — device defaults seed the player ONCE on mount (client-only;
+  // SSR/hydration stay at the neutral comprehension-first defaults).
+  useEffect(() => {
+    if (readSubtitleDefault()) setShowFa(true);
+    if (readAudioSpeedDefault() === 'slow') setSpeed(0.75);
+  }, []);
 
   // ------------------------------------------------------------------ engine + controller wiring
   useEffect(() => {

@@ -146,7 +146,9 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
     const rejected = await postStation(post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2' }, QA_B));
     expect(rejected.status).toBe(409); // h1 still missing
     /* TASK-29 M1: h1/h2 carry exercise blocks — one honest server-graded answer
-     * each before completing (the completion guard requires it). */
+     * each before completing (the completion guard requires it).
+     * UX-AUDIT #137: the ENTRY gate holds too — each station is graded only
+     * AFTER its prerequisite completed, so grade/complete interleave here. */
     for (const slug of ['stn-kana-h1', 'stn-kana-h2']) {
       const first = firstExerciseOf(slug)!;
       const graded = await postStation(
@@ -163,10 +165,10 @@ describe('TASK-HANASO-20 — learner data isolation (onboarding recovery)', () =
         ),
       );
       expect(graded.status, `grade ${slug}`).toBe(200);
+      await postStation(
+        post({ action: 'complete', chapterSlug: CH, stationSlug: slug, score: 1, taskCompleted: true }, QA_B),
+      );
     }
-    await postStation(
-      post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h1', score: 1, taskCompleted: true }, QA_B),
-    );
     const ok = await postStation(
       post({ action: 'complete', chapterSlug: CH, stationSlug: 'stn-kana-h2', score: 1, taskCompleted: true }, QA_B),
     );

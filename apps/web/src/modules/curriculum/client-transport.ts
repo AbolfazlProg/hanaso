@@ -64,7 +64,8 @@ export type ClientTeachingBlock =
             ja: string;
             reading: string;
             fa: string;
-            whyFa: string;
+            /** UX-AUDIT #141 — optional now: the readability claim is computed. */
+            whyFa?: string;
             lineRef?: string;
             selfExplainFa?: string;
             /** TASK-LEARNING-08 Addendum-5 §6 — a short authored pronunciation

@@ -57,6 +57,7 @@ import { ArrowLeft, Ear, Hand, Info, Mic, RotateCcw, Volume2 } from 'lucide-reac
 import { fa } from '@/messages/fa';
 import { KANA_READING_FA_BY_GLYPH, KANA_TEACHING_BY_ID } from '@/modules/curriculum/content/kana-teaching';
 import { KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
+import { readabilityLabel, type ReadabilityLabel } from '@/modules/curriculum/content/readability';
 import { kanaWordRomaji } from '@/modules/curriculum/kana-romaji';
 import type { KanaItem } from '@/modules/curriculum/types';
 import { JaBlock } from '@/components/patterns/ja-block';
@@ -101,7 +102,8 @@ export interface KanaRelatedExample {
   ja: string;
   reading: string;
   fa: string;
-  whyFa: string;
+  /** UX-AUDIT #141 — optional now: the readability claim is computed. */
+  whyFa?: string;
   pronFa?: string;
 }
 
@@ -134,6 +136,12 @@ export interface KanaCardProps {
   relatedExamples?: KanaRelatedExample[];
   /** TASK-HANASO-CTA-01 §۴ — per-word audio pair registry (null = no asset). */
   exampleAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /**
+   * UX-AUDIT #141 — the kana the walk has taught so far (before THIS card's
+   * position) and by the end of this station; the readability label of the
+   * example cards is COMPUTED from it (never a static claim).
+   */
+  taughtKana?: { before: string[]; byStationEnd: string[] };
   /** Writing-practice record callback (structured summary only — DD-111). */
   onWritingAttempt?: (summary: {
     character: string;
@@ -161,6 +169,7 @@ export function KanaCard({
   wordAudioUrls,
   relatedExamples,
   exampleAudioByWord,
+  taughtKana,
   onWritingAttempt,
   onWritingDone,
   initialProgress,
@@ -497,6 +506,23 @@ export function KanaCard({
     return cards;
   }, [hostWord, relatedExamples]);
 
+  /*
+   * UX-AUDIT #141 — the readability label of each card is COMPUTED from the
+   * kana taught up to this card's position (the walk's own kana-card blocks
+   * before it) — the «خواندنی است» claim can no longer run ahead of the
+   * lesson. An authored whyFa note (rare) renders instead of the generated
+   * line only when it exists; the generated line is the default.
+   */
+  const readableLabels = useMemo(() => {
+    const before = taughtKana?.before ?? [];
+    const byEnd = taughtKana?.byStationEnd ?? before;
+    const map = new Map<string, ReadabilityLabel>();
+    for (const card of readableExamples) {
+      map.set(card.key, readabilityLabel(card.ja, before, byEnd));
+    }
+    return map;
+  }, [readableExamples, taughtKana]);
+
   /**
    * §15 (TASK-LEARNING-09) — the mnemonic story card: a subtle teaching card
    * with the honest «داستانِ یادسپار» label (never presented as fact — the
@@ -620,8 +646,13 @@ export function KanaCard({
         <p className="mt-2 border-b border-ink-faint/60 pb-2 text-h3 font-bold text-ink" dir="rtl">
           {ex.readingFa}
           {ex.isHost ? (
+            /*
+             * UX-AUDIT #140 — the Latin complement is a SEPARATED chip (the
+             * « | » bridge the reading card uses), never glued onto the
+             * Persian reading («آوau» was neither Persian nor Japanese).
+             */
             <span className="ms-2 font-mono align-middle text-caption font-normal text-ink-soft" dir="ltr">
-              {kanaWordRomaji(ex.ja)}
+              {` · ${kanaWordRomaji(ex.ja)}`}
             </span>
           ) : null}
         </p>
@@ -633,11 +664,23 @@ export function KanaCard({
         </p>
       ) : null}
       <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{ex.meaningFa}</p>
-      {ex.whyFa ? (
-        <p className="ja-instruct mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
-          <MixedFaJaText text={ex.whyFa} />
-        </p>
-      ) : null}
+      {/*
+       * UX-AUDIT #141 — the readability claim is COMPUTED (readabilityLabel
+       * from the walk's taught-kana set). An authored whyFa note renders only
+       * when genuinely written; the generated honest claim is the default.
+       */}
+      {(() => {
+        const label: ReadabilityLabel | undefined = readableLabels.get(ex.key);
+        const note = ex.whyFa?.trim() ? ex.whyFa : label?.textFa;
+        return note ? (
+          <p
+            className="ja-instruct mt-1 text-small leading-[var(--leading-fa)] text-ink-soft"
+            data-readability={label?.kind}
+          >
+            <MixedFaJaText text={note} />
+          </p>
+        ) : null;
+      })()}
       {ex.pronFa ? (
         <div
           className="mt-3 flex items-start gap-2 rounded-md border border-shu/40 bg-surface-warm p-3"

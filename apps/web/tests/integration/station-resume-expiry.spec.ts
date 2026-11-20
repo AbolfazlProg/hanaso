@@ -18,6 +18,7 @@ import { GET as getStation, POST as postStation } from '@/app/api/curriculum/sta
 import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
 import { signSessionTokenSync } from '@/lib/learner/session-node';
 import { resetStoresForTests, getStationProgressStore } from '@/lib/poc/stores';
+import { plantPrereqChain } from '../helpers/walk-chain';
 import { RESUME_TTL_MS } from '@/modules/curriculum/resume-policy';
 
 const BASE = 'http://localhost/api/curriculum/station';
@@ -61,6 +62,8 @@ async function plantRow(
   currentBlock: string | null = 'blk-stn-kana-h1-card-hira-a',
 ) {
   const store = getStationProgressStore();
+  // UX-AUDIT #137: the entry gate holds — plant the chain the walk already earned
+  await plantPrereqChain(L1, STN);
   await store.upsert(L1, STN, {
     stationSlug: STN,
     status: status as 'in_progress',
@@ -133,6 +136,7 @@ describe('POST /api/curriculum/station — the 7-day resume clock (§۸)', () =>
   });
 
   it('the FIRST entry of a fresh row stamps the clock (the walk truly started)', async () => {
+    await plantPrereqChain(L1, STN);
     const res = await postStation(post({ action: 'enter', chapterSlug: CH, stationSlug: STN, stepIndex: 0 }));
     expect(res.status).toBe(200);
     const state = (await bodyOf(res)).data?.state;

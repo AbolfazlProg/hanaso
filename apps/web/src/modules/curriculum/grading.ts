@@ -73,8 +73,72 @@ export function gradeExerciseAnswer(ex: Exercise, answer: ExerciseAnswerPayload,
     return { correct: true, level: 0, feedbackFa: 'درست!' };
   }
   const level = attemptNo <= 1 ? 1 : attemptNo === 2 ? 2 : 3;
-  const feedbackFa = level === 1 ? ex.feedback.f1Fa : level === 2 ? ex.feedback.f2HintFa : ex.feedback.f3ExplainFa;
+  let feedbackFa = level === 1 ? ex.feedback.f1Fa : level === 2 ? ex.feedback.f2HintFa : ex.feedback.f3ExplainFa;
   const reveal = level >= 3 ? revealText(ex) : undefined;
+  /*
+   * UX-AUDIT #139 (root D — the feedback engine never leaks the key early):
+   * at F1/F2 the answer must not cross to the client — not through the
+   * feedback line, not through a distractor rationale. The enforcement is IN
+   * THE SHARED ENGINE (works for every chapter, published or drafted, with no
+   * per-chapter content work): every occurrence of a key text is redacted to
+   * «…» — the teaching sentence survives, the answer does not. The
+   * content-contract CI suite grades REAL wrong answers for every exercise of
+   * every chapter and asserts this contract holds (R3).
+   */
+  if (level < 3) {
+    const keyTexts = correctKeyTexts(ex);
+    const redact = (s: string | undefined): string | undefined => {
+      if (typeof s !== 'string') return s;
+      let out = s;
+      for (const k of keyTexts) {
+        while (out.includes(k)) out = out.replace(k, '…');
+      }
+      return out;
+    };
+    feedbackFa = redact(feedbackFa) ?? feedbackFa;
+    const distractorRationaleFa =
+      answer.kind === 'option' ? redact(ex.distractorRationaleFa?.[answer.optionId]) : undefined;
+    return finalizeWrong(ex, answer, level, feedbackFa, reveal, distractorRationaleFa);
+  }
+  return finalizeWrong(
+    ex,
+    answer,
+    level,
+    feedbackFa,
+    reveal,
+    answer.kind === 'option' ? ex.distractorRationaleFa?.[answer.optionId] : undefined,
+  );
+}
+
+/** The correct answer's display texts (the leak-detection corpus for F1/F2). */
+function correctKeyTexts(ex: Exercise): string[] {
+  const texts: string[] = [];
+  const correctOption = ex.options?.find((o) => o.id === ex.correctOptionId);
+  if (correctOption) texts.push(correctOption.label);
+  if (ex.correctOrder) {
+    for (const id of ex.correctOrder) {
+      const chunk = ex.chunks?.find((c) => c.id === id);
+      if (chunk) texts.push(chunk.ja);
+    }
+  }
+  if (ex.acceptedChipOrder) {
+    for (const id of ex.acceptedChipOrder) {
+      const chip = ex.chips?.find((c) => c.id === id);
+      if (chip) texts.push(chip.ja);
+    }
+  }
+  return texts.filter((t) => t && t !== '___NAME___' && t !== '[نام]です');
+}
+
+/** Assemble the WRONG outcome (ladder fields + elimination + F4 pointer). */
+function finalizeWrong(
+  ex: Exercise,
+  answer: ExerciseAnswerPayload,
+  level: 1 | 2 | 3,
+  feedbackFa: string,
+  reveal: string | undefined,
+  distractorRationaleFa: string | undefined,
+): GradeOutcome {
   // F2 (#106): eliminate exactly one wrong option — first authored wrong option
   // after the deterministic shuffle (stable, never the key, never the learner's
   // own wrong pick when avoidable).
@@ -88,13 +152,6 @@ export function gradeExerciseAnswer(ex: Exercise, answer: ExerciseAnswerPayload,
   }
   // F4 (#106): return-to-teaching pointer once the ladder is exhausted.
   const referenceBlockId = level >= 3 ? ex.referenceBlockId : undefined;
-  /*
-   * TASK-HANASO-20 (BUG-007): surface the authored rationale for the learner's
-   * OWN wrong pick (every wrong level — F1 benefits the most). Never a leak:
-   * it rides the same ANSWERED outcome back, never the pre-answer payload.
-   */
-  const distractorRationaleFa =
-    !correct && answer.kind === 'option' ? ex.distractorRationaleFa?.[answer.optionId] : undefined;
   return { correct: false, level, feedbackFa, reveal, eliminateOptionIds, referenceBlockId, distractorRationaleFa };
 }
 

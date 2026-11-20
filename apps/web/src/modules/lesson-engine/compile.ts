@@ -85,6 +85,21 @@ function compileInteraction(
       location: `station[${station.id}].${step.id}`,
     });
   }
+  /*
+   * UX-AUDIT #142 (root B — unanswerable placeholders never compile): an
+   * order/transform/sort interaction with NO tiles (the TODO skeleton class —
+   * e.g. the raw n5-lesson-02 draft) would compile into an exercise with an
+   * empty answer key and an EMPTY F3 reveal — unanswerable content. Hard
+   * finding: the draft stays out of the registry, the index and the walk.
+   */
+  if ((it.type === 'order_build' || it.type === 'transform' || it.type === 'sort') && (it.tiles ?? []).length < 2) {
+    findings.push({
+      rule: 'C-ORDER-TILES',
+      severity: 'hard',
+      message: `تعامل چینش دست‌کم ۲ تایل لازم دارد — الان ${(it.tiles ?? []).length} (محتوای پاسخ‌ناپذیر/placeholder).`,
+      location: `station[${station.id}].${step.id}`,
+    });
+  }
 
   const exercise: Exercise = {
     id: exerciseId,
@@ -129,9 +144,17 @@ function compileInteraction(
         : undefined,
     distractorRationaleFa: it.distractorReasons,
     feedback: {
-      f1Fa: it.feedbackCorrectFa ?? 'درست بود!',
-      f2HintFa: it.hints?.[0] ?? it.feedbackWrongFa ?? 'یک بار دیگر با یادآور محتوایی تلاش کن.',
-      f3ExplainFa: it.hints?.[2] ?? it.feedbackWrongFa ?? 'پاسخ با مثال حل‌شده نمایش می‌شود.',
+      /*
+       * UX-AUDIT #139 (root D — the ladder is the WRONG-path ladder): f1/f2
+       * are the pre-reveal beats — they take the HINTS/wrong-path copy. The
+       * SUCCESS message (feedbackCorrectFa — which naturally contains the
+       * answer) may only surface at F3, the reveal level. Previously f1Fa
+       * carried feedbackCorrectFa verbatim: every draft exercise leaked its
+       * answer on the FIRST wrong attempt.
+       */
+      f1Fa: it.hints?.[0] ?? it.feedbackWrongFa ?? 'با یادآور محتوایی یک بار دیگر تلاش کن.',
+      f2HintFa: it.hints?.[1] ?? it.feedbackWrongFa ?? 'یک بار دیگر با یادآور محتوایی تلاش کن.',
+      f3ExplainFa: it.hints?.[2] ?? it.feedbackCorrectFa ?? it.feedbackWrongFa ?? 'پاسخ با مثال حل‌شده نمایش می‌شود.',
     },
     assessmentRole: 'practice',
     referenceBlockId: undefined,
@@ -152,11 +175,20 @@ function compileStation(
   const lineRefs = new Set<string>();
 
   if (station.intro) {
+    /*
+     * UX-AUDIT #142 (root B — the internal-id leak): the conversation link is
+     * a STRUCTURED field, never baked into learner-facing copy. The station
+     * runner resolves it against the chapter's own dialogue and renders the
+     * linked line as CONTENT (speaker + text + translation + audio); an
+     * unresolvable ref renders nothing. The old bodyFa literally printed
+     * «اتصال به مکالمه: s-first-meeting-01-l1» — a registry id, to a beginner.
+     */
     blocks.push({
       kind: 'scene',
       id: `sc-intro-${station.id}`,
       titleFa: station.intro.textFa,
-      bodyFa: station.intro.conversationRef ? `اتصال به مکالمه: ${station.intro.conversationRef}` : '',
+      bodyFa: '',
+      conversationRef: station.intro.conversationRef,
     } as TeachingBlock);
   }
   station.steps.forEach((step) => {
@@ -330,9 +362,9 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
       correctOptionId: m.correctOptionId,
       distractorRationaleFa: undefined,
       feedback: {
-        f1Fa: 'درست بود!',
-        f2HintFa: m.hints[0] ?? m.feedbackWrongFa ?? 'با یادآور محتوایی دوباره تلاش کن.',
-        f3ExplainFa: m.hints[2] ?? m.feedbackWrongFa ?? 'توضیح با مثال حل‌شده در ایستگاه بازگشت.',
+        f1Fa: m.hints?.[0] ?? m.feedbackWrongFa ?? 'با یادآور محتوایی یک بار دیگر تلاش کن.',
+        f2HintFa: m.hints?.[1] ?? m.feedbackWrongFa ?? 'با یادآور محتوایی دوباره تلاش کن.',
+        f3ExplainFa: m.hints?.[2] ?? m.feedbackWrongFa ?? 'توضیح با مثال حل‌شده در ایستگاه بازگشت.',
       },
       assessmentRole: `mastery_${m.measure}`,
     };

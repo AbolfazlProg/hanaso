@@ -14,7 +14,7 @@ import {
   chapterAccessStatus,
 } from '@/modules/curriculum/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
-import { SiteNav } from '@/components/site-nav';
+import { SiteNav, resolveReviewDueCount } from '@/components/site-nav';
 
 /**
  * /learn — the LEARNING JOURNEY home (TASK-HANASO-16).
@@ -39,6 +39,7 @@ export const dynamic = 'force-dynamic';
 export default async function LearnPage({ searchParams }: { searchParams: Promise<{ s?: string }> }) {
   const { s } = await searchParams;
   const learnerId = await resolveLearnerId();
+  const reviewDueCount = await resolveReviewDueCount();
   const previewActive = await hasPreviewAccess();
   // TEMPORARY SITE-WIDE UNLOCK (UNLOCK_ALL_MODE=1): owner-only site for now —
   // the full index renders for EVERY visitor and every gate is open, no cookie.
@@ -49,15 +50,18 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
   const locksMode: PreviewLocksMode = previewActive ? await previewLocksMode() : 'open';
   const home = await resolveLearnerJourney(learnerId, undefined, { preview: unlockAll });
   // Full index — every published chapter + every draft. Renders for the owner's
-  // preview cookie OR for everyone while the temporary site-wide unlock is on;
-  // never for normal users in the default (env unset) state.
-  const previewIndex =
-    previewActive || unlockEverything
-      ? [
-          ...listChapterSummaries().map((c) => ({ ...c, draft: false })),
-          ...listDraftChapterSummaries().map((c) => ({ ...c, draft: true })),
-        ]
-      : [];
+  // preview cookie ONLY.
+  // UX-AUDIT #142 (draft/published lifecycle): the temporary site-wide unlock
+  // no longer lists the drafts — UNLOCK_ALL opens the PUBLISHED chapters for
+  // review; a draft is owner-preview content (its own gate + pv- namespace
+  // writes) and returns to the owner's preview cookie flow. The normal
+  // (env unset) state renders no index at all — unchanged.
+  const previewIndex = previewActive
+    ? [
+        ...listChapterSummaries().map((c) => ({ ...c, draft: false })),
+        ...listDraftChapterSummaries().map((c) => ({ ...c, draft: true })),
+      ]
+    : [];
   // Per-chapter lock status for the owner panel. Drafts are owner-reviewable in
   // BOTH modes (unpublished content is not part of the real learner path);
   // published chapters honour the current mode through chapterAccessStatus.
@@ -115,7 +119,7 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
 
   return (
     <>
-      <SiteNav active="learn" />
+      <SiteNav active="learn" reviewDueCount={reviewDueCount} />
       {unlockEverything && !previewActive && (
         <div
           style={{
@@ -132,9 +136,12 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
             alignItems: 'center',
           }}
         >
+          {/* UX-AUDIT #142: the unlock covers the PUBLISHED path only — the copy
+              must say exactly that (the old «شامل فصل‌های پیش‌نویس» was the
+              leak that made drafts look like product content). */}
           <strong>حالت بازِ کامل (موقت)</strong>
           <span style={{ opacity: 0.8 }}>
-            همهٔ درس‌ها — شامل فصل‌های پیش‌نویس — برای همه بدون قفل‌اند؛ هیچ کلیدی لازم نیست.
+            همهٔ فصل‌های منتشرشده بدون قفل‌اند؛ فصل‌های پیش‌نویس فقط با حالت پیش‌نمایش مالک باز می‌شوند.
           </span>
         </div>
       )}

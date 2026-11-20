@@ -23,6 +23,7 @@ import { POST as stationPost } from '@/app/api/curriculum/station/route';
 import { getChapter } from '@/modules/curriculum/content';
 import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
 import { signSessionTokenSync } from '@/lib/learner/session-node';
+import { plantPrereqChain } from '../helpers/walk-chain';
 
 const QA_UUID = '33333333-4444-5555-6666-777777777777';
 const QA_COOKIE = `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(QA_UUID)}`;
@@ -45,6 +46,7 @@ const stn = ch1.stations.find((s) =>
 
 describe('TASK-HANASO-29 F2 — grade action is station-scoped like hint', () => {
   it("grades a station's OWN practice exercise (positive control — unchanged behavior)", async () => {
+    await plantPrereqChain(QA_UUID, stn.slug);
     const correctOptionId = ex.correctOptionId!;
     const res = await stationPost(
       post({
@@ -80,6 +82,7 @@ describe('TASK-HANASO-29 F2 — grade action is station-scoped like hint', () =>
   });
 
   it('404s for mastery-pool exercises through the grade action too', async () => {
+    await plantPrereqChain(QA_UUID, stn.slug);
     const gate = Object.values(ch1.exercises).find((e) => e.assessmentRole.startsWith('mastery_'))!;
     const res = await stationPost(
       post({

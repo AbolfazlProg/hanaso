@@ -28,7 +28,11 @@ export const fa = {
   nav: {
     home: 'خانه',
     journey: 'مسیر یادگیری',
-    practice: 'تمرین',
+    /* UX-AUDIT #135/#144 — the review surface is REAL (/review), the third
+     * mobile tab slot is filled, and the badge carries the true due count. */
+    review: 'مرور',
+    reviewAriaDue: (n: number) => `مرور — ${new Intl.NumberFormat('fa-IR').format(n)} کارت سرِ قرار`,
+    settings: 'تنظیمات',
     ariaLabel: 'ناوبری اصلی',
   },
   /* TASK-HANASO-22 — Practice Hub + session copy (honest, no pass/fail) */
@@ -129,7 +133,9 @@ export const fa = {
     doneTitle: 'مرور امروز تمام شد',
     doneBody: 'همهٔ کارت‌های امروز مرور شد — زمان‌بندی‌ها به‌روز شدند.',
     backHome: 'بازگشت به خانه',
-    unknownCard: 'این کارت در محتوای فعلی یافت نشد — می‌توانی رتبه‌اش را ثبت کنی یا رد کنی.',
+    unknownCard: 'این کارت در محتوای فعلی پیدا نشد.',
+    /* UX-AUDIT #134 — an unresolvable card is NEVER rateable: skip only. */
+    unknownCardNote: 'رتبه‌ای ثبت نمی‌شود — کارتِ بی‌محتوا از زمان‌بندی خارج نمی‌شود و فقط می‌توانی ردش کنی.',
     skip: 'رد کردن',
     loadFailed: 'خواندن صف مرور ناموفق بود — بعداً تلاش کنید.',
     submitFailed: 'ثبت مرور ناموفق بود — دوباره تلاش کنید.',
@@ -403,8 +409,16 @@ export const fa = {
     unitProgress: 'بخش',
     islandMap: 'جزایر فصل',
     chapterLockedTitle: 'این فصل قفل است',
+    /* UX-AUDIT #137 — the station-level prereq notice (gate at ENTRY) */
+    stationLockedTitle: 'این درس هنوز باز نشده',
     chapterLockedBody: 'برای ورود به این فصل، ابتدا گیت فهم فصل قبل را بگذران.',
     goPrerequisite: 'رفتن به فصل پیش‌نیاز',
+    /* UX-AUDIT #135 (root D) — the data-driven enrollment handoff */
+    reviewEnrolledLine: (n: number) =>
+      `${new Intl.NumberFormat('fa-IR').format(n)} کارت مرور در صف ثبت شد — مرورشان را از «مرور روزانه» انجام بده.`,
+    reviewOpenCta: 'رفتن به مرور',
+    /* UX-AUDIT #142 (root B) — the scene block's resolved conversation link */
+    conversationLink: 'از مکالمهٔ فصل',
     prevStation: 'ایستگاه قبلی',
     /* feedback ladder F2/F4 (Issue #106) */
     eliminatedOption: 'یک گزینهٔ نادرست حذف شد',
@@ -416,7 +430,7 @@ export const fa = {
     /* station runner */
     continueBlock: 'ادامه',
     /* TASK-LEARNING-08 WP-5: auto-next after a correct answer (owner feedback D) */
-    autoNextHint: 'درست بود — به سؤال بعد می‌رویم…',
+    autoNextHint: 'به سؤال بعد می‌رویم…',
     /* TASK-LEARNING-08 Addendum-2 §1: the accepted ink is replaced by the clean
        standard sample for a short review beat. */
     kanaReviewSampleNote: 'نمونهٔ استاندارد — نتیجهٔ تمیز نوشتنت را ببین.',
@@ -544,6 +558,37 @@ export const fa = {
     viewResult: 'دیدن نتیجه',
     chapterCompleteTitle: 'فصل کامل شد',
     poUnitLabel: 'واحد آزمایشی (نمونهٔ فنی)',
+  },
+  /*
+   * UX-AUDIT #144 — the minimal product shell: the settings/profile page
+   * (previously a 404). Honest minimal scope: device-local display defaults +
+   * the optional learner name (#143) + the preview exit. No fake account
+   * system (identity is the signed cookie — #109's auth task owns the rest).
+   */
+  settings: {
+    title: 'تنظیمات و پروفایل',
+    lead: 'همین‌جا نامت را می‌توانی بنویسی و پیش‌فرض‌های این دستگاه را تنظیم کنی.',
+    profileTitle: 'پروفایل',
+    nameLabel: 'نام شما (اختیاری)',
+    namePlaceholder: 'مثلاً: سارا',
+    nameHint: 'این نام در تمرین‌های «معرفی خودت» به کار می‌رود — روی همین دستگاه ذخیره می‌شود.',
+    nameSaved: 'نام ذخیره شد.',
+    nameCleared: 'نام پاک شد.',
+    displayTitle: 'پیش‌فرض‌های نمایش (این دستگاه)',
+    subtitleLabel: 'زیرنویس فارسی مکالمه',
+    subtitleOn: 'روشن',
+    subtitleOff: 'خاموش',
+    audioSpeedLabel: 'سرعت پیش‌فرض صوت',
+    speedNormal: 'عادی',
+    speedSlow: 'آهسته',
+    savedNote: 'پیش‌فرض‌های این دستگاه ذخیره شد.',
+    reviewTitle: 'مرور روزانه',
+    reviewBody: 'کارت‌های سرِ قرارِ امروز و زمان‌بندی FSRS از همین‌جا دنبال می‌شود.',
+    reviewCta: 'رفتن به مرور',
+    learnerIdTitle: 'شناسهٔ این دستگاه',
+    learnerIdHint: 'پیشرفت شما با همین شناسهٔ محلی روی این مرورگر نگه داشته می‌شود — بدون حساب کاربری.',
+    exitPreview: 'خروج از حالت پیش‌نمایش مالک',
+    backHome: 'بازگشت به خانه',
   },
 } as const;
 

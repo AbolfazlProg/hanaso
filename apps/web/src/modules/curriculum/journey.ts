@@ -54,20 +54,32 @@ export function orderedStations(chapter: Chapter): Station[] {
   return out;
 }
 
-/** Availability of one station given the stored states (derived — never stored). */
+/**
+ * Availability of one station given the stored states (derived — never stored).
+ *
+ * UX-AUDIT #136 (root fix): the stored state is READ FIRST — the temporary
+ * unlock (owner review) bypasses lock DISPLAY only, flipping locked→available
+ * for browsing. A station with a stored state (completed / in_progress /
+ * needs_retry) stays TRUTHFUL even while the unlock is on: the «ایستگاه فعلی»
+ * marker, the CTA and the «انجام شد» rows follow the REAL frontier, never the
+ * first row of the map. (Previously the unlock short-circuited above the state
+ * read, so every station reported «available» and the frontier froze on
+ * station 1.)
+ */
 export function stationAvailability(
   station: Station,
   states: Map<string, StationState>,
   allStations: Station[],
   opts?: { unlockAll?: boolean },
 ): { availability: StationAvailability; blockedBy: string[] } {
-  // PREVIEW MODE (FINALIZATION): owner review bypasses lock DISPLAY only — the
-  // stored state, walk order and normal-user logic are untouched.
-  if (opts?.unlockAll) return { availability: 'available', blockedBy: [] };
   const state = states.get(station.slug);
   if (state) {
     return { availability: state.status, blockedBy: [] };
   }
+  // PREVIEW MODE (FINALIZATION): owner review bypasses lock DISPLAY only —
+  // the walk order and normal-user logic are untouched; locked rows open for
+  // browsing but nothing is ever reported as done that is not done.
+  if (opts?.unlockAll) return { availability: 'available', blockedBy: [] };
   const byslug = new Map(allStations.map((s) => [s.slug, s]));
   const blockedBy = station.prerequisites.filter((ref) => {
     const prereq = byslug.get(ref);
@@ -152,6 +164,16 @@ export function nextStation(journey: Journey): Station | null {
   const inProgress = journey.nodes.find((n) => n.station.core && n.availability === 'in_progress');
   return inProgress?.station ?? null;
 }
+
+/**
+ * UX-AUDIT #136 — the CANONICAL selector name for the journey frontier.
+ * One logic for «ایستگاه فعلی»: the first INCOMPLETE core station in walk
+ * order (in_progress first, then the first available). The map badge, the
+ * «ادامهٔ یادگیری» CTA, the section focus and the home module all read THIS
+ * selector (via resolveLearnerJourney) — two surfaces can no longer carry two
+ * different notions of «next».
+ */
+export const nextIncompleteStation = nextStation;
 
 /** All core stations completed → chapter is ready for the mastery gate. */
 export function corePathComplete(journey: Journey): boolean {

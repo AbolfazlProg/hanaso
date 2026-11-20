@@ -66,8 +66,14 @@ describe('lesson-engine: compile → existing runtime (D-0011 compatibility)', (
     expect(chapter.stations.length).toBe(loadDraft().stations.length);
     expect(Object.keys(chapter.exercises).length).toBeGreaterThan(0);
     expect(chapter.dialogueSlug).toBe('n5-lesson-02');
-    // compile-level notes are soft only
-    expect(findings.filter((f) => f.severity === 'hard')).toEqual([]);
+    // compile-level notes are soft only — EXCEPT the audited hard gates: the
+    // n5-lesson-02 skeleton (TODO placeholders) is flagged C-ORDER-TILES
+    // (order interactions with no tiles = unanswerable content, UX-AUDIT #142).
+    // The hard gate keeps the skeleton out of the registry/index/walk until it
+    // is actually authored; the compiled SHAPE remains inspectable here.
+    const hard = findings.filter((f) => f.severity === 'hard');
+    expect(hard.length).toBeGreaterThan(0);
+    expect(hard.every((f) => f.rule === 'C-ORDER-TILES')).toBe(true);
   });
 
   it('compiled output satisfies the product content invariants (unique slugs, resolved prereqs, ordered walk)', () => {
