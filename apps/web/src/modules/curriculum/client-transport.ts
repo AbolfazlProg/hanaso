@@ -148,6 +148,16 @@ export type ClientTeachingBlock =
         items: { ja: string; glossFa?: string; sideJa?: string }[];
       }[];
     }
+  | {
+      /** Part-2 ز: the drill mode picker — pointer ids only, no answer material. */
+      kind: 'drill-menu';
+      id: string;
+      titleFa: string;
+      bodyFa: string;
+      options: { id: string; labelFa: string; bodyFa: string; targetBlockId: string }[];
+      finishLabelFa: string;
+      finishTargetBlockId: string;
+    }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
 
 export interface ClientStation {
@@ -235,6 +245,16 @@ function stripBlock(block: TeachingBlock): ClientTeachingBlock {
         captionFa: block.captionFa,
         showGloss: block.showGloss,
         panels: block.panels,
+      };
+    case 'drill-menu':
+      return {
+        kind: 'drill-menu',
+        id: block.id,
+        titleFa: block.titleFa,
+        bodyFa: block.bodyFa,
+        options: block.options,
+        finishLabelFa: block.finishLabelFa,
+        finishTargetBlockId: block.finishTargetBlockId,
       };
     case 'character-scene':
       return {

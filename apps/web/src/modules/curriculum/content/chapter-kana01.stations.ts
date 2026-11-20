@@ -4413,8 +4413,52 @@ export const KANA_STATIONS: Station[] = [
         instructionsFa: 'جفت‌های شبیهٔ کانا را بدون دیدن الگو از حافظه بنویس — تمرینِ تشخیص دقیق جزئیات است.',
       },
       {
+        /*
+         * Part-2 ز (the eval: the drill was ONE fixed list — no hiragana/
+         * katakana/two-script/difficult-pair choice): the optional drill now
+         * OPENS with a real mode picker. The pools are curated from the
+         * chapter's own practice bank (every item taught — the drill sits at
+         * the chapter's end); the walk pointer jumps to the chosen pool and
+         * «پایان تمرین» completes honestly after ONE pool. The station stays
+         * optional (core:false) exactly as before.
+         */
+        kind: 'drill-menu',
+        id: 'blk-stn-kana-opt-drill-menu',
+        titleFa: 'دریل آزاد کانا — چه تمرینی می‌خواهی؟',
+        bodyFa:
+          'چهار چهرهٔ تمرین، خودت انتخاب می‌کنی: هیراگانای خالص، کاتاکانای خالص، ترکیب دو خط، یا همان جفت‌های شبیه‌ای که همه‌جا تله می‌گذارند. بعد از هر چهره می‌توانی به چهرهٔ بعدی بروی یا همین‌جا تمامش کنی — این ایستگاه اختیاری است و دروازهٔ فصل را قفل نمی‌کند.',
+        options: [
+          {
+            id: 'hira',
+            labelFa: 'هیراگانا',
+            bodyFa: 'بازشناسی خالصِ هیراگانا در سراسر ردیف‌ها — از あ تا ん.',
+            targetBlockId: 'blk-stn-kana-opt-drill-hira',
+          },
+          {
+            id: 'kata',
+            labelFa: 'کاتاکانا',
+            bodyFa: 'بازشناسی خالصِ کاتاکانا — وام‌واژه‌ها و شکل‌های گوشه‌دار.',
+            targetBlockId: 'blk-stn-kana-opt-drill-kata',
+          },
+          {
+            id: 'mixed',
+            labelFa: 'ترکیب دو خط',
+            bodyFa: 'یک کانا می‌آید، تو می‌گویی کدام خط — همین تشخیصِ درست است که می‌سازد.',
+            targetBlockId: 'blk-stn-kana-opt-drill-mixed',
+          },
+          {
+            id: 'pairs',
+            labelFa: 'جفت‌های شبیه',
+            bodyFa: 'シ/ツ، る/ろ، ソ/ン، さ/き… — تله‌های معروف، یک‌جا.',
+            targetBlockId: 'blk-stn-kana-opt-drill-pairs',
+          },
+        ],
+        finishLabelFa: 'کافی است — جمع‌بندی',
+        finishTargetBlockId: 'blk-stn-kana-opt-drill-wrapup',
+      },
+      {
         kind: 'exercise',
-        id: 'blk-stn-kana-opt-drill-drill',
+        id: 'blk-stn-kana-opt-drill-hira',
         exerciseIds: [
           'ex-kana-optdrill-rec-1',
           'ex-kana-optdrill-rec-2',
@@ -4426,6 +4470,56 @@ export const KANA_STATIONS: Station[] = [
           'ex-kana-optdrill-rec-8',
           'ex-kana-optdrill-rec-9',
           'ex-kana-optdrill-rec-10',
+        ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-opt-drill-kata',
+        exerciseIds: [
+          'ex-kana-k1-rec-kata-a',
+          'ex-kana-k7-rec-kata-ka',
+          'ex-kana-k4-rec-kata-sa',
+          'ex-kana-k2-rec-kata-ta',
+          'ex-kana-k11-rec-kata-na',
+          'ex-kana-k5-rec-kata-ha',
+          'ex-kana-k9-rec-kata-ma',
+          'ex-kana-k10-rec-kata-ya',
+          'ex-kana-k3-rec-kata-ra',
+          'ex-kana-k12-rec-kata-wa',
+        ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-opt-drill-mixed',
+        exerciseIds: [
+          'ex-kana-k13-disc-1',
+          'ex-kana-k13-disc-2',
+          'ex-kana-k13-disc-3',
+          'ex-kana-k13-disc-4',
+          'ex-kana-k13-disc-5',
+          'ex-kana-k13-disc-6',
+          'ex-kana-optdrill-rec-1',
+          'ex-kana-optdrill-rec-4',
+          'ex-kana-k1-rec-kata-a',
+          'ex-kana-k12-rec-kata-wo',
+        ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-opt-drill-pairs',
+        exerciseIds: [
+          'ex-kana-h11-rec-hira-ru',
+          'ex-kana-h11-rec-hira-ro',
+          'ex-kana-k4-rec-kata-shi', // シ is taught in k4 (サ row)
+          'ex-kana-k2-rec-kata-tsu',
+          'ex-kana-k4-rec-kata-so',
+          'ex-kana-k6-rec-kata-n',
+          'ex-kana-h3-rec-hira-sa',
+          'ex-kana-h2-rec-hira-ki',
+          'ex-kana-h8-rec-hira-nu',
+          'ex-kana-h10-rec-hira-me',
+          'ex-kana-k12-rec-kata-wa',
+          'ex-kana-k5-rec-kata-fu',
         ],
       },
       {

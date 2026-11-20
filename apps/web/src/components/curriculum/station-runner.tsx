@@ -1185,6 +1185,13 @@ export function StationRunner(props: StationRunnerProps) {
             });
           }}
           onReturnToBlock={returnToBlock}
+          onDrillPick={(targetBlockId) => {
+            const target = stepOfBlock(blocks, targetBlockId);
+            if (target !== null) setStep(target);
+          }}
+          onDrillFinish={() => {
+            setStep(blocks.length - 1);
+          }}
           kanaCardStage={block.kind === 'kana-card' ? normalizeKanaStage(kanaCardStages[block.id]) : undefined}
           relatedExamplesByKanaId={relatedExamplesByKanaId}
           onKanaProgress={(progress: { stage: string }) => {
@@ -1675,6 +1682,8 @@ function BlockView({
   exerciseInitialProgress,
   onExerciseProgress,
   onReturnToBlock,
+  onDrillPick,
+  onDrillFinish,
   onExerciseDone,
   onSceneDone,
   kanaCardStage,
@@ -1714,6 +1723,10 @@ function BlockView({
   onExerciseProgress?: (progress: { index: number; firstTryCorrect: number; attemptNo?: number }) => void;
   /** Issue #106 (F4): host-owned «بازگشت به آموزش» jump handler. */
   onReturnToBlock?: (blockId: string) => void;
+  /** Part-2 ز: the drill-menu mode pick — pointer jump to the pool's block. */
+  onDrillPick?: (targetBlockId: string) => void;
+  /** Part-2 ز: «پایان تمرین» — pointer jump to the wrap-up (honest finish). */
+  onDrillFinish?: () => void;
   onExerciseDone: (score: number) => void;
   onSceneDone: () => void;
   /** #117 §10: restored kana-card stage for this block (undefined = fresh). */
@@ -2315,6 +2328,42 @@ function BlockView({
               </div>
             ))}
           </div>
+        </section>
+      );
+
+    /*
+     * Part-2 ز — the OPTIONAL drill's mode picker: the learner chooses the
+     * drill face and the walk POINTER jumps to that pool (the same
+     * pointer-only semantics as the F4 return). «پایان تمرین» jumps to the
+     * wrap-up so one chosen pool can honestly finish the optional station.
+     */
+    case 'drill-menu':
+      return (
+        <section className="flex flex-col gap-4 rounded-md border-2 border-ai bg-card p-5" data-drill-menu>
+          <h3 className="text-h3 font-bold text-ink">{block.titleFa}</h3>
+          <p className="text-body leading-[var(--leading-fa)] text-ink-soft">{block.bodyFa}</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {block.options.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                data-drill-option={opt.id}
+                onClick={() => onDrillPick?.(opt.targetBlockId)}
+                className="flex min-h-24 flex-col gap-1 rounded-md border-2 border-ink bg-paper p-4 text-start transition-colors hover:border-indigo hover:bg-indigo-wash"
+              >
+                <span className="text-body font-black text-indigo">{opt.labelFa}</span>
+                <span className="text-small leading-[var(--leading-fa)] text-ink-soft">{opt.bodyFa}</span>
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            data-drill-finish
+            onClick={() => onDrillFinish?.()}
+            className="w-fit text-small text-ai underline underline-offset-4"
+          >
+            {block.finishLabelFa}
+          </button>
         </section>
       );
 
