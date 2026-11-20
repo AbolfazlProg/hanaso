@@ -158,6 +158,33 @@ function persianReadingByKana(chapter: Chapter): Map<string, string> {
 }
 
 export async function POST(req: Request) {
+  /*
+   * PART1-FIX-1 (evaluation criterion 8 / the h11/h12/p3/m1 500s): the route
+   * body previously ran UNGUARDED — any transient store/DB failure (deadlock,
+   * aborted tx, pool contention, PgBouncer timeout) escaped as Next's raw 500
+   * with no contract, and the client could not tell it was safe to retry.
+   * The handler is now wrapped: an unexpected failure returns a STRUCTURED
+   * 503 with `retryable: true` and a Persian cause. Nothing is registered by
+   * a failed call (grade = no write until the store succeeds; complete = one
+   * all-or-nothing transaction; enter/progress = idempotent upserts) — so a
+   * client retry can never duplicate a completion or forge progress.
+   */
+  try {
+    return await handleStationPost(req);
+  } catch (err) {
+    console.error('[hanaso/station] unhandled station-API failure', err);
+    return NextResponse.json(
+      fail({
+        code: 'station/transient_failure',
+        message: 'ثبت عملیات با خطای موقت سرور روبه‌رو شد — هیچ عملیاتی ثبت نشده است؛ چند لحظه بعد دوباره تلاش کن.',
+        details: { retryable: true },
+      }),
+      { status: 503, headers: { 'cache-control': 'no-store' } },
+    );
+  }
+}
+
+async function handleStationPost(req: Request): Promise<Response> {
   let body: unknown;
   try {
     body = await req.json();
@@ -345,6 +372,21 @@ export async function POST(req: Request) {
     } else if (exercise.type === 'kana-decode' && exercise.promptJa) {
       const urls = hostWordAudioUrls(exercise.promptJa);
       if (urls) outcome.correctAudio = { what: exercise.promptJa, ...urls };
+      /*
+       * PART1-FIX-5 (evaluation criterion 5 — the answer leak): the Persian
+       * reading of a decode word previously crossed the RSC boundary with the
+       * question payload and rendered ABOVE the options — the answer printed
+       * above the answer (h4 «کووکوو», k8 «جووس», and every row decode item).
+       * The station page now strips `promptJaReading` for kana-decode (never
+       * crosses pre-answer), and the reveal attaches the reading HERE, where
+       * it belongs: correct answer or F3, never before. Same shape as the
+       * kana-recognition/recall/listening reading card above.
+       */
+      outcome.correctReading = {
+        glyph: exercise.promptJa,
+        fa: exercise.promptJaReading ?? '',
+        latin: '',
+      };
     } else if (exercise.type === 'rule-listening' && exercise.promptJa) {
       /* TL-13 (T1): the WORD recording is the question; the reveal carries the
        * word's own audio + its reading (glyph + Persian) — the word never

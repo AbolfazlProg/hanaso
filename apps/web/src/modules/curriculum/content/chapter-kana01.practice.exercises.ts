@@ -831,9 +831,11 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     difficulty: 2,
     promptFa: 'این واژه را بخوان — راهنمایی: کشور',
     promptJa: 'くに',
-    promptJaReading: 'کونی',
+    /* PART1-FIX-2: «کونی» → «کوونی» (vulgar-Persian collision; chapter's own
+     * doubled-و convention — kept consistent with the h8 example-set card). */
+    promptJaReading: 'کوونی',
     options: [
-      { id: 'a', label: '«کونی»' },
+      { id: 'a', label: '«کوونی»' },
       { id: 'b', label: '«گونی»' },
       { id: 'c', label: '«نیکو»' },
     ],
@@ -845,7 +847,7 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     feedback: {
       f1Fa: 'کانا به کانا از چپ بخوان — هر کانا یک ضربه.',
       f2HintFa: 'با «کُ» شروع کن — گزینه‌ای که با «نی» شروع می‌شود را حذف کن.',
-      f3ExplainFa: 'くに = «کونی» (کشور) — دو ضربهٔ ساده.',
+      f3ExplainFa: 'くに = «کوونی» (کشور) — دو ضربهٔ ساده.',
     },
     assessmentRole: 'practice',
   },

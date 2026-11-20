@@ -121,31 +121,41 @@ export class PgStationProgressRepository implements StationProgressRepository {
     });
   }
 
-  /** Count graded answers for a station (server-tracked attempt counter). */
+  /** Count graded answers for a station (server-tracked attempt counter).
+   *
+   * PART1-FIX-1 (evaluation criterion 8 / station-API P0): the previous impl
+   * was read-then-write — two concurrent `grade` POSTs both read N and both
+   * wrote N+1, silently LOSING an increment. A lost increment can push
+   * `attemptCount` back to 0 and make the completion guard
+   * (`station/no_graded_answers`) reject a station the learner truly answered —
+   * exactly the «ثبت تکراری یا پیشرفت اشتباه» class from the mission. The
+   * increment is now ATOMIC in SQL (`attempt_count + 1` inside the conflict
+   * update), and the conflict branch never touches `status`/`completed_at`, so
+   * a late grade can never regress a completed station either.
+   */
   async incrementAttempts(userId: string, stationSlug: string): Promise<number> {
     const stationId = stationProgressId(stationSlug);
-    const [existing] = await this.client.db
-      .select(stationColumns)
-      .from(stationProgress)
-      .where(and(eq(stationProgress.userId, userId), eq(stationProgress.stationId, stationId)))
-      .limit(1);
-    const next = (existing?.attemptCount ?? 0) + 1;
     const now = new Date();
-    await this.client.db
+    const [row] = await this.client.db
       .insert(stationProgress)
       .values({
         userId,
         stationId,
         status: 'in_progress',
-        attemptCount: next,
+        attemptCount: 1,
         lastActivityAt: now, // a graded answer IS meaningful activity (HANASO-17 §۸)
         updatedAt: now,
       })
       .onConflictDoUpdate({
         target: [stationProgress.userId, stationProgress.stationId],
-        set: { attemptCount: next, lastActivityAt: now, updatedAt: now },
-      });
-    return next;
+        set: {
+          attemptCount: sql`${stationProgress.attemptCount} + 1`,
+          lastActivityAt: now,
+          updatedAt: now,
+        },
+      })
+      .returning({ attemptCount: stationProgress.attemptCount });
+    return row!.attemptCount;
   }
 }
 

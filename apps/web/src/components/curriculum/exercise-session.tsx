@@ -179,6 +179,17 @@ export function ExerciseSession({
   const [nameValue, setNameValue] = useState('');
   const [feedback, setFeedback] = useState<GradeResponse['outcome'] | null>(null);
   const [busy, setBusy] = useState(false);
+  /**
+   * PART1-FIX-1 (evaluation criterion 8 — the p3/m1 outage behavior): true when
+   * the LAST grade attempt never reached the server (transport failure or a
+   * 5xx/transient 503). An unregistered attempt must NOT consume the F-ladder,
+   * must NOT enable the attempt-3 «ادامه» escape (no advancing past a question
+   * the server never graded — the mission's «عبور بدون ثبت موفق عملیات ممنوع»),
+   * and its «تلاش دوباره» re-sends the SAME answer instead of a new attempt.
+   */
+  const [ungraded, setUngraded] = useState(false);
+  /** PART1-FIX-1: the last answer payload — the ungraded re-send re-submits it verbatim. */
+  const lastAnswerRef = useRef<Record<string, unknown> | null>(null);
   const [firstTryCorrect, setFirstTryCorrect] = useState(() =>
     initialProgress ? Math.max(0, Math.min(initialProgress.firstTryCorrect, exercises.length)) : 0,
   );
@@ -414,6 +425,7 @@ export function ExerciseSession({
     setAttemptNo(1);
     setHintFa(null); // TASK-HANASO-25: the hint is per-exercise — never bleeds to the next
     setEliminated([]); // eliminations live inside ONE exercise, never across them
+    setUngraded(false); // PART1-FIX-1: the next question starts with a clean transport state
   }, []);
 
   const advance = useCallback(() => {
@@ -482,22 +494,67 @@ export function ExerciseSession({
       if (gradingRef.current) return;
       gradingRef.current = true;
       setBusy(true);
+      lastAnswerRef.current = payload;
+      /*
+       * PART1-FIX-1 (the p3 4-minute lock + the m1 500s): the grade POST now
+       * carries a BOUNDED SAFE-RETRY — the server contract (structured 503
+       * `station/transient_failure`, retryable: true) marks transport-class
+       * failures; up to 2 automatic re-sends (1.5s/3s backoff) ride the SAME
+       * attempt number. Grading is pure and the answer payload is identical,
+       * so a re-send can never double-register a completion; the attempt
+       * counter itself is an atomic server-side increment (overcount of a
+       * lost-response attempt is harmless — it gates `> 0`, never scoring).
+       * A structured 4xx (validation/unknown exercise) is NOT retried — it is
+       * a permanent rejection, surfaced honestly. After the retries are spent
+       * the question STAYS with the learner (no ladder consumption, no escape
+       * button) — retry remains a click away.
+       */
+      let outcome: GradeResponse['outcome'] | null = null;
       try {
-        const res = await fetch('/api/curriculum/station', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            action: 'grade',
-            chapterSlug,
-            stationSlug,
-            exerciseId: ex!.id,
-            attemptNo,
-            answer: payload,
-          }),
-        });
-        const json = (await res.json()) as { data?: GradeResponse; error?: unknown };
-        const outcome = json.data?.outcome;
-        if (!outcome) throw new Error('grade failed');
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          if (attempt > 0) {
+            // backoff before the automatic re-send (1.5s, then 3s)
+            await new Promise((resolve) => setTimeout(resolve, attempt === 1 ? 1500 : 3000));
+          }
+          try {
+            const res = await fetch('/api/curriculum/station', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                action: 'grade',
+                chapterSlug,
+                stationSlug,
+                exerciseId: ex!.id,
+                attemptNo,
+                answer: payload,
+              }),
+            });
+            if (!res.ok) {
+              // 5xx/503 = transient (retryable per the server contract); any
+              // structured 4xx = permanent rejection — do not burn retries.
+              if (res.status >= 500) throw new Error(`transient ${res.status}`);
+              outcome = null;
+              break;
+            }
+            const json = (await res.json()) as { data?: GradeResponse; error?: unknown };
+            outcome = json.data?.outcome ?? null;
+            if (!outcome) throw new Error('grade failed');
+            break;
+          } catch {
+            // transport failure of THIS attempt — retry while attempts remain
+            outcome = null;
+            if (attempt === 2) break;
+          }
+        }
+        if (!outcome) {
+          // Reviewer-B S1: never fail silently — a dead «بررسی پاسخ» button reads
+          // as broken. The attempt is NOT consumed (ungraded) and the SAME answer
+          // stays ready for the manual re-send.
+          setUngraded(true);
+          setFeedback({ correct: false, level: 0, feedbackFa: fa.curriculum.gradingUnavailable });
+          return null;
+        }
+        setUngraded(false);
         setFeedback(outcome);
         if (outcome.correct && attemptNo === 1) {
           setFirstTryCorrect((n) => n + 1);
@@ -528,10 +585,6 @@ export function ExerciseSession({
           startOutcomeAudio(outcome.correctAudio, false);
         }
         return outcome;
-      } catch {
-        // Reviewer-B S1: never fail silently — a dead «بررسی پاسخ» button reads as broken.
-        setFeedback({ correct: false, level: 0, feedbackFa: fa.curriculum.gradingUnavailable });
-        return null;
       } finally {
         gradingRef.current = false;
         setBusy(false);
@@ -587,6 +640,17 @@ export function ExerciseSession({
   }, [built, ex, grade, nameValue, ordered, selected]);
 
   const retry = useCallback(() => {
+    //
+    // PART1-FIX-1: an UNREGISTERED attempt re-sends the SAME answer at the SAME
+    // attempt number — the server never saw it, so the F-ladder must not move
+    // and the selection must not be discarded (the learner's work is kept).
+    //
+    if (ungraded && lastAnswerRef.current) {
+      setFeedback(null);
+      setHintFa(null);
+      void grade(lastAnswerRef.current);
+      return;
+    }
     setAttemptNo((n) => Math.min(3, n + 1));
     if (ex?.chips && ex.chips.some((c) => c.ja === '___NAME___')) {
       // keep built chips for the template (only reorder allowed), keep the name
@@ -603,7 +667,7 @@ export function ExerciseSession({
     // `eliminated` intentionally SURVIVES the retry — an eliminated option stays
     // eliminated for every later attempt of the SAME exercise (#106 F2); only
     // reset() (advancing to the next exercise) clears it.
-  }, [ex]);
+  }, [ex, grade, ungraded]);
 
   const remainingChunks = useMemo(() => ex?.chunks?.filter((c) => !ordered.includes(c.id)) ?? [], [ex, ordered]);
   const remainingChips = useMemo(() => ex?.chips?.filter((c) => !built.includes(c.id)) ?? [], [ex, built]);
@@ -764,7 +828,11 @@ export function ExerciseSession({
           ) : (
             <JaBlock className="text-lead">{ex.promptJa}</JaBlock>
           )}
-          {ex.promptJaReading && ex.promptJa && (
+          {ex.promptJaReading && ex.promptJa && feedback && (
+            /* PART1-FIX-5: post-answer only — pre-answer this field carried the
+             * correct reading above the options (the h4/h5/k8 leak). For
+             * kana-decode the RSC strip already removes it entirely; this gate
+             * keeps the render honest for ANY future type. */
             <p className="mt-2 text-caption text-ink-soft" dir="ltr" lang="ja">
               {ex.promptJaReading}
             </p>
@@ -793,7 +861,10 @@ export function ExerciseSession({
              * saturates at 3, where «ادامه» stays the only forward path. */
             if (feedback && !feedback.correct) {
               setFeedback(null);
-              setAttemptNo((n) => Math.min(3, n + 1));
+              // PART1-FIX-1: picking a NEW option after an UNREGISTERED attempt
+              // is a re-send, not a new attempt — the ladder only moves when the
+              // server actually graded the previous one.
+              if (!ungraded) setAttemptNo((n) => Math.min(3, n + 1));
               setHintFa(null);
             }
             setSelected(optionId);
@@ -1041,13 +1112,14 @@ export function ExerciseSession({
             {fa.curriculum.checkAnswer}
           </button>
         )}
-        {feedback && !feedback.correct && attemptNo < 3 && (
+        {feedback && !feedback.correct && (ungraded || attemptNo < 3) && (
           <button
             type="button"
             onClick={retry}
+            data-testid={ungraded ? 'grade-resend' : 'grade-retry'}
             className="h-11 min-w-28 rounded-md border border-ai px-5 text-body font-bold text-ai transition-colors hover:bg-indigo-wash"
           >
-            {fa.curriculum.tryAgain}
+            {ungraded ? fa.curriculum.gradingRetrySend : fa.curriculum.tryAgain}
           </button>
         )}
         {/*
@@ -1063,7 +1135,13 @@ export function ExerciseSession({
          * indigo like every other forward action, and its label is a plain
          * action («ادامه»), never a status text posed as a button.
          */}
-        {feedback && !feedback.correct && attemptNo >= 3 && (
+        {feedback && !feedback.correct && attemptNo >= 3 && !ungraded && (
+          /*
+           * PART1-FIX-1: the «ادامه» escape is SERVER-GRADED-MISS-ONLY. It must
+           * never appear for an ungraded question — a transport outage can no
+           * longer let a learner pass a question the server never registered
+           * (the mission's «عبور یا تکمیل ایستگاه بدون ثبت موفق عملیات ممنوع»).
+           */
           <button
             type="button"
             onClick={advance}

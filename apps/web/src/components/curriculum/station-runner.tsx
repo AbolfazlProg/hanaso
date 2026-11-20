@@ -784,18 +784,46 @@ export function StationRunner(props: StationRunnerProps) {
       // TL-13 (A-3): a retry clears the failure state up-front; it re-arms if
       // this attempt fails again.
       completionFailedRef.current = false;
+      /*
+       * PART1-FIX-1 (the m1 4×500 incident): the completion POST now carries a
+       * BOUNDED AUTO-RETRY for transport-class failures ONLY (network error or
+       * 5xx — including the server's structured 503 station/transient_failure).
+       * 409 rejections (prerequisites / criterion / no_graded_answers) are
+       * STRUCTURED answers, not outages — they surface immediately. The server
+       * side is idempotent (`already: true` on a completed station) and the
+       * walk completion is ONE all-or-nothing transaction, so a retry can never
+       * double-register or half-register a completion.
+       */
+      const postCompletion = async (): Promise<Response | null> => {
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          if (attempt > 0) {
+            // backoff before the automatic re-send (1.5s, then 3s)
+            await new Promise((resolve) => setTimeout(resolve, attempt === 1 ? 1500 : 3000));
+          }
+          try {
+            const res = await fetch('/api/curriculum/station', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                action: 'complete',
+                chapterSlug,
+                stationSlug: station.slug,
+                score,
+                taskCompleted,
+              }),
+            });
+            if (!res.ok && res.status >= 500) throw new Error(`transient ${res.status}`);
+            return res; // 200 / 4xx — both are FINAL answers (not outages)
+          } catch {
+            // transport failure of THIS attempt — retry while attempts remain
+            if (attempt === 2) return null;
+          }
+        }
+        return null;
+      };
       try {
-        const res = await fetch('/api/curriculum/station', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            action: 'complete',
-            chapterSlug,
-            stationSlug: station.slug,
-            score,
-            taskCompleted,
-          }),
-        });
+        const res = await postCompletion();
+        if (res === null) throw new Error('transport unavailable');
         setCompleted(res.ok);
         if (res.ok) {
           setCompletionFailed(false);
@@ -2468,17 +2496,24 @@ function MicroAskPanel({
   const [picked, setPicked] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<{ correct: boolean; feedbackFa: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  /** PART1-FIX-1: a transport failure must NOT lock the ask (the old
+   * `outcome ?? {correct:false, …}` disabled every option with a fake wrong
+   * answer and let «ادامه» carry the learner past an unregistered ask). The
+   * ask stays open and re-answerable until the server actually registers it. */
+  const [sendFailed, setSendFailed] = useState(false);
 
   const answer = async (optionId: string) => {
     setPicked(optionId);
     setBusy(true);
+    setSendFailed(false);
     const result = await gradeBlock({
       chapterSlug,
       stationSlug,
       blockId,
       answer: { kind: 'option', optionId },
     });
-    setOutcome(result ?? { correct: false, feedbackFa: fa.curriculum.gradingUnavailable });
+    if (result) setOutcome(result);
+    else setSendFailed(true);
     setBusy(false);
   };
 
@@ -2495,7 +2530,7 @@ function MicroAskPanel({
             type="button"
             role="radio"
             aria-checked={picked === opt.id}
-            disabled={outcome !== null || busy}
+            disabled={busy || (outcome !== null && !sendFailed)}
             onClick={() => void answer(opt.id)}
             className={[
               'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
@@ -2506,6 +2541,11 @@ function MicroAskPanel({
           </button>
         ))}
       </div>
+      {sendFailed && outcome === null && (
+        <p role="alert" className="mt-3 rounded-md border border-error bg-card p-3 text-small text-ink">
+          {fa.curriculum.gradingUnavailable}
+        </p>
+      )}
       {outcome && (
         <div role="status" aria-live="polite" className="mt-3 rounded-md bg-card p-3 text-body">
           <p className={outcome.correct ? 'font-bold text-success' : 'font-bold text-ink'}>
@@ -2585,17 +2625,22 @@ function DiscoveryBlock({
   const [picked, setPicked] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<{ correct: boolean; feedbackFa: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  /** PART1-FIX-1: a transport failure keeps the question open (no fake verdict,
+   * no lockout) — the answer must reach the server before the block advances. */
+  const [sendFailed, setSendFailed] = useState(false);
 
   const answer = async (optionId: string) => {
     setPicked(optionId);
     setBusy(true);
+    setSendFailed(false);
     const result = await gradeBlock({
       chapterSlug,
       stationSlug,
       blockId: block.id,
       answer: { kind: 'option', optionId },
     });
-    setOutcome(result ?? { correct: false, feedbackFa: '' });
+    if (result) setOutcome(result);
+    else setSendFailed(true);
     setBusy(false);
   };
 
@@ -2647,7 +2692,7 @@ function DiscoveryBlock({
             type="button"
             role="radio"
             aria-checked={picked === opt.id}
-            disabled={outcome !== null || busy}
+            disabled={busy || (outcome !== null && !sendFailed)}
             onClick={() => void answer(opt.id)}
             className={[
               'min-h-11 rounded-md border px-4 py-3 text-start text-body transition-colors',
@@ -2658,6 +2703,11 @@ function DiscoveryBlock({
           </button>
         ))}
       </div>
+      {sendFailed && outcome === null && (
+        <p role="alert" className="rounded-md border border-error bg-card p-3 text-small text-ink">
+          {fa.curriculum.gradingUnavailable}
+        </p>
+      )}
       {outcome && (
         <div role="status" aria-live="polite" className="rounded-md bg-surface-warm p-3 text-body">
           {outcome.correct && <p className="font-bold text-success">{fa.curriculum.correct}</p>}
@@ -2688,6 +2738,9 @@ function CharacterSceneBlock({
   const [nameValue, setNameValue] = useState('');
   const [choice, setChoice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  /** PART1-FIX-1: a failed registration is NOT an answered step — the reply
+   * stays open for a retry instead of advancing unregistered. */
+  const [sendFailed, setSendFailed] = useState(false);
 
   const visible = block.steps.slice(0, stepIndex + 1);
   const current = block.steps[stepIndex];
@@ -2702,6 +2755,7 @@ function CharacterSceneBlock({
   const submitReply = async () => {
     if (!replySpec) return;
     setBusy(true);
+    setSendFailed(false);
     let answer: { kind: string; optionId?: string; chipOrder?: string[]; nameValue?: string };
     if (replySpec.kind === 'choice') {
       answer = { kind: 'option', optionId: choice ?? '' };
@@ -2715,7 +2769,10 @@ function CharacterSceneBlock({
       stepIndex,
       answer,
     });
-    setReply((r) => ({ ...r, [stepIndex]: { ok: result?.correct ?? false } }));
+    /* PART1-FIX-1: on a transport failure the step is NOT marked answered —
+     * the reply panel stays open (the «ادامه» gate needs a real registration). */
+    if (result) setReply((r) => ({ ...r, [stepIndex]: { ok: result.correct } }));
+    else setSendFailed(true);
     setBusy(false);
   };
 
@@ -2831,6 +2888,11 @@ function CharacterSceneBlock({
                   {fa.curriculum.checkAnswer}
                 </button>
               </div>
+            )}
+            {sendFailed && i === stepIndex && !answered && (
+              <p role="alert" className="mt-3 rounded-md border border-error bg-card p-3 text-small text-ink">
+                {fa.curriculum.gradingUnavailable}
+              </p>
             )}
             {answered && (
               <p role="status" aria-live="polite" className="mt-3 flex items-center gap-1.5 text-body text-success">
