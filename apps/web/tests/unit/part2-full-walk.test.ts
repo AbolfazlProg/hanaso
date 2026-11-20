@@ -52,7 +52,14 @@ describe('PART2 — the 38-node walk (journey order, server-enforced chain)', ()
       // grade ONE practice exercise of the station (the no_graded_answers guard)
       for (const ex of exercisesOf(station).slice(0, 1)) {
         const g = await stationPost(
-          post({ action: 'grade', chapterSlug: chapter.slug, stationSlug: slug, exerciseId: ex.id, attemptNo: 1, answer: { kind: 'option', optionId: ex.correctOptionId } }),
+          post({
+            action: 'grade',
+            chapterSlug: chapter.slug,
+            stationSlug: slug,
+            exerciseId: ex.id,
+            attemptNo: 1,
+            answer: { kind: 'option', optionId: ex.correctOptionId },
+          }),
         );
         const gj = (await asJson(g)) as { ok?: boolean };
         expect(gj.ok, `grade ${ex.id} @ ${slug}`).toBe(true);
@@ -76,14 +83,25 @@ describe('PART2 — the 38-node walk (journey order, server-enforced chain)', ()
     const { LEVELS_BY_CODE } = await import('@/modules/curriculum/content/levels');
     const { resolveJourney: rj, corePathComplete } = await import('@/modules/curriculum/journey');
     const { getStationProgressStore } = await import('@/lib/poc/stores');
-    const states = await getStationProgressStore().listForUnit(UUID, chapter.stations.map((st) => st.slug));
+    const states = await getStationProgressStore().listForUnit(
+      UUID,
+      chapter.stations.map((st) => st.slug),
+    );
     const journey2 = rj(chapter, LEVELS_BY_CODE[chapter.levelCode]!, states, null);
     expect(corePathComplete(journey2), 'core path complete after the 38-node walk').toBe(true);
     expect(journey2.coreTotal).toBeGreaterThanOrEqual(36);
   });
 
   it('refuses an OUT-OF-ORDER completion (the chain stays honest)', async () => {
-    const res = await stationPost(post({ action: 'complete', chapterSlug: chapter.slug, stationSlug: 'stn-kana-k13', score: null, taskCompleted: true }));
+    const res = await stationPost(
+      post({
+        action: 'complete',
+        chapterSlug: chapter.slug,
+        stationSlug: 'stn-kana-k13',
+        score: null,
+        taskCompleted: true,
+      }),
+    );
     const json = (await asJson(res)) as { ok?: boolean; error?: { code?: string } };
     expect(json.ok).toBe(false);
     expect(json.error?.code).toBe('station/prerequisites_not_met');

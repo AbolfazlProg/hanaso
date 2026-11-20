@@ -286,7 +286,8 @@ export const fa = {
     nameReset: 'از نو',
     nameCorrect: 'همین شد! نامت به کاتاکانا:',
     nameHintCount: (n: number) => `موراها را بشمار — نام تو ${new Intl.NumberFormat('fa-IR').format(n)} ضرب دارد.`,
-    nameHintFirst: (n: number) => `کارت اولِ ناهماهنگ، ضربِ ${new Intl.NumberFormat('fa-IR').format(n)} است — از آن‌جا ادامه بده.`,
+    nameHintFirst: (n: number) =>
+      `کارت اولِ ناهماهنگ، ضربِ ${new Intl.NumberFormat('fa-IR').format(n)} است — از آن‌جا ادامه بده.`,
     nameReveal: 'پیشنهادِ سیستم این بود — اما نوشتِ دیگری هم درست است؛ کاتاکانای نام‌ها یکتا نیست.',
     nameEdit: 'اصلاح پیشنهاد',
     nameDone: 'نامِ کاتاکانای تو ساخته شد — ادامهٔ درس',

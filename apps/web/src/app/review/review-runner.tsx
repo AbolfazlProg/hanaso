@@ -57,23 +57,20 @@ export function ReviewRunner({
   const card = cards[index];
   const remaining = useMemo(() => Math.max(cards.length - index, 0), [cards.length, index]);
 
-  const play = useCallback(
-    (audio: { opus: string; m4a: string } | null | undefined) => {
-      if (!audio) return;
-      const el = getCachedAudio(audio.opus);
-      if (!el) return;
-      try {
-        el.playbackRate = 1;
-        el.preservesPitch = true;
-        el.currentTime = 0;
-        const p = el.play();
-        if (p && typeof p.then === 'function') p.catch(() => reportPlaybackError(el.src));
-      } catch {
-        reportPlaybackError(audio.opus);
-      }
-    },
-    [],
-  );
+  const play = useCallback((audio: { opus: string; m4a: string } | null | undefined) => {
+    if (!audio) return;
+    const el = getCachedAudio(audio.opus);
+    if (!el) return;
+    try {
+      el.playbackRate = 1;
+      el.preservesPitch = true;
+      el.currentTime = 0;
+      const p = el.play();
+      if (p && typeof p.then === 'function') p.catch(() => reportPlaybackError(el.src));
+    } catch {
+      reportPlaybackError(audio.opus);
+    }
+  }, []);
 
   const rate = useCallback(
     async (rating: 'again' | 'hard' | 'good' | 'easy') => {
@@ -120,7 +117,9 @@ export function ReviewRunner({
 
   if (cards.length === 0) {
     return (
-      <p className="rounded-md border border-success/50 bg-card px-4 py-3 text-small text-ink-soft">{fa.home.reviewEmpty}</p>
+      <p className="rounded-md border border-success/50 bg-card px-4 py-3 text-small text-ink-soft">
+        {fa.home.reviewEmpty}
+      </p>
     );
   }
 

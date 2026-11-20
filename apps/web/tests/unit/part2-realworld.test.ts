@@ -22,8 +22,7 @@ const chapter = getChapter('kana-foundation-01')!;
 const stationBySlug = (slug: string): Station => chapter.stations.find((s) => s.slug === slug)!;
 
 const boardsOf = (st: Station) => st.blocks.filter((b) => b.kind === 'realworld-board');
-const boardItems = (st: Station) =>
-  boardsOf(st).flatMap((b) => b.panels.flatMap((p) => p.items.map((it) => it.ja)));
+const boardItems = (st: Station) => boardsOf(st).flatMap((b) => b.panels.flatMap((p) => p.items.map((it) => it.ja)));
 const assessedWords = (st: Station) =>
   st.blocks
     .filter((b) => b.kind === 'exercise')
@@ -78,7 +77,7 @@ describe('PART2 د — the m2 real menu/signboard experience', () => {
   });
 });
 
-describe('PART2 ط — the m1 friend\'s postcard', () => {
+describe("PART2 ط — the m1 friend's postcard", () => {
   const m1 = stationBySlug('stn-kana-m1-reading');
 
   it('a BARE board (decode challenge — glosses would leak the answers)', () => {

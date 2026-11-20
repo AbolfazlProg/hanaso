@@ -55,7 +55,14 @@ async function gradeFirstExercise(id: string, station: Station): Promise<void> {
   const exBlock = station.blocks.find((b) => b.kind === 'exercise') as { exerciseIds: string[] };
   const ex = chapter.exercises[exBlock.exerciseIds[0]!]!;
   const res = await stationPost(
-    stationReq(id, { action: 'grade', chapterSlug: chapter.slug, stationSlug: station.slug, exerciseId: ex.id, attemptNo: 1, answer: { kind: 'option', optionId: ex.correctOptionId } }),
+    stationReq(id, {
+      action: 'grade',
+      chapterSlug: chapter.slug,
+      stationSlug: station.slug,
+      exerciseId: ex.id,
+      attemptNo: 1,
+      answer: { kind: 'option', optionId: ex.correctOptionId },
+    }),
   );
   const json = (await asJson(res)) as { ok?: boolean };
   expect(json.ok, `grade of ${ex.id} for learner ${id}`).toBe(true);
@@ -72,7 +79,10 @@ describe('PART2 ج — the review engine through the real API', () => {
   it('① the queue is honestly EMPTY before any enrollment', async () => {
     const res = await queueGet(queueReq(UUID_A));
     expect(res.status).toBe(200);
-    const json = (await asJson(res)) as { ok?: boolean; data?: { status?: string; dueCount?: number; due?: unknown[] } };
+    const json = (await asJson(res)) as {
+      ok?: boolean;
+      data?: { status?: string; dueCount?: number; due?: unknown[] };
+    };
     expect(json.ok).toBe(true);
     expect(json.data?.status).toBe('integrated');
     expect(json.data?.dueCount).toBe(0);
@@ -82,9 +92,19 @@ describe('PART2 ج — the review engine through the real API', () => {
   it('② completing h1 registers its kana cards (registration + wave-1 inventory)', async () => {
     expect(h1.fsrsItems.length).toBeGreaterThanOrEqual(5);
     // the prerequisite h0 completes first (viewed — no exercise guard)
-    await stationPost(stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: 'stn-kana-h0', score: null }));
+    await stationPost(
+      stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: 'stn-kana-h0', score: null }),
+    );
     await gradeFirstExercise(UUID_A, h1);
-    const done = await stationPost(stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: h1.slug, score: null, taskCompleted: true }));
+    const done = await stationPost(
+      stationReq(UUID_A, {
+        action: 'complete',
+        chapterSlug: chapter.slug,
+        stationSlug: h1.slug,
+        score: null,
+        taskCompleted: true,
+      }),
+    );
     const doneJson = (await asJson(done)) as { ok?: boolean };
     expect(doneJson.ok).toBe(true);
 
@@ -97,9 +117,19 @@ describe('PART2 ج — the review engine through the real API', () => {
   });
 
   it('③ ownership — learner B sees an empty queue while A sees their cards', async () => {
-    await stationPost(stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: 'stn-kana-h0', score: null }));
+    await stationPost(
+      stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: 'stn-kana-h0', score: null }),
+    );
     await gradeFirstExercise(UUID_A, h1);
-    await stationPost(stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: h1.slug, score: null, taskCompleted: true }));
+    await stationPost(
+      stationReq(UUID_A, {
+        action: 'complete',
+        chapterSlug: chapter.slug,
+        stationSlug: h1.slug,
+        score: null,
+        taskCompleted: true,
+      }),
+    );
     const a = (await asJson(await queueGet(queueReq(UUID_A)))) as { data?: { dueCount?: number } };
     const b = (await asJson(await queueGet(queueReq(UUID_B)))) as { data?: { dueCount?: number } };
     expect(a.data?.dueCount).toBeGreaterThan(0);
@@ -107,14 +137,28 @@ describe('PART2 ج — the review engine through the real API', () => {
   });
 
   it('④ answer recording — the grade applies, reschedules, and is idempotent on clientReviewId', async () => {
-    await stationPost(stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: 'stn-kana-h0', score: null }));
+    await stationPost(
+      stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: 'stn-kana-h0', score: null }),
+    );
     await gradeFirstExercise(UUID_A, h1);
-    await stationPost(stationReq(UUID_A, { action: 'complete', chapterSlug: chapter.slug, stationSlug: h1.slug, score: null, taskCompleted: true }));
-    const q = (await asJson(await queueGet(queueReq(UUID_A)))) as { data?: { due?: { itemId: string; dueAt: string }[] } };
+    await stationPost(
+      stationReq(UUID_A, {
+        action: 'complete',
+        chapterSlug: chapter.slug,
+        stationSlug: h1.slug,
+        score: null,
+        taskCompleted: true,
+      }),
+    );
+    const q = (await asJson(await queueGet(queueReq(UUID_A)))) as {
+      data?: { due?: { itemId: string; dueAt: string }[] };
+    };
     const item = q.data!.due![0]!;
 
     const clientReviewId = 'c1111111-2222-4333-8444-555555555555';
-    const first = (await asJson(await reviewPost(reviewReq(UUID_A, { reviews: [{ itemId: item.itemId, rating: 'good', clientReviewId }] })))) as {
+    const first = (await asJson(
+      await reviewPost(reviewReq(UUID_A, { reviews: [{ itemId: item.itemId, rating: 'good', clientReviewId }] })),
+    )) as {
       data?: { applied?: number; duplicate?: number; results?: { dueAfter?: string }[] };
     };
     expect(first.data?.applied).toBe(1);
@@ -125,7 +169,9 @@ describe('PART2 ج — the review engine through the real API', () => {
     expect(new Date(dueAfter!).getTime()).toBeGreaterThan(new Date(item.dueAt).getTime());
 
     // the SAME clientReviewId replays as a duplicate — never a second grade
-    const replay = (await asJson(await reviewPost(reviewReq(UUID_A, { reviews: [{ itemId: item.itemId, rating: 'easy', clientReviewId }] })))) as {
+    const replay = (await asJson(
+      await reviewPost(reviewReq(UUID_A, { reviews: [{ itemId: item.itemId, rating: 'easy', clientReviewId }] })),
+    )) as {
       data?: { applied?: number; duplicate?: number };
     };
     expect(replay.data?.applied).toBe(0);
@@ -134,7 +180,9 @@ describe('PART2 ج — the review engine through the real API', () => {
 
   it('④-b unknown items are refused honestly (never a fake success)', async () => {
     const res = await reviewPost(
-      reviewReq(UUID_A, { reviews: [{ itemId: 'kn-rec-hira-a', rating: 'good', clientReviewId: 'c2222222-2222-4333-8444-555555555555' }] }),
+      reviewReq(UUID_A, {
+        reviews: [{ itemId: 'kn-rec-hira-a', rating: 'good', clientReviewId: 'c2222222-2222-4333-8444-555555555555' }],
+      }),
     );
     const json = (await asJson(res)) as { ok?: boolean; data?: { unknown_item?: number } };
     expect(json.ok).toBe(true);

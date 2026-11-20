@@ -2315,12 +2315,13 @@ function BlockView({
             {block.panels.map((panel, pi) => (
               <div key={pi} className="rounded-md border border-ink-faint bg-surface-warm p-4">
                 <p className="text-caption font-black text-indigo">{panel.titleFa}</p>
-                {panel.leadJa ? (
-                  <JaBlock className="mt-2 text-lead font-bold">{panel.leadJa}</JaBlock>
-                ) : null}
+                {panel.leadJa ? <JaBlock className="mt-2 text-lead font-bold">{panel.leadJa}</JaBlock> : null}
                 <ul className="mt-3 flex flex-col gap-2" data-board-items>
                   {panel.items.map((item, ii) => (
-                    <li key={ii} className="flex items-baseline justify-between gap-3 border-b border-dashed border-ink-faint pb-2 last:border-none last:pb-0">
+                    <li
+                      key={ii}
+                      className="flex items-baseline justify-between gap-3 border-b border-dashed border-ink-faint pb-2 last:border-none last:pb-0"
+                    >
                       <span className="flex min-w-0 flex-col gap-0.5">
                         <JaBlock className="text-body font-bold">{item.ja}</JaBlock>
                         {block.showGloss && item.glossFa ? (

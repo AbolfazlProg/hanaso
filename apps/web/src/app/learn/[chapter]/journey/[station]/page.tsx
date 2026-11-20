@@ -98,8 +98,7 @@ export default async function StationPage({
    * position, the same trust level as the resume anchor) — it grants no
    * progress: completion still runs the ordinary walk/completion flow.
    */
-  const initialBlockId =
-    block && station.blocks.some((b) => b.id === block) ? block : undefined;
+  const initialBlockId = block && station.blocks.some((b) => b.id === block) ? block : undefined;
 
   /*
    * Part-2 ط (G1 truly in the execution path): when THIS is the last core
@@ -107,7 +106,10 @@ export default async function StationPage({
    * chapter gate (the assessment page) — «دروازهٔ فصل در انتظار توست» stops
    * being a dead promise one hop away on the map.
    */
-  const lastCore = [...chapter.stations].sort((a, b) => a.order - b.order).reverse().find((st) => st.core);
+  const lastCore = [...chapter.stations]
+    .sort((a, b) => a.order - b.order)
+    .reverse()
+    .find((st) => st.core);
   const gateOpen = station.core && lastCore?.slug === station.slug;
 
   /*
