@@ -9,7 +9,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { timingSafeEqual } from 'node:crypto';
-import { previewModeEnabled, previewCookieAttributes, previewCookieValue } from '@/lib/preview';
+import { previewCookieAttributes, previewCookieValue } from '@/lib/preview';
 
 export const dynamic = 'force-dynamic';
 
