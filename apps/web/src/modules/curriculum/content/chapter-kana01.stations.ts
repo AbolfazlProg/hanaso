@@ -4233,6 +4233,21 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        /*
+         * Part-2 و — the REAL name-writing capstone (the objective promised
+         * «نوشتن نام خود به کاتاکانا»; the delivery was a multiple-choice).
+         * The seven owner requirements live in the NameKatakana component +
+         * the pure LOCAL engine (kana-name.ts — no external service, no paid
+         * API). Practice-layer only; the walk gates on it like writing.
+         */
+        kind: 'name-katakana',
+        id: 'blk-stn-kana-k13-name',
+        titleFa: 'نامِ خودت را به کاتاکانا بساز',
+        bodyFa:
+          'نامت را فارسی یا فینگلیش بنویس؛ سیستم آوانگاری را تشخیص می‌دهد و کاتاکانای پیشنهادی را مورا به مورا نشان می‌دهد — و چون نوشتار فارسی واکه‌های کوتاه را نمی‌نویسد، املای لاتین/فینگلیش پیشنهادِ دقیق‌تری می‌دهد (مثلاً «Maryam» از «مریم»). پیشنهاد را می‌توانی اصلاح کنی؛ بعد کارت‌های لازم را — به‌همراه چند کارت اضافهٔ تله — می‌چینی و نامت را می‌سازی. حروف تکراری، کارتِ تکراری می‌خواهند؛ و اگر ساختِ تو با پیشنهادِ سیستم فرق داشت، مقصر کسی نیست — نام‌ها یک املای درستِ یگانه ندارند.',
+        extrasCount: 4,
+      },
+      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-k13-wrapup',
         titleFa: 'آشتی دو خط + نامِ خودت — جمع‌بندی',

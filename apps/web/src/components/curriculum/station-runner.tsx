@@ -53,6 +53,7 @@ import { resumeFreshness } from '@/modules/curriculum/resume-policy';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
+import { NameKatakana } from '@/components/curriculum/name-katakana';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
@@ -1192,6 +1193,12 @@ export function StationRunner(props: StationRunnerProps) {
           onDrillFinish={() => {
             setStep(blocks.length - 1);
           }}
+          onNameDone={() => {
+            // Part-2 و: the name built — the walk continues (or completes)
+            if (step < blocks.length - 1) setStep((s) => s + 1);
+            else if (station.completion.kind === 'task_completed') void finishSession(null, true);
+            else void finishSession(null);
+          }}
           kanaCardStage={block.kind === 'kana-card' ? normalizeKanaStage(kanaCardStages[block.id]) : undefined}
           relatedExamplesByKanaId={relatedExamplesByKanaId}
           onKanaProgress={(progress: { stage: string }) => {
@@ -1684,6 +1691,7 @@ function BlockView({
   onReturnToBlock,
   onDrillPick,
   onDrillFinish,
+  onNameDone,
   onExerciseDone,
   onSceneDone,
   kanaCardStage,
@@ -1727,6 +1735,8 @@ function BlockView({
   onDrillPick?: (targetBlockId: string) => void;
   /** Part-2 ز: «پایان تمرین» — pointer jump to the wrap-up (honest finish). */
   onDrillFinish?: () => void;
+  /** Part-2 و: the name-katakana build completed (required interaction — walk continues). */
+  onNameDone: () => void;
   onExerciseDone: (score: number) => void;
   onSceneDone: () => void;
   /** #117 §10: restored kana-card stage for this block (undefined = fresh). */
@@ -2365,6 +2375,24 @@ function BlockView({
             {block.finishLabelFa}
           </button>
         </section>
+      );
+
+    /*
+     * Part-2 و — the k13 NAME-KATAKANA capstone: the local engine (kana-name.ts)
+     * suggests, the learner builds from the tray; the accepted answer is computed
+     * at runtime from THEIR input — nothing crosses the wire. Required
+     * interaction (like writing-practice): the walk continues on completion.
+     * Practice-layer only — never a mastery gate (DD-106).
+     */
+    case 'name-katakana':
+      return (
+        <NameKatakana
+          blockId={block.id}
+          titleFa={block.titleFa}
+          bodyFa={block.bodyFa}
+          extrasCount={block.extrasCount}
+          onNameDone={onNameDone}
+        />
       );
 
     case 'wrap-up':
