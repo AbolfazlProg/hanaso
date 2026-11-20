@@ -70,9 +70,11 @@ export default async function ChapterCompletePage({ params }: { params: Promise<
         </ul>
         {/* TASK-HANASO-17 — the card count is computed from the chapter's REAL
             FSRS inventory (listChapterCards), never a hardcoded number. */}
+        {/* Part-2 ج: the FSRS engine is live — the cards are REALLY in the
+            review queue; /review is the real runner (no more «فعال می‌شود»). */}
         <p className="mt-4 text-caption text-ink-soft">
-          کارت‌های مرور این فصل ({faNum(listChapterCards(chapter).length)} کارت) آمادهٔ صف مرورند — صف مرور با موتور M2
-          فعال می‌شود (هنوز فعال نیست).
+          کارت‌های مرور این فصل ({faNum(listChapterCards(chapter).length)} کارت) در صف مرور FSRS ثبت می‌شوند — مرور
+          روزانه‌شان از صفحهٔ «مرور» در خانه انجام می‌شود.
         </p>
       </section>
 

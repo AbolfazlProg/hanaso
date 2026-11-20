@@ -119,18 +119,18 @@ export default async function HomePage() {
             {fa.home.reviewQueuePending}
           </p>
         ) : view.review.kind === 'due' ? (
-          /* TASK-HANASO-29 (Subagent A F1): the FSRS engine is NOT integrated yet,
-           * so this branch stays unreachable — but the day it goes live, the old
-           * href="/review" would have led to a 404 (no /review route exists).
-           * Until a REAL review route ships with the engine, the due state renders
-           * as an honest non-clickable notice with the real count — no dead link,
-           * no fake queue. Wire `href` to the real route when it exists. */
+          /* Part-2 ج: the FSRS engine is LIVE and /review is the REAL queue
+           * runner — the due state is now a one-click honest CTA with the real
+           * count (ratings move the schedule; they are never a score). */
           <article className="flex flex-wrap items-center justify-between gap-3 rounded-md border-2 border-ink-faint bg-card p-5">
             <p className="text-body font-bold text-ink">{fa.home.reviewDue(view.review.count)}</p>
-            <p className="flex items-center gap-2 text-caption text-ink-soft" aria-live="polite">
-              <Repeat2 aria-hidden className="size-4 shrink-0 text-ink-faint" />
-              {fa.home.reviewRoutePending}
-            </p>
+            <Link
+              href="/review"
+              className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+            >
+              {fa.home.reviewStartCta}
+              <ArrowLeft aria-hidden className="size-4" />
+            </Link>
           </article>
         ) : view.review.kind === 'empty' ? (
           <p className="rounded-md border border-success/50 bg-card px-4 py-3 text-small text-ink-soft">

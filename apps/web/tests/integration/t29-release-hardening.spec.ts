@@ -95,25 +95,43 @@ describe('TASK-HANASO-29 F2 — grade action is station-scoped like hint', () =>
   });
 });
 
-describe('TASK-HANASO-29 F1 — no dead /review link on home (engine not integrated)', () => {
+/*
+ * Part-2 ج UPDATE (2026-11-20): the FSRS engine went LIVE (owner-pass —
+ * app.fsrs_cards + /api/review) and /review is now a REAL route (the queue
+ * runner). The F1 guard flips with the reality it protects: the home «due»
+ * card MUST now link the real route — and the route files must exist, so a
+ * future dead-link regression (route deleted, link kept) still fails here.
+ */
+describe('TASK-HANASO-29 F1 — the home review CTA links the REAL /review route', () => {
   const srcDir = join(process.cwd(), 'src');
 
-  it('the home page source contains no href="/review" (the route does not exist)', () => {
-    const page = readFileSync(join(srcDir, 'app/page.tsx'), 'utf8');
-    // strip /* … */ comments so the explanatory fix comment doesn't false-positive
-    const code = page.replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(code).not.toContain('href="/review"');
-    expect(code).not.toContain("href='/review'");
-    expect(code).not.toContain('href={`/review`}');
+  it('the /review route files exist (page + runner)', () => {
+    const page = readFileSync(join(srcDir, 'app/review/page.tsx'), 'utf8');
+    expect(page).toContain('ReviewRunner');
+    expect(page).toContain('getFsrsReviewStore');
+    const runner = readFileSync(join(srcDir, 'app/review/review-runner.tsx'), 'utf8');
+    // the runner submits through the idempotent review API — never a fake queue
+    expect(runner).toContain("fetch('/api/review'");
+    expect(runner).toContain('clientReviewId');
   });
 
-  it('the due-review branch renders the honest non-clickable notice instead of a CTA', () => {
+  it('the due-review branch renders the REAL CTA with the live count', () => {
     const page = readFileSync(join(srcDir, 'app/page.tsx'), 'utf8');
     expect(page).toContain("view.review.kind === 'due'");
-    expect(page).toContain('reviewRoutePending');
-    // the dead-link CTA message key is gone entirely
+    expect(page).toContain('href="/review"');
+    expect(page).toContain('reviewStartCta');
+    // the obsolete «route pending» key is gone entirely
     const fa = readFileSync(join(srcDir, 'messages/fa.ts'), 'utf8');
-    expect(fa).not.toContain('reviewCta');
-    expect(fa).toContain('reviewRoutePending');
+    expect(fa).not.toContain('reviewRoutePending');
+    expect(fa).toContain('reviewStartCta');
+  });
+
+  it('no dishonest «coming soon» review strings survive anywhere learner-facing', () => {
+    for (const rel of ['messages/fa.ts', 'app/learn/[chapter]/complete/page.tsx']) {
+      const src = readFileSync(join(srcDir, rel), 'utf8');
+      expect(src).not.toContain('به‌زودی فعال می‌شود');
+      expect(src).not.toContain('هنوز فعال نیست');
+      expect(src).not.toContain('موتور M2');
+    }
   });
 });
