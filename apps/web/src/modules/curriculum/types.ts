@@ -412,6 +412,75 @@ export type TeachingBlock =
       id: string;
       taskId: string;
     }
+  | {
+      /**
+       * Part-2 د/ط — a REAL-WORLD reading artifact (the café menu, the
+       * signboard, the friend's postcard) rendered as ONE board: panels of
+       * Japanese items with optional Persian glosses. Purely receptive — the
+       * exercises after it read FROM it. `showGloss` decides the honest
+       * treatment: glossed (the bilingual-tourist-menu clue — m2) or bare
+       * (the decode challenge of taught words — m1).
+       */
+      kind: 'realworld-board';
+      id: string;
+      titleFa: string;
+      captionFa?: string;
+      showGloss: boolean;
+      panels: {
+        titleFa: string;
+        /** Japanese line under the panel title (a menu heading, a postcard line). */
+        leadJa?: string;
+        items: {
+          ja: string;
+          /** Persian gloss (bilingual-menu style) — only rendered when showGloss. */
+          glossFa?: string;
+          /** The small right-hand detail of a real board (price, 〜あります). */
+          sideJa?: string;
+        }[];
+      }[];
+    }
+  | {
+      /**
+       * Part-2 ز — the OPTIONAL drill's mode picker. The learner CHOOSES the
+       * drill face (hiragana / katakana / two-script / difficult pairs) and the
+       * walk POINTER jumps to that pool's exercise block — the same pointer-only
+       * semantics as the F4 return (no progress granted, no completion skipped:
+       * finishing still walks the wrap-up and ≥1 graded answer is required).
+       * «پایان تمرین» jumps to the wrap-up so ONE chosen pool can honestly
+       * finish the optional station; every unchosen pool stays available.
+       */
+      kind: 'drill-menu';
+      id: string;
+      titleFa: string;
+      bodyFa: string;
+      options: {
+        id: string;
+        labelFa: string;
+        bodyFa: string;
+        /** The exercise block (pool) this mode jumps the walk to. */
+        targetBlockId: string;
+      }[];
+      finishLabelFa: string;
+      /** The wrap-up block the finish action jumps to. */
+      finishTargetBlockId: string;
+    }
+  | {
+      /**
+       * Part-2 و — the k13 NAME-KATAKANA experience. The ACCEPTED answer is
+       * computed at RUNTIME from the learner's own input by the pure local
+       * engine (kana-name.ts) — no stored key exists, nothing to strip (the
+       * transport passes the block whole). The block gates the walk forward
+       * like writing-practice (a required interaction, practice-layer only —
+       * NEVER a mastery gate, DD-106).
+       */
+      kind: 'name-katakana';
+      id: string;
+      titleFa: string;
+      /** Why the Latin/Finglish input gives the better suggestion (the honest pedagogy). */
+      bodyFa: string;
+      /** Extra distractor cards in the tray (on top of the required morae). */
+      extrasCount: number;
+    }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
 
 /* ------------------------------------------------------------------ rule slides (TASK-LEARNING-14) */

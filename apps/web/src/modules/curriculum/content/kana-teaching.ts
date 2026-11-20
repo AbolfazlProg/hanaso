@@ -629,7 +629,10 @@ export const KANA_TEACHING: KanaTeaching[] = [
     kanaId: 'hira-wo',
     audioRef: 'kn-hira-wo',
     pronunciationFa: '«اُ»',
-    pronunciationNoteFa: 'به‌عنوان ذره با صدای کامل «اُ» خوانده می‌شود',
+    // Part-2 الف (translit-standard.ts): the card shows romaji «wo» — the note
+    // must BRIDGE wo ↔ «اُ» (the audit's ヲ gap), never leave the pair unexplained.
+    pronunciationNoteFa:
+      'روماجی‌اش «wo» است اما خوانش روزمره «اُ» است — به‌عنوان ذرهٔ مفعول با صدای کامل «اُ» خوانده می‌شود',
     mnemonic: {
       coreImageFa: 'ذرهٔ «اُ»',
       storyFa:
@@ -1235,7 +1238,10 @@ export const KANA_TEACHING: KanaTeaching[] = [
     kanaId: 'kata-wo',
     audioRef: 'kn-kata-wo',
     pronunciationFa: '«اُ»',
-    pronunciationNoteFa: 'به‌عنوان ذره با صدای کامل «اُ» خوانده می‌شود',
+    // Part-2 الف (translit-standard.ts): the card shows romaji «wo» — the note
+    // must BRIDGE wo ↔ «اُ» (the audit's ヲ gap), never leave the pair unexplained.
+    pronunciationNoteFa:
+      'روماجی‌اش «wo» است اما خوانش روزمره «اُ» است — به‌عنوان ذرهٔ مفعول با صدای کامل «اُ» خوانده می‌شود',
     mnemonic: {
       coreImageFa: 'موج‌های پشت‌سرهم',
       storyFa:

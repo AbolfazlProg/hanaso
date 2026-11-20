@@ -135,6 +135,38 @@ export type ClientTeachingBlock =
       }[];
     }
   | { kind: 'listening-task'; id: string; taskId: string }
+  | {
+      /** Part-2 د/ط: the real-world board — pure display, no answer material. */
+      kind: 'realworld-board';
+      id: string;
+      titleFa: string;
+      captionFa?: string;
+      showGloss: boolean;
+      panels: {
+        titleFa: string;
+        leadJa?: string;
+        items: { ja: string; glossFa?: string; sideJa?: string }[];
+      }[];
+    }
+  | {
+      /** Part-2 ز: the drill mode picker — pointer ids only, no answer material. */
+      kind: 'drill-menu';
+      id: string;
+      titleFa: string;
+      bodyFa: string;
+      options: { id: string; labelFa: string; bodyFa: string; targetBlockId: string }[];
+      finishLabelFa: string;
+      finishTargetBlockId: string;
+    }
+  | {
+      /** Part-2 و: the name builder — the answer is computed client-side from
+       *  the learner's own input (kana-name.ts); no key ever exists to strip. */
+      kind: 'name-katakana';
+      id: string;
+      titleFa: string;
+      bodyFa: string;
+      extrasCount: number;
+    }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
 
 export interface ClientStation {
@@ -210,6 +242,36 @@ function stripBlock(block: TeachingBlock): ClientTeachingBlock {
         ...(block.word ? { word: block.word } : {}),
         ...(block.miniTable ? { miniTable: block.miniTable } : {}),
         ask: block.ask ? { questionFa: block.ask.questionFa, options: block.ask.options } : undefined,
+      };
+    /* Part-2 د/ط: the realworld-board is PURE DISPLAY — every field is
+       learner-facing content (item surfaces + authored glosses); there is no
+       answer key to strip. The explicit case documents that decision. */
+    case 'realworld-board':
+      return {
+        kind: 'realworld-board',
+        id: block.id,
+        titleFa: block.titleFa,
+        captionFa: block.captionFa,
+        showGloss: block.showGloss,
+        panels: block.panels,
+      };
+    case 'drill-menu':
+      return {
+        kind: 'drill-menu',
+        id: block.id,
+        titleFa: block.titleFa,
+        bodyFa: block.bodyFa,
+        options: block.options,
+        finishLabelFa: block.finishLabelFa,
+        finishTargetBlockId: block.finishTargetBlockId,
+      };
+    case 'name-katakana':
+      return {
+        kind: 'name-katakana',
+        id: block.id,
+        titleFa: block.titleFa,
+        bodyFa: block.bodyFa,
+        extrasCount: block.extrasCount,
       };
     case 'character-scene':
       return {

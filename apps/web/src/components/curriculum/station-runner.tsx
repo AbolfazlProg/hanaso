@@ -53,6 +53,7 @@ import { resumeFreshness } from '@/modules/curriculum/resume-policy';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
+import { NameKatakana } from '@/components/curriculum/name-katakana';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
@@ -85,6 +86,18 @@ export interface StationRunnerProps {
    * no map context — the map CTA is the safe fallback.
    */
   nextCoreStation?: { slug: string; titleFa: string } | null;
+  /**
+   * Part-2 ط (G1 in the execution path): true when this station is the LAST
+   * core one — the completion screen's primary CTA then leads STRAIGHT to the
+   * chapter gate (/assessment) instead of the map hop.
+   */
+  gateOpen?: boolean;
+  /**
+   * Part-2 ط (the ?block= deep link): a validated block id the walk opens AT
+   * (the anchor-dialogue CTA's return path). Pointer-only — it moves the step,
+   * grants no progress; the ordinary resume machinery keeps everything else.
+   */
+  initialBlockId?: string;
   /**
    * TASK-HANASO-17 §۶ — LESSON REPLAY (`?mode=review`): the completed lesson
    * re-opens from the TOP with all content (slides, audio, exercises); the
@@ -376,6 +389,8 @@ export function StationRunner(props: StationRunnerProps) {
     station,
     chapter,
     nextCoreStation,
+    gateOpen = false,
+    initialBlockId,
     replayMode = false,
     restartRequested = false,
     mapHref,
@@ -696,6 +711,13 @@ export function StationRunner(props: StationRunnerProps) {
         }
       })
       .finally(() => setResumeSettled(true));
+    /* Part-2 ط (?block= deep link): the validated block id from the URL moves
+     * the walk pointer AFTER the restore machinery — it is the deepest
+     * override (the anchor-dialogue CTA's return path), pointer-only. */
+    if (initialBlockId) {
+      const target = stepOfBlock(blocks, initialBlockId);
+      if (target !== null) setStep(target);
+    }
     // restore + fallback run exactly once per mount (deps limited on purpose;
     // replayMode/restartRequested are per-mount URL props — stable for the
     // mount, and restoreChecked already guarantees a single execution).
@@ -1018,11 +1040,20 @@ export function StationRunner(props: StationRunnerProps) {
    * never a second CTA (owner §7: the learner decides whether to continue).
    */
   const completionTarget = useMemo(
-    () => ({
-      href: mapHref ?? `/learn/${chapterSlug}/journey`,
-      label: fa.curriculum.ctaFinishStation,
-    }),
-    [mapHref, chapterSlug],
+    () =>
+      /*
+       * Part-2 ط (G1 in the execution path): completing the LAST core station
+       * hands the walk directly to the chapter gate — the primary CTA IS the
+       * gate («دروازهٔ فصل»), never a dead «دروازه در انتظار توست» that sends
+       * the learner hunting for the assessment on the map.
+       */
+      gateOpen
+        ? { href: `/learn/${chapterSlug}/assessment`, label: fa.curriculum.chapterGateCta }
+        : {
+            href: mapHref ?? `/learn/${chapterSlug}/journey`,
+            label: fa.curriculum.ctaFinishStation,
+          },
+    [gateOpen, mapHref, chapterSlug],
   );
 
   const goCompletionDestination = useCallback(() => {
@@ -1155,6 +1186,19 @@ export function StationRunner(props: StationRunnerProps) {
             });
           }}
           onReturnToBlock={returnToBlock}
+          onDrillPick={(targetBlockId) => {
+            const target = stepOfBlock(blocks, targetBlockId);
+            if (target !== null) setStep(target);
+          }}
+          onDrillFinish={() => {
+            setStep(blocks.length - 1);
+          }}
+          onNameDone={() => {
+            // Part-2 و: the name built — the walk continues (or completes)
+            if (step < blocks.length - 1) setStep((s) => s + 1);
+            else if (station.completion.kind === 'task_completed') void finishSession(null, true);
+            else void finishSession(null);
+          }}
           kanaCardStage={block.kind === 'kana-card' ? normalizeKanaStage(kanaCardStages[block.id]) : undefined}
           relatedExamplesByKanaId={relatedExamplesByKanaId}
           onKanaProgress={(progress: { stage: string }) => {
@@ -1645,6 +1689,9 @@ function BlockView({
   exerciseInitialProgress,
   onExerciseProgress,
   onReturnToBlock,
+  onDrillPick,
+  onDrillFinish,
+  onNameDone,
   onExerciseDone,
   onSceneDone,
   kanaCardStage,
@@ -1684,6 +1731,12 @@ function BlockView({
   onExerciseProgress?: (progress: { index: number; firstTryCorrect: number; attemptNo?: number }) => void;
   /** Issue #106 (F4): host-owned «بازگشت به آموزش» jump handler. */
   onReturnToBlock?: (blockId: string) => void;
+  /** Part-2 ز: the drill-menu mode pick — pointer jump to the pool's block. */
+  onDrillPick?: (targetBlockId: string) => void;
+  /** Part-2 ز: «پایان تمرین» — pointer jump to the wrap-up (honest finish). */
+  onDrillFinish?: () => void;
+  /** Part-2 و: the name-katakana build completed (required interaction — walk continues). */
+  onNameDone: () => void;
   onExerciseDone: (score: number) => void;
   onSceneDone: () => void;
   /** #117 §10: restored kana-card stage for this block (undefined = fresh). */
@@ -2229,6 +2282,117 @@ function BlockView({
           chapterSlug={chapterSlug}
           speakers={speakers}
           onSceneDone={onSceneDone}
+        />
+      );
+
+    /*
+     * Part-2 د/ط — the REAL-WORLD board (menu / signboard / postcard): a real
+     * artifact the learner READS, not a card stack. Glossed panels give the
+     * bilingual-tourist clue (m2); bare panels are the decode challenge (m1).
+     * Purely receptive — the following exercise blocks read from it.
+     */
+    case 'realworld-board':
+      return (
+        <section className="flex flex-col gap-4 rounded-md border-2 border-ai bg-card p-5" data-realworld-board>
+          <header className="flex flex-col gap-1">
+            <p className="flex items-center gap-2 text-caption font-bold text-ai">
+              <Sparkles aria-hidden className="size-4" />
+              {fa.curriculum.boardCaptionLabel}
+            </p>
+            <h3 className="text-h3 font-bold text-ink">
+              <MixedFaJaText text={block.titleFa} />
+            </h3>
+            {block.captionFa ? (
+              <p className="text-small leading-[var(--leading-fa)] text-ink-soft">
+                <MixedFaJaText text={block.captionFa} />
+              </p>
+            ) : null}
+          </header>
+          <p className="text-caption text-ink-faint">
+            {block.showGloss ? fa.curriculum.boardGlossHint : fa.curriculum.boardDecodeHint}
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {block.panels.map((panel, pi) => (
+              <div key={pi} className="rounded-md border border-ink-faint bg-surface-warm p-4">
+                <p className="text-caption font-black text-indigo">{panel.titleFa}</p>
+                {panel.leadJa ? <JaBlock className="mt-2 text-lead font-bold">{panel.leadJa}</JaBlock> : null}
+                <ul className="mt-3 flex flex-col gap-2" data-board-items>
+                  {panel.items.map((item, ii) => (
+                    <li
+                      key={ii}
+                      className="flex items-baseline justify-between gap-3 border-b border-dashed border-ink-faint pb-2 last:border-none last:pb-0"
+                    >
+                      <span className="flex min-w-0 flex-col gap-0.5">
+                        <JaBlock className="text-body font-bold">{item.ja}</JaBlock>
+                        {block.showGloss && item.glossFa ? (
+                          <span className="text-caption text-ink-soft">{item.glossFa}</span>
+                        ) : null}
+                      </span>
+                      {item.sideJa ? (
+                        <span className="shrink-0 text-caption text-ink-faint" dir="ltr" lang="ja">
+                          {item.sideJa}
+                        </span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+
+    /*
+     * Part-2 ز — the OPTIONAL drill's mode picker: the learner chooses the
+     * drill face and the walk POINTER jumps to that pool (the same
+     * pointer-only semantics as the F4 return). «پایان تمرین» jumps to the
+     * wrap-up so one chosen pool can honestly finish the optional station.
+     */
+    case 'drill-menu':
+      return (
+        <section className="flex flex-col gap-4 rounded-md border-2 border-ai bg-card p-5" data-drill-menu>
+          <h3 className="text-h3 font-bold text-ink">{block.titleFa}</h3>
+          <p className="text-body leading-[var(--leading-fa)] text-ink-soft">{block.bodyFa}</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {block.options.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                data-drill-option={opt.id}
+                onClick={() => onDrillPick?.(opt.targetBlockId)}
+                className="flex min-h-24 flex-col gap-1 rounded-md border-2 border-ink bg-paper p-4 text-start transition-colors hover:border-indigo hover:bg-indigo-wash"
+              >
+                <span className="text-body font-black text-indigo">{opt.labelFa}</span>
+                <span className="text-small leading-[var(--leading-fa)] text-ink-soft">{opt.bodyFa}</span>
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            data-drill-finish
+            onClick={() => onDrillFinish?.()}
+            className="w-fit text-small text-ai underline underline-offset-4"
+          >
+            {block.finishLabelFa}
+          </button>
+        </section>
+      );
+
+    /*
+     * Part-2 و — the k13 NAME-KATAKANA capstone: the local engine (kana-name.ts)
+     * suggests, the learner builds from the tray; the accepted answer is computed
+     * at runtime from THEIR input — nothing crosses the wire. Required
+     * interaction (like writing-practice): the walk continues on completion.
+     * Practice-layer only — never a mastery gate (DD-106).
+     */
+    case 'name-katakana':
+      return (
+        <NameKatakana
+          blockId={block.id}
+          titleFa={block.titleFa}
+          bodyFa={block.bodyFa}
+          extrasCount={block.extrasCount}
+          onNameDone={onNameDone}
         />
       );
 
