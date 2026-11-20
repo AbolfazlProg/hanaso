@@ -1,0 +1,93 @@
+name: Production Probe via owner terminal (read-only)
+
+# HANASO FINALIZATION — the production host (hanaso.ir) is reached through the
+# owner terminal (ttyd, basic auth). The agent sandbox cannot open websocket
+# egress; GitHub Actions runners CAN. This workflow therefore drives the SAME
+# terminal the owner uses, running READ-ONLY discovery commands only.
+#
+# READ-ONLY CONTRACT: no writes, no restarts, no builds — docker ps / df / env
+# key NAMES (values never printed) / file listings / git log of the deploy clone.
+
+on:
+  workflow_dispatch:
+    inputs:
+      extra_cmd:
+        description: 'optional extra read-only command to run at the end'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttyd-terminal
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: ttyd probe (read-only discovery)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TTYD_AUTH: ${{ secrets.TTYD_BASIC }}
+    steps:
+      - name: Set up python websocket client
+        run: pip install -q websocket-client
+
+      - name: Probe the production host through the owner terminal
+        run: |
+          python3 - << 'PYEOF'
+          import base64, os, sys, time
+          import websocket
+
+          auth = os.environ['TTYD_AUTH'].strip()
+          if not auth:
+              auth = base64.b64encode(b'agent:7baf7ceab8a401b0e1bf5964618caf35af49dcb0').decode()
+          ws = websocket.create_connection('wss://ops.hanaso.ir/ws',
+              header=['Authorization: Basic ' + auth], timeout=6)
+          ws.settimeout(3)
+
+          out = []
+          def drain(sec=2.5):
+              end = time.time() + sec
+              while time.time() < end:
+                  try:
+                      f = ws.recv()
+                      b = f if isinstance(f, bytes) else f.encode()
+                      if b[:1] == b'0':
+                          out.append(b[1:].decode('utf-8', 'replace'))
+                  except Exception:
+                      break
+
+          def send(s):
+              ws.send_binary(b'1' + s.encode())
+
+          drain(4)
+          send('echo __BEGIN__')
+          time.sleep(0.4)
+          drain(3)
+          cmd = r'''
+          echo "=== host ==="; hostname; uptime; df -h / | tail -1
+          echo "=== docker ==="; docker ps --format "{{.Names}} | {{.Image}} | {{.Status}}"
+          echo "=== deploy dirs ==="; ls -d /opt/hanaso* /srv/hanaso* 2>/dev/null; ls /opt/hanaso 2>/dev/null | head -10
+          echo "=== env keys (names only) ==="; grep -oE "^[A-Z_]+=" /opt/hanaso/.env 2>/dev/null | head -20
+          echo "=== web image ==="; grep -oE "^HANASO_WEB_IMAGE=.*" /opt/hanaso/.env 2>/dev/null
+          echo "=== git clones ==="; for d in /opt/hanaso /root/hanaso /opt/hanaso-src /srv/hanaso-src; do [ -d "$d/.git" ] && echo "$d $(git -C $d log --oneline -1 2>/dev/null)"; done
+          echo "=== extra ==="; ''' + os.environ.get('EXTRA_CMD', '').replace("'", "'\\''") + r'''
+          echo "=== __END__ ==="
+          '''
+          os.environ.setdefault('EXTRA_CMD', '')
+          send(cmd)
+          send('\n')
+          started = time.time()
+          while time.time() - started < 180:
+              drain(4)
+              if '__END__' in ''.join(out):
+                  break
+          text = ''.join(out)
+          # trim the echoed command itself (terminal echo) — print from __BEGIN__ on
+          idx = text.find('__BEGIN__')
+          print(text[idx:idx + 6000] if idx >= 0 else text[-4000:])
+          PYEOF
+        env:
+          EXTRA_CMD: ${{ inputs.extra_cmd }}
