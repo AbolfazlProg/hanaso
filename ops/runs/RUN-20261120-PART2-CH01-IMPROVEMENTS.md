@@ -2,6 +2,7 @@
 
 > Branch `fix/chapter01-part2` · worktree-isolated · **baseline = the EXACT head of PR #129 (`b0229dd`)** — PR #129 was still OPEN at start (verified via API), so per the coordination contract Part-2 builds ON Part-1's head and its PR targets `fix/chapter01-part1` (the diff contains ZERO Part-1 changes — verified with `git diff origin/fix/chapter01-part1..HEAD` = 23 real files).
 > No merge, no deploy. The owner reviews both missions' compatibility first.
+> **Delivery**: pushed + **PR #130** (`fix/chapter01-part2` → `fix/chapter01-part1`) · PR #129 re-verified STILL OPEN at the same head `b0229dd` at push time · **CI fully green on `1d459bc`** (main battery success + compose-smoke success + image→GHCR skipped per PR rules).
 
 ## The nine groups — what shipped
 
@@ -84,6 +85,13 @@
 - /review: honest empty for a fresh learner → after h1 enrollment: «۵ کارت» → あ → reveal → «خوب» → ۲/۵ → the API shows the reschedule (dueCount 4, the card pushed future) → the HOME page shows «۴ کارت برای مرور امروز» + the real «شروع مرور امروز» CTA.
 - Screenshots: `/tmp/evidence-m2-menu.png`, `/tmp/evidence-k13-name.png` (sandbox evidence; not committed — the repo baseline-screenshot rule).
 
+## CI outcome (the honest addendum — updated at delivery)
+
+- The initial local battery did NOT include `pnpm format:check` — the first CI run on the PR head (`43a551c`) failed at the **Format check** step (14 files: 12 source/test TS/TSX + the RUN report markdown); every other executed step passed.
+- Fix: a pure `prettier --write` sweep committed as `style(ch01-part2)` WITH the `hygiene-waiver:` trailer (BUG-011 escape hatch — format-only, auditable). An accidental sweep of the generated `writing-data` file-mode flips (the build touches the exec bit again) was caught BEFORE push and amended out — the generated files stay at the upstream mode `100755`, blobs byte-identical (same hashes as `fix/chapter01-part1`).
+- Gates RE-RUN green on the formatted tree: `format:check` ✓ · `typecheck` ✓ · `lint` ✓ · `vitest` 87 files / **931/931** ✓ · `pnpm build` ✓.
+- **CI on `1d459bc` (the amended PR head): ALL GREEN** — format / lint / typecheck / test / integration(PG18) / build / audit / smoke = success · compose smoke (real image · pgbouncer path · backup drill) = success · image → GHCR = skipped (PR context, expected). Run: https://github.com/AbolfazlProg/hanaso/actions/runs/44782755083
+
 ## Conflicts / merge contract
 
 - Zero overlap with the other agent's in-flight work: their three newest main commits touch only `apps/web/src/db/seed-curriculum.ts` (untouched here); the diff was audited against fm01/dialogue/audio/preview/security paths — none touched.
@@ -92,7 +100,7 @@
 
 ## Skills Used
 
-agent-browser (real navigation) · repo-internal gates (vitest/typecheck/lint/EQA/CL) — no external skills were needed for the content work itself.
+agent-browser (real navigation) · repo-internal gates (vitest/typecheck/lint/EQA/CL/format) — no external skills were needed for the content work itself.
 
 ## Source Documents Reviewed
 
