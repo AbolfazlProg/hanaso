@@ -1,0 +1,95 @@
+name: Preview Mode Activate / Deactivate (owner toggle)
+
+# HANASO FINALIZATION — Temporary Preview Mode (owner review pass) toggle.
+#
+# CONTRACT:
+#   - manual workflow_dispatch ONLY; never automatic.
+#   - action=activate: idempotently ensure PREVIEW_MODE_KEY (from the repo
+#     SECRET — never echoed in logs) in /opt/hanaso/.env, then recreate ONLY the
+#     hanaso-web container (env_file: .env → the key reaches the app).
+#   - action=deactivate: remove the PREVIEW_MODE_KEY line from /opt/hanaso/.env
+#     and recreate the web container — the feature becomes fully inert (every
+#     /preview/* route 404s, the cookie checks fail closed).
+#   - touches NOTHING else: no other services, no other env keys, no image
+#     builds (the production-deploy workflow owns those).
+#   - the key value travels via stdin env into remote commands and is verified
+#     by LENGTH only — never printed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'activate | deactivate'
+        required: true
+        type: choice
+        default: activate
+        options:
+          - activate
+          - deactivate
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  toggle:
+    name: Toggle preview mode on the VPS
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SSHPASS: ${{ secrets.VPS_PASSWORD }}
+      PREVIEW_KEY: ${{ secrets.PREVIEW_MODE_KEY }}
+    steps:
+      - name: Install SSH tooling
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq sshpass openssh-client >/dev/null
+
+      - name: Toggle the env key and recreate the web container
+        run: |
+          set -euo pipefail
+          export SSHPASS
+          sshpass -e ssh -p "${{ secrets.VPS_SSH_PORT }}" -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/tmp/gh_known_hosts -o ConnectTimeout=25 \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "PREVIEW_KEY='$PREVIEW_KEY' ACTION='${{ inputs.action }}' bash -s" <<'REMOTE'
+            set -euo pipefail
+            cd /opt/hanaso
+            [ -f .env ] || { echo "::error::/opt/hanaso/.env not found"; exit 1; }
+            if [ "$ACTION" = "activate" ]; then
+              if [ -z "${PREVIEW_KEY:-}" ]; then echo "::error::PREVIEW_MODE_KEY secret is empty"; exit 1; fi
+              # strip any existing line, then append the fresh one (idempotent)
+              sed -i '/^PREVIEW_MODE_KEY=/d' .env
+              printf '\n# Temporary Preview Mode (owner review) — see apps/web/src/lib/preview.ts\n' >> .env
+              printf 'PREVIEW_MODE_KEY=%s\n' "$PREVIEW_KEY" >> .env
+              chmod 600 .env
+            else
+              sed -i '/^PREVIEW_MODE_KEY=/d' .env
+            fi
+            # recreate ONLY the web container so the new env is picked up
+            docker compose up -d --no-deps web
+            sleep 5
+            LEN=$(docker exec hanaso-web printenv PREVIEW_MODE_KEY 2>/dev/null | tr -d '\n' | wc -c)
+            echo "PREVIEW_MODE_KEY present in container: $([ "$LEN" -gt 0 ] && echo yes || echo no) (length $LEN)"
+            curl -fsS --max-time 20 http://127.0.0.1:3000/api/health >/dev/null 2>&1 || curl -fsS --max-time 20 https://learn.kotodama.ir/api/health || true
+            echo "toggle done: $ACTION"
+          REMOTE
+
+      - name: Post-toggle verification
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.action }}" = "deactivate" ]; then
+            CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "https://learn.kotodama.ir/preview/enter?key=probe" || true)
+            echo "preview/enter with env disabled → HTTP $CODE (expect 404)"
+            [ "$CODE" = "404" ] || { echo "::error::preview route did NOT close after deactivation"; exit 1; }
+          else
+            H=$(curl -fsS --max-time 20 https://learn.kotodama.ir/api/health || true)
+            echo "health: $H"
+            echo "activation done — the owner enters with /preview/enter?key=<the PREVIEW_MODE_KEY value>"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Preview Mode ${{ inputs.action }}" >> $GITHUB_STEP_SUMMARY
+          echo "- action: ${{ inputs.action }} at $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_STEP_SUMMARY
