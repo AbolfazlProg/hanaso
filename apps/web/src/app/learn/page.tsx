@@ -1,6 +1,12 @@
 import { resolveLearnerId } from '@/lib/learner/server';
-import { hasPreviewAccess } from '@/lib/preview';
-import { resolveLearnerJourney, listChapterSummaries, listDraftChapterSummaries } from '@/modules/curriculum/server';
+import { hasPreviewAccess, previewUnlockAll, previewLocksMode, type PreviewLocksMode } from '@/lib/preview';
+import {
+  resolveLearnerJourney,
+  listChapterSummaries,
+  listDraftChapterSummaries,
+  loadChapterBundle,
+  chapterAccessStatus,
+} from '@/modules/curriculum/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { SiteNav } from '@/components/site-nav';
 
@@ -28,21 +34,74 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
   const { s } = await searchParams;
   const learnerId = await resolveLearnerId();
   const previewActive = await hasPreviewAccess();
-  const home = await resolveLearnerJourney(learnerId, undefined, { preview: previewActive });
-  // PREVIEW MODE: the owner's full index — every published chapter + every draft,
-  // all unlocked (this block renders ONLY with a valid preview cookie; normal
-  // users never see it, even when the env key is set).
+  // OWNER LOCK CONTROL: 'open' bypasses every lock at view level; 'enforce'
+  // applies the real prereqs/station locks to the pv- learner (real-path test).
+  const unlockAll = previewActive ? await previewUnlockAll() : false;
+  const locksMode: PreviewLocksMode = previewActive ? await previewLocksMode() : 'open';
+  const home = await resolveLearnerJourney(learnerId, undefined, { preview: unlockAll });
+  // PREVIEW MODE: the owner's full index — every published chapter + every draft
+  // (this block renders ONLY with a valid preview cookie; normal users never see
+  // it, even when the env key is set).
   const previewIndex = previewActive
     ? [
         ...listChapterSummaries().map((c) => ({ ...c, draft: false })),
         ...listDraftChapterSummaries().map((c) => ({ ...c, draft: true })),
       ]
     : [];
+  // Per-chapter lock status for the owner panel. Drafts are owner-reviewable in
+  // BOTH modes (unpublished content is not part of the real learner path);
+  // published chapters honour the current mode through chapterAccessStatus.
+  const chapterStatus = new Map<string, { locked: boolean; prerequisiteTitleFa: string | null }>();
+  if (previewActive) {
+    for (const c of previewIndex) {
+      if (c.draft) continue;
+      try {
+        const access = await chapterAccessStatus(loadChapterBundle(c.slug).chapter, learnerId);
+        chapterStatus.set(c.slug, access);
+      } catch {
+        // unreadable chapter — render as open rather than break the home page
+      }
+    }
+  }
 
   const nextStationTitle =
     home.nextStationSlug !== null
       ? (home.chapter.stations.find((st) => st.slug === home.nextStationSlug)?.titleFa ?? null)
       : null;
+
+  const panelBtn = (href: string, label: string, active: boolean) =>
+    active ? (
+      <span
+        key={label}
+        style={{
+          padding: '6px 12px',
+          borderRadius: 8,
+          background: '#1d4ed8',
+          color: '#fff',
+          fontSize: 13,
+          fontWeight: 700,
+        }}
+      >
+        {label}
+      </span>
+    ) : (
+      <a
+        key={label}
+        href={href}
+        style={{
+          padding: '6px 12px',
+          borderRadius: 8,
+          border: '1px solid #cbd5e1',
+          background: '#fff',
+          color: '#1d4ed8',
+          fontSize: 13,
+          fontWeight: 700,
+          textDecoration: 'none',
+        }}
+      >
+        {label}
+      </a>
+    );
 
   return (
     <>
@@ -64,7 +123,11 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
           }}
         >
           <strong>حالت پیش‌نمایش مالک فعال است</strong>
-          <span style={{ opacity: 0.75 }}>پیشرفت در فضای جداگانه ذخیره می‌شود — قفل‌ها فقط برای شما بازند.</span>
+          <span style={{ opacity: 0.75 }}>
+            {locksMode === 'enforce'
+              ? 'قفل‌ها فعال‌اند — مسیر واقعی زبان‌آموز در فضای پیش‌نمایش آزمایش می‌شود.'
+              : 'همهٔ درس‌ها بازند؛ پیشرفت در فضای جداگانه ذخیره می‌شود.'}
+          </span>
           <a href="/preview/exit" style={{ color: '#93c5fd', textDecoration: 'underline', marginLeft: 'auto' }}>
             خروج از پیش‌نمایش
           </a>
@@ -83,17 +146,34 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
           }}
         >
           <strong style={{ display: 'block', marginBottom: 8 }}>فهرست کامل برای بررسی (فقط مالک)</strong>
+          {/* OWNER LOCK CONTROL — the visible two-state switch */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 10 }}>
+            <span style={{ fontSize: 13, color: '#334155' }}>
+              وضعیت قفل‌ها:{' '}
+              <strong style={{ color: locksMode === 'enforce' ? '#b91c1c' : '#166534' }}>
+                {locksMode === 'enforce' ? 'فعال (قفل‌ها و پیش‌نیازهای عادی)' : 'باز (همهٔ درس‌ها بدون قفل)'}
+              </strong>
+            </span>
+            {panelBtn('/preview/locks?mode=open', 'بازکردن همهٔ درس‌ها', locksMode === 'open')}
+            {panelBtn('/preview/locks?mode=enforce', 'فعال‌کردن قفل‌ها', locksMode === 'enforce')}
+          </div>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 6 }}>
-            {previewIndex.map((c) => (
-              <li key={c.slug}>
-                <a href={`/learn/${c.slug}/journey`} style={{ color: '#1d4ed8', textDecoration: 'underline' }}>
-                  {c.titleFa}
-                </a>{' '}
-                <span style={{ color: c.draft ? '#b45309' : '#64748b', fontSize: 12 }}>
-                  ({c.draft ? 'پیش‌نویس' : 'منتشرشده'} · {c.levelCode})
-                </span>
-              </li>
-            ))}
+            {previewIndex.map((c) => {
+              const access = chapterStatus.get(c.slug);
+              const locked = locksMode === 'enforce' && (access?.locked ?? false);
+              return (
+                <li key={c.slug}>
+                  <a href={`/learn/${c.slug}/journey`} style={{ color: '#1d4ed8', textDecoration: 'underline' }}>
+                    {c.titleFa}
+                  </a>{' '}
+                  <span style={{ color: locked ? '#b91c1c' : c.draft ? '#b45309' : '#64748b', fontSize: 12 }}>
+                    ({c.draft ? `پیش‌نویس${locksMode === 'enforce' ? ' · قفل‌های داخلی فعال' : ''}` : 'منتشرشده'} ·{' '}
+                    {c.levelCode}
+                    {locked ? ` · قفل — پیش‌نیاز: ${access?.prerequisiteTitleFa ?? 'فصل قبل'}` : ''})
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

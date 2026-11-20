@@ -26,7 +26,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 
 export const PREVIEW_COOKIE_NAME = 'hanaso_preview';
-const PREVIEW_TTL_SECONDS = 12 * 60 * 60;
+export const PREVIEW_TTL_SECONDS = 12 * 60 * 60;
 
 /** The feature master switch — unset env = feature fully disabled. */
 export function previewModeEnabled(): boolean {
@@ -90,4 +90,57 @@ export function previewCookieAttributes(value: string | null): {
     sameSite: 'lax',
     path: '/',
   };
+}
+
+/**
+ * OWNER LOCK CONTROL (FINALIZATION §۳): a visible, owner-only switch with two
+ * states —
+ *  - 'open'    (default) every lock/prereq is bypassed at VIEW level: the fast
+ *              full-content review pass.
+ *  - 'enforce' the NORMAL locks/prereqs apply to the pv- learner so the owner
+ *              can rehearse the REAL learner path (published-chapter gates +
+ *              station prerequisites; draft chapters stay owner-reviewable in
+ *              both modes — they are not part of the real learner path).
+ * The mode rides a SECOND signed cookie (HMAC under the same PREVIEW_MODE_KEY)
+ * so a forged value can never flip it; no cookie ⇒ 'open'. It only ever means
+ * something TOGETHER with a valid preview cookie, and it is display-level only:
+ * walk order, stores and the normal-user logic are untouched.
+ */
+export const PREVIEW_LOCKS_COOKIE_NAME = 'hanaso_preview_locks';
+export type PreviewLocksMode = 'open' | 'enforce';
+
+/** HMAC-signed cookie value for one lock mode (safe to store client-side). */
+export function previewLocksCookieValue(mode: PreviewLocksMode): string {
+  return createHmac('sha256', process.env.PREVIEW_MODE_KEY ?? '')
+    .update(`hanaso-preview-locks-${mode}`)
+    .digest('hex');
+}
+
+/** Timing-safe check of a locks-mode cookie value against the configured key. */
+function previewLocksCookieValid(value: string | null | undefined, mode: PreviewLocksMode): boolean {
+  const key = process.env.PREVIEW_MODE_KEY;
+  if (!key || !value) return false;
+  const expected = Buffer.from(previewLocksCookieValue(mode));
+  const given = Buffer.from(value);
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}
+
+/** RSC variant: the owner's current lock mode ('open' when unset/invalid). */
+export async function previewLocksMode(): Promise<PreviewLocksMode> {
+  const jar = await cookies();
+  return previewLocksCookieValid(jar.get(PREVIEW_LOCKS_COOKIE_NAME)?.value, 'enforce') ? 'enforce' : 'open';
+}
+
+/**
+ * The VIEW-level unlock switch the pages feed into the journey resolver:
+ * preview active AND the owner has not chosen to enforce the normal locks.
+ * Direct-call safe (outside a request scope next/headers throws → false, so
+ * unit tests keep the normal locking semantics).
+ */
+export async function previewUnlockAll(): Promise<boolean> {
+  try {
+    return (await hasPreviewAccess()) && (await previewLocksMode()) === 'open';
+  } catch {
+    return false;
+  }
 }
