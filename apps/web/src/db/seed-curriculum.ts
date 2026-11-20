@@ -19,6 +19,7 @@ import { listChapters } from '@/modules/curriculum/content';
 import { LEVEL_POLICIES } from '@/modules/curriculum/content/levels';
 import type { Chapter } from '@/modules/curriculum/types';
 import { compileEngineChapter, engineChapterSchema } from '@/modules/lesson-engine';
+import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
 import * as schema from '../../db/schema';
 import { dialogueContentId, dialogueLineContentId, lessonContentId, levelContentId, unitContentId } from './ids';
 import { runSeed as seedDialogueBase, clearSeededContent as clearDialogueBase } from './seed';
@@ -188,9 +189,14 @@ export function loadDraftChapters(): Chapter[] {
       if (!parsed.success) continue;
       const { chapter, findings } = compileEngineChapter(parsed.data);
       if (findings.some((f) => f.severity === 'hard')) continue;
+      // the draft's dialogue bundle must exist: the lessons rows FK into
+      // content.dialogues, and a stub draft (no runtimeDialogueSlug, no bundle
+      // yet — e.g. the n5-lesson-02 skeleton) would fail both the base seed and
+      // the station insert. Skip it — the runtime preview index still lists it.
+      loadDialogueBundle(chapter.dialogueSlug);
       chapters.push(chapter);
     } catch {
-      // unreadable draft — skip, never break the seed
+      // unreadable draft / missing bundle — skip, never break the seed
     }
   }
   return chapters;
