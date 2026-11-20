@@ -138,7 +138,7 @@ describe('PART1 FIX-5 — the decode answer reading never leaks, teaches at reve
     // p2 carries the くに decode; complete its prerequisites honestly first.
     const p2 = stationBySlug('stn-kana-p2');
     const store = getStationProgressStore();
-    const dec = chapter.exercises['ex-kana-p2-dec-kuni'];
+    const dec = chapter.exercises['ex-kana-p2-dec-kuni'] as Exercise;
     const wrong = dec.options!.find((o) => o.id !== dec.correctOptionId)!.id;
     for (let i = 0; i < 3; i += 1) {
       const res = await stationPost(
