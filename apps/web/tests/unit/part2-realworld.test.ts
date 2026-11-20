@@ -12,6 +12,8 @@
  *   G1 — the last core station's completion CTA carries the gate wiring.
  */
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { getChapter } from '@/modules/curriculum/content';
 import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
 import type { Station } from '@/modules/curriculum/types';
@@ -71,7 +73,7 @@ describe('PART2 د — the m2 real menu/signboard experience', () => {
     for (const id of ['ex-kana-m2-menu-pc', 'ex-kana-m2-menu-coffee', 'ex-kana-m2-menu-sand']) {
       const ex = chapter.exercises[id];
       expect(ex, id).toBeDefined();
-      expect(ex.promptFa).toMatch(/منو|تابلو/);
+      expect(ex!.promptFa).toMatch(/منو|تابلو/);
     }
   });
 });
@@ -110,7 +112,7 @@ describe('PART2 ط — h0 wrap-up and the G1 gate in the execution path', () => 
   });
 
   it('the anchor dialogue page anchors the walk at the wrap-up (no station completing)', () => {
-    const src = require('node:fs').readFileSync('src/components/curriculum/anchor-dialogue-experience.tsx', 'utf8');
+    const src = readFileSync(join(process.cwd(), 'src/components/curriculum/anchor-dialogue-experience.tsx'), 'utf8');
     expect(src).toContain("kind === 'wrap-up'");
     expect(src).toContain("action: 'progress'");
     // the CTA path: progress (anchor) + the ?block= deep link back to the walk
@@ -126,7 +128,7 @@ describe('PART2 ط — h0 wrap-up and the G1 gate in the execution path', () => 
   it('the last core station is m2 — the gate CTA wires to the assessment route', () => {
     const core = chapter.stations.filter((s) => s.core).sort((a, b) => a.order - b.order);
     expect(core[core.length - 1]!.slug).toBe('stn-kana-m2-realworld');
-    const src = require('node:fs').readFileSync('src/components/curriculum/station-runner.tsx', 'utf8');
+    const src = readFileSync(join(process.cwd(), 'src/components/curriculum/station-runner.tsx'), 'utf8');
     expect(src).toContain('gateOpen');
     expect(src).toContain('/assessment');
   });
