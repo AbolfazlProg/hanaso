@@ -1,44 +1,78 @@
 /**
- * HANASO — SiteNav (TASK-HANASO-17 §۴) — server component (links only).
+ * HANASO — SiteNav (TASK-HANASO-17 §۴) — server component (links + badge).
  *
- * The main navigation, built from INTENTS that exist in the product TODAY:
- *   خانه (/) · مسیر یادگیری (/learn)
- * The blueprint's five destinations (خانه · یادگیری · مرور · کتابخانه · پیشرفت
- * — KB navigation-blueprint v3) render only what is REAL: review/library/
- * progress/accounts do not exist yet, and a link to a non-existent page is a
- * DEAD CONTROL (the blueprint's own rule — same reason the search icon waits
- * for phase 1.5). Growing the nav is a data-driven future change, documented
- * in DESIGN_DECISIONS N1.
+ * UX-AUDIT #135/#144 — the product shell is complete now that every
+ * destination EXISTS:
+ *   خانه (/) · مسیر یادگیری (/learn) · مرور (/review — the REAL FSRS runner)
+ * plus the settings gear (/settings) on the top bar. The old rule stands: a
+ * link to a non-existent page is a DEAD CONTROL — so the nav only grew when
+ * the surfaces became real (the review runner went live in Part-2 ج; the
+ * settings/profile page ships with this audit repair).
+ *
+ * The review badge is the learner's TRUE due count (server-computed, best
+ * effort — a store failure renders the badge-less link, never a fake number).
  *
  * Placement (nav-blueprint v3 §۲ — immersion):
  *   desktop ≥md: slim top bar;   mobile: fixed bottom tab bar with
- *   safe-area padding. Rendered ONLY on top-level pages (home / /learn /
- *   chapter map) — immersive sessions (station / assessment / complete) never
- *   show it.
+ *   safe-area padding (three tabs — the audited empty third slot is the
+ *   review tab now). Rendered ONLY on top-level pages (home / /learn /
+ *   chapter map / review / settings) — immersive sessions never show it.
  *
  * AIZEN (DD-084): paper surface, indigo structural border, lucide icons
  * (no emoji), state = weight + underline (never color alone).
  */
 import Link from 'next/link';
-import { Home, Map } from 'lucide-react';
+import { Home, Map, Repeat2, Settings } from 'lucide-react';
 import { fa } from '@/messages/fa';
+import { resolveLearnerId } from '@/lib/learner/server';
+import { getFsrsReviewStore } from '@/lib/poc/stores';
 
-export type NavDestination = 'home' | 'learn';
+export type NavDestination = 'home' | 'learn' | 'review';
 
 export interface SiteNavProps {
   active: NavDestination;
+  /**
+   * The learner's REAL due count (server-resolved). Undefined → the badge-less
+   * link (404 pages / surfaces without an identity). The NAV never resolves
+   * data itself — it is presentational, so jsdom unit tests render it as-is.
+   */
+  reviewDueCount?: number | null;
 }
 
 const DESTINATIONS: { key: NavDestination; href: string; label: string; Icon: typeof Home }[] = [
   { key: 'home', href: '/', label: fa.nav.home, Icon: Home },
   { key: 'learn', href: '/learn', label: fa.nav.journey, Icon: Map },
-  /* HANASO-IR owner fix (2026-11-19, item 3): the standalone /practice hub is
-   * GONE — practice lives in the journey's own exercise stations (stn-kana-p1..p4),
-   * reachable as rows of the learning path. No independent practice surface in
-   * the nav (old /practice links redirect to the journey map). */
+  { key: 'review', href: '/review', label: fa.nav.review, Icon: Repeat2 },
 ];
 
-export function SiteNav({ active }: SiteNavProps) {
+/** Best-effort due count for the review badge (never throws, never fakes). */
+export async function resolveReviewDueCount(): Promise<number | null> {
+  try {
+    const learnerId = await resolveLearnerId();
+    return await getFsrsReviewStore().countDue(learnerId, new Date());
+  } catch {
+    return null; // no identity / store unavailable → badge-less link
+  }
+}
+
+export function SiteNav({ active, reviewDueCount }: SiteNavProps) {
+  const dueCount = reviewDueCount ?? null;
+
+  const reviewLabel = (label: string) =>
+    dueCount !== null && dueCount > 0 ? (
+      <span className="inline-flex items-center gap-1.5">
+        {label}
+        <span
+          className="grid min-w-6 place-items-center rounded-full bg-shu px-1.5 py-0.5 text-micro font-black text-paper"
+          data-review-badge
+        >
+          {new Intl.NumberFormat('fa-IR').format(dueCount)}
+        </span>
+      </span>
+    ) : (
+      label
+    );
+
   return (
     <>
       {/* ---- desktop / tablet: slim top bar ---- */}
@@ -56,6 +90,9 @@ export function SiteNav({ active }: SiteNavProps) {
               href={href}
               hrefLang="fa"
               aria-current={active === key ? 'page' : undefined}
+              aria-label={
+                key === 'review' && dueCount !== null && dueCount > 0 ? fa.nav.reviewAriaDue(dueCount) : undefined
+              }
               className={[
                 'hidden h-11 items-center rounded-md px-4 text-body font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai md:flex',
                 active === key
@@ -63,9 +100,19 @@ export function SiteNav({ active }: SiteNavProps) {
                   : 'text-ink-soft hover:bg-surface-warm hover:text-ink',
               ].join(' ')}
             >
-              {label}
+              {key === 'review' ? reviewLabel(label) : label}
             </Link>
           ))}
+          {/* settings gear — the shell's control surface (#144; was a 404) */}
+          <Link
+            href="/settings"
+            hrefLang="fa"
+            aria-label={fa.nav.settings}
+            aria-current={false}
+            className="hidden h-11 w-11 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-surface-warm hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai md:flex"
+          >
+            <Settings aria-hidden className="size-5" />
+          </Link>
         </nav>
       </header>
 
@@ -82,12 +129,25 @@ export function SiteNav({ active }: SiteNavProps) {
                 href={href}
                 hrefLang="fa"
                 aria-current={active === key ? 'page' : undefined}
+                aria-label={
+                  key === 'review' && dueCount !== null && dueCount > 0 ? fa.nav.reviewAriaDue(dueCount) : undefined
+                }
                 className={[
                   'flex min-h-14 flex-col items-center justify-center gap-0.5 text-caption font-bold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ai',
                   active === key ? 'text-indigo' : 'text-ink-soft',
                 ].join(' ')}
               >
-                <Icon aria-hidden className="size-5" />
+                <span className="relative">
+                  <Icon aria-hidden className="size-5" />
+                  {key === 'review' && dueCount !== null && dueCount > 0 ? (
+                    <span
+                      className="absolute -end-2.5 -top-1.5 grid min-w-4 place-items-center rounded-full bg-shu px-1 text-[10px] font-black text-paper"
+                      data-review-badge
+                    >
+                      {new Intl.NumberFormat('fa-IR').format(dueCount)}
+                    </span>
+                  ) : null}
+                </span>
                 {label}
               </Link>
             </li>

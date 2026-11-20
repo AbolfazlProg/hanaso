@@ -16,23 +16,9 @@ import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import { getCachedAudio, reportPlaybackError } from '@/modules/audio/client-cache';
+import type { ResolvedReviewCard } from '@/modules/fsrs/item-registry';
 
-export interface ReviewCard {
-  itemId: string;
-  kind: string;
-  /** kn cards: the glyph is the FRONT (recall the sound). */
-  glyph?: string;
-  romaji?: string;
-  /** w/gr/chrk cards: the term (recall its meaning — or the term for s-cards). */
-  term?: string;
-  termFurigana?: string;
-  readingKana?: string;
-  meaningFa?: string;
-  audio?: { opus: string; m4a: string } | null;
-  note?: string;
-  /** The bundled content could not resolve this item — honest unknown card. */
-  unknown?: boolean;
-}
+export type ReviewCard = ResolvedReviewCard;
 
 type Phase = 'recall' | 'revealed' | 'done';
 
@@ -74,7 +60,7 @@ export function ReviewRunner({
 
   const rate = useCallback(
     async (rating: 'again' | 'hard' | 'good' | 'easy') => {
-      if (!card || submitting) return;
+      if (!card || submitting || card.unknown) return;
       setSubmitting(true);
       setError(null);
       try {
@@ -153,7 +139,15 @@ export function ReviewRunner({
 
       <article className="flex flex-col items-center gap-4 rounded-md border-2 border-indigo bg-card p-6 text-center">
         {card.unknown ? (
-          <p className="text-small leading-[var(--leading-fa)] text-ink-soft">{fa.review.unknownCard}</p>
+          /*
+           * UX-AUDIT #134: an unresolvable card is HONESTLY inert — the
+           * learner sees why, and the rating keys never appear (rating an
+           * invisible card pollutes the schedule). Skip is the only action.
+           */
+          <div className="flex flex-col items-center gap-3 py-4" data-unknown-card>
+            <p className="text-small leading-[var(--leading-fa)] text-ink-soft">{fa.review.unknownCard}</p>
+            <p className="text-caption text-ink-faint">{fa.review.unknownCardNote}</p>
+          </div>
         ) : card.glyph ? (
           <>
             <JaBlock className="text-h1 font-black text-hero-ja">{card.glyph}</JaBlock>
@@ -202,7 +196,7 @@ export function ReviewRunner({
           </p>
         ) : null}
 
-        {phase === 'recall' ? (
+        {phase === 'recall' && !card.unknown ? (
           <button
             type="button"
             onClick={() => setPhase('revealed')}
@@ -219,7 +213,7 @@ export function ReviewRunner({
           </p>
         ) : null}
 
-        {phase === 'revealed' ? (
+        {phase === 'revealed' && !card.unknown ? (
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
             {(
               [

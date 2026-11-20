@@ -10,6 +10,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getCachedAudio, preloadAudio, reportPlaybackError } from './client-cache';
+import { readAudioSpeedDefault } from '@/lib/learner/preferences';
 
 export type AudioSpeedMode = 'normal' | 'slow';
 
@@ -36,18 +37,23 @@ export interface UseAudioToggleResult {
  * @param keyPart changes reset the cycle (e.g. a new character/word).
  */
 export function useAudioToggle(urls: { opus: string; m4a: string } | null, keyPart?: string): UseAudioToggleResult {
-  /** speed of the most recent playback (the visible state) */
-  const [mode, setMode] = useState<AudioSpeedMode>('normal');
+  /*
+   * UX-AUDIT #144 — the speed DEFAULT (settings → سرعت پیش‌فرض صوت) seeds the
+   * cycle: a learner who chose «آهسته» starts slow on every new asset (the
+   * first click plays the preferred speed instead of always normal).
+   */
+  const [mode, setMode] = useState<AudioSpeedMode>(() => readAudioSpeedDefault());
   /** speed the NEXT click will use */
-  const nextRef = useRef<AudioSpeedMode>('normal');
+  const nextRef = useRef<AudioSpeedMode>(readAudioSpeedDefault());
 
   // reset the cycle when the target ASSET changes + warm the cache (§10).
   // Keyed by the URL STRING — a parent re-render passing an equal-value object
   // must never reset the learner's speed cycle mid-use.
   const urlKey = urls?.opus ?? null;
   useEffect(() => {
-    nextRef.current = 'normal';
-    setMode('normal');
+    const seed = readAudioSpeedDefault();
+    nextRef.current = seed;
+    setMode(seed);
     if (urlKey) void preloadAudio(urlKey);
   }, [urlKey, keyPart]);
 

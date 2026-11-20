@@ -500,8 +500,11 @@ export const FM01_STATIONS: Station[] = [
               kind: 'template-build',
               promptFa: 'معرفی کامل خودت را بچین (جای نام، چیپ نام را بگذار)',
               chips: [
+                // UX-AUDIT #143: the name slot uses the engine's ___NAME___
+                // convention — the runner renders a Persian-labelled input,
+                // never the literal 'NAME' tile the audit screenshotted.
                 { id: 'ic1', ja: 'はじめまして、' },
-                { id: 'ic2', ja: 'NAME' },
+                { id: 'ic2', ja: '___NAME___' },
                 { id: 'ic3', ja: 'です。' },
                 { id: 'ic4', ja: 'よろしく おねがいします。' },
               ],

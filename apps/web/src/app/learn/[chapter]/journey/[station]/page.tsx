@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Repeat2 } from 'lucide-react';
+import { ArrowRight, Lock, Repeat2 } from 'lucide-react';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
 import { sectionOfStation } from '@/modules/curriculum/journey';
 import { resolveLearnerId } from '@/lib/learner/server';
+import { getStationProgressStore } from '@/lib/poc/stores';
+import { previewUnlockAll, unlockAllMode } from '@/lib/preview';
 import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
 import { wordAudioUrls, kanaAudioUrls, hostWordAudioUrls } from '@/modules/audio/server';
@@ -69,6 +71,51 @@ export default async function StationPage({
   if (!station) notFound();
 
   /*
+   * UX-AUDIT #137 (root C — the gate at ENTRY, not at the completion POST):
+   * the station page refuses to SERVE a walk whose prerequisites are unmet —
+   * the learner sees which lesson to finish first, before investing a single
+   * step (the API entry gate enforces the same rule server-side for every
+   * walk action; this notice is the UI face of that gate). The temporary
+   * open mode keeps its bypass — one contract with the API.
+   */
+  const openMode = unlockAllMode() || (await previewUnlockAll());
+  if (!openMode && station.prerequisites.length > 0) {
+    const prereqStates = await getStationProgressStore().listForUnit(learnerId, station.prerequisites);
+    const unmet = station.prerequisites.filter((slug) => {
+      const st = prereqStates.find((s) => s.stationSlug === slug);
+      return !st || st.status === 'in_progress';
+    });
+    if (unmet.length > 0) {
+      const byTitle = new Map(chapter.stations.map((s) => [s.slug, s.titleFa]));
+      const ordered = unmet
+        .map((slug) => ({ slug, order: chapter.stations.find((s) => s.slug === slug)?.order ?? 0 }))
+        .sort((a, b) => a.order - b.order);
+      const first = ordered[0]!;
+      return (
+        <main className="mx-auto flex min-h-dvh max-w-2xl flex-col items-center justify-center gap-5 px-4 py-16 text-center">
+          <span
+            aria-hidden
+            className="grid size-16 place-items-center rounded-full border-2 border-dashed border-ink-faint text-ink-faint"
+          >
+            <Lock className="size-7" />
+          </span>
+          <h1 className="text-h2 font-black text-indigo">{fa.curriculum.stationLockedTitle}</h1>
+          <p className="max-w-md text-body leading-[var(--leading-fa)] text-ink">
+            این درس هنوز باز نشده — برای شروعش ابتدا «{byTitle.get(first.slug) ?? first.slug}» را کامل کن.
+          </p>
+          <Link
+            href={`/learn/${chapterSlug}/journey/${first.slug}`}
+            className="flex h-12 items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
+          >
+            {fa.curriculum.goPrerequisite}
+            <ArrowRight aria-hidden className="size-4" />
+          </Link>
+        </main>
+      );
+    }
+  }
+
+  /*
    * TASK-LEARNING-10 §6 — the next CORE station after this one on the real
    * learning-map order (authored `order`, core path only — the same semantics
    * the island map resolves). Passed to the runner for its completion CTA:
@@ -90,6 +137,22 @@ export default async function StationPage({
   const mapHref = sectionSlug ? `/learn/${chapterSlug}/journey?s=${sectionSlug}` : `/learn/${chapterSlug}/journey`;
   const replayMode = mode === 'review';
   const restartRequested = restart === '1';
+
+  /*
+   * UX-AUDIT #141 — the kana taught by the walk BEFORE this station (every
+   * earlier station's kana-card glyphs, chapter walk order). The runner
+   * computes the readability claims of the example cards from this context —
+   * the «خواندنی است» promise tracks the lesson, never a static string.
+   */
+  const taughtKanaBeforeStation: string[] = [];
+  for (const st of [...chapter.stations].filter((s) => s.order < station.order).sort((a, b) => a.order - b.order)) {
+    for (const b of st.blocks) {
+      if (b.kind === 'kana-card') {
+        const glyph = KANA_ITEMS_BY_ID[b.kanaId]?.glyph;
+        if (glyph && !taughtKanaBeforeStation.includes(glyph)) taughtKanaBeforeStation.push(glyph);
+      }
+    }
+  }
 
   /*
    * Part-2 ط (the ?block= deep link — the anchor-dialogue CTA's return path):
@@ -309,6 +372,7 @@ export default async function StationPage({
           restartRequested={restartRequested}
           mapHref={mapHref}
           returnToStationHref={blockIdToStationHref}
+          taughtKanaBeforeStation={taughtKanaBeforeStation}
         />
       </div>
     </main>

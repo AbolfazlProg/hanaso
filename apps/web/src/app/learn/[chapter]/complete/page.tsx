@@ -70,11 +70,16 @@ export default async function ChapterCompletePage({ params }: { params: Promise<
         </ul>
         {/* TASK-HANASO-17 — the card count is computed from the chapter's REAL
             FSRS inventory (listChapterCards), never a hardcoded number. */}
-        {/* Part-2 ج: the FSRS engine is live — the cards are REALLY in the
-            review queue; /review is the real runner (no more «فعال می‌شود»). */}
+        {/* UX-AUDIT #135 — the promise points AT the real runner: /review is
+            linked, not described. The nav's «مرور» tab + badge is the daily
+            entry; this link is the discoverability fallback. */}
         <p className="mt-4 text-caption text-ink-soft">
           کارت‌های مرور این فصل ({faNum(listChapterCards(chapter).length)} کارت) در صف مرور FSRS ثبت می‌شوند — مرور
-          روزانه‌شان از صفحهٔ «مرور» در خانه انجام می‌شود.
+          روزانه‌شان از{' '}
+          <Link href="/review" className="font-bold text-ai underline underline-offset-4">
+            صفحهٔ «مرور روزانه»
+          </Link>{' '}
+          انجام می‌شود.
         </p>
       </section>
 

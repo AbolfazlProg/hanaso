@@ -21,6 +21,7 @@ import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
 import { signSessionTokenSync } from '@/lib/learner/session-node';
 import { resetStoresForTests, getStationProgressStore } from '@/lib/poc/stores';
 import { firstExerciseOf } from '../helpers/grade-first';
+import { plantPrereqChain } from '../helpers/walk-chain';
 
 const BASE = 'http://localhost/api/curriculum/station';
 const CH = 'kana-foundation-01';
@@ -59,6 +60,7 @@ async function stateOf(res: Response): Promise<StateShape> {
 
 describe('POST /api/curriculum/station — walk position actions (WP-5)', () => {
   it('enter marks in_progress AND stores the resume anchor block', async () => {
+    await plantPrereqChain(L1, STN);
     const res = await postStation(
       post({
         action: 'enter',
@@ -75,6 +77,7 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
   });
 
   it('progress moves the anchor without touching status or score', async () => {
+    await plantPrereqChain(L1, STN);
     await postStation(
       post({
         action: 'enter',
@@ -128,6 +131,11 @@ describe('POST /api/curriculum/station — walk position actions (WP-5)', () => 
   });
 
   it('learner cookies isolate progress stores (#109 — no shared poc-user)', async () => {
+    // L1 walks h1 (in_progress must SURVIVE — never plant h1 itself);
+    // L2 walks h2 (its prereq h1 IS planted completed for L2 only)
+    await plantPrereqChain(L1, STN);
+    await plantPrereqChain(L2, STN);
+    await plantPrereqChain(L2, 'stn-kana-h2');
     await postStation(
       post(
         {

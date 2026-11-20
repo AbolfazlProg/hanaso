@@ -127,6 +127,11 @@ export function isDraftChapter(slug: string): boolean {
  * PREVIEW MODE (FINALIZATION): the Lesson-Engine drafts (content/lesson-engine/*.yaml)
  * as summaries for the owner's preview index — reads the YAML straight from the
  * content dir (server-only). Never used by normal-user surfaces.
+ *
+ * UX-AUDIT #142 (dead-link rule): a draft is LISTED only when it passes the
+ * EXACT same gates its journey page applies (compile + chapter validation +
+ * dialogue bundle load). A draft that fails validation is skipped — the index
+ * can never link to a 404 again (the «لینک مردهٔ n5-lesson-02» report).
  */
 export function listDraftChapterSummaries(): { slug: string; titleFa: string; levelCode: string }[] {
   const out: { slug: string; titleFa: string; levelCode: string }[] = [];
@@ -137,9 +142,13 @@ export function listDraftChapterSummaries(): { slug: string; titleFa: string; le
       const slug = f.replace(/\.yaml$/, '');
       try {
         const chapter = getDraftChapter(slug);
-        if (chapter) out.push({ slug: chapter.slug, titleFa: chapter.titleFa, levelCode: chapter.levelCode });
+        if (!chapter) continue;
+        // the journey page applies loadChapterBundle (compile + validation +
+        // dialogue) — list only drafts that would render, never a dead link
+        loadChapterBundle(chapter.slug);
+        out.push({ slug: chapter.slug, titleFa: chapter.titleFa, levelCode: chapter.levelCode });
       } catch {
-        // unreadable draft — skip, never break the home page
+        // unreadable / not-yet-publishable draft — skip, never break the home page
       }
     }
   } catch {
@@ -159,47 +168,55 @@ export async function chapterAccessStatus(
   chapter: Chapter,
   userId: string,
 ): Promise<{ locked: boolean; prerequisiteSlug: string | null; prerequisiteTitleFa: string | null }> {
-  // TEMPORARY SITE-WIDE UNLOCK (owner directive): env UNLOCK_ALL_MODE=1 opens
-  // every gate — published prereqs AND the draft gate — for every visitor,
-  // no preview cookie needed. View-level only; see lib/preview.ts.
-  if (unlockAllMode()) {
-    return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
-  }
-  // PREVIEW MODE: the owner browses with prereq gates bypassed (view-level only).
-  // Guarded: outside a request scope (direct-call unit tests) next/headers throws —
-  // no request = no preview cookie = normal locking semantics.
   let previewActive = false;
   try {
     previewActive = await hasPreviewAccess();
   } catch {
     previewActive = false;
   }
+  /*
+   * UX-AUDIT #142 (draft/published lifecycle — the gate ORDER changed): the
+   * DRAFT gate is evaluated FIRST and is closed for every non-preview request
+   * — including while the temporary site-wide unlock is on. UNLOCK_ALL opens
+   * the PUBLISHED path for review; a draft is owner-preview content, walkable
+   * ONLY with the preview cookie (whose pv- learner namespace also keeps the
+   * writes isolated from real progress). Previously unlockAllMode() returned
+   * early and opened the drafts to every visitor — the «انتشار ناتمام» report.
+   */
+  if (isDraftChapter(chapter.slug)) {
+    if (previewActive) {
+      return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
+    }
+    return {
+      locked: true,
+      prerequisiteSlug: null,
+      prerequisiteTitleFa: 'درس منتشرنشده — فقط با حالت پیش‌نمایش مالک قابل مشاهده است',
+    };
+  }
+  // TEMPORARY SITE-WIDE UNLOCK (owner directive): env UNLOCK_ALL_MODE=1 opens
+  // every gate — published prereqs — for every visitor, no preview cookie
+  // needed. View-level only; see lib/preview.ts. (Drafts never reach here —
+  // the draft gate above already answered.)
+  if (unlockAllMode()) {
+    return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
+  }
+  // PREVIEW MODE: the owner browses with prereq gates bypassed (view-level only).
+  // Guarded: outside a request scope (direct-call unit tests) next/headers throws —
+  // no request = no preview cookie = normal locking semantics.
   if (previewActive) {
     // OWNER LOCK CONTROL: 'open' (default) bypasses every gate at view level;
     // 'enforce' applies the REAL prereq gates so the owner can rehearse the
-    // actual learner path. Draft chapters stay owner-reviewable in BOTH modes —
-    // they are unpublished content and not part of the real learner path at all;
-    // the draft gate below for every non-owner request is untouched.
+    // actual learner path. (Draft chapters answered above — both modes.)
     let locksMode: 'open' | 'enforce' = 'open';
     try {
       locksMode = await previewLocksMode();
     } catch {
       locksMode = 'open';
     }
-    if (locksMode === 'open' || isDraftChapter(chapter.slug)) {
+    if (locksMode === 'open') {
       return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
     }
     // enforce + published chapter → fall through to the normal prereq gate below
-  }
-  // A Lesson-Engine draft is UNPUBLISHED content: without the preview cookie it
-  // is locked for EVERY user (direct-URL leak closed — loadChapterBundle resolves
-  // drafts, so the access layer must be the gate).
-  if (isDraftChapter(chapter.slug)) {
-    return {
-      locked: true,
-      prerequisiteSlug: null,
-      prerequisiteTitleFa: 'درس منتشرنشده — فقط با حالت پیش‌نمایش مالک قابل مشاهده است',
-    };
   }
   if (!chapter.prerequisiteChapterSlug) {
     return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };

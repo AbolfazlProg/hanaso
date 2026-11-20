@@ -8,9 +8,12 @@
  * data the engine judges against, so what you SEE is what you're graded on.
  */
 
-import { positionHintFa } from './engine';
+import { motionHintFa, positionHintFa } from './engine';
 import { dist, type Point } from './analysis';
 import type { WritingCharData } from './types';
+
+/** Persian digits for learner-facing counters (UX-AUDIT #133 — «ضربهٔ ۱ از ۳»). */
+const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
 /**
  * Render width of a brush stroke in the 1024² space (calligraphy feel).
@@ -303,23 +306,37 @@ export function movementHintFa(median: Point[]): string {
 
 /** Persian info block for one reference stroke (the demo/practice side panel). */
 export interface StrokeInfoFa {
-  /** «ضربهٔ ۲ از ۳» */
+  /** «ضربهٔ ۲ از ۳» (fa-IR digits) */
   label: string;
   /** «از بالا-چپ شروع کن» */
   startFa: string;
-  /** «به سمت پایین-راست بکش» */
+  /** «به سمت راست بکش» — the DIRECTION OF TRAVEL */
   directionFa: string;
   /** movement description */
   movementFa: string;
 }
 
+/**
+ * UX-AUDIT #133 (root A — ONE source of truth for stroke text):
+ * every string here is GENERATED from the same geometry the writing engine
+ * judges against:
+ *  - start   → the position hint of the stroke's first point (positionHintFa);
+ *  - direction → the DIRECTION OF TRAVEL (motionHintFa — the exact function
+ *    the validator's reversed-direction feedback uses), never the END point's
+ *    position. The old text described where the stroke ENDS («به سمت بالا» for
+ *    a horizontal stroke) while the animation and the validator followed the
+ *    travel direction — three messages from one stroke. Now text = animation
+ *    = validator by construction, for every glyph, with no per-stroke authored
+ *    copy to drift;
+ *  - label   → fa-IR digits (the interface's numeral standard).
+ */
 export function strokeInfoFa(data: WritingCharData, index: number): StrokeInfoFa {
   const median = data.medians[index]!.map((p) => ({ x: p[0] ?? 0, y: p[1] ?? 0 }));
   const total = data.medians.length;
   return {
-    label: `ضربهٔ ${index + 1} از ${total}`,
+    label: `ضربهٔ ${faNum(index + 1)} از ${faNum(total)}`,
     startFa: `از ${positionHintFa(median[0]!)} شروع کن`,
-    directionFa: `به سمت ${positionHintFa(median[median.length - 1]!)} بکش`,
+    directionFa: `به سمت ${motionHintFa(median)} بکش`,
     movementFa: movementHintFa(median),
   };
 }

@@ -34,6 +34,7 @@ import { EXPERIENCE } from '@/config/experience';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { mergeEliminated } from '@/modules/curriculum/station-walk';
+import { readLearnerName, writeLearnerName } from '@/lib/learner/preferences';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import { getCachedAudio, preloadAudio, reportPlaybackError } from '@/modules/audio/client-cache';
@@ -177,6 +178,16 @@ export function ExerciseSession({
   const [ordered, setOrdered] = useState<string[]>([]);
   const [built, setBuilt] = useState<string[]>([]);
   const [nameValue, setNameValue] = useState('');
+  /*
+   * UX-AUDIT #143 — the name loop CLOSES: the chip's input prefills from the
+   * device profile (settings → name), and a typed name persists back to it on
+   * check. The Persian-labelled inline input replaces the literal 'NAME' chip
+   * the audit found (the data now uses the engine's ___NAME___ convention).
+   */
+  useEffect(() => {
+    const saved = readLearnerName();
+    if (saved) setNameValue(saved);
+  }, []);
   const [feedback, setFeedback] = useState<GradeResponse['outcome'] | null>(null);
   const [busy, setBusy] = useState(false);
   /**
@@ -636,6 +647,8 @@ export function ExerciseSession({
     } else if (ex.chips) {
       if (built.length !== ex.chips.length) return;
       await grade({ kind: 'build', chipOrder: built, nameValue });
+      // #143: a typed name joins the device profile for the next exercises
+      if (nameValue.trim()) writeLearnerName(nameValue);
     }
   }, [built, ex, grade, nameValue, ordered, selected]);
 

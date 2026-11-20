@@ -60,6 +60,7 @@ import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
 import { ExampleAudioButton } from './example-audio-button';
 import { KANA_ITEMS_BY_ID, KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
+import { readabilityLabel } from '@/modules/curriculum/content/readability';
 import { loadWritingCharData, writingAvailability } from '@/modules/writing';
 import { getCachedAudio, preloadAudio } from '@/modules/audio/client-cache';
 
@@ -125,6 +126,13 @@ export interface StationRunnerProps {
    * (the original #106 behavior for teach stations).
    */
   returnToStationHref?: Record<string, string>;
+  /**
+   * UX-AUDIT #141 — the kana glyphs taught by the walk BEFORE this station
+   * (previous stations in chapter order, server-computed). Together with the
+   * station's own kana-card blocks it drives the COMPUTED readability claims
+   * of the example cards and the kana-card examples.
+   */
+  taughtKanaBeforeStation?: string[];
   clientExercises: Record<string, ClientExercise>;
   dialogue: {
     lines: Line[];
@@ -395,6 +403,7 @@ export function StationRunner(props: StationRunnerProps) {
     restartRequested = false,
     mapHref,
     returnToStationHref,
+    taughtKanaBeforeStation,
     clientExercises,
     dialogue,
     audioByLine,
@@ -439,6 +448,11 @@ export function StationRunner(props: StationRunnerProps) {
    * idempotency rule: «تازه‌سازی/مرور/تکرار = بدون انیمیشن دوباره».
    */
   const [freshCompletion, setFreshCompletion] = useState(false);
+  /**
+   * UX-AUDIT #135 (root D): the REAL FSRS enrollment result of THIS completion
+   * (from the complete response) — drives the honest wrap-up line.
+   */
+  const [enrolledCount, setEnrolledCount] = useState<number | null>(null);
 
   /*
    * TASK-HANASO-22 — the lesson's HONEST achievements (max 3, derived from the
@@ -533,6 +547,41 @@ export function StationRunner(props: StationRunnerProps) {
   }, [station.blocks]);
 
   const blocks = station.blocks;
+
+  /*
+   * UX-AUDIT #141 — the taught-kana context of the walk: the glyphs taught by
+   * previous stations (server data) + this station's kana-card blocks. The
+   * readability claim of every example card is computed against the kana the
+   * learner has ACTUALLY met by the current block — the claim can never run
+   * ahead of the lesson again.
+   */
+  const stationKanaGlyphs = useMemo(
+    () =>
+      station.blocks
+        .filter((b) => b.kind === 'kana-card')
+        .map((b) => (b.kind === 'kana-card' ? KANA_ITEMS_BY_ID[(b as { kanaId: string }).kanaId]?.glyph : undefined))
+        .filter((g): g is string => Boolean(g)),
+    [station.blocks],
+  );
+  const taughtKanaByStationEnd = useMemo(
+    () => [...new Set([...(taughtKanaBeforeStation ?? []), ...stationKanaGlyphs])],
+    [taughtKanaBeforeStation, stationKanaGlyphs],
+  );
+  const taughtKanaUpTo = useCallback(
+    (blockIndex: number) => {
+      const out = new Set(taughtKanaBeforeStation ?? []);
+      for (let i = 0; i < blockIndex && i < blocks.length; i += 1) {
+        const b = blocks[i];
+        if (b && b.kind === 'kana-card') {
+          const g = KANA_ITEMS_BY_ID[(b as { kanaId: string }).kanaId]?.glyph;
+          if (g) out.add(g);
+        }
+      }
+      return [...out];
+    },
+    [blocks, taughtKanaBeforeStation],
+  );
+
   const block = blocks[step];
   const lineById = useMemo(() => new Map(dialogue.lines.map((l) => [l.id, l])), [dialogue.lines]);
 
@@ -855,13 +904,25 @@ export function StationRunner(props: StationRunnerProps) {
            * completion: an `already: true` (idempotent re-complete) settles the
            * seal without re-stamping — the completion is a persisted fact. */
           let already = false;
+          let enrolledCount = 0;
           try {
-            const body = (await res.clone().json()) as { data?: { already?: boolean } };
+            const body = (await res.clone().json()) as {
+              data?: { already?: boolean; enrolledCount?: number };
+            };
             already = body?.data?.already === true;
+            enrolledCount = body?.data?.enrolledCount ?? 0;
           } catch {
             /* unparseable success body → treat as fresh (the 200 is the fact) */
           }
           setFreshCompletion(!already);
+          /*
+           * UX-AUDIT #135/#137 (root D — the wrap-up claim follows the REAL
+           * operation): the completion panel states the enrollment fact FROM
+           * the response — the count the server actually enrolled. A station
+           * with no cards claims nothing (the old static «کارت‌ها ثبت شدند»
+           * fired even for the welcome station with an empty inventory).
+           */
+          setEnrolledCount(enrolledCount);
         } else {
           // TL-13 (A-3): honest failure (409 criterion/prereq, 5xx, offline) — the
           // learner sees WHY nothing happened and can recover in place.
@@ -1186,6 +1247,7 @@ export function StationRunner(props: StationRunnerProps) {
             });
           }}
           onReturnToBlock={returnToBlock}
+          taughtKana={{ before: taughtKanaUpTo(step), byStationEnd: taughtKanaByStationEnd }}
           onDrillPick={(targetBlockId) => {
             const target = stepOfBlock(blocks, targetBlockId);
             if (target !== null) setStep(target);
@@ -1345,6 +1407,19 @@ export function StationRunner(props: StationRunnerProps) {
               </li>
             ))}
           </ul>
+          {enrolledCount !== null && enrolledCount > 0 ? (
+            /*
+             * UX-AUDIT #135 — the data-driven review handoff: only when the
+             * operation ACTUALLY enrolled cards, with the real count and a
+             * real link to the runner (never a promise pointing at nothing).
+             */
+            <p className="flex flex-wrap items-center justify-center gap-2 text-small text-ink-soft" data-enrolled-note>
+              <span>{fa.curriculum.reviewEnrolledLine(enrolledCount)}</span>
+              <Link href="/review" className="text-ai font-bold underline underline-offset-4">
+                {fa.curriculum.reviewOpenCta}
+              </Link>
+            </p>
+          ) : null}
           <button
             type="button"
             onClick={goCompletionDestination}
@@ -1698,6 +1773,7 @@ function BlockView({
   onKanaProgress,
   onKanaWritingDone,
   relatedExamplesByKanaId,
+  taughtKana,
 }: {
   block: ClientTeachingBlock;
   stationSlug: string;
@@ -1747,20 +1823,58 @@ function BlockView({
   onKanaWritingDone?: () => void;
   /** TASK-HANASO-CTA-01 §۴: kanaId → its related usage examples (station-wide). */
   relatedExamplesByKanaId?: Record<string, KanaRelatedExample[]>;
+  /**
+   * UX-AUDIT #141 — the kana taught up to THIS block's position + by this
+   * station's end; drives the computed readability labels of the example
+   * cards (example-set) and the kana-card example lists.
+   */
+  taughtKana?: { before: string[]; byStationEnd: string[] };
 }) {
   switch (block.kind) {
-    case 'scene':
+    case 'scene': {
+      /*
+       * UX-AUDIT #142 (root B — no internal ids reach the learner): a scene
+       * block's `conversationRef` resolves here through the walk's OWN
+       * dialogue — the linked line renders as content (speaker + text +
+       * translation). An unresolvable ref renders NOTHING (never the raw id
+       * «اتصال به مکالمه: s-…» the draft anchor leaked).
+       */
+      const refBlock = block as { conversationRef?: string };
+      const linkedLine = refBlock.conversationRef ? lineById.get(refBlock.conversationRef) : undefined;
+      const linkedSpeaker = linkedLine ? (speakers[linkedLine.speaker] ?? linkedLine.speaker) : null;
+      const linkedAudio = linkedLine ? (audioByLine[linkedLine.id] ?? '') : '';
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <h2 className="flex items-center gap-2 text-h3 font-bold text-indigo">
             <Sparkles aria-hidden className="size-5" />
             <MixedFaJaText text={block.titleFa} />
           </h2>
-          <p className="ja-instruct mt-3 text-body leading-[var(--leading-fa)] text-ink">
-            <MixedFaJaText text={block.bodyFa} />
-          </p>
+          {block.bodyFa ? (
+            <p className="ja-instruct mt-3 text-body leading-[var(--leading-fa)] text-ink">
+              <MixedFaJaText text={block.bodyFa} />
+            </p>
+          ) : null}
+          {linkedLine ? (
+            <div className="mt-4 rounded-md bg-surface-warm p-4" data-conversation-link>
+              <p className="text-caption text-ink-soft">{fa.curriculum.conversationLink}:</p>
+              <p className="mt-1 text-caption font-bold text-ink">{linkedSpeaker}</p>
+              <JaBlock className="mt-2 text-lead font-bold">{linkedLine.tokens.map((t) => t.surface).join('')}</JaBlock>
+              <p className="mt-2 text-small leading-[var(--leading-fa)] text-ink-soft" dir="auto">
+                {linkedLine.fa}
+              </p>
+              {linkedAudio ? (
+                <LineAudioButton
+                  lineId={linkedLine.id}
+                  audioUrl={linkedAudio}
+                  audioUrlFallback={audioFallbackByLine?.[linkedLine.id]}
+                  audioAvailable={audioAvailable}
+                />
+              ) : null}
+            </div>
+          ) : null}
         </section>
       );
+    }
 
     case 'vocab-card': {
       const word = chapter.words.find((w) => w.id === block.wordId)!;
@@ -1863,6 +1977,7 @@ function BlockView({
           wordAudioUrls={hostWordAudioByKanaId?.[kana.kanaId] ?? null}
           relatedExamples={relatedExamplesByKanaId?.[kana.kanaId]}
           exampleAudioByWord={exampleAudioByWord}
+          taughtKana={taughtKana}
           initialProgress={kanaCardStage ? ({ stage: kanaCardStage } as KanaCardProgress) : undefined}
           onProgress={onKanaProgress}
           onWritingDone={onKanaWritingDone}
@@ -2055,9 +2170,20 @@ function BlockView({
                   {example.reading}
                 </p>
                 <p className="mt-2 text-body leading-[var(--leading-fa)] text-ink-soft">{example.fa}</p>
-                <p className="ja-instruct mt-1 text-small text-ink-soft">
-                  <MixedFaJaText text={example.whyFa} />
-                </p>
+                {/*
+                 * UX-AUDIT #141 — the readability claim is COMPUTED from the
+                 * kana taught up to this block (see readability.ts). An
+                 * authored whyFa note (rare, non-claim) wins when present.
+                 */}
+                {(() => {
+                  const label = readabilityLabel(example.ja, taughtKana?.before ?? [], taughtKana?.byStationEnd ?? []);
+                  const note = example.whyFa?.trim() ? example.whyFa : label.textFa;
+                  return note ? (
+                    <p className="ja-instruct mt-1 text-small text-ink-soft" data-readability={label.kind}>
+                      <MixedFaJaText text={note} />
+                    </p>
+                  ) : null;
+                })()}
                 {/* Addendum-5 §6 — a SHORT pronunciation guide, authored ONLY for
                   words with a real pronunciation point (mouth / lips / tongue /
                   airflow / how it differs from the nearest Persian sound) —

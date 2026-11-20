@@ -24,6 +24,7 @@ import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
 import { resetStoresForTests, getStationProgressStore } from '@/lib/poc/stores';
 import { LEARNER_COOKIE_NAME } from '@/lib/learner/server';
 import { signSessionTokenSync } from '@/lib/learner/session-node';
+import { plantPrereqChain } from '../helpers/walk-chain';
 import { gradeExerciseAnswer, toClientExercise } from '@/modules/curriculum/grading';
 import { ExerciseSession } from '@/components/curriculum/exercise-session';
 import type { Exercise, Station } from '@/modules/curriculum/types';
@@ -136,6 +137,8 @@ describe('PART1 FIX-5 — the decode answer reading never leaks, teaches at reve
   it('SERVER: a revealed kana-decode outcome carries correctReading with the authored reading', async () => {
     resetStoresForTests();
     // p2 carries the くに decode; complete its prerequisites honestly first.
+    // UX-AUDIT #137: the entry gate holds — plant the chain the walk earned.
+    await plantPrereqChain(QA_UUID, 'stn-kana-p2');
     const p2 = stationBySlug('stn-kana-p2');
     const store = getStationProgressStore();
     const dec = chapter.exercises['ex-kana-p2-dec-kuni'] as Exercise;
@@ -346,6 +349,8 @@ describe('PART1 FIX-1 — the station API never raw-500s and never registers sil
 
   it('a store failure becomes a STRUCTURED 503 with retryable:true (never a raw 500)', async () => {
     const store = getStationProgressStore();
+    // UX-AUDIT #137: the entry gate passes — the failure under test is the store write
+    await plantPrereqChain(QA_UUID, 'stn-kana-h1');
     const spy = vi.spyOn(store, 'incrementAttempts').mockRejectedValueOnce(new Error('db pool exhausted'));
     const res = await stationPost(
       post({

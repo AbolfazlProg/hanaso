@@ -41,11 +41,7 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-h0-wrapup',
         titleFa: 'خوش‌آمد و سه خط ژاپنی — جمع‌بندی',
-        itemsFa: [
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
-        ],
+        itemsFa: [],
       },
     ],
     fsrsItems: [],
@@ -145,7 +141,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'え',
             reading: 'اِ',
             fa: 'نقاشی',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h1-1',
@@ -154,7 +149,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'اوِه',
             pronFa: '«اُو»ی ژاپنی با لب‌های گردِ شل — مثل «اُو»ی بی‌فشار، نه «او»ی کشیدهٔ فارسی (u).',
             fa: 'بالا / رو',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h1-2',
@@ -163,7 +157,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'آو',
             pronFa: 'دو واکهٔ جدا پشت هم — «آ» و بعد «اُو»، هر دو کامل و پیوسته؛ وسطش نشکن (a-u).',
             fa: 'ملاقات کردن',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h1-3',
@@ -172,7 +165,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'ایه',
             pronFa: '«اِ»ی آخر دهان کمی بازتر از «ای» فارسی است — نزدیک «ایِـ» کوتاه و باز (e).',
             fa: 'خانه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h1-4',
@@ -181,7 +173,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'آؤی',
             pronFa: 'سه واکهٔ پشت هم (a-o-i) — هر کدام یک ضرب، به هم نچسبند.',
             fa: 'آبی',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -192,9 +183,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: あ(آ)، い(ای)، う(او)، え(اِ)، お(اُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 5 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -288,7 +276,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'いく',
             reading: 'ایکو',
             fa: 'رفتن',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h2-1',
@@ -296,7 +283,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ここ',
             reading: 'کوکو',
             fa: 'اینجا',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h2-2',
@@ -304,7 +290,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'かう',
             reading: 'کاو',
             fa: 'خریدن',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h2-3',
@@ -312,7 +297,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'かく',
             reading: 'کاکو',
             fa: 'نوشتن',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h2-4',
@@ -320,7 +304,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'おく',
             reading: 'اُکو',
             fa: 'داخل / عقب',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -331,9 +314,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: か(کا)، き(کی)، く(کو)، け(که)، こ(کُ)',
           '8 واژهٔ واقعی تازه خواندنی شد — مجموع 13 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -429,7 +409,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'かさ',
             reading: 'کاسا',
             fa: 'چتر',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h3-1',
@@ -437,7 +416,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'いす',
             reading: 'ایسو',
             fa: 'صندلی',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h3-2',
@@ -445,7 +423,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'そこ',
             reading: 'سُکو',
             fa: 'آنجا',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h3-3',
@@ -453,7 +430,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'あさ',
             reading: 'اَسا',
             fa: 'صبح',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h3-4',
@@ -462,7 +438,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'سوشی',
             pronFa: '«اُو»ی «سو» خیلی کوتاه و بی‌رنگ است، لب‌ها به‌سختی گرد می‌شوند: نزدیک «سـِش» (su).',
             fa: 'سوشی',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -473,9 +448,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: さ(سا)، し(شی)، す(سو)، せ(سه)، そ(سُ)',
           '6 واژهٔ واقعی تازه خواندنی شد — مجموع 19 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -935,7 +907,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'さん',
             reading: 'سان',
             fa: 'پسوند محترمانه پس از نام',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h7-1',
@@ -944,7 +915,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'سِنسِی',
             pronFa: '«اِی» آخر کشیده است و خمِ «ی» ندارد — «سِنسِیی» با «اِی» بلند (ē).',
             fa: 'معلم / استاد',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h7-2',
@@ -952,7 +922,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'かんこく',
             reading: 'کانکوکو',
             fa: 'کره',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -963,9 +932,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '1 کانای جدید: ん(ن) — یک مورای کامل، نه «ن»ی سبک.',
           'شمارش ضربه را تمرین کردی: さん (۲)، せんせい (۴).',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1060,7 +1026,6 @@ export const KANA_STATIONS: Station[] = [
              * option/reveal) so the transcript-consistency gate stays green. */
             reading: 'کوونی',
             fa: 'کشور',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h8-1',
@@ -1068,7 +1033,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'この',
             reading: 'کُنو',
             fa: 'این (قبل از اسم)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h8-2',
@@ -1076,7 +1040,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'その',
             reading: 'سُنو',
             fa: 'آن (قبل از اسم)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h8-3',
@@ -1084,7 +1047,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'あの',
             reading: 'آنو',
             fa: 'آن (اشاره از راه دور)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h8-4',
@@ -1092,7 +1054,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'おなじ',
             reading: 'اُناجی',
             fa: 'یکسان',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -1108,9 +1069,6 @@ export const KANA_STATIONS: Station[] = [
            * Validated against the evaluation's own ground truth: k11 = 5,
            * k10 = 1. */
           '8 واژهٔ واقعی تازه خواندنی شد — مجموع 32 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1212,7 +1170,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'あなた',
             reading: 'اناتا',
             fa: 'شما / تو',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h9-1',
@@ -1221,7 +1178,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'دایگاکو',
             pronFa: '«آی»ی آخر کوتاه و یک‌ضرب است — «دایـ» را کشنده نکن (dai).',
             fa: 'دانشگاه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h9-2',
@@ -1229,7 +1185,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'あつい',
             reading: 'آتسویی',
             fa: 'گرم / داغ',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h9-3',
@@ -1237,7 +1192,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'あした',
             reading: 'آشیتا',
             fa: 'فردا',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -1248,9 +1202,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: た(تا)، ち(چی)، つ(تسو)، て(ته)، と(تُ)',
           '7 واژهٔ واقعی تازه خواندنی شد — مجموع 39 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1360,7 +1311,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'なまえ',
             reading: 'نامائه',
             fa: 'نام',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h10-1',
@@ -1369,7 +1319,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'تُمُداتی',
             pronFa: '«د» با صدا است و «چی» نرم — «توموداچی»؛ «چ» را فشار نده (tomodachi).',
             fa: 'دوست',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h10-2',
@@ -1378,7 +1327,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'میزو',
             pronFa: '«زُو» با ویزّ گلو — «می‌زو» (zu).',
             fa: 'آب',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h10-3',
@@ -1387,7 +1335,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'تسوما',
             pronFa: '«تسو» — «تس» یک ضرب و «اُو»ی آخر بی‌رنگ (tsu).',
             fa: 'همسر (زن از نظر مرد)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -1398,9 +1345,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: ま(ما)، み(می)، む(مو)، め(مه)، も(مُ)',
           '6 واژهٔ واقعی تازه خواندنی شد — مجموع 45 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1523,7 +1467,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'から',
             reading: 'کارا',
             fa: 'از (خاستگاه)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h11-1',
@@ -1531,7 +1474,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'くる',
             reading: 'کورو',
             fa: 'آمدن',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h11-2',
@@ -1540,7 +1482,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'کوروما',
             pronFa: '«رُو» تک‌ضرب و سبک — نوک زبان یک بار پشت دندان‌ها می‌زند (ru).',
             fa: 'ماشین',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h11-3',
@@ -1548,7 +1489,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'これ',
             reading: 'کُره',
             fa: 'این (چیز)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h11-4',
@@ -1556,7 +1496,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'それ',
             reading: 'سُره',
             fa: 'آن (چیز)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -1567,9 +1506,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: ら(را)، り(ری)، る(رو)، れ(ره)، ろ(رُ)',
           '7 واژهٔ واقعی تازه خواندنی شد — مجموع 52 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1717,7 +1653,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'نیهُن',
             pronFa: '«هِـ» نرم و جلویی است و «ن»ِ آخر نرم و بینی — «نیهُون» (nihon).',
             fa: 'ژاپن',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h12-1',
@@ -1726,7 +1661,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'هُن',
             pronFa: '«ن»ِ آخر نرم و بینی است — دهان کمی باز می‌ماند؛ «ن»ی کامل و چسبیده نیست (n).',
             fa: 'کتاب',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h12-2',
@@ -1735,7 +1669,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'شیمبون',
             pronFa: '«ن» پیش از «ب» لب‌ها را می‌بندد: «شیمبون» — نزدیک‌ترین صدای فارسی «م» است.',
             fa: 'روزنامه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h12-3',
@@ -1743,7 +1676,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'かばん',
             reading: 'کابان',
             fa: 'کیف',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h12-4',
@@ -1752,7 +1684,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'هیتو',
             pronFa: '«هیـ» با زبان نزدیک سقف دهان و کمی «یی» در آن — از «هِـ»ی فارسی نرم‌تر و جلوتر (hi).',
             fa: 'انسان / آدم',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -1763,9 +1694,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: は(ها)، ひ(هی)، ふ(فو)، へ(هه)، ほ(هُ)',
           '8 واژهٔ واقعی تازه خواندنی شد — مجموع 60 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -1835,7 +1763,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'هِیا',
             pronFa: '«هِیا» — «یـ»ی کوچک با «هِ» یکی می‌شود و یک هجا می‌سازد (hya).',
             fa: 'اتاق',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h14-1',
@@ -1843,7 +1770,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'よる',
             reading: 'یُرو',
             fa: 'شب',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h14-2',
@@ -1852,7 +1778,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'یامادا',
             pronFa: 'سه ضربه: یا — ما — دا (だ داکوتنِ た است).',
             fa: 'یامادا (نام خانوادگی)',
-            whyFa: 'や همین‌جا آموختی، ま از ردیف ま و だ داکوتنِ た — کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h14-3',
@@ -1861,7 +1786,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'یاسومی',
             pronFa: 'سه ضربهٔ روشن: یا — سُ — می.',
             fa: 'استراحت / تعطیلات',
-            whyFa: 'や همین‌جا آموختی، す از ردیف さ و み از ردیف ま — کاملاً خواندنی است.',
           },
         ],
       },
@@ -1869,13 +1793,7 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-h14-wrapup',
         titleFa: 'ردیف や — جمع‌بندی',
-        itemsFa: [
-          '3 کانای جدید: や(یا)، ゆ(یو)، よ(یُ)',
-          '5 واژهٔ واقعی تازه خواندنی شد — مجموع 65 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
-        ],
+        itemsFa: ['3 کانای جدید: や(یا)، ゆ(یو)، よ(یُ)', '5 واژهٔ واقعی تازه خواندنی شد — مجموع 65 واژه از جزوهٔ N5.'],
       },
     ],
     fsrsItems: ['kn-rec-hira-ya', 'kn-rec-hira-yu', 'kn-rec-hira-yo'],
@@ -2376,7 +2294,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'わたし',
             reading: 'واتاشی',
             fa: 'من',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h15-1',
@@ -2385,7 +2302,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'دِنوا',
             pronFa: '«ن» پیش از «وا» آهنگی میان «ن» و «نگ» است — نوک زبان به دندان نمی‌خورد (n).',
             fa: 'تلفن',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h15-2',
@@ -2394,7 +2310,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'اِمپیتسو',
             pronFa: '«ن» نرم، بعد «پیتسو» — «تس» یک ضرب است، نه «تِسِ» جدا (pitsu).',
             fa: 'مداد',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-h15-3',
@@ -2403,7 +2318,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'سامپو',
             pronFa: '«ن» پیش از «پ» مثل «م» تلفظ می‌شود — لب‌ها بسته می‌شوند: «سامپو» (n→m).',
             fa: 'پیاده‌روی',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -2581,12 +2495,7 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-k1-wrapup',
         titleFa: 'ردیف ア + طرحوارهٔ قرینه‌گری — جمع‌بندی',
-        itemsFa: [
-          '5 کانای جدید: ア(آ)، イ(ای)، ウ(او)، エ(اِ)، オ(اُ)',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
-        ],
+        itemsFa: ['5 کانای جدید: ア(آ)، イ(ای)، ウ(او)، エ(اِ)، オ(اُ)'],
       },
     ],
     fsrsItems: ['kn-rec-kata-a', 'kn-rec-kata-i', 'kn-rec-kata-u', 'kn-rec-kata-e', 'kn-rec-kata-o'],
@@ -2693,7 +2602,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ドイツ',
             reading: 'دویتسو',
             fa: 'آلمان',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k2-1',
@@ -2702,7 +2610,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'دُآ',
             pronFa: '«دُوا» — «د» با صدا و «آ»ی بلند (doa).',
             fa: 'در',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k2-2',
@@ -2710,7 +2617,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'タイ',
             reading: 'تای',
             fa: 'تایلند',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -2721,9 +2627,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: タ(تا)، チ(چی)، ツ(تسو)، テ(ته)، ト(تُ)',
           '4 واژهٔ واقعی تازه خواندنی شد — مجموع 81 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -2804,7 +2707,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'トイレ',
             reading: 'تُایره',
             fa: 'دستشویی',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k3-1',
@@ -2812,7 +2714,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'イタリア',
             reading: 'ایتالیا',
             fa: 'ایتالیا',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k3-2',
@@ -2820,7 +2721,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ドル',
             reading: 'دُرو',
             fa: 'دلار',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -2832,9 +2732,6 @@ export const KANA_STATIONS: Station[] = [
           // Part-2 الف (translit-standard.ts): ル=«رو» but ロ=«رُ» — the old line rendered both as «رو».
           '5 کانای جدید: ラ(را)، リ(ری)، ル(رو)، レ(ره)، ロ(رُ)',
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 84 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -2938,7 +2835,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ラジオ',
             reading: 'راجیو',
             fa: 'رادیو',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k4-1',
@@ -2946,7 +2842,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'サイズ',
             reading: 'سایزو',
             fa: 'اندازه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k4-2',
@@ -2954,7 +2849,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'アジア',
             reading: 'آجیا',
             fa: 'آسیا',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k4-3',
@@ -2963,7 +2857,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'تِسوتو',
             pronFa: '«اُو»ی وسط میان صداها بی‌صدا می‌شود: نزدیک «تِستو» (tesuto).',
             fa: 'آزمون',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -2974,9 +2867,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: サ(سا)، シ(شی)، ス(سو)، セ(سه)، ソ(سُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 89 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3083,7 +2973,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'باسو',
             pronFa: '«اُو»ی آخر بی‌صدا می‌شود: نزدیک «باس» — لب‌ها را گرد نکن (basu).',
             fa: 'اتوبوس',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k5-1',
@@ -3091,7 +2980,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'アルバイト',
             reading: 'آروبایتو',
             fa: 'کار پاره‌وقت',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k5-2',
@@ -3099,7 +2987,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ホテル',
             reading: 'هُترُو',
             fa: 'هتل',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k5-3',
@@ -3107,7 +2994,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ビル',
             reading: 'بیرُو',
             fa: 'برج / ساختمان',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k5-4',
@@ -3115,7 +3001,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ピザ',
             reading: 'پیزا',
             fa: 'پیتزا',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -3126,9 +3011,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: ハ(ها)، ヒ(هی)، フ(فو)، ヘ(هه)، ホ(هُ)',
           '8 واژهٔ واقعی تازه خواندنی شد — مجموع 97 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3204,7 +3086,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'インド',
             reading: 'ایندو',
             fa: 'هند',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k6-1',
@@ -3212,7 +3093,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'プレゼント',
             reading: 'پورِزِنتو',
             fa: 'هدیه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k6-2',
@@ -3220,7 +3100,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'フランス',
             reading: 'فورانسو',
             fa: 'فرانسه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k6-3',
@@ -3228,7 +3107,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ジャパン',
             reading: 'جَپان',
             fa: 'ژاپن (واژهٔ خارجی)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -3236,13 +3114,7 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-k6-wrapup',
         titleFa: 'ン — جمع‌بندی',
-        itemsFa: [
-          '1 کانای جدید: ン(ن)',
-          '3 واژهٔ واقعی تازه خواندنی شد — مجموع 100 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
-        ],
+        itemsFa: ['1 کانای جدید: ン(ن)', '3 واژهٔ واقعی تازه خواندنی شد — مجموع 100 واژه از جزوهٔ N5.'],
       },
     ],
     fsrsItems: ['kn-rec-kata-n', 'kn-disc-kata-so-n'],
@@ -3331,7 +3203,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'パソコン',
             reading: 'پاسوکون',
             fa: 'رایانهٔ شخصی',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k7-1',
@@ -3339,7 +3210,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'エアコン',
             reading: 'ئه‌کون',
             fa: 'کولر',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k7-2',
@@ -3348,7 +3218,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'کارائوکه',
             pronFa: 'همهٔ واکه‌ها یکی‌اند: «کارائوکه» — «که»ی آخر مثل «کِه»، نه «کی» (karaoke).',
             fa: 'کارائوکه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k7-3',
@@ -3356,7 +3225,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'タバコ',
             reading: 'تاباکو',
             fa: 'سیگار',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -3367,9 +3235,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: カ(کا)، キ(کی)، ク(کو)، ケ(که)، コ(کُ)',
           '4 واژهٔ واقعی تازه خواندنی شد — مجموع 104 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3628,7 +3493,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'آمریکا',
             pronFa: 'واکه‌ها هم‌طول و بدون هجای تأکیدی — نه aMErika و نه ameRIka؛ تخت و یکنواخت.',
             fa: 'آمریکا',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k9-1',
@@ -3636,7 +3500,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'サラリーマン',
             reading: 'سَلَریمان',
             fa: 'کارمند حقوق‌بگیر',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k9-2',
@@ -3645,7 +3508,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'راامن',
             pronFa: '«ر»ی ژاپنی یک ضربِ نوک زبان است — نه «ر»ی غلتان فارسی و نه «ل» (r).',
             fa: 'رامن (نودل)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k9-3',
@@ -3653,7 +3515,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'メーカー',
             reading: 'مِیکاا',
             fa: 'تولیدکننده',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -3664,9 +3525,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: マ(ما)، ミ(می)، ム(مو)، メ(مه)، モ(مُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 111 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3735,7 +3593,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'ヨーロッパ',
             reading: 'یُورُپّا',
             fa: 'اروپا',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -3746,9 +3603,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '3 کانای جدید: ヤ(یا)، ユ(یو)، ヨ(یُ)',
           '1 واژهٔ واقعی تازه خواندنی شد — مجموع 112 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3852,7 +3706,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'エンジニア',
             reading: 'اِنجینیا',
             fa: 'مهندس',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k11-1',
@@ -3861,7 +3714,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'نووتو',
             pronFa: '«نووتو» — «اُو» بلند و «اُو»ی آخر کوتاه و بی‌رنگ (nōto).',
             fa: 'دفترچه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k11-2',
@@ -3869,7 +3721,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'デザイナー',
             reading: 'دِزایناا',
             fa: 'طراح',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k11-3',
@@ -3878,7 +3729,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'کاتاکانا',
             pronFa: 'پنج هجای کاملاً مساوی — «کاتاکانا» تخت، بی‌تأکید.',
             fa: 'کاتاکانا (کانای وام‌واژه)',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -3889,9 +3739,6 @@ export const KANA_STATIONS: Station[] = [
         itemsFa: [
           '5 کانای جدید: ナ(نا)، ニ(نی)، ヌ(نو)، ネ(نه)، ノ(نُ)',
           '5 واژهٔ واقعی تازه خواندنی شد — مجموع 117 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -3967,7 +3814,6 @@ export const KANA_STATIONS: Station[] = [
             ja: 'シャワー',
             reading: 'شاووا',
             fa: 'دوش',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k12-1',
@@ -3976,7 +3822,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'پورِزِنتو',
             pronFa: 'چهار مورا — «پورِزِنتو» (purezento)؛ ゜ روی プ و ゛ روی ゼ، در یک واژه.',
             fa: 'هدیه',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
           {
             id: 'rd-stn-kana-k12-2',
@@ -3985,7 +3830,6 @@ export const KANA_STATIONS: Station[] = [
             reading: 'راجیو',
             pronFa: 'سه مورای کوتاه — «راجیو» (rajio).',
             fa: 'رادیو',
-            whyFa: 'با کاناهایی که تا این‌جا آموختی کاملاً خواندنی است.',
           },
         ],
       },
@@ -3997,9 +3841,6 @@ export const KANA_STATIONS: Station[] = [
           '2 کانای جدید: ワ(وا)، ヲ(اُ)',
           'ترکیب خارجی (ファ/ティ/ヴ) در ایستگاه بعدی آموزش داده می‌شود — اینجا فقط ردیف ワ.',
           '1 واژهٔ واقعی تازه خواندنی شد — مجموع 118 واژه از جزوهٔ N5.',
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
         ],
       },
     ],
@@ -4253,11 +4094,7 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-k13-wrapup',
         titleFa: 'آشتی دو خط + نامِ خودت — جمع‌بندی',
-        itemsFa: [
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
-        ],
+        itemsFa: [],
       },
     ],
     fsrsItems: [],
@@ -4396,11 +4233,7 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-opt-r-h9-wrapup',
         titleFa: 'مرور ایستگاه‌های فاز ۱ (اختیاری) — جمع‌بندی',
-        itemsFa: [
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
-        ],
+        itemsFa: [],
       },
     ],
     fsrsItems: [],
@@ -4547,11 +4380,7 @@ export const KANA_STATIONS: Station[] = [
         kind: 'wrap-up',
         id: 'blk-stn-kana-opt-drill-wrapup',
         titleFa: 'دریل آزاد کانا (اختیاری) — جمع‌بندی',
-        itemsFa: [
-          // Part-2 ج: the FSRS engine is LIVE — the wrap-up states the real, done fact
-          // (enrollment happened at station completion) and points at the real /review runner.
-          'کارت‌های مرور (FSRS) این کاناها در صف مرور ثبت شدند — مرورشان را از صفحهٔ «مرور» در خانه انجام بده.',
-        ],
+        itemsFa: [],
       },
     ],
     fsrsItems: [],

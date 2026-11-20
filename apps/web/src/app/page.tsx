@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ArrowLeft, BookOpenText, CircleCheck, Compass, Repeat2 } from 'lucide-react';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { resolveHome } from '@/modules/home/server';
-import { SiteNav } from '@/components/site-nav';
+import { SiteNav, resolveReviewDueCount } from '@/components/site-nav';
 import { fa } from '@/messages/fa';
 
 /**
@@ -29,6 +29,7 @@ export const dynamic = 'force-dynamic';
 export default async function HomePage() {
   const learnerId = await resolveLearnerId();
   const { view, dateLine } = await resolveHome(learnerId);
+  const reviewDueCount = await resolveReviewDueCount();
 
   const primaryLabel =
     view.primary.state === 'resume'
@@ -45,7 +46,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <SiteNav active="home" />
+      <SiteNav active="home" reviewDueCount={reviewDueCount} />
 
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 pb-28 pt-8 md:pb-12 md:pt-10">
         {/* ---- greeting: one short line + neutral day-line (PG-01; no name —

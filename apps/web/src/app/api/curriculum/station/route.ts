@@ -228,9 +228,12 @@ async function handleStationPost(req: Request): Promise<Response> {
   // loadChapterBundle for the owner's preview — for everyone else the walk API
   // must 404 it, or the direct-URL gate would be cosmetic (grading responses
   // would leak draft content to any learner id).
-  // TEMPORARY SITE-WIDE UNLOCK (UNLOCK_ALL_MODE=1): owner-only site for now —
-  // drafts walkable for every visitor without the preview cookie.
-  if (isDraftChapter(payload.chapterSlug) && !unlockAllMode() && !hasPreviewAccessFromRequest(req)) {
+  // UX-AUDIT #142 (draft/published lifecycle): the draft gate is CLOSED again
+  // even while the temporary site-wide unlock is on — UNLOCK_ALL opens the
+  // PUBLISHED path for review; a draft is owner-preview content and requires
+  // the preview cookie (whose pv- namespace also keeps the writes isolated).
+  // A draft reached without it 404s — no access, no progress registration.
+  if (isDraftChapter(payload.chapterSlug) && !hasPreviewAccessFromRequest(req)) {
     return NextResponse.json(fail({ code: 'station/unknown_chapter', message: 'unknown chapter' }), {
       status: 404,
     });
@@ -243,7 +246,45 @@ async function handleStationPost(req: Request): Promise<Response> {
     );
   }
 
+  /*
+   * UX-AUDIT #137 (root C — the prereq gate moves to ENTRY): the prerequisite
+   * check runs for every state-changing action (enter / progress / grade /
+   * grade-block / hint / writing-practice) — a learner whose prerequisites are
+   * unmet is stopped BEFORE walking twelve stages, not at the completion POST.
+   * The complete action keeps its own check below (defense in depth — the
+   * mission rule: the gate holds at entry AND at registration, server-side).
+   *
+   * UNLOCK/preview contract: the temporary open mode (owner-only site) and the
+   * preview cookie bypass the gate here — and (same contract) the completion
+   * gate below honours the SAME bypass, so an open-mode walk can never end in
+   * the «قابل ثبت نیست» surprise (#137's exact report).
+   */
   const store = getStationProgressStore();
+  const openMode = unlockAllMode() || (await hasPreviewAccessFromRequest(req));
+  if (!openMode && station.prerequisites.length > 0 && payload.action !== 'complete') {
+    const prereqSlugs = station.prerequisites;
+    const prereqStates = new Map((await store.listForUnit(userId, prereqSlugs)).map((s) => [s.stationSlug, s]));
+    const unsatisfied = prereqSlugs.filter(
+      (slug) => !prereqStates.has(slug) || prereqStates.get(slug)!.status === 'in_progress',
+    );
+    if (unsatisfied.length > 0) {
+      const prerequisites = unsatisfied
+        .map((slug) => {
+          const st = bundle.chapter.stations.find((s) => s.slug === slug);
+          return { slug, titleFa: st?.titleFa ?? slug, order: st?.order ?? Number.MAX_SAFE_INTEGER };
+        })
+        .sort((a, b) => a.order - b.order)
+        .map(({ slug, titleFa }) => ({ slug, titleFa }));
+      return NextResponse.json(
+        fail({
+          code: 'station/blocked_by_prereq',
+          message: `این درس هنوز باز نشده — برای شروعش ابتدا باید «${prerequisites[0]?.titleFa ?? 'درس قبل'}» کامل شود.`,
+          details: { prerequisites },
+        }),
+        { status: 409, headers: { 'cache-control': 'no-store' } },
+      );
+    }
+  }
 
   if (payload.action === 'enter' || payload.action === 'progress') {
     const current = await store.get(userId, station.slug);
@@ -523,8 +564,15 @@ async function handleStationPost(req: Request): Promise<Response> {
   if (current?.status === 'completed') {
     return NextResponse.json(ok({ stationSlug: station.slug, state: current, already: true }));
   }
+  /*
+   * UX-AUDIT #137: the completion gate shares the open-mode bypass with the
+   * ENTRY gate — one contract in both directions. In normal mode the gate
+   * holds (the learner never got this far — the entry gate already stopped
+   * them); in the temporary open mode a walked station REGISTERS (no wasted
+   * twelve-stage walk ends in «قابل ثبت نیست»).
+   */
   const prereqSlugs = station.prerequisites;
-  if (prereqSlugs.length > 0) {
+  if (prereqSlugs.length > 0 && !openMode) {
     const prereqStates = new Map((await store.listForUnit(userId, prereqSlugs)).map((s) => [s.stationSlug, s]));
     const unsatisfied = prereqSlugs.filter(
       (slug) => !prereqStates.has(slug) || prereqStates.get(slug)!.status === 'in_progress',
@@ -643,9 +691,17 @@ async function handleStationPost(req: Request): Promise<Response> {
     },
     userId,
   );
+  /*
+   * UX-AUDIT #135/#137 (root D — data-driven messaging): the completion
+   * response carries the REAL enrollment outcome (how many cards actually
+   * entered the FSRS queue + the station's inventory size). The client renders
+   * the wrap-up claim FROM this data — a station with no cards claims nothing,
+   * and the count is the true operation result, never a template.
+   */
+  let enrolledCount = 0;
+  const enrollTotal = station.fsrsItems.length;
   if (station.fsrsItems.length > 0) {
     const stationCards = listChapterCards(bundle.chapter).filter((c) => c.enrollStationSlug === station.slug);
-    let enrolledCount = 0;
     try {
       const result = await getFsrsReviewStore().enroll(
         userId,
@@ -694,7 +750,7 @@ async function handleStationPost(req: Request): Promise<Response> {
 
   /* The chapter fold itself runs INSIDE the service transaction. */
 
-  return NextResponse.json(ok({ stationSlug: station.slug, state, chapterState }), {
+  return NextResponse.json(ok({ stationSlug: station.slug, state, chapterState, enrolledCount, enrollTotal }), {
     headers: { 'cache-control': 'no-store' },
   });
 }
