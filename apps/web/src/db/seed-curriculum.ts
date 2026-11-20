@@ -176,8 +176,10 @@ export async function seedChapter(
  * Skips unreadable/invalid drafts — a broken draft must never break the seed.
  */
 export function loadDraftChapters(): Chapter[] {
-  const dir = 'content/lesson-engine';
-  if (!existsSync(dir)) return [];
+  // cwd differs per entrypoint: the Next server resolves the repo from apps/web,
+  // the db-cli (migrate container) runs with cwd /app — try both anchors.
+  const dir = ['content/lesson-engine', 'apps/web/content/lesson-engine'].find((p) => existsSync(p));
+  if (!dir) return [];
   const chapters: Chapter[] = [];
   for (const file of readdirSync(dir).sort()) {
     if (!file.endsWith('.yaml')) continue;
