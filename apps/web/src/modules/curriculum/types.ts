@@ -439,6 +439,31 @@ export type TeachingBlock =
         }[];
       }[];
     }
+  | {
+      /**
+       * Part-2 ز — the OPTIONAL drill's mode picker. The learner CHOOSES the
+       * drill face (hiragana / katakana / two-script / difficult pairs) and the
+       * walk POINTER jumps to that pool's exercise block — the same pointer-only
+       * semantics as the F4 return (no progress granted, no completion skipped:
+       * finishing still walks the wrap-up and ≥1 graded answer is required).
+       * «پایان تمرین» jumps to the wrap-up so ONE chosen pool can honestly
+       * finish the optional station; every unchosen pool stays available.
+       */
+      kind: 'drill-menu';
+      id: string;
+      titleFa: string;
+      bodyFa: string;
+      options: {
+        id: string;
+        labelFa: string;
+        bodyFa: string;
+        /** The exercise block (pool) this mode jumps the walk to. */
+        targetBlockId: string;
+      }[];
+      finishLabelFa: string;
+      /** The wrap-up block the finish action jumps to. */
+      finishTargetBlockId: string;
+    }
   | { kind: 'wrap-up'; id: string; titleFa: string; itemsFa: string[]; fsrsNoteFa?: string };
 
 /* ------------------------------------------------------------------ rule slides (TASK-LEARNING-14) */

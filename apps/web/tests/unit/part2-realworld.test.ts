@@ -133,3 +133,54 @@ describe('PART2 ط — h0 wrap-up and the G1 gate in the execution path', () => 
     expect(src).toContain('/assessment');
   });
 });
+
+describe('PART2 ز — the optional drill with a real mode choice', () => {
+  const drill = stationBySlug('stn-kana-m1-reading') && stationBySlug('stn-kana-opt-drill');
+
+  it('the drill opens with a REAL four-mode picker', () => {
+    const menu = drill.blocks.find((b) => b.kind === 'drill-menu');
+    expect(menu, 'drill-menu block').toBeDefined();
+    expect(menu!.options.length).toBe(4);
+    expect(menu!.options.map((o) => o.id)).toEqual(['hira', 'kata', 'mixed', 'pairs']);
+    // every mode targets a REAL exercise pool block of this station
+    const blockIds = new Set(drill.blocks.map((b) => b.id));
+    for (const opt of menu!.options) {
+      expect(blockIds.has(opt.targetBlockId), `${opt.id} targets ${opt.targetBlockId}`).toBe(true);
+    }
+    expect(menu!.finishTargetBlockId).toBe('blk-stn-kana-opt-drill-wrapup');
+  });
+
+  it('the four pools are real, distinct, and Hiragana/Katakana-pure where named', () => {
+    const poolOf = (blockId: string) => {
+      const b = drill.blocks.find((x) => x.id === blockId) as { exerciseIds: string[] };
+      return b.exerciseIds.map((id) => chapter.exercises[id]!);
+    };
+    const hira = poolOf('blk-stn-kana-opt-drill-hira');
+    const kata = poolOf('blk-stn-kana-opt-drill-kata');
+    const mixed = poolOf('blk-stn-kana-opt-drill-mixed');
+    const pairs = poolOf('blk-stn-kana-opt-drill-pairs');
+    expect(hira.length).toBeGreaterThanOrEqual(10);
+    expect(kata.length).toBeGreaterThanOrEqual(10);
+    expect(mixed.length).toBeGreaterThanOrEqual(10);
+    expect(pairs.length).toBeGreaterThanOrEqual(12);
+    // purity: the hira pool is all-hiragana prompts, the kata pool all-katakana
+    const isHira = (w?: string) => !!w && /[\u3040-\u309F]/.test(w) && !/[\u30A0-\u30FF]/.test(w);
+    const isKata = (w?: string) => !!w && /[\u30A0-\u30FF]/.test(w) && !/[\u3040-\u309F]/.test(w);
+    for (const ex of hira) expect(isHira(ex.promptJa), `${ex.id} hiragana-only`).toBe(true);
+    for (const ex of kata) expect(isKata(ex.promptJa), `${ex.id} katakana-only`).toBe(true);
+    // mixed really mixes both scripts
+    expect(mixed.some((ex) => isHira(ex.promptJa))).toBe(true);
+    expect(mixed.some((ex) => isKata(ex.promptJa))).toBe(true);
+    // every pool item stays a referenced practice item (the bank integrity)
+    for (const ex of [...hira, ...kata, ...mixed, ...pairs]) {
+      expect(ex.assessmentRole).toBe('practice');
+    }
+  });
+
+  it('the station stays OPTIONAL (the choice never gates the chapter)', () => {
+    expect(drill.core).toBe(false);
+    // the drill lives in section B's unit list (its optional branch, per the data)
+    const inUnits = chapter.units?.some((u) => u.stationSlugs.includes('stn-kana-opt-drill'));
+    expect(inUnits, 'opt-drill is listed in a unit').toBe(true);
+  });
+});
