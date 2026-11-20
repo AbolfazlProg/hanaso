@@ -160,7 +160,15 @@ export async function chapterAccessStatus(
   userId: string,
 ): Promise<{ locked: boolean; prerequisiteSlug: string | null; prerequisiteTitleFa: string | null }> {
   // PREVIEW MODE: the owner browses with prereq gates bypassed (view-level only).
-  if (await hasPreviewAccess()) {
+  // Guarded: outside a request scope (direct-call unit tests) next/headers throws —
+  // no request = no preview cookie = normal locking semantics.
+  let previewActive = false;
+  try {
+    previewActive = await hasPreviewAccess();
+  } catch {
+    previewActive = false;
+  }
+  if (previewActive) {
     return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
   }
   // A Lesson-Engine draft is UNPUBLISHED content: without the preview cookie it

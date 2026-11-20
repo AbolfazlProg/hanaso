@@ -23,6 +23,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { parse as parseYaml } from 'yaml';
 
 const VOICEVOX = process.env.VOICEVOX_URL ?? 'http://127.0.0.1:50021';
 const WEB = path.join(process.cwd(), 'apps', 'web');
@@ -62,9 +63,21 @@ const TARGETS = [
   { key: 's-first-meeting-01-l13-co', voiceId: 'vv-male-02-normal', text: 'よろしく おねがいします。' },
 ];
 
-/** Same rule as modules/dialogue hashAudioLine (sha256 of JSON {text, voiceId}, 16 hex). */
+/**
+ * Same rule as modules/dialogue hashAudioLine (sha256 of JSON {text, voiceId}, 16 hex).
+ * The hash binds to the RUNTIME line text = token surfaces JOINED (no spaces) — read
+ * straight from the dialogue YAML so code and validator can never drift apart. The
+ * synthesis text may carry display spacing; the hash must use the runtime string.
+ */
 function hashAudioLine(text, voiceId) {
   return createHash('sha256').update(JSON.stringify({ text, voiceId }), 'utf8').digest('hex').slice(0, 16);
+}
+
+function runtimeLineText(lineId) {
+  const doc = parseYaml(readFileSync(path.join(WEB, 'src/modules/dialogue/content/dialogue.first-meeting-01.yaml'), 'utf8'));
+  const line = (doc.dialogue ?? doc).lines.find((l) => l.id === lineId);
+  if (!line) throw new Error(`line ${lineId} not found in the dialogue YAML`);
+  return line.tokens.map((t) => t.surface).join('');
 }
 
 async function synth(text, speaker) {
@@ -161,8 +174,10 @@ for (const t of TARGETS) {
     hash: hashAudioLine(t.text, t.voiceId),
   };
   manifest.entries[t.key] = entry;
-  results.push({ key: t.key, ...entry });
-  console.log('generated', t.key, JSON.stringify(entry));
+  // the committed hash binds to the runtime line text (token-joined), NOT the display string
+  manifest.entries[t.key].hash = hashAudioLine(runtimeLineText(t.key.replace(/-co$/, '')), t.voiceId);
+  results.push({ key: t.key, ...entry, hash: manifest.entries[t.key].hash });
+  console.log('generated', t.key, JSON.stringify(results[results.length - 1]));
 }
 // stable-ordered entries
 manifest.entries = Object.fromEntries(Object.entries(manifest.entries).sort(([a], [b]) => (a < b ? -1 : 1)));
