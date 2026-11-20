@@ -74,7 +74,9 @@ function hashAudioLine(text, voiceId) {
 }
 
 function runtimeLineText(lineId) {
-  const doc = parseYaml(readFileSync(path.join(WEB, 'src/modules/dialogue/content/dialogue.first-meeting-01.yaml'), 'utf8'));
+  const doc = parseYaml(
+    readFileSync(path.join(WEB, 'src/modules/dialogue/content/dialogue.first-meeting-01.yaml'), 'utf8'),
+  );
   const line = (doc.dialogue ?? doc).lines.find((l) => l.id === lineId);
   if (!line) throw new Error(`line ${lineId} not found in the dialogue YAML`);
   return line.tokens.map((t) => t.surface).join('');
