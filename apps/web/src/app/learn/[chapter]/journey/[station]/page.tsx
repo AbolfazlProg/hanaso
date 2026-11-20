@@ -136,6 +136,17 @@ export default async function StationPage({
         ce.promptJa = undefined;
         ce.promptJaReading = undefined;
       }
+      /*
+       * PART1-FIX-5 (evaluation criterion 5 — the answer leak): in kana-decode
+       * the options ARE the Persian readings of the prompt — its
+       * `promptJaReading` crossing to the client rendered the correct answer
+       * directly above the options (h4 «کووکوو», h5, k8 «جووس», and every row
+       * decode item). The reading never crosses pre-answer any more; the
+       * server's grade outcome attaches it at reveal time (correctReading).
+       */
+      if (ex.type === 'kana-decode') {
+        ce.promptJaReading = undefined;
+      }
       clientExercises[id] = ce;
     }
   }

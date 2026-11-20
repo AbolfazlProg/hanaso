@@ -443,6 +443,9 @@ export const fa = {
     wordCardNote: 'نکته',
     gradingUnavailable: 'ارتباط با سرور برقرار نشد — نمره‌گذاری فعلاً در دسترس نیست؛ بعداً دوباره تلاش کن.',
     gradingUnavailableTitle: 'نمره‌گذاری در دسترس نیست',
+    /* PART1-FIX-1: the unregistered-attempt re-send — the SAME answer goes back
+     * at the SAME attempt number (the ladder is not consumed by an outage). */
+    gradingRetrySend: 'تلاش دوبارهٔ ارسال',
     progressUnavailable: 'خواندن پیشرفت ناموفق بود — اتصال را بررسی کن و صفحه را تازه‌سازی کن.',
     predictionDefaultReveal: 'پاسخ ثبت شد — به پخش مکالمه گوش کن و حدست را بسنج!',
     listeningTaskTitle: 'گوشِ فعال',

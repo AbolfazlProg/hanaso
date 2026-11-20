@@ -69,6 +69,11 @@ export default async function AssessmentPage({ params }: { params: Promise<{ cha
         ce.promptJa = undefined;
         ce.promptJaReading = undefined;
       }
+      /* PART1-FIX-5: same answer-leak rule as the station page — a decode
+       * question's Persian reading IS the answer; it never crosses pre-answer. */
+      if (ex.type === 'kana-decode') {
+        ce.promptJaReading = undefined;
+      }
       return ce;
     });
   const audioByLine: Record<string, string> = {};

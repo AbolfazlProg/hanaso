@@ -183,9 +183,27 @@ export async function completeStationWalk(params: {
     return { station, chapter };
   };
   if (!usingDbTransactions()) return run();
-  return runInTx((tx) =>
-    run({ stationRepo: new PgStationProgressRepository(tx), chapterRepo: new PgChapterProgressRepository(tx) }),
-  );
+  /*
+   * PART1-FIX-1 (evaluation criterion 8 / station-API P0 — the h11/h12/p3/m1
+   * 500s): this was the ONLY one of the three completion services WITHOUT a
+   * bounded transient retry (practice + mastery both had one) — a transient
+   * DB failure (deadlock, aborted-tx statement, pool contention) surfaced as a
+   * raw 500 and the learner's completed walk was left unregistered. The unit
+   * is all-or-nothing (one transaction) and the route's `already: true`
+   * replay guard makes a retry idempotent — so one bounded retry on the SAME
+   * retryable-error contract as the sibling services is safe: no duplicate
+   * completion, no half-registered state.
+   */
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return await runInTx((tx) =>
+        run({ stationRepo: new PgStationProgressRepository(tx), chapterRepo: new PgChapterProgressRepository(tx) }),
+      );
+    } catch (err) {
+      if (attempt < 1 && isRetryableTxError(err)) continue; // one bounded retry (subagent C-02 contract)
+      throw err;
+    }
+  }
 }
 
 /* ------------------------------------------------- 3. mastery gate */
