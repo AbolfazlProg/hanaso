@@ -4,7 +4,7 @@ import { fail, ok } from '@/modules/shared';
 import { getStationProgressStore } from '@/lib/poc/stores';
 import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { loadChapterBundle, isDraftChapter } from '@/modules/curriculum/server';
-import { hasPreviewAccessFromRequest } from '@/lib/preview';
+import { hasPreviewAccessFromRequest, unlockAllMode } from '@/lib/preview';
 import {
   applyStationEvent,
   stationMeetsCompletion,
@@ -201,7 +201,9 @@ export async function POST(req: Request) {
   // loadChapterBundle for the owner's preview — for everyone else the walk API
   // must 404 it, or the direct-URL gate would be cosmetic (grading responses
   // would leak draft content to any learner id).
-  if (isDraftChapter(payload.chapterSlug) && !hasPreviewAccessFromRequest(req)) {
+  // TEMPORARY SITE-WIDE UNLOCK (UNLOCK_ALL_MODE=1): owner-only site for now —
+  // drafts walkable for every visitor without the preview cookie.
+  if (isDraftChapter(payload.chapterSlug) && !unlockAllMode() && !hasPreviewAccessFromRequest(req)) {
     return NextResponse.json(fail({ code: 'station/unknown_chapter', message: 'unknown chapter' }), {
       status: 404,
     });

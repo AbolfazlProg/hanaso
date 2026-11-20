@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { loadChapterBundle, chapterAccessStatus, resolveLearnerJourney } from '@/modules/curriculum/server';
-import { previewUnlockAll } from '@/lib/preview';
+import { previewUnlockAll, unlockAllMode } from '@/lib/preview';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
@@ -56,10 +56,10 @@ export default async function JourneyPage({
     );
   }
 
-  // PREVIEW MODE / OWNER LOCK CONTROL: in the 'open' review mode the owner
-  // browses with the section/station locks bypassed; in 'enforce' the REAL
-  // availability applies to the pv- learner (locked rows render honestly).
-  const unlockAll = await previewUnlockAll();
+  // TEMPORARY SITE-WIDE UNLOCK / OWNER LOCK CONTROL: UNLOCK_ALL_MODE opens every
+  // section/station lock for everyone; otherwise the preview-cookie 'open' mode
+  // bypasses locks and 'enforce' renders the REAL availability honestly.
+  const unlockAll = unlockAllMode() || (await previewUnlockAll());
   const home = await resolveLearnerJourney(learnerId, slug, { preview: unlockAll });
   const nextStationTitle =
     home.nextStationSlug !== null

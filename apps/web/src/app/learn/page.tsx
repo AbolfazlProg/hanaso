@@ -1,5 +1,11 @@
 import { resolveLearnerId } from '@/lib/learner/server';
-import { hasPreviewAccess, previewUnlockAll, previewLocksMode, type PreviewLocksMode } from '@/lib/preview';
+import {
+  hasPreviewAccess,
+  previewUnlockAll,
+  previewLocksMode,
+  unlockAllMode,
+  type PreviewLocksMode,
+} from '@/lib/preview';
 import {
   resolveLearnerJourney,
   listChapterSummaries,
@@ -34,20 +40,24 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
   const { s } = await searchParams;
   const learnerId = await resolveLearnerId();
   const previewActive = await hasPreviewAccess();
+  // TEMPORARY SITE-WIDE UNLOCK (UNLOCK_ALL_MODE=1): owner-only site for now —
+  // the full index renders for EVERY visitor and every gate is open, no cookie.
+  const unlockEverything = unlockAllMode();
   // OWNER LOCK CONTROL: 'open' bypasses every lock at view level; 'enforce'
   // applies the real prereqs/station locks to the pv- learner (real-path test).
-  const unlockAll = previewActive ? await previewUnlockAll() : false;
+  const unlockAll = unlockEverything || (previewActive ? await previewUnlockAll() : false);
   const locksMode: PreviewLocksMode = previewActive ? await previewLocksMode() : 'open';
   const home = await resolveLearnerJourney(learnerId, undefined, { preview: unlockAll });
-  // PREVIEW MODE: the owner's full index — every published chapter + every draft
-  // (this block renders ONLY with a valid preview cookie; normal users never see
-  // it, even when the env key is set).
-  const previewIndex = previewActive
-    ? [
-        ...listChapterSummaries().map((c) => ({ ...c, draft: false })),
-        ...listDraftChapterSummaries().map((c) => ({ ...c, draft: true })),
-      ]
-    : [];
+  // Full index — every published chapter + every draft. Renders for the owner's
+  // preview cookie OR for everyone while the temporary site-wide unlock is on;
+  // never for normal users in the default (env unset) state.
+  const previewIndex =
+    previewActive || unlockEverything
+      ? [
+          ...listChapterSummaries().map((c) => ({ ...c, draft: false })),
+          ...listDraftChapterSummaries().map((c) => ({ ...c, draft: true })),
+        ]
+      : [];
   // Per-chapter lock status for the owner panel. Drafts are owner-reviewable in
   // BOTH modes (unpublished content is not part of the real learner path);
   // published chapters honour the current mode through chapterAccessStatus.
@@ -106,6 +116,28 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
   return (
     <>
       <SiteNav active="learn" />
+      {unlockEverything && !previewActive && (
+        <div
+          style={{
+            background: '#14532d',
+            color: '#dcfce7',
+            padding: '10px 16px',
+            fontSize: 13,
+            borderRadius: 10,
+            margin: '8px auto 0',
+            maxWidth: 720,
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 10,
+            alignItems: 'center',
+          }}
+        >
+          <strong>حالت بازِ کامل (موقت)</strong>
+          <span style={{ opacity: 0.8 }}>
+            همهٔ درس‌ها — شامل فصل‌های پیش‌نویس — برای همه بدون قفل‌اند؛ هیچ کلیدی لازم نیست.
+          </span>
+        </div>
+      )}
       {previewActive && (
         <div
           style={{
@@ -145,17 +177,29 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
             fontSize: 14,
           }}
         >
-          <strong style={{ display: 'block', marginBottom: 8 }}>فهرست کامل برای بررسی (فقط مالک)</strong>
-          {/* OWNER LOCK CONTROL — the visible two-state switch */}
+          <strong style={{ display: 'block', marginBottom: 8 }}>
+            {previewActive ? 'فهرست کامل برای بررسی (فقط مالک)' : 'فهرست کامل درس‌ها (حالت بازِ موقت)'}
+          </strong>
+          {/* OWNER LOCK CONTROL — the visible two-state switch (preview cookie only);
+              while the temporary site-wide unlock is on without a preview cookie,
+              everything is simply open, so only a status chip renders. */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 10 }}>
-            <span style={{ fontSize: 13, color: '#334155' }}>
-              وضعیت قفل‌ها:{' '}
-              <strong style={{ color: locksMode === 'enforce' ? '#b91c1c' : '#166534' }}>
-                {locksMode === 'enforce' ? 'فعال (قفل‌ها و پیش‌نیازهای عادی)' : 'باز (همهٔ درس‌ها بدون قفل)'}
-              </strong>
-            </span>
-            {panelBtn('/preview/locks?mode=open', 'بازکردن همهٔ درس‌ها', locksMode === 'open')}
-            {panelBtn('/preview/locks?mode=enforce', 'فعال‌کردن قفل‌ها', locksMode === 'enforce')}
+            {previewActive ? (
+              <>
+                <span style={{ fontSize: 13, color: '#334155' }}>
+                  وضعیت قفل‌ها:{' '}
+                  <strong style={{ color: locksMode === 'enforce' ? '#b91c1c' : '#166534' }}>
+                    {locksMode === 'enforce' ? 'فعال (قفل‌ها و پیش‌نیازهای عادی)' : 'باز (همهٔ درس‌ها بدون قفل)'}
+                  </strong>
+                </span>
+                {panelBtn('/preview/locks?mode=open', 'بازکردن همهٔ درس‌ها', locksMode === 'open')}
+                {panelBtn('/preview/locks?mode=enforce', 'فعال‌کردن قفل‌ها', locksMode === 'enforce')}
+              </>
+            ) : (
+              <span style={{ fontSize: 13, color: '#334155' }}>
+                وضعیت قفل‌ها: <strong style={{ color: '#166534' }}>باز (همهٔ درس‌ها برای همه بازند — موقت)</strong>
+              </span>
+            )}
           </div>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 6 }}>
             {previewIndex.map((c) => {

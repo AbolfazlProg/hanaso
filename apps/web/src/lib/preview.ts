@@ -47,6 +47,24 @@ export function previewCookieValid(value: string | null | undefined): boolean {
   return given.length === expected.length && timingSafeEqual(given, expected);
 }
 
+/**
+ * TEMPORARY SITE-WIDE UNLOCK (owner directive, 2026-11-20): the site is
+ * owner-only for now (no real users), so `UNLOCK_ALL_MODE=1` opens EVERYTHING
+ * for EVERY visitor — all chapter gates, all station locks, the draft chapters
+ * and the full /learn index — with NO preview cookie required. Purpose: the
+ * owner kept being locked out of chapter 2 behind the key/cookie dance.
+ *
+ * Contract (do not weaken):
+ *  - Off by default: env unset ⇒ every helper here behaves EXACTLY as before
+ *    (progressive reveal for normal users + key-gated owner preview).
+ *  - Display/view-level only: walk order, stores, progress namespaces and the
+ *    normal-user logic are untouched (same scope as the preview bypass).
+ *  - Revert = remove the env line and recreate web+worker.
+ */
+export function unlockAllMode(): boolean {
+  return process.env.UNLOCK_ALL_MODE === '1';
+}
+
 /** RSC variant: read the preview cookie via next/headers. */
 export async function hasPreviewAccess(): Promise<boolean> {
   const jar = await cookies();

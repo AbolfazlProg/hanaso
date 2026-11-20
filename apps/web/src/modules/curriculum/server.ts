@@ -4,7 +4,7 @@
  * dialogue-anchored content validation at load time (fail fast on content drift).
  */
 import { getChapterByDialogueSlug, getChapter, listChapters } from './content';
-import { hasPreviewAccess } from '@/lib/preview';
+import { hasPreviewAccess, previewLocksMode, unlockAllMode } from '@/lib/preview';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import { engineChapterSchema, compileEngineChapter } from '../../modules/lesson-engine';
@@ -159,6 +159,12 @@ export async function chapterAccessStatus(
   chapter: Chapter,
   userId: string,
 ): Promise<{ locked: boolean; prerequisiteSlug: string | null; prerequisiteTitleFa: string | null }> {
+  // TEMPORARY SITE-WIDE UNLOCK (owner directive): env UNLOCK_ALL_MODE=1 opens
+  // every gate — published prereqs AND the draft gate — for every visitor,
+  // no preview cookie needed. View-level only; see lib/preview.ts.
+  if (unlockAllMode()) {
+    return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
+  }
   // PREVIEW MODE: the owner browses with prereq gates bypassed (view-level only).
   // Guarded: outside a request scope (direct-call unit tests) next/headers throws —
   // no request = no preview cookie = normal locking semantics.
@@ -169,7 +175,21 @@ export async function chapterAccessStatus(
     previewActive = false;
   }
   if (previewActive) {
-    return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
+    // OWNER LOCK CONTROL: 'open' (default) bypasses every gate at view level;
+    // 'enforce' applies the REAL prereq gates so the owner can rehearse the
+    // actual learner path. Draft chapters stay owner-reviewable in BOTH modes —
+    // they are unpublished content and not part of the real learner path at all;
+    // the draft gate below for every non-owner request is untouched.
+    let locksMode: 'open' | 'enforce' = 'open';
+    try {
+      locksMode = await previewLocksMode();
+    } catch {
+      locksMode = 'open';
+    }
+    if (locksMode === 'open' || isDraftChapter(chapter.slug)) {
+      return { locked: false, prerequisiteSlug: null, prerequisiteTitleFa: null };
+    }
+    // enforce + published chapter → fall through to the normal prereq gate below
   }
   // A Lesson-Engine draft is UNPUBLISHED content: without the preview cookie it
   // is locked for EVERY user (direct-URL leak closed — loadChapterBundle resolves
