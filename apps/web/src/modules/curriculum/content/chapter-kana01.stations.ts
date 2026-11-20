@@ -1896,17 +1896,17 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h6-step-kyou',
         role: 'notice',
         bodyFa:
-          '«امروز»: «کیوو». ょ کوچک به き چسبیده و با آن «یک ضربه» شده است — نوشتنِ این واژه را بعدها می‌آموزی؛ الان فقط اندازه را ببین. （آنچه می‌شنوی «کیو» است: き+ょ. جفت دیگری هم هست — き+ゅ — که «کیُ» خوانده می‌شود؛ در تمرین‌ها هر دو را می‌بینی.)',
-        word: { ja: 'きょう', readingFa: 'کیوو', fa: 'امروز', highlight: ['ょ'], beats: 2 },
+          '«امروز»: «کیُو». ょ کوچک به き چسبیده و با آن «یک ضربه» شده است — نوشتنِ این واژه را بعدها می‌آموزی؛ الان فقط اندازه را ببین. （آنچه می‌شنوی «کیُ» است: き+ょ. جفت دیگری هم هست — き+ゅ — که «کیو» خوانده می‌شود؛ در تمرین‌ها هر دو را می‌بینی.)',
+        word: { ja: 'きょう', readingFa: 'کیُو', fa: 'امروز', highlight: ['ょ'], beats: 2 }, // Part-2 الف (translit-standard.ts): yo=«یُ»
       },
       {
         kind: 'rule-contrast',
         id: 'blk-stn-kana-h6-contrast-kyou',
         titleFa: 'کوچک = فشرده، بزرگ = جدا',
-        a: { ja: 'きょう', readingFa: 'کیوو', fa: 'امروز (۲ ضربه)', highlight: ['ょ'], beats: 2 },
+        a: { ja: 'きょう', readingFa: 'کیُو', fa: 'امروز (۲ ضربه)', highlight: ['ょ'], beats: 2 },
         b: {
           ja: 'きよう',
-          readingFa: 'کی‌یو',
+          readingFa: 'کی‌یُو',
           fa: 'این شکل واژه نیست — よ بزرگ جدا مانده (۳ ضربه)',
           highlight: ['よ'],
           beats: 3,
@@ -1918,7 +1918,7 @@ export const KANA_STATIONS: Station[] = [
             { id: 'b', label: 'きよう (با よ بزرگ)' },
           ],
           correctOptionId: 'a',
-          revealFa: '«کیوو» دو ضربه است (کیو — اُو)؛ «کی‌یو» سه ضربه (کی — یو — اُو). اندازهٔ ゃゅょ همان فشردگی است.',
+          revealFa: '«کیُو» دو ضربه است (کیُ — اُو)؛ «کی‌یُو» سه ضربه (کی — یُ — اُو). اندازهٔ ゃゅょ همان فشردگی است.',
         },
       },
       {
@@ -1988,7 +1988,7 @@ export const KANA_STATIONS: Station[] = [
         titleFa: 'جفت معروفِ کوچک/بزرگ',
         bodyFa:
           'یک جفت معروف که حالا می‌توانی کامل بخوانی: びょういん (بیمارستان) در برابر びよういん (آرایشگاه!) — یک نویسهٔ کوچک/بزرگ، دو جهان.',
-        word: { ja: 'びょういん', readingFa: 'بیووین', fa: 'بیمارستان', highlight: ['ょ'], beats: 4 },
+        word: { ja: 'びょういん', readingFa: 'بیُوین', fa: 'بیمارستان', highlight: ['ょ'], beats: 4 }, // Part-2 الف: byo=بیُ
         miniTable: {
           headers: ['شکل', 'صدا', 'واژه'],
           rows: [
@@ -2028,7 +2028,7 @@ export const KANA_STATIONS: Station[] = [
           rows: [
             ['きゃ = کیا', 'きや = کی‌یا', 'فشرده: یک ضربه'],
             ['しゃ = شا', 'しや = شی‌یا', 'فشرده: یک ضربه'],
-            ['きょう (امروز) = کیوو', 'きよう = کی‌یو', 'معنا فقط در فشرده است'],
+            ['きょう (امروز) = کیُو', 'きよう = کی‌یُو', 'معنا فقط در فشرده است'],
           ],
         },
         listenWords: [null, 'いしゃ', 'きょう'],
@@ -2082,7 +2082,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-h13-prereq',
         titleFa: 'پیش‌نیازهای این قاعده',
         items: [
-          { word: 'きょう', readingFa: 'کیوو', noteFa: 'ょ کوچک و فشرده را یادت هست؟ (قاعدهٔ یُوئون)' },
+          { word: 'きょう', readingFa: 'کیُو', noteFa: 'ょ کوچک و فشرده را یادت هست؟ (قاعدهٔ یُوئون)' },
           { word: 'がくせい', readingFa: 'گاکوسِی', noteFa: '゛ را یادت هست؟ (قاعدهٔ داکوتن)' },
         ],
       },
@@ -2764,7 +2764,8 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-k3-wrapup',
         titleFa: 'ردیف ラ — جمع‌بندی',
         itemsFa: [
-          '5 کانای جدید: ラ(را)، リ(ری)، ル(رو)، レ(ره)، ロ(رو)',
+          // Part-2 الف (translit-standard.ts): ル=«رو» but ロ=«رُ» — the old line rendered both as «رو».
+          '5 کانای جدید: ラ(را)، リ(ری)، ル(رو)، レ(ره)، ロ(رُ)',
           '3 واژهٔ واقعی تازه خواندنی شد — مجموع 84 واژه از جزوهٔ N5.',
           'کارت‌های مرور (FSRS) برای همین کاناها ثبت شدند — صف مرور روزانه به‌زودی فعال می‌شود.',
         ],
@@ -4113,14 +4114,29 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        /*
+         * Part-2 ح: おなまえ explained BEFORE its first teaching use (the
+         * character-scene below). All glyphs already taught (お H1 · な H8 ·
+         * ま H10 · え H1); は-as-particle reads «وا» (h12 row reading).
+         */
+        kind: 'rule-step',
+        id: 'blk-stn-kana-k13-step-onamae',
+        role: 'notice',
+        titleFa: 'واژهٔ تازه: おなまえ — «نام»',
+        bodyFa:
+          'おなまえ را کانا به کانا بخوان: お+な+ま+え — «اُ-نا-ما-اِ». «اُ»ی اول مؤدبانه است (نشانهٔ احترام، مثل «ـِ محترم») و «なまえ» یعنی نام. は در آخر جمله ذرهٔ موضوع است و «وا» خوانده می‌شود — همان خوانشی که در ردیف は دیدی. پس おなまえは؟ یعنی «نامت چیست؟» — همین لحظه میکی همین را می‌پرسد.',
+        word: { ja: 'おなまえ', readingFa: 'اُنامائِ', fa: 'نام (با احترام)', highlight: ['お'], beats: 4 },
+      },
+      {
         kind: 'character-scene',
         id: 'blk-stn-kana-k13-scene-miki',
         steps: [
           { speaker: 'میکی', ja: 'こんにちは！', reading: 'کُنیچیوا', fa: 'سلام!' },
           {
             speaker: 'میکی',
-            ja: 'おなまえは？',
-            reading: 'onamae wa',
+            ja: 'おなまえは؟',
+            // Part-2 الف/ح: Persian-first rendering (translit-standard.ts).
+            reading: 'اُنامائوا',
             fa: 'اسمت چیست؟',
             userReply: {
               kind: 'choice',
