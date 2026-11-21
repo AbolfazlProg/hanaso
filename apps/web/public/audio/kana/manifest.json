@@ -1,5 +1,5 @@
 {
-  "generatedBy": "voicevox:latest (VPS engine) — TASK-LEARNING-08 Addendum-5 §4: speaker 90 (VOICEVOX:ぞん子 ノーマル), speedScale 1.0, offline pre-generation. A/B + word-ASR evidence: ops/checkpoints/TASK-LEARNING-08/OWNER_FEEDBACK_CHECKLIST.md §A5-4 (/root/a5-voice-ab/). Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + loudness-match (RMS→−17dBFS, peak≤−1.5dBFS); opus 64k / m4a 128k. Credit: VOICEVOX:ぞん子 (VOICEVOX character terms)",
+  "generatedBy": "voicevox:latest (VPS engine) — TASK-LEARNING-08 Addendum-5 §4: speaker 90 (VOICEVOX:ぞん子 ノーマル), speedScale 1.0, offline pre-generation. A/B + word-ASR evidence: ops/checkpoints/TASK-LEARNING-08/OWNER_FEEDBACK_CHECKLIST.md §A5-4 (/root/a5-voice-ab/). Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + loudness-match (RMS→−17dBFS, peak≤−1.5dBFS); opus 64k / m4a 128k. Credit: VOICEVOX:ぞん子 (VOICEVOX character terms) | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 (VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry \"batch\":\"runner-voicevox-0.26.2\" | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 (VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry \"batch\":\"runner-voicevox-0.26.2\"",
   "format": "voicevox-opus-m4a",
   "entries": {
     "kn-hira-a": {
@@ -553,6 +553,650 @@
       "bytesM4a": 6552,
       "durationMs": 401,
       "hash": "0c2bb64a87fe5066"
+    },
+    "kn-hira-ga": {
+      "bytes": 5204,
+      "bytesM4a": 7202,
+      "durationMs": 465,
+      "hash": "9d7bbf059f30bc6d",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-gi": {
+      "bytes": 4839,
+      "bytesM4a": 7001,
+      "durationMs": 465,
+      "hash": "a28b42f084a15406",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-gu": {
+      "bytes": 5194,
+      "bytesM4a": 7202,
+      "durationMs": 455,
+      "hash": "ebea0291d89071ba",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-ge": {
+      "bytes": 5273,
+      "bytesM4a": 7970,
+      "durationMs": 487,
+      "hash": "b128949bc37b05b4",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-go": {
+      "bytes": 5128,
+      "bytesM4a": 6620,
+      "durationMs": 455,
+      "hash": "0e5ce7b00e2c2686",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-za": {
+      "bytes": 5631,
+      "bytesM4a": 7836,
+      "durationMs": 519,
+      "hash": "e5958e1174ef1c99",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-ji": {
+      "bytes": 5269,
+      "bytesM4a": 7766,
+      "durationMs": 519,
+      "hash": "45d10cd24c669338",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-zu": {
+      "bytes": 5492,
+      "bytesM4a": 7901,
+      "durationMs": 508,
+      "hash": "fee248662e99c3b6",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-ze": {
+      "bytes": 5636,
+      "bytesM4a": 8473,
+      "durationMs": 540,
+      "hash": "e97df076f8ee3f71",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-zo": {
+      "bytes": 5623,
+      "bytesM4a": 7999,
+      "durationMs": 519,
+      "hash": "ee1639fa985d26d6",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-da": {
+      "bytes": 5026,
+      "bytesM4a": 7028,
+      "durationMs": 455,
+      "hash": "311974cd0d3b4d8d",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-di": {
+      "bytes": 5269,
+      "bytesM4a": 7766,
+      "durationMs": 519,
+      "hash": "5571369bc7bbb2fd",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-du": {
+      "bytes": 5492,
+      "bytesM4a": 7901,
+      "durationMs": 508,
+      "hash": "7afeedf0cbf6d1df",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-de": {
+      "bytes": 4981,
+      "bytesM4a": 7288,
+      "durationMs": 476,
+      "hash": "b9517af8fa92f705",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-do": {
+      "bytes": 4791,
+      "bytesM4a": 6911,
+      "durationMs": 444,
+      "hash": "e66dc4f599080da9",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-ba": {
+      "bytes": 5151,
+      "bytesM4a": 7307,
+      "durationMs": 476,
+      "hash": "3ee35f3c7f5ad721",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-bi": {
+      "bytes": 4886,
+      "bytesM4a": 6943,
+      "durationMs": 465,
+      "hash": "af15c731117af5e9",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-bu": {
+      "bytes": 5141,
+      "bytesM4a": 7064,
+      "durationMs": 455,
+      "hash": "d04065526b8c8480",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-be": {
+      "bytes": 5207,
+      "bytesM4a": 7805,
+      "durationMs": 497,
+      "hash": "cc3ba52833578642",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-bo": {
+      "bytes": 5265,
+      "bytesM4a": 7023,
+      "durationMs": 465,
+      "hash": "b9fc0994b6497884",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-pa": {
+      "bytes": 5393,
+      "bytesM4a": 7664,
+      "durationMs": 497,
+      "hash": "437345f392658f47",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-pi": {
+      "bytes": 5173,
+      "bytesM4a": 7762,
+      "durationMs": 487,
+      "hash": "5bd9a67fa245b26c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-pu": {
+      "bytes": 5258,
+      "bytesM4a": 7038,
+      "durationMs": 465,
+      "hash": "da176cb3ec1e08df",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-pe": {
+      "bytes": 5600,
+      "bytesM4a": 8695,
+      "durationMs": 529,
+      "hash": "339dc5067cce1bc5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-po": {
+      "bytes": 5246,
+      "bytesM4a": 7423,
+      "durationMs": 487,
+      "hash": "c2e94b8ea496ffa5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-kya": {
+      "bytes": 5997,
+      "bytesM4a": 8323,
+      "durationMs": 551,
+      "hash": "3bd62216ff4c2c11",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-kyu": {
+      "bytes": 6147,
+      "bytesM4a": 8345,
+      "durationMs": 551,
+      "hash": "352df8060069ac3c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-kyo": {
+      "bytes": 6046,
+      "bytesM4a": 8235,
+      "durationMs": 551,
+      "hash": "2f9daf86e3bfd387",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-sha": {
+      "bytes": 6026,
+      "bytesM4a": 8550,
+      "durationMs": 583,
+      "hash": "3c754827d2d67b57",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-shu": {
+      "bytes": 6372,
+      "bytesM4a": 9603,
+      "durationMs": 604,
+      "hash": "596ccf30bc43a34c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-sho": {
+      "bytes": 5760,
+      "bytesM4a": 8611,
+      "durationMs": 583,
+      "hash": "0e4ed8f836db0326",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-cha": {
+      "bytes": 5957,
+      "bytesM4a": 8445,
+      "durationMs": 551,
+      "hash": "2049ab1157da33b3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-chu": {
+      "bytes": 6201,
+      "bytesM4a": 8587,
+      "durationMs": 551,
+      "hash": "7387e2f3ddf8bbca",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-cho": {
+      "bytes": 5920,
+      "bytesM4a": 7824,
+      "durationMs": 540,
+      "hash": "dc3dda3f14dd672e",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-nya": {
+      "bytes": 6070,
+      "bytesM4a": 8919,
+      "durationMs": 572,
+      "hash": "6de34664bdd09863",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-nyu": {
+      "bytes": 6111,
+      "bytesM4a": 8176,
+      "durationMs": 551,
+      "hash": "3adc98b6ad5cb77b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-nyo": {
+      "bytes": 5956,
+      "bytesM4a": 8127,
+      "durationMs": 561,
+      "hash": "31f466b750a37128",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-hya": {
+      "bytes": 5917,
+      "bytesM4a": 8283,
+      "durationMs": 593,
+      "hash": "8bafb1140039c5c4",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-hyu": {
+      "bytes": 6094,
+      "bytesM4a": 9004,
+      "durationMs": 604,
+      "hash": "09f278505ac7d4d3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-hyo": {
+      "bytes": 5644,
+      "bytesM4a": 8310,
+      "durationMs": 593,
+      "hash": "5dbaf624e19212b5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-mya": {
+      "bytes": 6005,
+      "bytesM4a": 8239,
+      "durationMs": 561,
+      "hash": "c6d4b318134c086a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-myu": {
+      "bytes": 5756,
+      "bytesM4a": 8251,
+      "durationMs": 540,
+      "hash": "9b5ac55396417672",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-myo": {
+      "bytes": 6082,
+      "bytesM4a": 8071,
+      "durationMs": 561,
+      "hash": "e3ceb3b173e61944",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-rya": {
+      "bytes": 5562,
+      "bytesM4a": 8298,
+      "durationMs": 529,
+      "hash": "a52b694d395e76cd",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-ryu": {
+      "bytes": 5260,
+      "bytesM4a": 7268,
+      "durationMs": 476,
+      "hash": "c292984ec5ef6c53",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-hira-ryo": {
+      "bytes": 5490,
+      "bytesM4a": 7506,
+      "durationMs": 508,
+      "hash": "25f84fd7bdea1f95",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-ga": {
+      "bytes": 5204,
+      "bytesM4a": 7202,
+      "durationMs": 465,
+      "hash": "4ab6bf3786a453e1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-gi": {
+      "bytes": 4839,
+      "bytesM4a": 7001,
+      "durationMs": 465,
+      "hash": "996a0da27b0ef41b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-gu": {
+      "bytes": 5194,
+      "bytesM4a": 7202,
+      "durationMs": 455,
+      "hash": "41a5abf334007447",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-ge": {
+      "bytes": 5273,
+      "bytesM4a": 7970,
+      "durationMs": 487,
+      "hash": "829fc682a9ff050c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-go": {
+      "bytes": 5128,
+      "bytesM4a": 6620,
+      "durationMs": 455,
+      "hash": "5bb07539263a6d6b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-za": {
+      "bytes": 5631,
+      "bytesM4a": 7836,
+      "durationMs": 519,
+      "hash": "1f3693d7b21534a0",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-ji": {
+      "bytes": 5269,
+      "bytesM4a": 7766,
+      "durationMs": 519,
+      "hash": "e2201dc8493dcaa4",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-zu": {
+      "bytes": 5492,
+      "bytesM4a": 7901,
+      "durationMs": 508,
+      "hash": "a14a0fbd431759a6",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-ze": {
+      "bytes": 5636,
+      "bytesM4a": 8473,
+      "durationMs": 540,
+      "hash": "b94de40a5d5a9bd0",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-zo": {
+      "bytes": 5623,
+      "bytesM4a": 7999,
+      "durationMs": 519,
+      "hash": "a5bce8e0118b9f58",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-da": {
+      "bytes": 5026,
+      "bytesM4a": 7028,
+      "durationMs": 455,
+      "hash": "24bf15caebe900f5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-di": {
+      "bytes": 5269,
+      "bytesM4a": 7766,
+      "durationMs": 519,
+      "hash": "78c53ae54caa91ab",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-du": {
+      "bytes": 5492,
+      "bytesM4a": 7901,
+      "durationMs": 508,
+      "hash": "e381d1a7b62b6190",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-de": {
+      "bytes": 4981,
+      "bytesM4a": 7288,
+      "durationMs": 476,
+      "hash": "94d33e120316d908",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-do": {
+      "bytes": 4791,
+      "bytesM4a": 6911,
+      "durationMs": 444,
+      "hash": "22a63502c5daa48b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-ba": {
+      "bytes": 5151,
+      "bytesM4a": 7307,
+      "durationMs": 476,
+      "hash": "9bf413b4425da2fb",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-bi": {
+      "bytes": 4886,
+      "bytesM4a": 6943,
+      "durationMs": 465,
+      "hash": "6dcf7d0938afd857",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-bu": {
+      "bytes": 5141,
+      "bytesM4a": 7064,
+      "durationMs": 455,
+      "hash": "c2d6727425e75583",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-be": {
+      "bytes": 5207,
+      "bytesM4a": 7805,
+      "durationMs": 497,
+      "hash": "db95859243110932",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-bo": {
+      "bytes": 5265,
+      "bytesM4a": 7023,
+      "durationMs": 465,
+      "hash": "0440fad0207a8972",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-pa": {
+      "bytes": 5393,
+      "bytesM4a": 7664,
+      "durationMs": 497,
+      "hash": "79997259bdce2559",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-pi": {
+      "bytes": 5173,
+      "bytesM4a": 7762,
+      "durationMs": 487,
+      "hash": "308eb5d6e496924a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-pu": {
+      "bytes": 5258,
+      "bytesM4a": 7038,
+      "durationMs": 465,
+      "hash": "28c8abb2a66ea5f9",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-pe": {
+      "bytes": 5600,
+      "bytesM4a": 8695,
+      "durationMs": 529,
+      "hash": "176220caee743855",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-po": {
+      "bytes": 5246,
+      "bytesM4a": 7423,
+      "durationMs": 487,
+      "hash": "cf7355ebb2b6d569",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-kya": {
+      "bytes": 5997,
+      "bytesM4a": 8323,
+      "durationMs": 551,
+      "hash": "425991b496807ea7",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-kyu": {
+      "bytes": 6147,
+      "bytesM4a": 8345,
+      "durationMs": 551,
+      "hash": "8824d770ffcf9492",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-kyo": {
+      "bytes": 6046,
+      "bytesM4a": 8235,
+      "durationMs": 551,
+      "hash": "2eb8652ae709e264",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-sha": {
+      "bytes": 6026,
+      "bytesM4a": 8550,
+      "durationMs": 583,
+      "hash": "b89fa8cab0fd402c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-shu": {
+      "bytes": 6372,
+      "bytesM4a": 9603,
+      "durationMs": 604,
+      "hash": "780fc119be42e9bd",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-sho": {
+      "bytes": 5760,
+      "bytesM4a": 8611,
+      "durationMs": 583,
+      "hash": "3b525222b7551f50",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-cha": {
+      "bytes": 5957,
+      "bytesM4a": 8445,
+      "durationMs": 551,
+      "hash": "7bcb3da2254c9e76",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-chu": {
+      "bytes": 6201,
+      "bytesM4a": 8587,
+      "durationMs": 551,
+      "hash": "80ad934178bd6311",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-cho": {
+      "bytes": 5920,
+      "bytesM4a": 7824,
+      "durationMs": 540,
+      "hash": "38733fbca1637ac2",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-nya": {
+      "bytes": 6070,
+      "bytesM4a": 8919,
+      "durationMs": 572,
+      "hash": "8dde9b3188c44f98",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-nyu": {
+      "bytes": 6111,
+      "bytesM4a": 8176,
+      "durationMs": 551,
+      "hash": "b02f94e4c433f12e",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-nyo": {
+      "bytes": 5956,
+      "bytesM4a": 8127,
+      "durationMs": 561,
+      "hash": "1fa19a89c77b9fd2",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-hya": {
+      "bytes": 5917,
+      "bytesM4a": 8283,
+      "durationMs": 593,
+      "hash": "ad9e1d7b9b6fcd30",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-hyu": {
+      "bytes": 6094,
+      "bytesM4a": 9004,
+      "durationMs": 604,
+      "hash": "825d391c69edc2fe",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-hyo": {
+      "bytes": 5644,
+      "bytesM4a": 8310,
+      "durationMs": 593,
+      "hash": "050fe280bdb1e4e3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-mya": {
+      "bytes": 6005,
+      "bytesM4a": 8239,
+      "durationMs": 561,
+      "hash": "f02badea894f016a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-myu": {
+      "bytes": 5756,
+      "bytesM4a": 8251,
+      "durationMs": 540,
+      "hash": "cf791ba4e23273ff",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-myo": {
+      "bytes": 6082,
+      "bytesM4a": 8071,
+      "durationMs": 561,
+      "hash": "31b2ab25435a19d9",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-rya": {
+      "bytes": 5562,
+      "bytesM4a": 8298,
+      "durationMs": 529,
+      "hash": "40efa4ac40ba4ca5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-ryu": {
+      "bytes": 5260,
+      "bytesM4a": 7268,
+      "durationMs": 476,
+      "hash": "f3e984b111547325",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "kn-kata-ryo": {
+      "bytes": 5490,
+      "bytesM4a": 7506,
+      "durationMs": 508,
+      "hash": "05ace1831348ea8f",
+      "batch": "runner-voicevox-0.26.2"
     }
   }
 }

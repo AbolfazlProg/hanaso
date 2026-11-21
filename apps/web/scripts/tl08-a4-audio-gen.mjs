@@ -21,7 +21,7 @@
  * HPF70 + shelf +2.5dB@2.5k + gate(-40dB,2:1) + peak-norm −1.5dBFS;
  * opus 64k / m4a 128k.
  */
-import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, existsSync } from 'node:fs';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
@@ -30,6 +30,16 @@ import os from 'node:os';
 const VOICEVOX = process.env.VOICEVOX_URL ?? 'http://127.0.0.1:50021';
 const SPEAKER = 90; // VOICEVOX:ぞん子 ノーマル — Addendum-5 §4 (A/B + ASR evidence)
 const CREDIT = 'VOICEVOX:ぞん子';
+/* Issue #146 audio completion (--missing-only): the engine runs on an ISOLATED
+ * OFFLINE RUNNER (sandbox/CI box) — NEVER on the VPS or production (owner
+ * constraint 2026-11-21: no VOICEVOX process on the serving host, ever).
+ * Production only SERVES the committed files; the voice + mastering chain are
+ * identical to batch-1, so the registry stays acoustically uniform. */
+const RUNNER_BATCH = 'runner-voicevox-0.26.2';
+const RUNNER_NOTE =
+  ' | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER ' +
+  '(never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 ' +
+  `(VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry "batch":"${RUNNER_BATCH}"`;
 const WEB = path.join(process.cwd(), 'apps', 'web');
 const KANA_DIR = path.join(WEB, 'public', 'audio', 'kana');
 const HOST_DIR = path.join(WEB, 'public', 'audio', 'hostwords');
@@ -257,45 +267,109 @@ function wordStem(word) {
 }
 
 // ---------------------------------------------------------------- registries
+/* --missing-only (Issue #146 completion): synthesize ONLY the assets the
+ * committed registries lack; existing files + manifest entries stay
+ * BYTE-IDENTICAL (same principle as the #146 writing-data rebuild). The
+ * default (no flag) remains the full VPS regeneration unchanged. A word list
+ * file (--only-file, one word per line) narrows the hostword batch to the
+ * UI-bound needed set; without it every missing surface word is generated. */
+const MISSING_ONLY = process.argv.includes('--missing-only');
+const onlyFile = process.argv.includes('--only-file') ? process.argv[process.argv.indexOf('--only-file') + 1] : null;
+
+function loadExistingManifest(dir) {
+  const p = path.join(dir, 'manifest.json');
+  if (!MISSING_ONLY || !existsSync(p)) return null;
+  return JSON.parse(readFileSync(p, 'utf8'));
+}
+
+function mergedGeneratedBy(existing) {
+  return existing ? `${existing.generatedBy}${RUNNER_NOTE}` : `${GENERATED_BY}${RUNNER_NOTE}`;
+}
+
 async function generateAll() {
   mkdirSync(KANA_DIR, { recursive: true });
   mkdirSync(HOST_DIR, { recursive: true });
+  const existingKana = loadExistingManifest(KANA_DIR);
+  const existingHost = loadExistingManifest(HOST_DIR);
+  const onlyWords = onlyFile
+    ? new Set(
+        readFileSync(onlyFile, 'utf8')
+          .split('\n')
+          .map((l) => l.trim())
+          .filter(Boolean),
+      )
+    : null;
 
   // 1. kana
-  const kanaManifest = { generatedBy: GENERATED_BY, format: 'voicevox-opus-m4a', entries: {} };
+  const kanaManifest = {
+    generatedBy: mergedGeneratedBy(existingKana),
+    format: 'voicevox-opus-m4a',
+    entries: existingKana ? { ...existingKana.entries } : {},
+  };
+  let kanaNew = 0;
   for (const { ref, text } of kanaEntries()) {
+    if (MISSING_ONLY && kanaManifest.entries[ref]) continue; // committed asset — untouched
     const wav = normTo(master(await synth(text)));
     const base = path.join(KANA_DIR, ref);
     const { bytes, bytesM4a } = encode(wav, base);
-    kanaManifest.entries[ref] = { bytes, bytesM4a, durationMs: probeMs(`${base}.opus`), hash: hash(text) };
+    kanaManifest.entries[ref] = {
+      bytes,
+      bytesM4a,
+      durationMs: probeMs(`${base}.opus`),
+      hash: hash(text),
+      batch: RUNNER_BATCH,
+    };
+    kanaNew += 1;
     process.stdout.write(`kana ${ref} ${text} ${probeMs(`${base}.opus`)}ms\n`);
   }
   writeFileSync(path.join(KANA_DIR, 'manifest.json'), JSON.stringify(kanaManifest, null, 2) + '\n');
 
   // 2. host words + example words — ONE per-word registry
   const words = wordSurface(); // TASK-HANASO-21: single source — --list and the real run can never drift
-  const hostManifest = { generatedBy: GENERATED_BY, format: 'voicevox-opus-m4a', entries: {} };
+  const hostManifest = {
+    generatedBy: mergedGeneratedBy(existingHost),
+    format: 'voicevox-opus-m4a',
+    entries: existingHost ? { ...existingHost.entries } : {},
+  };
+  let wordNew = 0;
   for (const word of words) {
+    if (MISSING_ONLY) {
+      if (hostManifest.entries[word]) continue; // committed asset — untouched
+      if (onlyWords && !onlyWords.has(word)) continue; // not part of this batch
+    }
     const wav = normTo(master(await synth(word)));
     const { stem } = wordStem(word);
     const base = path.join(HOST_DIR, stem);
     const { bytes, bytesM4a } = encode(wav, base);
-    hostManifest.entries[word] = { file: stem, bytes, bytesM4a, durationMs: probeMs(`${base}.opus`), hash: hash(word) };
+    hostManifest.entries[word] = {
+      file: stem,
+      bytes,
+      bytesM4a,
+      durationMs: probeMs(`${base}.opus`),
+      hash: hash(word),
+      batch: RUNNER_BATCH,
+    };
+    wordNew += 1;
     process.stdout.write(
       `word ${word} (${stem === encodeURIComponent(word) ? 'named' : 'hashed'}) ${probeMs(`${base}.opus`)}ms\n`,
     );
   }
   writeFileSync(path.join(HOST_DIR, 'manifest.json'), JSON.stringify(hostManifest, null, 2) + '\n');
 
-  // drop stale assets not in the manifest (the registry is the truth)
-  const keep = new Set(Object.values(hostManifest.entries).map((e) => e.file ?? ''));
-  for (const f of readdirSync(HOST_DIR)) {
-    if (f.endsWith('.opus') || f.endsWith('.m4a')) {
-      const stem = f.replace(/\.(opus|m4a)$/, '');
-      if (!keep.has(stem)) rmSync(path.join(HOST_DIR, f));
+  if (!MISSING_ONLY) {
+    // drop stale assets not in the manifest (the registry is the truth) —
+    // NEVER in --missing-only mode (that run owns nothing but its own batch)
+    const keep = new Set(Object.values(hostManifest.entries).map((e) => e.file ?? ''));
+    for (const f of readdirSync(HOST_DIR)) {
+      if (f.endsWith('.opus') || f.endsWith('.m4a')) {
+        const stem = f.replace(/\.(opus|m4a)$/, '');
+        if (!keep.has(stem)) rmSync(path.join(HOST_DIR, f));
+      }
     }
   }
-  console.log(`\ndone: 92 kana + ${words.length} words (host + example, one registry) — voice ${CREDIT}`);
+  console.log(
+    `\ndone: ${kanaNew} new kana + ${wordNew} new words (registry now: ${Object.keys(kanaManifest.entries).length} kana, ${Object.keys(hostManifest.entries).length} words) — voice ${CREDIT}${MISSING_ONLY ? ' [missing-only]' : ''}`,
+  );
 }
 
 /* TASK-HANASO-21 — `--list`: print the COMPLETE hostword generation surface as
