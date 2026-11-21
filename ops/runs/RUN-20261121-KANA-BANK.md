@@ -121,7 +121,47 @@ release through the official web-terminal (root shell — the same ttyd path the
   (untouched); disk 4.4GB free (77%); rollback artifact = image `hanaso-web:78b1c9d…` retained + the
   printed one-liner + the DB backup path above.
 
-## 4. Other agents' work — untouched
+## 4. Audio completion — batch-2 on an ISOLATED runner (the «92 pairs» closed; owner constraint honored)
+
+Owner order (2026-11-21): complete the remaining 92 kana-bank audio pairs — **VOICEVOX must never be
+installed or run on the VPS/production**. Honored literally: the engine
+(`voicevox_engine 0.26.2` CPU, official release, checksum-file-name-verified download) ran ONLY inside
+the execution sandbox on `127.0.0.1:50021`; the VPS/production was not touched (no SSH, no container,
+no config change). `tl08-a4-audio-gen.mjs` gained a backward-compatible `--missing-only` mode
+(default full-run behavior unchanged) that synthesizes ONLY what the committed registries lack and
+merges manifests — existing files and entries stay byte-identical (the #146 writing-data principle).
+
+- **Batch contents**: 92 kana pairs (`kn-*`, voiced/yōon — the #146 remainder) + the 104 UI-bound
+  words the h21 gate listed as `pendingVpsRun` (the expansion chapter's host words / rule sides /
+  examples / foreign-combo list). Registry after: **184 kana + 257 words, zero pending, zero orphans**.
+- **Verification battery** (all green):
+  - completeness: registry↔manifest↔disk 1:1 (184/184 kana, 257/257 words, 0 fileless, 0 orphan files);
+  - format: ffprobe across ALL 552 audio files — opus/48kHz/mono + aac/24kHz/mono, identical profiles
+    between batch-1 and batch-2, 0 violations;
+  - loudness/duration: mastering targets hold (RMS −24.3..−16.9 dBFS, mean −18.0; peak ≤ −0.5 dBFS;
+    duration 0.44–1.98s), manifest durationMs matches measured;
+  - pronunciation-spec: the engine's own `audio_query` mora parse captured for all 196 texts —
+    every spoken mora sequence matches the registry text (8 kana flags are CORRECT readings: を→o,
+    ぢ/づ→ji/zu standard, は/へ particle readings — batch-1 shows the SAME dictionary behavior, see
+    below; 36 word flags are long-vowel orthography (とお/とう/とー equivalence) + standard ぢ/づ/ヴァ
+    readings — zero mispronunciations);
+  - independent ear: faster-whisper (small, ja) on the 104 words — 66/104 verified incl. 20 words
+    recognized and re-written in KANJI (空気・元気・東京…) which is a recognition success, 3
+    orthographic variants (ファイル/ヒヤリング/ヴァイオリン), the rest are documented small-clip
+    ASR confusions (p/b, t/d, s/z) — cross-checked against the parse-spec above; the z-ai ASR service
+    was REJECTED (Chinese output — not a Japanese verifier) and whisper on sub-second isolated moras
+    is documented unreliable (1/8) — the mora evidence relies on the engine parse-spec;
+  - reproducibility: re-synthesis through the identical chain — batch-2 files decode BIT-EXACT
+    (corr = 1.000000); batch-1 committed assets re-synthesized on 0.26.2 decode at corr ≈ 0.9999 —
+    the isolated batch is acoustically UNIFORM with the trusted batch-1 (same speaker 90 ぞん子,
+    same mastering chain).
+- **Repo gates after landing**: h21 audio-honesty gate `surface=257 committed=257 pendingVpsRun=0`;
+  full unit suite 89 files / 984 tests ALL GREEN; `tsc --noEmit` clean; prettier clean.
+- **Production**: nothing deployed in this step — the owner constraint forbids touching the VPS here.
+  The audio is static content under `public/audio/`; it is SERVED by the next standard image release
+  (no VOICEVOX process involved — production only serves committed files, exactly as the owner set).
+
+## 5. Other agents' work — untouched
 
 Open PRs #113 / #115 / #120 / #123 / #128 (dependabot + other agents) were not touched; no branch of
 theirs was modified; the merge used squash per the repo's merge policy.
