@@ -318,24 +318,6 @@ export const EQA_WAIVERS: EqaWaiver[] = [
     resolvedBy: 'TASK-LEARNING-15',
   },
   {
-    key: 'EQA-10:stn-kana-hd2:C-first-engage',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرینِ پس از پکت کارت این ایستگاه difficulty 1 نیست (الگوی سیستمی «آموزش→آزمون d2») — در بازسازی مرحله‌ای محتوا، درگیرسازی ساده بلافاصله پس از هر پکت افزوده می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-kana-hd2:C-worked-before-decode',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرین رمزگشایی این ایستگاه پیش از هر نمونهٔ الگو‌شده (example-set/board) می‌آید — در بازسازی، لحظهٔ خواندنِ الگو‌شده پیش از تمرین قرار می‌گیرد.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
     key: 'EQA-10:stn-kana-hd3:C-first-engage',
     registeredAt: '2026-11-22',
     chapter: 'kana-foundation-01',
@@ -364,24 +346,6 @@ export const EQA_WAIVERS: EqaWaiver[] = [
   },
   {
     key: 'EQA-10:stn-kana-hd4:C-worked-before-decode',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرین رمزگشایی این ایستگاه پیش از هر نمونهٔ الگو‌شده (example-set/board) می‌آید — در بازسازی، لحظهٔ خواندنِ الگو‌شده پیش از تمرین قرار می‌گیرد.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-kana-hp1:C-first-engage',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرینِ پس از پکت کارت این ایستگاه difficulty 1 نیست (الگوی سیستمی «آموزش→آزمون d2») — در بازسازی مرحله‌ای محتوا، درگیرسازی ساده بلافاصله پس از هر پکت افزوده می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-kana-hp1:C-worked-before-decode',
     registeredAt: '2026-11-22',
     chapter: 'kana-foundation-01',
     issue: 158,
@@ -436,24 +400,6 @@ export const EQA_WAIVERS: EqaWaiver[] = [
   },
   {
     key: 'EQA-10:stn-kana-hy4:C-worked-before-decode',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرین رمزگشایی این ایستگاه پیش از هر نمونهٔ الگو‌شده (example-set/board) می‌آید — در بازسازی، لحظهٔ خواندنِ الگو‌شده پیش از تمرین قرار می‌گیرد.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-kana-kd1:C-first-engage',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرینِ پس از پکت کارت این ایستگاه difficulty 1 نیست (الگوی سیستمی «آموزش→آزمون d2») — در بازسازی مرحله‌ای محتوا، درگیرسازی ساده بلافاصله پس از هر پکت افزوده می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-kana-kd1:C-worked-before-decode',
     registeredAt: '2026-11-22',
     chapter: 'kana-foundation-01',
     issue: 158,
@@ -534,24 +480,6 @@ export const EQA_WAIVERS: EqaWaiver[] = [
     resolvedBy: 'TASK-LEARNING-15',
   },
   {
-    key: 'EQA-10:stn-kana-ky1:C-first-engage',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرینِ پس از پکت کارت این ایستگاه difficulty 1 نیست (الگوی سیستمی «آموزش→آزمون d2») — در بازسازی مرحله‌ای محتوا، درگیرسازی ساده بلافاصله پس از هر پکت افزوده می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-kana-ky1:C-worked-before-decode',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرین رمزگشایی این ایستگاه پیش از هر نمونهٔ الگو‌شده (example-set/board) می‌آید — در بازسازی، لحظهٔ خواندنِ الگو‌شده پیش از تمرین قرار می‌گیرد.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
     key: 'EQA-10:stn-kana-ky2:C-first-engage',
     registeredAt: '2026-11-22',
     chapter: 'kana-foundation-01',
@@ -598,24 +526,6 @@ export const EQA_WAIVERS: EqaWaiver[] = [
   },
   {
     key: 'EQA-10:stn-kana-ky4:C-worked-before-decode',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرین رمزگشایی این ایستگاه پیش از هر نمونهٔ الگو‌شده (example-set/board) می‌آید — در بازسازی، لحظهٔ خواندنِ الگو‌شده پیش از تمرین قرار می‌گیرد.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-kana-ky5:C-first-engage',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'اولین تمرینِ پس از پکت کارت این ایستگاه difficulty 1 نیست (الگوی سیستمی «آموزش→آزمون d2») — در بازسازی مرحله‌ای محتوا، درگیرسازی ساده بلافاصله پس از هر پکت افزوده می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-kana-ky5:C-worked-before-decode',
     registeredAt: '2026-11-22',
     chapter: 'kana-foundation-01',
     issue: 158,
