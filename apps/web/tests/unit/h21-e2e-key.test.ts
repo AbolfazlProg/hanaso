@@ -112,7 +112,7 @@ test('E2E answer key integrity — every practice exercise in both chapters is w
     }
   }
   // sanity: the real curriculum shape
-  expect(stations).toHaveLength(60); // 38 kana (TASK-HANASO-22 +2 milestones, TASK-27 +4 practice) + 22 fm01
+  expect(stations).toHaveLength(87); // 38 kana (TASK-HANASO-22 +2 milestones, TASK-27 +4 practice) + 27 kana extensions (ISSUE #146) + 22 fm01
   expect(exerciseCount).toBeGreaterThan(300);
 
   if (process.env.H21_E2E_DUMP) {

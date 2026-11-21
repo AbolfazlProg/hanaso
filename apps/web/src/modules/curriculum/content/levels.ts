@@ -41,6 +41,29 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
     },
   },
   {
+    code: 'L1X',
+    titleFa: 'کانا — بسطِ کامل',
+    jlptLabel: 'Pre-N5',
+    cefrLabel: 'pre-A1',
+    canDoFa: 'کاناهای واک‌دار/پوزی و ترکیب‌های یوون را می‌خواند، می‌شنود و می‌نویسد — بانکِ کانایش کامل است.',
+    orderInCourse: 1.5,
+    caps: {
+      // ISSUE #146 — the kana band's second stage: the 92 extension entries as a
+      // proper chapter (27 core stations, ~186'). Registered exception numbers:
+      // same shape as L1 (zero words/grammar — kana words are reading vessels,
+      // DD-119) with its own gate (same strictness — kana errors compound).
+      vocabCore: [0, 0],
+      grammarClusters: [0, 0],
+      stationsCore: [20, 28],
+      chapterMinutes: [150, 210],
+      dialogueLines: [2, 4],
+      listeningSpeed: 0.8,
+      furigana: 'all',
+      gate: { weighted: 0.9, minMeasure: 0.8 },
+      maxRemediationLoops: 3,
+    },
+  },
+  {
     code: 'L2',
     titleFa: 'مبتدی',
     jlptLabel: 'N5 (پایین)',

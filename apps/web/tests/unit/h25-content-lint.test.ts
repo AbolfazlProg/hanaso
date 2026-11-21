@@ -32,6 +32,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { getChapter } from '@/modules/curriculum/content';
 import type { Exercise, Chapter } from '@/modules/curriculum/types';
+import { derivedFormsIn } from '@/modules/curriculum/glyph-budget';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 
 const web = process.cwd();
@@ -441,12 +442,37 @@ import { RULE_MARK_STATION, decomposeJa } from '@/modules/curriculum/glyph-budge
 
 /** every glyph ACTUALLY TAUGHT (kana-card) by end of station index i */
 function taughtByEnd(ch: Chapter, i: number): Set<string> {
+  /* ISSUE #146: the registry includes the derived forms (が/ぱ/きゃ…) now, so a
+   * glyph being "card-taught" is no longer the only honest way a form is
+   * established — RULE DISPLAY (rule tables / prereq first-looks / contrasts /
+   * steps) teaches READING of it too (chapter-01's h5 deck shows がざ before its
+   * dakuten decode items). The taught set = cards ∪ forms displayed in teaching
+   * decks up to AND INCLUDING this station (a display block is the introduction
+   * of its own surfaces). */
   const set = new Set<string>();
   ch.stations.slice(0, i + 1).forEach((s) => {
     for (const b of s.blocks) {
       if (b.kind === 'kana-card') {
         const g = KANA_ITEMS_BY_ID[(b as { kanaId: string }).kanaId]?.glyph;
         if (g) set.add(g);
+      } else if (b.kind === 'rule-card') {
+        for (const f of derivedFormsIn(b.patternJa)) set.add(f);
+        if (b.structureTable) {
+          for (const row of b.structureTable.rows) for (const cell of row) for (const f of derivedFormsIn(cell)) set.add(f);
+        }
+      } else if (b.kind === 'rule-prereq') {
+        for (const it of b.items) {
+          if (it.glyph) set.add(it.glyph);
+          if (it.word) for (const f of derivedFormsIn(it.word)) set.add(f);
+        }
+      } else if (b.kind === 'rule-contrast') {
+        for (const f of derivedFormsIn(b.a.ja)) set.add(f);
+        for (const f of derivedFormsIn(b.b.ja)) set.add(f);
+      } else if (b.kind === 'rule-step') {
+        if (b.word) for (const f of derivedFormsIn(b.word.ja)) set.add(f);
+        if (b.miniTable) {
+          for (const row of b.miniTable.rows) for (const cell of row) for (const f of derivedFormsIn(cell)) set.add(f);
+        }
       }
     }
   });

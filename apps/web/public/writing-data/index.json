@@ -20,53 +20,134 @@
     "か": {
       "strokes": 3
     },
+    "が": {
+      "strokes": 5
+    },
     "き": {
       "strokes": 4
+    },
+    "きゃ": {
+      "strokes": 7
+    },
+    "きゅ": {
+      "strokes": 6
+    },
+    "きょ": {
+      "strokes": 6
+    },
+    "ぎ": {
+      "strokes": 6
     },
     "く": {
       "strokes": 1
     },
+    "ぐ": {
+      "strokes": 3
+    },
     "け": {
       "strokes": 3
+    },
+    "げ": {
+      "strokes": 5
     },
     "こ": {
       "strokes": 2
     },
+    "ご": {
+      "strokes": 4
+    },
     "さ": {
       "strokes": 3
+    },
+    "ざ": {
+      "strokes": 5
     },
     "し": {
       "strokes": 1
     },
+    "しゃ": {
+      "strokes": 4
+    },
+    "しゅ": {
+      "strokes": 3
+    },
+    "しょ": {
+      "strokes": 3
+    },
+    "じ": {
+      "strokes": 3
+    },
     "す": {
       "strokes": 2
+    },
+    "ず": {
+      "strokes": 4
     },
     "せ": {
       "strokes": 3
     },
+    "ぜ": {
+      "strokes": 5
+    },
     "そ": {
       "strokes": 1
+    },
+    "ぞ": {
+      "strokes": 3
     },
     "た": {
       "strokes": 4
     },
+    "だ": {
+      "strokes": 6
+    },
     "ち": {
       "strokes": 2
     },
+    "ちゃ": {
+      "strokes": 5
+    },
+    "ちゅ": {
+      "strokes": 4
+    },
+    "ちょ": {
+      "strokes": 4
+    },
+    "ぢ": {
+      "strokes": 4
+    },
     "つ": {
+      "strokes": 1
+    },
+    "づ": {
       "strokes": 1
     },
     "て": {
       "strokes": 1
     },
+    "で": {
+      "strokes": 3
+    },
     "と": {
       "strokes": 2
+    },
+    "ど": {
+      "strokes": 4
     },
     "な": {
       "strokes": 4
     },
     "に": {
       "strokes": 3
+    },
+    "にゃ": {
+      "strokes": 6
+    },
+    "にゅ": {
+      "strokes": 5
+    },
+    "にょ": {
+      "strokes": 5
     },
     "ぬ": {
       "strokes": 2
@@ -80,23 +161,71 @@
     "は": {
       "strokes": 3
     },
+    "ば": {
+      "strokes": 5
+    },
+    "ぱ": {
+      "strokes": 4
+    },
     "ひ": {
       "strokes": 1
     },
+    "ひゃ": {
+      "strokes": 4
+    },
+    "ひゅ": {
+      "strokes": 3
+    },
+    "ひょ": {
+      "strokes": 3
+    },
+    "び": {
+      "strokes": 1
+    },
+    "ぴ": {
+      "strokes": 3
+    },
     "ふ": {
+      "strokes": 4
+    },
+    "ぶ": {
+      "strokes": 2
+    },
+    "ぷ": {
       "strokes": 4
     },
     "へ": {
       "strokes": 1
     },
+    "べ": {
+      "strokes": 6
+    },
+    "ぺ": {
+      "strokes": 5
+    },
     "ほ": {
       "strokes": 4
+    },
+    "ぼ": {
+      "strokes": 1
+    },
+    "ぽ": {
+      "strokes": 3
     },
     "ま": {
       "strokes": 3
     },
     "み": {
       "strokes": 2
+    },
+    "みゃ": {
+      "strokes": 5
+    },
+    "みゅ": {
+      "strokes": 4
+    },
+    "みょ": {
+      "strokes": 4
     },
     "む": {
       "strokes": 3
@@ -121,6 +250,15 @@
     },
     "り": {
       "strokes": 2
+    },
+    "りゃ": {
+      "strokes": 5
+    },
+    "りゅ": {
+      "strokes": 4
+    },
+    "りょ": {
+      "strokes": 4
     },
     "る": {
       "strokes": 1
@@ -158,53 +296,134 @@
     "カ": {
       "strokes": 2
     },
+    "ガ": {
+      "strokes": 4
+    },
     "キ": {
       "strokes": 3
+    },
+    "キャ": {
+      "strokes": 5
+    },
+    "キュ": {
+      "strokes": 5
+    },
+    "キョ": {
+      "strokes": 6
+    },
+    "ギ": {
+      "strokes": 5
     },
     "ク": {
       "strokes": 2
     },
+    "グ": {
+      "strokes": 4
+    },
     "ケ": {
       "strokes": 3
+    },
+    "ゲ": {
+      "strokes": 5
     },
     "コ": {
       "strokes": 2
     },
+    "ゴ": {
+      "strokes": 4
+    },
     "サ": {
       "strokes": 3
+    },
+    "ザ": {
+      "strokes": 5
     },
     "シ": {
       "strokes": 3
     },
+    "シャ": {
+      "strokes": 5
+    },
+    "シュ": {
+      "strokes": 5
+    },
+    "ショ": {
+      "strokes": 6
+    },
+    "ジ": {
+      "strokes": 5
+    },
     "ス": {
       "strokes": 2
+    },
+    "ズ": {
+      "strokes": 4
     },
     "セ": {
       "strokes": 2
     },
+    "ゼ": {
+      "strokes": 4
+    },
     "ソ": {
       "strokes": 2
+    },
+    "ゾ": {
+      "strokes": 4
     },
     "タ": {
       "strokes": 3
     },
+    "ダ": {
+      "strokes": 5
+    },
     "チ": {
       "strokes": 3
     },
+    "チャ": {
+      "strokes": 5
+    },
+    "チュ": {
+      "strokes": 5
+    },
+    "チョ": {
+      "strokes": 6
+    },
+    "ヂ": {
+      "strokes": 5
+    },
     "ツ": {
+      "strokes": 3
+    },
+    "ヅ": {
       "strokes": 3
     },
     "テ": {
       "strokes": 3
     },
+    "デ": {
+      "strokes": 5
+    },
     "ト": {
       "strokes": 2
+    },
+    "ド": {
+      "strokes": 4
     },
     "ナ": {
       "strokes": 2
     },
     "ニ": {
       "strokes": 2
+    },
+    "ニャ": {
+      "strokes": 4
+    },
+    "ニュ": {
+      "strokes": 4
+    },
+    "ニョ": {
+      "strokes": 5
     },
     "ヌ": {
       "strokes": 2
@@ -218,23 +437,71 @@
     "ハ": {
       "strokes": 2
     },
+    "バ": {
+      "strokes": 2
+    },
+    "パ": {
+      "strokes": 3
+    },
     "ヒ": {
       "strokes": 2
     },
+    "ヒャ": {
+      "strokes": 4
+    },
+    "ヒュ": {
+      "strokes": 4
+    },
+    "ヒョ": {
+      "strokes": 5
+    },
+    "ビ": {
+      "strokes": 2
+    },
+    "ピ": {
+      "strokes": 4
+    },
     "フ": {
+      "strokes": 1
+    },
+    "ブ": {
+      "strokes": 3
+    },
+    "プ": {
       "strokes": 1
     },
     "ヘ": {
       "strokes": 1
     },
+    "ベ": {
+      "strokes": 3
+    },
+    "ペ": {
+      "strokes": 2
+    },
     "ホ": {
       "strokes": 4
+    },
+    "ボ": {
+      "strokes": 1
+    },
+    "ポ": {
+      "strokes": 3
     },
     "マ": {
       "strokes": 2
     },
     "ミ": {
       "strokes": 3
+    },
+    "ミャ": {
+      "strokes": 5
+    },
+    "ミュ": {
+      "strokes": 5
+    },
+    "ミョ": {
+      "strokes": 6
     },
     "ム": {
       "strokes": 2
@@ -259,6 +526,15 @@
     },
     "リ": {
       "strokes": 2
+    },
+    "リャ": {
+      "strokes": 4
+    },
+    "リュ": {
+      "strokes": 4
+    },
+    "リョ": {
+      "strokes": 5
     },
     "ル": {
       "strokes": 2

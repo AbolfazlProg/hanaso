@@ -28,6 +28,7 @@ import { validateCourseChain } from '@/modules/curriculum/validation';
 import type { Chapter, ChapterState, StationState } from '@/modules/curriculum/types';
 
 const KANA = 'kana-foundation-01';
+const KEXT = 'kana-extensions-01'; // ISSUE #146 — the kana band's second stage (L1X)
 const FM = 'first-meeting-01';
 
 /* --------------------------------------------------------------- helpers */
@@ -60,7 +61,8 @@ describe('courseOrder — course order is data, not array order', () => {
   it('sorts by level band, then authored chapter position', () => {
     const ordered = courseOrder(listChapters());
     expect(ordered[0]!.slug).toBe(KANA); // L1
-    expect(ordered[1]!.slug).toBe(FM); // L2
+    expect(ordered[1]!.slug).toBe(KEXT); // L1X — ISSUE #146
+    expect(ordered[2]!.slug).toBe(FM); // L2
   });
 });
 
@@ -73,7 +75,8 @@ describe('resolveRevealPlan — the active chapter comes from progress', () => {
     expect(plan.archive).toEqual([]);
     expect(plan.teaser).toBeNull();
     // the whole course size stays hidden — only a count, never names
-    expect(plan.hiddenCount).toBe(0);
+    // (3 chapters − active − the immediate next = 1 hidden; ISSUE #146)
+    expect(plan.hiddenCount).toBe(1);
   });
 
   it('a learner mid-chapter keeps that chapter active (refresh changes nothing)', () => {
@@ -103,7 +106,7 @@ describe('resolveRevealPlan — the active chapter comes from progress', () => {
       remediationCount: 0,
     };
     const plan = resolveRevealPlan(listChapters(), statesMap([[KANA, understood]]));
-    expect(plan.activeSlug).toBe(FM);
+    expect(plan.activeSlug).toBe(KEXT); // the extension chapter auto-activates first (ISSUE #146)
     expect(plan.archive.map((c) => c.slug)).toEqual([KANA]);
   });
 
@@ -118,11 +121,12 @@ describe('resolveRevealPlan — the active chapter comes from progress', () => {
       listChapters(),
       statesMap([
         [KANA, understood],
+        [KEXT, understood],
         [FM, understood],
       ]),
     );
     expect(plan.activeSlug).toBe(FM);
-    expect(plan.archive.map((c) => c.slug)).toEqual([KANA]);
+    expect(plan.archive.map((c) => c.slug)).toEqual([KANA, KEXT]);
   });
 });
 
@@ -146,8 +150,8 @@ describe('resolveRevealPlan — the teaser (curiosity, never a list)', () => {
       coreTotal,
     });
     expect(plan.teaser).not.toBeNull();
-    expect(plan.teaser!.slug).toBe(FM);
-    expect(plan.teaser!.titleFa).toBe(getChapter(FM)!.titleFa);
+    expect(plan.teaser!.slug).toBe(KEXT); // the immediate NEXT chapter is the extension (ISSUE #146)
+    expect(plan.teaser!.titleFa).toBe(getChapter(KEXT)!.titleFa);
     expect(plan.teaser!.topicFa.length).toBeGreaterThan(0);
     expect(plan.teaser!.topicFa.length).toBeLessThanOrEqual(100);
   });

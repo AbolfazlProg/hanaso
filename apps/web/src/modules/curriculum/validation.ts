@@ -13,6 +13,7 @@ import { orderedStations } from './journey';
 import { KANA_ITEMS, KANA_ITEMS_BY_ID } from './content/kana-items';
 import { RULE_MARK_STATION, decomposeJa, derivedFormsIn, type RuleMark } from './glyph-budget';
 import { LEVELS_BY_CODE } from './content/levels';
+import { getChapter } from './content';
 
 export interface ContentViolation {
   rule: string;
@@ -380,16 +381,86 @@ export function validateChapterAgainstDialogue(
  *   reproduced over the shipped glyph set).
  * - CONTENT-103 (light): a kana station's kana-cards carry ≥1 and ≤6 glyphs
  *   (a full row/ん/small rows — broken packets are rejected).
+ *
+ * ISSUE #146 chapter chaining — the taught set of a chapter SEEDS from its
+ * prerequisite chain: the progressive reveal guarantees the prerequisite
+ * chapter is UNDERSTOOD before this one unlocks, so everything its walk
+ * ESTABLISHED (card glyphs + derived forms displayed in teaching decks) is
+ * honest prior knowledge here. Rule DISPLAY establishes reading: chapter-01
+ * teaches the dakuten rule (h5/h12/h15) and displays がざ…ばぱ in its decks,
+ * which is exactly why its own decode items may use them before any card —
+ * the registry growing to include derived forms (#146) makes that established
+ * knowledge explicit instead of an accident of registry membership.
  */
+/**
+ * ISSUE #146 — the glyph set a chapter's PREREQUISITE CHAIN establishes before
+ * this chapter ever unlocks. Progressive reveal (TASK-HANASO-16 + CHAPTER-CHAIN)
+ * guarantees the prerequisite chapter is UNDERSTOOD first, so its teaching is
+ * honest prior knowledge: card glyphs + every derived form its teaching decks
+ * DISPLAYED (rule tables / prereq first-looks / contrasts / steps). The rule
+ * marks whose teaching units live in the chain are likewise available from
+ * order 0 of this chapter.
+ */
+function prerequisiteEstablished(chapter: Chapter): {
+  glyphs: Set<string>;
+  chainStations: Set<string>;
+} {
+  const glyphs = new Set<string>();
+  const chainStations = new Set<string>();
+  const chain: Chapter[] = [];
+  const seen = new Set<string>();
+  let cur: Chapter | undefined = chapter;
+  while (cur?.prerequisiteChapterSlug && !seen.has(cur.prerequisiteChapterSlug)) {
+    seen.add(cur.prerequisiteChapterSlug);
+    const prev = getChapter(cur.prerequisiteChapterSlug);
+    if (!prev) break;
+    chain.push(prev);
+    cur = prev;
+  }
+  const fold = (b: TeachingBlock): void => {
+    if (b.kind === 'kana-card') {
+      const item = KANA_ITEMS_BY_ID[b.kanaId];
+      if (item) glyphs.add(item.glyph);
+    } else if (b.kind === 'rule-card') {
+      for (const f of derivedFormsIn(b.patternJa)) glyphs.add(f);
+      if (b.structureTable) {
+        for (const row of b.structureTable.rows) for (const cell of row) for (const f of derivedFormsIn(cell)) glyphs.add(f);
+      }
+    } else if (b.kind === 'rule-prereq') {
+      for (const it of b.items) {
+        if (it.glyph) glyphs.add(it.glyph);
+        if (it.word) for (const f of derivedFormsIn(it.word)) glyphs.add(f);
+      }
+    } else if (b.kind === 'rule-contrast') {
+      for (const f of derivedFormsIn(b.a.ja)) glyphs.add(f);
+      for (const f of derivedFormsIn(b.b.ja)) glyphs.add(f);
+    } else if (b.kind === 'rule-step') {
+      if (b.word) for (const f of derivedFormsIn(b.word.ja)) glyphs.add(f);
+      if (b.miniTable) {
+        for (const row of b.miniTable.rows) for (const cell of row) for (const f of derivedFormsIn(cell)) glyphs.add(f);
+      }
+    }
+  };
+  for (const prev of chain) {
+    for (const s of prev.stations) {
+      chainStations.add(s.slug);
+      for (const b of s.blocks) fold(b);
+    }
+  }
+  return { glyphs, chainStations };
+}
+
 function validateKanaContent(chapter: Chapter, v: ContentViolation[]): void {
   const hasKanaCards = chapter.stations.some((s) => s.blocks.some((b) => b.kind === 'kana-card'));
   if (!hasKanaCards) return; // non-kana chapters: nothing to check
 
   // cumulative glyph set by station order — a station's own introducesGlyphs
   // (TL-14 first-look declarations) are available to that station from its
-  // position onward, exactly like its kana-cards.
+  // position onward, exactly like its kana-cards. SEED (issue #146): the
+  // prerequisite chain's established glyphs (cards + displayed derived forms).
   const ordered = [...chapter.stations].sort((a, b) => a.order - b.order);
-  const cumulative = new Set<string>();
+  const prereq = prerequisiteEstablished(chapter);
+  const cumulative = new Set<string>(prereq.glyphs);
   const cumulativeBySlug = new Map<string, Set<string>>();
   for (const s of ordered) {
     for (const b of s.blocks) {
@@ -409,16 +480,57 @@ function validateKanaContent(chapter: Chapter, v: ContentViolation[]): void {
     cumulativeBySlug.set(s.slug, new Set(cumulative));
   }
 
-  // Only BASE glyphs (the 92 registry records) are card-taught and checkable here.
-  // Rule-derived forms — precomposed dakuten/handakuten (が/パ…), small kana
-  // (っ/ゃ/ェ…), and the chōonpu — are taught by RULE units (05A §۲: a rule is one
-  // unit, not per-glyph cards); their coverage is the unit design itself, which
-  // the decodability engine guaranteed upstream (WP-0 package).
+  // ISSUE #146 — rule DISPLAY establishes reading: fold the derived forms shown
+  // in teaching decks (rule tables / prereq first-looks / contrasts / steps +
+  // kana-card glyphs) per station, in deck order. A decode prompt may rely on a
+  // form the learner has SEEN TAUGHT (chapter-01's h5 table shows がざ before its
+  // dakuten decode items) — not only on card-taught glyphs.
+  const shownBySlug = new Map<string, Set<string>>();
+  const shownSoFar = new Set<string>(prereq.glyphs);
+  for (const s of ordered) {
+    for (const b of s.blocks) {
+      if (b.kind === 'kana-card') {
+        const item = KANA_ITEMS_BY_ID[b.kanaId];
+        if (item) shownSoFar.add(item.glyph);
+      } else if (b.kind === 'rule-card') {
+        for (const f of derivedFormsIn(b.patternJa)) shownSoFar.add(f);
+        if (b.structureTable) {
+          for (const row of b.structureTable.rows) for (const cell of row) for (const f of derivedFormsIn(cell)) shownSoFar.add(f);
+        }
+      } else if (b.kind === 'rule-prereq') {
+        for (const it of b.items) {
+          if (it.glyph) shownSoFar.add(it.glyph);
+          if (it.word) for (const f of derivedFormsIn(it.word)) shownSoFar.add(f);
+        }
+      } else if (b.kind === 'rule-contrast') {
+        for (const f of derivedFormsIn(b.a.ja)) shownSoFar.add(f);
+        for (const f of derivedFormsIn(b.b.ja)) shownSoFar.add(f);
+      } else if (b.kind === 'rule-step') {
+        if (b.word) for (const f of derivedFormsIn(b.word.ja)) shownSoFar.add(f);
+        if (b.miniTable) {
+          for (const row of b.miniTable.rows) for (const cell of row) for (const f of derivedFormsIn(cell)) shownSoFar.add(f);
+        }
+      }
+    }
+    shownBySlug.set(s.slug, new Set(shownSoFar));
+  }
+
+  // Only BASE glyphs (the registry records) are checked here — the kanaOf filter
+  // ignores rule marks (っ/ゃ…) and punctuation; their legality is the rule-unit
+  // design enforced by GLYPH-BUDGET below.
   const BASE_GLYPHS = new Set(KANA_ITEMS.map((k) => k.glyph));
   const kanaOf = (text: string): string[] => [...text].filter((ch) => BASE_GLYPHS.has(ch));
 
+  // taught per station = card-taught (cumulative) ∪ displayed-in-teaching (shown)
+  const taughtBySlug = new Map<string, Set<string>>();
   for (const s of ordered) {
-    const taught = cumulativeBySlug.get(s.slug) ?? new Set<string>();
+    const at = cumulativeBySlug.get(s.slug) ?? new Set<string>();
+    const shownAt = shownBySlug.get(s.slug) ?? new Set<string>();
+    taughtBySlug.set(s.slug, new Set([...at, ...shownAt]));
+  }
+
+  for (const s of ordered) {
+    const taught = taughtBySlug.get(s.slug) ?? prereq.glyphs;
     // CONTENT-103 (light): a kana station carries either glyph cards (row units,
     // 1–6) or a rule card (rule units — H4/H5/H6/H13/K8/K12 teach a RULE, not
     // new glyphs). Neither = not a kana unit.
@@ -488,10 +600,20 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
 
   // rule-mark availability: the order of the unit that teaches each mark
   // (null = never taught in this chapter → any use is a violation).
+  // ISSUE #146 chapter chaining: a mark whose teaching unit lives in the
+  // PREREQUISITE CHAIN is available from order 0 here — the chain was completed
+  // before this chapter unlocked (progressive reveal).
+  const prereqChain = prerequisiteEstablished(chapter);
   const markFrom: Partial<Record<RuleMark, number | null>> = {};
   for (const mark of Object.keys(RULE_MARK_STATION) as RuleMark[]) {
     const slug = RULE_MARK_STATION[mark];
-    markFrom[mark] = orderOfSlug.has(slug) ? (orderOfSlug.get(slug) as number) : null;
+    if (orderOfSlug.has(slug)) {
+      markFrom[mark] = orderOfSlug.get(slug) as number;
+    } else if (prereqChain.chainStations.has(slug)) {
+      markFrom[mark] = 0;
+    } else {
+      markFrom[mark] = null;
+    }
   }
 
   /* ---- GLYPH-BUDGET: walk stations in order. A station's OWN teaching (its
@@ -507,7 +629,7 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
      already be established by a teaching display at that point in the deck —
      a hiragana-taught rule mark never substitutes for showing the script-
      specific form (the audit's 9 katakana cases + ぜ/ば/で/ぴ/ぼ/ぽ/じ). */
-  const shownDerived = new Set<string>();
+  const shownDerived = new Set<string>(prereqChain.glyphs);
   const reportedDerived = new Set<string>();
   const checkDerived = (surface: string, where: string, slug: string): void => {
     for (const ch of derivedFormsIn(surface)) {
@@ -524,18 +646,27 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
   const foldDerived = (surface: string): void => {
     for (const ch of derivedFormsIn(surface)) shownDerived.add(ch);
   };
-  const cumulative = new Set<string>();
+  const cumulative = new Set<string>(prereqChain.glyphs);
   for (const s of ordered) {
     for (const b of s.blocks) {
       if (b.kind === 'kana-card') {
         const item = KANA_ITEMS_BY_ID[b.kanaId];
-        if (item) cumulative.add(item.glyph);
+        // the card itself is a teaching display of the glyph (issue #146: a
+        // derived-form card — が — IS the introduction; deck order below keeps
+        // uses-after-cards honest via checkDerived + cumulative).
+        if (item) {
+          cumulative.add(item.glyph);
+          shownDerived.add(item.glyph);
+        }
       }
     }
     const local = new Set(s.introducesGlyphs ?? []);
     const checkSurface = (surface: string, where: string): void => {
       const req = decomposeJa(surface);
-      const unknownBase = req.base.filter((g) => !cumulative.has(g) && !local.has(g));
+      // a form established by a TEACHING DISPLAY (shownDerived) is readable —
+      // rule display + deck order (checkDerived) carry the discipline; cards
+      // are one display kind, rule tables/contrasts are the other.
+      const unknownBase = req.base.filter((g) => !cumulative.has(g) && !local.has(g) && !shownDerived.has(g));
       if (unknownBase.length > 0) {
         v.push({
           rule: RULES.glyphBudget,
@@ -558,6 +689,13 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
 
     for (const b of s.blocks) {
       if (b.kind === 'rule-card') {
+        /* a TEACHING block IS the display of its own surfaces — fold FIRST so
+         * its own table cells/pattern pass the taught check (issue #146: the
+         * registry includes derived forms now, so が in h5's table must read as
+         * "displayed here", not "untaught glyph"). checkDerived below stays
+         * satisfied for free (the display precedes itself trivially). */
+        foldDerived(b.patternJa);
+        if (b.structureTable) b.structureTable.rows.forEach((row) => row.forEach(foldDerived));
         checkSurface(b.patternJa, b.id);
         if (b.structureTable) {
           b.structureTable.rows.forEach((row, i) => row.forEach((cell) => checkSurface(cell, `${b.id}/table-r${i}`)));
@@ -567,8 +705,6 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
             row.forEach((cell) => checkDerived(cell, `${b.id}/table-r${i}`, s.slug)),
           );
         }
-        foldDerived(b.patternJa);
-        if (b.structureTable) b.structureTable.rows.forEach((row) => row.forEach(foldDerived));
       }
       if (b.kind === 'example-set') {
         for (const ex of b.examples) {
@@ -578,27 +714,29 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
         }
       }
       if (b.kind === 'rule-prereq') {
+        /* prereq items are the most EXPLICIT introduction form — fold first. */
         for (const item of b.items) {
-          if (item.glyph) checkSurface(item.glyph, `${b.id}/prereq`);
-          if (item.word) checkSurface(item.word, `${b.id}/prereq`);
-          /* prereq items are the most EXPLICIT introduction form — they fold. */
           if (item.glyph) foldDerived(item.glyph);
           if (item.word) foldDerived(item.word);
         }
+        for (const item of b.items) {
+          if (item.glyph) checkSurface(item.glyph, `${b.id}/prereq`);
+          if (item.word) checkSurface(item.word, `${b.id}/prereq`);
+        }
       }
       if (b.kind === 'rule-contrast') {
-        checkSurface(b.a.ja, `${b.id}/a`);
-        checkSurface(b.b.ja, `${b.id}/b`);
         foldDerived(b.a.ja);
         foldDerived(b.b.ja);
+        checkSurface(b.a.ja, `${b.id}/a`);
+        checkSurface(b.b.ja, `${b.id}/b`);
       }
       if (b.kind === 'rule-step') {
+        if (b.word) foldDerived(b.word.ja);
+        if (b.miniTable) b.miniTable.rows.forEach((row) => row.forEach(foldDerived));
         if (b.word) checkSurface(b.word.ja, b.id);
         if (b.miniTable) {
           b.miniTable.rows.forEach((row, i) => row.forEach((cell) => checkSurface(cell, `${b.id}/table-r${i}`)));
         }
-        if (b.word) foldDerived(b.word.ja);
-        if (b.miniTable) b.miniTable.rows.forEach((row) => row.forEach(foldDerived));
       }
       if (b.kind === 'exercise') {
         for (const id of b.exerciseIds) {

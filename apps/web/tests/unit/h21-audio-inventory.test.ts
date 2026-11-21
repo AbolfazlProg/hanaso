@@ -86,11 +86,13 @@ test('audio honesty gate — no playable word is an orphan (committed or covered
   const genSurface = new Set(JSON.parse(listed.stdout.trim()) as string[]);
 
   // ---- 4. THE GATE ---------------------------------------------------------
-  // basic kana glyphs own the kn-* registry — they are not hostword orphans
+  // registry glyphs own the kn-* registry — they are not hostword orphans.
+  // ISSUE #146: the registry is 184 entries (92 base + 92 extensions) — the
+  // exclusion set follows the REGISTRY, not a pinned count.
   const basicKana = new Set(
     [...kanaItemsSrc.matchAll(/kanaId:\s*'([^']+)',\s*\n\s*glyph:\s*'([^']+)'/g)].map((m) => m[2]),
   );
-  expect(basicKana.size).toBe(92);
+  expect(basicKana.size).toBe(184);
 
   const orphans = [...needed]
     .filter((w) => !basicKana.has(w))

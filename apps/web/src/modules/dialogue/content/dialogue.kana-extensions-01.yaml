@@ -1,0 +1,44 @@
+meta:
+  id: dlg-kana-extensions-01
+  format: 2
+  stage: 1
+  jlpt: Pre-N5
+  review: true
+  generated:
+    tool: curriculum-authoring@0.1.0
+    at: 2026-11-21
+dialogue_ref: dlg-kana-extensions-01
+scene: >-
+  بعدازظهر، در خیابانِ خرید نزدیک ایستگاه. میکی سورا را همراهی می‌کند؛ تابلوهای
+  مغازه‌ها و منوی کافه پر از صداهای واک‌دار و ترکیب‌های یوون است — میکی از سورا
+  می‌پرسد و سورا می‌خواند.
+characters:
+  - chr-miki
+  - chr-sora
+turn_gap_default_ms: 650
+lines:
+  - id: s-kana-extensions-01-l1
+    speaker: chr-miki
+    frame: speaker-b
+    tokens:
+      - { surface: ゲームセンター, reading: ゲームセンター, pos: noun }
+    fa: «مرکز بازی»! این تابلو را می‌توانی بخوانی؟
+    emotion_tag: happy
+    gap_after_ms: 700
+  - id: s-kana-extensions-01-l2
+    speaker: chr-sora
+    frame: speaker-a
+    tokens:
+      - { surface: ゲーム, reading: ゲーム, pos: noun }
+      - { surface: センター, reading: センター, pos: noun }
+    fa: «گِیمو سِنتا» — با ゛ روی ケ و کشیدگیِ ー. آره، راحت خواندم!
+    emotion_tag: happy
+    gap_after_ms: 700
+  - id: s-kana-extensions-01-l3
+    speaker: chr-miki
+    frame: speaker-b
+    tokens:
+      - { surface: しゅっちょう, reading: しゅっちょう, pos: noun }
+    fa: عالی! حالا しゅっちょう (رفت‌وآمد اداری) را هم امتحان کن — یوون و سوکوئون با هم!
+    emotion_tag: confident
+    gap_after_ms: 500

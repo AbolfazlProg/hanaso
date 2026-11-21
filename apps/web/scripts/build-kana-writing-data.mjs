@@ -174,8 +174,26 @@ function strokePathsOf(svg) {
 }
 
 // ---------------------------------------------------------------- pipeline
-const chars = requiredChars();
-const missing = chars.filter((ch) => !existsInVendor(ch));
+/*
+ * ISSUE #146 — the 42 basic yōon digraphs (きゃ…リョ, both scripts). KanjiVG
+ * ships no combined source for these; the composition is DETERMINISTIC and
+ * documented: each part is fitted (uniform scale, centered) into its own half
+ * of the char box — the base glyph into the left region, the small kana into
+ * the right-bottom region — and the stroke order is base-strokes-first,
+ * small-kana-last (the real pen order of a yōon). Same centerline semantics
+ * as every other char: rendering, evaluation and writing-direction truth all
+ * read the same composed geometry.
+ */
+const SMALL = { hira: ['ゃ', 'ゅ', 'ょ'], kata: ['ャ', 'ュ', 'ョ'] };
+const DIGRAPHS = {};
+for (const script of ['hira', 'kata']) {
+  for (const base of ['き', 'し', 'ち', 'に', 'ひ', 'み', 'り', 'キ', 'シ', 'チ', 'ニ', 'ヒ', 'ミ', 'リ']) {
+    if (script === 'hira' && /[ァ-ン]/.test(base)) continue;
+    if (script === 'kata' && /[ぁ-ん]/.test(base)) continue;
+    for (const small of SMALL[script]) DIGRAPHS[`${base}${small}`] = [base, small];
+  }
+}
+
 function existsInVendor(ch) {
   try {
     readFileSync(path.join(vendorDir, `${ch}.svg`));
@@ -184,8 +202,48 @@ function existsInVendor(ch) {
     return false;
   }
 }
+/** A char is buildable when vendored OR a digraph whose parts are all vendored. */
+function buildable(ch) {
+  if (existsInVendor(ch)) return true;
+  const parts = DIGRAPHS[ch];
+  return !!parts && parts.every((p) => existsInVendor(p));
+}
+const chars = requiredChars();
+const missing = chars.filter((ch) => !buildable(ch));
 if (missing.length > 0) {
   throw new Error(`KanjiVG source missing for: ${missing.join(' ')} — do not ship`);
+}
+
+/** Map part bbox → target rect (uniform scale, centered) in 109-space. */
+function partTransform(bbox, rect) {
+  const s = Math.min(rect.w / (bbox.w || 1), rect.h / (bbox.h || 1));
+  const dx = rect.x + (rect.w - bbox.w * s) / 2 - bbox.x * s;
+  const dy = rect.y + (rect.h - bbox.h * s) / 2 - bbox.y * s;
+  return (p) => ({ x: p.x * s + dx, y: p.y * s + dy });
+}
+
+/** Compose a digraph's strokes (segment lists, 109-space): base left, small right-bottom. */
+function composeDigraph(parts) {
+  const rects = [
+    { x: 2, y: 3, w: 70, h: 101 }, // base glyph — writing-true size, left
+    { x: 68, y: 52, w: 39, h: 52 }, // small kana — right-bottom (typographic yōon)
+  ];
+  const strokes = [];
+  parts.forEach((part, i) => {
+    const svg = readFileSync(path.join(vendorDir, `${part}.svg`), 'utf8');
+    const segsPerStroke = strokePathsOf(svg).map((d) => parsePath(d));
+    // bbox over ALL points of this part
+    const pts = segsPerStroke.flat().flat();
+    const bbox = {
+      x: Math.min(...pts.map((p) => p.x)),
+      y: Math.min(...pts.map((p) => p.y)),
+      w: Math.max(...pts.map((p) => p.x)) - Math.min(...pts.map((p) => p.x)),
+      h: Math.max(...pts.map((p) => p.y)) - Math.min(...pts.map((p) => p.y)),
+    };
+    const t = partTransform(bbox, rects[i]);
+    for (const segs of segsPerStroke) strokes.push(segs.map((seg) => seg.map((p) => t(p))));
+  });
+  return strokes;
 }
 
 rmSync(outDir, { recursive: true, force: true });
@@ -198,12 +256,13 @@ const index = {
 };
 
 for (const ch of [...chars].sort()) {
-  const svg = readFileSync(path.join(vendorDir, `${ch}.svg`), 'utf8');
-  const dPaths = strokePathsOf(svg);
+  const digraphParts = DIGRAPHS[ch];
+  const segsPerStroke = digraphParts
+    ? composeDigraph(digraphParts)
+    : strokePathsOf(readFileSync(path.join(vendorDir, `${ch}.svg`), 'utf8')).map((d) => parsePath(d));
   const strokes = [];
   const medians = [];
-  for (const d of dPaths) {
-    const segs = parsePath(d);
+  for (const segs of segsPerStroke) {
     strokes.push(scalePath(segs));
     const flat = flatten(segs).map((p) => ({ x: p.x * SCALE, y: p.y * SCALE }));
     const totalLen = flat.reduce(
@@ -236,4 +295,7 @@ copyFileSync(
 );
 copyFileSync(path.join(vendorDir, 'README.md'), path.join(outDir, 'licenses', 'README-KanjiVG.md'));
 
-console.log(`writing-data: ${Object.keys(index.chars).length} chars rebuilt from KanjiVG (centerline-v2)`);
+console.log(
+  `writing-data: ${Object.keys(index.chars).length} chars rebuilt from KanjiVG (centerline-v2) — ` +
+    `${Object.values(DIGRAPHS).length} digraph definitions available`,
+);

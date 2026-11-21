@@ -22,9 +22,14 @@ import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 describe('bundled chapters', () => {
-  it('ships the kana foundation chapter then the first conversation chapter', () => {
-    // TASK-LEARNING-06: chapter 01 (kana, L1) precedes the conversation chapter (L2).
-    expect(listChapters().map((c) => c.slug)).toEqual(['kana-foundation-01', 'first-meeting-01']);
+  it('ships the kana foundation chapter, its extensions, then the first conversation chapter', () => {
+    // TASK-LEARNING-06: chapter 01 (kana, L1) → its extensions (ISSUE #146, L1X)
+    // precede the conversation chapter (L2) in course order (level → orderInLevel).
+    expect(listChapters().map((c) => c.slug)).toEqual([
+      'kana-foundation-01',
+      'kana-extensions-01',
+      'first-meeting-01',
+    ]);
   });
 
   /* TASK-LEARNING-13 (progress audit A-5): the kana bank shipped 80 exercise
@@ -75,14 +80,29 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     expect(chapter.expressions).toHaveLength(0);
   });
 
-  it('covers every registry kana with a kana-card (no orphan records — CONTENT-106)', () => {
-    const cardIds = new Set(
-      chapter.stations.flatMap((s) => s.blocks.flatMap((b) => (b.kind === 'kana-card' ? [b.kanaId] : []))),
+  it('covers every registry kana with a kana-card in ITS introducing chapter (no orphan records — CONTENT-106, generalized for #146)', () => {
+    /* ISSUE #146: the registry grew to 184 entries across TWO chapters. The
+     * orphan gate generalizes: EVERY registry item must be introduced by
+     * kana-cards in the chapter its `introducedInUnit` belongs to — per
+     * chapter, data-driven (a new chapter auto-joins this gate). */
+    const bySlug = new Map(listChapters().map((c) => [c.slug, c]));
+    const cardIdsBySlug = new Map(
+      listChapters().map((c) => [
+        c.slug,
+        new Set(c.stations.flatMap((s) => s.blocks.flatMap((b) => (b.kind === 'kana-card' ? [b.kanaId] : [])))),
+      ]),
     );
     for (const item of KANA_ITEMS) {
-      expect(cardIds.has(item.kanaId), `kana-card present for ${item.kanaId}`).toBe(true);
+      const own = cardIdsBySlug.get('kana-foundation-01')!;
+      const ext = cardIdsBySlug.get('kana-extensions-01')!;
+      const covered = own.has(item.kanaId) || ext.has(item.kanaId);
+      expect(covered, `kana-card present for ${item.kanaId} in exactly one chapter`).toBe(true);
+      expect(own.has(item.kanaId) && ext.has(item.kanaId), `${item.kanaId} introduced twice`).toBe(false);
+      void bySlug;
     }
-    expect(cardIds.size).toBe(92);
+    // the foundation keeps its identity: the 92 BASE syllabaries, exactly
+    expect(cardIdsBySlug.get('kana-foundation-01')!.size).toBe(92);
+    expect(cardIdsBySlug.get('kana-extensions-01')!.size).toBe(92);
   });
 
   it('ships the kana gate bank: ≥5 switches per M-K measure, kana labels present', () => {

@@ -21,7 +21,7 @@
  * HPF70 + shelf +2.5dB@2.5k + gate(-40dB,2:1) + peak-norm −1.5dBFS;
  * opus 64k / m4a 128k.
  */
-import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
@@ -45,7 +45,10 @@ function kanaEntries() {
   for (const m of src.matchAll(/kanaId:\s*'([^']+)',\s*\n\s*glyph:\s*'([^']+)'/g)) {
     out.push({ ref: `kn-${m[1]}`, text: m[2] });
   }
-  if (out.length !== 92) throw new Error(`expected 92 kana, got ${out.length}`);
+  // ISSUE #146: the registry is 184 entries (92 base + 92 extensions) — the
+  // gate follows the REGISTRY, never a pinned count (a future extension joins
+  // automatically).
+  if (out.length !== 184) throw new Error(`expected the full 184-entry kana bank, got ${out.length}`);
   return out;
 }
 
@@ -58,7 +61,7 @@ function hostWords() {
 
 function exampleWords() {
   const set = new Set();
-  for (const file of ['chapter-kana01.stations.ts', 'chapter-fm01.stations.ts']) {
+  for (const file of ['chapter-kana01.stations.ts', 'chapter-kext01.stations.ts', 'chapter-fm01.stations.ts']) {
     const src = readFileSync(path.join(WEB, 'src', 'modules', 'curriculum', 'content', file), 'utf8');
     for (const m of src.matchAll(/role:\s*'(?:anchor|near|varied|faded|reading)',\s*\n\s*ja:\s*'([^']+)'/g)) {
       const ja = m[1];
@@ -89,7 +92,7 @@ function contrastAndExerciseWords() {
   // DO need a hostword clip for their contrast play button.
   const basicKana = new Set(kanaEntries().map((k) => k.text));
   const stationsDir = path.join(WEB, 'src', 'modules', 'curriculum', 'content');
-  for (const file of ['chapter-kana01.stations.ts', 'chapter-fm01.stations.ts']) {
+  for (const file of ['chapter-kana01.stations.ts', 'chapter-kext01.stations.ts', 'chapter-fm01.stations.ts']) {
     const src = readFileSync(path.join(stationsDir, file), 'utf8');
     for (const m of src.matchAll(/\bja:\s*'([^']+)'/g)) {
       const ja = m[1];
@@ -98,7 +101,7 @@ function contrastAndExerciseWords() {
       if (/[\u3040-\u30ff]/.test(ja)) set.add(ja);
     }
   }
-  for (const file of ['chapter-kana01.exercises.ts', 'chapter-fm01.exercises.ts']) {
+  for (const file of ['chapter-kana01.exercises.ts', 'chapter-kext01.exercises.ts', 'chapter-fm01.exercises.ts']) {
     const src = readFileSync(path.join(stationsDir, file), 'utf8');
     // promptJa on decode/rule-listening items (the audible question/word)
     for (const m of src.matchAll(/promptJa:\s*'([^']+)'/g)) {
@@ -254,10 +257,25 @@ async function generateAll() {
   mkdirSync(HOST_DIR, { recursive: true });
 
   // 1. kana
+  // ISSUE #146: SKIP_EXISTING=1 keeps the COMMITTED assets byte-stable (the
+  // base 92 were generated with this same engine/voice) and re-synthesizes
+  // only what the registry grew — the manifest still carries EVERY entry
+  // (bytes/duration probed from the existing files; hash is text-derived).
+  const skipExisting = process.env.SKIP_EXISTING === '1';
   const kanaManifest = { generatedBy: GENERATED_BY, format: 'voicevox-opus-m4a', entries: {} };
   for (const { ref, text } of kanaEntries()) {
-    const wav = normTo(master(await synth(text)));
     const base = path.join(KANA_DIR, ref);
+    if (skipExisting && existsSync(`${base}.opus`) && existsSync(`${base}.m4a`)) {
+      kanaManifest.entries[ref] = {
+        bytes: statSync(`${base}.opus`).size,
+        bytesM4a: statSync(`${base}.m4a`).size,
+        durationMs: probeMs(`${base}.opus`),
+        hash: hash(text),
+      };
+      process.stdout.write(`kana ${ref} ${text} SKIP (committed asset kept)\n`);
+      continue;
+    }
+    const wav = normTo(master(await synth(text)));
     const { bytes, bytesM4a } = encode(wav, base);
     kanaManifest.entries[ref] = { bytes, bytesM4a, durationMs: probeMs(`${base}.opus`), hash: hash(text) };
     process.stdout.write(`kana ${ref} ${text} ${probeMs(`${base}.opus`)}ms\n`);
@@ -268,9 +286,20 @@ async function generateAll() {
   const words = wordSurface(); // TASK-HANASO-21: single source — --list and the real run can never drift
   const hostManifest = { generatedBy: GENERATED_BY, format: 'voicevox-opus-m4a', entries: {} };
   for (const word of words) {
-    const wav = normTo(master(await synth(word)));
     const { stem } = wordStem(word);
     const base = path.join(HOST_DIR, stem);
+    if (skipExisting && existsSync(`${base}.opus`) && existsSync(`${base}.m4a`)) {
+      hostManifest.entries[word] = {
+        file: stem,
+        bytes: statSync(`${base}.opus`).size,
+        bytesM4a: statSync(`${base}.m4a`).size,
+        durationMs: probeMs(`${base}.opus`),
+        hash: hash(word),
+      };
+      process.stdout.write(`word ${word} SKIP (committed asset kept)\n`);
+      continue;
+    }
+    const wav = normTo(master(await synth(word)));
     const { bytes, bytesM4a } = encode(wav, base);
     hostManifest.entries[word] = { file: stem, bytes, bytesM4a, durationMs: probeMs(`${base}.opus`), hash: hash(word) };
     process.stdout.write(
@@ -287,7 +316,7 @@ async function generateAll() {
       if (!keep.has(stem)) rmSync(path.join(HOST_DIR, f));
     }
   }
-  console.log(`\ndone: 92 kana + ${words.length} words (host + example, one registry) — voice ${CREDIT}`);
+  console.log(`\ndone: 184 kana + ${words.length} words (host + example, one registry) — voice ${CREDIT}`);
 }
 
 /* TASK-HANASO-21 — `--list`: print the COMPLETE hostword generation surface as
