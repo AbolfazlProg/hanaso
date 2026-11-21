@@ -1,5 +1,5 @@
 /**
- * HANASO — Educational QA gates EQA-1..7 (TASK-LEARNING-04, Issue #97).
+ * HANASO — Educational QA gates EQA-1..10 (TASK-LEARNING-04, Issue #97 + ENGINE-REFORM 2026-11-22).
  *
  * This file IS the CI gate: `pnpm --filter web test:eqa` runs it in CI and it
  * FAILS the build when any pedagogical violation is not covered by a registered,
@@ -12,6 +12,11 @@
  *     rule MUST be rejected by that gate (proves no gate is a rubber stamp).
  *  3. REPORT   — error output is actionable (subject + reason + KB rule ref).
  *  4. #110     — mastery thresholds are injected from level policy (L4 ≠ L2).
+ *  5. ENGINE-REFORM — EQA-8 (course-wide prerequisites over the Knowledge
+ *     Registry: glyphs/marks/words/kanji/assess-timing incl. deck order) and
+ *     EQA-10 (station teaching contracts: packet→simple engagement, worked
+ *     model before application, guided before independent, per-type structure)
+ *     — each mutation below reproduces one of the mission's acceptance criteria.
  */
 import { describe, expect, it } from 'vitest';
 import { getChapter, listChapters } from '@/modules/curriculum/content';
@@ -31,6 +36,13 @@ import {
   renderMarkdown,
   findingKey,
 } from '@/modules/curriculum/eqa';
+import {
+  buildCourseAssessmentEvents,
+  buildKnowledgeRegistry,
+  gateEqa8,
+  gateEqa8Course,
+  gateEqa10,
+} from '@/modules/curriculum/knowledge';
 import type { Chapter } from '@/modules/curriculum/types';
 import type { EqaWaiver } from '@/modules/curriculum/eqa/waivers';
 import { toClientExercise, gradeMasterySubmission, servedCorrectPosition } from '@/modules/curriculum/grading';
@@ -40,6 +52,16 @@ import { computeMastery } from '@/modules/mastery';
 
 function cloneChapter(): Chapter {
   return structuredClone(getChapter('first-meeting-01')!);
+}
+
+/** ENGINE-REFORM mutation helper: run `run(chapters, mutate(chapters))` over a
+ *  fresh, MUTABLE copy of the real course — the registry is rebuilt over the
+ *  same mutated chapters the gates see (content registration updates the
+ *  registry — the honest engine contract). */
+function withCourseMutation<T>(mutate: (chapters: Chapter[]) => T, run: (chapters: Chapter[], ctx: T) => void): void {
+  const chapters = structuredClone(listChapters());
+  const ctx = mutate(chapters);
+  run(chapters, ctx);
 }
 
 function runOnRealChapters() {
@@ -66,8 +88,11 @@ describe('EQA gates over the REAL bundled chapters (the CI gate)', () => {
     }
   });
 
-  it('registers exactly the known violation set — one waived finding per open issue entry', () => {
-    const waivedKeys = result.chapters.flatMap((c) => c.waived.map((w) => findingKey(w.finding))).sort();
+  it('registers exactly the known violation set — every waived finding maps to a registered waiver key', () => {
+    // ENGINE-REFORM: findings are per-station; several findings can share one
+    // key (e.g. 6 C-guided-first items on one station) — the honest invariant is
+    // the UNIQUE key set, matched 1:1 against the waiver register.
+    const waivedKeys = [...new Set(result.chapters.flatMap((c) => c.waived.map((w) => findingKey(w.finding))))].sort();
     expect(waivedKeys).toEqual([...EQA_WAIVERS].map((w) => w.key).sort());
   });
 
@@ -75,8 +100,22 @@ describe('EQA gates over the REAL bundled chapters (the CI gate)', () => {
     for (const { waiver } of result.chapters.flatMap((c) => c.waived)) {
       expect(waiver.issue).toBeGreaterThan(0);
       expect(waiver.reason.length).toBeGreaterThan(20);
-      expect(waiver.resolvedBy).toMatch(/^TASK-LEARNING-0\d/);
+      expect(waiver.resolvedBy).toMatch(/^TASK-(LEARNING|HANASO|ENGINE)-?\w*\d+$/);
     }
+  });
+
+  it('the three rebuilt pilot stations are CLEAN of every ENGINE-REFORM finding (the new standard, no waivers)', () => {
+    // The pilots prove the engine-level fix end-to-end: no EQA-8/EQA-10 error
+    // and no waiver — the staged-teaching standard lives in the content itself.
+    const kxp = result.chapters.find((c) => c.chapter.slug === 'kana-expansion-01')!;
+    for (const slug of ['stn-kana-hd1', 'stn-kana-hy1', 'stn-kana-kx1']) {
+      const findings = kxp.findings.filter((f) => f.subject === slug);
+      expect(findings, `${slug} must be clean under all gates`).toEqual([]);
+    }
+  });
+
+  it('the knowledge-registry course findings carry no errors (integrity green)', () => {
+    expect(result.courseFindings.filter((f) => f.severity === 'error')).toEqual([]);
   });
 
   it('reports zero unregistered concept references (listening sub-skills are declared via teachesConcepts — TASK-LEARNING-06)', () => {
@@ -454,19 +493,23 @@ describe('waiver hygiene — the waiver list cannot rot', () => {
 describe('EQA report output is actionable', () => {
   const result = runOnRealChapters();
 
-  it('console report is honest: clean pass with zero waivers + the remaining review items', () => {
-    // TASK-LEARNING-06: the 05A/05B rebuild closed all seven waivers — the report
-    // shows a clean pass (any NEW violation still fails, the mutation tests prove it).
+  it('console report is honest: a pass that SHOWS the registered ENGINE-REFORM debt + review items', () => {
+    // TASK-LEARNING-06 closed the 05A/05B waivers; ENGINE-REFORM (2026-11-22)
+    // registered the course's staged-teaching debt (75 waiver rows under the
+    // content-rebuild issue) — the report prints EVERY waived finding, so the
+    // debt stays visible in every CI log (never silently accepted).
     const text = renderConsole(result);
     expect(text).toContain('PASS');
-    expect(text).toContain('معاف‌شده: 0');
-    expect(text).toContain('EQA'); // the registry is still rendered for reviewers
+    expect(text).toMatch(/معاف‌شده: [1-9]/);
+    expect(text).toContain('EQA'); // the gate registry is still rendered for reviewers
+    expect(text).toContain('Knowledge Registry'); // the registry findings section renders
   });
 
-  it('markdown report renders the honest clean state (all seven 05A/05B-era waivers closed)', () => {
-    const md = renderMarkdown(result, { commit: 'test', date: '2026-11-05' });
+  it('markdown report renders the honest state (old 05A/05B waivers stay closed)', () => {
+    const md = renderMarkdown(result, { commit: 'test', date: '2026-11-22' });
     expect(md).toContain('EQA_RUN_REPORT');
-    // TASK-LEARNING-06: zero active waivers — none of the old waived keys may return.
+    expect(md).toContain('Knowledge Registry');
+    // TASK-LEARNING-06: the old waived keys may never return.
     expect(md).not.toContain('line-grammar-not-taught');
     expect(md).not.toContain('slot-missing');
     expect(md).not.toContain('recall-first-share');
@@ -513,5 +556,207 @@ describe('#110 — mastery gate thresholds come from level policy, not a hardcod
     const graded = gradeMasterySubmission(ch, answers, LEVELS_BY_CODE[ch.levelCode]!);
     expect(graded.outcome).toBe('passed');
     expect(graded.weightedScore).toBe(1);
+  });
+});
+
+/* ================================================================ 5. ENGINE-REFORM — EQA-8 / EQA-10 mutations
+ * Each mutation reproduces one of the mission's acceptance criteria: content
+ * with an untaught prerequisite MUST be rejected; early use of words/grammar
+ * in question/option text MUST be caught; unknown content MUST produce a
+ * traceable error; station contracts MUST be auto-checked; the registry MUST
+ * update when new content registers. */
+
+describe('EQA-8 (course-wide prerequisites) — mutations MUST be rejected', () => {
+  it('R1 — rejects content whose prerequisite teaching was REMOVED upstream (chain enforcement)', () => {
+    withCourseMutation(
+      (chapters) => {
+        const kana01 = chapters.find((c) => c.slug === 'kana-foundation-01')!;
+        // Remove kata-ra's card: every DOWNSTREAM chapter that uses ラ now carries
+        // an untaught glyph — fm01's イランじん exercises must be rejected.
+        for (const s of kana01.stations)
+          s.blocks = s.blocks.filter((b) => !(b.kind === 'kana-card' && b.kanaId === 'kata-ra'));
+        return chapters.find((c) => c.slug === 'first-meeting-01')!;
+      },
+      (chapters, fm) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8(fm, registry);
+        expect(
+          findings.some((f) => f.rule === 'glyph-untaught' && f.severity === 'error' && f.messageFa.includes('ラ')),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('R2 — rejects a rule mark used before its teaching unit (within one chapter)', () => {
+    withCourseMutation(
+      (chapters) => {
+        const kana01 = chapters.find((c) => c.slug === 'kana-foundation-01')!;
+        // h1 (order 1) — the dakuten mark is taught by h5 (order 5).
+        const h1 = kana01.stations.find((s) => s.slug === 'stn-kana-h1')!;
+        const block = h1.blocks.find((b) => b.kind === 'exercise') as { exerciseIds: string[] } | undefined;
+        const ex = kana01.exercises[block!.exerciseIds[0]!]!;
+        ex.options![0]!.label = 'が';
+        return kana01;
+      },
+      (chapters, kana01) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8(kana01, registry);
+        expect(
+          findings.some((f) => f.subject === 'stn-kana-h1' && f.rule === 'mark-untaught' && f.severity === 'error'),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('R3 — rejects an untaught registered word smuggled into answer material (the early-use rule)', () => {
+    withCourseMutation(
+      (chapters) => {
+        const fm = chapters.find((c) => c.slug === 'first-meeting-01')!;
+        // 韓国人 (voc-kankokujin) is taught at stn-fm01-11-vocab2 (order 11); the
+        // word-order chunks of an early exercise smuggle it in at order 3.
+        const ex = fm.exercises['ex-fm01-g1-order-1']!;
+        ex.chunks![0]!.ja = 'かんこくじん';
+        return fm;
+      },
+      (chapters, fm) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8(fm, registry);
+        expect(
+          findings.some(
+            (f) => f.rule === 'word-untaught' && f.severity === 'error' && f.messageFa.includes('かんこくじん'),
+          ),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('R4 — rejects unregistered kanji inside an assessment surface (unknown content = traceable error)', () => {
+    withCourseMutation(
+      (chapters) => {
+        const fm = chapters.find((c) => c.slug === 'first-meeting-01')!;
+        const ex = fm.exercises['ex-fm01-g1-cloze-1']!;
+        ex.clozeTokens![0] = '本日はninger';
+        return fm;
+      },
+      (chapters, fm) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8(fm, registry);
+        expect(
+          findings.some(
+            (f) =>
+              f.subject === 'stn-fm01-03-grammar-desu' && f.rule === 'kanji-unregistered' && f.severity === 'error',
+          ),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('R5 — rejects an exercise assessing a concept whose teaching card comes LATER in the SAME deck (block order)', () => {
+    withCourseMutation(
+      (chapters) => {
+        const kxp = chapters.find((c) => c.slug === 'kana-expansion-01')!;
+        // quiz-1 (block 4) targets hira-ga; retarget it to hira-go whose card is at block 7.
+        const ex = kxp.exercises['ex-kxp-hd1-rec-1']!;
+        ex.targetConcept = 'hira-go';
+        ex.assessesConcepts = ['hira-go'];
+        return kxp;
+      },
+      (chapters, kxp) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8(kxp, registry);
+        expect(
+          findings.some(
+            (f) => f.subject === 'stn-kana-hd1' && f.rule === 'assess-before-teach' && f.severity === 'error',
+          ),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('course integrity — the registry flags duplicate registration notes and dangling prerequisites honestly', () => {
+    const registry = buildKnowledgeRegistry(listChapters());
+    const findings = gateEqa8Course(registry);
+    // grammar clusters anchored to several stations are the documented ambiguity
+    // (warning-grade, EQA-9) — the integrity layer itself must be traceable.
+    expect(findings.some((f) => f.rule === 'registry-integrity' && f.severity === 'warning')).toBe(true);
+    expect(findings.some((f) => f.rule === 'registry-unique-ids')).toBe(false);
+  });
+});
+
+describe('EQA-10 (station teaching contracts) — mutations MUST be rejected', () => {
+  it('C-first-engage — rejects a card packet whose whole engagement block is NOT difficulty 1', () => {
+    withCourseMutation(
+      (chapters) => {
+        const kxp = chapters.find((c) => c.slug === 'kana-expansion-01')!;
+        // The first packet's engagement block must carry a d1 item: downgrade ALL
+        // of quiz-1's items to d2 → the packet is taught without a simple activity.
+        for (const id of ['ex-kxp-hd1-rec-1', 'ex-kxp-hd1-rec-2', 'ex-kxp-hd1-rec-3'])
+          kxp.exercises[id]!.difficulty = 2;
+        return kxp;
+      },
+      (chapters, kxp) => {
+        const findings = gateEqa10(kxp, buildCourseAssessmentEvents(chapters));
+        expect(findings.some((f) => f.subject === 'stn-kana-hd1' && f.rule === 'C-first-engage')).toBe(true);
+      },
+    );
+  });
+
+  it('C-worked-before-decode — rejects a decode exercise with NO worked model before it', () => {
+    withCourseMutation(
+      (chapters) => {
+        const kxp = chapters.find((c) => c.slug === 'kana-expansion-01')!;
+        const hd1 = kxp.stations.find((s) => s.slug === 'stn-kana-hd1')!;
+        hd1.blocks = hd1.blocks.filter((b) => b.kind !== 'example-set');
+        return kxp;
+      },
+      (chapters, kxp) => {
+        const findings = gateEqa10(kxp, buildCourseAssessmentEvents(chapters));
+        expect(findings.some((f) => f.subject === 'stn-kana-hd1' && f.rule === 'C-worked-before-decode')).toBe(true);
+      },
+    );
+  });
+
+  it('C-guided-first — rejects an independent (d3) item before any guided (≤d2) assessment of the same concept', () => {
+    withCourseMutation(
+      (chapters) => {
+        const kxp = chapters.find((c) => c.slug === 'kana-expansion-01')!;
+        // dec-1 is the guided (d2) round for hd1-row; making it d3 leaves dec-2 (d3)
+        // without any earlier ≤2 assessment of the same target.
+        kxp.exercises['ex-kxp-hd1-dec-1']!.difficulty = 3;
+        return kxp;
+      },
+      (chapters, kxp) => {
+        const findings = gateEqa10(kxp, buildCourseAssessmentEvents(chapters));
+        expect(
+          findings.some(
+            (f) =>
+              f.subject === 'stn-kana-hd1' && f.rule === 'C-guided-first' && f.messageFa.includes('ex-kxp-hd1-dec-1'),
+          ),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('C-type-structure — rejects a station missing its type-required blocks', () => {
+    withCourseMutation(
+      (chapters) => {
+        const kxp = chapters.find((c) => c.slug === 'kana-expansion-01')!;
+        const hd1 = kxp.stations.find((s) => s.slug === 'stn-kana-hd1')!;
+        hd1.type = 'vocab'; // a vocab station without a single vocab-card
+        return kxp;
+      },
+      (chapters, kxp) => {
+        const findings = gateEqa10(kxp, buildCourseAssessmentEvents(chapters));
+        expect(findings.some((f) => f.subject === 'stn-kana-hd1' && f.rule === 'C-type-structure')).toBe(true);
+      },
+    );
+  });
+
+  it('the real course: every C-guided-first subject maps to a registered waiver (no silent new debt)', () => {
+    const chapters = listChapters();
+    const findings = chapters.flatMap((c) => gateEqa10(c, buildCourseAssessmentEvents(chapters)));
+    const errors = findings.filter((f) => f.severity === 'error');
+    const waived = new Set(EQA_WAIVERS.map((w) => w.key));
+    for (const f of errors) expect(waived.has(findingKey(f))).toBe(true);
   });
 });

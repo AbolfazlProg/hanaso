@@ -21,6 +21,20 @@ import {
   type ValidatorFinding,
   type ValidatorReport,
 } from './types';
+/* ENGINE-REFORM (2026-11-22): the draft-level prerequisite + staging checks
+ * share the curriculum's glyph/rule knowledge (single source of truth — the
+ * kana bank + the rule marks of kana-foundation-01). */
+import { decomposeJa, type RuleMark } from '../curriculum/glyph-budget';
+
+const RULE_MARKS: ReadonlySet<RuleMark> = new Set<RuleMark>([
+  'dakuten',
+  'handakuten',
+  'yoon-small',
+  'sokuon',
+  'choonpu',
+  'foreign-small',
+]);
+const KANJI_RE = /[\u4e00-\u9fff]/;
 
 /* ------------------------------------------------------------------ helpers */
 
@@ -510,6 +524,94 @@ export function validateEngineChapter(chapter: EngineChapter, options: ValidateO
               `سیاست تلاش این گام باید «${expected}» باشد (Independent) — hint policy نقض شده.`,
             );
         }
+      });
+    });
+  });
+
+  /* ---- L-STAGING: the staged-teaching contract (ENGINE-REFORM §۴) ----
+   * The three-level model (D-0010..0012) at the AUTHORING layer: an independent
+   * (difficulty 3) interaction exists only in practice/review stations (they
+   * consolidate — no new content); inside a TEACHING station the first
+   * interaction is teach-stage and a guided interaction never precedes every
+   * teach interaction of its station. */
+  run('L-STAGING', () => {
+    if (!draft) return;
+    chapter.stations.forEach((s) => {
+      const isTeaching = s.type === 'teaching';
+      let seenTeachInteraction = false;
+      s.steps.forEach((st) => {
+        if (!st.interaction) return;
+        if (isTeaching && st.stage === 'independent')
+          push(
+            'L-STAGING',
+            'hard',
+            `station[${s.id}].${st.id}`,
+            'گام Independent فقط در ایستگاه‌های practice/review مجاز است — ایستگاه آموزشی تدریس می‌کند (D-0012؛ سطح ۳ در Practice).',
+          );
+        if (isTeaching && st.stage !== 'teach' && !seenTeachInteraction)
+          push(
+            'L-STAGING',
+            'hard',
+            `station[${s.id}].${st.id}`,
+            'اولین تعامل ایستگاه آموزشی باید مرحلهٔ teach باشد — پاسخ از همان آموزش قابل تشخیص باشد، نه هدایت‌شده/مستقل (ENGINE-REFORM §۴).',
+          );
+        if (st.stage === 'teach') seenTeachInteraction = true;
+      });
+    });
+  });
+
+  /* ---- L-PREREQ-SURF: no untaught content in ANY draft surface (ENGINE-REFORM §۳) ----
+   * Every Japanese-bearing surface of every step (card text/reading, option
+   * ja labels, tiles) must resolve through the kana bank (base + mark — the
+   * kana-foundation entry knowledge every chapter presupposes); kanji must be
+   * covered by the draft's OWN registered items (vocabulary surfaces, kanji
+   * characters, grammar patterns, expressions). Unknown content is a traceable
+   * error — never silently accepted. */
+  run('L-PREREQ-SURF', () => {
+    if (!draft) return;
+    const registeredJa = new Set<string>();
+    const registerChars = (text: string | undefined) => {
+      if (!text) return;
+      for (const ch of text) if (KANJI_RE.test(ch)) registeredJa.add(ch);
+    };
+    chapter.vocabulary.forEach((v) => {
+      registerChars(v.surface);
+      registerChars(v.reading);
+    });
+    chapter.grammar.forEach((g) => registerChars(g.patternJa));
+    chapter.expressions.forEach((e) => {
+      registerChars(e.ja);
+      registerChars(e.reading);
+    });
+    chapter.kanji.forEach((k) => registerChars(k.character));
+    const checkSurface = (text: string | undefined, location: string) => {
+      if (!text) return;
+      const unknownKanji = [...text].filter((ch) => KANJI_RE.test(ch) && !registeredJa.has(ch));
+      if (unknownKanji.length > 0)
+        push(
+          'L-PREREQ-SURF',
+          'hard',
+          location,
+          `کانجیِ ناشناخته (${unknownKanji.join('')}) در سطح محتوا — باید در فهرست واژگان/کانجی/عبارت‌های همین درفت ثبت شود یا حذف شود (رجیستری دانش؛ محتوای ناشناخته بی‌صدا پذیرفته نمی‌شود).`,
+        );
+      const req = decomposeJa(text);
+      const earlyMarks = req.marks.filter((m) => !RULE_MARKS.has(m));
+      if (earlyMarks.length > 0)
+        push(
+          'L-PREREQ-SURF',
+          'hard',
+          location,
+          `نشانهٔ نگارشی ناشناخته (${earlyMarks.join(', ')}) — قواعد شناخته‌شدهٔ موتور: ${[...RULE_MARKS].join(', ')}.`,
+        );
+    };
+    chapter.stations.forEach((s) => {
+      s.steps.forEach((st) => {
+        const loc = `station[${s.id}].${st.id}`;
+        checkSurface(st.card?.textJa, `${loc}.card.textJa`);
+        checkSurface(st.card?.reading, `${loc}.card.reading`);
+        (st.interaction?.options ?? []).forEach((o, i) => checkSurface(o.ja, `${loc}.opt-${o.id ?? i}`));
+        (st.interaction?.tiles ?? []).forEach((t, i) => checkSurface(t, `${loc}.tile-${i}`));
+        (st.interaction?.extraTiles ?? []).forEach((t, i) => checkSurface(t, `${loc}.extraTile-${i}`));
       });
     });
   });

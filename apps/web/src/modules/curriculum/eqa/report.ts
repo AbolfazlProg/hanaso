@@ -17,8 +17,8 @@ const SEVERITY_FA: Record<string, string> = {
 export function renderConsole(result: EqaRunResult): string {
   const lines: string[] = [];
   lines.push('════════════════════════════════════════════════════════════════');
-  lines.push(' HANASO — گیت‌های کیفیت آموزشی EQA-1..EQA-7 (TASK-LEARNING-04)');
-  lines.push(' قواعد: HANASO_INSTRUCTIONAL_DESIGN_CONTRACT §۵ · Issue #97');
+  lines.push(' HANASO — گیت‌های کیفیت آموزشی EQA-1..10 (TASK-LEARNING-04 + ENGINE-REFORM 2026-11-22)');
+  lines.push(' قواعد: HANASO_INSTRUCTIONAL_DESIGN_CONTRACT §۵ · Issue #97 · ENGINE-REFORM (رجیستری دانش)');
   lines.push('════════════════════════════════════════════════════════════════');
 
   let errorCount = 0;
@@ -62,6 +62,16 @@ export function renderConsole(result: EqaRunResult): string {
     }
   }
 
+  if (result.courseFindings.length > 0) {
+    lines.push('');
+    lines.push('▌رجیستری دانش (Knowledge Registry — ENGINE-REFORM)');
+    for (const f of result.courseFindings) {
+      if (f.severity === 'error') errorCount += 1;
+      else warnCount += 1;
+      lines.push(`  [${f.gate}] ${SEVERITY_FA[f.severity]} — ${f.subject}: ${f.messageFa}`);
+    }
+  }
+
   for (const w of result.staleWaivers) {
     errorCount += 1;
     lines.push('');
@@ -91,7 +101,7 @@ export function renderMarkdown(result: EqaRunResult, meta: { commit: string; dat
   md.push('# EQA_RUN_REPORT — گزارش اجرای گیت‌های کیفیت آموزشی');
   md.push('');
   md.push(
-    `> تاریخ: ${meta.date} · کامیت: \`${meta.commit}\` · ابزار: \`pnpm --filter web test:eqa\` (EQA-1..7 · TASK-LEARNING-04 / #97)`,
+    `> تاریخ: ${meta.date} · کامیت: \`${meta.commit}\` · ابزار: \`pnpm --filter web test:eqa\` (EQA-1..10 · TASK-LEARNING-04 / #97 + ENGINE-REFORM 2026-11-22)`,
   );
   md.push(`> نتیجهٔ این اجرا: **${result.pass ? 'PASS' : 'FAIL'}** — خطای بدون معافیت = شکست CI.`);
   md.push('');
@@ -145,6 +155,14 @@ export function renderMarkdown(result: EqaRunResult, meta: { commit: string; dat
     md.push('## سیاست سطوح (LEVEL_POLICIES)');
     md.push('');
     for (const f of result.levelFindings) {
+      md.push(`- **[${f.gate}] ${f.subject}**: ${f.messageFa}`);
+    }
+    md.push('');
+  }
+  if (result.courseFindings.length > 0) {
+    md.push('## رجیستری دانش (Knowledge Registry — ENGINE-REFORM)');
+    md.push('');
+    for (const f of result.courseFindings) {
       md.push(`- **[${f.gate}] ${f.subject}**: ${f.messageFa}`);
     }
     md.push('');

@@ -14,6 +14,9 @@ import type { Chapter, LevelPolicy } from '../types';
 import type { EqaFinding } from './policy';
 import { findingKey } from './policy';
 import { gateEqa1, gateEqa2, gateEqa3, gateEqa4, gateEqa5, gateEqa6, gateEqa7Chapter, gateEqa7Levels } from './gates';
+import { gateEqa8, gateEqa8Course } from '../knowledge/prereq-gate';
+import { buildCourseAssessmentEvents, gateEqa10 } from '../knowledge/contracts';
+import { buildKnowledgeRegistry } from '../knowledge/registry';
 import type { EqaWaiver } from './waivers';
 import { matchWaivers } from './waivers';
 
@@ -32,6 +35,8 @@ export interface EqaRunResult {
   chapters: EqaChapterResult[];
   /** Global (chapter-independent) EQA-7 level-policy findings. */
   levelFindings: EqaFinding[];
+  /** Global EQA-8 knowledge-registry integrity findings (ENGINE-REFORM). */
+  courseFindings: EqaFinding[];
   /** Stale waivers (finding no longer exists) — fail CI. */
   staleWaivers: EqaWaiver[];
   /** Duplicate waiver keys — fail CI. */
@@ -46,10 +51,20 @@ export function runEqa(
   waivers: readonly EqaWaiver[],
 ): EqaRunResult {
   const levelFindings = gateEqa7Levels(levelList);
+
+  /* ENGINE-REFORM 2026-11-22 — EQA-8/EQA-10 course context:
+   * the Knowledge Reference Registry (derived once from the same chapter
+   * list — one derivation, no parallel truth) + the course-wide assessment
+   * history for the guided-before-independent staging rule. */
+  const registry = buildKnowledgeRegistry(chapters);
+  const courseFindings = gateEqa8Course(registry);
+  const courseEvents = buildCourseAssessmentEvents(chapters);
+
   const allFindings: { key: string; chapterSlug: string }[] = levelFindings.map((f) => ({
     key: findingKey(f),
     chapterSlug: '(levels)',
   }));
+  for (const f of courseFindings) allFindings.push({ key: findingKey(f), chapterSlug: '(registry)' });
   const chapterResults: EqaChapterResult[] = [];
 
   for (const chapter of chapters) {
@@ -61,6 +76,8 @@ export function runEqa(
       ...gateEqa5(chapter),
       ...gateEqa6(chapter),
       ...gateEqa7Chapter(chapter, levels),
+      ...gateEqa8(chapter, registry),
+      ...gateEqa10(chapter, courseEvents),
     ];
     for (const f of findings) allFindings.push({ key: findingKey(f), chapterSlug: chapter.slug });
 
@@ -88,7 +105,15 @@ export function runEqa(
     stale.length === 0 &&
     duplicates.length === 0 &&
     levelFindings.every((f) => f.severity !== 'error') &&
+    courseFindings.every((f) => f.severity !== 'error') &&
     chapterResults.every((c) => c.unwaivedErrors.length === 0);
 
-  return { chapters: chapterResults, levelFindings, staleWaivers: stale, duplicateWaivers: duplicates, pass };
+  return {
+    chapters: chapterResults,
+    levelFindings,
+    courseFindings,
+    staleWaivers: stale,
+    duplicateWaivers: duplicates,
+    pass,
+  };
 }

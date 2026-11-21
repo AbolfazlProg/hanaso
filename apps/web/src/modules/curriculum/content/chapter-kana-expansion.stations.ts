@@ -17,19 +17,25 @@ export const KXP_STATIONS: Station[] = [
   {
     slug: 'stn-kana-hd1',
     type: 'kana',
-    titleFa: 'ردیف が — داکوتنِ か行',
-    objectiveFa: '゛ را روی か行 می‌بینی: کا→گا. صدای تازه نیست؛ گلوِ لرزان است.',
+    titleFa: 'ردیف が — داکوتنِ ردیفِ کا',
+    objectiveFa: '゛ را روی ردیفِ کا می‌بینی: کا→گا. صدای تازه نیست؛ گلوِ لرزان است.',
     core: true,
     order: 1,
     prerequisites: [],
     lineRefs: [],
     objectiveCode: 'kana-hira-expansion',
     teachesConcepts: ['kana-dakuten', 'hd1-row'],
-    estMinutes: 9,
+    estMinutes: 11,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
+    /* ENGINE-REFORM (2026-11-22) — the staged-teaching rebuild of this pilot:
+     * every card packet gets its immediate SIMPLE engagement (difficulty 1 —
+     * answerable straight from the card just seen); the recall round follows
+     * (difficulty 2); the worked reading models (かいぎ/おんがく) come BEFORE the
+     * guided decode; the independent decode (a brand-new word) comes LAST —
+     * teach a little → one simple activity → gradually harder → independent. */
     blocks: [
       {
         kind: 'rule-prereq',
@@ -61,7 +67,7 @@ export const KXP_STATIONS: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-hd1-quiz-1',
-        exerciseIds: ['ex-kxp-hd1-rec-1'],
+        exerciseIds: ['ex-kxp-hd1-rec-1', 'ex-kxp-hd1-rec-2', 'ex-kxp-hd1-rec-3'],
       },
       {
         kind: 'kana-card',
@@ -78,17 +84,12 @@ export const KXP_STATIONS: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-hd1-quiz-2',
+        exerciseIds: ['ex-kxp-hd1-rec-4', 'ex-kxp-hd1-rec-5'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hd1-rcl',
         exerciseIds: ['ex-kxp-hd1-rcl-1', 'ex-kxp-hd1-rcl-2'],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-hd1-dec',
-        exerciseIds: ['ex-kxp-hd1-dec-1', 'ex-kxp-hd1-dec-2'],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-hd1-lis',
-        exerciseIds: ['ex-kxp-hd1-lis-1'],
       },
       {
         kind: 'example-set',
@@ -102,16 +103,40 @@ export const KXP_STATIONS: Station[] = [
             fa: 'جلسه',
             whyFa: 'واک‌دار در پایان واژه: き+゛ = ぎ.',
           },
+          {
+            id: 'ex-stn-kana-hd1-apply-1',
+            role: 'reading',
+            ja: 'おんがく',
+            reading: 'اون‌گاکو',
+            fa: 'موسیقی',
+            whyFa: 'باز هم ゛: か→が — درون واژه، جای نشانه فرقی نمی‌کند.',
+            pronFa: '«گ» در «اون‌گاکو» همان لرزش گلوست که در «گا» تکیه داشتی؛ گلو را روشن نگه دار.',
+          },
         ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hd1-dec',
+        exerciseIds: ['ex-kxp-hd1-dec-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hd1-lis',
+        exerciseIds: ['ex-kxp-hd1-lis-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hd1-indep',
+        exerciseIds: ['ex-kxp-hd1-dec-2'],
       },
       {
         kind: 'wrap-up',
         id: 'blk-stn-kana-hd1-wrapup',
-        titleFa: 'جمع‌بندی — ردیف が — داکوتنِ か行',
+        titleFa: 'جمع‌بندی — ردیف が — داکوتنِ ردیفِ کا',
         itemsFa: [
-          '゛ را روی か行 می‌بینی: کا→گا. صدای تازه نیست؛ گلوِ لرزان است.',
-          'کارت‌های تازه در بانک کانای تو نشستند — تمرین خودکارِ بعدی آن‌ها را می‌پرسد.',
-          'واژه‌ی かいぎ را خواندی — واک‌دار در پایان واژه: き+゛ = ぎ.',
+          '゛ را روی ردیفِ کا می‌بینی: کا→گا. صدای تازه نیست؛ گلوِ لرزان است.',
+          'هر پنج کارتِ ردیف が را همان‌جا با خواندنِ ساده و بعد فراخوانیِ کوتاه تثبیت کردی.',
+          'سه واژهٔ واقعی خواندی — かいぎ (جلسه)، おんがく (موسیقی) و آسنِ تازه: あさごはん (صبحانه).',
         ],
       },
     ],
@@ -532,7 +557,7 @@ export const KXP_STATIONS: Station[] = [
   {
     slug: 'stn-kana-hy1',
     type: 'kana',
-    titleFa: 'یُوئون ۱ — きゃ行 و しゃ行',
+    titleFa: 'یُوئون ۱ — بستهٔ きゃ و しゃ',
     objectiveFa: 'ャ کوچک فشرده می‌کند: کیا و شا در یک مورا.',
     core: true,
     order: 6,
@@ -540,11 +565,15 @@ export const KXP_STATIONS: Station[] = [
     lineRefs: [],
     objectiveCode: 'kana-hira-expansion',
     teachesConcepts: ['kana-yoon', 'hy1-row'],
-    estMinutes: 9,
+    estMinutes: 11,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
+    /* ENGINE-REFORM (2026-11-22) — the staged-teaching rebuild of this pilot:
+     * packet → immediate simple engagement (d1) → recall round (d2) → worked
+     * reading models BEFORE the guided decode → listening → independent decode
+     * of a brand-new word, last. */
     blocks: [
       {
         kind: 'rule-prereq',
@@ -599,17 +628,12 @@ export const KXP_STATIONS: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-hy1-quiz-2',
+        exerciseIds: ['ex-kxp-hy1-rec-2'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hy1-rcl',
         exerciseIds: ['ex-kxp-hy1-rcl-1', 'ex-kxp-hy1-rcl-2'],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-hy1-dec',
-        exerciseIds: ['ex-kxp-hy1-dec-1', 'ex-kxp-hy1-dec-2'],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-hy1-lis',
-        exerciseIds: ['ex-kxp-hy1-lis-1'],
       },
       {
         kind: 'example-set',
@@ -623,16 +647,40 @@ export const KXP_STATIONS: Station[] = [
             fa: 'شرکت',
             whyFa: 'しゃ فشرده — یک ضربه.',
           },
+          {
+            id: 'ex-stn-kana-hy1-apply-1',
+            role: 'reading',
+            ja: 'しゃしん',
+            reading: 'شاشِن',
+            fa: 'عکس',
+            whyFa: 'همان فشرده در میان واژه: しゃ + し + ん — سه ضربه، نه چهار.',
+            pronFa: 'در «شاشِن» صدای «شا» را با یک ضربه بگو؛ اگر دو ضربه شود «شِیا» خوانده‌ای — واژه‌ای که وجود ندارد.',
+          },
         ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hy1-dec',
+        exerciseIds: ['ex-kxp-hy1-dec-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hy1-lis',
+        exerciseIds: ['ex-kxp-hy1-lis-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hy1-indep',
+        exerciseIds: ['ex-kxp-hy1-dec-2'],
       },
       {
         kind: 'wrap-up',
         id: 'blk-stn-kana-hy1-wrapup',
-        titleFa: 'جمع‌بندی — یُوئون ۱ — きゃ行 و しゃ行',
+        titleFa: 'جمع‌بندی — یُوئون ۱ — بستهٔ きゃ و しゃ',
         itemsFa: [
           'ャ کوچک فشرده می‌کند: کیا و شا در یک مورا.',
-          'کارت‌های تازه در بانک کانای تو نشستند — تمرین خودکارِ بعدی آن‌ها را می‌پرسد.',
-          'واژه‌ی かいしゃ را خواندی — しゃ فشرده — یک ضربه.',
+          'هر بستهٔ شش کارت را همان‌جا با خواندنِ ساده تثبیت کردی و بعد فراخوانی گرفتی.',
+          'سه واژهٔ واقعی خواندی — かいしゃ (شرکت)، しゃしん (عکس) و تازه: でんしゃ (قطار).',
         ],
       },
     ],
@@ -1917,7 +1965,11 @@ export const KXP_STATIONS: Station[] = [
     estMinutes: 10,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
-    mastery: { threshold: 0.7 },
+    /* ENGINE-REFORM (2026-11-22) — the practice-station rebuild of this pilot:
+     * the REAL-WORLD BOARD (the reading material) precedes every exercise; the
+     * decode ladder is staged — guided reads of board words first (difficulty 2,
+     * each anchored to the board via referenceBlockId), the independent reads
+     * (difficulty 3) only AFTER the guided round of the same skill. */
     blocks: [
       {
         kind: 'scene',
@@ -1948,21 +2000,28 @@ export const KXP_STATIONS: Station[] = [
               { ja: 'ちゃいろ', sideJa: '' },
               { ja: 'ぱんだ', sideJa: '' },
               { ja: 'りゅう', sideJa: '' },
+              { ja: 'シュークリーム', sideJa: '' },
+            ],
+          },
+          {
+            titleFa: 'تابلوهای آموزش و اطرافِ خیابان',
+            leadJa: 'にほんごの べんきょう',
+            items: [
+              { ja: 'だいがく', sideJa: '' },
+              { ja: 'じてんしゃ', sideJa: '' },
             ],
           },
         ],
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-kx1-read',
-        exerciseIds: [
-          'ex-kxp-kx1-dec-1',
-          'ex-kxp-kx1-dec-2',
-          'ex-kxp-kx1-dec-3',
-          'ex-kxp-kx1-dec-4',
-          'ex-kxp-kx1-dec-5',
-          'ex-kxp-kx1-dec-6',
-        ],
+        id: 'blk-stn-kana-kx1-read-guided',
+        exerciseIds: ['ex-kxp-kx1-dec-2', 'ex-kxp-kx1-dec-5', 'ex-kxp-kx1-dec-3'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-kx1-read-independent',
+        exerciseIds: ['ex-kxp-kx1-dec-1', 'ex-kxp-kx1-dec-4', 'ex-kxp-kx1-dec-6'],
       },
       {
         kind: 'wrap-up',
@@ -1970,7 +2029,7 @@ export const KXP_STATIONS: Station[] = [
         titleFa: 'جمع‌بندی — نظام کاملِ کانا',
         itemsFa: [
           'تکمیل شد: ۱۸۴ کانای نظامِ نوشتاری ژاپنی — پایه، داکوتن، هان‌داکوتن و یُوئون.',
-          'واژه‌های واقعی را با همهٔ نشانه‌ها خواندی — از だいがく تا キャンプ.',
+          'اول با راهنمایی خواندی (きょう، ぱんだ، じてんしゃ) و بعد مستقل (だいがく، シュークリーム، にほんごの べんきょう) — هر سه تابلوی محله.',
           'از حالا هر نوشتهٔ ژاپنی‌ای که این نشانه‌ها را دارد، برایت خواندنی است.',
         ],
       },

@@ -24,7 +24,7 @@ import type { ExerciseType, StationType, TeachingBlock } from '../types';
 
 export type EqaSeverity = 'error' | 'warning' | 'info';
 
-export type EqaGateId = 'EQA-1' | 'EQA-2' | 'EQA-3' | 'EQA-4' | 'EQA-5' | 'EQA-6' | 'EQA-7';
+export type EqaGateId = 'EQA-1' | 'EQA-2' | 'EQA-3' | 'EQA-4' | 'EQA-5' | 'EQA-6' | 'EQA-7' | 'EQA-8' | 'EQA-10';
 
 export interface EqaFinding {
   gate: EqaGateId;
@@ -258,5 +258,23 @@ export const EQA_GATE_REGISTRY: readonly EqaGateSpec[] = [
     scope:
       'خطا: levelCode فصل در LEVEL_POLICIES نباشد؛ مقدار gate سیاست خارج بازهٔ مستند؛ minMeasure > weighted؛ نقض یکنوایی تشدید آستانه L2→L7. تضمین ساختاری: computeMastery فقط آستانهٔ تزریق‌شده می‌پذیرد (امکان پاس‌دادن stage هاردکد وجود ندارد) + تست سنکرون LEVEL_MATRIX §۶.',
     owner: 'Engineering + CI',
+  },
+  {
+    id: 'EQA-8',
+    ruleFa:
+      'پیش‌نیاز محتوایی: هر سطح محتوایی (آموزش، مثال، سؤال، گزینه حتی انحرافی، راهنما، بازخورد) فقط از دانشِ تدریس‌شدهٔ پیش از آن نقطه استفاده می‌کند — رجیستری دانشِ کل مسیر',
+    source: 'ENGINE-REFORM 2026-11-22 §۳ · Knowledge Registry · GLYPH-BUDGET/CONTENT-105 lineage',
+    scope:
+      'خطا: نویسه/قاعدهٔ تدریس‌نشده در هر سطح ژاپنی (R1/R2)؛ واژهٔ ثبت‌شده در متن پیرامونی پیش از تدریسش (R3)؛ کانجی ثبت‌نشده در سطح سنجش (R4)؛ سنجش مفهوم پیش از بلوک تدریس‌کننده حتی درون همان ایستگاه (R5). هشدار: کانجی گلاوس‌دار در متریال دریافت‌همراه. معافِ مستند: مکالمهٔ لنگر (مواجههٔ اولیه سه‌منشأ — exposureAt در رجیستری، هرگز تدریس حساب نمی‌شود)؛ زمان‌بندی درک خط نزد EQA-1 می‌ماند. رجیستری از محتوای فصل‌ها مشتق می‌شود (یک منبع حقیقت، بدون نسخهٔ موازی)، دیجست نسخه‌بندی‌شده دارد و ثبتِ آموزش هر ایستگاه خودکار است.',
+    owner: 'Content Author + CI',
+  },
+  {
+    id: 'EQA-10',
+    ruleFa:
+      'قرارداد آموزشی ایستگاه: هر نوع ایستگاه ترتیب/ساختار آموزشی خودش را دارد — پکت→درگیرسازی ساده (difficulty 1)، مثال الگو‌شده پیش از کاربرد، هدایت‌شده پیش از مستقل',
+    source: 'ENGINE-REFORM 2026-11-22 §۴ · teaching-interaction-model (D-0010/0011/0012) · station-blueprint §۲–۴',
+    scope:
+      'خطا: اولین تعامل پس از هر پکت آموزش باید difficulty 1 باشد (C-first-engage)؛ اولین kana-decode ایستگاه آموزشی باید پس از example-set الگو‌شده بیاید (C-worked-before-decode)؛ آیتم difficulty-3 فقط پس از سنجش هدایت‌شدهٔ ≤۲ همان مفهوم (C-guided-first)؛ ساختار الزامی هر نوع ایستگاه (C-type-structure). مرز: ایستگاه‌های مرور/تمرینِ بدون محتوای جدید از قواعد تدریسِ جدید معاف‌اند؛ نمره/رتبه/امتیاز ممنوع — فقط درستی پاسخ، بازخورد آموزشی و پیشرفت معتبر.',
+    owner: 'Content Author + CI',
   },
 ] as const;

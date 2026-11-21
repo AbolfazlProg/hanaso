@@ -1,0 +1,5284 @@
+{
+  "generatedAt": "2026-11-21T18:22:38.550Z",
+  "schemaVersion": 1,
+  "digest": "8be9c2a9",
+  "course": ["kana-foundation-01", "kana-expansion-01", "first-meeting-01"],
+  "entryCount": 325,
+  "byKind": {
+    "concept": 60,
+    "kana": 176,
+    "derived-glyph": 59,
+    "rule-mark": 6,
+    "grammar": 5,
+    "word": 11,
+    "expression": 8
+  },
+  "notes": [
+    {
+      "rule": "grammar-anchor-ambiguous",
+      "message": "خوشهٔ گرامری gr-desu-identity به 5 ایستگاه لنگر است — earliest ثبت شد."
+    },
+    {
+      "rule": "grammar-anchor-ambiguous",
+      "message": "خوشهٔ گرامری gr-desu-qa به 4 ایستگاه لنگر است — earliest ثبت شد."
+    },
+    {
+      "rule": "grammar-anchor-ambiguous",
+      "message": "خوشهٔ گرامری gr-mo به 7 ایستگاه لنگر است — earliest ثبت شد."
+    },
+    {
+      "rule": "grammar-anchor-ambiguous",
+      "message": "خوشهٔ گرامری gr-dewa-arimasen به 8 ایستگاه لنگر است — earliest ثبت شد."
+    },
+    {
+      "rule": "grammar-anchor-ambiguous",
+      "message": "خوشهٔ گرامری gr-kara-kimashita به 7 ایستگاه لنگر است — earliest ثبت شد."
+    }
+  ],
+  "entries": [
+    {
+      "id": "kana-orientation",
+      "kind": "concept",
+      "surface": "kana-orientation",
+      "reading": null,
+      "meaningFa": "خوش‌آمد و سه خط ژاپنی",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h0",
+        "stationOrder": 1,
+        "globalIndex": 10001
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-a",
+      "kind": "kana",
+      "surface": "あ",
+      "reading": "a",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h1",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-h1-card-hira-a",
+        "globalIndex": 10002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-a"]
+    },
+    {
+      "id": "hira-e",
+      "kind": "kana",
+      "surface": "え",
+      "reading": "e",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h1",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-h1-card-hira-e",
+        "globalIndex": 10002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-e"]
+    },
+    {
+      "id": "hira-i",
+      "kind": "kana",
+      "surface": "い",
+      "reading": "i",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h1",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-h1-card-hira-i",
+        "globalIndex": 10002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-i"]
+    },
+    {
+      "id": "hira-o",
+      "kind": "kana",
+      "surface": "お",
+      "reading": "o",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h1",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-h1-card-hira-o",
+        "globalIndex": 10002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-o"]
+    },
+    {
+      "id": "hira-u",
+      "kind": "kana",
+      "surface": "う",
+      "reading": "u",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h1",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-h1-card-hira-u",
+        "globalIndex": 10002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-u"]
+    },
+    {
+      "id": "kana-hira-foundation",
+      "kind": "concept",
+      "surface": "kana-hira-foundation",
+      "reading": null,
+      "meaningFa": "ردیف あ",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h1",
+        "stationOrder": 2,
+        "globalIndex": 10002
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-ka",
+      "kind": "kana",
+      "surface": "か",
+      "reading": "ka",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h2",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-h2-card-hira-ka",
+        "globalIndex": 10003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ka"]
+    },
+    {
+      "id": "hira-ke",
+      "kind": "kana",
+      "surface": "け",
+      "reading": "ke",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h2",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-h2-card-hira-ke",
+        "globalIndex": 10003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ke"]
+    },
+    {
+      "id": "hira-ki",
+      "kind": "kana",
+      "surface": "き",
+      "reading": "ki",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h2",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-h2-card-hira-ki",
+        "globalIndex": 10003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ki"]
+    },
+    {
+      "id": "hira-ko",
+      "kind": "kana",
+      "surface": "こ",
+      "reading": "ko",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h2",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-h2-card-hira-ko",
+        "globalIndex": 10003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ko"]
+    },
+    {
+      "id": "hira-ku",
+      "kind": "kana",
+      "surface": "く",
+      "reading": "ku",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h2",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-h2-card-hira-ku",
+        "globalIndex": 10003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ku"]
+    },
+    {
+      "id": "hira-sa",
+      "kind": "kana",
+      "surface": "さ",
+      "reading": "sa",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h3",
+        "stationOrder": 4,
+        "blockId": "blk-stn-kana-h3-card-hira-sa",
+        "globalIndex": 10004
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-sa"]
+    },
+    {
+      "id": "hira-se",
+      "kind": "kana",
+      "surface": "せ",
+      "reading": "se",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h3",
+        "stationOrder": 4,
+        "blockId": "blk-stn-kana-h3-card-hira-se",
+        "globalIndex": 10004
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-se"]
+    },
+    {
+      "id": "hira-shi",
+      "kind": "kana",
+      "surface": "し",
+      "reading": "shi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h3",
+        "stationOrder": 4,
+        "blockId": "blk-stn-kana-h3-card-hira-shi",
+        "globalIndex": 10004
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-shi"]
+    },
+    {
+      "id": "hira-so",
+      "kind": "kana",
+      "surface": "そ",
+      "reading": "so",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h3",
+        "stationOrder": 4,
+        "blockId": "blk-stn-kana-h3-card-hira-so",
+        "globalIndex": 10004
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-so"]
+    },
+    {
+      "id": "hira-su",
+      "kind": "kana",
+      "surface": "す",
+      "reading": "su",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h3",
+        "stationOrder": 4,
+        "blockId": "blk-stn-kana-h3-card-hira-su",
+        "globalIndex": 10004
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-su"]
+    },
+    {
+      "id": "glyph-が",
+      "kind": "derived-glyph",
+      "surface": "が",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-h5-step-gakusei",
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ka", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ぎ",
+      "kind": "derived-glyph",
+      "surface": "ぎ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-h5-step-concept",
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ki", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ご",
+      "kind": "derived-glyph",
+      "surface": "ご",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-h5-contrast-koko",
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ko", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ざ",
+      "kind": "derived-glyph",
+      "surface": "ざ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-h5-step-concept",
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-sa", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-じ",
+      "kind": "derived-glyph",
+      "surface": "じ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-h5-step-concept",
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-shi", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ぜ",
+      "kind": "derived-glyph",
+      "surface": "ぜ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-h5-step-concept",
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-se", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ぞ",
+      "kind": "derived-glyph",
+      "surface": "ぞ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-h5-step-kazoku",
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-so", "mark-dakuten"]
+    },
+    {
+      "id": "kana-dakuten",
+      "kind": "concept",
+      "surface": "kana-dakuten",
+      "reading": null,
+      "meaningFa": "داکوتن: دو خطِ راست‌بالای کانا، صامت را واک‌دار می‌کند",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "mark-dakuten",
+      "kind": "rule-mark",
+      "surface": "dakuten",
+      "reading": null,
+      "meaningFa": "قاعدهٔ داکوتن (゛)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h5",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-h5-prereq",
+        "globalIndex": 10006
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-practice-1",
+      "kind": "concept",
+      "surface": "kana-practice-1",
+      "reading": null,
+      "meaningFa": "آموخته‌های あ/か/さ و قواعد کشش و داکوتن را با بازیابی فعال تثبیت می‌کنی",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-p1",
+        "stationOrder": 7,
+        "globalIndex": 10007
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-n",
+      "kind": "kana",
+      "surface": "ん",
+      "reading": "n",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h7",
+        "stationOrder": 8,
+        "blockId": "blk-stn-kana-h7-card-hira-n",
+        "globalIndex": 10008
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-n"]
+    },
+    {
+      "id": "kana-hira-mastery",
+      "kind": "concept",
+      "surface": "kana-hira-mastery",
+      "reading": null,
+      "meaningFa": "ん",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h7",
+        "stationOrder": 8,
+        "globalIndex": 10008
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-na",
+      "kind": "kana",
+      "surface": "な",
+      "reading": "na",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h8",
+        "stationOrder": 9,
+        "blockId": "blk-stn-kana-h8-card-hira-na",
+        "globalIndex": 10009
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-na"]
+    },
+    {
+      "id": "hira-ne",
+      "kind": "kana",
+      "surface": "ね",
+      "reading": "ne",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h8",
+        "stationOrder": 9,
+        "blockId": "blk-stn-kana-h8-card-hira-ne",
+        "globalIndex": 10009
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ne"]
+    },
+    {
+      "id": "hira-ni",
+      "kind": "kana",
+      "surface": "に",
+      "reading": "ni",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h8",
+        "stationOrder": 9,
+        "blockId": "blk-stn-kana-h8-card-hira-ni",
+        "globalIndex": 10009
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ni"]
+    },
+    {
+      "id": "hira-no",
+      "kind": "kana",
+      "surface": "の",
+      "reading": "no",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h8",
+        "stationOrder": 9,
+        "blockId": "blk-stn-kana-h8-card-hira-no",
+        "globalIndex": 10009
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-no"]
+    },
+    {
+      "id": "hira-nu",
+      "kind": "kana",
+      "surface": "ぬ",
+      "reading": "nu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h8",
+        "stationOrder": 9,
+        "blockId": "blk-stn-kana-h8-card-hira-nu",
+        "globalIndex": 10009
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-nu"]
+    },
+    {
+      "id": "glyph-だ",
+      "kind": "derived-glyph",
+      "surface": "だ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h9",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-h9-prereq-derived",
+        "globalIndex": 10010
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ta", "mark-dakuten"]
+    },
+    {
+      "id": "hira-chi",
+      "kind": "kana",
+      "surface": "ち",
+      "reading": "chi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h9",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-h9-card-hira-chi",
+        "globalIndex": 10010
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-chi"]
+    },
+    {
+      "id": "hira-da",
+      "kind": "concept",
+      "surface": "hira-da",
+      "reading": null,
+      "meaningFa": "ردیف た",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h9",
+        "stationOrder": 10,
+        "globalIndex": 10010
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-ta",
+      "kind": "kana",
+      "surface": "た",
+      "reading": "ta",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h9",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-h9-card-hira-ta",
+        "globalIndex": 10010
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ta"]
+    },
+    {
+      "id": "hira-te",
+      "kind": "kana",
+      "surface": "て",
+      "reading": "te",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h9",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-h9-card-hira-te",
+        "globalIndex": 10010
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-te"]
+    },
+    {
+      "id": "hira-to",
+      "kind": "kana",
+      "surface": "と",
+      "reading": "to",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h9",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-h9-card-hira-to",
+        "globalIndex": 10010
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-to"]
+    },
+    {
+      "id": "hira-tsu",
+      "kind": "kana",
+      "surface": "つ",
+      "reading": "tsu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h9",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-h9-card-hira-tsu",
+        "globalIndex": 10010
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-tsu"]
+    },
+    {
+      "id": "kana-practice-2",
+      "kind": "concept",
+      "surface": "kana-practice-2",
+      "reading": null,
+      "meaningFa": "شنیدن و خواندن ん و ردیف‌های な/た را با تمایز جفت‌های شبیه تثبیت می‌کنی",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-p2",
+        "stationOrder": 11,
+        "globalIndex": 10011
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "glyph-ず",
+      "kind": "derived-glyph",
+      "surface": "ず",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h10",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-h10-prereq-derived",
+        "globalIndex": 10012
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-su", "mark-dakuten"]
+    },
+    {
+      "id": "hira-ma",
+      "kind": "kana",
+      "surface": "ま",
+      "reading": "ma",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h10",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-h10-card-hira-ma",
+        "globalIndex": 10012
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ma"]
+    },
+    {
+      "id": "hira-me",
+      "kind": "kana",
+      "surface": "め",
+      "reading": "me",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h10",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-h10-card-hira-me",
+        "globalIndex": 10012
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-me"]
+    },
+    {
+      "id": "hira-mi",
+      "kind": "kana",
+      "surface": "み",
+      "reading": "mi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h10",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-h10-card-hira-mi",
+        "globalIndex": 10012
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-mi"]
+    },
+    {
+      "id": "hira-mo",
+      "kind": "kana",
+      "surface": "も",
+      "reading": "mo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h10",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-h10-card-hira-mo",
+        "globalIndex": 10012
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-mo"]
+    },
+    {
+      "id": "hira-mu",
+      "kind": "kana",
+      "surface": "む",
+      "reading": "mu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h10",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-h10-card-hira-mu",
+        "globalIndex": 10012
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-mu"]
+    },
+    {
+      "id": "hira-ra",
+      "kind": "kana",
+      "surface": "ら",
+      "reading": "ra",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h11",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-h11-card-hira-ra",
+        "globalIndex": 10013
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ra"]
+    },
+    {
+      "id": "hira-re",
+      "kind": "kana",
+      "surface": "れ",
+      "reading": "re",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h11",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-h11-card-hira-re",
+        "globalIndex": 10013
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-re"]
+    },
+    {
+      "id": "hira-ri",
+      "kind": "kana",
+      "surface": "り",
+      "reading": "ri",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h11",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-h11-card-hira-ri",
+        "globalIndex": 10013
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ri"]
+    },
+    {
+      "id": "hira-ro",
+      "kind": "kana",
+      "surface": "ろ",
+      "reading": "ro",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h11",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-h11-card-hira-ro",
+        "globalIndex": 10013
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ro"]
+    },
+    {
+      "id": "hira-ru",
+      "kind": "kana",
+      "surface": "る",
+      "reading": "ru",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h11",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-h11-card-hira-ru",
+        "globalIndex": 10013
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ru"]
+    },
+    {
+      "id": "glyph-ば",
+      "kind": "derived-glyph",
+      "surface": "ば",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-h12-step-dakuten-ha",
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ha", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-び",
+      "kind": "derived-glyph",
+      "surface": "び",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-h12-step-dakuten-ha",
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-hi", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ぶ",
+      "kind": "derived-glyph",
+      "surface": "ぶ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-h12-step-dakuten-ha",
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-fu", "mark-dakuten"]
+    },
+    {
+      "id": "hira-ba",
+      "kind": "concept",
+      "surface": "hira-ba",
+      "reading": null,
+      "meaningFa": "ردیف は",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-bi",
+      "kind": "concept",
+      "surface": "hira-bi",
+      "reading": null,
+      "meaningFa": "ردیف は",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-bu",
+      "kind": "concept",
+      "surface": "hira-bu",
+      "reading": null,
+      "meaningFa": "ردیف は",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-fu",
+      "kind": "kana",
+      "surface": "ふ",
+      "reading": "fu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-h12-card-hira-fu",
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-fu"]
+    },
+    {
+      "id": "hira-ha",
+      "kind": "kana",
+      "surface": "は",
+      "reading": "ha",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-h12-card-hira-ha",
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ha"]
+    },
+    {
+      "id": "hira-he",
+      "kind": "kana",
+      "surface": "へ",
+      "reading": "he",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-h12-card-hira-he",
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-he"]
+    },
+    {
+      "id": "hira-hi",
+      "kind": "kana",
+      "surface": "ひ",
+      "reading": "hi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-h12-card-hira-hi",
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-hi"]
+    },
+    {
+      "id": "hira-ho",
+      "kind": "kana",
+      "surface": "ほ",
+      "reading": "ho",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h12",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-h12-card-hira-ho",
+        "globalIndex": 10014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ho"]
+    },
+    {
+      "id": "kana-practice-3",
+      "kind": "concept",
+      "surface": "kana-practice-3",
+      "reading": null,
+      "meaningFa": "تمایز متراکم‌ترین جفت‌های شبیه هیراگانا و خواندن واژه‌های داکوتن ば",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-p3",
+        "stationOrder": 15,
+        "globalIndex": 10015
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-ya",
+      "kind": "kana",
+      "surface": "や",
+      "reading": "ya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h14",
+        "stationOrder": 16,
+        "blockId": "blk-stn-kana-h14-card-hira-ya",
+        "globalIndex": 10016
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ya"]
+    },
+    {
+      "id": "hira-yo",
+      "kind": "kana",
+      "surface": "よ",
+      "reading": "yo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h14",
+        "stationOrder": 16,
+        "blockId": "blk-stn-kana-h14-card-hira-yo",
+        "globalIndex": 10016
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-yo"]
+    },
+    {
+      "id": "hira-yu",
+      "kind": "kana",
+      "surface": "ゆ",
+      "reading": "yu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h14",
+        "stationOrder": 16,
+        "blockId": "blk-stn-kana-h14-card-hira-yu",
+        "globalIndex": 10016
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-yu"]
+    },
+    {
+      "id": "glyph-ゃ",
+      "kind": "derived-glyph",
+      "surface": "ゃ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h6",
+        "stationOrder": 17,
+        "blockId": "blk-stn-kana-h6-prereq",
+        "globalIndex": 10017
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-yoon-small"]
+    },
+    {
+      "id": "glyph-ゅ",
+      "kind": "derived-glyph",
+      "surface": "ゅ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h6",
+        "stationOrder": 17,
+        "blockId": "blk-stn-kana-h6-prereq",
+        "globalIndex": 10017
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-yoon-small"]
+    },
+    {
+      "id": "glyph-ょ",
+      "kind": "derived-glyph",
+      "surface": "ょ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h6",
+        "stationOrder": 17,
+        "blockId": "blk-stn-kana-h6-prereq",
+        "globalIndex": 10017
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-yoon-small"]
+    },
+    {
+      "id": "kana-yoon",
+      "kind": "concept",
+      "surface": "kana-yoon",
+      "reading": null,
+      "meaningFa": "یُوئون: کانای کوچک ゃ/ゅ/ょ، صامت و مصوت را در یک مورا فشرده می‌کند",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h6",
+        "stationOrder": 17,
+        "globalIndex": 10017
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "mark-yoon-small",
+      "kind": "rule-mark",
+      "surface": "yoon-small",
+      "reading": null,
+      "meaningFa": "قاعدهٔ کانای کوچک یُوئون",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h6",
+        "stationOrder": 17,
+        "blockId": "blk-stn-kana-h6-prereq",
+        "globalIndex": 10017
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-sokuon",
+      "kind": "concept",
+      "surface": "kana-sokuon",
+      "reading": null,
+      "meaningFa": "سوکوئون: っ کوچک = یک مورای فشار/مکث قبل از صامت",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h13",
+        "stationOrder": 18,
+        "globalIndex": 10018
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "mark-sokuon",
+      "kind": "rule-mark",
+      "surface": "sokuon",
+      "reading": null,
+      "meaningFa": "قاعدهٔ سُکوئون (っ)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h13",
+        "stationOrder": 18,
+        "blockId": "blk-stn-kana-h13-prereq",
+        "globalIndex": 10018
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "glyph-で",
+      "kind": "derived-glyph",
+      "surface": "で",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-h15-prereq",
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-te", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ぱ",
+      "kind": "derived-glyph",
+      "surface": "ぱ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-h15-contrast-ba-pa",
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ha", "mark-handakuten"]
+    },
+    {
+      "id": "glyph-ぴ",
+      "kind": "derived-glyph",
+      "surface": "ぴ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-h15-prereq",
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-hi", "mark-handakuten"]
+    },
+    {
+      "id": "glyph-ぼ",
+      "kind": "derived-glyph",
+      "surface": "ぼ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-h15-prereq",
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ho", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ぽ",
+      "kind": "derived-glyph",
+      "surface": "ぽ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-h15-prereq",
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ho", "mark-handakuten"]
+    },
+    {
+      "id": "hira-bo",
+      "kind": "concept",
+      "surface": "hira-bo",
+      "reading": null,
+      "meaningFa": "ردیف わ + قاعدهٔ هان‌داکوتن (゜)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-pa",
+      "kind": "concept",
+      "surface": "hira-pa",
+      "reading": null,
+      "meaningFa": "ردیف わ + قاعدهٔ هان‌داکوتن (゜)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-pi",
+      "kind": "concept",
+      "surface": "hira-pi",
+      "reading": null,
+      "meaningFa": "ردیف わ + قاعدهٔ هان‌داکوتن (゜)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-po",
+      "kind": "concept",
+      "surface": "hira-po",
+      "reading": null,
+      "meaningFa": "ردیف わ + قاعدهٔ هان‌داکوتن (゜)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-wa",
+      "kind": "kana",
+      "surface": "わ",
+      "reading": "wa",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-h15-card-hira-wa",
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-wa"]
+    },
+    {
+      "id": "hira-wo",
+      "kind": "kana",
+      "surface": "を",
+      "reading": "wo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-h15-card-hira-wo",
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-wo"]
+    },
+    {
+      "id": "kana-handakuten",
+      "kind": "concept",
+      "surface": "kana-handakuten",
+      "reading": null,
+      "meaningFa": "ردیف わ + قاعدهٔ هان‌داکوتن (゜)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "mark-handakuten",
+      "kind": "rule-mark",
+      "surface": "handakuten",
+      "reading": null,
+      "meaningFa": "قاعدهٔ هان‌داکوتن (゜)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-h15",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-h15-prereq",
+        "globalIndex": 10019
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-practice-4",
+      "kind": "concept",
+      "surface": "kana-practice-4",
+      "reading": null,
+      "meaningFa": "پیش از برگهٔ خواندن واقعی، کل هیراگانا با همهٔ قواعدش را یک‌جا مرور می‌کنی",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-p4",
+        "stationOrder": 20,
+        "globalIndex": 10020
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-realworld-reading",
+      "kind": "concept",
+      "surface": "kana-realworld-reading",
+      "reading": null,
+      "meaningFa": "واژه‌های واقعیِ هیراگانایی را فقط با آموخته‌های خودت می‌خوانی",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-m1-reading",
+        "stationOrder": 21,
+        "globalIndex": 10021
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-katakana",
+      "kind": "concept",
+      "surface": "kana-katakana",
+      "reading": null,
+      "meaningFa": "کاتاکانا، خط دوم ژاپنی: همان ۴۶ صدایی که حالا بلدی، با شکل‌های تازه. وام‌واژه‌های واقعی از همین‌جا شروع می‌شوند.",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k1",
+        "stationOrder": 22,
+        "globalIndex": 10022
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kata-a",
+      "kind": "kana",
+      "surface": "ア",
+      "reading": "a",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k1",
+        "stationOrder": 22,
+        "blockId": "blk-stn-kana-k1-card-kata-a",
+        "globalIndex": 10022
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-a"]
+    },
+    {
+      "id": "kata-e",
+      "kind": "kana",
+      "surface": "エ",
+      "reading": "e",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k1",
+        "stationOrder": 22,
+        "blockId": "blk-stn-kana-k1-card-kata-e",
+        "globalIndex": 10022
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-e"]
+    },
+    {
+      "id": "kata-i",
+      "kind": "kana",
+      "surface": "イ",
+      "reading": "i",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k1",
+        "stationOrder": 22,
+        "blockId": "blk-stn-kana-k1-card-kata-i",
+        "globalIndex": 10022
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-i"]
+    },
+    {
+      "id": "kata-o",
+      "kind": "kana",
+      "surface": "オ",
+      "reading": "o",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k1",
+        "stationOrder": 22,
+        "blockId": "blk-stn-kana-k1-card-kata-o",
+        "globalIndex": 10022
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-o"]
+    },
+    {
+      "id": "kata-u",
+      "kind": "kana",
+      "surface": "ウ",
+      "reading": "u",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k1",
+        "stationOrder": 22,
+        "blockId": "blk-stn-kana-k1-card-kata-u",
+        "globalIndex": 10022
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-u"]
+    },
+    {
+      "id": "glyph-ド",
+      "kind": "derived-glyph",
+      "surface": "ド",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k2",
+        "stationOrder": 23,
+        "blockId": "blk-stn-kana-k2-prereq-dakuten",
+        "globalIndex": 10023
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-to", "mark-dakuten"]
+    },
+    {
+      "id": "kata-chi",
+      "kind": "kana",
+      "surface": "チ",
+      "reading": "chi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k2",
+        "stationOrder": 23,
+        "blockId": "blk-stn-kana-k2-card-kata-chi",
+        "globalIndex": 10023
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-chi"]
+    },
+    {
+      "id": "kata-ta",
+      "kind": "kana",
+      "surface": "タ",
+      "reading": "ta",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k2",
+        "stationOrder": 23,
+        "blockId": "blk-stn-kana-k2-card-kata-ta",
+        "globalIndex": 10023
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ta"]
+    },
+    {
+      "id": "kata-te",
+      "kind": "kana",
+      "surface": "テ",
+      "reading": "te",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k2",
+        "stationOrder": 23,
+        "blockId": "blk-stn-kana-k2-card-kata-te",
+        "globalIndex": 10023
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-te"]
+    },
+    {
+      "id": "kata-to",
+      "kind": "kana",
+      "surface": "ト",
+      "reading": "to",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k2",
+        "stationOrder": 23,
+        "blockId": "blk-stn-kana-k2-card-kata-to",
+        "globalIndex": 10023
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-to"]
+    },
+    {
+      "id": "kata-tsu",
+      "kind": "kana",
+      "surface": "ツ",
+      "reading": "tsu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k2",
+        "stationOrder": 23,
+        "blockId": "blk-stn-kana-k2-card-kata-tsu",
+        "globalIndex": 10023
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-tsu"]
+    },
+    {
+      "id": "kata-ra",
+      "kind": "kana",
+      "surface": "ラ",
+      "reading": "ra",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k3",
+        "stationOrder": 24,
+        "blockId": "blk-stn-kana-k3-card-kata-ra",
+        "globalIndex": 10024
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ra"]
+    },
+    {
+      "id": "kata-re",
+      "kind": "kana",
+      "surface": "レ",
+      "reading": "re",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k3",
+        "stationOrder": 24,
+        "blockId": "blk-stn-kana-k3-card-kata-re",
+        "globalIndex": 10024
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-re"]
+    },
+    {
+      "id": "kata-ri",
+      "kind": "kana",
+      "surface": "リ",
+      "reading": "ri",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k3",
+        "stationOrder": 24,
+        "blockId": "blk-stn-kana-k3-card-kata-ri",
+        "globalIndex": 10024
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ri"]
+    },
+    {
+      "id": "kata-ro",
+      "kind": "kana",
+      "surface": "ロ",
+      "reading": "ro",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k3",
+        "stationOrder": 24,
+        "blockId": "blk-stn-kana-k3-card-kata-ro",
+        "globalIndex": 10024
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ro"]
+    },
+    {
+      "id": "kata-ru",
+      "kind": "kana",
+      "surface": "ル",
+      "reading": "ru",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k3",
+        "stationOrder": 24,
+        "blockId": "blk-stn-kana-k3-card-kata-ru",
+        "globalIndex": 10024
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ru"]
+    },
+    {
+      "id": "glyph-ジ",
+      "kind": "derived-glyph",
+      "surface": "ジ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k4",
+        "stationOrder": 25,
+        "blockId": "blk-stn-kana-k4-prereq-derived",
+        "globalIndex": 10025
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-shi", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ズ",
+      "kind": "derived-glyph",
+      "surface": "ズ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k4",
+        "stationOrder": 25,
+        "blockId": "blk-stn-kana-k4-prereq-derived",
+        "globalIndex": 10025
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-su", "mark-dakuten"]
+    },
+    {
+      "id": "kata-sa",
+      "kind": "kana",
+      "surface": "サ",
+      "reading": "sa",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k4",
+        "stationOrder": 25,
+        "blockId": "blk-stn-kana-k4-card-kata-sa",
+        "globalIndex": 10025
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-sa"]
+    },
+    {
+      "id": "kata-se",
+      "kind": "kana",
+      "surface": "セ",
+      "reading": "se",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k4",
+        "stationOrder": 25,
+        "blockId": "blk-stn-kana-k4-card-kata-se",
+        "globalIndex": 10025
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-se"]
+    },
+    {
+      "id": "kata-shi",
+      "kind": "kana",
+      "surface": "シ",
+      "reading": "shi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k4",
+        "stationOrder": 25,
+        "blockId": "blk-stn-kana-k4-card-kata-shi",
+        "globalIndex": 10025
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-shi"]
+    },
+    {
+      "id": "kata-so",
+      "kind": "kana",
+      "surface": "ソ",
+      "reading": "so",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k4",
+        "stationOrder": 25,
+        "blockId": "blk-stn-kana-k4-card-kata-so",
+        "globalIndex": 10025
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-so"]
+    },
+    {
+      "id": "kata-su",
+      "kind": "kana",
+      "surface": "ス",
+      "reading": "su",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k4",
+        "stationOrder": 25,
+        "blockId": "blk-stn-kana-k4-card-kata-su",
+        "globalIndex": 10025
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-su"]
+    },
+    {
+      "id": "glyph-ザ",
+      "kind": "derived-glyph",
+      "surface": "ザ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-prereq-derived",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-sa", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-バ",
+      "kind": "derived-glyph",
+      "surface": "バ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-prereq-derived",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ha", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ビ",
+      "kind": "derived-glyph",
+      "surface": "ビ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-prereq-derived",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-hi", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ピ",
+      "kind": "derived-glyph",
+      "surface": "ピ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-prereq-derived",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-hi", "mark-handakuten"]
+    },
+    {
+      "id": "kata-fu",
+      "kind": "kana",
+      "surface": "フ",
+      "reading": "fu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-card-kata-fu",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-fu"]
+    },
+    {
+      "id": "kata-ha",
+      "kind": "kana",
+      "surface": "ハ",
+      "reading": "ha",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-card-kata-ha",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ha"]
+    },
+    {
+      "id": "kata-he",
+      "kind": "kana",
+      "surface": "ヘ",
+      "reading": "he",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-card-kata-he",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-he"]
+    },
+    {
+      "id": "kata-hi",
+      "kind": "kana",
+      "surface": "ヒ",
+      "reading": "hi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-card-kata-hi",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-hi"]
+    },
+    {
+      "id": "kata-ho",
+      "kind": "kana",
+      "surface": "ホ",
+      "reading": "ho",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k5",
+        "stationOrder": 26,
+        "blockId": "blk-stn-kana-k5-card-kata-ho",
+        "globalIndex": 10026
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ho"]
+    },
+    {
+      "id": "glyph-ゼ",
+      "kind": "derived-glyph",
+      "surface": "ゼ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k6",
+        "stationOrder": 27,
+        "blockId": "blk-stn-kana-k6-prereq-derived",
+        "globalIndex": 10027
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-se", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-パ",
+      "kind": "derived-glyph",
+      "surface": "パ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k6",
+        "stationOrder": 27,
+        "blockId": "blk-stn-kana-k6-prereq-derived",
+        "globalIndex": 10027
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ha", "mark-handakuten"]
+    },
+    {
+      "id": "glyph-プ",
+      "kind": "derived-glyph",
+      "surface": "プ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k6",
+        "stationOrder": 27,
+        "blockId": "blk-stn-kana-k6-prereq-derived",
+        "globalIndex": 10027
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-fu", "mark-handakuten"]
+    },
+    {
+      "id": "glyph-ャ",
+      "kind": "derived-glyph",
+      "surface": "ャ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k6",
+        "stationOrder": 27,
+        "blockId": "blk-stn-kana-k6-prereq-derived",
+        "globalIndex": 10027
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-yoon-small"]
+    },
+    {
+      "id": "glyph-ュ",
+      "kind": "derived-glyph",
+      "surface": "ュ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k6",
+        "stationOrder": 27,
+        "blockId": "blk-stn-kana-k6-prereq-derived",
+        "globalIndex": 10027
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-yoon-small"]
+    },
+    {
+      "id": "glyph-ョ",
+      "kind": "derived-glyph",
+      "surface": "ョ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k6",
+        "stationOrder": 27,
+        "blockId": "blk-stn-kana-k6-prereq-derived",
+        "globalIndex": 10027
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-yoon-small"]
+    },
+    {
+      "id": "kata-n",
+      "kind": "kana",
+      "surface": "ン",
+      "reading": "n",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k6",
+        "stationOrder": 27,
+        "blockId": "blk-stn-kana-k6-card-kata-n",
+        "globalIndex": 10027
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-n"]
+    },
+    {
+      "id": "kata-ka",
+      "kind": "kana",
+      "surface": "カ",
+      "reading": "ka",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k7",
+        "stationOrder": 28,
+        "blockId": "blk-stn-kana-k7-card-kata-ka",
+        "globalIndex": 10028
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ka"]
+    },
+    {
+      "id": "kata-ke",
+      "kind": "kana",
+      "surface": "ケ",
+      "reading": "ke",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k7",
+        "stationOrder": 28,
+        "blockId": "blk-stn-kana-k7-card-kata-ke",
+        "globalIndex": 10028
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ke"]
+    },
+    {
+      "id": "kata-ki",
+      "kind": "kana",
+      "surface": "キ",
+      "reading": "ki",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k7",
+        "stationOrder": 28,
+        "blockId": "blk-stn-kana-k7-card-kata-ki",
+        "globalIndex": 10028
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ki"]
+    },
+    {
+      "id": "kata-ko",
+      "kind": "kana",
+      "surface": "コ",
+      "reading": "ko",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k7",
+        "stationOrder": 28,
+        "blockId": "blk-stn-kana-k7-card-kata-ko",
+        "globalIndex": 10028
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ko"]
+    },
+    {
+      "id": "kata-ku",
+      "kind": "kana",
+      "surface": "ク",
+      "reading": "ku",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k7",
+        "stationOrder": 28,
+        "blockId": "blk-stn-kana-k7-card-kata-ku",
+        "globalIndex": 10028
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ku"]
+    },
+    {
+      "id": "glyph-ペ",
+      "kind": "derived-glyph",
+      "surface": "ペ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k8",
+        "stationOrder": 29,
+        "blockId": "blk-stn-kana-k8-prereq",
+        "globalIndex": 10029
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-he", "mark-handakuten"]
+    },
+    {
+      "id": "glyph-ボ",
+      "kind": "derived-glyph",
+      "surface": "ボ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k8",
+        "stationOrder": 29,
+        "blockId": "blk-stn-kana-k8-prereq",
+        "globalIndex": 10029
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ho", "mark-dakuten"]
+    },
+    {
+      "id": "mark-choonpu",
+      "kind": "rule-mark",
+      "surface": "choonpu",
+      "reading": null,
+      "meaningFa": "قاعدهٔ خط کشیدهٔ کاتاکانا (ー)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k8",
+        "stationOrder": 29,
+        "blockId": "blk-stn-kana-k8-prereq",
+        "globalIndex": 10029
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kata-ma",
+      "kind": "kana",
+      "surface": "マ",
+      "reading": "ma",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k9",
+        "stationOrder": 30,
+        "blockId": "blk-stn-kana-k9-card-kata-ma",
+        "globalIndex": 10030
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ma"]
+    },
+    {
+      "id": "kata-me",
+      "kind": "kana",
+      "surface": "メ",
+      "reading": "me",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k9",
+        "stationOrder": 30,
+        "blockId": "blk-stn-kana-k9-card-kata-me",
+        "globalIndex": 10030
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-me"]
+    },
+    {
+      "id": "kata-mi",
+      "kind": "kana",
+      "surface": "ミ",
+      "reading": "mi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k9",
+        "stationOrder": 30,
+        "blockId": "blk-stn-kana-k9-card-kata-mi",
+        "globalIndex": 10030
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-mi"]
+    },
+    {
+      "id": "kata-mo",
+      "kind": "kana",
+      "surface": "モ",
+      "reading": "mo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k9",
+        "stationOrder": 30,
+        "blockId": "blk-stn-kana-k9-card-kata-mo",
+        "globalIndex": 10030
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-mo"]
+    },
+    {
+      "id": "kata-mu",
+      "kind": "kana",
+      "surface": "ム",
+      "reading": "mu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k9",
+        "stationOrder": 30,
+        "blockId": "blk-stn-kana-k9-card-kata-mu",
+        "globalIndex": 10030
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-mu"]
+    },
+    {
+      "id": "kata-ya",
+      "kind": "kana",
+      "surface": "ヤ",
+      "reading": "ya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k10",
+        "stationOrder": 31,
+        "blockId": "blk-stn-kana-k10-card-kata-ya",
+        "globalIndex": 10031
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ya"]
+    },
+    {
+      "id": "kata-yo",
+      "kind": "kana",
+      "surface": "ヨ",
+      "reading": "yo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k10",
+        "stationOrder": 31,
+        "blockId": "blk-stn-kana-k10-card-kata-yo",
+        "globalIndex": 10031
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-yo"]
+    },
+    {
+      "id": "kata-yu",
+      "kind": "kana",
+      "surface": "ユ",
+      "reading": "yu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k10",
+        "stationOrder": 31,
+        "blockId": "blk-stn-kana-k10-card-kata-yu",
+        "globalIndex": 10031
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-yu"]
+    },
+    {
+      "id": "glyph-デ",
+      "kind": "derived-glyph",
+      "surface": "デ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k11",
+        "stationOrder": 32,
+        "blockId": "blk-stn-kana-k11-prereq-derived",
+        "globalIndex": 10032
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-te", "mark-dakuten"]
+    },
+    {
+      "id": "kata-na",
+      "kind": "kana",
+      "surface": "ナ",
+      "reading": "na",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k11",
+        "stationOrder": 32,
+        "blockId": "blk-stn-kana-k11-card-kata-na",
+        "globalIndex": 10032
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-na"]
+    },
+    {
+      "id": "kata-ne",
+      "kind": "kana",
+      "surface": "ネ",
+      "reading": "ne",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k11",
+        "stationOrder": 32,
+        "blockId": "blk-stn-kana-k11-card-kata-ne",
+        "globalIndex": 10032
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ne"]
+    },
+    {
+      "id": "kata-ni",
+      "kind": "kana",
+      "surface": "ニ",
+      "reading": "ni",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k11",
+        "stationOrder": 32,
+        "blockId": "blk-stn-kana-k11-card-kata-ni",
+        "globalIndex": 10032
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ni"]
+    },
+    {
+      "id": "kata-no",
+      "kind": "kana",
+      "surface": "ノ",
+      "reading": "no",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k11",
+        "stationOrder": 32,
+        "blockId": "blk-stn-kana-k11-card-kata-no",
+        "globalIndex": 10032
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-no"]
+    },
+    {
+      "id": "kata-nu",
+      "kind": "kana",
+      "surface": "ヌ",
+      "reading": "nu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k11",
+        "stationOrder": 32,
+        "blockId": "blk-stn-kana-k11-card-kata-nu",
+        "globalIndex": 10032
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-nu"]
+    },
+    {
+      "id": "kata-wa",
+      "kind": "kana",
+      "surface": "ワ",
+      "reading": "wa",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k12",
+        "stationOrder": 33,
+        "blockId": "blk-stn-kana-k12-card-kata-wa",
+        "globalIndex": 10033
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-wa"]
+    },
+    {
+      "id": "kata-wo",
+      "kind": "kana",
+      "surface": "ヲ",
+      "reading": "wo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k12",
+        "stationOrder": 33,
+        "blockId": "blk-stn-kana-k12-card-kata-wo",
+        "globalIndex": 10033
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-wo"]
+    },
+    {
+      "id": "glyph-ァ",
+      "kind": "derived-glyph",
+      "surface": "ァ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k12-foreign",
+        "stationOrder": 34,
+        "blockId": "blk-stn-kana-kf-prereq",
+        "globalIndex": 10034
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-foreign-small"]
+    },
+    {
+      "id": "glyph-ィ",
+      "kind": "derived-glyph",
+      "surface": "ィ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k12-foreign",
+        "stationOrder": 34,
+        "blockId": "blk-stn-kana-kf-prereq",
+        "globalIndex": 10034
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-foreign-small"]
+    },
+    {
+      "id": "glyph-ヴ",
+      "kind": "derived-glyph",
+      "surface": "ヴ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k12-foreign",
+        "stationOrder": 34,
+        "blockId": "blk-stn-kana-kf-prereq",
+        "globalIndex": 10034
+      },
+      "exposureAt": null,
+      "prerequisites": ["mark-foreign-small"]
+    },
+    {
+      "id": "mark-foreign-small",
+      "kind": "rule-mark",
+      "surface": "foreign-small",
+      "reading": null,
+      "meaningFa": "قاعدهٔ واج‌های کوچک خارجی (ファ/ティ/ヴ)",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k12-foreign",
+        "stationOrder": 34,
+        "blockId": "blk-stn-kana-kf-prereq",
+        "globalIndex": 10034
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-two-script-use",
+      "kind": "concept",
+      "surface": "kana-two-script-use",
+      "reading": null,
+      "meaningFa": "تمرین تمایز هیراگانا و کاتاکانا + نوشتن نام خود به کاتاکانا",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-k13",
+        "stationOrder": 35,
+        "globalIndex": 10035
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-opt-review",
+      "kind": "concept",
+      "surface": "kana-opt-review",
+      "reading": null,
+      "meaningFa": "شاخهٔ اختیاری از فاز مرور — اختیاری است و دروازهٔ فصل را قفل نمی‌کند.",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-opt-r-h9",
+        "stationOrder": 37,
+        "globalIndex": 10037
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-opt-drill",
+      "kind": "concept",
+      "surface": "kana-opt-drill",
+      "reading": null,
+      "meaningFa": "تمرین آزاد بازشناسی: ردیف و خط را خودت انتخاب می‌کنی، خارج از مسیر اصلی درس.",
+      "firstTaught": {
+        "chapterSlug": "kana-foundation-01",
+        "stationSlug": "stn-kana-opt-drill",
+        "stationOrder": 38,
+        "globalIndex": 10038
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "glyph-ぐ",
+      "kind": "derived-glyph",
+      "surface": "ぐ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "blockId": "blk-stn-kana-hd1-card-hira-gu",
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ku", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-げ",
+      "kind": "derived-glyph",
+      "surface": "げ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "blockId": "blk-stn-kana-hd1-card-hira-ge",
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ke", "mark-dakuten"]
+    },
+    {
+      "id": "hd1-row",
+      "kind": "concept",
+      "surface": "hd1-row",
+      "reading": null,
+      "meaningFa": "゛ را روی ردیفِ کا می‌بینی: کا→گا. صدای تازه نیست؛ گلوِ لرزان است.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-ga",
+      "kind": "kana",
+      "surface": "が",
+      "reading": "ga",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "blockId": "blk-stn-kana-hd1-card-hira-ga",
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ka", "mark-dakuten"]
+    },
+    {
+      "id": "hira-ge",
+      "kind": "kana",
+      "surface": "げ",
+      "reading": "ge",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "blockId": "blk-stn-kana-hd1-card-hira-ge",
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ke", "mark-dakuten"]
+    },
+    {
+      "id": "hira-gi",
+      "kind": "kana",
+      "surface": "ぎ",
+      "reading": "gi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "blockId": "blk-stn-kana-hd1-card-hira-gi",
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ki", "mark-dakuten"]
+    },
+    {
+      "id": "hira-go",
+      "kind": "kana",
+      "surface": "ご",
+      "reading": "go",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "blockId": "blk-stn-kana-hd1-card-hira-go",
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ko", "mark-dakuten"]
+    },
+    {
+      "id": "hira-gu",
+      "kind": "kana",
+      "surface": "ぐ",
+      "reading": "gu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "blockId": "blk-stn-kana-hd1-card-hira-gu",
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ku", "mark-dakuten"]
+    },
+    {
+      "id": "kana-hira-expansion",
+      "kind": "concept",
+      "surface": "kana-hira-expansion",
+      "reading": null,
+      "meaningFa": "゛ را روی ردیفِ کا می‌بینی: کا→گا. صدای تازه نیست؛ گلوِ لرزان است.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd1",
+        "stationOrder": 1,
+        "globalIndex": 20001
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hd2-row",
+      "kind": "concept",
+      "surface": "hd2-row",
+      "reading": null,
+      "meaningFa": "س→ز و ش→ج — جفت‌های آشنای فارسی با علامت ゛.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd2",
+        "stationOrder": 2,
+        "globalIndex": 20002
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-ji",
+      "kind": "kana",
+      "surface": "じ",
+      "reading": "ji",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd2",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-hd2-card-hira-ji",
+        "globalIndex": 20002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-shi", "mark-dakuten"]
+    },
+    {
+      "id": "hira-za",
+      "kind": "kana",
+      "surface": "ざ",
+      "reading": "za",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd2",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-hd2-card-hira-za",
+        "globalIndex": 20002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-sa", "mark-dakuten"]
+    },
+    {
+      "id": "hira-ze",
+      "kind": "kana",
+      "surface": "ぜ",
+      "reading": "ze",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd2",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-hd2-card-hira-ze",
+        "globalIndex": 20002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-se", "mark-dakuten"]
+    },
+    {
+      "id": "hira-zo",
+      "kind": "kana",
+      "surface": "ぞ",
+      "reading": "zo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd2",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-hd2-card-hira-zo",
+        "globalIndex": 20002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-so", "mark-dakuten"]
+    },
+    {
+      "id": "hira-zu",
+      "kind": "kana",
+      "surface": "ず",
+      "reading": "zu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd2",
+        "stationOrder": 2,
+        "blockId": "blk-stn-kana-hd2-card-hira-zu",
+        "globalIndex": 20002
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-su", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ぢ",
+      "kind": "derived-glyph",
+      "surface": "ぢ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd3",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-hd3-card-hira-di",
+        "globalIndex": 20003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-chi", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-づ",
+      "kind": "derived-glyph",
+      "surface": "づ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd3",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-hd3-card-hira-du",
+        "globalIndex": 20003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-tsu", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ど",
+      "kind": "derived-glyph",
+      "surface": "ど",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd3",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-hd3-card-hira-do",
+        "globalIndex": 20003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-to", "mark-dakuten"]
+    },
+    {
+      "id": "hd3-row",
+      "kind": "concept",
+      "surface": "hd3-row",
+      "reading": null,
+      "meaningFa": "ت→د — همان داستانِ ゛ روی た行؛ ぢ و づ کم‌کاربردند.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd3",
+        "stationOrder": 3,
+        "globalIndex": 20003
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-de",
+      "kind": "kana",
+      "surface": "で",
+      "reading": "de",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd3",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-hd3-card-hira-de",
+        "globalIndex": 20003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-te", "mark-dakuten"]
+    },
+    {
+      "id": "hira-di",
+      "kind": "kana",
+      "surface": "ぢ",
+      "reading": "ji",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd3",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-hd3-card-hira-di",
+        "globalIndex": 20003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-chi", "mark-dakuten"]
+    },
+    {
+      "id": "hira-do",
+      "kind": "kana",
+      "surface": "ど",
+      "reading": "do",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd3",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-hd3-card-hira-do",
+        "globalIndex": 20003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-to", "mark-dakuten"]
+    },
+    {
+      "id": "hira-du",
+      "kind": "kana",
+      "surface": "づ",
+      "reading": "zu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd3",
+        "stationOrder": 3,
+        "blockId": "blk-stn-kana-hd3-card-hira-du",
+        "globalIndex": 20003
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-tsu", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-べ",
+      "kind": "derived-glyph",
+      "surface": "べ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd4",
+        "stationOrder": 4,
+        "blockId": "blk-stn-kana-hd4-card-hira-be",
+        "globalIndex": 20004
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-he", "mark-dakuten"]
+    },
+    {
+      "id": "hd4-row",
+      "kind": "concept",
+      "surface": "hd4-row",
+      "reading": null,
+      "meaningFa": "ها→با — ゛ روی は行؛ واژه‌های かばん و しんぶん را می‌خوانی.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd4",
+        "stationOrder": 4,
+        "globalIndex": 20004
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-be",
+      "kind": "kana",
+      "surface": "べ",
+      "reading": "be",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hd4",
+        "stationOrder": 4,
+        "blockId": "blk-stn-kana-hd4-card-hira-be",
+        "globalIndex": 20004
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-he", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ぷ",
+      "kind": "derived-glyph",
+      "surface": "ぷ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hp1",
+        "stationOrder": 5,
+        "blockId": "blk-stn-kana-hp1-card-hira-pu",
+        "globalIndex": 20005
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-fu", "mark-handakuten"]
+    },
+    {
+      "id": "glyph-ぺ",
+      "kind": "derived-glyph",
+      "surface": "ぺ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hp1",
+        "stationOrder": 5,
+        "blockId": "blk-stn-kana-hp1-card-hira-pe",
+        "globalIndex": 20005
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-he", "mark-handakuten"]
+    },
+    {
+      "id": "hira-pe",
+      "kind": "kana",
+      "surface": "ぺ",
+      "reading": "pe",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hp1",
+        "stationOrder": 5,
+        "blockId": "blk-stn-kana-hp1-card-hira-pe",
+        "globalIndex": 20005
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-he", "mark-handakuten"]
+    },
+    {
+      "id": "hira-pu",
+      "kind": "kana",
+      "surface": "ぷ",
+      "reading": "pu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hp1",
+        "stationOrder": 5,
+        "blockId": "blk-stn-kana-hp1-card-hira-pu",
+        "globalIndex": 20005
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-fu", "mark-handakuten"]
+    },
+    {
+      "id": "hp1-row",
+      "kind": "concept",
+      "surface": "hp1-row",
+      "reading": null,
+      "meaningFa": "دایرهٔ کوچک ゜ صدای ه را به پ می‌رساند — سه‌گانهٔ は/ば/ぱ.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hp1",
+        "stationOrder": 5,
+        "globalIndex": 20005
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-kya",
+      "kind": "kana",
+      "surface": "きゃ",
+      "reading": "kya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy1",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-hy1-card-hira-kya",
+        "globalIndex": 20006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ki", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-kyo",
+      "kind": "kana",
+      "surface": "きょ",
+      "reading": "kyo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy1",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-hy1-card-hira-kyo",
+        "globalIndex": 20006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ki", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-kyu",
+      "kind": "kana",
+      "surface": "きゅ",
+      "reading": "kyu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy1",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-hy1-card-hira-kyu",
+        "globalIndex": 20006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ki", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-sha",
+      "kind": "kana",
+      "surface": "しゃ",
+      "reading": "sha",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy1",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-hy1-card-hira-sha",
+        "globalIndex": 20006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-shi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-sho",
+      "kind": "kana",
+      "surface": "しょ",
+      "reading": "sho",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy1",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-hy1-card-hira-sho",
+        "globalIndex": 20006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-shi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-shu",
+      "kind": "kana",
+      "surface": "しゅ",
+      "reading": "shu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy1",
+        "stationOrder": 6,
+        "blockId": "blk-stn-kana-hy1-card-hira-shu",
+        "globalIndex": 20006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-shi", "mark-yoon-small"]
+    },
+    {
+      "id": "hy1-row",
+      "kind": "concept",
+      "surface": "hy1-row",
+      "reading": null,
+      "meaningFa": "ャ کوچک فشرده می‌کند: کیا و شا در یک مورا.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy1",
+        "stationOrder": 6,
+        "globalIndex": 20006
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-cha",
+      "kind": "kana",
+      "surface": "ちゃ",
+      "reading": "cha",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy2",
+        "stationOrder": 7,
+        "blockId": "blk-stn-kana-hy2-card-hira-cha",
+        "globalIndex": 20007
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-chi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-cho",
+      "kind": "kana",
+      "surface": "ちょ",
+      "reading": "cho",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy2",
+        "stationOrder": 7,
+        "blockId": "blk-stn-kana-hy2-card-hira-cho",
+        "globalIndex": 20007
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-chi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-chu",
+      "kind": "kana",
+      "surface": "ちゅ",
+      "reading": "chu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy2",
+        "stationOrder": 7,
+        "blockId": "blk-stn-kana-hy2-card-hira-chu",
+        "globalIndex": 20007
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-chi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-nya",
+      "kind": "kana",
+      "surface": "にゃ",
+      "reading": "nya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy2",
+        "stationOrder": 7,
+        "blockId": "blk-stn-kana-hy2-card-hira-nya",
+        "globalIndex": 20007
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ni", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-nyo",
+      "kind": "kana",
+      "surface": "にょ",
+      "reading": "nyo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy2",
+        "stationOrder": 7,
+        "blockId": "blk-stn-kana-hy2-card-hira-nyo",
+        "globalIndex": 20007
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ni", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-nyu",
+      "kind": "kana",
+      "surface": "にゅ",
+      "reading": "nyu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy2",
+        "stationOrder": 7,
+        "blockId": "blk-stn-kana-hy2-card-hira-nyu",
+        "globalIndex": 20007
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ni", "mark-yoon-small"]
+    },
+    {
+      "id": "hy2-row",
+      "kind": "concept",
+      "surface": "hy2-row",
+      "reading": null,
+      "meaningFa": "چا و نیا فشرده — اندازهٔ ゃ معنا می‌سازد.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy2",
+        "stationOrder": 7,
+        "globalIndex": 20007
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-hya",
+      "kind": "kana",
+      "surface": "ひゃ",
+      "reading": "hya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy3",
+        "stationOrder": 8,
+        "blockId": "blk-stn-kana-hy3-card-hira-hya",
+        "globalIndex": 20008
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-hi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-hyo",
+      "kind": "kana",
+      "surface": "ひょ",
+      "reading": "hyo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy3",
+        "stationOrder": 8,
+        "blockId": "blk-stn-kana-hy3-card-hira-hyo",
+        "globalIndex": 20008
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-hi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-hyu",
+      "kind": "kana",
+      "surface": "ひゅ",
+      "reading": "hyu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy3",
+        "stationOrder": 8,
+        "blockId": "blk-stn-kana-hy3-card-hira-hyu",
+        "globalIndex": 20008
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-hi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-mya",
+      "kind": "kana",
+      "surface": "みゃ",
+      "reading": "mya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy3",
+        "stationOrder": 8,
+        "blockId": "blk-stn-kana-hy3-card-hira-mya",
+        "globalIndex": 20008
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-mi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-myo",
+      "kind": "kana",
+      "surface": "みょ",
+      "reading": "myo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy3",
+        "stationOrder": 8,
+        "blockId": "blk-stn-kana-hy3-card-hira-myo",
+        "globalIndex": 20008
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-mi", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-myu",
+      "kind": "kana",
+      "surface": "みゅ",
+      "reading": "myu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy3",
+        "stationOrder": 8,
+        "blockId": "blk-stn-kana-hy3-card-hira-myu",
+        "globalIndex": 20008
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-mi", "mark-yoon-small"]
+    },
+    {
+      "id": "hy3-row",
+      "kind": "concept",
+      "surface": "hy3-row",
+      "reading": null,
+      "meaningFa": "هیا و میا فشرده — جفتِ بیمارستان/آرایشگاه را کامل می‌بینی.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy3",
+        "stationOrder": 8,
+        "globalIndex": 20008
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "hira-rya",
+      "kind": "kana",
+      "surface": "りゃ",
+      "reading": "rya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy4",
+        "stationOrder": 9,
+        "blockId": "blk-stn-kana-hy4-card-hira-rya",
+        "globalIndex": 20009
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ri", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-ryo",
+      "kind": "kana",
+      "surface": "りょ",
+      "reading": "ryo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy4",
+        "stationOrder": 9,
+        "blockId": "blk-stn-kana-hy4-card-hira-ryo",
+        "globalIndex": 20009
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ri", "mark-yoon-small"]
+    },
+    {
+      "id": "hira-ryu",
+      "kind": "kana",
+      "surface": "りゅ",
+      "reading": "ryu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy4",
+        "stationOrder": 9,
+        "blockId": "blk-stn-kana-hy4-card-hira-ryu",
+        "globalIndex": 20009
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ri", "mark-yoon-small"]
+    },
+    {
+      "id": "hy4-row",
+      "kind": "concept",
+      "surface": "hy4-row",
+      "reading": null,
+      "meaningFa": "ریا، ریو، ریُ — آخرین بستهٔ یُوئون هیراگانا.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-hy4",
+        "stationOrder": 9,
+        "globalIndex": 20009
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "glyph-ガ",
+      "kind": "derived-glyph",
+      "surface": "ガ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-prereq",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ka", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ギ",
+      "kind": "derived-glyph",
+      "surface": "ギ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-gi",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ki", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-グ",
+      "kind": "derived-glyph",
+      "surface": "グ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-gu",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ku", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ゲ",
+      "kind": "derived-glyph",
+      "surface": "ゲ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-ge",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ke", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ゴ",
+      "kind": "derived-glyph",
+      "surface": "ゴ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-go",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ko", "mark-dakuten"]
+    },
+    {
+      "id": "kana-kata-expansion",
+      "kind": "concept",
+      "surface": "kana-kata-expansion",
+      "reading": null,
+      "meaningFa": "همان ゛ کاتاکانایی — وام‌واژه‌ها با گِ واک‌دار.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kata-ga",
+      "kind": "kana",
+      "surface": "ガ",
+      "reading": "ga",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-ga",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ka", "mark-dakuten"]
+    },
+    {
+      "id": "kata-ge",
+      "kind": "kana",
+      "surface": "ゲ",
+      "reading": "ge",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-ge",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ke", "mark-dakuten"]
+    },
+    {
+      "id": "kata-gi",
+      "kind": "kana",
+      "surface": "ギ",
+      "reading": "gi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-gi",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ki", "mark-dakuten"]
+    },
+    {
+      "id": "kata-go",
+      "kind": "kana",
+      "surface": "ゴ",
+      "reading": "go",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-go",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ko", "mark-dakuten"]
+    },
+    {
+      "id": "kata-gu",
+      "kind": "kana",
+      "surface": "グ",
+      "reading": "gu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "blockId": "blk-stn-kana-kd1-card-kata-gu",
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ku", "mark-dakuten"]
+    },
+    {
+      "id": "kd1-row",
+      "kind": "concept",
+      "surface": "kd1-row",
+      "reading": null,
+      "meaningFa": "همان ゛ کاتاکانایی — وام‌واژه‌ها با گِ واک‌دار.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd1",
+        "stationOrder": 10,
+        "globalIndex": 20010
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "glyph-ゾ",
+      "kind": "derived-glyph",
+      "surface": "ゾ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd2",
+        "stationOrder": 11,
+        "blockId": "blk-stn-kana-kd2-card-kata-zo",
+        "globalIndex": 20011
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-so", "mark-dakuten"]
+    },
+    {
+      "id": "kata-ji",
+      "kind": "kana",
+      "surface": "ジ",
+      "reading": "ji",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd2",
+        "stationOrder": 11,
+        "blockId": "blk-stn-kana-kd2-card-kata-ji",
+        "globalIndex": 20011
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-shi", "mark-dakuten"]
+    },
+    {
+      "id": "kata-za",
+      "kind": "kana",
+      "surface": "ザ",
+      "reading": "za",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd2",
+        "stationOrder": 11,
+        "blockId": "blk-stn-kana-kd2-card-kata-za",
+        "globalIndex": 20011
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-sa", "mark-dakuten"]
+    },
+    {
+      "id": "kata-ze",
+      "kind": "kana",
+      "surface": "ゼ",
+      "reading": "ze",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd2",
+        "stationOrder": 11,
+        "blockId": "blk-stn-kana-kd2-card-kata-ze",
+        "globalIndex": 20011
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-se", "mark-dakuten"]
+    },
+    {
+      "id": "kata-zo",
+      "kind": "kana",
+      "surface": "ゾ",
+      "reading": "zo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd2",
+        "stationOrder": 11,
+        "blockId": "blk-stn-kana-kd2-card-kata-zo",
+        "globalIndex": 20011
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-so", "mark-dakuten"]
+    },
+    {
+      "id": "kata-zu",
+      "kind": "kana",
+      "surface": "ズ",
+      "reading": "zu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd2",
+        "stationOrder": 11,
+        "blockId": "blk-stn-kana-kd2-card-kata-zu",
+        "globalIndex": 20011
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-su", "mark-dakuten"]
+    },
+    {
+      "id": "kd2-row",
+      "kind": "concept",
+      "surface": "kd2-row",
+      "reading": null,
+      "meaningFa": "ザ، ジ، ズ، ゼ، ゾ — و تمایزِ معروف ジ/シ/ツ.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd2",
+        "stationOrder": 11,
+        "globalIndex": 20011
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "glyph-ダ",
+      "kind": "derived-glyph",
+      "surface": "ダ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-kd3-prereq",
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ta", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ヂ",
+      "kind": "derived-glyph",
+      "surface": "ヂ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-kd3-card-kata-di",
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-chi", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ヅ",
+      "kind": "derived-glyph",
+      "surface": "ヅ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-kd3-card-kata-du",
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-tsu", "mark-dakuten"]
+    },
+    {
+      "id": "kata-da",
+      "kind": "kana",
+      "surface": "ダ",
+      "reading": "da",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-kd3-card-kata-da",
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ta", "mark-dakuten"]
+    },
+    {
+      "id": "kata-de",
+      "kind": "kana",
+      "surface": "デ",
+      "reading": "de",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-kd3-card-kata-de",
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-te", "mark-dakuten"]
+    },
+    {
+      "id": "kata-di",
+      "kind": "kana",
+      "surface": "ヂ",
+      "reading": "ji",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-kd3-card-kata-di",
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-chi", "mark-dakuten"]
+    },
+    {
+      "id": "kata-do",
+      "kind": "kana",
+      "surface": "ド",
+      "reading": "do",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-kd3-card-kata-do",
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-to", "mark-dakuten"]
+    },
+    {
+      "id": "kata-du",
+      "kind": "kana",
+      "surface": "ヅ",
+      "reading": "zu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "blockId": "blk-stn-kana-kd3-card-kata-du",
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-tsu", "mark-dakuten"]
+    },
+    {
+      "id": "kd3-row",
+      "kind": "concept",
+      "surface": "kd3-row",
+      "reading": null,
+      "meaningFa": "ダ، デ، ド در وام‌واژه‌ها؛ ヂ و ヅ نادرند.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd3",
+        "stationOrder": 12,
+        "globalIndex": 20012
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "glyph-ブ",
+      "kind": "derived-glyph",
+      "surface": "ブ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd4",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-kd4-card-kata-bu",
+        "globalIndex": 20013
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-fu", "mark-dakuten"]
+    },
+    {
+      "id": "glyph-ベ",
+      "kind": "derived-glyph",
+      "surface": "ベ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd4",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-kd4-card-kata-be",
+        "globalIndex": 20013
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-he", "mark-dakuten"]
+    },
+    {
+      "id": "kata-ba",
+      "kind": "kana",
+      "surface": "バ",
+      "reading": "ba",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd4",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-kd4-card-kata-ba",
+        "globalIndex": 20013
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ha", "mark-dakuten"]
+    },
+    {
+      "id": "kata-be",
+      "kind": "kana",
+      "surface": "ベ",
+      "reading": "be",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd4",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-kd4-card-kata-be",
+        "globalIndex": 20013
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-he", "mark-dakuten"]
+    },
+    {
+      "id": "kata-bi",
+      "kind": "kana",
+      "surface": "ビ",
+      "reading": "bi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd4",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-kd4-card-kata-bi",
+        "globalIndex": 20013
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-hi", "mark-dakuten"]
+    },
+    {
+      "id": "kata-bo",
+      "kind": "kana",
+      "surface": "ボ",
+      "reading": "bo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd4",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-kd4-card-kata-bo",
+        "globalIndex": 20013
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ho", "mark-dakuten"]
+    },
+    {
+      "id": "kata-bu",
+      "kind": "kana",
+      "surface": "ブ",
+      "reading": "bu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd4",
+        "stationOrder": 13,
+        "blockId": "blk-stn-kana-kd4-card-kata-bu",
+        "globalIndex": 20013
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-fu", "mark-dakuten"]
+    },
+    {
+      "id": "kd4-row",
+      "kind": "concept",
+      "surface": "kd4-row",
+      "reading": null,
+      "meaningFa": "ハ→バ — وام‌واژه‌ها با بِ واک‌دار.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kd4",
+        "stationOrder": 13,
+        "globalIndex": 20013
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "glyph-ポ",
+      "kind": "derived-glyph",
+      "surface": "ポ",
+      "reading": null,
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kp1",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-kp1-card-kata-po",
+        "globalIndex": 20014
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ho", "mark-handakuten"]
+    },
+    {
+      "id": "kata-pa",
+      "kind": "kana",
+      "surface": "パ",
+      "reading": "pa",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kp1",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-kp1-card-kata-pa",
+        "globalIndex": 20014
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ha", "mark-handakuten"]
+    },
+    {
+      "id": "kata-pe",
+      "kind": "kana",
+      "surface": "ペ",
+      "reading": "pe",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kp1",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-kp1-card-kata-pe",
+        "globalIndex": 20014
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-he", "mark-handakuten"]
+    },
+    {
+      "id": "kata-pi",
+      "kind": "kana",
+      "surface": "ピ",
+      "reading": "pi",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kp1",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-kp1-card-kata-pi",
+        "globalIndex": 20014
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-hi", "mark-handakuten"]
+    },
+    {
+      "id": "kata-po",
+      "kind": "kana",
+      "surface": "ポ",
+      "reading": "po",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kp1",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-kp1-card-kata-po",
+        "globalIndex": 20014
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ho", "mark-handakuten"]
+    },
+    {
+      "id": "kata-pu",
+      "kind": "kana",
+      "surface": "プ",
+      "reading": "pu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kp1",
+        "stationOrder": 14,
+        "blockId": "blk-stn-kana-kp1-card-kata-pu",
+        "globalIndex": 20014
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-fu", "mark-handakuten"]
+    },
+    {
+      "id": "kp1-row",
+      "kind": "concept",
+      "surface": "kp1-row",
+      "reading": null,
+      "meaningFa": "دایرهٔ ゜ در وام‌واژه‌ها: パン، ピアノ، プール.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kp1",
+        "stationOrder": 14,
+        "globalIndex": 20014
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kata-kya",
+      "kind": "kana",
+      "surface": "キャ",
+      "reading": "kya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky1",
+        "stationOrder": 15,
+        "blockId": "blk-stn-kana-ky1-card-kata-kya",
+        "globalIndex": 20015
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ki", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-kyo",
+      "kind": "kana",
+      "surface": "キョ",
+      "reading": "kyo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky1",
+        "stationOrder": 15,
+        "blockId": "blk-stn-kana-ky1-card-kata-kyo",
+        "globalIndex": 20015
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ki", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-kyu",
+      "kind": "kana",
+      "surface": "キュ",
+      "reading": "kyu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky1",
+        "stationOrder": 15,
+        "blockId": "blk-stn-kana-ky1-card-kata-kyu",
+        "globalIndex": 20015
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ki", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-sha",
+      "kind": "kana",
+      "surface": "シャ",
+      "reading": "sha",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky1",
+        "stationOrder": 15,
+        "blockId": "blk-stn-kana-ky1-card-kata-sha",
+        "globalIndex": 20015
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-shi", "mark-yoon-small"]
+    },
+    {
+      "id": "ky1-row",
+      "kind": "concept",
+      "surface": "ky1-row",
+      "reading": null,
+      "meaningFa": "ャ کوچک در وام‌واژه‌ها: キャンプ، シャツ.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky1",
+        "stationOrder": 15,
+        "globalIndex": 20015
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kata-cha",
+      "kind": "kana",
+      "surface": "チャ",
+      "reading": "cha",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky2",
+        "stationOrder": 16,
+        "blockId": "blk-stn-kana-ky2-card-kata-cha",
+        "globalIndex": 20016
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-chi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-sho",
+      "kind": "kana",
+      "surface": "ショ",
+      "reading": "sho",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky2",
+        "stationOrder": 16,
+        "blockId": "blk-stn-kana-ky2-card-kata-sho",
+        "globalIndex": 20016
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-shi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-shu",
+      "kind": "kana",
+      "surface": "シュ",
+      "reading": "shu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky2",
+        "stationOrder": 16,
+        "blockId": "blk-stn-kana-ky2-card-kata-shu",
+        "globalIndex": 20016
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-shi", "mark-yoon-small"]
+    },
+    {
+      "id": "ky2-row",
+      "kind": "concept",
+      "surface": "ky2-row",
+      "reading": null,
+      "meaningFa": "چا و شُ فشرده در وام‌واژه‌ها: チャイ، ショット.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky2",
+        "stationOrder": 16,
+        "globalIndex": 20016
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kata-cho",
+      "kind": "kana",
+      "surface": "チョ",
+      "reading": "cho",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky3",
+        "stationOrder": 17,
+        "blockId": "blk-stn-kana-ky3-card-kata-cho",
+        "globalIndex": 20017
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-chi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-chu",
+      "kind": "kana",
+      "surface": "チュ",
+      "reading": "chu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky3",
+        "stationOrder": 17,
+        "blockId": "blk-stn-kana-ky3-card-kata-chu",
+        "globalIndex": 20017
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-chi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-nya",
+      "kind": "kana",
+      "surface": "ニャ",
+      "reading": "nya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky3",
+        "stationOrder": 17,
+        "blockId": "blk-stn-kana-ky3-card-kata-nya",
+        "globalIndex": 20017
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ni", "mark-yoon-small"]
+    },
+    {
+      "id": "ky3-row",
+      "kind": "concept",
+      "surface": "ky3-row",
+      "reading": null,
+      "meaningFa": "چو و نیا فشرده: チューリップ، ニャー.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky3",
+        "stationOrder": 17,
+        "globalIndex": 20017
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kata-hya",
+      "kind": "kana",
+      "surface": "ヒャ",
+      "reading": "hya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky4",
+        "stationOrder": 18,
+        "blockId": "blk-stn-kana-ky4-card-kata-hya",
+        "globalIndex": 20018
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-hi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-hyo",
+      "kind": "kana",
+      "surface": "ヒョ",
+      "reading": "hyo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky4",
+        "stationOrder": 18,
+        "blockId": "blk-stn-kana-ky4-card-kata-hyo",
+        "globalIndex": 20018
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-hi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-hyu",
+      "kind": "kana",
+      "surface": "ヒュ",
+      "reading": "hyu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky4",
+        "stationOrder": 18,
+        "blockId": "blk-stn-kana-ky4-card-kata-hyu",
+        "globalIndex": 20018
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-hi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-nyo",
+      "kind": "kana",
+      "surface": "ニョ",
+      "reading": "nyo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky4",
+        "stationOrder": 18,
+        "blockId": "blk-stn-kana-ky4-card-kata-nyo",
+        "globalIndex": 20018
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ni", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-nyu",
+      "kind": "kana",
+      "surface": "ニュ",
+      "reading": "nyu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky4",
+        "stationOrder": 18,
+        "blockId": "blk-stn-kana-ky4-card-kata-nyu",
+        "globalIndex": 20018
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ni", "mark-yoon-small"]
+    },
+    {
+      "id": "ky4-row",
+      "kind": "concept",
+      "surface": "ky4-row",
+      "reading": null,
+      "meaningFa": "نیو و هیا/هیو/هیُ — بستهٔ پنجم.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky4",
+        "stationOrder": 18,
+        "globalIndex": 20018
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kata-mya",
+      "kind": "kana",
+      "surface": "ミャ",
+      "reading": "mya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky5",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-ky5-card-kata-mya",
+        "globalIndex": 20019
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-mi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-myo",
+      "kind": "kana",
+      "surface": "ミョ",
+      "reading": "myo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky5",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-ky5-card-kata-myo",
+        "globalIndex": 20019
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-mi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-myu",
+      "kind": "kana",
+      "surface": "ミュ",
+      "reading": "myu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky5",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-ky5-card-kata-myu",
+        "globalIndex": 20019
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-mi", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-rya",
+      "kind": "kana",
+      "surface": "リャ",
+      "reading": "rya",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky5",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-ky5-card-kata-rya",
+        "globalIndex": 20019
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ri", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-ryo",
+      "kind": "kana",
+      "surface": "リョ",
+      "reading": "ryo",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky5",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-ky5-card-kata-ryo",
+        "globalIndex": 20019
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ri", "mark-yoon-small"]
+    },
+    {
+      "id": "kata-ryu",
+      "kind": "kana",
+      "surface": "リュ",
+      "reading": "ryu",
+      "meaningFa": null,
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky5",
+        "stationOrder": 19,
+        "blockId": "blk-stn-kana-ky5-card-kata-ryu",
+        "globalIndex": 20019
+      },
+      "exposureAt": null,
+      "prerequisites": ["kata-ri", "mark-yoon-small"]
+    },
+    {
+      "id": "ky5-row",
+      "kind": "concept",
+      "surface": "ky5-row",
+      "reading": null,
+      "meaningFa": "میا، میو، میُ، ریا، ریو، ریُ — بستهٔ کاملِ یُوئون.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-ky5",
+        "stationOrder": 19,
+        "globalIndex": 20019
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kana-full-system",
+      "kind": "concept",
+      "surface": "kana-full-system",
+      "reading": null,
+      "meaningFa": "واژه‌های واقعی را با داکوتن، هان‌داکوتن و یُوئون می‌خوانی — در هر دو خط.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kx1",
+        "stationOrder": 20,
+        "globalIndex": 20020
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "kx1-row",
+      "kind": "concept",
+      "surface": "kx1-row",
+      "reading": null,
+      "meaningFa": "واژه‌های واقعی را با داکوتن، هان‌داکوتن و یُوئون می‌خوانی — در هر دو خط.",
+      "firstTaught": {
+        "chapterSlug": "kana-expansion-01",
+        "stationSlug": "stn-kana-kx1",
+        "stationOrder": 20,
+        "globalIndex": 20020
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "gr-desu-identity",
+      "kind": "grammar",
+      "surface": "AはBです",
+      "reading": null,
+      "meaningFa": "گزارهٔ هویت — «X هست Y»",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-01-anchor",
+        "stationOrder": 1,
+        "globalIndex": 30001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ha", "hira-te", "hira-su", "mark-dakuten"]
+    },
+    {
+      "id": "gr-desu-qa",
+      "kind": "grammar",
+      "surface": "ですか / ですね",
+      "reading": null,
+      "meaningFa": "پرسش و تأیید هویت",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-01-anchor",
+        "stationOrder": 1,
+        "globalIndex": 30001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-te", "hira-su", "hira-ka", "hira-ne", "mark-dakuten"]
+    },
+    {
+      "id": "gr-dewa-arimasen",
+      "kind": "grammar",
+      "surface": "AはBでは ありません",
+      "reading": null,
+      "meaningFa": "نفی مؤدبانهٔ هویت — «نیست»",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-01-anchor",
+        "stationOrder": 1,
+        "globalIndex": 30001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ha", "hira-te", "hira-a", "hira-ri", "hira-ma", "hira-se", "hira-n", "mark-dakuten"]
+    },
+    {
+      "id": "gr-kara-kimashita",
+      "kind": "grammar",
+      "surface": "〜から きました",
+      "reading": null,
+      "meaningFa": "خاستگاه — «از … آمده‌ام»",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-01-anchor",
+        "stationOrder": 1,
+        "globalIndex": 30001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ka", "hira-ra", "hira-ki", "hira-ma", "hira-shi", "hira-ta"]
+    },
+    {
+      "id": "gr-mo",
+      "kind": "grammar",
+      "surface": "AもBです",
+      "reading": null,
+      "meaningFa": "「هم» — افزودن به همان گروه",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-01-anchor",
+        "stationOrder": 1,
+        "globalIndex": 30001
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-mo", "hira-te", "hira-su", "mark-dakuten"]
+    },
+    {
+      "id": "greet-first-meeting",
+      "kind": "concept",
+      "surface": "greet-first-meeting",
+      "reading": null,
+      "meaningFa": "کل مکالمهٔ ۱۴ نوبتی را یک‌بار بشنو و حس «شکاف دانستن» را تجربه کن",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-01-anchor",
+        "stationOrder": 1,
+        "globalIndex": 30001
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "identity-vocab-core",
+      "kind": "concept",
+      "surface": "identity-vocab-core",
+      "reading": null,
+      "meaningFa": "۸ واژهٔ هویت را با صدا بشناس: من، پسوند さん، سه ملیت، دانشگاه، استاد، آن شخص",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "globalIndex": 30002
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "voc-anokata",
+      "kind": "word",
+      "surface": "あの方",
+      "reading": "あのかた",
+      "meaningFa": "آن شخص (اشارهٔ مؤدبانه به نفر سوم)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "blockId": "blk-v1-card-anokata",
+        "globalIndex": 30002
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-a", "hira-no", "hira-ka", "hira-ta"]
+    },
+    {
+      "id": "voc-chuugokujin",
+      "kind": "word",
+      "surface": "中国人",
+      "reading": "ちゅうごくじん",
+      "meaningFa": "چینی (اهل چین)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "blockId": "blk-v1-card-chuugokujin",
+        "globalIndex": 30002
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": [
+        "hira-chi",
+        "hira-u",
+        "hira-ko",
+        "hira-ku",
+        "hira-shi",
+        "hira-n",
+        "mark-yoon-small",
+        "mark-dakuten"
+      ]
+    },
+    {
+      "id": "voc-daigaku",
+      "kind": "word",
+      "surface": "大学",
+      "reading": "だいがく",
+      "meaningFa": "دانشگاه",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "blockId": "blk-v1-card-daigaku",
+        "globalIndex": 30002
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-ta", "hira-i", "hira-ka", "hira-ku", "mark-dakuten"]
+    },
+    {
+      "id": "voc-iranjin",
+      "kind": "word",
+      "surface": "イラン人",
+      "reading": "イランじん",
+      "meaningFa": "ایرانی (اهل ایران) — خودِ تویی!",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "blockId": "blk-v1-card-iranjin",
+        "globalIndex": 30002
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["kata-i", "kata-ra", "kata-n", "hira-shi", "hira-n", "mark-dakuten"]
+    },
+    {
+      "id": "voc-nihonjin",
+      "kind": "word",
+      "surface": "日本人",
+      "reading": "にほんじん",
+      "meaningFa": "ژاپنی (اهل ژاپن)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "blockId": "blk-v1-card-nihonjin",
+        "globalIndex": 30002
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-ni", "hira-ho", "hira-n", "hira-shi", "mark-dakuten"]
+    },
+    {
+      "id": "voc-san",
+      "kind": "word",
+      "surface": "〜さん",
+      "reading": "〜さん",
+      "meaningFa": "پسوند احترام پس از نام (مثل «آقای/خانمِ»)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "blockId": "blk-v1-card-san",
+        "globalIndex": 30002
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-sa", "hira-n"]
+    },
+    {
+      "id": "voc-sensee",
+      "kind": "word",
+      "surface": "先生",
+      "reading": "せんせい",
+      "meaningFa": "استاد / معلم",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "blockId": "blk-v1-card-sensee",
+        "globalIndex": 30002
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-se", "hira-n", "hira-i"]
+    },
+    {
+      "id": "voc-watashi",
+      "kind": "word",
+      "surface": "私",
+      "reading": "わたし",
+      "meaningFa": "من",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-02-vocab",
+        "stationOrder": 2,
+        "blockId": "blk-v1-card-watashi",
+        "globalIndex": 30002
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-wa", "hira-ta", "hira-shi"]
+    },
+    {
+      "id": "identity-statement",
+      "kind": "concept",
+      "surface": "identity-statement",
+      "reading": null,
+      "meaningFa": "جملهٔ هویت را بفهم و بساز: わたしは にほんじんです",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-03-grammar-desu",
+        "stationOrder": 3,
+        "globalIndex": 30003
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "sov-bridge-persian",
+      "kind": "concept",
+      "surface": "sov-bridge-persian",
+      "reading": null,
+      "meaningFa": "بفهم چرا سورا در نوبت ۴ «من» را نمی‌گوید — و چرا ترتیب برای تو غریبه نیست",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-04-structure",
+        "stationOrder": 4,
+        "globalIndex": 30004
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "chrk-hai",
+      "kind": "expression",
+      "surface": "はい",
+      "reading": "はい",
+      "meaningFa": "«بله» — تأیید مؤدب",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-05-grammar-qa",
+        "stationOrder": 5,
+        "blockId": "blk-g2-card-hai",
+        "globalIndex": 30005
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ha", "hira-i"]
+    },
+    {
+      "id": "identity-question",
+      "kind": "concept",
+      "surface": "identity-question",
+      "reading": null,
+      "meaningFa": "هویت را بپرس (ですか) و شنیده‌ات را تأیید کن (ですね)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-05-grammar-qa",
+        "stationOrder": 5,
+        "globalIndex": 30005
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "listen-final-intonation",
+      "kind": "concept",
+      "surface": "listen-final-intonation",
+      "reading": null,
+      "meaningFa": "هویت را بپرس (ですか) و شنیده‌ات را تأیید کن (ですね)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-05-grammar-qa",
+        "stationOrder": 5,
+        "globalIndex": 30005
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "chrk-anokata-donata",
+      "kind": "expression",
+      "surface": "あのかたは どなたですか",
+      "reading": "あのかたは どなたですか",
+      "meaningFa": "«آن [آقا/خانم] کیست؟» — پرسش مؤدبانه دربارهٔ شخص سوم",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-06-expression",
+        "stationOrder": 6,
+        "blockId": "blk-e1-card-anokata",
+        "globalIndex": 30006
+      },
+      "exposureAt": null,
+      "prerequisites": [
+        "hira-a",
+        "hira-no",
+        "hira-ka",
+        "hira-ta",
+        "hira-ha",
+        "hira-to",
+        "hira-na",
+        "hira-te",
+        "hira-su",
+        "mark-dakuten"
+      ]
+    },
+    {
+      "id": "chrk-hajimemashite",
+      "kind": "expression",
+      "surface": "はじめまして",
+      "reading": "はじめまして",
+      "meaningFa": "«از آشنایی‌تان خوشبختم» — آغازگر معرفی در اولین دیدار",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-06-expression",
+        "stationOrder": 6,
+        "blockId": "blk-e1-card-hajimemashite",
+        "globalIndex": 30006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ha", "hira-shi", "hira-me", "hira-ma", "hira-te", "mark-dakuten"]
+    },
+    {
+      "id": "chrk-konnichiwa",
+      "kind": "expression",
+      "surface": "こんにちは",
+      "reading": "こんにちは",
+      "meaningFa": "سلام (احوال‌پرسی روزانه)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-06-expression",
+        "stationOrder": 6,
+        "blockId": "blk-e1-card-konnichiwa",
+        "globalIndex": 30006
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-ko", "hira-n", "hira-ni", "hira-chi", "hira-ha"]
+    },
+    {
+      "id": "chrk-yoroshiku",
+      "kind": "expression",
+      "surface": "よろしく おねがいします",
+      "reading": "よろしく おねがいします",
+      "meaningFa": "«از رابطه‌مان خوشحال می‌شوم» — بستن آیین آشنایی",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-06-expression",
+        "stationOrder": 6,
+        "blockId": "blk-e1-card-yoroshiku",
+        "globalIndex": 30006
+      },
+      "exposureAt": null,
+      "prerequisites": [
+        "hira-yo",
+        "hira-ro",
+        "hira-shi",
+        "hira-ku",
+        "hira-o",
+        "hira-ne",
+        "hira-ka",
+        "hira-i",
+        "hira-ma",
+        "hira-su",
+        "mark-dakuten"
+      ]
+    },
+    {
+      "id": "listen-vowel-length",
+      "kind": "concept",
+      "surface": "listen-vowel-length",
+      "reading": null,
+      "meaningFa": "بدون متن دنبال کن: جیست، چه‌کسی، و تفاوت‌های صدایی",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-07-listen",
+        "stationOrder": 7,
+        "globalIndex": 30007
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "self-intro-production",
+      "kind": "concept",
+      "surface": "self-intro-production",
+      "reading": null,
+      "meaningFa": "خودت را در موقعیت واقعی معرفی کن",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-09-integrate",
+        "stationOrder": 9,
+        "globalIndex": 30009
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "voc-kankokujin",
+      "kind": "word",
+      "surface": "韓国人",
+      "reading": "かんこくじん",
+      "meaningFa": "کره‌ای (اهل کره)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-11-vocab2",
+        "stationOrder": 11,
+        "blockId": "blk-v2-card-kankokujin",
+        "globalIndex": 30011
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-ka", "hira-n", "hira-ko", "hira-ku", "hira-shi", "mark-dakuten"]
+    },
+    {
+      "id": "voc-kara",
+      "kind": "word",
+      "surface": "〜から",
+      "reading": "〜から",
+      "meaningFa": "از (نشانهٔ خاستگاه)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-11-vocab2",
+        "stationOrder": 11,
+        "blockId": "blk-v2-card-kara",
+        "globalIndex": 30011
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-ka", "hira-ra"]
+    },
+    {
+      "id": "voc-kimashita",
+      "kind": "word",
+      "surface": "来ました",
+      "reading": "きました",
+      "meaningFa": "آمد (شکل مؤدبانهٔ گذشتهٔ «آمدن»)",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-11-vocab2",
+        "stationOrder": 11,
+        "blockId": "blk-v2-card-kimashita",
+        "globalIndex": 30011
+      },
+      "exposureAt": [
+        {
+          "chapterSlug": "first-meeting-01",
+          "stationSlug": "stn-fm01-01-anchor",
+          "stationOrder": 1,
+          "globalIndex": 30001
+        }
+      ],
+      "prerequisites": ["hira-ki", "hira-ma", "hira-shi", "hira-ta"]
+    },
+    {
+      "id": "chrk-iie",
+      "kind": "expression",
+      "surface": "いいえ",
+      "reading": "いいえ",
+      "meaningFa": "«نه» — ردّ مؤدبانهٔ فرضِ غلط",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-14-expression",
+        "stationOrder": 14,
+        "blockId": "blk-e2-card-iie",
+        "globalIndex": 30014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-i", "hira-e"]
+    },
+    {
+      "id": "chrk-soodesuka",
+      "kind": "expression",
+      "surface": "そうですか",
+      "reading": "そうですか",
+      "meaningFa": "«آه، می‌فهمم» — واکنش به اطلاعات نو",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-14-expression",
+        "stationOrder": 14,
+        "blockId": "blk-e2-card-soodesuka",
+        "globalIndex": 30014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-so", "hira-u", "hira-te", "hira-su", "hira-ka", "mark-dakuten"]
+    },
+    {
+      "id": "chrk-wakarimashita",
+      "kind": "expression",
+      "surface": "わかりました",
+      "reading": "わかりました",
+      "meaningFa": "«فهمیدم / باشه» — دریافت اطلاعات",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-14-expression",
+        "stationOrder": 14,
+        "blockId": "blk-e2-card-wakarimashita",
+        "globalIndex": 30014
+      },
+      "exposureAt": null,
+      "prerequisites": ["hira-wa", "hira-ka", "hira-ri", "hira-ma", "hira-shi", "hira-ta"]
+    },
+    {
+      "id": "react-new-info",
+      "kind": "concept",
+      "surface": "react-new-info",
+      "reading": null,
+      "meaningFa": "سه واکنش گفتاری را در جای درست به‌کار ببر",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-14-expression",
+        "stationOrder": 14,
+        "globalIndex": 30014
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "listen-nasal-mora",
+      "kind": "concept",
+      "surface": "listen-nasal-mora",
+      "reading": null,
+      "meaningFa": "かんこく را از かこく تمیز بده و ردّ مؤدبانه را بشناس",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-15-listen",
+        "stationOrder": 15,
+        "globalIndex": 30015
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "origin-statement",
+      "kind": "concept",
+      "surface": "origin-statement",
+      "reading": null,
+      "meaningFa": "بگو از کجا آمده‌ای: かんこくから きました / イランから きました",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-16-grammar-kara",
+        "stationOrder": 16,
+        "globalIndex": 30016
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "country-pattern",
+      "kind": "concept",
+      "surface": "country-pattern",
+      "reading": null,
+      "meaningFa": "الگوی 〜じん را با کشورهای بیشتر تمرین کن — پیش‌نمایش 〜ご",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-opt-countries",
+        "stationOrder": 19,
+        "globalIndex": 30019
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    },
+    {
+      "id": "jobs-recognition",
+      "kind": "concept",
+      "surface": "jobs-recognition",
+      "reading": null,
+      "meaningFa": "۸ واژهٔ شغل را بشناس تا شغل خودت را بگویی — فقط با انتخاب صریح تو کارت می‌شود",
+      "firstTaught": {
+        "chapterSlug": "first-meeting-01",
+        "stationSlug": "stn-fm01-opt-jobs",
+        "stationOrder": 21,
+        "globalIndex": 30021
+      },
+      "exposureAt": null,
+      "prerequisites": []
+    }
+  ]
+}
