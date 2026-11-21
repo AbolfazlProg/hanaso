@@ -174,16 +174,34 @@ function strokePathsOf(svg) {
 }
 
 // ---------------------------------------------------------------- pipeline
+
+/*
+ * Issue #146 — the YŌON compounds (きゃ・シャ…). KanjiVG vendors the parts
+ * (base kana + small kana) but no compound files; the writing of きゃ IS writing
+ * き then ゃ in sequence, so the compound centerlines are the deterministic
+ * concatenation of the two vendored sources (same license, same coordinate
+ * space, small-kana glyphs already drawn at their compound position).
+ */
+const SMALL_KANA = new Set(['ゃ', 'ゅ', 'ょ', 'ャ', 'ュ', 'ョ']);
+void SMALL_KANA; // documented intent — parts() splits on code points
+function partsOf(ch) {
+  if ([...ch].length === 1) return [ch];
+  return [...ch];
+}
+function existsInVendor(ch) {
+  const parts = partsOf(ch);
+  return parts.every((p) => {
+    try {
+      readFileSync(path.join(vendorDir, `${p}.svg`));
+      return true;
+    } catch {
+      return false;
+    }
+  });
+}
+
 const chars = requiredChars();
 const missing = chars.filter((ch) => !existsInVendor(ch));
-function existsInVendor(ch) {
-  try {
-    readFileSync(path.join(vendorDir, `${ch}.svg`));
-    return true;
-  } catch {
-    return false;
-  }
-}
 if (missing.length > 0) {
   throw new Error(`KanjiVG source missing for: ${missing.join(' ')} — do not ship`);
 }
@@ -198,8 +216,8 @@ const index = {
 };
 
 for (const ch of [...chars].sort()) {
-  const svg = readFileSync(path.join(vendorDir, `${ch}.svg`), 'utf8');
-  const dPaths = strokePathsOf(svg);
+  const parts = partsOf(ch);
+  const dPaths = parts.flatMap((p) => strokePathsOf(readFileSync(path.join(vendorDir, `${p}.svg`), 'utf8')));
   const strokes = [];
   const medians = [];
   for (const d of dPaths) {

@@ -1,0 +1,55 @@
+# HANASO — Dialogue content: kana-expansion-01 (Issue #146).
+# Chapter 01-Expansion anchor micro-dialogue — the kana-system completion hook.
+#
+# PROVENANCE: HANASO-original composition (DD-011/DD-R05). Receptive hook like
+# the kana-welcome-01 pattern (Persian glosses + sound carry the meaning); all
+# lines are pure kana USING the newly banked glyph classes (dakuten/handakuten/
+# yōon) so the anchor previews exactly what the chapter teaches.
+#
+# AUDIO: no pre-generated assets for these lines yet — the honest-absence
+# degradation applies until the next VPS VOICEVOX run (tl08-a4-audio-gen.mjs).
+meta:
+  id: dlg-kana-expansion-01
+  format: 2
+  stage: 1
+  jlpt: Pre-N5
+  review: true
+  generated:
+    tool: curriculum-authoring@0.1.0
+    at: 2026-11-21
+
+dialogue_ref: dlg-kana-expansion-01
+scene: کافهٔ یامادا — میکی منوی تازه را نشان می‌دهد؛ سورا تابلوی نانوایی محله را می‌خواند
+characters: [chr-miki, chr-sora]
+turn_gap_default_ms: 650
+
+lines:
+  - id: s-kana-expansion-01-l1
+    speaker: chr-miki
+    frame: speaker-b
+    tokens:
+      - { surface: グルメ, reading: グルメ, pos: noun, katakana: true }
+      - { surface: カフェ, reading: カフェ, pos: noun, katakana: true }
+    fa: فروشگاه‌های خوبِ غذا — کافه!
+    emotion_tag: happy
+    gap_after_ms: 700
+
+  - id: s-kana-expansion-01-l2
+    speaker: chr-sora
+    frame: speaker-a
+    tokens:
+      - { surface: パンや, reading: パンや, pos: noun, katakana: true }
+      - { surface: だいじょうぶ, reading: だいじょうぶ, pos: adjectival-noun }
+    fa: نانوایی؟ مشکلی نیست!
+    emotion_tag: thinking
+    gap_after_ms: 700
+
+  - id: s-kana-expansion-01-l3
+    speaker: chr-miki
+    frame: speaker-b
+    tokens:
+      - { surface: きょう, reading: きょう, pos: noun }
+      - { surface: いっしょに, reading: いっしょに, pos: adverb }
+    fa: امروز — با هم!
+    emotion_tag: happy
+    gap_after_ms: 500

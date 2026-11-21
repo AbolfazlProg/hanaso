@@ -10,6 +10,7 @@ import { FM01_EXPRESSIONS, FM01_GRAMMAR, FM01_WORDS } from './chapter-fm01.items
 import { FM01_EXERCISES } from './chapter-fm01.exercises';
 import { FM01_STATIONS } from './chapter-fm01.stations';
 import { CHAPTER_KANA_FOUNDATION } from './chapter-kana01';
+import { CHAPTER_KANA_EXPANSION } from './chapter-kana-expansion';
 
 /** Chapter 2 — «اولین مکالمه» (unit-first-meeting-01) — the 05B two-unit rebuild (TASK-LEARNING-06). */
 export const CHAPTER_FIRST_MEETING: Chapter = {
@@ -96,7 +97,7 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
 };
 
 /** All bundled chapters, ordered by level/position. */
-export const CHAPTERS: Chapter[] = [CHAPTER_KANA_FOUNDATION, CHAPTER_FIRST_MEETING];
+export const CHAPTERS: Chapter[] = [CHAPTER_KANA_FOUNDATION, CHAPTER_KANA_EXPANSION, CHAPTER_FIRST_MEETING];
 
 const CHAPTERS_BY_SLUG: Record<string, Chapter> = Object.fromEntries(CHAPTERS.map((c) => [c.slug, c]));
 

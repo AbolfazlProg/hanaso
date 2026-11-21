@@ -38,7 +38,7 @@ const SCAFFOLD = /___|NAME|…/;
 test('audio honesty gate — no playable word is an orphan (committed or covered by the next VPS gen run)', () => {
   // ---- 1. the needed surface: every word a play control can bind to -------
   const needed = new Set<string>();
-  for (const slug of ['kana-foundation-01', 'first-meeting-01']) {
+  for (const slug of ['kana-foundation-01', 'kana-expansion-01', 'first-meeting-01']) {
     const ch = getChapter(slug)!;
     for (const ex of Object.values(ch.exercises)) {
       const e = ex as { type: string; promptJa?: string };
@@ -90,7 +90,10 @@ test('audio honesty gate — no playable word is an orphan (committed or covered
   const basicKana = new Set(
     [...kanaItemsSrc.matchAll(/kanaId:\s*'([^']+)',\s*\n\s*glyph:\s*'([^']+)'/g)].map((m) => m[2]),
   );
-  expect(basicKana.size).toBe(92);
+  // Issue #146: the registry carries the full kana system now (92 base + 92
+  // voiced/yōon) — every one owns its kn-* registry entry, so none of them is
+  // a hostword orphan.
+  expect(basicKana.size).toBe(184);
 
   const orphans = [...needed]
     .filter((w) => !basicKana.has(w))

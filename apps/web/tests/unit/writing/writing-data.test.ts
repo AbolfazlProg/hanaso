@@ -209,3 +209,211 @@ describe('writing-data KanjiVG rebuild (#117 WP-2)', () => {
     expect(JSON.parse(before).strokes).toHaveLength(3);
   });
 });
+
+/**
+ * Issue #146 — the kana-SYSTEM completion (dakuten ゛=base+2, handakuten
+ * ゜=base+1, yōon=base+small, and the separated pair forms the cards
+ * discriminate against). Derived from the SAME authoritative sources as the
+ * basic table (KanjiVG r20260714 — the composition rules are the writing
+ * truth: a voiced glyph is its base stroke sequence + the 2-stroke ゛).
+ */
+const EXPANSION_STANDARD: Record<string, number> = {
+  が: 5,
+  きゃ: 7,
+  きゅ: 6,
+  きょ: 6,
+  ぎ: 6,
+  ぐ: 3,
+  げ: 5,
+  ご: 4,
+  ざ: 5,
+  しゃ: 4,
+  しゅ: 3,
+  しょ: 3,
+  じ: 3,
+  ず: 4,
+  ぜ: 5,
+  ぞ: 3,
+  だ: 6,
+  ちゃ: 5,
+  ちゅ: 4,
+  ちょ: 4,
+  ぢ: 4,
+  づ: 3,
+  で: 3,
+  ど: 4,
+  にゃ: 6,
+  にゅ: 5,
+  にょ: 5,
+  ば: 5,
+  ぱ: 4,
+  ひゃ: 4,
+  ひゅ: 3,
+  ひょ: 3,
+  び: 3,
+  ぴ: 2,
+  ぶ: 6,
+  ぷ: 5,
+  べ: 3,
+  ぺ: 2,
+  ぼ: 6,
+  ぽ: 5,
+  みゃ: 5,
+  みゅ: 4,
+  みょ: 4,
+  りゃ: 5,
+  りゅ: 4,
+  りょ: 4,
+  ガ: 4,
+  キャ: 5,
+  キヤ: 5,
+  キュ: 5,
+  キユ: 5,
+  キョ: 6,
+  キヨ: 6,
+  ギ: 5,
+  グ: 4,
+  ゲ: 5,
+  ゴ: 4,
+  ザ: 5,
+  シャ: 5,
+  シヤ: 5,
+  シュ: 5,
+  シユ: 5,
+  ショ: 6,
+  シヨ: 6,
+  ジ: 5,
+  ズ: 4,
+  ゼ: 4,
+  ゾ: 4,
+  ダ: 5,
+  チャ: 5,
+  チヤ: 5,
+  チュ: 5,
+  チユ: 5,
+  チョ: 6,
+  チヨ: 6,
+  ヂ: 5,
+  ヅ: 5,
+  デ: 5,
+  ド: 4,
+  ニャ: 4,
+  ニヤ: 4,
+  ニュ: 4,
+  ニユ: 4,
+  ニョ: 5,
+  ニヨ: 5,
+  バ: 4,
+  パ: 3,
+  ヒャ: 4,
+  ヒヤ: 4,
+  ヒュ: 4,
+  ヒユ: 4,
+  ヒョ: 5,
+  ヒヨ: 5,
+  ビ: 4,
+  ピ: 3,
+  ブ: 3,
+  プ: 2,
+  ベ: 3,
+  ペ: 2,
+  ボ: 6,
+  ポ: 5,
+  ミャ: 5,
+  ミヤ: 5,
+  ミュ: 5,
+  ミユ: 5,
+  ミョ: 6,
+  ミヨ: 6,
+  リャ: 4,
+  リヤ: 4,
+  リュ: 4,
+  リユ: 4,
+  リョ: 5,
+  リヨ: 5,
+};
+
+describe('EXPANSION writing-data integrity (Issue #146 — the kana-system completion)', () => {
+  it('ships every voiced/yōon glyph with the composed stroke count', () => {
+    expect(Object.keys(EXPANSION_STANDARD).length).toBeGreaterThanOrEqual(92);
+    for (const [g, n] of Object.entries(EXPANSION_STANDARD)) {
+      const data = readFileSync(join(dataDir, `${g}.json`), 'utf8') as unknown as string;
+      const parsed = JSON.parse(data) as CharData;
+      expect(parsed.strokes.length, `${g} stroke count`).toBe(n);
+      expect(index.chars[g]?.strokes, `${g} index entry`).toBe(n);
+      // every stroke is ONE continuous centerline (single M)
+      for (const d of parsed.strokes) expect(d.match(/M/g)?.length).toBe(1);
+      // every median: ≥2 points, in-bounds, first point = path start
+      for (let i = 0; i < parsed.medians.length; i += 1) {
+        const m = parsed.medians[i]!;
+        expect(m.length >= 2, `${g}#${i} median density`).toBe(true);
+        const first = parsed.strokes[i]!.match(/M(-?[\d.]+),(-?[\d.]+)/)!;
+        expect(Math.abs(m[0]![0]! - Number(first[1]))).toBeLessThanOrEqual(1);
+        expect(Math.abs(m[0]![1]! - Number(first[2]))).toBeLessThanOrEqual(1);
+        for (const [x, y] of m) {
+          expect(x).toBeGreaterThanOrEqual(-30);
+          expect(x).toBeLessThanOrEqual(1054);
+          expect(y).toBeGreaterThanOrEqual(-30);
+          expect(y).toBeLessThanOrEqual(1054);
+        }
+      }
+    }
+  });
+
+  it('voiced glyphs compose honestly: dakuten = base+2, handakuten = base+1, yōon = base+small', () => {
+    const dak = {
+      が: 'か',
+      ぎ: 'き',
+      ぐ: 'く',
+      げ: 'け',
+      ご: 'こ',
+      ざ: 'さ',
+      じ: 'し',
+      ず: 'す',
+      ぜ: 'せ',
+      ぞ: 'そ',
+      だ: 'た',
+      ぢ: 'ち',
+      づ: 'つ',
+      で: 'て',
+      ど: 'と',
+      ば: 'は',
+      び: 'ひ',
+      ぶ: 'ふ',
+      べ: 'へ',
+      ぼ: 'ほ',
+      ガ: 'カ',
+      ギ: 'キ',
+      グ: 'ク',
+      ゲ: 'ケ',
+      ゴ: 'コ',
+      ザ: 'サ',
+      ジ: 'シ',
+      ズ: 'ス',
+      ゼ: 'セ',
+      ゾ: 'ソ',
+      ダ: 'タ',
+      ヂ: 'チ',
+      ヅ: 'ツ',
+      デ: 'テ',
+      ド: 'ト',
+      バ: 'ハ',
+      ビ: 'ヒ',
+      ブ: 'フ',
+      ベ: 'ヘ',
+      ボ: 'ホ',
+    };
+    const han = { ぱ: 'は', ぴ: 'ひ', ぷ: 'ふ', ぺ: 'へ', ぽ: 'ほ', パ: 'ハ', ピ: 'ヒ', プ: 'フ', ペ: 'ヘ', ポ: 'ホ' };
+    for (const [v, b] of Object.entries(dak)) {
+      expect(EXPANSION_STANDARD[v]!).toBe(STANDARD[b]! + 2);
+    }
+    for (const [v, b] of Object.entries(han)) {
+      expect(EXPANSION_STANDARD[v]!).toBe(STANDARD[b]! + 1);
+    }
+    // one yōon spot check per row family (KanjiVG small-kana data: ゃゅょ/ャュョ are 2-stroke)
+    expect(EXPANSION_STANDARD['きゃ']!).toBe(7); // き(4) + ゃ(3)
+    expect(EXPANSION_STANDARD['しゃ']!).toBe(4); // し(1) + ゃ(3)
+    expect(EXPANSION_STANDARD['チャ']!).toBe(5); // チ(3) + ャ(2)
+    expect(EXPANSION_STANDARD['ニュ']!).toBe(4); // ニ(2) + ュ(2)
+  });
+});
