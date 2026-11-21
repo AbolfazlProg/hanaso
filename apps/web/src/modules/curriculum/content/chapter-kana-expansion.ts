@@ -25,7 +25,7 @@ export const CHAPTER_KANA_EXPANSION: Chapter = {
     'بسطِ بانک کانا: ۲۰ ایستگاه، ۹۲ کارتِ تازه (ردیف‌های واک‌دار، پ‌دار و فشرده در هر دو خط)، جفت‌های کمینه با شکل‌های آموخته، یک ایستگاه خواندنِ واقعی و گیت فهم — قواعد از فصل ۰۱، کارت‌ها این‌جا.',
   dialogueSlug: 'kana-expansion-01',
   orderInLevel: 2,
-  estMinutes: 175,
+  estMinutes: 179 /* ENGINE-REFORM: hd1/hy1 staged-teaching rebuild (+4) */,
   estLoad: 'light',
   bandArc: 'kana-expansion',
   sceneFa:
