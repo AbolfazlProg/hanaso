@@ -153,11 +153,19 @@ export const KXP_STATIONS: Station[] = [
     lineRefs: [],
     objectiveCode: 'kana-hira-expansion',
     teachesConcepts: ['kana-dakuten', 'hd2-row'],
-    estMinutes: 9,
+    estMinutes: 11,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
+    /* ENGINE-REFORM §۵ (2026-11-22 — five-lesson mission #158) — the staged
+     * rebuild of this station: every card packet gets its immediate SIMPLE
+     * engagement (difficulty 1 — one per card, answerable straight off the card
+     * just seen); the recall round follows (difficulty 2); the worked reading
+     * models come BEFORE the guided decode of the very word they modeled; a
+     * listening round arrives before the fully independent decode of a
+     * brand-new word (difficulty 3), last of all — teach a little → one simple
+     * activity → gradually harder → independent. */
     blocks: [
       {
         kind: 'rule-prereq',
@@ -206,17 +214,12 @@ export const KXP_STATIONS: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-hd2-quiz-2',
+        exerciseIds: ['ex-kxp-hd2-rec-2'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hd2-rcl',
         exerciseIds: ['ex-kxp-hd2-rcl-1', 'ex-kxp-hd2-rcl-2'],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-hd2-dec',
-        exerciseIds: ['ex-kxp-hd2-dec-1', 'ex-kxp-hd2-dec-2'],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-hd2-lis',
-        exerciseIds: ['ex-kxp-hd2-lis-1'],
       },
       {
         kind: 'example-set',
@@ -225,12 +228,43 @@ export const KXP_STATIONS: Station[] = [
           {
             id: 'ex-stn-kana-hd2-apply-0',
             role: 'reading',
-            ja: 'にほんご',
-            reading: 'نی‌هون‌گو',
-            fa: 'زبان ژاپنی',
-            whyFa: 'گویِ واک‌دار در پایان: こ+゛ = ご.',
+            ja: 'ざっし',
+            reading: 'زَش‌شی',
+            fa: 'مجله',
+            whyFa: 'ざ آغاز می‌کند؛ っ ضربه را قطع می‌کند و し را می‌رساند.',
+          },
+          {
+            id: 'ex-stn-kana-hd2-apply-1',
+            role: 'reading',
+            ja: 'かぜ',
+            reading: 'کازه',
+            fa: 'باد',
+            whyFa: 'خوانشِ واک‌دار در پایان واژه: か+ぜ — سه ضربه.',
+            pronFa: '«ز» در «کازه» همان لرزش گلوست که در «زا» تکیه داشتی؛ دو خطِ ゛ را در پایان واژه گم نکن.',
           },
         ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hd2-dec',
+        /* ENGINE-REFORM §۵: the GUIDED application reads the very word the worked
+         * example modeled — the answer is derivable from the model, and the
+         * F4 return points back to that teaching block. */
+        exerciseIds: ['ex-kxp-hd2-dec-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hd2-lis',
+        /* ENGINE-REFORM §۵: audio-committed hostword only (honest-absence rule) —
+         * a listening question never without its sound. */
+        exerciseIds: ['ex-kxp-hd2-lis-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hd2-indep',
+        /* ENGINE-REFORM §۵: the INDEPENDENT application — a brand-new word (never
+         * seen before), difficulty 3, only AFTER the guided decode of the same row. */
+        exerciseIds: ['ex-kxp-hd2-dec-2'],
       },
       {
         kind: 'wrap-up',
@@ -238,8 +272,8 @@ export const KXP_STATIONS: Station[] = [
         titleFa: 'جمع‌بندی — ردیف ざ — داکوتنِ さ行',
         itemsFa: [
           'س→ز و ش→ج — جفت‌های آشنای فارسی با علامت ゛.',
-          'کارت‌های تازه در بانک کانای تو نشستند — تمرین خودکارِ بعدی آن‌ها را می‌پرسد.',
-          'واژه‌ی にほんご را خواندی — گویِ واک‌دار در پایان: こ+゛ = ご.',
+          'هر پنج کارتِ ردیف ざ را همان‌جا با خواندنِ ساده و بعد فراخوانیِ کوتاه تثبیت کردی.',
+          'سه واژهٔ واقعی خواندی — ざっし (مجله)، かぜ (باد) و تازه: しずか (ساکت).',
         ],
       },
     ],
@@ -462,11 +496,19 @@ export const KXP_STATIONS: Station[] = [
     lineRefs: [],
     objectiveCode: 'kana-hira-expansion',
     teachesConcepts: ['kana-handakuten', 'hp1-row'],
-    estMinutes: 8,
+    estMinutes: 11,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
+    /* ENGINE-REFORM §۵ (2026-11-22 — five-lesson mission #158) — the staged
+     * rebuild of this station: every card packet gets its immediate SIMPLE
+     * engagement (difficulty 1 — one per card, answerable straight off the card
+     * just seen); the recall round follows (difficulty 2); the worked reading
+     * models come BEFORE the guided decode of the very word they modeled; a
+     * listening round arrives before the fully independent decode of a
+     * brand-new word (difficulty 3), last of all — teach a little → one simple
+     * activity → gradually harder → independent. */
     blocks: [
       {
         kind: 'rule-prereq',
@@ -515,17 +557,12 @@ export const KXP_STATIONS: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-hp1-quiz-2',
+        exerciseIds: ['ex-kxp-hp1-rec-2'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hp1-rcl',
         exerciseIds: ['ex-kxp-hp1-rcl-1', 'ex-kxp-hp1-rcl-2'],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-hp1-dec',
-        exerciseIds: ['ex-kxp-hp1-dec-1', 'ex-kxp-hp1-dec-2'],
-      },
-      {
-        kind: 'exercise',
-        id: 'blk-stn-kana-hp1-lis',
-        exerciseIds: ['ex-kxp-hp1-lis-1'],
       },
       {
         kind: 'example-set',
@@ -534,12 +571,43 @@ export const KXP_STATIONS: Station[] = [
           {
             id: 'ex-stn-kana-hp1-apply-0',
             role: 'reading',
-            ja: 'てんぽう',
-            reading: 'تِن‌پوو',
-            fa: 'آب‌وهوا',
-            whyFa: 'دایرهٔ ゜ روی ほ: «پُ».',
+            ja: 'ぱん',
+            reading: 'پان',
+            fa: 'نان',
+            whyFa: 'ぱ با ゜ آغاز می‌کند — «پ»، نه «ه» و نه «ب».',
+          },
+          {
+            id: 'ex-stn-kana-hp1-apply-1',
+            role: 'reading',
+            ja: 'えんぴつ',
+            reading: 'اِن‌پیتسو',
+            fa: 'مداد',
+            whyFa: 'در میان واژه: え+ん+ぴ+つ — چهار ضربه.',
+            pronFa: 'به دایرهٔ ゜ روی ぴ دقت کن — اگر دو خطِ ゛ بود «بِ» می‌شد (えんびつ را در ردیف ば خواندی).',
           },
         ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hp1-dec',
+        /* ENGINE-REFORM §۵: the GUIDED application reads the very word the worked
+         * example modeled — the answer is derivable from the model, and the
+         * F4 return points back to that teaching block. */
+        exerciseIds: ['ex-kxp-hp1-dec-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hp1-lis',
+        /* ENGINE-REFORM §۵: audio-committed hostword only (honest-absence rule) —
+         * a listening question never without its sound. */
+        exerciseIds: ['ex-kxp-hp1-lis-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-hp1-indep',
+        /* ENGINE-REFORM §۵: the INDEPENDENT application — a brand-new word (never
+         * seen before), difficulty 3, only AFTER the guided decode of the same row. */
+        exerciseIds: ['ex-kxp-hp1-dec-2'],
       },
       {
         kind: 'wrap-up',
@@ -547,8 +615,8 @@ export const KXP_STATIONS: Station[] = [
         titleFa: 'جمع‌بندی — ردیف ぱ — هان‌داکوتن (゜)',
         itemsFa: [
           'دایرهٔ کوچک ゜ صدای ه را به پ می‌رساند — سه‌گانهٔ は/ば/ぱ.',
-          'کارت‌های تازه در بانک کانای تو نشستند — تمرین خودکارِ بعدی آن‌ها را می‌پرسد.',
-          'واژه‌ی てんぽう را خواندی — دایرهٔ ゜ روی ほ: «پُ».',
+          'هر پنج کارتِ ردیف ぱ را همان‌جا با خواندنِ ساده و بعد فراخوانیِ کوتاه تثبیت کردی.',
+          'سه واژهٔ واقعی خواندی — ぱん (نان)،ぱんだ (پاندا) و تازه: てんぽう (آب‌وهوا).',
         ],
       },
     ],
@@ -996,11 +1064,19 @@ export const KXP_STATIONS: Station[] = [
     lineRefs: [],
     objectiveCode: 'kana-kata-expansion',
     teachesConcepts: ['kana-dakuten', 'kd1-row'],
-    estMinutes: 9,
+    estMinutes: 10,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
+    /* ENGINE-REFORM §۵ (2026-11-22 — five-lesson mission #158) — the staged
+     * rebuild of this station: every card packet gets its immediate SIMPLE
+     * engagement (difficulty 1 — one per card, answerable straight off the card
+     * just seen); the recall round follows (difficulty 2); the worked reading
+     * models come BEFORE the guided decode of the very word they modeled; a
+     * listening round arrives before the fully independent decode of a
+     * brand-new word (difficulty 3), last of all — teach a little → one simple
+     * activity → gradually harder → independent. */
     blocks: [
       {
         kind: 'rule-prereq',
@@ -1049,12 +1125,12 @@ export const KXP_STATIONS: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-kd1-quiz-2',
-        exerciseIds: ['ex-kxp-kd1-rcl-1', 'ex-kxp-kd1-rcl-2'],
+        exerciseIds: ['ex-kxp-kd1-rec-2'],
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-kd1-dec',
-        exerciseIds: ['ex-kxp-kd1-dec-1', 'ex-kxp-kd1-dec-2'],
+        id: 'blk-stn-kana-kd1-rcl',
+        exerciseIds: ['ex-kxp-kd1-rcl-1', 'ex-kxp-kd1-rcl-2'],
       },
       {
         kind: 'example-set',
@@ -1065,10 +1141,41 @@ export const KXP_STATIONS: Station[] = [
             role: 'reading',
             ja: 'グラス',
             reading: 'گوراسُ',
-            fa: 'لیگ',
-            whyFa: 'گویِ واک‌دارِ کاتاکانا.',
+            fa: 'لیوان',
+            whyFa: 'グ واک‌دار آغاز می‌کند — وام‌واژه، پس کاتاکانا.',
+          },
+          {
+            id: 'ex-stn-kana-kd1-apply-1',
+            role: 'reading',
+            ja: 'ゲーム',
+            reading: 'گه‌مُ',
+            fa: 'بازی',
+            whyFa: 'ゲ + کششِ ー — صدای «گه» دراز می‌شود.',
+            pronFa: 'در «گه‌مُ» صدای «گه» را کمی دراز بکش؛ همان لرزش گلوست که در «گا» تکیه داشتی.',
           },
         ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-kd1-dec',
+        /* ENGINE-REFORM §۵: the GUIDED application reads the very word the worked
+         * example modeled — the answer is derivable from the model, and the
+         * F4 return points back to that teaching block. */
+        exerciseIds: ['ex-kxp-kd1-dec-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-kd1-lis',
+        /* ENGINE-REFORM §۵: audio-committed hostword only (honest-absence rule) —
+         * a listening question never without its sound. */
+        exerciseIds: ['ex-kxp-kd1-lis-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-kd1-indep',
+        /* ENGINE-REFORM §۵: the INDEPENDENT application — a brand-new word (never
+         * seen before), difficulty 3, only AFTER the guided decode of the same row. */
+        exerciseIds: ['ex-kxp-kd1-dec-2'],
       },
       {
         kind: 'wrap-up',
@@ -1076,8 +1183,8 @@ export const KXP_STATIONS: Station[] = [
         titleFa: 'جمع‌بندی — ردیف ガ — داکوتنِ カ行',
         itemsFa: [
           'همان ゛ کاتاکانایی — وام‌واژه‌ها با گِ واک‌دار.',
-          'کارت‌های تازه در بانک کانای تو نشستند — تمرین خودکارِ بعدی آن‌ها را می‌پرسد.',
-          'واژه‌ی グラス را خواندی — گویِ واک‌دارِ کاتاکانا.',
+          'چهار کارتِ ギ・グ・ゲ・ゴ را همان‌جا با خواندنِ ساده تثبیت کردی و بعد فراخوانی گرفتی.',
+          'سه واژهٔ واقعی خواندی — グラス (لیوان)،ゴルフ (گلف) و تازه: グループ (گروه).',
         ],
       },
     ],
@@ -1496,11 +1603,19 @@ export const KXP_STATIONS: Station[] = [
     lineRefs: [],
     objectiveCode: 'kana-kata-expansion',
     teachesConcepts: ['kana-yoon', 'ky1-row'],
-    estMinutes: 9,
+    estMinutes: 10,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
+    /* ENGINE-REFORM §۵ (2026-11-22 — five-lesson mission #158) — the staged
+     * rebuild of this station: every card packet gets its immediate SIMPLE
+     * engagement (difficulty 1 — one per card, answerable straight off the card
+     * just seen); the recall round follows (difficulty 2); the worked reading
+     * models come BEFORE the guided decode of the very word they modeled; a
+     * listening round arrives before the fully independent decode of a
+     * brand-new word (difficulty 3), last of all — teach a little → one simple
+     * activity → gradually harder → independent. */
     blocks: [
       {
         kind: 'rule-prereq',
@@ -1543,12 +1658,12 @@ export const KXP_STATIONS: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-ky1-quiz-2',
-        exerciseIds: ['ex-kxp-ky1-rcl-1', 'ex-kxp-ky1-rcl-2'],
+        exerciseIds: ['ex-kxp-ky1-rec-2'],
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-ky1-dec',
-        exerciseIds: ['ex-kxp-ky1-dec-1', 'ex-kxp-ky1-dec-2'],
+        id: 'blk-stn-kana-ky1-rcl',
+        exerciseIds: ['ex-kxp-ky1-rcl-1', 'ex-kxp-ky1-rcl-2'],
       },
       {
         kind: 'example-set',
@@ -1560,18 +1675,49 @@ export const KXP_STATIONS: Station[] = [
             ja: 'キャンプ',
             reading: 'کیان‌پُ',
             fa: 'کمپ',
-            whyFa: 'ャ کوچک فشرده + ゜.',
+            whyFa: 'キャ فشرده آغاز می‌کند — یک ضربه، نه دو.',
+          },
+          {
+            id: 'ex-stn-kana-ky1-apply-1',
+            role: 'reading',
+            ja: 'シャツ',
+            reading: 'شاتسُ',
+            fa: 'پیراهن',
+            whyFa: 'همان فشرده در آغاز واژهٔ دوم: シャ+ツ — دو ضربه.',
+            pronFa: 'در «شاتسُ» صدای «شا» را با یک ضربه بگو؛ ャ کوچک روی シ را تنگ نگه دار.',
           },
         ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-ky1-dec',
+        /* ENGINE-REFORM §۵: the GUIDED application reads the very word the worked
+         * example modeled — the answer is derivable from the model, and the
+         * F4 return points back to that teaching block. */
+        exerciseIds: ['ex-kxp-ky1-dec-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-ky1-lis',
+        /* ENGINE-REFORM §۵: audio-committed hostword only (honest-absence rule) —
+         * a listening question never without its sound. */
+        exerciseIds: ['ex-kxp-ky1-lis-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-ky1-indep',
+        /* ENGINE-REFORM §۵: the INDEPENDENT application — a brand-new word (never
+         * seen before), difficulty 3, only AFTER the guided decode of the same row. */
+        exerciseIds: ['ex-kxp-ky1-dec-2'],
       },
       {
         kind: 'wrap-up',
         id: 'blk-stn-kana-ky1-wrapup',
         titleFa: 'جمع‌بندی — یُوئون کاتاکانا ۱ — キャ行 و シャ行',
         itemsFa: [
-          'ャ کوچک در وام‌واژه‌ها: キャンプ، シャツ.',
-          'کارت‌های تازه در بانک کانای تو نشستند — تمرین خودکارِ بعدی آن‌ها را می‌پرسد.',
-          'واژه‌ی キャンプ را خواندی — ャ کوچک فشرده + ゜.',
+          'ャ کوچک در وام‌واژه‌ها: キャンプ،シャツ.',
+          'هر بستهٔ کارت را همان‌جا با خواندنِ ساده تثبیت کردی و بعد فراخوانی گرفتی.',
+          'سه واژهٔ واقعی خواندی — キャンプ (کمپ)،シャワー (دوش) و تازه: キャンセル (لغو).',
         ],
       },
     ],
@@ -1858,11 +2004,19 @@ export const KXP_STATIONS: Station[] = [
     lineRefs: [],
     objectiveCode: 'kana-kata-expansion',
     teachesConcepts: ['kana-yoon', 'ky5-row'],
-    estMinutes: 8,
+    estMinutes: 11,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
     introducesGlyphs: [],
+    /* ENGINE-REFORM §۵ (2026-11-22 — five-lesson mission #158) — the staged
+     * rebuild of this station: every card packet gets its immediate SIMPLE
+     * engagement (difficulty 1 — one per card, answerable straight off the card
+     * just seen); the recall round follows (difficulty 2); the worked reading
+     * models come BEFORE the guided decode of the very word they modeled; a
+     * listening round arrives before the fully independent decode of a
+     * brand-new word (difficulty 3), last of all — teach a little → one simple
+     * activity → gradually harder → independent. */
     blocks: [
       {
         kind: 'rule-prereq',
@@ -1917,12 +2071,12 @@ export const KXP_STATIONS: Station[] = [
       {
         kind: 'exercise',
         id: 'blk-stn-kana-ky5-quiz-2',
-        exerciseIds: ['ex-kxp-ky5-rcl-1', 'ex-kxp-ky5-rcl-2'],
+        exerciseIds: ['ex-kxp-ky5-rec-2'],
       },
       {
         kind: 'exercise',
-        id: 'blk-stn-kana-ky5-dec',
-        exerciseIds: ['ex-kxp-ky5-dec-1', 'ex-kxp-ky5-dec-2'],
+        id: 'blk-stn-kana-ky5-rcl',
+        exerciseIds: ['ex-kxp-ky5-rcl-1', 'ex-kxp-ky5-rcl-2', 'ex-kxp-ky5-rcl-3', 'ex-kxp-ky5-rcl-4'],
       },
       {
         kind: 'example-set',
@@ -1934,9 +2088,40 @@ export const KXP_STATIONS: Station[] = [
             ja: 'ミャンマー',
             reading: 'میان‌ما',
             fa: 'میانمار',
-            whyFa: 'ミャ فشرده + کششِ ー.',
+            whyFa: 'ミャ فشرده آغاز می‌کند + کششِ ー در پایان.',
+          },
+          {
+            id: 'ex-stn-kana-ky5-apply-1',
+            role: 'reading',
+            ja: 'リュック',
+            reading: 'ریووک‌کُ',
+            fa: 'کوله‌پشتی',
+            whyFa: 'リュ فشرده + っ که ضربه را قطع می‌کند.',
+            pronFa: 'در «ریووک‌کُ» صدای «ریو» را با یک ضربه بگو؛ ュ کوچک روی リ را تنگ نگه دار.',
           },
         ],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-ky5-dec',
+        /* ENGINE-REFORM §۵: the GUIDED application reads the very word the worked
+         * example modeled — the answer is derivable from the model, and the
+         * F4 return points back to that teaching block. */
+        exerciseIds: ['ex-kxp-ky5-dec-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-ky5-lis',
+        /* ENGINE-REFORM §۵: audio-committed hostword only (honest-absence rule) —
+         * a listening question never without its sound. */
+        exerciseIds: ['ex-kxp-ky5-lis-1'],
+      },
+      {
+        kind: 'exercise',
+        id: 'blk-stn-kana-ky5-indep',
+        /* ENGINE-REFORM §۵: the INDEPENDENT application — a brand-new word (never
+         * seen before), difficulty 3, only AFTER the guided decode of the same row. */
+        exerciseIds: ['ex-kxp-ky5-dec-2'],
       },
       {
         kind: 'wrap-up',
@@ -1944,8 +2129,8 @@ export const KXP_STATIONS: Station[] = [
         titleFa: 'جمع‌بندی — یُوئون کاتاکانا ۵ — بستهٔ پایانی',
         itemsFa: [
           'میا، میو، میُ، ریا، ریو، ریُ — بستهٔ کاملِ یُوئون.',
-          'کارت‌های تازه در بانک کانای تو نشستند — تمرین خودکارِ بعدی آن‌ها را می‌پرسد.',
-          'واژه‌ی ミャンマー را خواندی — ミャ فشرده + کششِ ー.',
+          'هر شش کارت را همان‌جا با خواندنِ ساده تثبیت کردی و بعد فراخوانی گرفتی.',
+          'سه واژهٔ واقعی خواندی — ミャンマー (میانمار)،リャド (ریاض) و تازه: ミュージアム (موزه).',
         ],
       },
     ],
