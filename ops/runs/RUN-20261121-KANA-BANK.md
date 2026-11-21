@@ -20,6 +20,7 @@
 ### 2.1 The placement decision (teaching-framework call)
 
 **A dedicated chained chapter: `kana-expansion-01`** — not an absorption into chapter 01:
+
 - Chapter 01 sits AT its registered caps (36 core / 441′ of 460′ — the TASK-HANASO-27 exception);
   CONTENT-103 caps a kana station at 6 cards — 92 cards cannot fit honestly;
 - the authored h5 rule-card honesty note plans the だ/ば rows «بعداً همراه خودِ ردیف‌ها» — this release
