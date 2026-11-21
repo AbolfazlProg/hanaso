@@ -135,7 +135,7 @@ describe.skipIf(!drillAvailable)(DRILL_TITLE, () => {
     // TASK-LEARNING-06) = 26. The old 19 (10 + 9) predates those content
     // rebuilds; CI had not reached this step since (the format gate failed
     // earlier — fixed in Addendum-5).
-    expect(restored.tables['content.dialogue_lines']).toBe(26);
+    expect(restored.tables['content.dialogue_lines']).toBe(29); // + the expansion anchor's 3 lines (Issue #146)
     expect(restored.pgbossAvailable).toBe(true);
   });
 

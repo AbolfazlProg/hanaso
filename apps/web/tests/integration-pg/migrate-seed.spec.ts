@@ -59,12 +59,12 @@ describe('seed (idempotent, deterministic ids)', () => {
     // HANASO-PRODUCTION-REMEDIATION correction: the stale 57 predated TASK-27
     // (118c1d2, Nov 14) which added the 4 integrated practice stations p1..p4 to
     // the journey — its CI run was format-red, so the integration pin never re-ran.
-    // Content truth now: 1 anchor B_lesson + 60 stations (38 kana-foundation-01
-    // incl. 4 practice + 22 first-meeting-01).
+    // Content truth now: 1 anchor B_lesson + 80 stations (38 kana-foundation-01
+    // incl. 4 practice + 20 kana-expansion-01 [Issue #146] + 22 first-meeting-01).
     expect(await counts('content.characters')).toBe(4);
-    expect(await counts('content.dialogues')).toBe(3);
-    expect(await counts('content.dialogue_lines')).toBe(26);
-    expect(await counts('content.lessons')).toBe(61); // 1 anchor B_lesson + 60 stations (38+22, incl. 4 practice)
+    expect(await counts('content.dialogues')).toBe(4); // + kana-expansion-01 (Issue #146)
+    expect(await counts('content.dialogue_lines')).toBe(29); // + the expansion anchor's 3 lines
+    expect(await counts('content.lessons')).toBe(81); // 1 anchor B_lesson + 80 stations (38+20+22)
   });
 
   it('uses deterministic uuidv5 ids — re-seeding updates the same rows', async () => {
@@ -80,7 +80,7 @@ describe('seed (idempotent, deterministic ids)', () => {
     await runSeed({ url: process.env.DIRECT_DATABASE_URL! }); // idempotent re-run
 
     const after = await pool!.query<{ count: string }>('SELECT count(*) AS count FROM content.dialogues');
-    expect(Number(after.rows[0]!.count)).toBe(3); // no duplicates (PoC + fm01 + kana-welcome)
+    expect(Number(after.rows[0]!.count)).toBe(4); // no duplicates (PoC + fm01 + kana-welcome + expansion)
 
     const lesson = (
       await pool!.query<{ id: string; dialogue_id: string; unit_stage: string }>(
