@@ -105,7 +105,7 @@ describe('seed (idempotent, deterministic ids)', () => {
       `SELECT c.slug AS speaker FROM content.dialogue_lines l
        JOIN content.characters c ON c.id = l.speaker_character_id`,
     );
-    expect(rows.length).toBe(26); // 10 (PoC) + 13 (fm01) + 3 (kana-welcome)
+    expect(rows.length).toBe(29); // 10 (PoC) + 13 (fm01) + 3 (kana-welcome) + 3 (kana-expansion — Issue #146)
     for (const row of rows) expect(row.speaker).toMatch(/^chr-(miki|yamada|sora|kim)$/);
   });
 });
