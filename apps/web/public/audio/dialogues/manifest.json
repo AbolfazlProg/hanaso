@@ -174,6 +174,24 @@
    "durationMs": 4199,
    "hash": "4866b8e90918325c"
   },
+  "s-kana-expansion-01-l1": {
+   "bytes": 4993,
+   "bytesM4a": 19162,
+   "durationMs": 1500,
+   "hash": "36843609e0315533"
+  },
+  "s-kana-expansion-01-l2": {
+   "bytes": 9188,
+   "bytesM4a": 33812,
+   "durationMs": 2855,
+   "hash": "9272576c2c825d99"
+  },
+  "s-kana-expansion-01-l3": {
+   "bytes": 5892,
+   "bytesM4a": 23472,
+   "durationMs": 1831,
+   "hash": "8f93ae4c0112de3f"
+  },
   "s-kana-welcome-01-l1": {
    "bytes": 4115,
    "bytesM4a": 15023,
