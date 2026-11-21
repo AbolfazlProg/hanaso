@@ -75,12 +75,53 @@ export interface DialogueSceneProps {
    * to /poc/lesson. When absent in embedded mode the CTA is hidden entirely.
    */
   onFinish?: () => void | Promise<void>;
+  /**
+   * Owner order 2026-11-21 «زیرنویس پیش‌فرض روشن در مرحلهٔ آموزش مکالمه»: the
+   * TEACHING stage (the anchor dialogue inside the lesson walk) starts with
+   * the Persian subtitle ON regardless of the learner's stored settings —
+   * the device default (settings → زیرنویس فارسی) can no longer leave the
+   * FIRST viewing silent-subtitled. The learner can still toggle mid-playback
+   * (session-local); only the comprehension-check stage (the exercise blocks
+   * after the dialogue — no transcript there) is subtitle-free.
+   */
+  subtitleDefaultOn?: boolean;
+  /**
+   * Start AT `initialLineId` WITHOUT auto-playing (a lesson-walk replay block
+   * seeks to its focus line and waits for the learner's own play press — the
+   * user-gesture chain stays intact). Default: the legacy seek+play behavior
+   * (the /dialogue deep-link click-through).
+   */
+  autoStart?: boolean;
 }
 
 function makeSceneLogger(slug: string) {
   return (name: string, props: Record<string, unknown>): void => {
     logEvent(name, { dialogue_id: slug, ...props });
   };
+}
+
+/**
+ * Issue #98 v2 (owner order 2026-11-21) — the transcript comfort-band math
+ * (PURE — exported for tests): the active line's TOP is held at
+ * `COMFORT_ANCHOR_RATIO` of the transcript viewport height from its top edge —
+ * anchored to the character stage above, upcoming lines visible below, NEVER
+ * glued to the bottom edge (the old just-enough math). Returns the absolute
+ * scrollTop to move to, or null when the line is already inside the band (or
+ * the needed move is clamped away — early lines at the natural top stay put).
+ */
+export const COMFORT_ANCHOR_RATIO = 0.34;
+
+export function comfortScrollTarget(
+  container: { top: number; height: number; scrollTop: number; scrollHeight: number; clientHeight: number },
+  element: { top: number },
+): number | null {
+  const desiredTop = container.top + container.height * COMFORT_ANCHOR_RATIO;
+  const delta = element.top - desiredTop;
+  if (Math.abs(delta) <= 4) return null; // already inside the comfort band
+  const maxScroll = Math.max(0, container.scrollHeight - container.clientHeight);
+  const target = Math.min(Math.max(container.scrollTop + delta, 0), maxScroll);
+  if (Math.abs(target - container.scrollTop) < 1) return null; // clamped to the same position
+  return target;
 }
 
 type BannerError = { code: string; message: string; lineId?: string; lineFa?: string };
@@ -100,6 +141,8 @@ export function DialogueScene({
   dialogueSlug = 'cafe-morning-01',
   embedded = false,
   onFinish,
+  subtitleDefaultOn = false,
+  autoStart = true,
 }: DialogueSceneProps) {
   const logSceneEvent = makeSceneLogger(dialogueSlug);
   const { dialogue, characters, audio } = bundle;
@@ -112,7 +155,7 @@ export function DialogueScene({
   // seeds the initial state — a beginner who chose «روشن» no longer re-toggles
   // every dialogue. Explicit §۲/§۴ comprehension-first remains the no-settings
   // default (false).
-  const [showFa, setShowFa] = useState(false);
+  const [showFa, setShowFa] = useState(subtitleDefaultOn === true);
   // UX-AUDIT #144: the speed default (settings → سرعت پیش‌فرض صوت) seeds the
   // dialogue player's rate too (slow = 0.75×).
   const [speed, setSpeed] = useState<0.75 | 1>(1);
@@ -143,8 +186,11 @@ export function DialogueScene({
 
   // UX-AUDIT #144 — device defaults seed the player ONCE on mount (client-only;
   // SSR/hydration stay at the neutral comprehension-first defaults).
+  // Owner order 2026-11-21: in the TEACHING mode the subtitle is already ON and
+  // the stored setting is deliberately NOT consulted — the previous setting
+  // must never leave the first viewing of the lesson's dialogue unsubtitled.
   useEffect(() => {
-    if (readSubtitleDefault()) setShowFa(true);
+    if (!subtitleDefaultOn && readSubtitleDefault()) setShowFa(true);
     if (readAudioSpeedDefault() === 'slow') setSpeed(0.75);
   }, []);
 
@@ -258,9 +304,11 @@ export function DialogueScene({
     const engine = engineRef.current;
     if (!engine || !initialLineId) return;
     engine.seekToLine(initialLineId);
-    engine.play(); // arriving from a click on «در مکالمه ببین» — user-gesture chain
+    // autoStart=false (a lesson-walk replay block): seek WITHOUT playing — the
+    // learner's own «پخش» press is the user-gesture the browser audio chain needs.
+    if (autoStart) engine.play();
     logSceneEvent('dialogue_entered_at_line', { line_id: initialLineId });
-  }, [initialLineId]);
+  }, [initialLineId, autoStart]);
 
   // deep link ?line=<id> (T6 «در مکالمه ببین» target).
   // S1 fix (visual review #3): key on an engine-generation counter instead of a
@@ -276,24 +324,35 @@ export function DialogueScene({
     if (dialogue.lines.some((l) => l.id === initialLineId)) initialPlay();
   }, [initialLineId, dialogue, initialPlay, engineGeneration]);
 
-  // Issue #98 (T3 «خط فعال همیشه در دید»): keep the active bubble in view WITHIN the
-  // transcript region — manual container math via scrollBy, so the PAGE never scrolls
-  // (the stage + transport stay fixed). prefers-reduced-motion → instant, not smooth.
+  // Issue #98 v2 (owner order 2026-11-21 «دیالوگ فعال به کف باکس نچسبد»): the
+  // active bubble is kept in a COMFORT BAND at the TOP-THIRD of the transcript
+  // viewport — visually anchored to the character stage above (the speaking
+  // face + speaker chip stay in one eye-span) with the upcoming lines visible
+  // below. The old just-enough bottom-edge math glued the active line to the
+  // bottom of the box — detached from the characters. Absolute scrollTo with
+  // clamping (never a jittery scrollBy chain); prefers-reduced-motion → instant.
   useEffect(() => {
     if (activeIndex < 0) return;
     const container = transcriptRef.current;
     const el = lineRefs.current[activeIndex];
     if (!container || !el) return;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // guards: environments without matchMedia (jsdom, very old browsers) get the
+    // smooth default — never a crash in the scroll path.
+    const reduce =
+      typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
     const behavior: ScrollBehavior = reduce ? 'auto' : 'smooth';
-    const cBox = container.getBoundingClientRect();
-    const eBox = el.getBoundingClientRect();
-    const pad = 8;
-    if (eBox.top < cBox.top + pad) {
-      container.scrollBy({ top: eBox.top - cBox.top - pad, behavior });
-    } else if (eBox.bottom > cBox.bottom - pad) {
-      container.scrollBy({ top: eBox.bottom - cBox.bottom + pad, behavior });
-    }
+    const target = comfortScrollTarget(
+      {
+        top: container.getBoundingClientRect().top,
+        height: container.getBoundingClientRect().height,
+        scrollTop: container.scrollTop,
+        scrollHeight: container.scrollHeight,
+        clientHeight: container.clientHeight,
+      },
+      { top: el.getBoundingClientRect().top },
+    );
+    if (target === null) return;
+    container.scrollTo({ top: target, behavior });
   }, [activeIndex]);
 
   // stage A→B eligibility: the LAST line has been seen (playing it, or playback ended)
