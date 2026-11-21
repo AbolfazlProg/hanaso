@@ -219,3 +219,18 @@ static files only; no service/resource/settings changes.
 
 Open PRs #113 / #115 / #120 / #123 / #128 (dependabot + other agents) were not touched; no branch of
 theirs was modified; the merge used squash per the repo's merge policy.
+
+### 6.4 Remaining items (honest, at final report time)
+
+- **Kana bank audio: 92/92 COMPLETE** — every batch-2 entry committed, deployed and byte-served;
+  nothing pending on the audio side of #146.
+- **Word audio: 257/257 committed** (153 batch-1 + 104 batch-2) — the h21 audio-honesty gate re-run on
+  the merged tree (13:15Z): **PASS, 0 orphans**.
+- **REMAINING — the anchor micro-dialogue `kana-expansion-01` (3 lines) has no committed dialogue
+  audio yet** (the dialogues registry carries the 4 batch-1 families only). By design this is honest:
+  `buildAudioManifest` reports `available:false` and the player runs silent with the honest note —
+  never a dead or fake control. Completion path: the SAME isolated-runner method (voicevox_engine
+  0.26.2 CPU in the sandbox, speaker 90, same mastering chain — NEVER the VPS), folded into the
+  dialogues registry as a small follow-up batch.
+- **Constraint re-verified at report time**: `voicevox-gen` on the VPS = Exited (0), port 50021
+  CLOSED; the container is retained (not deleted) for the owner; nothing else on the server changed.
