@@ -6,8 +6,12 @@
 # lines are pure kana USING the newly banked glyph classes (dakuten/handakuten/
 # yōon) so the anchor previews exactly what the chapter teaches.
 #
-# AUDIO: no pre-generated assets for these lines yet — the honest-absence
-# degradation applies until the next VPS VOICEVOX run (tl08-a4-audio-gen.mjs).
+# AUDIO: committed VOICEVOX assets for all three lines (dual opus+m4a under
+# public/audio/dialogues/) — generated on the ISOLATED voicevox_engine 0.26.2 CPU
+# release (sandbox/runner, 127.0.0.1:50021 — NEVER the VPS; production serves the
+# static files only) by scripts/gen-kana-expansion-dialogue-audio.mjs with the same
+# cast (voices.yaml: miki=四国めたん 2, sora=九州そら 16), params and mastering chain
+# as the committed dialogue batches; manifest hashes bind to the runtime line text.
 meta:
   id: dlg-kana-expansion-01
   format: 2
