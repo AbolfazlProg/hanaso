@@ -31,7 +31,11 @@ console.log('════ Knowledge Reference Registry ════');
 console.log(`schemaVersion : ${registry.schemaVersion}`);
 console.log(`digest        : ${registry.digest}`);
 console.log(`course        : ${registry.course.join(' → ')}`);
-console.log(`entries       : ${registry.entries.length} (${Object.entries(byKind).map(([k, v]) => `${k}:${v}`).join(' ')})`);
+console.log(
+  `entries       : ${registry.entries.length} (${Object.entries(byKind)
+    .map(([k, v]) => `${k}:${v}`)
+    .join(' ')})`,
+);
 console.log(`notes         : ${registry.notes.length} (all warning-grade, reported)`);
 console.log('');
 
@@ -39,9 +43,14 @@ console.log('— search examples —');
 for (const q of ['だいがく', 'daigaku', 'きゃ', 'キャ', 'せんせい']) {
   const hits = searchKnowledge(registry, { query: q, foldScript: true }).slice(0, 4);
   console.log(
-    `  «${q}» → ${hits
-      .map((h) => `${h.entry.id} [${h.matchedOn}] @${h.entry.firstTaught.chapterSlug}/${h.entry.firstTaught.stationSlug}`)
-      .join(' · ') || '(هیچ)'}`,
+    `  «${q}» → ${
+      hits
+        .map(
+          (h) =>
+            `${h.entry.id} [${h.matchedOn}] @${h.entry.firstTaught.chapterSlug}/${h.entry.firstTaught.stationSlug}`,
+        )
+        .join(' · ') || '(هیچ)'
+    }`,
   );
 }
 console.log('');
