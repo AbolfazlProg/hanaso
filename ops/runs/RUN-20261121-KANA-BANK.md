@@ -234,3 +234,67 @@ theirs was modified; the merge used squash per the repo's merge policy.
   dialogues registry as a small follow-up batch.
 - **Constraint re-verified at report time**: `voicevox-gen` on the VPS = Exited (0), port 50021
   CLOSED; the container is retained (not deleted) for the owner; nothing else on the server changed.
+
+## 8. Follow-up batch (RUN-20261121-03): the anchor micro-dialogue audio — DEPLOYED
+
+Owner order: «سه خط صوتی باقی‌ماندهٔ دیالوگ فصل kana-expansion-01 را تکمیل کن… دقیقاً از همان روش
+batch قبلی» (2026-11-21) — VOICEVOX never on the VPS, the stopped `voicevox-gen` container NOT
+restarted, production serves static files only, no service/resource/settings changes.
+
+### 8.1 Generation (isolated sandbox — the batch-2 chain, unchanged)
+
+- Engine: **voicevox_engine 0.26.2 CPU** official release (the §6.1 instance, `127.0.0.1:50021`,
+  sandbox) — cast verified against the LIVE engine before synthesis: `四国めたん style 2 ノーマル`
+  (miki), `九州そら style 16 ノーマル` (sora) — the voices.yaml casting;
+- params: speedScale 0.95 / pitchScale 0 / intonationScale 1.0 / prePhoneme 0.06 / postPhoneme 0.18 +
+  the sentence-final breath (+0.12 s); mastering: HPF 70 Hz + shelf +2.5 dB @ 2.5 kHz + gate, two-pass
+  RMS **−23.5 dBFS** (the dialogues level), limiter 0.8414; opus 32 k / m4a 96 k — identical to the
+  committed dialogue batches (gen-first-meeting-missing-audio.mjs pattern);
+- text binding: synthesis text = token surfaces space-joined; the manifest **hash binds to the
+  runtime line text** (token-joined, `hashAudioLine`) — `グルメカフェ` / `パンやだいじょうぶ` /
+  `きょういっしょに`;
+- method record committed: `apps/web/scripts/gen-kana-expansion-dialogue-audio.mjs`.
+
+### 8.2 PR #156 → squash-merged as `a66a40c06fdce94b3eb40f19ba7f1128ce23f491`
+
+Files: 6 audio assets (`s-kana-expansion-01-l{1,2,3}.{opus,m4a}`) + dialogues manifest (3 entries:
+bytes/bytesM4a/durationMs/hash) + the gen script + the honest YAML comment update (the
+honest-absence note replaced by the committed-state note). One CI iteration: eslint
+`no-unused-vars` on the new gen script (fixed `65ed7ad`) → **battery + compose smoke GREEN on the
+PR, and all 3 checks (battery + compose smoke + image→GHCR) GREEN on main `a66a40c`**.
+
+- Local QA: 6/6 ffprobe-clean (opus 48 kHz / aac 24 kHz mono — the committed dialogue chain's own
+  output format), durations 0–1 ms vs manifest, RMS −23.5…−23.8 dB, peaks ≤ −1.5 dBFS, decode 0
+  errors; **fresh-engine correlation replay corr = 1.00000, Δduration = 0 ms on all 3 lines** —
+  genuine speaker renders of the exact registry text;
+- full battery on the merged tree: **89 files / 984 tests ALL GREEN**; prettier clean.
+
+### 8.3 Deployment + outside verification (same 10-step staged swap)
+
+- Script `deploy-a66a40c.sh` transferred base64 (6 chunks), server SHA-256
+  `434a0cc3d639bdc37d9ed45ef0d861b5a8d8b859e26e614ef24a11fe7882ee4d` byte-identical; executed
+  detached (`/root/deploy-a66a40c.log`) — **ALL 10 STEPS GREEN**, ends
+  `=== RELEASE LIVE: a66a40c06fdce94b3eb40f19ba7f1128ce23f491 (kana-expansion-01 anchor dialogue audio — #156 surface) ===`;
+  safety artifacts: `/root/hanaso-backups/db-pre-audio-bank-20261121T140415Z.sql` + `.env.pre-audio-bank`;
+  rollback one-liner to `161ab12` recorded; postgres/pgbouncer untouched (Up 44 h).
+- **Production verified from OUTSIDE**: `/api/health` → commit `a66a40c…` `ok:true`;
+  all 6 files `200` + correct content-type + **byte-IDENTICAL to the committed repo bytes**
+  (sha256 match) + strict decode clean + RMS −23.5…−23.8 dB; `/api/dialogues/kana-expansion-01` →
+  `available:true`, `audioSource:voicevox`, credits `VOICEVOX:四国めたん・九州そら`, per-line
+  files/bytes/durations == manifest; regressions byte-identical (`kn-hira-ga.opus`,
+  `s-kana-welcome-01-l1.opus`, `s-first-meeting-01-l12.m4a`); `/`, `/learn`,
+  `/learn/kana-expansion-01` → 200. The anchor dialogue now plays REAL audio — no live TTS anywhere.
+
+### 8.4 Constraints re-verified at report time
+
+- `voicevox-gen` on the VPS = **Exited (0), NOT restarted, port 50021 CLOSED** — image/container
+  retained untouched; hanaso web/worker healthy on `a66a40c`; postgres/pgbouncer Up 44 h;
+- disk hygiene (same owner-approved §6.2 pattern): removed ONLY the double-superseded `9be3984`
+  image (re-pullable from GHCR) → inventory exactly live `a66a40c` + rollback `161ab12`; 4.2 GB free.
+
+### 8.5 Remaining items (honest, at final report time)
+
+- **Dialogue audio: COMPLETE — all 4 dialogue families voiced** (cafe-morning-01 10 lines,
+  first-meeting-01 14 assets, kana-welcome-01 3 lines, kana-expansion-01 3 lines);
+- kana bank 184/184 + word audio 257/257 unchanged (h21 gate `pendingVpsRun=0`);
+- **nothing pending on the audio side of #146** — the §6.4 "REMAINING" item is resolved by §8.
