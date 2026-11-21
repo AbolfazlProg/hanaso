@@ -11,6 +11,16 @@
 import type { Chapter, Exercise, LevelPolicy, TeachingBlock } from './types';
 import { orderedStations } from './journey';
 import { KANA_ITEMS, KANA_ITEMS_BY_ID } from './content/kana-items';
+import { getChapter } from './content';
+
+/** Lazy chapter lookup for the prerequisite-chain inheritance (Issue #146). */
+function getChapterUnsafe(slug: string): Chapter | undefined {
+  try {
+    return getChapter(slug) ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
 import { RULE_MARK_STATION, decomposeJa, derivedFormsIn, type RuleMark } from './glyph-budget';
 import { LEVELS_BY_CODE } from './content/levels';
 
@@ -387,9 +397,18 @@ function validateKanaContent(chapter: Chapter, v: ContentViolation[]): void {
 
   // cumulative glyph set by station order — a station's own introducesGlyphs
   // (TL-14 first-look declarations) are available to that station from its
-  // position onward, exactly like its kana-cards.
+  // position onward, exactly like its kana-cards. The prerequisite chapter's
+  // taught glyphs carry over (CHAPTER-CHAIN — Issue #146): the learner enters
+  // the expansion chapter knowing every base glyph of the foundation chapter.
   const ordered = [...chapter.stations].sort((a, b) => a.order - b.order);
-  const cumulative = new Set<string>();
+  const prereq = chapter.prerequisiteChapterSlug ? getChapterUnsafe(chapter.prerequisiteChapterSlug) : undefined;
+  const cumulative = new Set<string>(
+    prereq
+      ? prereq.stations.flatMap((s) =>
+          s.blocks.flatMap((b) => (b.kind === 'kana-card' ? [KANA_ITEMS_BY_ID[b.kanaId]?.glyph ?? ''] : [])),
+        )
+      : [],
+  );
   const cumulativeBySlug = new Map<string, Set<string>>();
   for (const s of ordered) {
     for (const b of s.blocks) {
@@ -409,13 +428,16 @@ function validateKanaContent(chapter: Chapter, v: ContentViolation[]): void {
     cumulativeBySlug.set(s.slug, new Set(cumulative));
   }
 
-  // Only BASE glyphs (the 92 registry records) are card-taught and checkable here.
-  // Rule-derived forms — precomposed dakuten/handakuten (が/パ…), small kana
-  // (っ/ゃ/ェ…), and the chōonpu — are taught by RULE units (05A §۲: a rule is one
-  // unit, not per-glyph cards); their coverage is the unit design itself, which
-  // the decodability engine guaranteed upstream (WP-0 package).
-  const BASE_GLYPHS = new Set(KANA_ITEMS.map((k) => k.glyph));
-  const kanaOf = (text: string): string[] => [...text].filter((ch) => BASE_GLYPHS.has(ch));
+  /*
+   * Issue #146: the checkable set is the glyphs TAUGHT BY CARDS — resolved
+   * through the same decomposition the glyph budget uses (voiced glyphs
+   * resolve to their base + the mark rule, whether or not they carry their
+   * own registry card now). A decode prompt is decodable when its base glyphs
+   * are card-taught by that point (the mark availability is GLYPH-BUDGET's
+   * check, over every surface, in validateRuleTeaching).
+   */
+  const CARD_TAUGHT = new Set(KANA_ITEMS.map((k) => k.glyph));
+  const kanaOf = (text: string): string[] => decomposeJa(text).base.filter((g) => CARD_TAUGHT.has(g));
 
   for (const s of ordered) {
     const taught = cumulativeBySlug.get(s.slug) ?? new Set<string>();
@@ -486,12 +508,38 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
   const ordered = [...chapter.stations].sort((a, b) => a.order - b.order);
   const orderOfSlug = new Map(ordered.map((s) => [s.slug, s.order] as const));
 
+  /*
+   * Issue #146 — the PREREQUISITE-CHAIN carries knowledge: a chapter that
+   * declares prerequisiteChapterSlug (CHAPTER-CHAIN) enters with its
+   * prerequisite ALREADY understood, so every rule mark and base glyph the
+   * prerequisite's walk taught is available from this chapter's first station.
+   * The gate stays exactly as strict for teaching WITHIN the chapter — the
+   * inherited set is only the chapter chain's honest entry knowledge.
+   */
+  const prereqChapter = chapter.prerequisiteChapterSlug ? getChapterUnsafe(chapter.prerequisiteChapterSlug) : undefined;
+  const prereqTaughtGlyphs = new Set<string>(
+    prereqChapter
+      ? prereqChapter.stations.flatMap((s) =>
+          s.blocks.flatMap((b) => (b.kind === 'kana-card' ? [KANA_ITEMS_BY_ID[b.kanaId]?.glyph ?? ''] : [])),
+        )
+      : [],
+  );
+  const prereqMarks = new Set<RuleMark>(
+    prereqChapter
+      ? (Object.keys(RULE_MARK_STATION) as RuleMark[]).filter((m) =>
+          prereqChapter.stations.some((s) => s.slug === RULE_MARK_STATION[m]),
+        )
+      : [],
+  );
+
   // rule-mark availability: the order of the unit that teaches each mark
-  // (null = never taught in this chapter → any use is a violation).
+  // (null = never taught in this chapter → any use is a violation) — a mark
+  // taught by the prerequisite chapter is available from order 0.
   const markFrom: Partial<Record<RuleMark, number | null>> = {};
   for (const mark of Object.keys(RULE_MARK_STATION) as RuleMark[]) {
     const slug = RULE_MARK_STATION[mark];
     markFrom[mark] = orderOfSlug.has(slug) ? (orderOfSlug.get(slug) as number) : null;
+    if (prereqMarks.has(mark)) markFrom[mark] = 0;
   }
 
   /* ---- GLYPH-BUDGET: walk stations in order. A station's OWN teaching (its
@@ -509,6 +557,29 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
      specific form (the audit's 9 katakana cases + ぜ/ば/で/ぴ/ぼ/ぽ/じ). */
   const shownDerived = new Set<string>();
   const reportedDerived = new Set<string>();
+  // the prerequisite chapter's teaching displays carry over (chain rule — Issue #146)
+  if (prereqChapter) {
+    for (const s of prereqChapter.stations) {
+      for (const b of s.blocks) {
+        const surfaces: string[] = [];
+        if (b.kind === 'rule-card') surfaces.push(b.patternJa);
+        if (b.kind === 'rule-prereq')
+          for (const it of b.items) {
+            if (it.glyph) surfaces.push(it.glyph);
+            if (it.word) surfaces.push(it.word);
+          }
+        if (b.kind === 'rule-contrast') {
+          surfaces.push(b.a.ja);
+          surfaces.push(b.b.ja);
+        }
+        if (b.kind === 'rule-step') {
+          if (b.word) surfaces.push(b.word.ja);
+          if (b.miniTable) b.miniTable.rows.forEach((r) => r.forEach((c) => surfaces.push(c)));
+        }
+        for (const surf of surfaces) for (const ch of derivedFormsIn(surf)) shownDerived.add(ch);
+      }
+    }
+  }
   const checkDerived = (surface: string, where: string, slug: string): void => {
     for (const ch of derivedFormsIn(surface)) {
       if (shownDerived.has(ch)) continue;
@@ -524,12 +595,19 @@ function validateRuleTeaching(chapter: Chapter, v: ContentViolation[]): void {
   const foldDerived = (surface: string): void => {
     for (const ch of derivedFormsIn(surface)) shownDerived.add(ch);
   };
-  const cumulative = new Set<string>();
+  const cumulative = new Set<string>(prereqTaughtGlyphs);
   for (const s of ordered) {
     for (const b of s.blocks) {
       if (b.kind === 'kana-card') {
         const item = KANA_ITEMS_BY_ID[b.kanaId];
-        if (item) cumulative.add(item.glyph);
+        if (item) {
+          cumulative.add(item.glyph);
+          /* Issue #146: the voiced glyphs are registry cards now — the card
+           * block IS the explicit teaching display of its derived form (the
+           * card shows glyph + image + mark story). Fold it like a prereq
+           * first-look so DERIVED-GLYPH-SHOWN tracks the deck honestly. */
+          foldDerived(item.glyph);
+        }
       }
     }
     const local = new Set(s.introducesGlyphs ?? []);

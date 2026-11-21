@@ -10,6 +10,7 @@ import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
 import { wordAudioUrls, kanaAudioUrls, hostWordAudioUrls } from '@/modules/audio/server';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
+import { getChapter } from '@/modules/curriculum/content';
 import { StationRunner } from '@/components/curriculum/station-runner';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 import { fa } from '@/messages/fa';
@@ -143,8 +144,28 @@ export default async function StationPage({
    * earlier station's kana-card glyphs, chapter walk order). The runner
    * computes the readability claims of the example cards from this context —
    * the «خواندنی است» promise tracks the lesson, never a static string.
+   *
+   * Issue #146 — CHAPTER-CHAIN inheritance: the chapter's declared
+   * prerequisite (kana-foundation-01 → kana-expansion-01) is already
+   * understood when this chapter unlocks, so its taught glyphs seed the
+   * "before" context; the expansion chapter's claims stay honest from station 1.
    */
   const taughtKanaBeforeStation: string[] = [];
+  const prereqGlyphs: string[] = [];
+  {
+    const prereq = chapter.prerequisiteChapterSlug ? getChapter(chapter.prerequisiteChapterSlug) : null;
+    if (prereq) {
+      for (const st of [...prereq.stations].sort((a, b) => a.order - b.order)) {
+        for (const b of st.blocks) {
+          if (b.kind === 'kana-card') {
+            const glyph = KANA_ITEMS_BY_ID[b.kanaId]?.glyph;
+            if (glyph && !prereqGlyphs.includes(glyph)) prereqGlyphs.push(glyph);
+          }
+        }
+      }
+    }
+  }
+  for (const g of prereqGlyphs) taughtKanaBeforeStation.push(g);
   for (const st of [...chapter.stations].filter((s) => s.order < station.order).sort((a, b) => a.order - b.order)) {
     for (const b of st.blocks) {
       if (b.kind === 'kana-card') {

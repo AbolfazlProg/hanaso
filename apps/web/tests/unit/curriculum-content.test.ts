@@ -5,6 +5,7 @@
  * L2 caps, QUESTION quality rules) over the BUNDLED chapter data — a content edit
  * that violates the blueprint breaks the build here, not in review.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { getChapter, listChapters } from '@/modules/curriculum/content';
 import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
@@ -14,7 +15,7 @@ import { gradeMasterySubmission, gradeExerciseAnswer, toClientExercise } from '@
 import type { ExerciseAnswerPayload } from '@/modules/curriculum/grading';
 import { loadDialogue } from '@/modules/dialogue/server';
 import { FM01_EXERCISES } from '@/modules/curriculum/content/chapter-fm01.exercises';
-import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
+import { KANA_ITEMS, KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 import { loadRealAudioAssets, loadVoices as loadVoicesForTest } from '@/modules/audio/audio-manifest';
 import { hashAudioLine } from '@/modules/dialogue/content/loader';
 import { resolveSpeaker } from '@/modules/character/registry';
@@ -22,9 +23,10 @@ import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 describe('bundled chapters', () => {
-  it('ships the kana foundation chapter then the first conversation chapter', () => {
-    // TASK-LEARNING-06: chapter 01 (kana, L1) precedes the conversation chapter (L2).
-    expect(listChapters().map((c) => c.slug)).toEqual(['kana-foundation-01', 'first-meeting-01']);
+  it('ships kana foundation → kana expansion → the first conversation chapter', () => {
+    // TASK-LEARNING-06: chapter 01 (kana, L1) → its expansion (the bank completion,
+    // Issue #146 — same L1 band, chained prerequisite) → the conversation chapter (L2).
+    expect(listChapters().map((c) => c.slug)).toEqual(['kana-foundation-01', 'kana-expansion-01', 'first-meeting-01']);
   });
 
   /* TASK-LEARNING-13 (progress audit A-5): the kana bank shipped 80 exercise
@@ -75,14 +77,25 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
     expect(chapter.expressions).toHaveLength(0);
   });
 
-  it('covers every registry kana with a kana-card (no orphan records — CONTENT-106)', () => {
-    const cardIds = new Set(
-      chapter.stations.flatMap((s) => s.blocks.flatMap((b) => (b.kind === 'kana-card' ? [b.kanaId] : []))),
-    );
-    for (const item of KANA_ITEMS) {
-      expect(cardIds.has(item.kanaId), `kana-card present for ${item.kanaId}`).toBe(true);
+  it('covers every registry kana with a kana-card across the kana chapters (no orphan records — CONTENT-106)', () => {
+    /* Issue #146: the invariant is CORPUS-WIDE now — the 92 base glyphs are
+     * carded in kana-foundation-01, the 92 voiced/yōon glyphs in its chained
+     * expansion chapter. Every registry record must still be TAUGHT (no
+     * orphan bank data), wherever its unit lives. */
+    const taught = new Map<string, number>();
+    for (const slug of ['kana-foundation-01', 'kana-expansion-01']) {
+      const ch = getChapter(slug)!;
+      for (const s of ch.stations) {
+        for (const b of s.blocks) {
+          if (b.kind === 'kana-card')
+            taught.set((b as { kanaId: string }).kanaId, (taught.get((b as { kanaId: string }).kanaId) ?? 0) + 1);
+        }
+      }
     }
-    expect(cardIds.size).toBe(92);
+    for (const item of KANA_ITEMS) {
+      expect(taught.has(item.kanaId), `kana-card present for ${item.kanaId}`).toBe(true);
+    }
+    expect(taught.size).toBe(184);
   });
 
   it('ships the kana gate bank: ≥5 switches per M-K measure, kana labels present', () => {
@@ -107,6 +120,63 @@ describe('chapter kana-foundation-01 vs L1 policy (TASK-LEARNING-06)', () => {
      * loanword milestone (TASK-HANASO-22 two-section split). */
     expect(journey.unitGroups![0]!.nodes.some((n) => n.station.slug === 'stn-kana-m1-reading')).toBe(true);
     expect(journey.unitGroups![1]!.nodes.some((n) => n.station.slug === 'stn-kana-m2-realworld')).toBe(true);
+  });
+});
+
+describe('chapter kana-expansion-01 vs L1 policy (Issue #146 — the bank completion)', () => {
+  const chapter = getChapter('kana-expansion-01')!;
+  const level = LEVELS_BY_CODE[chapter.levelCode]!;
+  const dialogue = loadDialogue(chapter.dialogueSlug);
+  const lineIds = dialogue.lines.map((l) => l.id);
+
+  it('passes the full content validation incl. kana rules (CONTENT-103/105/106)', () => {
+    const violations = [...validateChapter(chapter, level), ...validateChapterAgainstDialogue(chapter, level, lineIds)];
+    expect(violations, JSON.stringify(violations, null, 1)).toEqual([]);
+  });
+
+  it('chains to the foundation chapter (CHAPTER-CHAIN — the honest reveal promise)', () => {
+    expect(chapter.prerequisiteChapterSlug).toBe('kana-foundation-01');
+    expect(chapter.levelCode).toBe('L1');
+    expect(chapter.orderInLevel).toBe(2);
+  });
+
+  it('cards exactly the 92 voiced/yōon glyphs in 20 row-packet stations (≤6 per station — CONTENT-103)', () => {
+    const cards = chapter.stations.flatMap((s) => s.blocks.flatMap((b) => (b.kind === 'kana-card' ? [b.kanaId] : [])));
+    expect(cards.length).toBe(92);
+    expect(new Set(cards).size).toBe(92);
+    for (const s of chapter.stations) {
+      const n = s.blocks.filter((b) => b.kind === 'kana-card').length;
+      expect(n, `${s.slug} packet size`).toBeLessThanOrEqual(6);
+    }
+    // every card is an expansion-chapter unit (introducedInUnit ∈ the new units)
+    const units = new Set(
+      chapter.units!.flatMap((u) => u.stationSlugs.map((s) => s.replace('stn-kana-', '').toUpperCase())),
+    );
+    for (const id of cards) {
+      expect(KANA_ITEMS_BY_ID[id]!.introducedInUnit, `${id} unit`).toBeTruthy();
+    }
+    void units;
+  });
+
+  it('listening exercises exist ONLY where the word audio is committed (honest sound — no dead questions)', () => {
+    const listening = Object.values(chapter.exercises).filter((e) => e.type === 'rule-listening');
+    expect(listening.length).toBeGreaterThan(0);
+    const manifest = JSON.parse(readFileSync(join(process.cwd(), 'public/audio/hostwords/manifest.json'), 'utf8')) as {
+      entries: Record<string, unknown>;
+    };
+    const committed = new Set(Object.keys(manifest.entries));
+    for (const ex of listening) {
+      expect(committed.has(ex.promptJa!), `${ex.id} plays ${ex.promptJa}`).toBe(true);
+    }
+  });
+
+  it('the two-level journey map (2 sections covering all stations)', () => {
+    const journey = resolveJourney(chapter, level, [], null);
+    expect(journey.unitGroups?.length).toBe(2);
+    const grouped = journey.unitGroups!.flatMap((g) => g.nodes.map((n) => n.station.slug));
+    expect(new Set(grouped).size).toBe(20);
+    expect(journey.unitGroups![0]!.nodes.some((n) => n.station.slug === 'stn-kana-hd1')).toBe(true);
+    expect(journey.unitGroups![1]!.nodes.some((n) => n.station.slug === 'stn-kana-kx1')).toBe(true);
   });
 });
 

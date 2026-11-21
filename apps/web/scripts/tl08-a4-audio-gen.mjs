@@ -45,7 +45,11 @@ function kanaEntries() {
   for (const m of src.matchAll(/kanaId:\s*'([^']+)',\s*\n\s*glyph:\s*'([^']+)'/g)) {
     out.push({ ref: `kn-${m[1]}`, text: m[2] });
   }
-  if (out.length !== 92) throw new Error(`expected 92 kana, got ${out.length}`);
+  /* Issue #146: the registry carries the full system now (184 = 92 base + 92
+   * voiced/yōon). The count is asserted against the REGISTRY, not a constant —
+   * the bank and the audio surface can never drift apart. */
+  const registryCount = (src.match(/kanaId:\s*'/g) ?? []).length;
+  if (out.length !== registryCount) throw new Error(`expected ${registryCount} kana, got ${out.length}`);
   return out;
 }
 
@@ -58,7 +62,7 @@ function hostWords() {
 
 function exampleWords() {
   const set = new Set();
-  for (const file of ['chapter-kana01.stations.ts', 'chapter-fm01.stations.ts']) {
+  for (const file of ['chapter-kana01.stations.ts', 'chapter-kana-expansion.stations.ts', 'chapter-fm01.stations.ts']) {
     const src = readFileSync(path.join(WEB, 'src', 'modules', 'curriculum', 'content', file), 'utf8');
     for (const m of src.matchAll(/role:\s*'(?:anchor|near|varied|faded|reading)',\s*\n\s*ja:\s*'([^']+)'/g)) {
       const ja = m[1];
@@ -89,7 +93,7 @@ function contrastAndExerciseWords() {
   // DO need a hostword clip for their contrast play button.
   const basicKana = new Set(kanaEntries().map((k) => k.text));
   const stationsDir = path.join(WEB, 'src', 'modules', 'curriculum', 'content');
-  for (const file of ['chapter-kana01.stations.ts', 'chapter-fm01.stations.ts']) {
+  for (const file of ['chapter-kana01.stations.ts', 'chapter-kana-expansion.stations.ts', 'chapter-fm01.stations.ts']) {
     const src = readFileSync(path.join(stationsDir, file), 'utf8');
     for (const m of src.matchAll(/\bja:\s*'([^']+)'/g)) {
       const ja = m[1];
@@ -98,7 +102,11 @@ function contrastAndExerciseWords() {
       if (/[\u3040-\u30ff]/.test(ja)) set.add(ja);
     }
   }
-  for (const file of ['chapter-kana01.exercises.ts', 'chapter-fm01.exercises.ts']) {
+  for (const file of [
+    'chapter-kana01.exercises.ts',
+    'chapter-kana-expansion.exercises.ts',
+    'chapter-fm01.exercises.ts',
+  ]) {
     const src = readFileSync(path.join(stationsDir, file), 'utf8');
     // promptJa on decode/rule-listening items (the audible question/word)
     for (const m of src.matchAll(/promptJa:\s*'([^']+)'/g)) {

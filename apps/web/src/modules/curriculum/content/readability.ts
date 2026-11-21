@@ -37,17 +37,28 @@ export interface ReadabilityLabel {
  * The kana a word REQUIRES — every `ja` character that maps to a registry
  * kana (voiced compositions resolve to their base kana; kanji, punctuation
  * and the long-vowel mark are ignored — they are not kana knowledge).
+ *
+ * Issue #146: the registry now CARRIES the voiced/yōon glyphs too (the kana
+ * bank is complete). The required side still resolves a voiced glyph to its
+ * BASE kana's knowledge (き + the ゛ rule — exactly what chapter 01's h5/h6/h15
+ * rule stations teach), because reading knowledge = base glyph + mark rule.
+ * The voiced registry card itself is drilled in kana-expansion-01; resolving
+ * to the base keeps every chapter-01 readability claim honest and unchanged.
  */
 export function requiredKanaOf(ja: string): string[] {
   const out: string[] = [];
   for (const ch of Array.from(new Set(Array.from(ja)))) {
+    // voiced kana (が・ぱ…) decompose FIRST — their knowledge is base + mark rule
+    const decomposed = ch.normalize('NFD').replace(/[\u3099\u309A]/g, '');
+    if (decomposed !== ch && GLYPH_BY_CHAR.has(decomposed)) {
+      out.push(decomposed);
+      continue;
+    }
     if (GLYPH_BY_CHAR.has(ch)) {
       out.push(ch);
       continue;
     }
-    // voiced kana (が・ぱ・ヴ…) decompose to their base kana's knowledge
-    const decomposed = ch.normalize('NFD').replace(/[\u3099\u309A]/g, '');
-    if (decomposed !== ch && GLYPH_BY_CHAR.has(decomposed)) out.push(decomposed);
+    // non-registry kana (small ゃ/ょ, っ, ー…) — the mark rules, not kana knowledge
   }
   return out;
 }

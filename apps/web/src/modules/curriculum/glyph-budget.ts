@@ -158,10 +158,15 @@ export function decomposeJa(text: string): GlyphRequirement {
   const base = new Set<string>();
   const marks = new Set<RuleMark>();
   for (const ch of text) {
-    if (BASE_GLYPHS.has(ch)) {
-      base.add(ch);
-      continue;
-    }
+    /*
+     * Issue #146: the voiced glyphs are registry members now (the bank is
+     * complete), but their KNOWLEDGE model is unchanged — base glyph + the
+     * mark rule (゛/゜ taught by the rule units). Resolution order is
+     * therefore: voiced decomposition FIRST, then the registry, then the
+     * bare marks. A card-taught voiced glyph (kana-expansion-01) passes via
+     * its base (chapter-chain inheritance) + the mark's rule unit — the same
+     * rule the walk itself teaches.
+     */
     const dak = DAKUTEN_BASE[ch];
     if (dak) {
       base.add(dak);
@@ -172,6 +177,10 @@ export function decomposeJa(text: string): GlyphRequirement {
     if (hand) {
       base.add(hand);
       marks.add('handakuten');
+      continue;
+    }
+    if (BASE_GLYPHS.has(ch)) {
+      base.add(ch);
       continue;
     }
     if (YOON_SMALL.has(ch)) {
