@@ -3,21 +3,36 @@
  *
  * The shared learning-journey layout of `/learn` (auto-selected ACTIVE chapter)
  * and `/learn/[chapter]/journey` (explicit chapter — the continue target after
- * a station, or an ARCHIVE review). Renders exactly ONE chapter, never a
- * chapter list:
+ * a station, or an ARCHIVE review). Renders exactly ONE chapter panel, plus
+ * (owner order 2026-11-21) the PUBLISHED-chapter catalog — every published
+ * chapter visible and selectable with an honest lock state:
  *
  *   chapter header (goal + honest progress, no future counts)
  *   → ONE primary CTA (deep-linked «شروع/ادامهٔ یادگیری» into the next station,
  *     or «دروازهٔ فهم» when the core path is done)
  *   → the one-section-at-a-time panel (client SectionJourney)
+ *   → the PUBLISHED-chapter catalog (each chapter selectable; a locked one shows
+ *     its prerequisite as the reason — Issue #94 «قفل ≠ مخفی»; drafts never list)
  *   → the late teaser (only ≥75% through the active chapter — curiosity, no lists)
  *   → the understood-chapter archive (compact, collapsible, reviewable).
  *
- * Progressive reveal (owner's direction): future chapters are NEVER listed and
- * the course's total size is never exposed anywhere on this page.
+ * Progressive reveal's «future chapters are never listed» policy is SUPERSEDED
+ * by the owner's 2026-11-21 directive («فصل دوم باید در مسیر معمول یادگیری و
+ * فهرست فصل‌ها قابل مشاهده و انتخاب باشد») — the catalog lists the published
+ * chapters with their states; the gates themselves are unchanged.
  */
 import Link from 'next/link';
-import { ArrowLeft, BookOpenText, CircleCheck, Clock3, Compass, LibraryBig, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft,
+  BookOpenText,
+  CircleCheck,
+  Clock3,
+  Compass,
+  LibraryBig,
+  Lock,
+  Map as MapIcon,
+  Sparkles,
+} from 'lucide-react';
 import { SectionJourney, type SectionDto, type StationContentKind } from './section-journey';
 import type { Station } from '@/modules/curriculum/types';
 
@@ -50,6 +65,7 @@ function contentKindOf(station: Station): StationContentKind {
 import { fa } from '@/messages/fa';
 import type { SectionView } from '@/modules/curriculum/journey';
 import type { ArchiveChapterCard, RevealTeaser } from '@/modules/curriculum/reveal';
+import type { ChapterCatalogRow } from '@/modules/curriculum/server';
 
 export interface JourneyHomeProps {
   chapterSlug: string;
@@ -69,6 +85,12 @@ export interface JourneyHomeProps {
   activeSectionIndex: number;
   initialSectionSlug?: string;
   reveal: { archive: ArchiveChapterCard[]; teaser: RevealTeaser | null };
+  /**
+   * Owner order 2026-11-21 — the published-chapter catalog (every published
+   * chapter selectable with its honest state). Absent → the section is not
+   * rendered (older hosts/tests).
+   */
+  catalog?: ChapterCatalogRow[];
 }
 
 export function JourneyHome(props: JourneyHomeProps) {
@@ -89,6 +111,7 @@ export function JourneyHome(props: JourneyHomeProps) {
     activeSectionIndex,
     initialSectionSlug,
     reveal,
+    catalog,
   } = props;
 
   // flatten the pure SectionView (with Station objects) into the client DTO
@@ -224,6 +247,84 @@ export function JourneyHome(props: JourneyHomeProps) {
         nextStationSlug={nextStationSlug}
         initial={{ sections: sectionDtos, activeIndex: activeSectionIndex }}
       />
+
+      {/* ---- THE PUBLISHED-CHAPTER CATALOG (owner order 2026-11-21) ----
+       * Every published chapter of the course, selectable, with its honest
+       * state. A LOCKED chapter stays listed (Issue #94 «قفل ≠ مخفی»): its row
+       * carries the prerequisite as the reason and links to the chapter page,
+       * which renders the same soft-lock notice — the gates are never
+       * bypassed. Drafts never appear here (owner-preview content only). */}
+      {catalog && catalog.length > 0 ? (
+        <section
+          className="rounded-md border-2 border-ink-faint bg-card p-1"
+          aria-label={fa.curriculum.chapterCatalogTitle}
+        >
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
+            <MapIcon aria-hidden className="size-5 text-ink-soft" />
+            <h2 className="text-body font-black text-ink">{fa.curriculum.chapterCatalogTitle}</h2>
+            <p className="w-full text-caption text-ink-soft">{fa.curriculum.chapterCatalogHint}</p>
+          </div>
+          <ul className="flex flex-col gap-2 border-t border-ink-faint/50 px-4 py-3">
+            {catalog.map((row) => {
+              const isActive = row.slug === chapterSlug;
+              const chip = row.locked ? (
+                <span className="flex items-center gap-1 rounded-full border border-error/60 bg-error/10 px-2.5 py-0.5 text-caption font-bold text-error">
+                  <Lock aria-hidden className="size-3.5" />
+                  {fa.curriculum.chapterCatalogLockedChip}
+                </span>
+              ) : isActive ? (
+                <span className="rounded-full border-2 border-ink bg-ink px-2.5 py-0.5 text-caption font-bold text-paper">
+                  {fa.curriculum.chapterCatalogActiveChip}
+                </span>
+              ) : row.status === 'understood' ? (
+                <span className="flex items-center gap-1 rounded-full border border-success/70 bg-success/10 px-2.5 py-0.5 text-caption font-bold text-success">
+                  <CircleCheck aria-hidden className="size-3.5" />
+                  {fa.curriculum.chapterCatalogUnderstoodChip}
+                </span>
+              ) : row.status === 'in_progress' ? (
+                <span className="rounded-full border border-ai px-2.5 py-0.5 text-caption font-bold text-ai">
+                  {fa.curriculum.chapterCatalogInProgressChip}
+                </span>
+              ) : (
+                <span className="rounded-full border border-ink-faint px-2.5 py-0.5 text-caption text-ink-soft">
+                  {fa.curriculum.chapterCatalogReadyChip}
+                </span>
+              );
+              return (
+                <li key={row.slug}>
+                  {isActive ? (
+                    /* the ACTIVE chapter's home is THIS page — its row is the
+                     * anchor of the list, not a self-link */
+                    <div
+                      className="flex min-h-12 flex-wrap items-center gap-2 rounded-md border-2 border-indigo/60 bg-indigo-wash/30 px-4 py-2.5"
+                      aria-current="true"
+                    >
+                      <span className="text-body font-bold text-indigo">{row.titleFa}</span>
+                      {chip}
+                    </div>
+                  ) : (
+                    <Link
+                      href={`/learn/${row.slug}/journey`}
+                      className="flex min-h-12 flex-wrap items-center gap-2 rounded-md border border-ink-faint bg-paper px-4 py-2.5 text-body text-ink transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+                    >
+                      <span className="font-bold">{row.titleFa}</span>
+                      {chip}
+                      <span className="ms-auto text-caption text-ink-soft" aria-hidden>
+                        {fa.curriculum.chapterCatalogOpenLabel}
+                      </span>
+                    </Link>
+                  )}
+                  {row.locked && row.prerequisiteTitleFa ? (
+                    <p className="mt-1 px-4 pb-1 text-caption leading-[var(--leading-fa)] text-ink-soft">
+                      {fa.curriculum.chapterCatalogLockedReason(row.prerequisiteTitleFa)}
+                    </p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       {/* ---- late teaser: curiosity hook, not a list (only ≥75% through) ---- */}
       {reveal.teaser ? (

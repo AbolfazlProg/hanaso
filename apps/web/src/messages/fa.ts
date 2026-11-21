@@ -306,6 +306,22 @@ export const fa = {
     archiveTitle: 'فصل‌های گذرانده‌شده',
     archiveSummary: 'برای مرور، هر وقت خواستی برگرد.',
     archiveEmptyHint: 'هنوز فصلی را کامل نفهمیده‌ای — آرشیو همین‌جا پر می‌شود.',
+    /* ---- owner order 2026-11-21 — the published-chapter catalog («مسیر دوره»):
+     * every PUBLISHED chapter is listed with an honest per-chapter state; a
+     * locked chapter shows its prerequisite as the reason (never bypassed). */
+    chapterCatalogTitle: 'مسیر دوره',
+    chapterCatalogHint: 'هر فصل با پیش‌نیاز خودش اینجا دیده می‌شود — قفل‌ها با گذراندن فصلِ قبل باز می‌شوند.',
+    chapterCatalogActiveChip: 'همین فصل — در حال یادگیری',
+    chapterCatalogUnderstoodChip: 'فهمیده‌شده',
+    chapterCatalogReadyChip: 'آمادهٔ شروع',
+    chapterCatalogInProgressChip: 'شروع‌شده',
+    chapterCatalogLockedChip: 'قفل',
+    chapterCatalogLockedReason: (prerequisiteTitleFa: string) =>
+      `برای بازشدن این فصل، «${prerequisiteTitleFa}» را کامل کن.`,
+    chapterCatalogOpenLabel: 'ورود به فصل',
+    /* ---- owner order 2026-11-21 — the inline anchor dialogue section ---- */
+    dialogueSectionTitle: 'مکالمهٔ فصل',
+    dialogueInlineNote: 'همین‌جا در درس گوش کن و ببین — بعد به بخش بعدی همین درس ادامه می‌دهی.',
     chapterUnderstoodBadge: 'فهمیده‌شده',
     teaserTitle: 'بعد از این فصل…',
     teaserHint: 'با تمام‌کردن این فصل، فصل بعدی برایت باز می‌شود.',

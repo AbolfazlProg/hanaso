@@ -12,6 +12,7 @@ import {
   listDraftChapterSummaries,
   loadChapterBundle,
   chapterAccessStatus,
+  listPublishedChapterCatalog,
 } from '@/modules/curriculum/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { SiteNav, resolveReviewDueCount } from '@/components/site-nav';
@@ -82,6 +83,15 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
     home.nextStationSlug !== null
       ? (home.chapter.stations.find((st) => st.slug === home.nextStationSlug)?.titleFa ?? null)
       : null;
+
+  /*
+   * Owner order 2026-11-21 («فصل دوم باید در مسیر معمول یادگیری و فهرست فصل‌ها
+   * قابل مشاهده و انتخاب باشد»): the PUBLISHED-chapter catalog renders for
+   * EVERY learner on the learning home — the chapter list with honest lock
+   * states (a locked chapter names its prerequisite; drafts never list — the
+   * Draft/Published lifecycle and the prereq gates themselves stay intact).
+   */
+  const catalog = await listPublishedChapterCatalog(learnerId);
 
   const panelBtn = (href: string, label: string, active: boolean) =>
     active ? (
@@ -245,6 +255,7 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
         activeSectionIndex={home.activeSectionIndex}
         initialSectionSlug={s}
         reveal={{ archive: home.reveal.archive, teaser: home.isReview ? null : home.reveal.teaser }}
+        catalog={catalog}
       />
     </>
   );

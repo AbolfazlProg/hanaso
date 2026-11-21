@@ -379,6 +379,20 @@ export default async function StationPage({
             })),
             speakers,
           }}
+          dialogueScene={{
+            /*
+             * Owner order 2026-11-21 «مکالمه درون درس» — the FULL dialogue
+             * bundle for the inline anchor-dialogue section (the first real
+             * section of the chapter's first lesson — subtitles ON by default,
+             * grading through the same /api/curriculum/station round-trip).
+             * Serializable RSC transport — the same data the /dialogue page
+             * already ships (no new surface).
+             */
+            dialogueSlug: chapter.dialogueSlug,
+            dialogue,
+            characters: bundle!.bundle.characters,
+            audio: bundle!.bundle.audio,
+          }}
           audioByLine={audioByLine}
           audioFallbackByLine={audioFallbackByLine}
           audioAvailable={bundle!.bundle.audio.available}

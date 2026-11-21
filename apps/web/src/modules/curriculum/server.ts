@@ -233,6 +233,48 @@ export async function chapterAccessStatus(
   };
 }
 
+/**
+ * Owner order 2026-11-21 («فصل دوم باید قابل پیدا کردن و انتخاب باشد») — the
+ * PUBLISHED-chapter catalog: every published chapter in COURSE ORDER with its
+ * honest per-chapter state, so the learning home always shows the full path
+ * (a locked chapter renders its prerequisite as the REASON — locked ≠ hidden,
+ * Issue #94 — and never bypasses the Draft/Published lifecycle or the prereq
+ * gates: drafts stay owner-preview content and are NOT listed here).
+ */
+export interface ChapterCatalogRow {
+  slug: string;
+  titleFa: string;
+  levelCode: string;
+  /** 'understood' (gate passed) · 'in_progress' (touched) · 'not_started'. */
+  status: 'understood' | 'in_progress' | 'not_started';
+  /** The chapter-level prereq gate (DD-117/120) — locked chapters keep it. */
+  locked: boolean;
+  /** The prerequisite chapter's title — the LOCK REASON surfaced to the learner. */
+  prerequisiteTitleFa: string | null;
+}
+
+export async function listPublishedChapterCatalog(userId: string): Promise<ChapterCatalogRow[]> {
+  const chapters = courseOrder(listChapters());
+  const chapterStore = (await import('@/lib/poc/stores')).getChapterProgressStore();
+  const out: ChapterCatalogRow[] = [];
+  for (const c of chapters) {
+    // UX-AUDIT #142: a draft is owner-preview content — never product listing.
+    if (isDraftChapter(c.slug)) continue;
+    const access = await chapterAccessStatus(c, userId);
+    const state = await chapterStore.get(userId, c.slug);
+    out.push({
+      slug: c.slug,
+      titleFa: c.titleFa,
+      levelCode: c.levelCode,
+      status: state?.status === 'understood' ? 'understood' : state ? 'in_progress' : 'not_started',
+      locked: access.locked,
+      // a locked chapter's reason is its (first) unmet prerequisite title
+      prerequisiteTitleFa: access.locked ? access.prerequisiteTitleFa : null,
+    });
+  }
+  return out;
+}
+
 /*
  * TASK-HANASO-16 — the learning-home composition (one server call per render).
  *

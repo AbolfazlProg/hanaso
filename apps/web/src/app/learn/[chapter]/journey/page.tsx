@@ -1,5 +1,10 @@
 import { notFound } from 'next/navigation';
-import { loadChapterBundle, chapterAccessStatus, resolveLearnerJourney } from '@/modules/curriculum/server';
+import {
+  loadChapterBundle,
+  chapterAccessStatus,
+  resolveLearnerJourney,
+  listPublishedChapterCatalog,
+} from '@/modules/curriculum/server';
 import { previewUnlockAll, unlockAllMode } from '@/lib/preview';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
@@ -66,6 +71,10 @@ export default async function JourneyPage({
     home.nextStationSlug !== null
       ? (chapter.stations.find((st) => st.slug === home.nextStationSlug)?.titleFa ?? null)
       : null;
+  /* Owner order 2026-11-21 — the published-chapter catalog renders on the
+   * chapter map too (the learning home and the chapter pages share one
+   * surface; drafts never list, the prereq gates stay intact). */
+  const catalog = await listPublishedChapterCatalog(learnerId);
 
   return (
     <>
@@ -90,6 +99,7 @@ export default async function JourneyPage({
         activeSectionIndex={home.activeSectionIndex}
         initialSectionSlug={s}
         reveal={{ archive: home.reveal.archive, teaser: home.isReview ? null : home.reveal.teaser }}
+        catalog={catalog}
       />
     </>
   );

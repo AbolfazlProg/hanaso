@@ -56,6 +56,8 @@ import { MixedFaJaText } from './mixed-fa-ja-text';
 import { NameKatakana } from '@/components/curriculum/name-katakana';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
+import { InlineDialoguePlayer } from './inline-dialogue-player';
+import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
 import { ExampleAudioButton } from './example-audio-button';
@@ -71,6 +73,47 @@ interface Line {
   tokens: { surface: string }[];
   fa: string;
   speaker: string;
+}
+
+/**
+ * Owner order 2026-11-21 «مکالمه درون درس» — the full dialogue bundle for the
+ * INLINE anchor-dialogue section (serializable RSC transport, resolved
+ * server-side by the station page). Absent (older hosts / unit tests) → the
+ * dialogue-player block degrades to the legacy standalone link — never a
+ * broken player.
+ */
+interface DialogueSceneTransport {
+  dialogueSlug: string;
+  dialogue: Dialogue;
+  characters: CharacterRef[];
+  audio: {
+    available: boolean;
+    note?: string;
+    audioSource?: 'voicevox' | 'placeholder';
+    voiceCredits?: string[];
+    entries: {
+      lineId: string;
+      voiceId: string;
+      hash: string;
+      files: { opus: string; m4a: string };
+      bytes: number;
+      durationMs?: number;
+    }[];
+  };
+}
+
+/** The stripped dialogue-player block type (client transport — SKL-013). */
+type DialoguePlayerBlock = Extract<ClientTeachingBlock, { kind: 'dialogue-player' }>;
+
+/**
+ * Owner order 2026-11-21 — the anchor dialogue-opening contract: a `scene`
+ * block immediately followed by a `dialogue-player` block is ONE inline
+ * dialogue section — the lesson STARTS with the conversation itself visible
+ * (no button, no intermediate step, no separate page). Data-driven: any
+ * chapter whose first lesson authors this pair gets the behavior for free.
+ */
+function isDialogueOpeningPair(blocks: ClientTeachingBlock[], sceneIndex: number): boolean {
+  return blocks[sceneIndex]?.kind === 'scene' && blocks[sceneIndex + 1]?.kind === 'dialogue-player';
 }
 
 export interface StationRunnerProps {
@@ -138,6 +181,13 @@ export interface StationRunnerProps {
     lines: Line[];
     speakers: Record<string, string>;
   };
+  /**
+   * Owner order 2026-11-21 «مکالمه درون درس»: the FULL dialogue bundle for the
+   * inline anchor-dialogue section (the first real section of the chapter's
+   * first lesson). Absent → the dialogue-player block renders the legacy
+   * standalone link (honest degradation, never a broken player).
+   */
+  dialogueScene?: DialogueSceneTransport;
   audioByLine: Record<string, string>;
   audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
@@ -406,6 +456,7 @@ export function StationRunner(props: StationRunnerProps) {
     taughtKanaBeforeStation,
     clientExercises,
     dialogue,
+    dialogueScene,
     audioByLine,
     audioFallbackByLine,
     audioAvailable,
@@ -1036,6 +1087,17 @@ export function StationRunner(props: StationRunnerProps) {
   }, [blocks]);
 
   const next = useCallback(() => {
+    /*
+     * Owner order 2026-11-21 «مکالمه درون درس»: advancing FROM the scene part of
+     * an inline dialogue-opening pair skips the embedded dialogue-player block —
+     * its content is rendered INSIDE the scene's view; the walk never parks on
+     * a duplicated section. (Navigation pointer only — completion semantics,
+     * station prereqs and stored progress are untouched.)
+     */
+    if (isDialogueOpeningPair(blocks, step) && step + 2 <= blocks.length - 1) {
+      setStep(step + 2);
+      return;
+    }
     if (step < blocks.length - 1) {
       setStep((s) => s + 1);
       return;
@@ -1052,6 +1114,30 @@ export function StationRunner(props: StationRunnerProps) {
       void finishSession(stationFinishScore(blocks, blockResults, sessionScore) ?? 0);
     }
   }, [blockResults, blocks, finishSession, sessionScore, station.completion.kind, step]);
+
+  /**
+   * Owner order 2026-11-21 «مکالمه درون درس» — the inline player's OWN finish
+   * CTA («مشاهده کردم — ادامهٔ درس»): after watching the dialogue the learner
+   * continues to the next section of the SAME lesson. Pointer-only move —
+   * the station's completion criteria, prerequisites and stored progress are
+   * untouched (identical to pressing the walk's own forward action).
+   */
+  const advancePastDialogue = useCallback(
+    (dialogueStep: number) => {
+      const target = dialogueStep + 1;
+      if (target <= blocks.length - 1) {
+        setStep(target);
+        return;
+      }
+      // a dialogue-player block as the LAST authored block: the walk ends with
+      // the station's own completion rule (viewed/task/score — exactly `next`).
+      if (station.completion.kind === 'viewed') void finishSession(null);
+      else if (station.completion.kind === 'task_completed')
+        void finishSession(stationFinishScore(blocks, blockResults, sessionScore) ?? sessionScore, true);
+      else void finishSession(stationFinishScore(blocks, blockResults, sessionScore) ?? 0);
+    },
+    [blockResults, blocks, finishSession, sessionScore, station.completion.kind],
+  );
 
   /**
    * Issue #102 «مرحلهٔ قبل»: one block back — earned exercise results survive by
@@ -1229,6 +1315,21 @@ export function StationRunner(props: StationRunnerProps) {
           hostWordAudioByKanaId={hostWordAudioByKanaId}
           exampleAudioByWord={exampleAudioByWord}
           isLastBlock={step === blocks.length - 1}
+          dialogueScene={dialogueScene}
+          pairedScene={
+            block.kind === 'dialogue-player' && blocks[step - 1]?.kind === 'scene'
+              ? (blocks[step - 1] as { titleFa: string; bodyFa?: string })
+              : null
+          }
+          embeddedDialogueBlock={isDialogueOpeningPair(blocks, step) ? (blocks[step + 1] as DialoguePlayerBlock) : null}
+          dialogueStartAtLine={
+            block.kind === 'dialogue-player' && block.focusLineRefs.length > 0 ? block.focusLineRefs[0] : null
+          }
+          onDialogueFinished={() => {
+            const dialogueIndex =
+              block.kind === 'dialogue-player' ? step : isDialogueOpeningPair(blocks, step) ? step + 1 : -1;
+            if (dialogueIndex >= 0) void advancePastDialogue(dialogueIndex);
+          }}
           exerciseScore={block.kind === 'exercise' ? blockResult(blockResults, block.id) : null}
           exerciseInitialProgress={block.kind === 'exercise' ? exerciseProgress[block.id] : undefined}
           onExerciseProgress={(progress) => {
@@ -1760,6 +1861,11 @@ function BlockView({
   hostWordAudioByKanaId,
   exampleAudioByWord,
   isLastBlock,
+  dialogueScene,
+  pairedScene,
+  embeddedDialogueBlock,
+  dialogueStartAtLine,
+  onDialogueFinished,
   exerciseScore,
   exerciseInitialProgress,
   onExerciseProgress,
@@ -1785,6 +1891,16 @@ function BlockView({
   audioByLine: Record<string, string>;
   audioFallbackByLine?: Record<string, string>;
   audioAvailable: boolean;
+  /** Owner order 2026-11-21 — the full dialogue bundle (inline player). */
+  dialogueScene?: DialogueSceneTransport;
+  /** The scene block PAIRED with this dialogue-player block (grouped rendering). */
+  pairedScene?: { titleFa: string; bodyFa?: string } | null;
+  /** On a grouped scene block: the embedded dialogue-player block that follows. */
+  embeddedDialogueBlock?: DialoguePlayerBlock | null;
+  /** A revisit dialogue block starts at its first focus line (null = from the top). */
+  dialogueStartAtLine?: string | null;
+  /** The inline player's finish CTA → continue the SAME lesson's walk. */
+  onDialogueFinished?: () => void;
   wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
   /** WP-2/WP-3: resolved kana audio pairs (kanaId → opus+m4a | null). */
   kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
@@ -1832,6 +1948,26 @@ function BlockView({
 }) {
   switch (block.kind) {
     case 'scene': {
+      /*
+       * Owner order 2026-11-21 «مکالمه درون درس»: a scene block that opens an
+       * inline dialogue pair renders the conversation ITSELF — the dialogue is
+       * the lesson's FIRST REAL SECTION, visible immediately on the lesson
+       * page. No button, no navigation, no separate page: the compact scene
+       * intro + prediction + the multi-speaker player (subtitles ON by default)
+       * are one section of THIS lesson walk.
+       */
+      if (embeddedDialogueBlock && dialogueScene && onDialogueFinished) {
+        return (
+          <InlineDialoguePlayer
+            chapterSlug={chapterSlug}
+            stationSlug={stationSlug}
+            scene={{ titleFa: block.titleFa, bodyFa: block.bodyFa ?? '' }}
+            block={embeddedDialogueBlock}
+            bundle={dialogueScene}
+            onFinished={onDialogueFinished}
+          />
+        );
+      }
       /*
        * UX-AUDIT #142 (root B — no internal ids reach the learner): a scene
        * block's `conversationRef` resolves here through the walk's OWN
@@ -2538,7 +2674,28 @@ function BlockView({
         </section>
       );
 
-    case 'dialogue-player':
+    case 'dialogue-player': {
+      /*
+       * Owner order 2026-11-21 «مکالمه درون درس»: the dialogue-player block is
+       * the INLINE conversation of this lesson — the proven multi-speaker
+       * player renders right here (the dialogue never feels like a separate
+       * page). A replay block starts at its first focus line (no autoplay —
+       * the learner's own play press). Absent bundle (older host) → the legacy
+       * standalone link — the honest degradation, never a broken player.
+       */
+      if (dialogueScene && onDialogueFinished) {
+        return (
+          <InlineDialoguePlayer
+            chapterSlug={chapterSlug}
+            stationSlug={stationSlug}
+            scene={pairedScene ? { titleFa: pairedScene.titleFa, bodyFa: pairedScene.bodyFa ?? '' } : null}
+            block={block}
+            bundle={dialogueScene}
+            onFinished={onDialogueFinished}
+            startAtLine={dialogueStartAtLine ?? null}
+          />
+        );
+      }
       return (
         <section className="flex flex-col gap-3 rounded-md border-2 border-ai bg-card p-5">
           <h3 className="flex items-center gap-2 text-h3 font-bold text-ai">
@@ -2555,6 +2712,7 @@ function BlockView({
           </Link>
         </section>
       );
+    }
   }
 }
 
