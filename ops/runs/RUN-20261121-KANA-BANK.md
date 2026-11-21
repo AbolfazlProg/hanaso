@@ -161,7 +161,61 @@ merges manifests — existing files and entries stay byte-identical (the #146 wr
   The audio is static content under `public/audio/`; it is SERVED by the next standard image release
   (no VOICEVOX process involved — production only serves committed files, exactly as the owner set).
 
-## 5. Other agents' work — untouched
+## 6. Audio release DEPLOYED + constraint enforcement (follow-up session, same day)
+
+Owner order: «خودت درستش کن…» — complete the audio task; VOICEVOX never on the VPS; production serves
+static files only; no service/resource/settings changes.
+
+### 6.1 Independent re-verification of §4 (fresh sandbox, fresh clone — every claim reproduced)
+
+- **Text/pronunciation binding (strongest evidence)**: recomputed
+  `sha256(text|voicevox:90)[:16]` from the CONTENT SOURCE (`kana-items.ts` + the gen script's own
+  `--list` surface) and compared with both manifests — **184/184 kana + 257/257 words MATCH**; the
+  disk set equals the manifest set in both dirs (0 missing, 0 orphan);
+- **Format**: ffprobe on ALL 882 committed audio files (184+257 entries × opus/m4a) — codecs
+  `opus`/`aac` correct, per-file bytes == manifest bytes, durations == manifest durationMs (0
+  violations beyond the 60ms tolerance — in fact 0 deltas >60ms);
+- **Gates**: `h21-audio-inventory` → `surface=257 committed=257 pendingVpsRun=0`; full unit suite
+  **89 files / 984 tests ALL GREEN** locally; `tsc --noEmit` clean; prettier clean; CI on `161ab12`
+  → all 3 checks success (battery + compose smoke + image→GHCR).
+- **Replay on a fresh engine instance** (0.26.2, official release, isolated sandbox,
+  `127.0.0.1:50021`): regenerated `kn-hira-ga` / `kn-kata-za` / `kn-hira-kya` through the same
+  `--missing-only` chain — raw bytes differ by ≤6 B (ONNX-CPU encode nondeterminism) but decoded
+  audio **corr = 0.99965–0.99999** with **exactly equal durations** — independent confirmation that
+  the committed batch-2 files are genuine speaker-90 renders of the registry text, acoustically
+  uniform with batch-1.
+
+### 6.2 Deployment (same safe 10-step staged swap)
+
+- Script transferred base64 in 6 chunks; server SHA-256 `ee098a5519ac8bc8b36840e7400b76d6da1aac23ade535ebd8ea62d7944c6ffd`
+  byte-identical; executed detached (`/root/deploy-161ab12.log`) — **ALL 10 STEPS GREEN**, ends
+  `=== RELEASE LIVE: 161ab1215d40aa6c82b56f6dc6f947be47c4e475 (kana-bank audio completion — #153 surface) ===`;
+  safety artifacts: `/root/hanaso-backups/db-pre-audio-bank-20261121T121606Z.sql` + `.env.pre-audio-bank`;
+  rollback one-liner to `9be3984` recorded; postgres/pgbouncer untouched (Up 42h).
+- **Audio LIVE on production (verified from outside)**: `/api/health` → `"commit":"161ab12…"` ·
+  `ok:true`; `/audio/kana/kn-hira-ga.opus` → 200 `audio/ogg` **5204 B == manifest**;
+  `/audio/kana/kn-kata-za.m4a` → 200 `audio/mp4` **7836 B == manifest**; the batch-2 word
+  `ぎゅうにゅう` (`w-309edf148b9ccc7f.opus`) → 200 **8888 B == manifest**; `/audio/kana/manifest.json`
+  → 200. The cards' play controls now serve real committed audio — no live TTS anywhere.
+- Disk hygiene on the VPS: removed ONLY the double-superseded `78b1c9d` images (every earlier release
+  re-pullable from GHCR); inventory now exactly live `161ab12` + rollback `9be3984`; 4.2 GB free.
+
+### 6.3 Constraint enforcement — a violating instance found and STOPPED (not deleted)
+
+- **Finding**: container `voicevox-gen` (`voicevox/voicevox_engine:latest`, started
+  **2026-11-21T01:50:59Z** — hours BEFORE the audio session, idle ~0.8% CPU) was RUNNING on the VPS
+  with port **0.0.0.0:50021 published** — a direct violation of the owner's standing constraint
+  («VOICEVOX under no circumstances on the VPS») and an open TTS port on a production box.
+  The PR #153 audio session did NOT use it (batch-2 carries `runner-voicevox-0.26.2`; the sandbox
+  timeline confirms the isolated run) — this was a pre-existing/leftover instance.
+- **Action** (direct compliance, minimal and reversible): `docker stop voicevox-gen` — the container
+  is stopped (restart policy `no` → stays down across reboots), **port 50021 verified closed**,
+  image/container/files NOT deleted — restorable any time with `docker start voicevox-gen` if the
+  owner ever wants it (not recommended while the constraint stands). Nothing else on the VPS was
+  changed; the hanaso services (web/worker/postgres/pgbouncer) and other tenants (msg-*, coturn,
+  ntfy) untouched.
+
+## 7. Other agents' work — untouched
 
 Open PRs #113 / #115 / #120 / #123 / #128 (dependabot + other agents) were not touched; no branch of
 theirs was modified; the merge used squash per the repo's merge policy.
