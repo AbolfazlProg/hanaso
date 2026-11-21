@@ -90,7 +90,7 @@ async function verifyCast() {
     if (!style || style.name !== 'ノーマル') {
       throw new Error(`style ${styleId} for ${speakerName} is not ノーマル on this engine`);
     }
-    console.log('cast verified:', speakerName, `style ${styleId}`, 'ノーマル');
+    console.log('cast verified:', voiceId, speakerName, `style ${styleId}`, 'ノーマル');
   }
 }
 
