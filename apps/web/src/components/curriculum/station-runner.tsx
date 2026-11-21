@@ -3194,7 +3194,13 @@ function CharacterSceneBlock({
         );
       })}
 
-      {reply[stepIndex] && !finished && (
+      {/* ISSUE #147: a step WITHOUT a userReply (pure narration beat) must still
+          be advanceable — its «ادامه» renders immediately, because there is
+          nothing to answer. A reply-bearing step keeps the answered gate: the
+          scene advances only on a real registration (PART1-FIX-1). Without
+          this, a multi-step scene whose early steps are narration-only locks at
+          its first step forever (stn-fm01-09-integrate / blk-i1-scene). */}
+      {(reply[stepIndex] || !current?.userReply) && !finished && (
         <button
           type="button"
           onClick={advance}
