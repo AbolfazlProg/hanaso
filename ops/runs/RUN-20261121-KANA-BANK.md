@@ -89,6 +89,38 @@
   · `/api/ready` db ok — the live release is UNCHANGED and HEALTHY; the new release ships when the owner
   runs the one-command (terminal repair is independent and can happen any time).
 
+### 3.1 Deployment EXECUTED — the owner repaired the server connection (~07:29Z, same day)
+
+With the owner's order «خودت درستش کن — اتصال به سرور الان درست شده» the executor ran the prepared
+release through the official web-terminal (root shell — the same ttyd path the browser uses):
+
+- **Pre-flight (server, read-only)**: `.env` image line = `hanaso-web:78b1c9d…` · web+worker Up 8h
+  (healthy) · postgres+pgbouncer Up 38h (healthy) · `/api/health` → `78b1c9d`.
+- **Disk hygiene (REQUIRED before the pull — honest deviation, documented)**: `/` at 97% (612MB free)
+  would fail the 1.27GB pull and endanger postgres. Removed ONLY the superseded hanaso release images
+  (a7f5325 / c9f74d4 / b46b948 / d942352 / 36cb4a5 — every one re-pullable from GHCR); the rollback
+  target `hanaso-web:78b1c9d…` RETAINED; voicevox/coturn/ntfy/other services untouched. Result: 5.4GB
+  free (71%).
+- **Transfer integrity**: script moved base64 in 6 chunks; server SHA-256
+  `623c4f6b4e203b3383f273ef67e60032045e3c110f85fce5530cb79220fb65f8` — byte-identical to the prepared
+  owner-command body.
+- **Execution** (detached, `/root/deploy-9be3984.log`): **ALL 10 STEPS GREEN** — ends
+  `=== RELEASE LIVE: 9be3984009b73995f03b7c7f9974606e965bd4ee (kana-bank + fm01-09 fix) ===`.
+- **Safety artifacts**: `/root/hanaso-backups/db-pre-kana-bank-20261121T072920Z.sql` (728,908 bytes,
+  read-only pg_dump) + `.env.pre-kana-bank`; the deploy itself modified no user data.
+- **Post-deploy verification from OUTSIDE the VPS**: `/api/health` →
+  `"commit":"9be3984009b73995f03b7c7f9974606e965bd4ee"` · `ok:true` · `/api/ready` process ok +
+  database ok (PG 18.6, 14ms) · `/`, `/learn`, `/review` all 200 · `/api/review/queue` → FSRS-6
+  integrated, honest empty for a fresh visitor.
+- **Real learner-path evidence for #146**:
+  `/api/curriculum/journey?chapter=kana-expansion-01` → `ok:true` · title «فصل ۰۱+ — بسطِ نوشتار:
+  داکوتن، هان‌داکوتن و یُوئون» · `coreTotal: 20` · `nodes: 20` (stn-kana-hd1 «ردیف が — داکوتنِ か行» …)
+  · unlocked; `/learn/kana-expansion-01` → 200 with no cookies. (The `/learn` index HTML listing only
+  the current chapter is the documented UX contract — one chapter at a time, never a chapter list.)
+- **Server state after**: web+worker Up (healthy) on the `9be3984…` image; postgres+pgbouncer Up 38h
+  (untouched); disk 4.4GB free (77%); rollback artifact = image `hanaso-web:78b1c9d…` retained + the
+  printed one-liner + the DB backup path above.
+
 ## 4. Other agents' work — untouched
 
 Open PRs #113 / #115 / #120 / #123 / #128 (dependabot + other agents) were not touched; no branch of
