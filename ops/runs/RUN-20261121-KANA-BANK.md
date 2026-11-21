@@ -298,3 +298,75 @@ PR, and all 3 checks (battery + compose smoke + image→GHCR) GREEN on main `a66
   first-meeting-01 14 assets, kana-welcome-01 3 lines, kana-expansion-01 3 lines);
 - kana bank 184/184 + word audio 257/257 unchanged (h21 gate `pendingVpsRun=0`);
 - **nothing pending on the audio side of #146** — the §6.4 "REMAINING" item is resolved by §8.
+
+## 9. Follow-up (RUN-20261121-04): the three owner-order UX fixes — DEPLOYED
+
+Owner order (2026-11-21): fix ONLY the three reported problems — (۱) chapter 2 not findable in the
+UI; (۲) the dialogue behind a button on a separate page in the first lesson; (۳) the auto-scroll
+gluing the active line to the transcript bottom. Scope guards honored: no full-content audit, no
+unrelated changes, the teaching system / prereqs / progress logic untouched.
+
+### 9.1 PR #157 → squash-merged as `3a8ed39dc6ec165be76621dd2594e887f42955fe`
+
+Shared structural fixes (zero chapter-2 hardcode):
+
+1. **The published-chapter catalog** («مسیر دوره»): `listPublishedChapterCatalog` (server) — every
+   PUBLISHED chapter in course order with an honest state + the prereq-gate reason; rendered by the
+   shared `JourneyHome` (catalog prop) on /learn and the chapter maps. A locked chapter stays
+   listed with its prerequisite as the reason and links to the SAME soft-lock notice (#94
+   «قفل ≠ مخفی»); drafts never list (UX-AUDIT #142); the Draft/Published lifecycle and prereq gates
+   are NOT bypassed. The reveal module's «future chapters never listed» policy is superseded by
+   the owner directive — documented in the component header.
+2. **The inline anchor dialogue** (the shared lesson contract): the authored `[scene →
+dialogue-player]` pair renders as ONE inline dialogue section (`InlineDialoguePlayer` +
+   `isDialogueOpeningPair` — data-driven; future chapters inherit it from their authored blocks):
+   the lesson STARTS with the conversation itself on screen — compact scene intro + prediction
+   (server-graded grade-block, SKL-013) + the proven multi-speaker player INLINE. No button, no
+   separate page, no intermediate step; the in-player «پایان مشاهده» CTA continues the SAME lesson
+   (walk/completion/prereq semantics untouched — pointer-only moves); a revisit block starts
+   POSITIONED at its first focus line (never auto-plays). Subtitles: the teaching stage starts ON
+   regardless of stored settings (`subtitleDefaultOn` — the #144 seeding skipped); the
+   comprehension-check stage keeps its no-transcript gist questions + the gradual-hint ladder.
+3. **The transcript comfort band** (`comfortScrollTarget`, pure + tested): the active line's top
+   held at 34% of the transcript viewport height — anchored to the character stage, upcoming lines
+   visible below, NEVER glued to the bottom edge; clamped + toleranced (no jitter; early lines
+   stay natural); prefers-reduced-motion → instant; matchMedia guarded.
+
+### 9.2 QA
+
+- 15 new regression tests (`tests/unit/ui/inline-dialogue-contract.test.tsx`): the comfort-band
+  math, the subtitle defaults (teaching ON / default comprehension-first / stored-OFF cannot win),
+  the inline player markup (no page hop), the grouped walk (lesson starts with the dialogue; the
+  embedded block is skipped; the watch-gated CTA), the catalog rows/states/reasons;
+  **full battery 90 files / 999 tests GREEN**; tsc/eslint/prettier clean;
+- **real-browser passes (agent-browser)** — desktop 1440×900 + iPhone 14 (390×844):
+  - fresh learner (no unlock): catalog rows + chapter 2 «قفل» + the reason «برای بازشدن این فصل،
+    «فصل ۰۱…» را کامل کن.» + the clickable row → the honest lock notice; chapter 1's first lesson
+    (stn-kana-h0) opens straight into the inline dialogue (subtitles ON, 3 lines, watch-gated CTA →
+    wrap-up → honest completion);
+  - chapter 2's first lesson (stn-fm01-01-anchor, rehearsal via the owner's documented
+    UNLOCK_ALL_MODE — no code bypass): prediction graded server-side → the 14-line playback with
+    the MEASURED comfort band (**lineTopPct = 34 at lines 2/8/10**, mobile 34% too) → «پایان
+    مشاهده» → the check stage (3 simple gist questions; a wrong answer walked the F-ladder + the
+    «سرنخ» hint button live) → station complete; zero console errors.
+
+### 9.3 Deployment + production verification
+
+- CI on the PR: battery + compose smoke GREEN (image→GHCR is main-only by design); CI on main
+  `3a8ed39`: all 3 checks GREEN; the 10-step staged swap ran ALL GREEN →
+  `=== RELEASE LIVE: 3a8ed39… (the three UX fixes — #157 surface) ===`; backup
+  `db-pre-ux-fixes-20261121T163501Z.sql` + `.env` copy; rollback one-liner to `a66a40c` recorded;
+  postgres/pgbouncer untouched (Up 46 h).
+- **Production verified from the real browser** (desktop + mobile): /learn renders «مسیر دوره»
+  (chapter 2 listed + selectable — with the owner's standing UNLOCK_ALL_MODE=1 it shows
+  «آمادهٔ شروع»; the locked+reason state verified on the fresh dev pass and pinned by tests);
+  chapter 2's first lesson opens straight into the inline dialogue (subtitles ON; the character
+  stage in the viewport; transcript 321px mobile) with the REAL production audio playing
+  («خط ۴ از ۱۳ · در حال پخش») and the comfort band at 34%; regression probes green (/, /learn,
+  /review, chapter pages 200; health `3a8ed39` ok:true; audio assets byte-served).
+
+### 9.4 Constraints at report time
+
+`voicevox-gen` = Exited (0), port 50021 CLOSED (never restarted); disk hygiene per the §6.2
+pattern (the double-superseded `161ab12` removed — re-pullable from GHCR): inventory = live
+`3a8ed39` + rollback `a66a40c`, 4.2 GB free.
