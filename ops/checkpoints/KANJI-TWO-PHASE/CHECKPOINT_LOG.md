@@ -14,3 +14,11 @@
 - **§۶ Regression Tests (دائمی، روی مسیر اصلی موتور):** `kanji-reference.test.ts` (۹) + `kanji-contract.test.ts` (۱۱) + `memory-admission.test.ts` (۹) + `two-phase-gates.test.ts` (۱۴) — همهٔ ۸ سناریوی رد مأموریت پوشش داده شد. باتری کل: **۱۱۵۰/۱۱۵۰ سبز** · tsc/eslint/prettier سبز · build سبز · EQA روی فصل‌های واقعی: بدون خطای جدید.
 - **فایل‌های تغییرکرده:** ۲۲۷ فایل stage شده (۱۰۳ SVG vendor + ۱۰۳ writing-data + ۲۰ فایل کد/تست/مستند/طرح). SHA پس از commit در ادامه ثبت می‌شود.
 - **باقی‌مانده:** §۸ تست Backend/DB/CI + PR + Merge + Deploy + تأیید SHA از Health Endpoint؛ §۹ گزارش نهایی.
+
+## CP2 — ۲۰۲۶-۱۱-۲۲ (۲۰:۰۵): انتشار کامل §۸/§۹
+
+- **PR #164 (مأموریت ۱):** push شاخه + اصلاح دو فایل قالب prettier که CI گرفته بود (ffa2fcf `style(engine)` + 7c5505c `style(ops)` — هر دو hygiene-waiver: format-only) → CI سبز → squash-merge → **main `f0abfe1`**.
+- **PR #165 (مأموریت ۲):** شاخه `feat/kanji-memory-two-phase` → کامیت `84867bb` → CI روی شاخه سبز (run 45059802565: verify+compose-smoke) → PR → squash-merge → **main `d2a597a`** → CI روی main سبز سه-job (run 45060360631: verify + compose-smoke + **image→GHCR tag=d2a597a**).
+- **Deploy VPS:** الگوی مرحله‌ای مالک؛ بکاپ pg_dump 767KB (20261122T195139Z/200004Z) + .env؛ pull ایمیج پین‌شده؛ sync سورس؛ تعویض خط ایمیج؛ `up -d --no-deps web worker`. **سه مانع رفع شد:** (۱) مرگ اسکریپت با قطع سشن → nohup؛ (۲) دیسک پُر ۹۷٪ (604MB آزاد) → حذف ۴ ایمیج منقضی hanaso (f90ff43/9ef7881/3a8ed39/a66a40c) → ۴.۵GB آزاد (rollback به b75afea محفوظ)؛ (۳) نام سرویس compose = web/worker (نه hanaso-web).
+- **تأیید SHA از Health Endpoint (سه سطح):** tier1 محلی `ok:true @ d2a597a` · `/api/ready` database ok (PG 18.6) · **public `https://hanaso.ir/api/health` → `"commit":"d2a597a905c0584811392577c2dd6fcb50b5e0e6"`** — هر دو کانتینر روی ایمیج جدید.
+- **فایل‌های تغییرکرده این checkpoint:** ops/runs/RUN-20261122-KANJI-TWO-PHASE.md (نو) · ops/AGENT_RUN_LOG.md (ردیف RUN-20261122-04) · CURRENT_PHASE.md (سرصفحهٔ ۲۰۲۶-۱۱-۲۲) · این فایل. **آخرین SHA زنده: `d2a597a905c0584811392577c2dd6fcb50b5e0e6`** — docs(ops) commit پس از این می‌آید.
