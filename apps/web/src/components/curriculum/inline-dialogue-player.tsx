@@ -135,7 +135,11 @@ export function InlineDialoguePlayer({
           the SAME section (context preparation, not an intermediate step) */}
       {scene && (
         <div className="rounded-md border border-ink-faint bg-surface-warm px-4 py-3">
-          <p className="text-small font-bold text-ink">{scene.titleFa}</p>
+          {/* JOURNEY-FIX 2026-11-23 §۱: scene title/body render through the shared
+              mixed-direction renderer (a scene title may embed a Japanese run). */}
+          <p className="text-small font-bold text-ink">
+            <MixedFaJaText text={scene.titleFa} />
+          </p>
           <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
             <MixedFaJaText text={scene.bodyFa} />
           </p>

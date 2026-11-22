@@ -35,6 +35,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { SectionJourney, type SectionDto, type StationContentKind } from './section-journey';
+import { MixedFaJaText } from './mixed-fa-ja-text';
 import type { Station } from '@/modules/curriculum/types';
 
 /**
@@ -180,7 +181,13 @@ export function JourneyHome(props: JourneyHomeProps) {
           <Compass aria-hidden className="size-8" />
         </span>
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-h2 font-black text-indigo">{chapterTitleFa}</h2>
+          {/* JOURNEY-FIX 2026-11-23 §۱ (mixed-direction display): the chapter title
+             * embeds a Japanese run (わたしは学生です) — it renders through the shared
+             * MixedFaJaText engine so the JP run keeps the ja-block font stack and
+             * stable bidi isolation, exactly like every other mixed line. */}
+          <h2 className="text-h2 font-black text-indigo">
+            <MixedFaJaText text={chapterTitleFa} />
+          </h2>
           {chapterUnderstood ? (
             <span className="flex items-center gap-1 rounded-full border-2 border-ink bg-ink px-2.5 py-0.5 text-caption text-paper">
               <CircleCheck aria-hidden className="size-3.5" />
@@ -188,7 +195,9 @@ export function JourneyHome(props: JourneyHomeProps) {
             </span>
           ) : null}
         </div>
-        <p className="mt-3 max-w-prose text-body leading-[var(--leading-fa)] text-ink">{chapterCanDoFa}</p>
+        <p className="mt-3 max-w-prose text-body leading-[var(--leading-fa)] text-ink">
+          <MixedFaJaText text={chapterCanDoFa} />
+        </p>
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-small text-ink-soft">
           <span className="flex items-center gap-1.5">
             <Clock3 aria-hidden className="size-4" />
@@ -233,7 +242,9 @@ export function JourneyHome(props: JourneyHomeProps) {
             <>
               {coreCompleted > 0 ? fa.curriculum.continueLearning : fa.curriculum.startLearning}
               {nextStationTitleFa ? (
-                <span className="text-body font-bold text-indigo-mist">— {nextStationTitleFa}</span>
+                <span className="text-body font-bold text-indigo-mist">
+                  — <MixedFaJaText text={nextStationTitleFa} />
+                </span>
               ) : null}
               <ArrowLeft aria-hidden className="size-5" />
             </>
@@ -304,7 +315,9 @@ export function JourneyHome(props: JourneyHomeProps) {
                       className="flex min-h-12 flex-wrap items-center gap-2 rounded-md border-2 border-indigo/60 bg-indigo-wash/30 px-4 py-2.5"
                       aria-current="true"
                     >
-                      <span className="text-body font-bold text-indigo">{row.titleFa}</span>
+                      <span className="text-body font-bold text-indigo">
+                        <MixedFaJaText text={row.titleFa} />
+                      </span>
                       {chip}
                     </div>
                   ) : (
@@ -312,7 +325,9 @@ export function JourneyHome(props: JourneyHomeProps) {
                       href={`/learn/${row.slug}/journey`}
                       className="flex min-h-12 flex-wrap items-center gap-2 rounded-md border border-ink-faint bg-paper px-4 py-2.5 text-body text-ink transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
                     >
-                      <span className="font-bold">{row.titleFa}</span>
+                      <span className="font-bold">
+                        <MixedFaJaText text={row.titleFa} />
+                      </span>
                       {chip}
                       <span className="ms-auto text-caption text-ink-soft" aria-hidden>
                         {fa.curriculum.chapterCatalogOpenLabel}
@@ -342,9 +357,11 @@ export function JourneyHome(props: JourneyHomeProps) {
             <Sparkles aria-hidden className="size-5" />
             {fa.curriculum.teaserTitle}
           </h2>
-          <p className="mt-2 text-body font-bold text-ink">{reveal.teaser.titleFa}</p>
+          <p className="mt-2 text-body font-bold text-ink">
+            <MixedFaJaText text={reveal.teaser.titleFa} />
+          </p>
           <p className="mt-1 max-w-prose text-small leading-[var(--leading-fa)] text-ink-soft">
-            {reveal.teaser.topicFa}
+            <MixedFaJaText text={reveal.teaser.topicFa} />
           </p>
           <p className="mt-3 text-caption text-ink-soft">{fa.curriculum.teaserHint}</p>
         </aside>
@@ -368,7 +385,9 @@ export function JourneyHome(props: JourneyHomeProps) {
                     href={`/learn/${c.slug}/journey`}
                     className="flex min-h-12 items-center justify-between gap-3 rounded-md border border-ink-faint bg-paper px-4 py-2.5 text-body text-ink transition-colors hover:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
                   >
-                    <span className="font-bold">{c.titleFa}</span>
+                    <span className="font-bold">
+                      <MixedFaJaText text={c.titleFa} />
+                    </span>
                     <span className="flex items-center gap-1 text-caption text-ink-soft">
                       <CircleCheck aria-hidden className="size-4" />
                       {fa.curriculum.chapterUnderstoodBadge}

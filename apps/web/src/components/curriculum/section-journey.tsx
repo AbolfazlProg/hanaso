@@ -428,7 +428,9 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                     : 'border-ink-faint/60 bg-card text-ink hover:border-ai hover:bg-indigo-wash',
                 ].join(' ')}
               >
-                <span className="min-w-0 truncate text-small font-bold">{sec.titleFa}</span>
+                <span className="min-w-0 truncate text-small font-bold">
+                  <MixedFaJaText text={sec.titleFa} />
+                </span>
                 {sec.status === 'locked' ? <Lock aria-hidden className="size-3.5 shrink-0 opacity-70" /> : null}
                 {active ? (
                   <span className="ms-auto rounded-full bg-paper/15 px-2 py-0.5 text-caption">
@@ -453,7 +455,11 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
             rows by one hairline. NO background boxes, NO decorative frames
             behind the texts (the owner's explicit rule). ---- */}
         <header className="border-b border-ink-faint/40 p-5 sm:p-6">
-          <h2 className="text-h2 font-black text-ink">{section.titleFa}</h2>
+          {/* JOURNEY-FIX 2026-11-23 §۱: the section title (unit name) embeds a
+              Japanese run — through the shared mixed-direction renderer, same as rows. */}
+          <h2 className="text-h2 font-black text-ink">
+            <MixedFaJaText text={section.titleFa} />
+          </h2>
           {section.goalFa ? (
             <p className="mt-3 max-w-prose text-body leading-[var(--leading-fa)] text-ink-soft">
               <span className="font-bold text-ink">{fa.curriculum.sectionGoalLabel}: </span>

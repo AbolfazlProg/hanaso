@@ -4,6 +4,7 @@ import { resolveLearnerId } from '@/lib/learner/server';
 import { stripStationAnswerMaterial } from '@/modules/curriculum/client-transport';
 import { AnchorDialogueExperience } from '@/components/curriculum/anchor-dialogue-experience';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
+import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import { fa } from '@/messages/fa';
 
 /**
@@ -53,10 +54,15 @@ export default async function AnchorDialoguePage({ params }: { params: Promise<{
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-6 px-4 py-10">
       <header className="flex flex-col gap-2">
         <p className="text-caption text-ink-soft">
-          {chapter.titleFa} · {anchor.titleFa}
+          {/* JOURNEY-FIX 2026-11-23 §۱: mixed-direction header — shared renderer. */}
+          <MixedFaJaText text={chapter.titleFa} /> · <MixedFaJaText text={anchor.titleFa} />
         </p>
-        <h1 className="text-h1 font-black text-indigo">{anchor.titleFa}</h1>
-        <p className="text-lead text-ink-soft">{anchor.objectiveFa}</p>
+        <h1 className="text-h1 font-black text-indigo">
+          <MixedFaJaText text={anchor.titleFa} />
+        </h1>
+        <p className="text-lead text-ink-soft">
+          <MixedFaJaText text={anchor.objectiveFa} />
+        </p>
       </header>
       <AnchorDialogueExperience
         chapterSlug={chapter.slug}
