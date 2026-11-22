@@ -17,10 +17,13 @@
  *     behavior from its authored [scene, dialogue-player] anchor blocks — no
  *     per-chapter code.
  *
- * Subtitle contract (same owner order): the TEACHING stage starts with the
- * Persian subtitle ON regardless of the learner's stored settings (the
- * comprehension-check stage after the dialogue keeps its no-transcript,
- * gradual-hint exercise flow — unchanged).
+ * Subtitle contract (JOURNEY-FIX 2026-11-23 §۴ — supersedes the 2026-11-21
+ * order for the FIRST listen): the anchor's first full-conversation playback
+ * is PURE LISTENING — the Persian subtitle starts OFF and PINNED off (the
+ * «شکاف دانستن» knowledge-gap experience; the mid-playback toggle stays
+ * available). TEACHING replays (the revisit blocks) keep the subtitle ON by
+ * default, and the comprehension-check stage after the dialogue keeps its
+ * no-transcript, gradual-hint exercise flow — unchanged.
  *
  * Prediction grading stays the honest server round-trip (SKL-013): the block
  * arrives pre-stripped (no correctOptionId / revealFa) and grades through
@@ -69,6 +72,17 @@ export interface InlineDialoguePlayerProps {
    */
   onFinished: () => void;
   /**
+   * JOURNEY-FIX 2026-11-23 §۴ (subtitle policy — «شکاف دانستن» first listen):
+   * TRUE on the chapter's FIRST full-conversation encounter (the anchor
+   * station): the Persian subtitle starts OFF and PINNED off (pure listening —
+   * the knowledge-gap experience; the mid-playback toggle stays available).
+   * FALSE on every TEACHING replay (the revisit blocks): subtitle ON by
+   * default, exactly as the 2026-11-21 teaching order. The comprehension-check
+   * stage keeps its own no-transcript flow unchanged.
+   * Data-driven at the runner from the STATION TYPE — never a chapter hardcode.
+   */
+  firstListen?: boolean;
+  /**
    * The line the player starts positioned at (a REVISIT block starts at its
    * first focus line; the chapter-opening dialogue starts from the top — null).
    * Never auto-plays: the learner's own «پخش» press is the user-gesture chain.
@@ -83,6 +97,7 @@ export function InlineDialoguePlayer({
   block,
   bundle,
   onFinished,
+  firstListen = false,
   startAtLine = null,
 }: InlineDialoguePlayerProps) {
   const prediction = block.prediction;
@@ -196,8 +211,9 @@ export function InlineDialoguePlayer({
       {/* the proven multi-speaker player, INLINE in the lesson walk:
           TASK-LEARNING-07 / Issue #101 `embedded` — every PoC navigation surface
           hidden; the WALK owns completion (onFinished → the next section).
-          Owner order 2026-11-21: the teaching stage's subtitle starts ON
-          (subtitleDefaultOn) regardless of the stored settings. */}
+          JOURNEY-FIX 2026-11-23 §۴: firstListen (the anchor's first full
+          encounter) pins the Persian subtitle OFF — pure listening, the toggle
+          remains mid-playback; teaching replays keep the ON default. */}
       <DialogueScene
         bundle={{
           dialogue: bundle.dialogue,
@@ -208,7 +224,8 @@ export function InlineDialoguePlayer({
         initialLineId={startLineId}
         autoStart={false}
         embedded
-        subtitleDefaultOn
+        subtitleDefaultOn={!firstListen}
+        subtitlePinned={firstListen}
         onFinish={onFinished}
       />
 

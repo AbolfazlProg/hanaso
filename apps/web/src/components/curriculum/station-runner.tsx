@@ -1336,6 +1336,13 @@ export function StationRunner(props: StationRunnerProps) {
               : null
           }
           embeddedDialogueBlock={isDialogueOpeningPair(blocks, step) ? (blocks[step + 1] as DialoguePlayerBlock) : null}
+          /* JOURNEY-FIX 2026-11-23 §۴ (subtitle policy — data-driven, never a
+           * chapter hardcode): the ANCHOR station is by contract the chapter's
+           * FIRST full-conversation encounter → its inline dialogue plays the
+           * first listen with the Persian subtitle OFF + pinned off («شکاف
+           * دانستن» pure listening; the mid-playback toggle stays available).
+           * Every other station's dialogue blocks are teaching replays → ON. */
+          dialogueFirstListen={station.type === 'anchor'}
           dialogueStartAtLine={
             block.kind === 'dialogue-player' && block.focusLineRefs.length > 0 ? block.focusLineRefs[0] : null
           }
@@ -1879,6 +1886,7 @@ function BlockView({
   dialogueScene,
   pairedScene,
   embeddedDialogueBlock,
+  dialogueFirstListen,
   dialogueStartAtLine,
   onDialogueFinished,
   exerciseScore,
@@ -1914,6 +1922,10 @@ function BlockView({
   pairedScene?: { titleFa: string; bodyFa?: string } | null;
   /** On a grouped scene block: the embedded dialogue-player block that follows. */
   embeddedDialogueBlock?: DialoguePlayerBlock | null;
+  /* JOURNEY-FIX 2026-11-23 §۴: TRUE → the inline dialogue is the chapter's FIRST
+   * listen (anchor station): Persian subtitle OFF + pinned off. FALSE (default)
+   * → teaching replay: subtitle ON. */
+  dialogueFirstListen?: boolean;
   /** A revisit dialogue block starts at its first focus line (null = from the top). */
   dialogueStartAtLine?: string | null;
   /** The inline player's finish CTA → continue the SAME lesson's walk. */
@@ -1970,8 +1982,9 @@ function BlockView({
        * inline dialogue pair renders the conversation ITSELF — the dialogue is
        * the lesson's FIRST REAL SECTION, visible immediately on the lesson
        * page. No button, no navigation, no separate page: the compact scene
-       * intro + prediction + the multi-speaker player (subtitles ON by default)
-       * are one section of THIS lesson walk.
+       * intro + prediction + the multi-speaker player are one section of THIS
+       * lesson walk. JOURNEY-FIX 2026-11-23 §۴: the ANCHOR station's pair is
+       * the first listen — subtitle OFF + pinned; teaching replays stay ON.
        */
       if (embeddedDialogueBlock && dialogueScene && onDialogueFinished) {
         return (
@@ -1982,6 +1995,7 @@ function BlockView({
             block={embeddedDialogueBlock}
             bundle={dialogueScene}
             onFinished={onDialogueFinished}
+            firstListen={dialogueFirstListen === true}
           />
         );
       }

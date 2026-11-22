@@ -54,8 +54,10 @@ export const FM01_STATIONS: Station[] = [
          * کاملاً حذف شود»): the GRADED pre-viewing prediction is REMOVED —
          * the learner was forced to GUESS content they had neither been taught
          * nor even heard. The anchor is now the pure viewing experience
-         * (subtitles ON) + the post-viewing gist checks below, which are
-         * answerable straight from what was just seen. */
+         * (JOURNEY-FIX 2026-11-23 §۴: the FIRST LISTEN plays with the Persian
+         * subtitle OFF + pinned — «شکاف دانستن» pure listening; teaching
+         * replays and the post-viewing gist checks below are unchanged, the
+         * checks answerable straight from what was just heard). */
         kind: 'dialogue-player',
         id: 'blk-a1-dialogue',
         focusLineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(10), L(11), L(12), L(13)],

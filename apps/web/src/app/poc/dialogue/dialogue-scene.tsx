@@ -83,8 +83,21 @@ export interface DialogueSceneProps {
    * FIRST viewing silent-subtitled. The learner can still toggle mid-playback
    * (session-local); only the comprehension-check stage (the exercise blocks
    * after the dialogue — no transcript there) is subtitle-free.
+   *
+   * JOURNEY-FIX 2026-11-23 §۴ (owner order «زیرنویس از اولین پخش مکالمه»):
+   * the FIRST LISTEN (the anchor station's first full-conversation encounter —
+   * the «شکاف دانستن» listening) starts with the Persian subtitle OFF and
+   * PINNED off — even a stored «روشن» device default cannot pre-load the text
+   * onto the first listening; the toggle stays available mid-playback for
+   * learners who genuinely need it. Teaching replays keep the ON default.
    */
   subtitleDefaultOn?: boolean;
+  /**
+   * True = the resolved default (ON or OFF) is pinned: the stored device
+   * default (settings → زیرنویس فارسی) does NOT re-seed the initial state.
+   * Set together with subtitleDefaultOn={false} for the first-listen stage.
+   */
+  subtitlePinned?: boolean;
   /**
    * Start AT `initialLineId` WITHOUT auto-playing (a lesson-walk replay block
    * seeks to its focus line and waits for the learner's own play press — the
@@ -142,6 +155,7 @@ export function DialogueScene({
   embedded = false,
   onFinish,
   subtitleDefaultOn = false,
+  subtitlePinned = false,
   autoStart = true,
 }: DialogueSceneProps) {
   const logSceneEvent = makeSceneLogger(dialogueSlug);
@@ -189,8 +203,11 @@ export function DialogueScene({
   // Owner order 2026-11-21: in the TEACHING mode the subtitle is already ON and
   // the stored setting is deliberately NOT consulted — the previous setting
   // must never leave the first viewing of the lesson's dialogue unsubtitled.
+  // JOURNEY-FIX 2026-11-23 §۴: a PINNED first-listen (subtitlePinned) skips the
+  // stored-default seeding entirely — the first full listen starts text-free
+  // («شکاف دانستن»); the mid-playback toggle remains the learner's own choice.
   useEffect(() => {
-    if (!subtitleDefaultOn && readSubtitleDefault()) setShowFa(true);
+    if (!subtitleDefaultOn && !subtitlePinned && readSubtitleDefault()) setShowFa(true);
     if (readAudioSpeedDefault() === 'slow') setSpeed(0.75);
   }, []);
 
@@ -633,9 +650,15 @@ export function DialogueScene({
                 <button
                   type="button"
                   onClick={() => playFrom(line.id)}
-                  /* min 44×44 touch target (WCAG 2.5.5 — Reviewer-B S2 mobile) */
+                  /* min 44×44 touch target (WCAG 2.5.5 — Reviewer-B S2 mobile).
+                   * JOURNEY-FIX 2026-11-23 §۴: the accessible name identifies the
+                   * line by SPEAKER + NUMBER — never by its Persian translation
+                   * (the translation toggles with showFa; leaking it into every
+                   * row's aria-label pre-listened the whole conversation for
+                   * screen-reader users and defeated the comprehension-first
+                     subtitle policy). The Japanese text is already visible in the row. */
                   className="mt-1 grid size-11 place-items-center rounded-md border-2 border-indigo px-2 py-1 text-caption font-bold text-indigo hover:bg-indigo-wash"
-                  aria-label={`پخش از این خط: ${speakerLabel(line, characters)} — ${line.fa}`}
+                  aria-label={`پخش از این خط: ${speakerLabel(line, characters)} — خط ${new Intl.NumberFormat('fa-IR').format(i + 1)}`}
                 >
                   <Play aria-hidden className="size-4" />
                 </button>
