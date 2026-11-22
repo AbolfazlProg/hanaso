@@ -1041,7 +1041,15 @@ export function ExerciseSession({
           {/* the teaching copy — never a duplicate of the status title (the
               server's first-try correct copy is exactly «درست!») */}
           {feedback.feedbackFa !== fa.curriculum.correct && (
-            <p className="ja-instruct text-body leading-[var(--leading-fa)]">{feedback.feedbackFa}</p>
+            <p className="ja-instruct text-body leading-[var(--leading-fa)]">
+              {/*
+               * ENGINE-NEXTGEN W-A: ladder copy mixes Persian with Japanese
+               * fragments and arrows («ترتیب: موضوع+も → هویت → です») — it
+               * renders through the shared MixedFaJaText engine so runs are
+               * isolated and RTL-context arrows point at the next-read item.
+               */}
+              <MixedFaJaText text={feedback.feedbackFa} />
+            </p>
           )}
           {/* TASK-HANASO-20 (BUG-007): the picked distractor's OWN rationale —
               why *this* choice is wrong, straight under the ladder line. */}

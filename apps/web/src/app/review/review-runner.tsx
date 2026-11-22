@@ -10,7 +10,7 @@
  */
 import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Ear, Loader2, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Ear, Loader2, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
@@ -122,7 +122,9 @@ export function ReviewRunner({
           className="mx-auto flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
         >
           {fa.review.backHome}
-          <ArrowLeft aria-hidden className="size-4" />
+          {/* ENGINE-NEXTGEN W-A: a RETURN home points RIGHT (→) — the app-wide
+           * back-link convention; forward CTAs keep ArrowLeft. */}
+          <ArrowRight aria-hidden className="size-4" />
         </Link>
       </div>
     );

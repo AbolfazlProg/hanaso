@@ -13,7 +13,7 @@
  */
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CircleCheck, MessageCircleQuestion, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CircleCheck, MessageCircleQuestion, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import type { CharacterRef, Dialogue } from '@/modules/dialogue';
@@ -208,7 +208,10 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
             className="flex h-11 w-fit items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
           >
             {fa.curriculum.journeyTitle}
-            <ArrowLeft aria-hidden className="size-4" />
+            {/* ENGINE-NEXTGEN W-A: back links point RIGHT (→) app-wide —
+                 * this is a RETURN to the journey, matching the station header's
+                 * «بازگشت به مسیر» ArrowRight convention. */}
+            <ArrowRight aria-hidden className="size-4" />
           </a>
         </div>
       )}

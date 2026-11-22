@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, CircleCheck } from 'lucide-react';
+import { ArrowRight, CircleCheck } from 'lucide-react';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
 import { listChapterCards } from '@/modules/fsrs/integration';
 
@@ -98,7 +98,9 @@ export default async function ChapterCompletePage({ params }: { params: Promise<
           className="flex h-12 items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
         >
           {fa.curriculum.backToJourney}
-          <ArrowLeft aria-hidden className="size-4" />
+          {/* ENGINE-NEXTGEN W-A: back links point RIGHT (→) app-wide (same
+           * convention as the station header's «بازگشت به مسیر»). */}
+          <ArrowRight aria-hidden className="size-4" />
         </Link>
       </div>
     </main>
