@@ -19,6 +19,7 @@
  */
 import { listChapters } from '@/modules/curriculum/content';
 import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
+import { transliterateKanaToFa } from '@/modules/curriculum/content/translit-standard';
 import { listChapterCards, type FsrsCardDescriptor } from './integration';
 import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
@@ -35,6 +36,10 @@ export interface ResolvedReviewCard {
   term?: string;
   termFurigana?: string;
   readingKana?: string;
+  /** ENGINE-NEXTGEN W-D — the derived Persian transliteration (words only:
+   * the locked word-level standard; expressions are skipped honestly —
+   * particle readings like は=wa are not derivable from glyphs). */
+  translitFa?: string;
   meaningFa?: string;
   audio?: { opus: string; m4a: string } | null;
   note?: string;
@@ -117,6 +122,10 @@ export function resolveReviewCard(itemId: string, kind: string): ResolvedReviewC
   const word =
     chapter.words.find((w) => w.id === ref) ?? chapter.words.find((w) => w.fsrs.w === itemId || w.fsrs.s === itemId);
   if (word) {
+    /* ENGINE-NEXTGEN W-D: the review word card carries the same derived dual
+     * pronunciation the teaching card shows (one standard, one component —
+     * translit honestly omitted when a glyph is uncovered). */
+    const { fa: translitFa, errors } = transliterateKanaToFa(word.readingKana);
     return {
       itemId,
       kind,
@@ -124,6 +133,8 @@ export function resolveReviewCard(itemId: string, kind: string): ResolvedReviewC
       termFurigana: word.termFurigana,
       meaningFa: word.meaningFa,
       readingKana: word.readingKana,
+      romaji: word.romaji,
+      translitFa: errors.length === 0 ? translitFa : undefined,
       audio: hostWordAudioUrls(word.term) ?? undefined,
     };
   }

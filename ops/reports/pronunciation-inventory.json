@@ -1,0 +1,2943 @@
+{
+ "generatedAt": "2026-11-22T17:22:28.993Z",
+ "standard": "translit-standard.ts — ENGINE-NEXTGEN W-D (card-truth mora walk; romaji double-vowel style)",
+ "kanaBankCoverage": {
+  "totalKanaItems": 184,
+  "missingFa": [],
+  "missingRomaji": []
+ },
+ "words": {
+  "total": 11,
+  "summary": {
+   "consistent": 11
+  },
+  "items": [
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-watashi",
+    "term": "私",
+    "readingKana": "わたし",
+    "authoredRomaji": "watashi",
+    "derivedRomaji": "watashi",
+    "derivedTranslitFa": "واتاشی",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-san",
+    "term": "〜さん",
+    "readingKana": "〜さん",
+    "authoredRomaji": "san",
+    "derivedRomaji": "san",
+    "derivedTranslitFa": "سان",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-nihonjin",
+    "term": "日本人",
+    "readingKana": "にほんじん",
+    "authoredRomaji": "nihonjin",
+    "derivedRomaji": "nihonjin",
+    "derivedTranslitFa": "نیهُن‌جین",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-chuugokujin",
+    "term": "中国人",
+    "readingKana": "ちゅうごくじん",
+    "authoredRomaji": "chuugokujin",
+    "derivedRomaji": "chuugokujin",
+    "derivedTranslitFa": "چووگُکوجین",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-daigaku",
+    "term": "大学",
+    "readingKana": "だいがく",
+    "authoredRomaji": "daigaku",
+    "derivedRomaji": "daigaku",
+    "derivedTranslitFa": "دایگاکو",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-sensee",
+    "term": "先生",
+    "readingKana": "せんせい",
+    "authoredRomaji": "sensee",
+    "derivedRomaji": "sensee",
+    "derivedTranslitFa": "سهن‌سهی",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-anokata",
+    "term": "あの方",
+    "readingKana": "あのかた",
+    "authoredRomaji": "anokata",
+    "derivedRomaji": "anokata",
+    "derivedTranslitFa": "آنُکاتا",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-iranjin",
+    "term": "イラン人",
+    "readingKana": "イランじん",
+    "authoredRomaji": "iranjin",
+    "derivedRomaji": "iranjin",
+    "derivedTranslitFa": "ایران‌جین",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-kankokujin",
+    "term": "韓国人",
+    "readingKana": "かんこくじん",
+    "authoredRomaji": "kankokujin",
+    "derivedRomaji": "kankokujin",
+    "derivedTranslitFa": "کان‌کُکوجین",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-kara",
+    "term": "〜から",
+    "readingKana": "〜から",
+    "authoredRomaji": "kara",
+    "derivedRomaji": "kara",
+    "derivedTranslitFa": "کارا",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   },
+   {
+    "chapter": "first-meeting-01",
+    "wordId": "voc-kimashita",
+    "term": "来ました",
+    "readingKana": "きました",
+    "authoredRomaji": "kimashita",
+    "derivedRomaji": "kimashita",
+    "derivedTranslitFa": "کیماشیتا",
+    "romajiMatch": true,
+    "status": "consistent",
+    "derivationErrors": []
+   }
+  ]
+ },
+ "handRenderings": {
+  "total": 275,
+  "summary": {
+   "missing-hand": 107,
+   "inconsistent": 77,
+   "uncovered": 8,
+   "consistent": 74,
+   "split-form-display": 9
+  },
+  "items": [
+   {
+    "ja": "آؤی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "آتسویی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "آجیا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "آروبایتو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "آشیتا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "آمریکا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "آنو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "آو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ئه‌کون",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اِ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اَسا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اُکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اِمپیتسو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اناتا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اُناجی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اِن‌پیتسو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اِنجینیا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اون‌گاکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "اوِه",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ایتالیا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ایسو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ایکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ایندو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ایه",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "باسو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "بودُو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "بووشی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "بیرُو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "بیُوین",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "پاسوکون",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "پان",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "پورِزِنتو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "پوستُ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "پیزا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "تاباکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "تای",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "تُایره",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "تِسوتو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "تسوما",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "تُمُداتی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "جَپان",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "چُت‌تُ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "دُآ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "دایگاکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "دُرو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "دِزایناا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "دِنوا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ده‌پا‌تُو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "دُوا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "دویتسو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "راامن",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "راجیو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ریُوکان",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "ریووک‌کُ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "زَش‌شی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "زه‌رو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سامپو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سان",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سایزو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سُره",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سُکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سَلَریمان",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سِنسِی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سُنو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "سوشی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "شاتسُ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "شاشِن",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "شاوا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "شاووا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "شیمبون",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "فورانسو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کابان",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کاتاکانا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کارا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کارائوکه",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کازه",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کاسا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کاکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کانکوکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کاو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کایشا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کایگی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کُره",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کُنو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کورو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کوروما",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کوکو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "کیان‌پُ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "گه‌مُ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "گوراسُ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "میان‌ما",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "میزو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "مِیکاا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "میوو‌جی‌ک‌کُ",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "نامائه",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "نووتو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "نیاا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "نیهُن",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "هُترُو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "هُن",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "هِیا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "هیتو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "واتاشی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "یاسومی",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "یامادا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "یُرو",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "یُورُپّا",
+    "authored": null,
+    "derived": null,
+    "where": [
+     "(reading-moment — no hand rendering exists)"
+    ],
+    "surfaceClass": "word",
+    "status": "missing-hand"
+   },
+   {
+    "ja": "あ",
+    "authored": "اَ",
+    "derived": "آ",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ァ",
+    "authored": "آی کوچک",
+    "derived": null,
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "uncovered"
+   },
+   {
+    "ja": "あさ",
+    "authored": "اَسا",
+    "derived": "آسا",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "あさごはん",
+    "authored": "آساگوهان",
+    "derived": "آساگُهان",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "あした",
+    "authored": "آشیتا",
+    "derived": "آشیتا",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "あつい",
+    "authored": "آتسویی",
+    "derived": "آتسوی",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "あなた",
+    "authored": "اناتا",
+    "derived": "آناتا",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "い",
+    "authored": "ای",
+    "derived": "ای",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ィ",
+    "authored": "ای کوچک",
+    "derived": null,
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "uncovered"
+   },
+   {
+    "ja": "いいえ",
+    "authored": "اییه ⊕ اییه (نه) ⊕ اییه",
+    "derived": "ای‌یه",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "いえ",
+    "authored": "ایه (خانه) ⊕ ایه",
+    "derived": "ایه",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "いしゃ",
+    "authored": "ایشا ⊕ ایشا (پزشک)",
+    "derived": "ایشا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "いっしょ",
+    "authored": "ایْشّو",
+    "derived": "ایشُّ",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "う",
+    "authored": "اُ",
+    "derived": "او",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ヴ",
+    "authored": "وُ (vu)",
+    "derived": "وُ",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "えき",
+    "authored": "اِکی",
+    "derived": "اِکی",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "えんぴつ",
+    "authored": "اِمپیتسو (مداد) ⊕ اِمپیتسو",
+    "derived": "اِن‌پیتسو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "おおきい",
+    "authored": "اووکیی",
+    "derived": "اووکی‌ی",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "おおさか",
+    "authored": "اووساکا",
+    "derived": "اووساکا",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "か",
+    "authored": "کا",
+    "derived": "کا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)",
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "カ",
+    "authored": "کا",
+    "derived": "کا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "が",
+    "authored": "گا",
+    "derived": "گا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ガ",
+    "authored": "گا",
+    "derived": "گا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "かいぎ",
+    "authored": "کایگی",
+    "derived": "کایگی",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "かいしゃ",
+    "authored": "کایشا",
+    "derived": "کایشا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "かぎ",
+    "authored": "کاگی",
+    "derived": "کاگی",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "がくせい",
+    "authored": "گاکوسِی",
+    "derived": "گاکوسهی",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "かさ",
+    "authored": "کاسا",
+    "derived": "کاسا",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "かぜ",
+    "authored": "کازه",
+    "derived": "کازه",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "かぞく",
+    "authored": "کازوکُ ⊕ کازوکو",
+    "derived": "کازُکو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "がっこう",
+    "authored": "گَکّوو ⊕ گَکّوو (مدرسه) ⊕ گَکّوو ⊕ گَکّوو",
+    "derived": "گاکُّو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "かばん",
+    "authored": "کابان",
+    "derived": "کابان",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "かんこくじん",
+    "authored": "kankokujin",
+    "derived": "کان‌کُکوجین",
+    "where": [
+     "chapter-fm01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "きゃ",
+    "authored": "کیا",
+    "derived": "کیا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "きや",
+    "authored": "کی + یا",
+    "derived": "کی‌یا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "キャ",
+    "authored": "کیا",
+    "derived": "کیا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "キヤ",
+    "authored": "کی + یا",
+    "derived": "کی‌یا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "きゃく",
+    "authored": "کیاکو",
+    "derived": "کیاکو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "キャンセル",
+    "authored": "کیان‌سِرو",
+    "derived": "کیان‌سهرو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "キャンプ",
+    "authored": "کیان‌پُ",
+    "derived": "کیان‌پو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "きゅう",
+    "authored": "کیوو",
+    "derived": "کیوو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "きょう",
+    "authored": "کیُو ⊕ امروز ⊕ کیُو ⊕ کیُو (امروز) ⊕ کیُو",
+    "derived": "کیُو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "くうき",
+    "authored": "کووکی",
+    "derived": "کووکی",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "くに",
+    "authored": "کوونی",
+    "derived": "کونی",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "グラス",
+    "authored": "گوراسُ",
+    "derived": "گوراسو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "グループ",
+    "authored": "گورووپو",
+    "derived": "گورووپو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "くるま",
+    "authored": "کوروما",
+    "derived": "کوروما",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "ケーキ",
+    "authored": "کِیکی",
+    "derived": "کههکی",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "けっか",
+    "authored": "کِکّا",
+    "derived": "کهکّا",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "コーヒー",
+    "authored": "کووهیی ⊕ کووهیی (قهوه)",
+    "derived": "کووهیی",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "コーラ",
+    "authored": "کوورا",
+    "derived": "کوورا",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "こうこう",
+    "authored": "کووکوو",
+    "derived": "کُوکُو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ここ",
+    "authored": "کوکو (اینجا) ⊕ کوکو",
+    "derived": "کُکُ",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ごご",
+    "authored": "گوگو ⊕ گوگو (بعدازظهر) ⊕ گوگو ⊕ گوگو",
+    "derived": "گُگُ",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ゴルフ",
+    "authored": "گوروفو",
+    "derived": "گُروفو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "コンピューター",
+    "authored": "کُمپیووتاا",
+    "derived": "کُن‌پیووتاا",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "さ",
+    "authored": "سا",
+    "derived": "سا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)",
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "サ",
+    "authored": "سا",
+    "derived": "سا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ざ",
+    "authored": "زا",
+    "derived": "زا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ザ",
+    "authored": "زا",
+    "derived": "زا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)",
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ざせき",
+    "authored": "زاسِکی",
+    "derived": "زاسهکی",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "さっき",
+    "authored": "سَکّکی",
+    "derived": "ساکّی",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ざっし",
+    "authored": "زَش‌شی ⊕ مجله ⊕ زَشّی ⊕ زَشّی (مجله)",
+    "derived": "زاشّی",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "さん",
+    "authored": "سان",
+    "derived": "سان",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "さんすう",
+    "authored": "سانسوو",
+    "derived": "سان‌سوو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "さんぽ",
+    "authored": "سامپو (قدم‌زدن)",
+    "derived": "سان‌پُ",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ジ",
+    "authored": "جی",
+    "derived": "جی",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "しずか",
+    "authored": "شیزوکا",
+    "derived": "شیزوکا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "じてんしゃ",
+    "authored": "جیتن‌شا",
+    "derived": "جیتهن‌شا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ジム",
+    "authored": "جیمُ",
+    "derived": "جیمو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "しゃしん",
+    "authored": "شاشین",
+    "derived": "شاشین",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "シャワー",
+    "authored": "شاوا",
+    "derived": "شاواا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "シュ",
+    "authored": "شو",
+    "derived": "شو",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "シユ",
+    "authored": "شی + یو",
+    "derived": "شی‌یو",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "シュークリーム",
+    "authored": "شوو‌کُ‌روو‌یمُ",
+    "derived": "شووکورییمو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ジュース",
+    "authored": "جووس ⊕ جووس (آب‌میوه)",
+    "derived": "جووسو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "じゅう",
+    "authored": "جوو",
+    "derived": "جوو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "しんぶん",
+    "authored": "شیم‌بون ⊕ شیمبون",
+    "derived": "شین‌بون",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ず",
+    "authored": "زُ",
+    "derived": "زو",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ズ",
+    "authored": "زُ",
+    "derived": "زو",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "すし",
+    "authored": "سوشی",
+    "derived": "سوشی",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "せ",
+    "authored": "سِ",
+    "derived": "سه",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ゼ",
+    "authored": "زه",
+    "derived": "زه",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ゼロ",
+    "authored": "زه‌رو",
+    "derived": "زهرُ",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "せん",
+    "authored": "سِن",
+    "derived": "سهن",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "せんせい",
+    "authored": "sensee ⊕ سِنسِی ⊕ سِنسِی (معلم) ⊕ سِنسِی",
+    "derived": "سهن‌سهی",
+    "where": [
+     "chapter-fm01.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "その",
+    "authored": "سُنو",
+    "derived": "سُنُ",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "た",
+    "authored": "تا",
+    "derived": "تا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "タ",
+    "authored": "تا",
+    "derived": "تا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "だ",
+    "authored": "دا",
+    "derived": "دا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)",
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ダ",
+    "authored": "دا",
+    "derived": "دا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "だいがく",
+    "authored": "daigaku ⊕ دایگاکو ⊕ دایگاکو ⊕ دایگاکو",
+    "derived": "دایگاکو",
+    "where": [
+     "chapter-fm01.exercises.ts (promptJaReading)",
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "ダンス",
+    "authored": "دانسُ",
+    "derived": "دان‌سو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ちゃ",
+    "authored": "چا",
+    "derived": "چا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ちや",
+    "authored": "چی + یا",
+    "derived": "چی‌یا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "チャイ",
+    "authored": "چای",
+    "derived": "چای",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "チュ",
+    "authored": "چو",
+    "derived": "چو",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "チユ",
+    "authored": "چی + یو",
+    "derived": "چی‌یو",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "チューリップ",
+    "authored": "چُوو‌روو‌ری‌پ‌پُ",
+    "derived": "چووریپّو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ちゅうごくじん",
+    "authored": "chuugokujin",
+    "derived": "چووگُکوجین",
+    "where": [
+     "chapter-fm01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "チョコ",
+    "authored": "چُوکُ",
+    "derived": "چُکُ",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ちょっと",
+    "authored": "چُت‌تُ ⊕ چُوتّو",
+    "derived": "چُتُّ",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "デ",
+    "authored": "دِ",
+    "derived": "ده",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "てちょう",
+    "authored": "تِ‌چُو",
+    "derived": "تهچُو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "デパート",
+    "authored": "ده‌پا‌تُو",
+    "derived": "دهپااتُ",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "でんしゃ",
+    "authored": "دِن‌شا",
+    "derived": "دهن‌شا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "てんぽう",
+    "authored": "تِن‌پوو",
+    "derived": "تهن‌پُو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "でんわ",
+    "authored": "دنوا",
+    "derived": "دهن‌وا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ド",
+    "authored": "دُ",
+    "derived": "دُ",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ドア",
+    "authored": "دُوا",
+    "derived": "دُا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "とうきょう",
+    "authored": "توکیُو",
+    "derived": "تُوکیُو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ともだち",
+    "authored": "تُمُداتی",
+    "derived": "تُمُداچی",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "にほんごの べんきょう",
+    "authored": "نی‌هون‌گو نو بِن‌کیُو",
+    "derived": "نیهُن‌گُنُبهن‌کیُو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "にほんじん",
+    "authored": "nihonjin",
+    "derived": "نیهُن‌جین",
+    "where": [
+     "chapter-fm01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ニュ",
+    "authored": "نیو",
+    "derived": "نیو",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ニユ",
+    "authored": "نی + یو",
+    "derived": "نی‌یو",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "ニュース",
+    "authored": "نیوسُ",
+    "derived": "نیووسو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ねこ",
+    "authored": "نِکو",
+    "derived": "نهکُ",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)",
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "は",
+    "authored": "ها",
+    "derived": "ها",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)",
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ハ",
+    "authored": "ها",
+    "derived": "ها",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ば",
+    "authored": "با",
+    "derived": "با",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "バ",
+    "authored": "با",
+    "derived": "با",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)",
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ぱ",
+    "authored": "پا",
+    "derived": "پا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "パ",
+    "authored": "پا",
+    "derived": "پا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)",
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "バス",
+    "authored": "باسُ",
+    "derived": "باسو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ぱん",
+    "authored": "پان",
+    "derived": "پان",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)",
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "パン",
+    "authored": "پان",
+    "derived": "پان",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ぱんだ",
+    "authored": "پاندا",
+    "derived": "پان‌دا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ビ",
+    "authored": "بی",
+    "derived": "بی",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ぴ",
+    "authored": "پی",
+    "derived": "پی",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ピ",
+    "authored": "پی",
+    "derived": "پی",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ひゃ",
+    "authored": "هیا",
+    "derived": "هیا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ひや",
+    "authored": "هی + یا",
+    "derived": "هی‌یا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "ひゃく",
+    "authored": "هیاَکو",
+    "derived": "هیاکو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ヒョウ",
+    "authored": "هیُو",
+    "derived": "هیُو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "びょういん",
+    "authored": "بیُوین",
+    "derived": "بیُوین",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "プ",
+    "authored": "پُ",
+    "derived": "پو",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "プール",
+    "authored": "پو‌رو",
+    "derived": "پوورو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ファイル",
+    "authored": "فایل ⊕ فایل (فایل)",
+    "derived": "فایرو",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ブドウ",
+    "authored": "بودُو",
+    "derived": "بودُو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "ペ",
+    "authored": "پِ",
+    "derived": "په",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ぼ",
+    "authored": "بُ",
+    "derived": "بُ",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ボ",
+    "authored": "بُ",
+    "derived": "بُ",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ぽ",
+    "authored": "پُ",
+    "derived": "پُ",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ボールペン",
+    "authored": "بوولپِن",
+    "derived": "بووروپهن",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ほん",
+    "authored": "هُن",
+    "derived": "هُن",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "みず",
+    "authored": "میزو",
+    "derived": "میزو",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ミャ",
+    "authored": "میا",
+    "derived": "میا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ミヤ",
+    "authored": "می + یا",
+    "derived": "می‌یا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "ミャンマー",
+    "authored": "میان‌ما",
+    "derived": "میان‌ماا",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ミュージアム",
+    "authored": "میوو‌جی‌آمو",
+    "derived": "میووجیامو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "ゃ",
+    "authored": "دوقلوی کوچک や",
+    "derived": null,
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "uncovered"
+   },
+   {
+    "ja": "や",
+    "authored": "یا",
+    "derived": "یا",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ャ",
+    "authored": "یای کوچک (کاتاکانا)",
+    "derived": null,
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "uncovered"
+   },
+   {
+    "ja": "ゅ",
+    "authored": "دوقلوی کوچک ゆ",
+    "derived": null,
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "uncovered"
+   },
+   {
+    "ja": "ゆ",
+    "authored": "یو",
+    "derived": "یو",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ュ",
+    "authored": "یوی کوچک (کاتاکانا)",
+    "derived": null,
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "uncovered"
+   },
+   {
+    "ja": "ょ",
+    "authored": "دوقلوی کوچک よ",
+    "derived": null,
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "uncovered"
+   },
+   {
+    "ja": "よ",
+    "authored": "یُ",
+    "derived": "یُ",
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "ョ",
+    "authored": "یوی گردِ کوچک (کاتاکانا)",
+    "derived": null,
+    "where": [
+     "chapter-kana01.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "uncovered"
+   },
+   {
+    "ja": "らーめん",
+    "authored": "راامِن",
+    "derived": "راامهن",
+    "where": [
+     "chapter-kana01.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "りゃ",
+    "authored": "ریا",
+    "derived": "ریا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "glyph",
+    "status": "consistent"
+   },
+   {
+    "ja": "りや",
+    "authored": "ری + یا",
+    "derived": "ری‌یا",
+    "where": [
+     "chapter-kana-expansion.stations.ts (readingFa)"
+    ],
+    "surfaceClass": "split-form-display",
+    "status": "split-form-display"
+   },
+   {
+    "ja": "リャド",
+    "authored": "ریادُ",
+    "derived": "ریادُ",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "りゅう",
+    "authored": "ریوو",
+    "derived": "ریوو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   },
+   {
+    "ja": "リュック",
+    "authored": "ریووک‌کُ",
+    "derived": "ریوکّو",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "りょかん",
+    "authored": "ریُوکان",
+    "derived": "ریُکان",
+    "where": [
+     "chapter-kana-expansion.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "inconsistent"
+   },
+   {
+    "ja": "わたし",
+    "authored": "واتاشی",
+    "derived": "واتاشی",
+    "where": [
+     "chapter-kana01.practice.exercises.ts (promptJaReading)"
+    ],
+    "surfaceClass": "word",
+    "status": "consistent"
+   }
+  ]
+ }
+}

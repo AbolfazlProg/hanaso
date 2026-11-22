@@ -15,6 +15,7 @@ import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
+import { WordPronunciation } from '@/components/curriculum/word-pronunciation';
 import { getCachedAudio, reportPlaybackError } from '@/modules/audio/client-cache';
 import type { ResolvedReviewCard } from '@/modules/fsrs/item-registry';
 
@@ -177,10 +178,23 @@ export function ReviewRunner({
               <JaBlock className="text-h2 font-black">{card.term}</JaBlock>
             )}
             <p className="text-lead font-bold text-ink">{card.meaningFa}</p>
+            {/* ENGINE-NEXTGEN W-D: word cards carry the SAME derived dual
+             * pronunciation the teaching card shows — the ONE shared component
+             * (reading · romaji + آوانویسی). Cards without romaji (expression
+             * cards) keep the plain reading. */}
             {card.readingKana ? (
-              <p className="text-small text-ink-soft" dir="ltr" lang="ja">
-                {card.readingKana}
-              </p>
+              card.romaji ? (
+                <WordPronunciation
+                  className="mt-0.5"
+                  readingKana={card.readingKana}
+                  romaji={card.romaji}
+                  translitFa={card.translitFa}
+                />
+              ) : (
+                <p className="text-small text-ink-soft" dir="ltr" lang="ja">
+                  {card.readingKana}
+                </p>
+              )
             ) : null}
             {card.audio ? (
               <button

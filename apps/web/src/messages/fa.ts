@@ -523,6 +523,8 @@ export const fa = {
     playLine: 'پخش صدای این خط',
     inDialogue: 'در مکالمه ببین',
     wordCardNote: 'نکته',
+    /* ENGINE-NEXTGEN W-D — the dual-pronunciation guide label (WordPronunciation). */
+    wordTranslitLabel: 'آوانویسی',
     gradingUnavailable: 'ارتباط با سرور برقرار نشد — نمره‌گذاری فعلاً در دسترس نیست؛ بعداً دوباره تلاش کن.',
     gradingUnavailableTitle: 'نمره‌گذاری در دسترس نیست',
     /* PART1-FIX-1: the unregistered-attempt re-send — the SAME answer goes back

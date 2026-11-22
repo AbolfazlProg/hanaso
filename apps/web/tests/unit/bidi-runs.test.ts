@@ -12,11 +12,6 @@ import { describe, expect, it } from 'vitest';
 
 import { flipArrowsRtl, segmentForDisplay } from '@/lib/bidi-runs';
 
-const join = (s: string) =>
-  segmentForDisplay(s)
-    .map((seg) => (seg.dir === 'ltr' ? `\u2066${seg.text}\u2069` : seg.text))
-    .join('');
-
 describe('semantic arrows — RTL Persian prose points at the next-read item', () => {
   it('a Persian sequence arrow flips (→ becomes ←)', () => {
     const segs = segmentForDisplay('سلام → معرفی → پرسش');

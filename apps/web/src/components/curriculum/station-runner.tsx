@@ -65,6 +65,8 @@ import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedEx
 import { ExampleAudioButton } from './example-audio-button';
 import { KANA_ITEMS_BY_ID, KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
 import { readabilityLabel } from '@/modules/curriculum/content/readability';
+import { transliterateKanaToFa } from '@/modules/curriculum/content/translit-standard';
+import { WordPronunciation } from '@/components/curriculum/word-pronunciation';
 import { loadWritingCharData, writingAvailability } from '@/modules/writing';
 import { getCachedAudio, preloadAudio } from '@/modules/audio/client-cache';
 
@@ -2030,6 +2032,11 @@ function BlockView({
     case 'vocab-card': {
       const word = chapter.words.find((w) => w.id === block.wordId)!;
       const line = lineById.get(word.lineRef);
+      // ENGINE-NEXTGEN W-D: the word's Persian transliteration is DERIVED by
+      // the ONE locked standard (never hand-authored) — computed once here;
+      // an uncovered glyph honestly omits the guide (never guesses).
+      const derivedTranslit = transliterateKanaToFa(word.readingKana);
+      const translitFa = derivedTranslit.errors.length === 0 ? derivedTranslit.fa : undefined;
       // Issue #103: prefer the word's INDEPENDENT audio when the registry has a
       // committed asset; honest fallback to the source-line audio otherwise.
       const wordAudio = wordAudioByWord?.[word.id] ?? null;
@@ -2054,9 +2061,15 @@ function BlockView({
               ) : (
                 <JaBlock className="mt-2 text-lead font-bold">{word.term}</JaBlock>
               )}
-              <p className="mt-1 text-small text-ink-soft" dir="ltr" lang="ja">
-                {word.readingKana} · {word.romaji}
-              </p>
+              {/* ENGINE-NEXTGEN W-D: the dual pronunciation renders through
+               * the ONE shared component (reading · romaji + the derived
+               * Persian transliteration) — no inline per-surface habit. */}
+              <WordPronunciation
+                className="mt-1"
+                readingKana={word.readingKana}
+                romaji={word.romaji}
+                translitFa={translitFa}
+              />
             </div>
             {(useWordAudio || line) && (
               <LineAudioButton
@@ -2308,9 +2321,7 @@ function BlockView({
                   thumb-sized) — the audio is part of the example, not a footer
                   decoration. */}
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                  <JaBlock className="text-word-hero font-bold leading-snug text-ink">
-                    {example.ja}
-                  </JaBlock>
+                  <JaBlock className="text-word-hero font-bold leading-snug text-ink">{example.ja}</JaBlock>
                   {/* Addendum-4 §7 — every example word gets its OWN playable
                     audio (independent asset bound to THIS word; normal ⇄ slow
                     cycle like every other teaching sound). No asset → no

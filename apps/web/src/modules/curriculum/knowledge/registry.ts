@@ -26,6 +26,7 @@
  */
 import type { Chapter, Station, TeachingBlock } from '../types';
 import { KANA_ITEMS, KANA_ITEMS_BY_ID } from '../content/kana-items';
+import { transliterateKanaToFa } from '../content/translit-standard';
 import { RULE_MARK_STATION, decomposeJa, derivedFormsIn, type RuleMark } from '../glyph-budget';
 import { stationsInWalkOrder } from '../eqa/model';
 import type {
@@ -281,6 +282,17 @@ export function buildKnowledgeRegistry(
             notes.push({ rule: 'word-unknown-id', message: `vocab-card با شناسهٔ ناشناخته ${block.wordId}.` });
             continue;
           }
+          /* ENGINE-NEXTGEN W-D: the word's Persian transliteration is DERIVED
+           * by the locked word-level standard — never authored per word (the
+           * drift source the audit found). An uncovered glyph files a note and
+           * leaves translitFa undefined rather than guessing. */
+          const { fa: translitFa, errors: translitErrors } = transliterateKanaToFa(w.readingKana);
+          if (translitErrors.length > 0) {
+            notes.push({
+              rule: 'word-translit-uncovered',
+              message: `واژهٔ ${w.id} (${w.readingKana}): مورای پوشش‌نشده در استاندارد آوانویسی — ${translitErrors.join('؛ ')}.`,
+            });
+          }
           const exposureStation =
             (w.lineRef && opts?.dialogueLineHost?.(chapter.slug, w.lineRef)) || anchorStation?.slug;
           register({
@@ -289,6 +301,7 @@ export function buildKnowledgeRegistry(
             surface: w.term,
             reading: w.readingKana,
             romaji: w.romaji,
+            translitFa: translitErrors.length === 0 ? translitFa : undefined,
             meaningFa: w.meaningFa,
             prerequisites: [...glyphPrereqs(w.readingKana)],
             firstTaught: p,
