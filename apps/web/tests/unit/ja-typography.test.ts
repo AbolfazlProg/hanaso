@@ -44,7 +44,7 @@ describe('ENGINE-NEXTGEN W-B — the JP typography tokens', () => {
     expect(tokensCss).toContain('--text-word-hero-lg: clamp(2rem, 9vw, 3rem)');
     expect(tokensCss).toContain('--text-micro: 0.625rem');
     expect(tokensCss).toContain('--text-seal-glyph: 2.0625rem');
-    expect(tokensCss).toContain("--font-jp: var(--font-ja-ui-loaded");
+    expect(tokensCss).toContain('--font-jp: var(--font-ja-ui-loaded');
   });
 
   it('the furigana readability floor stays locked (50% + 12px minimum)', () => {
@@ -56,10 +56,7 @@ describe('ENGINE-NEXTGEN W-B — the JP typography tokens', () => {
 
 describe('W-B — no raw sizes on the audited learner surfaces', () => {
   it('the five word-hero sites use tokens, not raw clamp()', () => {
-    for (const f of [
-      'components/curriculum/station-runner.tsx',
-      'components/curriculum/kana-card.tsx',
-    ]) {
+    for (const f of ['components/curriculum/station-runner.tsx', 'components/curriculum/kana-card.tsx']) {
       const src = read(f);
       expect(src, `${f} still carries a raw clamp`).not.toMatch(/text-\[clamp/);
       expect(src).toContain('text-word-hero');
@@ -97,9 +94,7 @@ describe('W-B — no raw sizes on the audited learner surfaces', () => {
   });
 
   it('grammar structure tables floor their Japanese runs at the JP body token', () => {
-    expect(read('components/curriculum/station-runner.tsx')).toContain(
-      'w-full border-collapse text-small ja-instruct',
-    );
+    expect(read('components/curriculum/station-runner.tsx')).toContain('w-full border-collapse text-small ja-instruct');
   });
 
   it('japanese-sentence ruby lines rely on the .fg-block contract (no raw leading)', () => {
