@@ -73,6 +73,10 @@ export function buildTaughtModel(chapter: Chapter): TaughtModel {
       if (block.kind === 'expression-card') concepts.add(block.expressionId);
       // TASK-LEARNING-06 (DD-122): the kana-card block teaches its registry concept.
       if (block.kind === 'kana-card') concepts.add(block.kanaId);
+      // KANJI-TWO-PHASE §۲: the kanji-card teaches its reference concept — only
+      // meaningful (and only legal) inside a station of type 'kanji'; anywhere
+      // else the knowledge registry files the breach and EQA-12 fails it.
+      if (block.kind === 'kanji-card') concepts.add(block.kanjiId);
     }
     // grammar clusters anchored to this station
     for (const [clusterId, hosts] of clusterHosts) {
@@ -103,6 +107,7 @@ export function buildTaughtModel(chapter: Chapter): TaughtModel {
     ...chapter.words.map((w) => w.id),
     ...chapter.grammar.map((g) => g.id),
     ...chapter.expressions.map((e) => e.id),
+    ...(chapter.kanji ?? []).map((k) => k.kanjiId),
     ...chapter.stations.map((s) => s.objectiveCode).filter(Boolean),
     ...taughtAtOrder.keys(),
   ]);

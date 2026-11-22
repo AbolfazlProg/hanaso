@@ -27,6 +27,16 @@ export type ClientTeachingBlock =
   | { kind: 'vocab-card'; id: string; wordId: string }
   | { kind: 'expression-card'; id: string; expressionId: string }
   | {
+      /** KANJI-TWO-PHASE §۲ — the dedicated kanji teaching card (no answer
+       *  material — the card is purely receptive; its retrieval packet is a
+       *  normal exercise block). Passes to the client unchanged. */
+      kind: 'kanji-card';
+      id: string;
+      kanjiId: string;
+      anchorWordIds: string[];
+      noteFa?: string;
+    }
+  | {
       /** TASK-LEARNING-06 (DD-122): kana glyph card — purely receptive (no answer material). */
       kind: 'kana-card';
       id: string;
@@ -408,8 +418,8 @@ export function stripStationAnswerMaterial(station: Station): Station {
           ask: block.ask ? { questionFa: block.ask.questionFa, options: block.ask.options } : undefined,
         } as unknown as TeachingBlock;
       }
-      // scene / vocab-card / expression-card / rule-card / example-set / exercise /
-      // listening-task / wrap-up / rule-prereq carry no answer material — pass through unchanged.
+      // scene / vocab-card / expression-card / kanji-card / rule-card / example-set /
+      // exercise / listening-task / wrap-up / rule-prereq carry no answer material — pass through unchanged.
       return block;
     }) as Station['blocks'],
   };

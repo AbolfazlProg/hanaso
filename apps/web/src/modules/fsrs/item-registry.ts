@@ -24,6 +24,8 @@ import { listChapterCards, type FsrsCardDescriptor } from './integration';
 import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
+import { KANJI_ITEMS_BY_ID } from '@/modules/curriculum/kanji';
+import { cardSatisfiesTemplate } from './review-contract';
 
 /** The display payload of one review card (the client DTO, server-resolved). */
 export interface ResolvedReviewCard {
@@ -41,6 +43,13 @@ export interface ResolvedReviewCard {
    * particle readings like は=wa are not derivable from glyphs). */
   translitFa?: string;
   meaningFa?: string;
+  /** KANJI-TWO-PHASE §۳ — kanji card extras: the reference facts the reveal
+   * carries (readings in kana, stroke count) and the anchor words the kanji
+   * rides inside (taught vocabulary of the same chapter). */
+  on?: string[];
+  kun?: string[];
+  strokeCount?: number;
+  anchorWords?: { term: string; readingKana: string; meaningFa: string }[];
   audio?: { opus: string; m4a: string } | null;
   note?: string;
   /** The registry could not resolve this item — honest unknown card. */
@@ -106,6 +115,41 @@ export function resolveReviewCard(itemId: string, kind: string): ResolvedReviewC
   // kn- cards resolve straight from the kana registry (their ids are the data).
   const kana = resolveKanaCard(itemId);
   if (kana) return kana;
+
+  /*
+   * KANJI-TWO-PHASE §۳ — kj- cards resolve from the N5 reference + the
+   * chapter's anchor words (the card's own teaching context). The template
+   * contract decides servability: a card whose template-required fields are
+   * missing (or whose kind has no template) is an honest unknown — never a
+   * guessed card, never the vocab template.
+   */
+  if (itemId.startsWith('kj-rec-') || itemId.startsWith('kj-wri-')) {
+    const kanjiId = itemId.slice(itemId.indexOf('-', 3) + 1); // strip kj-rec-/kj-wri-
+    const ref = KANJI_ITEMS_BY_ID.get(kanjiId);
+    if (!ref) return unknown;
+    const descriptor = cardIndex().get(itemId);
+    const chapter = descriptor ? listChapters().find((c) => c.slug === descriptor.chapterSlug) : undefined;
+    const anchors = (chapter?.words ?? []).filter((w) => w.term.includes(ref.literal));
+    const card: ResolvedReviewCard = {
+      itemId,
+      kind,
+      glyph: ref.literal,
+      meaningFa: ref.meaningFa,
+      on: ref.on,
+      kun: ref.kun,
+      strokeCount: ref.strokeCount,
+      anchorWords:
+        anchors.length > 0
+          ? anchors.map((w) => ({ term: w.term, readingKana: w.readingKana, meaningFa: w.meaningFa }))
+          : undefined,
+      note: itemId.startsWith('kj-rec-')
+        ? 'کانجی را ببین و معنا و خوانش‌هایش را به یاد بیاور.'
+        : 'معنی و خوانش را ببین و شکل کانجی (و ترتیب ضربه‌هایش) را به یاد بیاور.',
+    };
+    const check = cardSatisfiesTemplate(card);
+    if (!check.ok) return unknown; // template breach → honest unknown (never ratable)
+    return card;
+  }
 
   const descriptor = cardIndex().get(itemId);
   if (!descriptor) return unknown;

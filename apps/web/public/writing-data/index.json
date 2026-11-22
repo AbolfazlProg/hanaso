@@ -1,6 +1,10 @@
 {
   "source": "KanjiVG r20260714 (CC BY-SA 3.0) — kanjivg.tagaini.net",
   "format": "centerline-v2 (strokes = writing-direction centerlines in 1024×1024, y-down)",
+  "kanji": {
+    "source": "KanjiVG (CC BY-SA 3.0) — the 103 N5 reference kanji (KANJIDIC2 2026-326 validated set)",
+    "count": 103
+  },
   "chars": {
     "あ": {
       "strokes": 3
@@ -616,6 +620,315 @@
     },
     "ン": {
       "strokes": 2
+    },
+    "一": {
+      "strokes": 1
+    },
+    "七": {
+      "strokes": 2
+    },
+    "万": {
+      "strokes": 3
+    },
+    "三": {
+      "strokes": 3
+    },
+    "上": {
+      "strokes": 3
+    },
+    "下": {
+      "strokes": 3
+    },
+    "中": {
+      "strokes": 4
+    },
+    "九": {
+      "strokes": 2
+    },
+    "二": {
+      "strokes": 2
+    },
+    "五": {
+      "strokes": 4
+    },
+    "人": {
+      "strokes": 2
+    },
+    "今": {
+      "strokes": 4
+    },
+    "休": {
+      "strokes": 6
+    },
+    "会": {
+      "strokes": 6
+    },
+    "何": {
+      "strokes": 7
+    },
+    "先": {
+      "strokes": 6
+    },
+    "入": {
+      "strokes": 2
+    },
+    "八": {
+      "strokes": 2
+    },
+    "六": {
+      "strokes": 4
+    },
+    "円": {
+      "strokes": 4
+    },
+    "出": {
+      "strokes": 5
+    },
+    "分": {
+      "strokes": 4
+    },
+    "前": {
+      "strokes": 9
+    },
+    "北": {
+      "strokes": 5
+    },
+    "十": {
+      "strokes": 2
+    },
+    "千": {
+      "strokes": 3
+    },
+    "午": {
+      "strokes": 4
+    },
+    "半": {
+      "strokes": 5
+    },
+    "南": {
+      "strokes": 9
+    },
+    "友": {
+      "strokes": 4
+    },
+    "口": {
+      "strokes": 3
+    },
+    "古": {
+      "strokes": 5
+    },
+    "右": {
+      "strokes": 5
+    },
+    "名": {
+      "strokes": 6
+    },
+    "四": {
+      "strokes": 5
+    },
+    "国": {
+      "strokes": 8
+    },
+    "土": {
+      "strokes": 3
+    },
+    "外": {
+      "strokes": 5
+    },
+    "多": {
+      "strokes": 6
+    },
+    "大": {
+      "strokes": 3
+    },
+    "天": {
+      "strokes": 4
+    },
+    "女": {
+      "strokes": 3
+    },
+    "子": {
+      "strokes": 3
+    },
+    "学": {
+      "strokes": 8
+    },
+    "安": {
+      "strokes": 6
+    },
+    "小": {
+      "strokes": 3
+    },
+    "少": {
+      "strokes": 4
+    },
+    "山": {
+      "strokes": 3
+    },
+    "川": {
+      "strokes": 3
+    },
+    "左": {
+      "strokes": 5
+    },
+    "年": {
+      "strokes": 6
+    },
+    "店": {
+      "strokes": 8
+    },
+    "後": {
+      "strokes": 9
+    },
+    "手": {
+      "strokes": 4
+    },
+    "新": {
+      "strokes": 13
+    },
+    "日": {
+      "strokes": 4
+    },
+    "時": {
+      "strokes": 10
+    },
+    "書": {
+      "strokes": 10
+    },
+    "月": {
+      "strokes": 4
+    },
+    "木": {
+      "strokes": 4
+    },
+    "本": {
+      "strokes": 5
+    },
+    "来": {
+      "strokes": 7
+    },
+    "東": {
+      "strokes": 8
+    },
+    "校": {
+      "strokes": 10
+    },
+    "母": {
+      "strokes": 5
+    },
+    "毎": {
+      "strokes": 6
+    },
+    "気": {
+      "strokes": 6
+    },
+    "水": {
+      "strokes": 4
+    },
+    "火": {
+      "strokes": 4
+    },
+    "父": {
+      "strokes": 4
+    },
+    "生": {
+      "strokes": 5
+    },
+    "男": {
+      "strokes": 7
+    },
+    "白": {
+      "strokes": 5
+    },
+    "百": {
+      "strokes": 6
+    },
+    "目": {
+      "strokes": 5
+    },
+    "社": {
+      "strokes": 7
+    },
+    "空": {
+      "strokes": 8
+    },
+    "立": {
+      "strokes": 5
+    },
+    "耳": {
+      "strokes": 6
+    },
+    "聞": {
+      "strokes": 14
+    },
+    "花": {
+      "strokes": 7
+    },
+    "行": {
+      "strokes": 6
+    },
+    "西": {
+      "strokes": 6
+    },
+    "見": {
+      "strokes": 7
+    },
+    "言": {
+      "strokes": 7
+    },
+    "話": {
+      "strokes": 13
+    },
+    "語": {
+      "strokes": 14
+    },
+    "読": {
+      "strokes": 14
+    },
+    "買": {
+      "strokes": 12
+    },
+    "足": {
+      "strokes": 7
+    },
+    "車": {
+      "strokes": 7
+    },
+    "週": {
+      "strokes": 11
+    },
+    "道": {
+      "strokes": 12
+    },
+    "金": {
+      "strokes": 8
+    },
+    "長": {
+      "strokes": 8
+    },
+    "間": {
+      "strokes": 12
+    },
+    "雨": {
+      "strokes": 8
+    },
+    "電": {
+      "strokes": 13
+    },
+    "食": {
+      "strokes": 9
+    },
+    "飲": {
+      "strokes": 12
+    },
+    "駅": {
+      "strokes": 14
+    },
+    "高": {
+      "strokes": 10
+    },
+    "魚": {
+      "strokes": 11
     }
   }
 }

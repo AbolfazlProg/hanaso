@@ -1,8 +1,15 @@
 # راهنمای تولید درس برای ایجنت — HANASO Lesson Engine
 
 > مأموریت فاز ۶ — «چگونه ایجنت برای درس بعدی دقیقاً چه می‌کند». پیش‌نیاز مطالعه:
-> `docs/lesson-engine/REQUIREMENTS.md` (قواعد فریم‌ورک) و دو سند اصلی
+> `docs/lesson-engine/REQUIREMENTS.md` (قواعد فریم‌ورک)، `docs/lesson-engine/TWO-PHASE-PIPELINE.md` (معماری دومرحله‌ای — KANJI-TWO-PHASE §۴) و دو سند اصلی
 > `HANASO_TEACHING_FRAMEWORK.md` + `HANASO_STAGED_TEACHING_IMPLEMENTATION.md` در مخزن teaching-framework.
+
+## مرحلهٔ ۰ — تفکیک دو فاز (الزامی از ۲۰۲۶-۱۱-۲۲)
+
+**ایجنت استخراج (فاز ۱) و ایجنت تألیف (فاز ۲) کارهای متفاوتی انجام می‌دهند و اشتباه گرفتنشان ممنوع است:**
+
+- **فاز ۱ — Curriculum Planning / Content Extraction**: مطالعهٔ منبع؛ استخراج واژگان/گرامر/کانجی/عبارت‌ها با ارجاع منبع؛ تعیین پیش‌نیاز همهٔ مطالب؛ تعیین ترتیب آموزشی؛ بخش‌بندی منطقی بین ایستگاه‌ها + هدف و نوع هر ایستگاه؛ تعیین جایگاه ایستگاه‌های کانجی (ایستگاه اختصاصی `kanji`، هر کانجی ≥۲ واژهٔ anchor حامل خود کانجی که قبلاً تدریس می‌شوند). خروجی: `CurriculumPlan` (YAML) — بدون هیچ نثر آموزشی/مثال/تمرین. گیت ورود به فاز ۲: **Gate P1**.
+- **فاز ۲ — Lesson Authoring / Instruction Design**: تبدیل طرح پذیرفته‌شده به درس واقعی — توضیح، مثال، آموزش کوتاه مرحله‌ای، فعالیت بلافاصله، تمرین هدایت‌شده و مستقل، Hint/Feedback (نردبان خودبسنده)، سنجش نهایی. گیت ورود به انتشار: **Gate P2** (وفاداری به نقشه — تغییر ترتیب/پیش‌نیاز/واگذاری بدون گیت P1 مجدد رد می‌شود).
 
 ## قرارداد طلایی (غیرقابل‌نقض)
 
@@ -11,7 +18,7 @@
 3. **بدون موتور موازی (D-0011)** — خروجی موتور همان فرمت runtime موجود است؛ StationRunner دست‌نخورده.
 4. **قواعد فریم‌ورک جایگزین نمی‌شوند** — همهٔ اعداد از `ENGINE_CONFIG` (کالیبره‌پذیر با Q-xxx).
 
-## جریان تولید درس جدید (۷ گام)
+## جریان تولید درس جدید (۸ گام)
 
 ### گام ۱ — parse جزوه
 
@@ -23,7 +30,18 @@ corepack pnpm --filter web exec tsx scripts/lesson-engine/parse-booklet.ts \
 خروجی: `booklet-draft.json` — همهٔ درس‌ها با مکالمه/واژگان/عبارت‌ها/گرامر + شماره صفحهٔ هر آیتم.
 (جزوهٔ فعلی: «Online Japanese N5 Course» — ۱۵ درس؛ لیست‌های سراسری واژگان/عبارت‌ها هم استخراج می‌شود.)
 
-### گام ۲ — draft اسکلت فصل
+### گام ۲ — طرح فاز ۱ (Curriculum Plan / استخراج + بخش‌بندی)
+
+از `booklet-draft.json` یک `CurriculumPlan` بساز (قالب: `plan-types.ts`؛ نمونهٔ واقعی: `content/lesson-engine/plans/first-meeting-01.plan.yaml`). برای فصل‌های موجود، مبدّل `extract-plan-from-chapter.ts` طرح را از دادهٔ واقعی فصل استخراج می‌کند. کانجی‌ها فقط از مرجع N5 (`curriculum/kanji`) با ≥۲ واژهٔ anchor حامل خود کانجی، در ایستگاه اختصاصی `kanji` بعد از ایستگاه‌های واژگانِ anchor.
+
+```bash
+corepack pnpm --filter web exec tsx scripts/lesson-engine/validate-plan.ts \
+  apps/web/content/lesson-engine/plans/<chapter>.plan.yaml   # گیت P1
+```
+
+PASS = صفر خطای HARD (فاز ۲ شروع می‌شود) — بدون P1 سبز، گام ۳ ممنوع است.
+
+### گام ۳ — draft اسکلت فصل
 
 ```bash
 corepack pnpm --filter web exec tsx scripts/lesson-engine/draft-chapter.ts \
@@ -33,7 +51,7 @@ corepack pnpm --filter web exec tsx scripts/lesson-engine/draft-chapter.ts \
 
 خروجی: YAML اسکلت — نقشهٔ ایستگاه‌ها بر اساس مدل ۱۳-مرحله (anchor→vocab→grammar→practice→transfer) با گام‌های flow آماده و همهٔ محتواها TODO + پرچم.
 
-### گام ۳ — تکمیل ایجنت (اینجا «محتوا» ساخته می‌شود)
+### گام ۴ — تکمیل ایجنت (اینجا «محتوا» ساخته می‌شود)
 
 ایجنت YAML را ویرایش می‌کند و دقیقاً این‌ها را از جزوه پر می‌کند:
 
@@ -50,7 +68,7 @@ corepack pnpm --filter web exec tsx scripts/lesson-engine/draft-chapter.ts \
 
 قواعد حین تکمیل (validator همه را می‌سنجد): سقف گام‌ها، ≤۲ تعامل متوالی هم‌قالب، typing ممنوع در teach، Exit Check per station، تناوب ۶۰/۴۰ در practice، transcript فقط بعد از ≥۲ شنیدن، خوانش کانجی فقط درون ≥۲ anchor word.
 
-### گام ۴ — اعتبارسنجی آموزشی
+### گام ۵ — اعتبارسنجی آموزشی
 
 ```bash
 corepack pnpm --filter web exec tsx scripts/lesson-engine/validate-draft.ts \
@@ -59,7 +77,7 @@ corepack pnpm --filter web exec tsx scripts/lesson-engine/validate-draft.ts \
 
 PASS = صفر خطای HARD. هشدارهای SOFT باید با دلیل ثبت شوند (QC «حذف با دلیل»).
 
-### گام ۵ — کامپایل (اثبات سازگاری)
+### گام ۶ — کامپایل (اثبات سازگاری)
 
 ```bash
 corepack pnpm --filter web exec tsx scripts/lesson-engine/compile-check.ts \
@@ -68,11 +86,11 @@ corepack pnpm --filter web exec tsx scripts/lesson-engine/compile-check.ts \
 
 خروجی: `Chapter` runtime — اثبات اینکه محتوا بدون کدنویسی اختصاصی به StationRunner موجود می‌رسد.
 
-### گام ۶ — گیت CI
+### گام ۷ — گیت CI
 
 `tests/unit/lesson-engine-gates.test.ts` (در `pnpm test`): schema + validator + compile + ant-invention. فصل draft باید در CI سبز بماند.
 
-### گام ۷ — انتشار (فقط با تأیید مالک)
+### گام ۸ — انتشار (فقط با تأیید مالک)
 
 مسیر انتشار: ساخت dialogue YAML (ماژول dialogue) + صوت + تبدیل دستی/کامپایل به ماژول TS محتوا + seed + EQA کامل + مرور مالک. `published: true` فقط پس از این زنجیره.
 

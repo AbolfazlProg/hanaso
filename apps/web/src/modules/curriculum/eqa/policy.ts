@@ -24,7 +24,8 @@ import type { ExerciseType, StationType, TeachingBlock } from '../types';
 
 export type EqaSeverity = 'error' | 'warning' | 'info';
 
-export type EqaGateId = 'EQA-1' | 'EQA-2' | 'EQA-3' | 'EQA-4' | 'EQA-5' | 'EQA-6' | 'EQA-7' | 'EQA-8' | 'EQA-10';
+export type EqaGateId =
+  'EQA-1' | 'EQA-2' | 'EQA-3' | 'EQA-4' | 'EQA-5' | 'EQA-6' | 'EQA-7' | 'EQA-8' | 'EQA-10' | 'EQA-12';
 
 export interface EqaFinding {
   gate: EqaGateId;
@@ -284,6 +285,16 @@ export const EQA_GATE_REGISTRY: readonly EqaGateSpec[] = [
     source: 'ENGINE-REFORM 2026-11-22 §۴ · teaching-interaction-model (D-0010/0011/0012) · station-blueprint §۲–۴',
     scope:
       'خطا: اولین تعامل پس از هر پکت آموزش باید difficulty 1 باشد (C-first-engage)؛ اولین kana-decode ایستگاه آموزشی باید پس از example-set الگو‌شده بیاید (C-worked-before-decode)؛ آیتم difficulty-3 فقط پس از سنجش هدایت‌شدهٔ ≤۲ همان مفهوم (C-guided-first)؛ ساختار الزامی هر نوع ایستگاه (C-type-structure). مرز: ایستگاه‌های مرور/تمرینِ بدون محتوای جدید از قواعد تدریسِ جدید معاف‌اند؛ نمره/رتبه/امتیاز ممنوع — فقط درستی پاسخ، بازخورد آموزشی و پیشرفت معتبر.',
+    owner: 'Content Author + CI',
+  },
+  {
+    id: 'EQA-12',
+    ruleFa:
+      'قرارداد آموزشی کانجی: کانجی فقط در ایستگاه اختصاصی خودش تدریس می‌شود؛ معرفی در کارت واژه = تدریس نیست؛ واژه‌های anchor پیش از ایستگاه کانجی تدریس شده باشند؛ کانجی‌های هر سطح و ترتیبشان قابل رهگیری باشد',
+    source:
+      'KANJI-TWO-PHASE 2026-11-22 §۲ · kanji-interaction-blueprint (D-0006، ≥۲ anchor) · KANJIDIC2/KanjiVG N5 reference (docs/domain/KANJI-N5-REFERENCE.md)',
+    scope:
+      'خطا: کانجی‌کارت بیرون از ایستگاه kanji (K1)؛ کانجی تدریس‌شده بدون اعلام در chapter.kanji یا اعلام بدون کانجی‌کارت (K2)؛ واژهٔ anchor نامعتبر/ناقل کانجی/ثبت‌نشده/تدریس‌شده پس از ایستگاه کانجی یا کمتر از ۲ anchor (K3)؛ ایستگاه kanji بدون کانجی‌کارت (K4)؛ شناسهٔ کانجی خارج از مرجع N5 (K5). هشدار: بیش از ۴ کانجی در یک ایستگاه (عدد کالیبرهٔ فریم‌ورک). سنجش کانجی پیش از تدریس اختصاصی از مسیر عمومی EQA-1/R5 رد می‌شود (شناسهٔ کانجی = مفهوم ثبت‌شدهٔ رجیستری). تعداد ایستگاه‌های کانجی هر فصل داده است — یک یا چند، بدون عدد ثابت. مرجع N5 هرگز «رسمی JLPT» معرفی نمی‌شود (JLPT فهرست رسمی منتشر نمی‌کند).',
     owner: 'Content Author + CI',
   },
 ] as const;

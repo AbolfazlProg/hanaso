@@ -1,0 +1,500 @@
+planVersion: 1
+chapterId: first-meeting-01
+phaseStatus: extracted
+source:
+  artifact: chapter-first-meeting-01
+  lesson: 1
+titleFa: 'طرح جایگاه‌گذاری کانجی — فصل ۰۲ (نمونهٔ فاز ۱: ایستگاه اختصاصی 人 و 国)'
+canDoFa: در پایان این فصل می‌توانی خودت را کامل معرفی کنی (نام، ملیت، خاستگاه)، هویت دیگران را بپرسی و تأیید کنی، فرض غلط
+  را مؤدبانه رد کنی — و کل مکالمهٔ ۱۴ نوبتی را بفهمی.
+level: H1
+prerequisiteChapterSlug: kana-foundation-01
+dialogue:
+- speaker: chr-miki
+  textJa: こんにちは、やまださん
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l1
+- speaker: chr-yamada
+  textJa: こんにちは、ミキさん
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l2
+- speaker: chr-yamada
+  textJa: はじめまして、やまだです。わたしはにほんじんです。よろしくおねがいします
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l3
+- speaker: chr-sora
+  textJa: はじめまして、ソラです。よろしくおねがいします
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l4
+- speaker: chr-yamada
+  textJa: ソラさんですね。ちゅうごくじんですか。
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l5
+- speaker: chr-sora
+  textJa: はい、わたしはちゅうごくじんです。
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l6
+- speaker: chr-miki
+  textJa: あのかたはどなたですか。
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l7
+- speaker: chr-yamada
+  textJa: アリさんです。イランじんです。だいがくのせんせいです。
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l8
+- speaker: chr-yamada
+  textJa: キムさんもちゅうごくじんですか。
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l9
+- speaker: chr-sora
+  textJa: いいえ、キムさんはちゅうごくじんではありません。かんこくじんです。
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l10
+- speaker: chr-yamada
+  textJa: そうですか。わかりました。
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l11
+- speaker: chr-kim
+  textJa: はじめまして、キムです。かんこくからきました。よろしくおねがいします
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l12
+- speaker: chr-sora
+  textJa: よろしくおねがいします
+  sourceRef:
+    artifact: dialogue-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l13
+vocabulary:
+- id: voc-watashi
+  surface: 私
+  reading: わたし
+  meaningFa: من
+  teachStationId: stn-fm01-02-vocab
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l3
+- id: voc-san
+  surface: 〜さん
+  reading: 〜さん
+  meaningFa: پسوند احترام پس از نام (مثل «آقای/خانمِ»)
+  teachStationId: stn-fm01-02-vocab
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l1
+- id: voc-nihonjin
+  surface: 日本人
+  reading: にほんじん
+  meaningFa: ژاپنی (اهل ژاپن)
+  teachStationId: stn-fm01-02-vocab
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l3
+- id: voc-chuugokujin
+  surface: 中国人
+  reading: ちゅうごくじん
+  meaningFa: چینی (اهل چین)
+  teachStationId: stn-fm01-02-vocab
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l5
+- id: voc-daigaku
+  surface: 大学
+  reading: だいがく
+  meaningFa: دانشگاه
+  teachStationId: stn-fm01-02-vocab
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l8
+- id: voc-sensee
+  surface: 先生
+  reading: せんせい
+  meaningFa: استاد / معلم
+  teachStationId: stn-fm01-02-vocab
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l8
+- id: voc-anokata
+  surface: あの方
+  reading: あのかた
+  meaningFa: آن شخص (اشارهٔ مؤدبانه به نفر سوم)
+  teachStationId: stn-fm01-02-vocab
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l7
+- id: voc-iranjin
+  surface: イラン人
+  reading: イランじん
+  meaningFa: ایرانی (اهل ایران) — خودِ تویی!
+  teachStationId: stn-fm01-02-vocab
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l8
+- id: voc-kankokujin
+  surface: 韓国人
+  reading: かんこくじん
+  meaningFa: کره‌ای (اهل کره)
+  teachStationId: stn-fm01-11-vocab2
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l10
+- id: voc-kara
+  surface: 〜から
+  reading: 〜から
+  meaningFa: از (نشانهٔ خاستگاه)
+  teachStationId: stn-fm01-11-vocab2
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l12
+- id: voc-kimashita
+  surface: 来ました
+  reading: きました
+  meaningFa: آمد (شکل مؤدبانهٔ گذشتهٔ «آمدن»)
+  teachStationId: stn-fm01-11-vocab2
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l12
+grammar:
+- id: gr-desu-identity
+  patternJa: AはBです
+  functionFa: گزارهٔ هویت — «X هست Y»
+  teachStationId: stn-fm01-03-grammar-desu
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l3
+- id: gr-desu-qa
+  patternJa: ですか / ですね
+  functionFa: پرسش و تأیید هویت
+  teachStationId: stn-fm01-05-grammar-qa
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l5
+- id: gr-mo
+  patternJa: AもBです
+  functionFa: 「هم» — افزودن به همان گروه
+  teachStationId: stn-fm01-12-grammar-mo
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l9
+- id: gr-dewa-arimasen
+  patternJa: AはBでは ありません
+  functionFa: نفی مؤدبانهٔ هویت — «نیست»
+  teachStationId: stn-fm01-13-grammar-dewa
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l10
+- id: gr-kara-kimashita
+  patternJa: 〜から きました
+  functionFa: خاستگاه — «از … آمده‌ام»
+  teachStationId: stn-fm01-16-grammar-kara
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l12
+expressions:
+- id: chrk-konnichiwa
+  ja: こんにちは
+  reading: こんにちは
+  functionFa: سلام (احوال‌پرسی روزانه)
+  teachStationId: stn-fm01-06-expression
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l1
+- id: chrk-hajimemashite
+  ja: はじめまして
+  reading: はじめまして
+  functionFa: «از آشنایی‌تان خوشبختم» — آغازگر معرفی در اولین دیدار
+  teachStationId: stn-fm01-06-expression
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l3
+- id: chrk-yoroshiku
+  ja: よろしく おねがいします
+  reading: よろしく おねがいします
+  functionFa: «از رابطه‌مان خوشحال می‌شوم» — بستن آیین آشنایی
+  teachStationId: stn-fm01-06-expression
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l9
+- id: chrk-anokata-donata
+  ja: あのかたは どなたですか
+  reading: あのかたは どなたですか
+  functionFa: «آن [آقا/خانم] کیست؟» — پرسش مؤدبانه دربارهٔ شخص سوم
+  teachStationId: stn-fm01-06-expression
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l7
+- id: chrk-hai
+  ja: はい
+  reading: はい
+  functionFa: «بله» — تأیید مؤدب
+  teachStationId: stn-fm01-05-grammar-qa
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l6
+- id: chrk-iie
+  ja: いいえ
+  reading: いいえ
+  functionFa: «نه» — ردّ مؤدبانهٔ فرضِ غلط
+  teachStationId: stn-fm01-14-expression
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l10
+- id: chrk-soodesuka
+  ja: そうですか
+  reading: そうですか
+  functionFa: «آه، می‌فهمم» — واکنش به اطلاعات نو
+  teachStationId: stn-fm01-14-expression
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l11
+- id: chrk-wakarimashita
+  ja: わかりました
+  reading: わかりました
+  functionFa: «فهمیدم / باشه» — دریافت اطلاعات
+  teachStationId: stn-fm01-14-expression
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: s-first-meeting-01-l11
+kanji:
+- character: 人
+  anchorWordIds:
+  - voc-nihonjin
+  - voc-chuugokujin
+  - voc-iranjin
+  - voc-kankokujin
+  teachStationId: stn-fm01-23-kanji
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: word-surfaces
+- character: 国
+  anchorWordIds:
+  - voc-chuugokujin
+  - voc-kankokujin
+  teachStationId: stn-fm01-23-kanji
+  sourceRef:
+    artifact: chapter-first-meeting-01
+    lesson: 1
+    locator: word-surfaces
+stations:
+- id: stn-fm01-01-anchor
+  domain: anchor
+  type: teaching
+  objectiveFa: کل مکالمهٔ ۱۳ نوبتی را یک‌بار بشنو و حس «شکاف دانستن» را تجربه کن
+  order: 1
+  prerequisites: []
+- id: stn-fm01-02-vocab
+  domain: vocab
+  type: teaching
+  objectiveFa: '۸ واژهٔ هویت را با صدا بشناس: من، پسوند さん، سه ملیت، دانشگاه، استاد، آن شخص'
+  order: 2
+  prerequisites:
+  - stn-fm01-01-anchor
+- id: stn-fm01-03-grammar-desu
+  domain: grammar
+  type: teaching
+  objectiveFa: 'جملهٔ هویت را بفهم و بساز: わたしは にほんじんです'
+  order: 3
+  prerequisites:
+  - stn-fm01-02-vocab
+- id: stn-fm01-04-structure
+  domain: grammar
+  type: teaching
+  objectiveFa: بفهم چرا سورا در نوبت ۴ «من» را نمی‌گوید — و چرا ترتیب برای تو غریبه نیست
+  order: 4
+  prerequisites:
+  - stn-fm01-03-grammar-desu
+- id: stn-fm01-05-grammar-qa
+  domain: grammar
+  type: teaching
+  objectiveFa: هویت را بپرس (ですか) و شنیده‌ات را تأیید کن (ですね)
+  order: 5
+  prerequisites:
+  - stn-fm01-03-grammar-desu
+- id: stn-fm01-06-expression
+  domain: vocab
+  type: teaching
+  objectiveFa: فرمول‌های آشنایی را در جای درست به‌کار ببر
+  order: 6
+  prerequisites:
+  - stn-fm01-02-vocab
+- id: stn-fm01-07-listen
+  domain: listening
+  type: teaching
+  objectiveFa: 'بدون متن دنبال کن: جیست، چه‌کسی، و تفاوت‌های صدایی'
+  order: 7
+  prerequisites:
+  - stn-fm01-02-vocab
+  - stn-fm01-05-grammar-qa
+- id: stn-fm01-08-practice
+  domain: practice
+  type: practice
+  objectiveFa: همهٔ آموخته‌های نوبت‌های ۱–۸ را بازیابی کن
+  order: 8
+  prerequisites:
+  - stn-fm01-02-vocab
+  - stn-fm01-03-grammar-desu
+  - stn-fm01-05-grammar-qa
+  - stn-fm01-06-expression
+  - stn-fm01-07-listen
+- id: stn-fm01-09-integrate
+  domain: transfer
+  type: teaching
+  objectiveFa: خودت را در موقعیت واقعی معرفی کن
+  order: 9
+  prerequisites:
+  - stn-fm01-08-practice
+- id: stn-fm01-10-reconnect
+  domain: anchor
+  type: teaching
+  objectiveFa: همان مکالمه را با تمرکز نوبت‌های ۹–۱۴ دوباره بشنو
+  order: 10
+  prerequisites:
+  - stn-fm01-09-integrate
+- id: stn-fm01-11-vocab2
+  domain: vocab
+  type: teaching
+  objectiveFa: ۳ واژهٔ تازه (کره‌ای، از، آمد) + بازیافت واژه‌های قبل
+  order: 11
+  prerequisites:
+  - stn-fm01-10-reconnect
+- id: stn-fm01-12-grammar-mo
+  domain: grammar
+  type: teaching
+  objectiveFa: 'با も بگو «او هم مثل قبلی است»: キムさんも ちゅうごくじんですか'
+  order: 12
+  prerequisites:
+  - stn-fm01-11-vocab2
+- id: stn-fm01-13-grammar-dewa
+  domain: grammar
+  type: teaching
+  objectiveFa: 'فرض غلط را مؤدبانه رد کن: ちゅうごくじんでは ありません'
+  order: 13
+  prerequisites:
+  - stn-fm01-12-grammar-mo
+- id: stn-fm01-14-expression
+  domain: vocab
+  type: teaching
+  objectiveFa: سه واکنش گفتاری را در جای درست به‌کار ببر
+  order: 14
+  prerequisites:
+  - stn-fm01-13-grammar-dewa
+- id: stn-fm01-15-listen
+  domain: listening
+  type: teaching
+  objectiveFa: かんこく را از かこく تمیز بده و ردّ مؤدبانه را بشناس
+  order: 15
+  prerequisites:
+  - stn-fm01-11-vocab2
+  - stn-fm01-14-expression
+- id: stn-fm01-16-grammar-kara
+  domain: grammar
+  type: teaching
+  objectiveFa: 'بگو از کجا آمده‌ای: かんこくから きました / イランから きました'
+  order: 16
+  prerequisites:
+  - stn-fm01-11-vocab2
+- id: stn-fm01-17-practice
+  domain: practice
+  type: practice
+  objectiveFa: 'الگوهای هر دو واحد را کنار هم بازیابی کن: は/も · ですか/ではありません · خاستگاه'
+  order: 17
+  prerequisites:
+  - stn-fm01-16-grammar-kara
+  - stn-fm01-15-listen
+- id: stn-fm01-18-integrate
+  domain: transfer
+  type: teaching
+  objectiveFa: وقتی میکی حدس می‌زند چینی هستی، مؤدبانه اصلاح کن و خودت را کامل معرفی کن
+  order: 18
+  prerequisites:
+  - stn-fm01-17-practice
+- id: stn-fm01-opt-countries
+  domain: grammar
+  type: teaching
+  objectiveFa: الگوی 〜じん را با کشورهای بیشتر تمرین کن — پیش‌نمایش 〜ご
+  order: 19
+  prerequisites:
+  - stn-fm01-02-vocab
+- id: stn-fm01-opt-review-desu
+  domain: review
+  type: review
+  objectiveFa: ۴ بافت تازه با جای‌خالی — الگو را خودت کامل کن
+  order: 20
+  prerequisites:
+  - stn-fm01-03-grammar-desu
+- id: stn-fm01-opt-jobs
+  domain: grammar
+  type: teaching
+  objectiveFa: ۸ واژهٔ شغل را بشناس تا شغل خودت را بگویی — فقط با انتخاب صریح تو کارت می‌شود
+  order: 21
+  prerequisites:
+  - stn-fm01-13-grammar-dewa
+- id: stn-fm01-opt-drill
+  domain: review
+  type: review
+  objectiveFa: 'جفت‌های مرگبار فصل را جدا کن: ですか/ですね · は/も · طول واکه'
+  order: 22
+  prerequisites:
+  - stn-fm01-17-practice
+- id: stn-fm01-23-kanji
+  domain: kanji
+  type: teaching
+  objectiveFa: کانجی‌های 人 و 国 را در واژه‌های ژاپنی/چینی/کره‌ای/ایرانی که آموخته‌ای بشناسد و معنا و خوانش هر کانجی را به‌خوبی
+    جدا کند
+  order: 23
+  prerequisites:
+  - stn-fm01-02-vocab
+  - stn-fm01-11-vocab2
+notes:
+- ایستگاه اختصاصی کانجی پس از هر دو ایستگاه واژگان حامل anchorها (سفارش ۲ و ۱۱) قرار گرفته است — خوانش‌ها فقط داخل واژه‌های
+  آموزش‌دیدهٔ قبلی (D-0006).
+- بقیهٔ کانجی‌های فصل (日 本 中 大 学 先 生 来) فقط ۱ واژهٔ anchor دارند — تدریس اختصاصی آن‌ها به فصل‌های بعدی واگذار شده (قاعدهٔ
+  ≥۲ anchor).
