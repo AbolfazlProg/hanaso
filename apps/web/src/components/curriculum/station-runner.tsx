@@ -57,6 +57,8 @@ import { NameKatakana } from '@/components/curriculum/name-katakana';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { InlineDialoguePlayer } from './inline-dialogue-player';
+import { DialogueFocusLines } from './dialogue-focus-lines';
+import { resolveDialogueFocus } from '@/modules/curriculum/dialogue-focus';
 import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
@@ -177,6 +179,14 @@ export interface StationRunnerProps {
    */
   taughtKanaBeforeStation?: string[];
   clientExercises: Record<string, ClientExercise>;
+  /**
+   * ENGINE-REFORM §۳ (owner order 2026-11-22 «نمایش بخش منتخب مکالمه»): the
+   * chapter-wide item label map (word/expression/grammar id → Persian label)
+   * the focused-line teaching view uses for its «چه چیزی این خط می‌آموزد»
+   * chips. Optional — absent renders the chips without labels. Computed by the
+   * host page from the real chapter data (never hardcoded per lesson).
+   */
+  dialogueItemLabels?: Record<string, string>;
   dialogue: {
     lines: Line[];
     speakers: Record<string, string>;
@@ -455,6 +465,7 @@ export function StationRunner(props: StationRunnerProps) {
     returnToStationHref,
     taughtKanaBeforeStation,
     clientExercises,
+    dialogueItemLabels,
     dialogue,
     dialogueScene,
     audioByLine,
@@ -1305,6 +1316,7 @@ export function StationRunner(props: StationRunnerProps) {
           chapterSlug={chapterSlug}
           chapter={chapter}
           clientExercises={clientExercises}
+          dialogueItemLabels={dialogueItemLabels}
           lineById={lineById}
           speakers={dialogue.speakers}
           audioByLine={audioByLine}
@@ -1851,6 +1863,7 @@ function BlockView({
   chapterSlug,
   chapter,
   clientExercises,
+  dialogueItemLabels,
   lineById,
   speakers,
   audioByLine,
@@ -1886,6 +1899,8 @@ function BlockView({
   chapterSlug: string;
   chapter: Pick<Chapter, 'words' | 'expressions'>;
   clientExercises: Record<string, ClientExercise>;
+  /** ENGINE-REFORM §۳ — labels for the focused-line teaching view's teaches chips. */
+  dialogueItemLabels?: Record<string, string>;
   lineById: Map<string, Line>;
   speakers: Record<string, string>;
   audioByLine: Record<string, string>;
@@ -2682,7 +2697,28 @@ function BlockView({
        * page). A replay block starts at its first focus line (no autoplay —
        * the learner's own play press). Absent bundle (older host) → the legacy
        * standalone link — the honest degradation, never a broken player.
+       *
+       * ENGINE-REFORM §۳ (owner order 2026-11-22 «نمایش بخش منتخب مکالمه»):
+       * a `lineTeaching` block whose focus lines are a strict subset renders
+       * the FOCUSED-LINE TEACHING VIEW instead — only the block's own lines
+       * (speaker + image + translation + per-line audio + teaches), resolved
+       * by the standard chapter-independent resolver. The whole conversation
+       * NEVER ships to the focused component.
        */
+      if (dialogueScene) {
+        const focusView = resolveDialogueFocus(dialogueScene, block.focusLineRefs, block.lineTeaching);
+        if (focusView.mode === 'focus') {
+          return (
+            <DialogueFocusLines
+              lines={focusView.lines}
+              audioByLine={audioByLine}
+              audioFallbackByLine={audioFallbackByLine}
+              audioAvailable={audioAvailable}
+              itemLabels={dialogueItemLabels}
+            />
+          );
+        }
+      }
       if (dialogueScene && onDialogueFinished) {
         return (
           <InlineDialoguePlayer

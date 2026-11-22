@@ -276,6 +276,64 @@ export function gateEqa8(chapter: Chapter, registry: KnowledgeRegistry): EqaFind
         }
       }
     }
+
+    /* R5b + R6 — GRADED NON-EXERCISE blocks (ENGINE-REFORM §۴, owner order
+     * 2026-11-22 «آزمون قبل از آموزش»): guided-discovery / structured-input /
+     * dialogue-player prediction are GRADED questions. The engine enforces the
+     * SAME mandatory order on them as on exercises —
+     *  R6  a graded block MUST declare assessesConcepts (an unlabeled graded
+     *      question is invisible to the teach-order gate — that invisibility
+     *      was the root cause of «آزمون قبل از آموزش»);
+     *  R5b every declared concept must be TAUGHT strictly before the block
+     *      (deck order inside the station, station/chapter order otherwise) —
+     *      an induction quiz before its rule teaching is a build failure. */
+    station.blocks.forEach((block, blockIndex) => {
+      let concepts: string[] | undefined;
+      let blockKindFa: string;
+      if (block.kind === 'guided-discovery' || block.kind === 'structured-input') {
+        concepts = block.assessesConcepts;
+        blockKindFa = block.kind === 'guided-discovery' ? 'کشف هدایت‌شده' : 'ورودی ساخت‌یافته';
+      } else if (block.kind === 'dialogue-player' && block.prediction) {
+        concepts = block.prediction.assessesConcepts;
+        blockKindFa = 'پرسش پیش‌بینی';
+      } else {
+        return;
+      }
+      if (!concepts || concepts.length === 0) {
+        report(
+          'graded-block-unlabelled',
+          station.slug,
+          'error',
+          `بلوک ${block.id} (${blockKindFa}) در ایستگاه ${station.slug} نمره‌دار است اما assessesConcepts ندارد — پرسش نمره‌دار بدون برچسب برای موتور نامرئی می‌شود و ترتیب آموزش-پیش-از-سنجش قابل اعتبارسنجی نیست (R6).`,
+          'ENGINE-REFORM §۴ R6 · Knowledge Registry',
+          `${block.id}: unlabelled`,
+        );
+        return;
+      }
+      for (const concept of concepts) {
+        const taught = registry.taughtAt.get(concept);
+        if (!taught) continue; // unregistered concepts stay EQA-1's warning layer
+        const sameStation = taught.chapterSlug === chapter.slug && taught.stationSlug === station.slug;
+        let ok: boolean;
+        if (!sameStation) {
+          const myGlobal = station.order + 10000 * (registry.course.indexOf(chapter.slug) + 1);
+          ok = taught.globalIndex < myGlobal;
+        } else {
+          const taughtIdx = taught.blockId ? station.blocks.findIndex((b) => b.id === taught.blockId) : 0;
+          ok = (taughtIdx >= 0 ? taughtIdx : 0) < blockIndex;
+        }
+        if (!ok) {
+          report(
+            'graded-block-before-teach',
+            station.slug,
+            'error',
+            `بلوک ${block.id} (${blockKindFa}) در ایستگاه ${station.slug} مفهوم «${concept}» را می‌سنجد، اما تدریسِ آن در ${taught.chapterSlug}/${taught.stationSlug}${taught.blockId ? ` (بلوک ${taught.blockId})` : ''} است — پرسش نمره‌دار پیش از تدریس (R5b: آموزش مقدم بر سنجش، برای بلوک‌های نمره‌دار هم).`,
+            'ENGINE-REFORM §۴ R5b · Knowledge Registry',
+            `${block.id}: ${concept}`,
+          );
+        }
+      }
+    });
   }
 
   for (const slot of reported.values()) push(slot.finding);

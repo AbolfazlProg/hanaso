@@ -232,12 +232,34 @@ export type TeachingBlock =
       id: string;
       /** Lines to focus/highlight first (the anchor station plays all). */
       focusLineRefs: string[];
-      /** Prediction question (stage-2: exactly one — COMPOSITION §۳-۲). */
+      /**
+       * ENGINE-REFORM §3+§4 (owner order 2026-11-22 «نمایش خطّ منتخب مکالمه»):
+       * TRUE = this block's purpose is TEACHING with the SPECIFIC focus lines —
+       * the resolver (curriculum/dialogue-focus) extracts ONLY those lines
+       * (speaker name+image, tokens with readings, translation, per-line audio)
+       * and the full conversation is NOT rendered. Absent/false = the
+       * conversation-experience mode (the whole dialogue player; focus lines
+       * drive the start position/highlight only). Data-driven for every
+       * chapter — never a per-lesson hardcode.
+       */
+      lineTeaching?: boolean;
+      /** Prediction question (stage-2: exactly one — COMPOSITION §۳-۲).
+       *
+       * SUPERSEDED by the owner order 2026-11-22 («آزمون قبل از آموزش باید
+       * کاملاً حذف شود»): a GRADED pre-listening guess on material the learner
+       * has neither been taught nor even exposed to yet violates the mandatory
+       * teaching order. The engine now gates it (EQA-8 R5/R6): a prediction may
+       * stay ONLY where every concept it assesses is already taught strictly
+       * before it (a labelled, post-teaching warm-up — never a blind guess).
+       * The anchor/reconnect dialogue experience itself is NOT a question. */
       prediction?: {
         questionFa: string;
         options: { id: string; label: string }[];
         correctOptionId: string;
         revealFa: string;
+        /** Concepts this graded question presupposes (EQA-8 R5/R6 — declared so
+         * the gate can enforce teach-before-assess for graded blocks too). */
+        assessesConcepts?: string[];
       };
       /** Less support on the D-side replay (subtitle hidden until tap). */
       reducedSupport?: boolean;
@@ -245,7 +267,14 @@ export type TeachingBlock =
   | { kind: 'vocab-card'; id: string; wordId: string }
   | { kind: 'expression-card'; id: string; expressionId: string }
   | {
-      /** DIA-loop step I — guided discovery (grammar stations). */
+      /** DIA-loop step I — guided discovery (grammar stations).
+       *
+       * ENGINE-REFORM 2026-11-22 §۴: this block is a GRADED question — for the
+       * prerequisite engine it is an ASSESSMENT and MUST declare
+       * `assessesConcepts` (every concept the option set presupposes). The gate
+       * then enforces that each of those concepts is TAUGHT strictly before
+       * this block (EQA-8 R5) — an induction quiz placed before the rule
+       * teaching is a build failure, never a shipped lesson. */
       kind: 'guided-discovery';
       id: string;
       displayLineRef: string;
@@ -256,6 +285,8 @@ export type TeachingBlock =
       options: { id: string; label: string }[];
       correctOptionId: string;
       explainFa: string;
+      /** Concepts this graded question presupposes (EQA-8 R5/R6). */
+      assessesConcepts?: string[];
     }
   | {
       /** DIA-loop step A — the Persian rule card. */
@@ -320,7 +351,9 @@ export type TeachingBlock =
       }[];
     }
   | {
-      /** Structured input before production (EV-241/242). */
+      /** Structured input before production (EV-241/242). A GRADED question —
+       * declare `assessesConcepts` (EQA-8 R5/R6, same contract as
+       * guided-discovery: taught strictly before this block). */
       kind: 'structured-input';
       id: string;
       questionFa: string;
@@ -328,6 +361,8 @@ export type TeachingBlock =
       options: { id: string; label: string }[];
       correctOptionId: string;
       explainFa: string;
+      /** Concepts this graded question presupposes (EQA-8 R5/R6). */
+      assessesConcepts?: string[];
     }
   | {
       /**

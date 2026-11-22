@@ -211,6 +211,19 @@ export default async function StationPage({
 
   // client-safe exercise payloads (no answers/feedback)
   const clientExercises: Record<string, ClientExercise> = {};
+
+  /*
+   * ENGINE-REFORM §۳ (owner order 2026-11-22 «نمایش بخش منتخب مکالمه»): the
+   * chapter-wide item label map for the focused-line teaching view's «آنچه این
+   * خط به تو می‌آموزد» chips — computed from the REAL chapter data (words,
+   * expressions, grammar clusters), never hardcoded per lesson. Any future
+   * chapter's dialogue-teaches ids resolve through the same standard map.
+   */
+  const dialogueItemLabels: Record<string, string> = {};
+  for (const w of chapter.words) dialogueItemLabels[w.id] = `${w.term} — ${w.meaningFa}`;
+  for (const x of chapter.expressions) dialogueItemLabels[x.id] = `${x.ja} — ${x.functionFa}`;
+  for (const g of chapter.grammar) dialogueItemLabels[g.id] = `${g.pattern} — ${g.titleFa}`;
+
   for (const block of station.blocks) {
     if (block.kind !== 'exercise') continue;
     for (const id of block.exerciseIds) {
@@ -370,6 +383,7 @@ export default async function StationPage({
           station={toClientStation(station)}
           chapter={{ words: chapter.words, expressions: chapter.expressions }}
           clientExercises={clientExercises}
+          dialogueItemLabels={dialogueItemLabels}
           dialogue={{
             lines: dialogue.lines.map((l) => ({
               id: l.id,
