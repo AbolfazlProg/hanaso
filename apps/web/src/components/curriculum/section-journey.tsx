@@ -206,11 +206,7 @@ function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean
   switch (action) {
     case 'review':
       return (
-        <span
-          className={`${box} border-success bg-success text-paper`}
-          aria-hidden
-          data-row-marker="done"
-        >
+        <span className={`${box} border-success bg-success text-paper`} aria-hidden data-row-marker="done">
           <CircleCheck className="size-4" />
         </span>
       );
@@ -577,7 +573,15 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                 key={row.slug}
                 ref={rowRef}
                 data-testid={isCurrent ? 'journey-current-row' : undefined}
-                data-row-state={row.action === 'review' ? 'done' : row.action === 'continue' ? 'in-progress' : row.action === 'locked' ? 'locked' : 'start'}
+                data-row-state={
+                  row.action === 'review'
+                    ? 'done'
+                    : row.action === 'continue'
+                      ? 'in-progress'
+                      : row.action === 'locked'
+                        ? 'locked'
+                        : 'start'
+                }
                 className={
                   [
                     'relative',

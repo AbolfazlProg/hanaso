@@ -699,10 +699,7 @@ export function DialogueScene({
                     const label = itemLabels?.[id];
                     if (embedded) {
                       return label ? (
-                        <span
-                          key={id}
-                          className="rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft"
-                        >
+                        <span key={id} className="rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft">
                           {label}
                         </span>
                       ) : null;

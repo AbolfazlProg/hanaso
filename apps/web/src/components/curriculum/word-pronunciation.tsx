@@ -28,8 +28,8 @@ export function WordPronunciation({ readingKana, romaji, translitFa, className }
   return (
     <div className={className}>
       {/* JOURNEY-FIX 2026-11-23 §۶: the dual pronunciation grew to text-body —
-         * next to a word-hero term the 14px caption read as fine print; the
-         * romaji/kana pairing is core reading data for a beginner, not metadata. */}
+       * next to a word-hero term the 14px caption read as fine print; the
+       * romaji/kana pairing is core reading data for a beginner, not metadata. */}
       <p className="text-body text-ink-soft" dir="ltr" lang="ja">
         {readingKana} · {romaji}
       </p>

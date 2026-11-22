@@ -107,9 +107,7 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
       {(() => {
         const anchorSlug =
           chapter.stations.find((s) => s.type === 'anchor')?.slug ??
-            [...chapter.stations]
-              .sort((a, b) => a.order - b.order)
-              .find((s) => s.core)?.slug;
+          [...chapter.stations].sort((a, b) => a.order - b.order).find((s) => s.core)?.slug;
         const href = anchorSlug ? `/learn/${chapter.slug}/journey/${anchorSlug}` : `/learn/${chapter.slug}/journey`;
         return (
           <Link

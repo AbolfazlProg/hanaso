@@ -182,9 +182,9 @@ export function JourneyHome(props: JourneyHomeProps) {
         </span>
         <div className="flex flex-wrap items-center gap-2">
           {/* JOURNEY-FIX 2026-11-23 §۱ (mixed-direction display): the chapter title
-             * embeds a Japanese run (わたしは学生です) — it renders through the shared
-             * MixedFaJaText engine so the JP run keeps the ja-block font stack and
-             * stable bidi isolation, exactly like every other mixed line. */}
+           * embeds a Japanese run (わたしは学生です) — it renders through the shared
+           * MixedFaJaText engine so the JP run keeps the ja-block font stack and
+           * stable bidi isolation, exactly like every other mixed line. */}
           <h2 className="text-h2 font-black text-indigo">
             <MixedFaJaText text={chapterTitleFa} />
           </h2>

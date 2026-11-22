@@ -111,7 +111,11 @@ describe('DialogueScene — embedded mode (Issue #101: no PoC leak into product)
     expect(bare).not.toContain('chrk-yoroshiku'); // the raw registry id is GONE
     expect(bare).not.toContain('class="poc-token-link'); // token chunks not links
     const labeled = renderToStaticMarkup(
-      <DialogueScene bundle={bundle} embedded itemLabels={{ 'chrk-yoroshiku': 'よろしく おねがいします — «از رابطه‌مان خوشحال می‌شوم»' }} />,
+      <DialogueScene
+        bundle={bundle}
+        embedded
+        itemLabels={{ 'chrk-yoroshiku': 'よろしく おねがいします — «از رابطه‌مان خوشحال می‌شوم»' }}
+      />,
     );
     expect(labeled).toContain('از رابطه‌مان خوشحال می‌شوم');
     expect(labeled).not.toContain('chrk-yoroshiku');
