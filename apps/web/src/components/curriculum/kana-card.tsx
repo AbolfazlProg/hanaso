@@ -622,7 +622,7 @@ export function KanaCard({
             ))}
           </p>
         ) : (
-          <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
+          <JaBlock className="text-word-hero font-bold leading-snug text-ink">
             {Array.from(ex.ja).map((ch, i) => (
               <span
                 key={`${ch}-${i}`}

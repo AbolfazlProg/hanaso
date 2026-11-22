@@ -846,7 +846,9 @@ export function ExerciseSession({
              * correct reading above the options (the h4/h5/k8 leak). For
              * kana-decode the RSC strip already removes it entirely; this gate
              * keeps the render honest for ANY future type. */
-            <p className="mt-2 text-caption text-ink-soft" dir="ltr" lang="ja">
+            /* ENGINE-NEXTGEN W-B: reading at text-small (was the 12px
+               caption floor for a kana reading the learner studies). */
+            <p className="mt-2 text-small text-ink-soft" dir="ltr" lang="ja">
               {ex.promptJaReading}
             </p>
           )}

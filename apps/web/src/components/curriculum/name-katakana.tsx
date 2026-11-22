@@ -218,7 +218,10 @@ export function NameKatakana({
               </div>
             )}
           </div>
-          <p className="text-caption text-ink-faint">
+          {/* ENGINE-NEXTGEN W-B: the built katakana-name surface — raised
+             from the 12px caption floor (the name is the learner's own
+             output, sized as readable meta). */}
+          <p className="text-small text-ink-faint">
             <span dir="ltr">{surface}</span>
           </p>
 

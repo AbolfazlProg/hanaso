@@ -135,7 +135,7 @@ export function AizenSeal({ animate, label, className }: AizenSealProps) {
           textAnchor="middle"
           dominantBaseline="central"
           fill="var(--color-paper)"
-          style={{ font: '900 33px var(--font-ja-serif, serif)' }}
+          style={{ font: '900 var(--text-seal-glyph) var(--font-ja-serif, serif)' }}
         >
           藍
         </text>
@@ -145,7 +145,7 @@ export function AizenSeal({ animate, label, className }: AizenSealProps) {
           textAnchor="middle"
           dominantBaseline="central"
           fill="var(--color-paper)"
-          style={{ font: '900 33px var(--font-ja-serif, serif)' }}
+          style={{ font: '900 var(--text-seal-glyph) var(--font-ja-serif, serif)' }}
         >
           染
         </text>

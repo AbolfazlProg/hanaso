@@ -152,7 +152,10 @@ export function ReviewRunner({
           </div>
         ) : card.glyph ? (
           <>
-            <JaBlock className="text-h1 font-black text-hero-ja">{card.glyph}</JaBlock>
+            {/* ENGINE-NEXTGEN W-B: two font-size utilities collided on this
+               element (h1 vs hero-ja — cascade-dependent winner) — the hero
+               token alone IS the intended kana-glyph review size. */}
+            <JaBlock className="text-hero-ja font-black">{card.glyph}</JaBlock>
             {card.audio ? (
               <button
                 type="button"

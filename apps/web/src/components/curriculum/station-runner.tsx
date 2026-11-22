@@ -2230,7 +2230,10 @@ function BlockView({
           </p>
           {block.structureTable && (
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full border-collapse text-small">
+              {/* ENGINE-NEXTGEN W-B: ja-instruct floors the Japanese runs
+                  inside these 14px cells at the JP body token (17px) —
+                  grammar tables are STUDIED reading content, never meta. */}
+              <table className="w-full border-collapse text-small ja-instruct">
                 <thead>
                   <tr className="border-b border-ink-faint text-ink-soft">
                     {block.structureTable.headers.map((h) => (
@@ -2305,7 +2308,7 @@ function BlockView({
                   thumb-sized) — the audio is part of the example, not a footer
                   decoration. */}
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                  <JaBlock className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink">
+                  <JaBlock className="text-word-hero font-bold leading-snug text-ink">
                     {example.ja}
                   </JaBlock>
                   {/* Addendum-4 §7 — every example word gets its OWN playable
@@ -2393,7 +2396,7 @@ function BlockView({
                     </span>
                   )}
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                    <JaBlock className="text-[clamp(2rem,9vw,3rem)] font-bold leading-snug text-ink">
+                    <JaBlock className="text-word-hero-lg font-bold leading-snug text-ink">
                       {item.glyph ?? item.word}
                     </JaBlock>
                     <ExampleAudioButton word={item.word ?? item.glyph ?? ''} urls={urls} />
@@ -2454,7 +2457,7 @@ function BlockView({
                   <HighlightedJa
                     ja={block.word.ja}
                     highlight={block.word.highlight}
-                    className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink"
+                    className="text-word-hero font-bold leading-snug text-ink"
                   />
                   {block.word.beats != null && (
                     <div className="mt-2">
@@ -2606,7 +2609,10 @@ function BlockView({
                         ) : null}
                       </span>
                       {item.sideJa ? (
-                        <span className="shrink-0 text-caption text-ink-faint" dir="ltr" lang="ja">
+                        /* ENGINE-NEXTGEN W-B: real learner-read JP (board side
+                           details: prices, 〜あります) — raised from the 12px
+                           furigana floor to text-small + the JP font stack. */
+                        <span className="ja-block shrink-0 text-small text-ink-faint" dir="ltr" lang="ja">
                           {item.sideJa}
                         </span>
                       ) : null}
@@ -2946,7 +2952,7 @@ function ContrastPanel({
         <HighlightedJa
           ja={word.ja}
           highlight={word.highlight}
-          className="text-[clamp(1.75rem,7vw,2.35rem)] font-bold leading-snug text-ink"
+          className="text-word-hero font-bold leading-snug text-ink"
         />
         <ExampleAudioButton word={word.ja} urls={urls} />
       </div>

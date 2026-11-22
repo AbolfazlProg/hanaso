@@ -35,7 +35,7 @@ export function JapaneseSentence({
   return (
     <div className={cn('frame-ink rounded-lg bg-card p-4 shadow-card', className)}>
       <div className="fg-block flex items-start gap-3">
-        <div className="min-w-0 flex-1 text-ja leading-[2]">
+        <div className="min-w-0 flex-1 text-ja">
           <FuriganaText tokens={tokens} variant={variant} />
         </div>
         {action ? <div className="shrink-0 pt-1">{action}</div> : null}
