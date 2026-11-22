@@ -23,7 +23,9 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
     'میکی دوستش سورا را به کافهٔ یامادا می‌آورد؛ کنار پنجره علی کتاب می‌خواند و کمی بعد کیم — همکلاسی کره‌ای سورا — وارد می‌شود. یک مکالمه، دو واحد داستانی، و در پایان گیت فهم.',
   dialogueSlug: 'first-meeting-01',
   orderInLevel: 1,
-  estMinutes: 71,
+  /* ENGINE-REFORM 2026-11-22 §۲: +1' for the LISTEN-1 vowel-length teaching
+   * block (71 → 72, still inside the L2 [35, 75] window). */
+  estMinutes: 72,
   estLoad: 'medium',
   bandArc: 'cafe-intro',
   sceneFa:

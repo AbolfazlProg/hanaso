@@ -18,6 +18,9 @@ export type ClientTeachingBlock =
       kind: 'dialogue-player';
       id: string;
       focusLineRefs: string[];
+      /** ENGINE-REFORM §۳/§۴ — carried to the client: the runner branches on it
+       * (focused-line teaching view vs the full conversation player). */
+      lineTeaching?: boolean;
       prediction?: { questionFa: string; options: { id: string; label: string }[] };
       reducedSupport?: boolean;
     }
@@ -216,6 +219,7 @@ function stripBlock(block: TeachingBlock): ClientTeachingBlock {
         kind: 'dialogue-player',
         id: block.id,
         focusLineRefs: block.focusLineRefs,
+        lineTeaching: block.lineTeaching,
         prediction: block.prediction
           ? { questionFa: block.prediction.questionFa, options: block.prediction.options }
           : undefined,
@@ -331,6 +335,7 @@ export function stripStationAnswerMaterial(station: Station): Station {
           kind: 'dialogue-player',
           id: block.id,
           focusLineRefs: block.focusLineRefs,
+          lineTeaching: block.lineTeaching,
           prediction: block.prediction
             ? { questionFa: block.prediction.questionFa, options: block.prediction.options }
             : undefined,

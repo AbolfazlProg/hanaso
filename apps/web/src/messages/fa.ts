@@ -322,6 +322,14 @@ export const fa = {
     /* ---- owner order 2026-11-21 — the inline anchor dialogue section ---- */
     dialogueSectionTitle: 'مکالمهٔ فصل',
     dialogueInlineNote: 'همین‌جا در درس گوش کن و ببین — بعد به بخش بعدی همین درس ادامه می‌دهی.',
+    /* ---- owner order 2026-11-22 «نمایش بخش منتخب مکالمه» — the focused-line
+     * teaching view (ENGINE-REFORM §۳): only the lesson's own dialogue lines
+     * render, never the whole conversation. ---- */
+    dialogueFocusSectionTitle: 'خط‌های آموزشی همین درس',
+    dialogueFocusSectionNote:
+      'فقط همان نوبت‌هایی از مکالمه که این درس با آن‌ها آموزش می‌دهد — بقیهٔ گفتگو در جای خودش (درس آغازین) می‌ماند.',
+    dialogueFocusTurn: 'نوبت',
+    dialogueFocusTeaches: 'آنچه این خط به تو می‌آموزد',
     chapterUnderstoodBadge: 'فهمیده‌شده',
     teaserTitle: 'بعد از این فصل…',
     teaserHint: 'با تمام‌کردن این فصل، فصل بعدی برایت باز می‌شود.',

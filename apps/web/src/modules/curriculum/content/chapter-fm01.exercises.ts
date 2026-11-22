@@ -290,6 +290,35 @@ export const FM01_EXERCISES: Exercise[] = [
   },
 
   /* ════════════════════════ GRAMMAR-2 (stn-fm01-05-grammar-qa) ════════════════════════ */
+  /* ENGINE-REFORM 2026-11-22 §۲ — the immediate SIMPLE engagement after the
+   * rule packet (difficulty 1: one blank, the answer is the rule table's own
+   * ですね row). */
+  {
+    id: 'ex-fm01-g2-engage-1',
+    type: 'cloze',
+    targetSkill: 'grammar',
+    targetConcept: 'gr-desu-qa',
+    lineRef: L(5),
+    difficulty: 1,
+    promptFa: 'جای خالی: «پس سورا هستید»',
+    promptJa: 'ソラさん___。',
+    clozeTokens: ['ソラさん', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'ですね', 'です', 'ですか', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      a: 'です خبر ساده است — این‌جا «پس سورا هستید، نه؟» می‌خواهی.',
+      b: 'پرسش نیست — خبرِ شنیده‌ات را تأیید می‌کنی.',
+    },
+    feedback: {
+      f1Fa: '«پس …» یعنی تأیید شنیده‌ها — با ね.',
+      f2HintFa: 'جدول قاعده: ですね = تأیید.',
+      f3ExplainFa: 'ソラさんですね — «پس سورا هستید» (تأیید؛ آهنگ نیمه‌پایین).',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-g2-rule',
+  },
   {
     id: 'ex-fm01-g2-cloze-1',
     type: 'cloze',
@@ -386,6 +415,56 @@ export const FM01_EXERCISES: Exercise[] = [
   },
 
   /* ════════════════════════ EXPRESSION-1 (stn-fm01-06-expression) ════════════════════════ */
+  /* ENGINE-REFORM 2026-11-22 §۲ — the immediate SIMPLE engagement after each
+   * card packet (difficulty 1, answerable straight off the card just seen). */
+  {
+    id: 'ex-fm01-e1-engage-yoroshiku',
+    type: 'response-select',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-yoroshiku',
+    lineRef: L(13),
+    difficulty: 1,
+    promptFa: 'آیین معرفی تمام شد — دو طرف با هم چه می‌گویند؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'よろしく おねがいします', 'はじめまして', 'こんにちは', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'はじめまして آغاز آیین است — پایانش این نیست.',
+      c: 'こんにちは سلامِ روزانه است — جای آیین آشنایی نیست.',
+    },
+    feedback: {
+      f1Fa: 'پایان آیین با よろしく おねがいします.',
+      f2HintFa: 'کارت: «از رابطهٔمان خوشحال می‌شوم» — بستن آیین.',
+      f3ExplainFa: 'نوبت ۱۳: هر دو با هم می‌گویند よろしく おねがいします.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e1-card-yoroshiku',
+  },
+  {
+    id: 'ex-fm01-e1-engage-anokata',
+    type: 'response-select',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-anokata-donata',
+    lineRef: L(7),
+    difficulty: 1,
+    promptFa: 'مؤدبانه می‌پرسی یک شخص سوم که نمی‌شناسی کیست — کدام جمله؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'あのかたは どなたですか', 'せんせいですか', 'わたしです', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'پرسش دربارهٔ شغل است، نه «کیست؟» — و せんせい را از قبل نمی‌دانی.',
+      c: 'جوابِ معرفی خودت است، نه پرسش.',
+    },
+    feedback: {
+      f1Fa: 'پرسش مؤدبانه دربارهٔ شخص سوم: あのかたは どなたですか.',
+      f2HintFa: 'کارت: «آن [آقا/خانم] کیست؟» — با あのかた.',
+      f3ExplainFa: 'نوبت ۷ میکی همین را می‌پرسد.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-e1-card-anokata',
+  },
   {
     id: 'ex-fm01-e1-resp-1',
     type: 'response-select',
@@ -459,6 +538,33 @@ export const FM01_EXERCISES: Exercise[] = [
   },
 
   /* ════════════════════════ LISTEN-1 (stn-fm01-07-listen) ════════════════════════ */
+  /* ENGINE-REFORM 2026-11-22 §۲ — the immediate SIMPLE engagement after the
+   * vowel-length rule (difficulty 1: the two contrast forms were just modeled
+   * by blk-l1-vl-rule; recognizing the taught long form is answerable
+   * straight off that teaching). */
+  {
+    id: 'ex-fm01-l1-engage-1',
+    type: 'listen-minimal-pair',
+    targetSkill: 'listening',
+    targetConcept: 'voc-sensee',
+    assessesConcepts: ['listen-vowel-length'],
+    audioLineRef: L(8),
+    lineRef: L(8),
+    difficulty: 1,
+    promptFa: 'گوش بده (خط ۸): واژهٔ «استاد» را با کدام شکل شنیدی؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'せんせい', 'せんせ', 'せんせえ', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {},
+    feedback: {
+      f1Fa: 'آخرین واکه کشیده بود — せんせい.',
+      f2HintFa: 'قاعدهٔ همین درس: せんせい چهار مورا و آخرش بلند.',
+      f3ExplainFa: 'せんせい (sensee) = استاد — با واکهٔ پایانی کشیده.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-l1-vl-rule',
+  },
   {
     id: 'ex-fm01-l1-gist-1',
     type: 'gist-select',

@@ -48,6 +48,11 @@ export interface ContentSurface {
   field: string;
   /** Assess surfaces: the exercise's declared concepts (target + assesses). */
   declaredConcepts?: string[];
+  /** True when the surface comes from a GRADED NON-EXERCISE block (ENGINE-REFORM
+   *  §4 — guided-discovery / structured-input / dialogue-player prediction):
+   *  the block IS an assessment for the prerequisite engine, so it must declare
+   *  its concepts (R5 teach-before-assess) and cannot ship unlabeled (R6). */
+  gradedBlockKind?: 'guided-discovery' | 'structured-input' | 'prediction';
   /** True for the exercise's own promptJa (the asked-about vessel). */
   isPromptVessel?: boolean;
   /** True when the surface is SELF-SUPPORTING: the meaning/reading is provided
@@ -201,11 +206,19 @@ export function collectChapterSurfaces(chapter: Chapter): ContentSurface[] {
           push(block.characters.join(''), 'writing-chars', 'use');
           break;
         case 'structured-input':
-          for (const opt of block.options) push(opt.label, `si-opt-${opt.id}`, 'assess');
+          for (const opt of block.options)
+            push(opt.label, `si-opt-${opt.id}`, 'assess', {
+              declaredConcepts: block.assessesConcepts ? [...block.assessesConcepts] : undefined,
+              gradedBlockKind: 'structured-input',
+            });
           break;
         case 'guided-discovery':
           for (const h of block.highlightSurfaces) push(h, 'gd-highlight', 'teach');
-          for (const opt of block.options) push(opt.label, `gd-opt-${opt.id}`, 'assess');
+          for (const opt of block.options)
+            push(opt.label, `gd-opt-${opt.id}`, 'assess', {
+              declaredConcepts: block.assessesConcepts ? [...block.assessesConcepts] : undefined,
+              gradedBlockKind: 'guided-discovery',
+            });
           break;
         case 'wrap-up':
           /* recap copy — everything it mentions was just experienced with
@@ -222,13 +235,31 @@ export function collectChapterSurfaces(chapter: Chapter): ContentSurface[] {
         case 'exercise':
           exerciseSurfaces(chapter, station, block, blockIndex, out);
           break;
-        case 'dialogue-player':
+        case 'dialogue-player': {
+          /* The dialogue lines themselves stay EXEMPT (three-origin first
+           * encounter — exposure, never teaching). The block's GRADED
+           * prediction, however, IS an assessment (ENGINE-REFORM §۴): its
+           * Japanese-bearing options join the inventory (R1–R4 + the R3 target
+           * exemption via declaredConcepts); the teach-before-assess order and
+           * the labelling duty are enforced by the R5b/R6 block walk in
+           * prereq-gate.ts (graded blocks are gated even when their options
+           * are Persian-only — never invisible to the engine). */
+          if (block.prediction) {
+            for (const opt of block.prediction.options) {
+              push(opt.label, `pred-opt-${opt.id}`, 'assess', {
+                declaredConcepts: block.prediction.assessesConcepts
+                  ? [...block.prediction.assessesConcepts]
+                  : undefined,
+                gradedBlockKind: 'prediction',
+              });
+            }
+          }
+          break;
+        }
         case 'listening-task':
         case 'name-katakana':
         case 'drill-menu':
-          /* documented boundaries: the anchor dialogue is the three-origin FIRST
-           * ENCOUNTER (exposure — never counted as teaching, exempt from the
-           * prerequisite checks by design); listening-task lines are timed by
+          /* documented boundaries: listening-task lines are timed by
            * EQA-1 layer 2 (line comprehension); name-katakana answers are
            * computed from the learner's own input; drill-menu labels are Persian. */
           break;

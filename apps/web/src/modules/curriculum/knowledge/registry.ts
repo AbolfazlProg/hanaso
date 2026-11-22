@@ -205,11 +205,19 @@ export function buildKnowledgeRegistry(
     const running = entryKnowledge(chapter);
     const ordered = stationsInWalkOrder(chapter);
 
-    /* --- grammar clusters: anchored to the earliest station carrying ALL of the
-     *     cluster's lines (the eqa/model.ts rule — ambiguity reported, never guessed). */
+    /* --- grammar clusters: anchored to the earliest GRAMMAR/STRUCTURE station
+     *     carrying ALL of the cluster's lines (the eqa/model.ts rule — the
+     *     anchor/exposure station is NOT a grammar host: mission §۳/§۴ «مواجهه
+     *     در مکالمه با تدریس واقعی اشتباه گرفته نشود» — the anchor plays the
+     *     conversation for the FIRST time; it teaches nothing. Before this fix
+     *     the earliest host was the anchor station itself, so every gr-* entry
+     *     registered at order 1 — a dishonestly EARLY taught-point that let
+     *     graded pre-teaching questions pass the timing gates. Ambiguity is
+     *     reported, never guessed. */
     const grammarHost = new Map<string, Station>();
+    const grammarStations = ordered.filter((s) => s.type === 'grammar' || s.type === 'structure');
     for (const cluster of chapter.grammar) {
-      const hosts = ordered.filter(
+      const hosts = grammarStations.filter(
         (s) => cluster.lineRefs.length > 0 && cluster.lineRefs.every((l) => s.lineRefs.includes(l)),
       );
       if (hosts.length === 0) {

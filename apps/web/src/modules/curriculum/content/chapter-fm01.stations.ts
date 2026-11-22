@@ -28,11 +28,14 @@ export const FM01_STATIONS: Station[] = [
     slug: 'stn-fm01-01-anchor',
     type: 'anchor',
     titleFa: 'اولین مواجهه — کل مکالمه',
-    objectiveFa: 'کل مکالمهٔ ۱۴ نوبتی را یک‌بار بشنو و حس «شکاف دانستن» را تجربه کن',
+    objectiveFa: 'کل مکالمهٔ ۱۳ نوبتی را یک‌بار بشنو و حس «شکاف دانستن» را تجربه کن',
     core: true,
     order: 1,
     prerequisites: [],
-    lineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(9), L(10), L(11), L(12)],
+    /* ENGINE-REFORM 2026-11-22 §۲ (the honest full anchor): ALL 13 turns —
+     * the previous data listed L9 twice and MISSED the joint closing turn L13
+     * (both hosts speaking よろしく together). */
+    lineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(10), L(11), L(12), L(13)],
     objectiveCode: 'greet-first-meeting',
     estMinutes: 4,
     estLoad: 'light',
@@ -47,20 +50,15 @@ export const FM01_STATIONS: Station[] = [
           'میکی دوستش سورا را برای اولین بار به کافهٔ یامادا می‌آورد. کنار پنجره، علی — استاد ایرانی — کتاب ژاپنی می‌خواند. گوش کن: سلام، معرفی، پرسش… و کمی بعد یک مهمان تازه وارد می‌شود.',
       },
       {
+        /* ENGINE-REFORM 2026-11-22 §۲ (owner order «آزمون قبل از آموزش باید
+         * کاملاً حذف شود»): the GRADED pre-viewing prediction is REMOVED —
+         * the learner was forced to GUESS content they had neither been taught
+         * nor even heard. The anchor is now the pure viewing experience
+         * (subtitles ON) + the post-viewing gist checks below, which are
+         * answerable straight from what was just seen. */
         kind: 'dialogue-player',
         id: 'blk-a1-dialogue',
-        focusLineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(9), L(10), L(11), L(12)],
-        prediction: {
-          questionFa: 'به پاسخ سورا به پرسشِ ملیت دقت کن — فکر می‌کنی چه چیزی می‌گوید؟',
-          options: [
-            { id: 'a', label: 'ملیتش را تأیید می‌کند' },
-            { id: 'b', label: 'از پاسخ فرار می‌کند' },
-            { id: 'c', label: 'سؤال را برمی‌گرداند' },
-          ],
-          correctOptionId: 'a',
-          revealFa:
-            'سورا با «はい» تأیید می‌کند و می‌گوید: わたしは ちゅうごくじんです — در راه این فصل همهٔ این جمله را می‌سازی.',
-        },
+        focusLineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(10), L(11), L(12), L(13)],
       },
       ex('blk-a1-check', ['ex-fm01-a1-gist-1', 'ex-fm01-a1-gist-2', 'ex-fm01-a1-gist-3']),
     ],
@@ -88,7 +86,10 @@ export const FM01_STATIONS: Station[] = [
       { kind: 'vocab-card', id: 'blk-v1-card-chuugokujin', wordId: 'voc-chuugokujin' },
       { kind: 'vocab-card', id: 'blk-v1-card-daigaku', wordId: 'voc-daigaku' },
       { kind: 'vocab-card', id: 'blk-v1-card-sensee', wordId: 'voc-sensee' },
-      ex('blk-v1-ret-2', ['ex-fm01-v1-p2-aud-1', 'ex-fm01-v1-p2-txt-1']),
+      /* ENGINE-REFORM 2026-11-22 §۲ — the packet's engagement ramps d1 → d2:
+       * the text recognition (d1, straight off the cards) comes FIRST, then
+       * the harder audio recognition (d2). */
+      ex('blk-v1-ret-2', ['ex-fm01-v1-p2-txt-1', 'ex-fm01-v1-p2-aud-1']),
       { kind: 'vocab-card', id: 'blk-v1-card-anokata', wordId: 'voc-anokata' },
       { kind: 'vocab-card', id: 'blk-v1-card-iranjin', wordId: 'voc-iranjin' },
       ex('blk-v1-ret-3', ['ex-fm01-v1-p3-match-1']),
@@ -136,23 +137,15 @@ export const FM01_STATIONS: Station[] = [
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
-      { kind: 'dialogue-player', id: 'blk-g1-dialogue', focusLineRefs: [L(3), L(6)] },
-      {
-        kind: 'guided-discovery',
-        id: 'blk-g1-discovery',
-        displayLineRef: L(3),
-        highlightSurfaces: ['わたしは', 'にほんじん', 'です'],
-        compareLineRef: L(6),
-        questionFa: 'در هر دو جمله، は و です چه جایگاهی دارند؟',
-        options: [
-          { id: 'a', label: 'は بعد از «چه‌کسی» و です پایان جمله' },
-          { id: 'b', label: 'ها اول جمله و です بعد از موضوع' },
-          { id: 'c', label: 'هر دو اختیاری‌اند' },
-        ],
-        correctOptionId: 'a',
-        explainFa:
-          'は موضوع جمله را علامت می‌زند (تلفظ wa) و です جمله را مؤدبانه می‌بندد — مثل فارسی، فعل/هویت‌ساز آخر می‌نشیند: わたしは にほんじんです = من ژاپنی‌ام.',
-      },
+      /* ENGINE-REFORM 2026-11-22 §۲/§۳ — the real teach-first rebuild of this
+       * station. The dialogue-player becomes a LINE-TEACHING block (only
+       * lines 3 & 6 render — speaker, reading, translation, per-line audio:
+       * never the whole conversation); the old guided-discovery induction
+       * quiz BEFORE the rule is REMOVED (a graded guess on an untaught rule —
+       * «آزمون قبل از آموزش»); the rule-card now comes FIRST, then worked
+       * examples, then ONE simple engagement straight off the teaching table,
+       * then comprehension + production with a d1→d2 ramp. */
+      { kind: 'dialogue-player', id: 'blk-g1-dialogue', lineTeaching: true, focusLineRefs: [L(3), L(6)] },
       {
         kind: 'rule-card',
         id: 'blk-g1-rule',
@@ -211,11 +204,18 @@ export const FM01_STATIONS: Station[] = [
           },
         ],
       },
+      /* ENGINE-REFORM 2026-11-22 §۲ — ONE simple engagement straight off the
+       * rule-card's structure table (word-order, difficulty 1: the answer is
+       * the table's own second row with the packet-1 nationality), THEN the
+       * comprehension question, THEN production. The graded question is
+       * declared (R5b) and comes AFTER its teaching. */
+      ex('blk-g1-engage-1', ['ex-fm01-g1-order-1']),
       {
         kind: 'structured-input',
         id: 'blk-g1-input',
         questionFa: 'در نوبت ۸، چه کسی せんせい است؟',
         lineRef: L(8),
+        assessesConcepts: ['gr-desu-identity', 'voc-sensee', 'voc-daigaku'],
         options: [
           { id: 'a', label: 'علی' },
           { id: 'b', label: 'یامادا' },
@@ -224,7 +224,7 @@ export const FM01_STATIONS: Station[] = [
         correctOptionId: 'a',
         explainFa: 'アリさんは だいがくの せんせいです — الگوی AはBです دربارهٔ علی.',
       },
-      ex('blk-g1-drill', ['ex-fm01-g1-order-1', 'ex-fm01-g1-cloze-1', 'ex-fm01-g1-prod-1', 'ex-fm01-g1-prod-2']),
+      ex('blk-g1-drill', ['ex-fm01-g1-cloze-1', 'ex-fm01-g1-prod-1', 'ex-fm01-g1-prod-2']),
     ],
     fsrsItems: ['gr-fm01-desu-identity'],
   },
@@ -301,22 +301,14 @@ export const FM01_STATIONS: Station[] = [
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
-      { kind: 'dialogue-player', id: 'blk-g2-dialogue', focusLineRefs: [L(5), L(7)] },
-      {
-        kind: 'guided-discovery',
-        id: 'blk-g2-discovery',
-        displayLineRef: L(5),
-        highlightSurfaces: ['ですね', 'ですか'],
-        questionFa: 'در نوبت ۵، یامادا هر دو را یک‌جا می‌گوید — چه فرق دارند؟',
-        options: [
-          { id: 'a', label: 'ね تأیید شنیده‌هاست، か پرسش' },
-          { id: 'b', label: 'هر دو پرسش‌اند' },
-          { id: 'c', label: 'فرقی ندارند' },
-        ],
-        correctOptionId: 'a',
-        explainFa:
-          'ソラさんですね = «پس سورا هستید» (تأیید؛ آهنگ پایین) — ちゅうごくじんですか = «چینی هستید؟» (پرسش؛ آهنگ بالا).',
-      },
+      /* ENGINE-REFORM 2026-11-22 §۲/§۳ — the teach-first rebuild: the two
+       * model lines (5 & 7) render as the focused-line teaching view (never
+       * the whole conversation); the guided-discovery induction quiz BEFORE
+       * the rule is REMOVED (a graded guess on an untaught distinction);
+       * the rule-card teaches the three forms FIRST, the はい expression
+       * card joins the teaching packet, then ONE simple d1 engagement
+       * straight off the table, then examples → listening → production. */
+      { kind: 'dialogue-player', id: 'blk-g2-dialogue', lineTeaching: true, focusLineRefs: [L(5), L(7)] },
       {
         kind: 'rule-card',
         id: 'blk-g2-rule',
@@ -332,6 +324,11 @@ export const FM01_STATIONS: Station[] = [
           ],
         },
       },
+      { kind: 'expression-card', id: 'blk-g2-card-hai', expressionId: 'chrk-hai' },
+      /* §۲ — ONE simple engagement (difficulty 1) immediately after the
+       * teaching packet: the single-blank cloze straight off the table's
+       * ですね row. */
+      ex('blk-g2-engage-1', ['ex-fm01-g2-engage-1']),
       {
         kind: 'example-set',
         id: 'blk-g2-examples',
@@ -357,7 +354,6 @@ export const FM01_STATIONS: Station[] = [
         ],
       },
       ex('blk-g2-drill-aud', ['ex-fm01-g2-aud-1']),
-      { kind: 'expression-card', id: 'blk-g2-card-hai', expressionId: 'chrk-hai' },
       ex('blk-g2-drill', ['ex-fm01-g2-cloze-1', 'ex-fm01-g2-prod-1', 'ex-fm01-g2-prod-2']),
     ],
     fsrsItems: ['gr-fm01-desu-qa', 'chrk-fm01-hai'],
@@ -377,12 +373,17 @@ export const FM01_STATIONS: Station[] = [
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
+      /* ENGINE-REFORM 2026-11-22 §۲ — every card packet now gets its immediate
+       * SIMPLE engagement (difficulty 1, answerable straight off the card just
+       * seen) BEFORE the harder d2 retrieval — the mandated teach→engage ramp. */
       { kind: 'expression-card', id: 'blk-e1-card-konnichiwa', expressionId: 'chrk-konnichiwa' },
       { kind: 'expression-card', id: 'blk-e1-card-hajimemashite', expressionId: 'chrk-hajimemashite' },
       ex('blk-e1-ret-1', ['ex-fm01-e1-resp-1']),
       { kind: 'expression-card', id: 'blk-e1-card-yoroshiku', expressionId: 'chrk-yoroshiku' },
+      ex('blk-e1-engage-y', ['ex-fm01-e1-engage-yoroshiku']),
       ex('blk-e1-ret-2', ['ex-fm01-e1-resp-2']),
       { kind: 'expression-card', id: 'blk-e1-card-anokata', expressionId: 'chrk-anokata-donata' },
+      ex('blk-e1-engage-a', ['ex-fm01-e1-engage-anokata']),
       ex('blk-e1-ret-3', ['ex-fm01-e1-order-1']),
       {
         kind: 'wrap-up',
@@ -413,13 +414,44 @@ export const FM01_STATIONS: Station[] = [
     lineRefs: [L(3), L(5), L(6), L(7), L(8)],
     objectiveCode: 'listen-vowel-length',
     teachesConcepts: ['listen-final-intonation'],
-    estMinutes: 3,
+    estMinutes: 4,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
       { kind: 'listening-task', id: 'blk-l1-task', taskId: 'listen-1' },
-      ex('blk-l1-drill-1', ['ex-fm01-l1-gist-1', 'ex-fm01-l1-who-1']),
+      /* ENGINE-REFORM 2026-11-22 §۲ — the station's NEW concept (vowel length)
+       * is TAUGHT before it is tested: a rule-card models the two contrast
+       * pairs with their real audio (the correct forms carry committed
+       * hostword assets; the wrong forms honestly render no control — they
+       * are not words). The minimal-pair items that previously tested this
+       * untaught skill cold (difficulty 3 first!) now follow a modeled
+       * engagement: teach → simple guided discrimination → recycling →
+       * independent. */
+      {
+        kind: 'rule-card',
+        id: 'blk-l1-vl-rule',
+        patternJa: 'せんせい ↔ せんせ',
+        titleFa: 'طول واکه — بلند یا کوتاه',
+        bodyFa:
+          'در ژاپنی طول واکه معنا را عوض می‌کند. せんせい (استاد) چهار موراست و واکهٔ پایانی‌اش کشیده است؛ کوتاهش کنی (せんせ) واژه نابود می‌شود. همین‌طور ちゅうごく (چین): «اوی» وسط واژه کشیده است — ちゅごک نادرست است.',
+        structureTable: {
+          headers: ['درست (کشیده)', 'نادرست (کوتاه)', 'شنیدن'],
+          rows: [
+            ['せんせい — سِنسِی (استاد)، ۴ مورا', 'せんせ — واژه نیست', 'سِ…ن…سِی — آخر کشیده'],
+            ['ちゅうごく — چیووگوکو (چین)', 'ちゅごく — واژه نیست', 'چِیوْ…گو…کو — وسط کشیده'],
+          ],
+        },
+        listenWords: ['せんせい', 'ちゅうごく'],
+        listenNoteFa: 'صدای شکل‌های درست پخش می‌شود؛ شکل‌های نادرست واژه نیستند و صدای ثبت‌شده ندارند.',
+        persianBridgeFa: 'مثل فارسی: «آب» با آی بلند — کوتاهش کنی «اب» می‌شود، بی‌معنا.',
+      },
+      /* §۲ — ONE simple engagement (difficulty 1) straight off the rule just
+       * taught: recognize the modeled long form in the taught line 8. */
+      ex('blk-l1-engage-1', ['ex-fm01-l1-engage-1']),
+      /* recycling of ALREADY-taught material, ramping d1 → d2. */
+      ex('blk-l1-drill-1', ['ex-fm01-l1-who-1', 'ex-fm01-l1-gist-1']),
+      /* independent discrimination — now AFTER teaching + guided practice. */
       ex('blk-l1-drill-2', ['ex-fm01-l1-mp-1', 'ex-fm01-l1-mp-2']),
     ],
     fsrsItems: [],

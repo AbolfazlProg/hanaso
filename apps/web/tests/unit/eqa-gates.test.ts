@@ -114,6 +114,39 @@ describe('EQA gates over the REAL bundled chapters (the CI gate)', () => {
     }
   });
 
+  it('the EIGHT rebuilt chapter-02 lessons are CLEAN of every ENGINE-REFORM finding (owner order 2026-11-22 — no waivers)', () => {
+    /* ENGINE-REFORM §۲ — the first 8 lessons of first-meeting-01 (the REAL
+     * chapter 02) prove BOTH owner fixes end-to-end in the content itself:
+     * no graded question before its teaching (EQA-8 R5b/R6) and no EQA-10
+     * error — the previous C-first-engage/C-guided-first waivers for 05/06/
+     * 07/08 are GONE because the stations were really rebuilt. */
+    const fm = result.chapters.find((c) => c.chapter.slug === 'first-meeting-01')!;
+    for (const slug of [
+      'stn-fm01-01-anchor',
+      'stn-fm01-02-vocab',
+      'stn-fm01-03-grammar-desu',
+      'stn-fm01-04-structure',
+      'stn-fm01-05-grammar-qa',
+      'stn-fm01-06-expression',
+      'stn-fm01-07-listen',
+      'stn-fm01-08-practice',
+    ]) {
+      const findings = fm.findings.filter((f) => f.subject === slug);
+      expect(findings, `${slug} must be clean under all gates`).toEqual([]);
+    }
+  });
+
+  it('the graded pre-viewing prediction pattern is GONE from the rebuilt anchor (the «آزمون قبل از آموزش» removal)', () => {
+    const fm = result.chapters.find((c) => c.chapter.slug === 'first-meeting-01')!;
+    const anchor = fm.chapter.stations.find((s) => s.slug === 'stn-fm01-01-anchor')!;
+    const player = anchor.blocks.find((b) => b.kind === 'dialogue-player');
+    expect(player && 'prediction' in player ? player.prediction : undefined).toBeUndefined();
+    // the anchor's focus now covers the WHOLE 13-turn dialogue (incl. the joint L13)
+    if (player && 'focusLineRefs' in player) {
+      expect(new Set(player.focusLineRefs).size).toBe(13);
+    }
+  });
+
   it('the knowledge-registry course findings carry no errors (integrity green)', () => {
     expect(result.courseFindings.filter((f) => f.severity === 'error')).toEqual([]);
   });
@@ -269,6 +302,12 @@ describe('EQA-3 (recall-first composition) — mutations MUST be rejected', () =
       'ex-fm01-p2-c3-cloze-1',
       'ex-fm01-p2-c3-order-1',
       'ex-fm01-e2-prod-1',
+      // ENGINE-REFORM 2026-11-22 §2 — the four NEW pool items (the pool grew;
+      // the mutation must still push the meaning-select share past the cap).
+      'ex-fm01-g2-engage-1',
+      'ex-fm01-e1-engage-yoroshiku',
+      'ex-fm01-e1-engage-anokata',
+      'ex-fm01-l1-engage-1',
     ]) {
       const ex = ch.exercises[id]!;
       if (ex.type !== 'meaning-select') {
@@ -502,13 +541,23 @@ describe('EQA report output is actionable', () => {
     expect(text).toContain('PASS');
     expect(text).toMatch(/معاف‌شده: [1-9]/);
     expect(text).toContain('EQA'); // the gate registry is still rendered for reviewers
-    expect(text).toContain('Knowledge Registry'); // the registry findings section renders
+    /* ENGINE-REFORM §۴: the registry-integrity SECTION is GONE — the honest
+     * registry now has zero course findings (the old warnings were the
+     * exposure-mistaken-for-teaching ambiguity, root-caused away). The
+     * string 'Knowledge Registry' may still appear inside waived findings'
+     * ruleRef lines — that is the debt ledger, not the integrity section. */
+    expect(result.courseFindings).toEqual([]);
+    expect(result.courseFindings.some((f) => f.rule === 'registry-integrity')).toBe(false);
   });
 
   it('markdown report renders the honest state (old 05A/05B waivers stay closed)', () => {
     const md = renderMarkdown(result, { commit: 'test', date: '2026-11-22' });
     expect(md).toContain('EQA_RUN_REPORT');
-    expect(md).toContain('Knowledge Registry');
+    /* ENGINE-REFORM §۴ — the registry is GREEN: zero course findings (the
+     * exposure≠teaching fix removed the ambiguity-note noise; the course
+     * integrity section no longer renders). */
+    expect(result.courseFindings).toEqual([]);
+    expect(result.courseFindings.some((f) => f.rule === 'registry-integrity')).toBe(false);
     // TASK-LEARNING-06: the old waived keys may never return.
     expect(md).not.toContain('line-grammar-not-taught');
     expect(md).not.toContain('slot-missing');
@@ -673,13 +722,153 @@ describe('EQA-8 (course-wide prerequisites) — mutations MUST be rejected', () 
     );
   });
 
-  it('course integrity — the registry flags duplicate registration notes and dangling prerequisites honestly', () => {
+  /* ── ENGINE-REFORM 2026-11-22 §۴ (owner order «آزمون قبل از آموزش») — the two
+   * regression tests for the NEW graded-block rules: the exact quiz-before-
+   * teaching patterns the owner found in chapter 02, reproduced on a fresh
+   * mutation — a future lesson that ships either one MUST fail CI. */
+
+  it('R5b — rejects a graded guided-discovery placed BEFORE its rule teaching (the «آزمون قبل از آموزش» root pattern)', () => {
+    withCourseMutation(
+      (chapters) => {
+        const fm = chapters.find((c) => c.slug === 'first-meeting-01')!;
+        const stn = fm.stations.find((s) => s.slug === 'stn-fm01-03-grammar-desu')!;
+        // Re-insert the OLD pattern: a LABELLED graded induction quiz BEFORE
+        // the rule-card (the deck position of blk-g1-rule) that assesses the
+        // very rule it precedes.
+        stn.blocks.unshift({
+          kind: 'guided-discovery',
+          id: 'blk-g1-discovery-regression',
+          displayLineRef: 's-first-meeting-01-l3',
+          highlightSurfaces: ['わたしは', 'にほんじん', 'です'],
+          questionFa: 'در هر دو جمله، は و です چه جایگاهی دارند؟',
+          options: [
+            { id: 'a', label: 'は بعد از «چه‌کسی» و です پایان جمله' },
+            { id: 'b', label: 'هر دو اول جمله' },
+            { id: 'c', label: 'هر دو اختیاری‌اند' },
+          ],
+          correctOptionId: 'a',
+          explainFa: '...',
+          assessesConcepts: ['gr-desu-identity'],
+        });
+        return fm;
+      },
+      (chapters, fm) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8(fm, registry);
+        expect(
+          findings.some(
+            (f) =>
+              f.subject === 'stn-fm01-03-grammar-desu' &&
+              f.rule === 'graded-block-before-teach' &&
+              f.severity === 'error' &&
+              f.messageFa.includes('gr-desu-identity'),
+          ),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('R6 — rejects an UNLABELLED graded block (a graded question the engine cannot verify — invisibility is the bug)', () => {
+    withCourseMutation(
+      (chapters) => {
+        const fm = chapters.find((c) => c.slug === 'first-meeting-01')!;
+        const stn = fm.stations.find((s) => s.slug === 'stn-fm01-03-grammar-desu')!;
+        const si = stn.blocks.find((b) => b.kind === 'structured-input') as {
+          assessesConcepts?: string[];
+        };
+        // Strip the label from the (real, fixed) structured-input block: the
+        // graded question becomes invisible to the teach-order gate — R6 must
+        // reject it instead of silently accepting it.
+        si!.assessesConcepts = undefined;
+        return fm;
+      },
+      (chapters, fm) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8(fm, registry);
+        expect(
+          findings.some(
+            (f) =>
+              f.subject === 'stn-fm01-03-grammar-desu' &&
+              f.rule === 'graded-block-unlabelled' &&
+              f.severity === 'error',
+          ),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('R5b — rejects a graded pre-listening PREDICTION assessing concepts not yet taught (the anchor guess-question pattern)', () => {
+    withCourseMutation(
+      (chapters) => {
+        const fm = chapters.find((c) => c.slug === 'first-meeting-01')!;
+        const anchor = fm.stations.find((s) => s.slug === 'stn-fm01-01-anchor')!;
+        const player = anchor.blocks.find((b) => b.kind === 'dialogue-player') as {
+          prediction?: Record<string, unknown>;
+        };
+        // Re-arm the OLD pattern: a labelled graded prediction BEFORE the
+        // dialogue on a concept whose teaching comes later (gr-desu-qa @ 05).
+        player!.prediction = {
+          questionFa: 'فکر می‌کنی سورا چه می‌گوید؟',
+          options: [
+            { id: 'a', label: 'ملیتش را تأیید می‌کند' },
+            { id: 'b', label: 'فرار می‌کند' },
+            { id: 'c', label: 'برمی‌گرداند' },
+          ],
+          correctOptionId: 'a',
+          revealFa: '...',
+          assessesConcepts: ['gr-desu-qa'],
+        };
+        return fm;
+      },
+      (chapters, fm) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8(fm, registry);
+        expect(
+          findings.some(
+            (f) =>
+              f.subject === 'stn-fm01-01-anchor' && f.rule === 'graded-block-before-teach' && f.severity === 'error',
+          ),
+        ).toBe(true);
+      },
+    );
+  });
+
+  it('course integrity — the honest registry is GREEN on the real course (the exposure≠teaching fix killed the ambiguity notes)', () => {
     const registry = buildKnowledgeRegistry(listChapters());
     const findings = gateEqa8Course(registry);
-    // grammar clusters anchored to several stations are the documented ambiguity
-    // (warning-grade, EQA-9) — the integrity layer itself must be traceable.
-    expect(findings.some((f) => f.rule === 'registry-integrity' && f.severity === 'warning')).toBe(true);
+    /* ENGINE-REFORM §۴ root-cause fix: grammar clusters now anchor to their
+     * GRAMMAR/STRUCTURE teaching stations (never the anchor exposure station),
+     * so the old `grammar-anchor-ambiguous` warnings — an artifact of the
+     * anchor being a "host" of every cluster — are GONE. The integrity layer
+     * is transparent AND green; a duplicate registration or dangling prereq
+     * still has to surface (mutation-proven below). */
+    expect(findings.filter((f) => f.severity === 'error')).toEqual([]);
+    expect(findings.some((f) => f.rule === 'registry-integrity' && f.severity === 'warning')).toBe(false);
     expect(findings.some((f) => f.rule === 'registry-unique-ids')).toBe(false);
+    // the grammar taught-points are the REAL teaching stations, not the anchor
+    expect(registry.taughtAt.get('gr-desu-qa')?.stationSlug).toBe('stn-fm01-05-grammar-qa');
+    expect(registry.taughtAt.get('gr-desu-identity')?.stationSlug).toBe('stn-fm01-03-grammar-desu');
+  });
+
+  it('course integrity — registry problems DO surface when present (mutation-proven)', () => {
+    withCourseMutation(
+      (chapters) => {
+        // a vocab-card referencing an unknown word id → the registry notes the
+        // integrity problem and the course gate surfaces it (traceable error).
+        const fm = chapters.find((c) => c.slug === 'first-meeting-01')!;
+        const stn = fm.stations.find((s) => s.slug === 'stn-fm01-02-vocab')!;
+        const card = stn.blocks.find((b) => b.kind === 'vocab-card') as { wordId: string };
+        card.wordId = 'voc-does-not-exist';
+        return chapters;
+      },
+      (chapters) => {
+        const registry = buildKnowledgeRegistry(chapters);
+        const findings = gateEqa8Course(registry);
+        expect(
+          findings.some((f) => f.rule === 'registry-integrity' && f.messageFa.includes('voc-does-not-exist')),
+        ).toBe(true);
+      },
+    );
   });
 });
 

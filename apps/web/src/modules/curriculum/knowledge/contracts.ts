@@ -143,7 +143,7 @@ export const STATION_TYPE_CONTRACT: Record<
     requirementFa: 'exercise/drill-menu/example-set/dialogue-player',
   },
   anchor: {
-    ruleFa: 'ایستگاه لنگر: پخش مکالمهٔ محوری + پرسش پیش‌بینی',
+    ruleFa: 'ایستگاه لنگر: پخش مکالمهٔ محوری + بازبینی فهمِ پس از مشاهده (بدون پرسش حدسیِ نمره‌دار)',
     requires: (b) => b.kind === 'dialogue-player',
     requirementFa: 'dialogue-player',
   },

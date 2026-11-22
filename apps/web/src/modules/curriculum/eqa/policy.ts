@@ -81,11 +81,20 @@ export const EQA_POLICY = {
  * Station types whose blocks are pure receipt or the assessment itself — the
  * alternation rules do NOT apply to them:
  *  - anchor  : stage A is gist-receipt by design (DD-94 §۴-۱ «شامل ANCHOR (دریافت‌محض)»);
- *              its allowed support = scene card + one prediction question (CONTRACT §۳).
+ *              its allowed support = scene card + the dialogue experience (the
+ *              graded pre-viewing prediction was REMOVED by the owner order
+ *              2026-11-22 — see the ENGINE-REFORM note below).
  *  - mastery : stage D is the replay + separate gate assessment (DD-048); the
  *              scored interaction is the gate itself, not station blocks.
  */
 export const RECEIPT_STATION_TYPES: ReadonlySet<StationType> = new Set(['anchor', 'mastery'] as const);
+
+/* ENGINE-REFORM 2026-11-22 §4 (owner order «آزمون قبل از آموزش باید کاملاً حذف شود"):
+ * the anchor's allowed support is the scene card + the dialogue experience —
+ * a GRADED pre-viewing prediction (a forced guess on material the learner has
+ * neither been taught nor exposed to yet) is no longer an allowed anchor
+ * pattern; post-viewing gist checks that are answerable from the viewing
+ * itself are the simple engagement (EQA-8 R5b/R6 gate the graded blocks). */
 
 /** Receptive (non-interactive) block kinds — the learner only receives. */
 const RECEPTIVE_KINDS: ReadonlySet<string> = new Set([
@@ -265,7 +274,7 @@ export const EQA_GATE_REGISTRY: readonly EqaGateSpec[] = [
       'پیش‌نیاز محتوایی: هر سطح محتوایی (آموزش، مثال، سؤال، گزینه حتی انحرافی، راهنما، بازخورد) فقط از دانشِ تدریس‌شدهٔ پیش از آن نقطه استفاده می‌کند — رجیستری دانشِ کل مسیر',
     source: 'ENGINE-REFORM 2026-11-22 §۳ · Knowledge Registry · GLYPH-BUDGET/CONTENT-105 lineage',
     scope:
-      'خطا: نویسه/قاعدهٔ تدریس‌نشده در هر سطح ژاپنی (R1/R2)؛ واژهٔ ثبت‌شده در متن پیرامونی پیش از تدریسش (R3)؛ کانجی ثبت‌نشده در سطح سنجش (R4)؛ سنجش مفهوم پیش از بلوک تدریس‌کننده حتی درون همان ایستگاه (R5). هشدار: کانجی گلاوس‌دار در متریال دریافت‌همراه. معافِ مستند: مکالمهٔ لنگر (مواجههٔ اولیه سه‌منشأ — exposureAt در رجیستری، هرگز تدریس حساب نمی‌شود)؛ زمان‌بندی درک خط نزد EQA-1 می‌ماند. رجیستری از محتوای فصل‌ها مشتق می‌شود (یک منبع حقیقت، بدون نسخهٔ موازی)، دیجست نسخه‌بندی‌شده دارد و ثبتِ آموزش هر ایستگاه خودکار است.',
+      'خطا: نویسه/قاعدهٔ تدریس‌نشده در هر سطح ژاپنی (R1/R2)؛ واژهٔ ثبت‌شده در متن پیرامونی پیش از تدریسش (R3)؛ کانجی ثبت‌نشده در سطح سنجش (R4)؛ سنجش مفهوم پیش از بلوک تدریس‌کننده حتی درون همان ایستگاه (R5)؛ بلوک نمره‌دارِ بدون برچسب assessesConcepts (R6) و پرسش نمره‌دار (کشف هدایت‌شده/ورودی ساخت‌یافته/پیش‌بینی) پیش از تدریس مفهومهایش (R5b — مالک ۲۰۲۶-۱۱-۲۲: آزمون قبل از آموزش کاملاً حذف شود). هشدار: کانجی گلاوس‌دار در متریال دریافت‌همراه. معافِ مستند: مکالمهٔ لنگر (مواجههٔ اولیه سه‌منشأ — exposureAt در رجیستری، هرگز تدریس حساب نمی‌شود)؛ زمان‌بندی درک خط نزد EQA-1 می‌ماند. رجیستری از محتوای فصل‌ها مشتق می‌شود (یک منبع حقیقت، بدون نسخهٔ موازی)، دیجست نسخه‌بندی‌شده دارد و ثبتِ آموزش هر ایستگاه خودکار است.',
     owner: 'Content Author + CI',
   },
   {
