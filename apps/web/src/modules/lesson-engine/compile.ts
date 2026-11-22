@@ -18,12 +18,14 @@ import type {
   ChapterUnit,
   CompletionCriteria,
   Exercise,
+  KanjiItem,
   Station,
   TeachingBlock,
   VocabItem,
   GrammarCluster,
   ExpressionItem,
 } from '@/modules/curriculum/types';
+import { KANJI_ITEMS_BY_LITERAL, kanjiFsrsCardIds } from '@/modules/curriculum/kanji';
 import { ENGINE_CONFIG } from './engine-config';
 import type { EngineChapter, EngineStation, EngineStep, ValidatorFinding } from './types';
 
@@ -268,6 +270,11 @@ function mapDomainToStationType(domain: EngineStation['domain']): Station['type'
       return 'grammar';
     case 'kana':
       return 'kana';
+    /* KANJI-TWO-PHASE §۲: the draft's kanji domain lowers to the runtime's
+     * DEDICATED kanji station type — the only type whose deck may carry
+     * kanji-card blocks (EQA-12 K1 enforces it on the compiled output). */
+    case 'kanji':
+      return 'kanji';
     case 'listening':
       return 'listen';
     case 'practice':
@@ -328,6 +335,46 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     lineRef: e.lineRef ?? lineId(1),
     fsrs: { chrk: `chrk-${e.id}` },
   }));
+
+  /*
+   * KANJI-TWO-PHASE §۲: the draft's kanji targets lower to the runtime
+   * KanjiItem — the reference id resolves by LITERAL (a kanji outside the N5
+   * reference is a HARD finding: the reference is the only source of kanji
+   * facts), and each anchor word must be a DECLARED chapter vocabulary surface
+   * (the vessel rule — D-0006). Card ids come from the ONE convention helper.
+   */
+  const kanjiItems: KanjiItem[] = [];
+  draft.kanji.forEach((k) => {
+    const ref = KANJI_ITEMS_BY_LITERAL.get(k.character);
+    if (!ref) {
+      findings.push({
+        rule: 'C-KANJI-REFERENCE',
+        severity: 'hard',
+        message: `کانجی ${k.character} (${k.id}) در مرجع N5 موجود نیست — تدریس کانجی خارج از مرجع ممکن نیست (منبع: KANJIDIC2/KanjiVG — docs/domain/KANJI-N5-REFERENCE.md).`,
+        location: `chapter.kanji[${k.id}]`,
+      });
+      return;
+    }
+    const anchorWordIds: string[] = [];
+    for (const a of k.anchorWords) {
+      const word = draft.vocabulary.find((v) => v.surface === a.word);
+      if (!word) {
+        findings.push({
+          rule: 'C-KANJI-ANCHOR',
+          severity: 'hard',
+          message: `کانجی ${k.character}: واژهٔ anchor «${a.word}» در واژگان درفت ${draft.id} نیست — anchor باید واژهٔ اعلام‌شدهٔ همین فصل باشد (D-0006).`,
+          location: `chapter.kanji[${k.id}].anchorWords`,
+        });
+        continue;
+      }
+      if (!anchorWordIds.includes(word.id)) anchorWordIds.push(word.id);
+    }
+    kanjiItems.push({
+      kanjiId: ref.kanjiId,
+      fsrs: kanjiFsrsCardIds(ref.kanjiId),
+      anchorWordIds,
+    });
+  });
 
   let order = 0;
   const stations: Station[] = [];
@@ -411,6 +458,7 @@ export function compileEngineChapter(draft: EngineChapter): CompileResult {
     words,
     grammar,
     expressions,
+    kanji: kanjiItems.length > 0 ? kanjiItems : undefined,
     stations,
     exercises: allExercises,
     mastery: {

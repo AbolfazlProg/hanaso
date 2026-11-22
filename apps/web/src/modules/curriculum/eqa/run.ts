@@ -15,6 +15,7 @@ import type { EqaFinding } from './policy';
 import { findingKey } from './policy';
 import { gateEqa1, gateEqa2, gateEqa3, gateEqa4, gateEqa5, gateEqa6, gateEqa7Chapter, gateEqa7Levels } from './gates';
 import { gateEqa8, gateEqa8Course } from '../knowledge/prereq-gate';
+import { gateEqa12 } from '../knowledge/kanji-contract';
 import { buildCourseAssessmentEvents, gateEqa10 } from '../knowledge/contracts';
 import { buildKnowledgeRegistry } from '../knowledge/registry';
 import type { EqaWaiver } from './waivers';
@@ -78,6 +79,7 @@ export function runEqa(
       ...gateEqa7Chapter(chapter, levels),
       ...gateEqa8(chapter, registry),
       ...gateEqa10(chapter, courseEvents),
+      ...gateEqa12(chapter, registry),
     ];
     for (const f of findings) allFindings.push({ key: findingKey(f), chapterSlug: chapter.slug });
 

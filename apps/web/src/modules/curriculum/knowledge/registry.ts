@@ -29,6 +29,7 @@ import { KANA_ITEMS, KANA_ITEMS_BY_ID } from '../content/kana-items';
 import { transliterateKanaToFa } from '../content/translit-standard';
 import { RULE_MARK_STATION, decomposeJa, derivedFormsIn, type RuleMark } from '../glyph-budget';
 import { stationsInWalkOrder } from '../eqa/model';
+import { KANJI_ITEMS_BY_ID } from '../kanji';
 import type {
   KnowledgeEntry,
   KnowledgePoint,
@@ -256,7 +257,7 @@ export function buildKnowledgeRegistry(
         globalIndex: (chIdx + 1) * 10000 + station.order,
       });
 
-      for (const block of station.blocks) {
+      for (const [blockIndex, block] of station.blocks.entries()) {
         const p = pointOf(block.id);
         if (block.kind === 'kana-card') {
           const item = KANA_ITEMS_BY_ID[block.kanaId];
@@ -337,6 +338,87 @@ export function buildKnowledgeRegistry(
             firstTaught: p,
           });
         }
+        /*
+         * KANJI-TWO-PHASE §۲ — the dedicated kanji teaching card. The KANJI
+         * CONTRACT folds into the registry here:
+         *   K1  only a station of type 'kanji' may register a kanji (a kanji-card
+         *       anywhere else is a contract breach — noted, never silently
+         *       accepted; EQA-12 turns it into an error);
+         *   K3  every anchor word must be a REGISTERED word taught strictly
+         *       BEFORE this kanji point (global order; deck order inside the
+         *       same station) — readings ride inside anchor words (D-0006);
+         *   the kanji's reading glyphs join the prerequisites (the readings are
+         *       displayed on the card in kana — those glyphs must be known).
+         */
+        if (block.kind === 'kanji-card') {
+          if (station.type !== 'kanji') {
+            notes.push({
+              rule: 'kanji-card-outside-kanji-station',
+              message: `کانجی‌کارت ${block.id} در ایستگاه ${station.slug} از نوع ${station.type} است — تدریس کانجی فقط در ایستگاه اختصاصی kanji مجاز است (معرفی در کارت واژه = تدریس نیست).`,
+            });
+            continue;
+          }
+          const ref = KANJI_ITEMS_BY_ID.get(block.kanjiId);
+          if (!ref) {
+            notes.push({
+              rule: 'kanji-unknown-id',
+              message: `kanji-card با شناسهٔ ناشناخته ${block.kanjiId} — در مرجع N5 موجود نیست.`,
+            });
+            continue;
+          }
+          const declared = chapter.kanji?.find((k) => k.kanjiId === block.kanjiId);
+          if (!declared) {
+            notes.push({
+              rule: 'kanji-card-undeclared',
+              message: `کانجی ${ref.literal} (${block.kanjiId}) در ایستگاه ${station.slug} تدریس می‌شود اما در فهرست kanji فصل ${chapter.slug} اعلام نشده است.`,
+            });
+          }
+          const anchorIds: string[] = [];
+          for (const wid of block.anchorWordIds) {
+            const w = wordById.get(wid);
+            if (!w) {
+              notes.push({
+                rule: 'kanji-anchor-unknown-word',
+                message: `کانجی ${ref.literal}: واژهٔ anchor ناشناخته ${wid}.`,
+              });
+              continue;
+            }
+            const wEntry = byId.get(wid);
+            const wIdx = wEntry
+              ? wEntry.firstTaught.stationSlug === station.slug
+                ? station.blocks.findIndex((b) => b.id === wEntry.firstTaught.blockId)
+                : -2
+              : -1;
+            const before =
+              wEntry !== undefined &&
+              (wEntry.firstTaught.globalIndex < p.globalIndex || (wIdx >= 0 && wIdx < blockIndex));
+            if (!before) {
+              notes.push({
+                rule: 'kanji-anchor-not-before',
+                message: `کانجی ${ref.literal} (${block.kanjiId}): واژهٔ anchor «${w.term}» (${wid}) پیش از ایستگاه ${station.slug} تدریس نشده است — خوانش کانجی باید داخل واژهٔ آموزش‌دیده قبلی باشد (D-0006).`,
+              });
+            }
+            anchorIds.push(wid);
+          }
+          if (anchorIds.length === 0) {
+            notes.push({
+              rule: 'kanji-anchor-empty',
+              message: `کانجی ${ref.literal} (${block.kanjiId}) هیچ واژهٔ anchor معتبری ندارد — حداقل ۲ واژهٔ آموزش‌دیده قبلی لازم است (kanji-interaction-blueprint).`,
+            });
+          }
+          const readingPrereqs = [...ref.on, ...ref.kun].flatMap((r) => glyphPrereqs(r.replace(/[-.]/g, '')));
+          register({
+            id: block.kanjiId,
+            kind: 'kanji',
+            surface: ref.literal,
+            romaji: ref.meaningsEn[0],
+            meaningFa: ref.meaningFa,
+            prerequisites: [...new Set([...anchorIds, ...readingPrereqs])],
+            firstTaught: p,
+            kanjiId: block.kanjiId,
+            strokeCount: ref.strokeCount,
+          });
+        }
         /* rule decks: every derived form DISPLAYED by a teaching surface is
          * taught at that display (the DERIVED-GLYPH-SHOWN fold set). */
         for (const surface of teachingDisplaySurfaces(block)) {
@@ -401,6 +483,7 @@ export function buildKnowledgeRegistry(
         if (b.kind === 'kana-card' && KANA_ITEMS_BY_ID[b.kanaId]) running.add(b.kanaId);
         if (b.kind === 'vocab-card') running.add(b.wordId);
         if (b.kind === 'expression-card') running.add(b.expressionId);
+        if (b.kind === 'kanji-card') running.add(b.kanjiId);
         for (const s of teachingDisplaySurfaces(b)) for (const f of derivedFormsIn(s)) running.add(`glyph-${f}`);
       }
       for (const mark of Object.keys(RULE_MARK_STATION) as RuleMark[]) {
@@ -415,6 +498,18 @@ export function buildKnowledgeRegistry(
       chapter.slug,
       ordered.map((s) => s.slug),
     );
+
+    /* KANJI-TWO-PHASE §۲: every DECLARED kanji target must actually have a
+     * dedicated teaching card in this chapter's walk (a declaration without
+     * its kanji-card is a dead teaching claim — noted, surfaced by EQA-12). */
+    for (const item of chapter.kanji ?? []) {
+      if (!byId.has(item.kanjiId)) {
+        notes.push({
+          rule: 'kanji-declared-not-taught',
+          message: `فصل ${chapter.slug}: کانجی ${item.kanjiId} در فهرست kanji اعلام شده اما هیچ kanji-card اختصاصی در ایستگاه‌های فصل ندارد.`,
+        });
+      }
+    }
   }
 
   /* --- indexes --- */
@@ -422,7 +517,7 @@ export function buildKnowledgeRegistry(
   const bySurfaceFolded = new Map<string, KnowledgeEntry[]>();
   const byReading = new Map<string, KnowledgeEntry[]>();
   for (const e of entries) {
-    if (KANA_RE.test(e.surface)) {
+    if (KANA_RE.test(e.surface) || (e.kind === 'kanji' && e.surface.length === 1)) {
       const list = bySurface.get(e.surface) ?? [];
       list.push(e);
       bySurface.set(e.surface, list);
@@ -435,6 +530,17 @@ export function buildKnowledgeRegistry(
       const list = byReading.get(e.reading) ?? [];
       list.push(e);
       byReading.set(e.reading, list);
+    }
+    /* kanji: the on/kun readings are searchable surfaces too (reference lookup). */
+    if (e.kind === 'kanji') {
+      const ref = KANJI_ITEMS_BY_ID.get(e.kanjiId ?? '');
+      if (ref) {
+        for (const r of [...ref.on, ...ref.kun]) {
+          const list = byReading.get(r) ?? [];
+          list.push(e);
+          byReading.set(r, list);
+        }
+      }
     }
   }
 
@@ -530,6 +636,46 @@ export function searchKnowledge(registry: KnowledgeRegistry, query: KnowledgeSea
     if (query.limit && results.length >= query.limit) break;
   }
   return results;
+}
+
+/**
+ * KANJI-TWO-PHASE §۲ — the per-level kanji tracking surface: the course's
+ * taught kanji, in course order (globalIndex), joined to their chapter and
+ * level. «کانجی‌های موردنیاز هر سطح و ترتیب آموزش آن‌ها قابل رهگیری باشد» —
+ * this query is the engine-side answer (reports/EQA-12 render from it).
+ */
+export function kanjiTaughtSequence(
+  registry: KnowledgeRegistry,
+  chapters?: RegistrySource,
+): {
+  entry: KnowledgeEntry;
+  chapterSlug: string;
+  levelCode: string;
+}[] {
+  const levelByChapter = new Map((chapters ?? []).map((c) => [c.slug, c.levelCode] as const));
+  return registry.entries
+    .filter((e) => e.kind === 'kanji')
+    .sort((a, b) => a.firstTaught.globalIndex - b.firstTaught.globalIndex)
+    .map((entry) => ({
+      entry,
+      chapterSlug: entry.firstTaught.chapterSlug,
+      levelCode: levelByChapter.get(entry.firstTaught.chapterSlug) ?? '',
+    }));
+}
+
+/** All kanji registry entries first-taught in a given chapter. */
+export function kanjiTaughtInChapter(registry: KnowledgeRegistry, chapterSlug: string): KnowledgeEntry[] {
+  return registry.entries.filter((e) => e.kind === 'kanji' && e.firstTaught.chapterSlug === chapterSlug);
+}
+
+/** Is the kanji taught at or before the given station (dedicated station's card)? */
+export function isKanjiTaughtAtOrBefore(
+  registry: KnowledgeRegistry,
+  kanjiId: string,
+  chapterSlug: string,
+  stationSlug: string,
+): boolean {
+  return isTaughtAtOrBefore(registry, kanjiId, chapterSlug, stationSlug);
 }
 
 /**

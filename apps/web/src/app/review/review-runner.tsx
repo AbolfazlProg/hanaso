@@ -151,6 +151,27 @@ export function ReviewRunner({
             <p className="text-small leading-[var(--leading-fa)] text-ink-soft">{fa.review.unknownCard}</p>
             <p className="text-caption text-ink-faint">{fa.review.unknownCardNote}</p>
           </div>
+        ) : card.kind === 'kj-wri' ? (
+          /* KANJI-TWO-PHASE §۳ — kj-wri FRONT is the meaning + readings (the
+           * recall target is the CHARACTER + its stroke order — revealed after
+           * the attempt; the glyph is never shown up front). */
+          <div className="flex flex-col items-center gap-2" data-kanji-writing-front>
+            <p className="text-lead font-bold text-ink">{card.meaningFa}</p>
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-small text-ink-soft" dir="ltr" lang="ja">
+              {card.on && card.on.length > 0 ? (
+                <span>
+                  <span className="text-ink-faint">音 </span>
+                  {card.on.join('・')}
+                </span>
+              ) : null}
+              {card.kun && card.kun.length > 0 ? (
+                <span>
+                  <span className="text-ink-faint">訓 </span>
+                  {card.kun.join('・')}
+                </span>
+              ) : null}
+            </div>
+          </div>
         ) : card.glyph ? (
           <>
             {/* ENGINE-NEXTGEN W-B: two font-size utilities collided on this
@@ -226,7 +247,54 @@ export function ReviewRunner({
           </button>
         ) : null}
 
-        {phase === 'revealed' && card.glyph ? (
+        {/*
+         * KANJI-TWO-PHASE §۳ — the kanji reveal: meaning + readings (on/kun)
+         * + stroke count + the anchor words the kanji rides inside. kj-wri
+         * cards run the same reveal in reverse (meaning is the front — the
+         * glyph + strokes ARE the recall target).
+         */}
+        {phase === 'revealed' && card.kind === 'kj-rec' ? (
+          <div className="flex flex-col items-center gap-2" data-kanji-reveal>
+            <p className="text-lead font-bold text-ink">{card.meaningFa}</p>
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-small text-ink-soft" dir="ltr" lang="ja">
+              {card.on && card.on.length > 0 ? (
+                <span>
+                  <span className="text-ink-faint">音 </span>
+                  {card.on.join('・')}
+                </span>
+              ) : null}
+              {card.kun && card.kun.length > 0 ? (
+                <span>
+                  <span className="text-ink-faint">訓 </span>
+                  {card.kun.join('・')}
+                </span>
+              ) : null}
+              {card.strokeCount ? <span className="text-ink-faint">{faNum(card.strokeCount)} ضرب</span> : null}
+            </div>
+            {card.anchorWords && card.anchorWords.length > 0 ? (
+              <ul className="flex flex-col items-center gap-1 pt-1" dir="ltr" lang="ja">
+                {card.anchorWords.slice(0, 3).map((a) => (
+                  <li key={a.term} className="text-small text-ink-soft">
+                    <span className="font-bold text-ink">{a.term}</span>
+                    <span className="text-ink-faint"> · </span>
+                    {a.meaningFa}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ) : null}
+
+        {phase === 'revealed' && card.kind === 'kj-wri' ? (
+          <div className="flex flex-col items-center gap-2" data-kanji-writing-reveal>
+            <JaBlock className="text-hero-ja font-black">{card.glyph}</JaBlock>
+            <p className="text-small text-ink-soft">
+              {faNum(card.strokeCount ?? 0)} ضرب — {fa.review.kanjiStrokeNote}
+            </p>
+          </div>
+        ) : null}
+
+        {phase === 'revealed' && card.glyph && card.kind !== 'kj-rec' && card.kind !== 'kj-wri' ? (
           <p className="text-lead font-bold text-ink" dir="ltr">
             {card.romaji}
           </p>

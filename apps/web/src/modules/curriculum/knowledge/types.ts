@@ -35,7 +35,8 @@ export type KnowledgeKind =
   | 'grammar' // a grammar pattern cluster — taught by the station anchoring its lines
   | 'expression' // a functional expression — taught by expression-card
   | 'derived-glyph' // a derived form (voiced/small/foreign) — taught by its first explicit teaching display
-  | 'concept'; // a station-declared concept (objectiveCode / teachesConcepts) — taught at its station
+  | 'concept' // a station-declared concept (objectiveCode / teachesConcepts) — taught at its station
+  | 'kanji'; // a reference kanji (n5-reference: kj-65e5 …) — taught ONLY by a kanji-card in a DEDICATED kanji station (KANJI-TWO-PHASE §۲)
 
 /** Canonical registry id of a rule mark. */
 export type RuleMarkId = `mark-${'dakuten' | 'handakuten' | 'yoon-small' | 'sokuon' | 'choonpu' | 'foreign-small'}`;
@@ -76,6 +77,14 @@ export interface KnowledgeEntry {
   /** Kana extras. */
   script?: 'hira' | 'kata';
   row?: string;
+  /**
+   * Kanji extras (kind 'kanji'): the N5 reference key (kj-65e5 …) — facts
+   * (readings/strokes) stay in the reference module; the registry stores only
+   * teaching position + prerequisites. Anchor words ride in `prerequisites`
+   * (word ids taught strictly before the kanji station — EQA-12 K3).
+   */
+  kanjiId?: string;
+  strokeCount?: number;
 }
 
 /** Which chapters the course is built from, in course order (the registry's input). */

@@ -142,6 +142,12 @@ export function collectChapterSurfaces(chapter: Chapter): ContentSurface[] {
         case 'kana-card':
         case 'vocab-card':
         case 'expression-card':
+        /* KANJI-TWO-PHASE §۲ — the kanji-card's own surfaces (literal, anchor
+         * words, readings) fold through the registry builder at its own block
+         * (its kanji id joins the known set there; its anchor words are
+         * prerequisite-validated at registration). Nothing assessable rides
+         * on this card — it is the dedicated teaching display. */
+        case 'kanji-card':
           break; // handled via the registry builder (ids fold in deck order)
         case 'rule-card': {
           push(block.patternJa, 'patternJa', 'teach');

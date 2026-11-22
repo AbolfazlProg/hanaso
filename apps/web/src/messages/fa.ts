@@ -136,6 +136,8 @@ export const fa = {
     unknownCard: 'این کارت در محتوای فعلی پیدا نشد.',
     /* UX-AUDIT #134 — an unresolvable card is NEVER rateable: skip only. */
     unknownCardNote: 'رتبه‌ای ثبت نمی‌شود — کارتِ بی‌محتوا از زمان‌بندی خارج نمی‌شود و فقط می‌توانی ردش کنی.',
+    /* KANJI-TWO-PHASE §۳ — the kj-wri reveal note (stroke-order reminder). */
+    kanjiStrokeNote: 'ترتیب ضربه‌ها را در مسیر یادگیری تمرین کن.',
     skip: 'رد کردن',
     loadFailed: 'خواندن صف مرور ناموفق بود — بعداً تلاش کنید.',
     submitFailed: 'ثبت مرور ناموفق بود — دوباره تلاش کنید.',

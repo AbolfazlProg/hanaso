@@ -26,8 +26,11 @@
  */
 import type { Chapter } from '@/modules/curriculum/types';
 
-/** Card kinds of the v3.1 enum + the kn prefix added for kana (DD-119). */
-export type FsrsCardKind = 'w' | 's' | 'w-p' | 's-line' | 'gr' | 'chrk' | 'kn';
+/** Card kinds of the v3.1 enum + the kn prefix added for kana (DD-119) and the
+ *  kj-rec/kj-wri pair added for kanji (KANJI-TWO-PHASE §۳ — kanji recognition
+ *  and writing/recall are DISTINCT review tasks, never equated with vocab
+ *  review: different front, different practice structure, different template). */
+export type FsrsCardKind = 'w' | 's' | 'w-p' | 's-line' | 'gr' | 'chrk' | 'kn' | 'kj-rec' | 'kj-wri';
 
 /** One card of a chapter's inventory — pure data, no scheduling state. */
 export interface FsrsCardDescriptor {
@@ -131,20 +134,42 @@ export function listChapterCards(chapter: Chapter): FsrsCardDescriptor[] {
   const cards: FsrsCardDescriptor[] = [];
   const stationBySlug = new Map(chapter.stations.map((s) => [s.slug, s]));
 
-  const enrollStationFor = (contentRef: string): string => {
-    const st = chapter.stations.find((s) => {
-      if (s.fsrsItems.some((id) => id.startsWith(contentRef))) return true;
-      return false;
-    });
-    return st?.slug ?? chapter.stations[0]?.slug ?? '';
+  /*
+   * KANJI-TWO-PHASE §۳ (the honest admission rule): a card enrolls at the
+   * station that REALLY TEACHES its content — the station carrying its
+   * teaching card (vocab-card / expression-card / the anchored grammar
+   * station). A word/grammar/expression with NO teaching home enrolls
+   * NOWHERE ('__unassigned__' matches no real station slug): «فقط محتوایی
+   * وارد مرور شود که واقعاً تدریس شده است» — meeting the content in the
+   * conversation (exposureAt) enrolls nothing. Shipped chapters carry cards
+   * for every word/grammar/expression (audited 2026-11-22), so this changes
+   * no live behavior — it only closes the hole where an authoring mistake
+   * (a list entry without its teaching card) would have enrolled at the
+   * chapter's first station by default.
+   */
+  const UNASSIGNED = '__unassigned__';
+  const vocabCardStationOf = (wordId: string): string =>
+    chapter.stations.find((s) => s.blocks.some((b) => b.kind === 'vocab-card' && b.wordId === wordId))?.slug ??
+    UNASSIGNED;
+  const grammarHostOf = (clusterId: string): string => {
+    const g = chapter.grammar.find((x) => x.id === clusterId);
+    if (!g || g.lineRefs.length === 0) return UNASSIGNED;
+    const host = chapter.stations.find(
+      (s) => (s.type === 'grammar' || s.type === 'structure') && g.lineRefs.every((l) => s.lineRefs.includes(l)),
+    );
+    return host?.slug ?? UNASSIGNED;
   };
+  const expressionCardStationOf = (expressionId: string): string =>
+    chapter.stations.find((s) => s.blocks.some((b) => b.kind === 'expression-card' && b.expressionId === expressionId))
+      ?.slug ?? UNASSIGNED;
 
   for (const w of chapter.words) {
+    const enrollStationSlug = vocabCardStationOf(w.id);
     cards.push({
       itemId: w.fsrs.w,
       kind: 'w',
       wave: 1,
-      enrollStationSlug: enrollStationFor(w.fsrs.w),
+      enrollStationSlug,
       contentRef: w.id,
       sourceDialogueLineId: w.lineRef,
     });
@@ -152,7 +177,7 @@ export function listChapterCards(chapter: Chapter): FsrsCardDescriptor[] {
       itemId: w.fsrs.s,
       kind: 's',
       wave: 1,
-      enrollStationSlug: enrollStationFor(w.fsrs.s),
+      enrollStationSlug,
       contentRef: w.id,
       sourceDialogueLineId: w.lineRef,
     });
@@ -162,7 +187,7 @@ export function listChapterCards(chapter: Chapter): FsrsCardDescriptor[] {
       itemId: g.fsrs.gr,
       kind: 'gr',
       wave: 1,
-      enrollStationSlug: enrollStationFor(g.fsrs.gr),
+      enrollStationSlug: grammarHostOf(g.id),
       contentRef: g.id,
       sourceDialogueLineId: g.lineRefs[0],
     });
@@ -172,9 +197,39 @@ export function listChapterCards(chapter: Chapter): FsrsCardDescriptor[] {
       itemId: e.fsrs.chrk,
       kind: 'chrk',
       wave: 1,
-      enrollStationSlug: enrollStationFor(e.fsrs.chrk),
+      enrollStationSlug: expressionCardStationOf(e.id),
       contentRef: e.id,
       sourceDialogueLineId: e.lineRef,
+    });
+  }
+  /*
+   * KANJI-TWO-PHASE §۳ — the kanji card pair. Admission rule: a kj card is
+   * enrolled by completing the DEDICATED kanji station that teaches it (the
+   * station carrying its kanji-card) — never by a vocab station, never by an
+   * encounter. `enrollStationSlug` is derived from the deck itself (the
+   * station whose blocks contain the card for this kanji id), so a kanji
+   * that no station teaches enrolls NOWHERE (honest absence — the registry
+   * files kanji-declared-not-taught and EQA-12 fails the chapter). Recognition
+   * is wave 1 (station end); writing/recall is wave 2 (productive direction).
+   */
+  for (const item of chapter.kanji ?? []) {
+    const host = chapter.stations.find(
+      (s) => s.type === 'kanji' && s.blocks.some((b) => b.kind === 'kanji-card' && b.kanjiId === item.kanjiId),
+    );
+    const enrollStationSlug = host?.slug ?? '__no-kanji-station__';
+    cards.push({
+      itemId: item.fsrs.rec,
+      kind: 'kj-rec',
+      wave: 1,
+      enrollStationSlug,
+      contentRef: item.kanjiId,
+    });
+    cards.push({
+      itemId: item.fsrs.wri,
+      kind: 'kj-wri',
+      wave: 2,
+      enrollStationSlug,
+      contentRef: item.kanjiId,
     });
   }
   // Station-declared items not already covered (s-line cards, kn cards, extras).

@@ -267,6 +267,32 @@ export type TeachingBlock =
   | { kind: 'vocab-card'; id: string; wordId: string }
   | { kind: 'expression-card'; id: string; expressionId: string }
   | {
+      /**
+       * KANJI-TWO-PHASE §۲ — the DEDICATED kanji teaching card.
+       *
+       * Contract (enforced by EQA-12 + the Knowledge Registry):
+       * - lives ONLY in a station of type 'kanji' (a kanji-card in a vocab
+       *   station is a build failure — introducing a kanji inside a word card
+       *   is NOT teaching the kanji);
+       * - the kanji's anchor words (ids) must be REGISTERED WORDS TAUGHT at an
+       *   earlier walk position (readings ride inside anchor words — D-0006);
+       * - registering this block is the ONE event that makes the kanji
+       *   «taught» in the course (registry kind 'kanji').
+       *
+       * Facts (readings/strokes/meaning) resolve from the N5 reference by
+       * kanjiId; only teaching policy lives here.
+       */
+      kind: 'kanji-card';
+      id: string;
+      /** N5 reference registry key ('kj-65e5', …). */
+      kanjiId: string;
+      /** Word ids whose surfaces carry this kanji — the anchor words the card
+       *  shows (must be taught strictly before this station; validated). */
+      anchorWordIds: string[];
+      /** Persian teaching note shown on the card (optional authoring layer). */
+      noteFa?: string;
+    }
+  | {
       /** DIA-loop step I — guided discovery (grammar stations).
        *
        * ENGINE-REFORM 2026-11-22 §۴: this block is a GRADED question — for the
@@ -620,6 +646,10 @@ export const STATION_TYPES = [
   'deepdive',
   /** TASK-LEARNING-06 (DD-117/122 — Issue #94): kana-teaching station (row/rule unit of chapter 01). */
   'kana',
+  /** KANJI-TWO-PHASE §۲ (2026-11-22): the DEDICATED kanji-teaching station —
+   *  the only station type whose deck may carry kanji-card blocks. One or more
+   *  per chapter as content needs (no fixed artificial count). */
+  'kanji',
 ] as const;
 export type StationType = (typeof STATION_TYPES)[number];
 
@@ -704,6 +734,14 @@ export interface Chapter {
   words: VocabItem[];
   grammar: GrammarCluster[];
   expressions: ExpressionItem[];
+  /**
+   * KANJI-TWO-PHASE §۲ (2026-11-22, add-only): the chapter's kanji TEACHING
+   *  targets — the kanji whose dedicated kanji stations exist in this
+   *  chapter. Absent/empty = a chapter that teaches no kanji (all existing
+   *  chapters — recognition rides inside taught words under R4 word-coverage).
+   *  Entries reference the N5 reference registry; they never duplicate its facts.
+   */
+  kanji?: KanjiItem[];
   stations: Station[];
   /** All exercises (practice + mastery pools) keyed by id. */
   exercises: Record<string, Exercise>;
@@ -777,6 +815,56 @@ export interface KanaItem {
   fsrsCardId?: string;
   /** Unit that introduces this glyph (e.g. 'H1'). */
   introducedInUnit: string;
+}
+
+/* ------------------------------------------------------------------ kanji (KANJI-TWO-PHASE §۱/§۲ — 2026-11-22) */
+
+/**
+ * One N5 reference kanji — the STRUCTURAL FACT record (readings, strokes,
+ * grade, frequency) of the single canonical home `curriculum/kanji/n5-reference`
+ * (generated from KANJIDIC2 + KanjiVG; see KANJI_N5_SOURCE there). This type is
+ * the public shape of that data for the rest of the engine.
+ */
+export interface KanjiReferenceEntry {
+  /** Registry key: 'kj-65e5' (stable ASCII content id = 'kj-' + lowercase UCS hex). */
+  kanjiId: string;
+  /** The standard character. */
+  literal: string;
+  /** Unicode codepoint, lowercase hex (matches KanjiVG file naming). */
+  ucs: string;
+  /** ON readings (katakana) — source verbatim (KANJIDIC2). */
+  on: string[];
+  /** KUN readings (hiragana, source punctuation preserved). */
+  kun: string[];
+  /** English meanings — source verbatim (trimmed). */
+  meaningsEn: string[];
+  /** Persian gloss — HANASO-original composition (reviewable, never «official»). */
+  meaningFa: string;
+  /** Stroke count (validated: KANJIDIC2 == KanjiVG stroke files). */
+  strokeCount: number;
+  /** Kyōiku grade (school grade; null = not in the education set). */
+  grade: number | null;
+  /** Newspaper frequency rank (0 = unranked). */
+  freq: number;
+}
+
+/**
+ * The CHAPTER-LEVEL kanji teaching target — the authoring link between the N5
+ * reference and this chapter's dedicated kanji stations. Mirrors VocabItem's
+ * role for words: it DECLARES that this chapter teaches this kanji (in a
+ * kanji-type station), and names the anchor words the kanji rides inside.
+ * Facts live in the reference; teaching position lives in the registry.
+ */
+export interface KanjiItem {
+  /** N5 reference registry key ('kj-65e5' — joins KanjiReferenceEntry 1:1). */
+  kanjiId: string;
+  /** FSRS wave-1 card ids: kj-rec-<kanjiId> (recognition) and kj-wri-<kanjiId>
+   *  (writing/recall — kanji review is NOT vocab review; distinct cards). */
+  fsrs: { rec: string; wri: string };
+  /** Word ids of this chapter carrying the kanji — the anchor words (D-0006:
+   *  readings taught only inside anchor words; each must be a REGISTERED word
+   *  TAUGHT before the kanji station — EQA-12). */
+  anchorWordIds: string[];
 }
 
 /**

@@ -1,11 +1,13 @@
 /**
- * HANASO — kana writing-data builder (TASK-LEARNING-08 phase 2 / #117).
+ * HANASO — kana + N5-kanji writing-data builder (TASK-LEARNING-08 phase 2 / #117 +
+ * KANJI-TWO-PHASE §۱ 2026-11-22).
  *
- * Rebuilds `public/writing-data/*.json` from the vendored KanjiVG kana SVG
- * sources (vendor/kanjivg-kana, CC BY-SA 3.0) — replacing the earlier
- * AnimCJK-derived data whose audit found 16/92 glyphs with non-standard
- * stroke counts and 12/92 with out-of-bounds medians (the root cause of the
- * engine rejecting correct drawings and of the broken あ last-stroke render).
+ * Rebuilds `public/writing-data/*.json` from the vendored KanjiVG sources
+ * (vendor/kanjivg-kana + vendor/kanjivg-kanji, CC BY-SA 3.0) — replacing the
+ * earlier AnimCJK-derived data whose audit found 16/92 glyphs with
+ * non-standard stroke counts and 12/92 with out-of-bounds medians (the root
+ * cause of the engine rejecting correct drawings and of the broken あ
+ * last-stroke render).
  *
  * Why KanjiVG: it is the canonical Japanese stroke database — the 92 basic
  * kana all match the standard stroke counts, every stroke is ONE continuous
@@ -15,6 +17,12 @@
  *      via stroke-dashoffset),
  *   2. the geometric reference for evaluation,
  *   3. the writing-direction truth (start point = path start).
+ *
+ * KANJI-TWO-PHASE §۱: the 103 N5 reference kanji (n5-reference.ts) join the
+ * same pipeline — vendored KanjiVG SVGs (stroke counts validated against
+ * KANJIDIC2 at generation time), the general path grammar (M/c/s/S/C), and
+ * the same centerline-v2 output. Kana keep the STRICT grammar and parser
+ * (byte-stable rebuild: `git diff` after a rebuild must be empty for kana).
  *
  * Output per character (same JSON shape as the old format, new semantics):
  *   { strokes: [centerline path d in 1024×1024, y-down],
@@ -32,6 +40,7 @@ import { fileURLToPath } from 'node:url';
 
 const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const vendorDir = path.join(webRoot, 'vendor', 'kanjivg-kana');
+const kanjiVendorDir = path.join(webRoot, 'vendor', 'kanjivg-kanji');
 const outDir = path.join(webRoot, 'public', 'writing-data');
 
 /** KanjiVG viewBox is 109×109; the writing engine's char space is 1024×1024 (y down). */
@@ -39,7 +48,16 @@ const KVG_SIZE = 109;
 const CHAR_SPACE = 1024;
 const SCALE = CHAR_SPACE / KVG_SIZE;
 
-/** Which characters the shipped content actually practices (from kana-items.ts). */
+/** The 103 N5 reference kanji the shipped content may practice (from n5-reference.ts). */
+function requiredKanjiChars() {
+  const src = readFileSync(path.join(webRoot, 'src/modules/curriculum/kanji/n5-reference.ts'), 'utf8');
+  const literals = [...src.matchAll(/literal: '([^']+)'/g)].map((m) => m[1]);
+  const unique = [...new Set(literals)].sort();
+  if (unique.length === 0) throw new Error('n5-reference.ts yielded no kanji — refusing to build the kanji set');
+  return unique;
+}
+
+/** Which kana characters the shipped content actually practices (from kana-items.ts). */
 function requiredChars() {
   const src = readFileSync(path.join(webRoot, 'src/modules/curriculum/content/kana-items.ts'), 'utf8');
   const glyphs = [...src.matchAll(/glyph: '([^']+)'/g)].map((m) => m[1]);
@@ -87,6 +105,86 @@ function parsePath(d) {
         cy += nums[5];
         i += 6;
       }
+    } else {
+      throw new Error(`unsupported path command: ${cmd}`);
+    }
+  }
+  return segs;
+}
+
+/*
+ * KANJI-TWO-PHASE §۱ — the KANJI path grammar (KanjiVG kanji files also use
+ * the smooth-cubic forms s/S and the absolute cubic C). The general parser
+ * lowers every command to ABSOLUTE cubic segments in 109-space (the same
+ * segment shape `scalePath`/`flatten` consume). Kana keep the strict original
+ * parser above (byte-stable rebuild guarantee); kanji use this one.
+ */
+function parsePathGeneral(d) {
+  const tokens = d.match(/[McsSC]|-?(?:\d+\.\d+|\.\d+|\d+)/g) ?? [];
+  const segs = [];
+  let cx = 0;
+  let cy = 0;
+  let pc2x = null; // previous cubic's second control point (for s/S reflection)
+  let pc2y = null;
+  let i = 0;
+  let started = false;
+  const num = () => Number(tokens[i++]);
+  while (i < tokens.length) {
+    const cmd = tokens[i];
+    i += 1;
+    if (cmd === 'M') {
+      cx = num();
+      cy = num();
+      started = true;
+      pc2x = null;
+      pc2y = null;
+    } else if (cmd === 'c' || cmd === 'C' || cmd === 's' || cmd === 'S') {
+      if (!started) throw new Error('path command before M');
+      let d1x, d1y, d2x, d2y, ex, ey;
+      if (cmd === 'c' || cmd === 'C') {
+        const rel = cmd === 'c';
+        d1x = num() * (rel ? 1 : 1);
+        d1y = num();
+        d2x = num();
+        d2y = num();
+        ex = num();
+        ey = num();
+        if (rel) {
+          d1x += cx;
+          d1y += cy;
+          d2x += cx;
+          d2y += cy;
+          ex += cx;
+          ey += cy;
+        }
+      } else {
+        // smooth cubic: first control = reflection of the previous second control
+        const rel = cmd === 's';
+        const rx = pc2x === null ? cx : 2 * pc2x - cx;
+        const ry = pc2y === null ? cy : 2 * pc2y - cy;
+        d2x = num();
+        d2y = num();
+        ex = num();
+        ey = num();
+        if (rel) {
+          d2x += cx;
+          d2y += cy;
+          ex += cx;
+          ey += cy;
+        }
+        d1x = rx;
+        d1y = ry;
+      }
+      segs.push([
+        { x: cx, y: cy },
+        { x: d1x, y: d1y },
+        { x: d2x, y: d2y },
+        { x: ex, y: ey },
+      ]);
+      pc2x = d2x;
+      pc2y = d2y;
+      cx = ex;
+      cy = ey;
     } else {
       throw new Error(`unsupported path command: ${cmd}`);
     }
@@ -206,14 +304,65 @@ if (missing.length > 0) {
   throw new Error(`KanjiVG source missing for: ${missing.join(' ')} — do not ship`);
 }
 
+/* KANJI-TWO-PHASE §۱ — the N5 kanji set joins the build (same output format,
+ * the general path grammar; every kanji's vendored SVG must exist). */
+const kanjiChars = requiredKanjiChars();
+const kanjiMissing = kanjiChars.filter((ch) => {
+  try {
+    readFileSync(path.join(kanjiVendorDir, `${ch}.svg`));
+    return false;
+  } catch {
+    return true;
+  }
+});
+if (kanjiMissing.length > 0) {
+  throw new Error(`KanjiVG kanji source missing for: ${kanjiMissing.join(' ')} — do not ship`);
+}
+
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(path.join(outDir, 'licenses'), { recursive: true });
 
 const index = {
   source: 'KanjiVG r20260714 (CC BY-SA 3.0) — kanjivg.tagaini.net',
   format: 'centerline-v2 (strokes = writing-direction centerlines in 1024×1024, y-down)',
+  /* KANJI-TWO-PHASE §۱: the N5 reference kanji share the index (facts+provenance
+   * in curriculum/kanji/n5-reference.ts — KANJIDIC2 cross-validated). */
+  kanji: {
+    source: 'KanjiVG (CC BY-SA 3.0) — the 103 N5 reference kanji (KANJIDIC2 2026-326 validated set)',
+    count: kanjiChars.length,
+  },
   chars: {},
 };
+
+/** One character's stroke pipeline (shared by kana and kanji). */
+function buildChar(ch, svgOf, parser) {
+  const dPaths = strokePathsOf(svgOf(ch));
+  const strokes = [];
+  const medians = [];
+  for (const d of dPaths) {
+    const segs = parser(d);
+    strokes.push(scalePath(segs));
+    const flat = flatten(segs).map((p) => ({ x: p.x * SCALE, y: p.y * SCALE }));
+    const totalLen = flat.reduce(
+      (s, p, i) => (i === 0 ? 0 : s + Math.hypot(p.x - flat[i - 1].x, p.y - flat[i - 1].y)),
+      0,
+    );
+    const n = Math.min(32, Math.max(8, Math.ceil(totalLen / 40)));
+    medians.push(resamplePoints(flat, n).map((p) => [Math.round(p.x * 10) / 10, Math.round(p.y * 10) / 10]));
+  }
+  if (strokes.length === 0) throw new Error(`no strokes parsed for ${ch}`);
+  // bounds integrity — nothing outside the char space (a margin of one pen
+  // width is tolerated; KanjiVG coordinates are clean, this pins that).
+  for (const m of medians) {
+    for (const [x, y] of m) {
+      if (x < -30 || x > CHAR_SPACE + 30 || y < -30 || y > CHAR_SPACE + 30) {
+        throw new Error(`${ch}: median out of bounds (${x},${y}) — refusing to ship`);
+      }
+    }
+  }
+  writeFileSync(path.join(outDir, `${ch}.json`), `${JSON.stringify({ strokes, medians })}\n`);
+  index.chars[ch] = { strokes: strokes.length };
+}
 
 for (const ch of [...chars].sort()) {
   const parts = partsOf(ch);
@@ -245,6 +394,11 @@ for (const ch of [...chars].sort()) {
   index.chars[ch] = { strokes: strokes.length };
 }
 
+/* KANJI-TWO-PHASE §۱ — the N5 kanji set: general grammar (M/c/s/S/C). */
+for (const ch of [...kanjiChars].sort()) {
+  buildChar(ch, (c) => readFileSync(path.join(kanjiVendorDir, `${c}.svg`), 'utf8'), parsePathGeneral);
+}
+
 writeFileSync(path.join(outDir, 'index.json'), `${JSON.stringify(index, null, 2)}\n`);
 
 // license obligations travel with the derived data (CC BY-SA 3.0 ShareAlike)
@@ -254,4 +408,6 @@ copyFileSync(
 );
 copyFileSync(path.join(vendorDir, 'README.md'), path.join(outDir, 'licenses', 'README-KanjiVG.md'));
 
-console.log(`writing-data: ${Object.keys(index.chars).length} chars rebuilt from KanjiVG (centerline-v2)`);
+console.log(
+  `writing-data: ${Object.keys(index.chars).length} chars rebuilt from KanjiVG (centerline-v2; ${kanjiChars.length} N5 kanji)`,
+);

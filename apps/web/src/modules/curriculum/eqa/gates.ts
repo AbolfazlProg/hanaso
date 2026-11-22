@@ -172,8 +172,12 @@ export function gateEqa2(chapter: Chapter): EqaFinding[] {
     const explanationRun = longestRun(station.blocks.map((b) => ({ predicate: blockIsExplanation(b) })));
     // TASK-LEARNING-06: kana-card packets follow the SAME packet rule as vocab cards
     // (05A experience spec §۲ — 2–3 cards then retrieval; DD-94 §۳-۱ vocab row).
+    // KANJI-TWO-PHASE §۲: kanji-cards join the same packet rule (2–4 kanji per
+    // station, retrieval inside the flow — never «all cards then all quizzes»).
     const vocabRun = longestRun(
-      station.blocks.map((b) => ({ predicate: b.kind === 'vocab-card' || b.kind === 'kana-card' })),
+      station.blocks.map((b) => ({
+        predicate: b.kind === 'vocab-card' || b.kind === 'kana-card' || b.kind === 'kanji-card',
+      })),
     );
     const receptiveStretch = longestRun(station.blocks.map((b) => ({ predicate: blockIsReceptive(b) })));
 
