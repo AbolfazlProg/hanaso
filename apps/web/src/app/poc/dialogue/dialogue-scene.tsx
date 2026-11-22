@@ -689,13 +689,17 @@ export function DialogueScene({
                   {showFa && <span className="text-body text-ink-soft">{line.fa}</span>}
                 </div>
               </div>
-              {(line.teaches?.length ?? 0) > 0 && (
+              {showFa && (line.teaches?.length ?? 0) > 0 && (
                 <div className="flex flex-wrap gap-1 ps-8">
                   {line.teaches?.map((id) => {
                     /* JOURNEY-FIX 2026-11-23 §۶: the embedded/product transcript
                      * resolves each teaches id through the chapter's standard
                      * label map — the raw internal id never reaches the learner;
-                     * an unmapped id renders NOTHING (honest omit). */
+                     * an unmapped id renders NOTHING (honest omit). The chips
+                     * ride the SUBTITLE visibility (showFa): they are supported-
+                     * reading meta — the pinned first listen stays pure audio
+                     * («شکاف دانستن»), the teaching replay shows them with the
+                     * translation, and the mid-playback toggle covers both. */
                     const label = itemLabels?.[id];
                     if (embedded) {
                       return label ? (

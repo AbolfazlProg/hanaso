@@ -114,6 +114,7 @@ describe('DialogueScene — embedded mode (Issue #101: no PoC leak into product)
       <DialogueScene
         bundle={bundle}
         embedded
+        subtitleDefaultOn
         itemLabels={{ 'chrk-yoroshiku': 'よろしく おねがいします — «از رابطه‌مان خوشحال می‌شوم»' }}
       />,
     );
