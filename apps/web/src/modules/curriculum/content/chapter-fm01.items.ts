@@ -29,7 +29,7 @@ export const FM01_WORDS: VocabItem[] = [
     readingKana: 'わたし',
     romaji: 'watashi',
     meaningFa: 'من',
-    noteFa: 'در ژاپنی معمولاً حذفش می‌کنند وقتی معلوم است — نوبت ۴ سورا را ببین.',
+    noteFa: 'در ژاپنی معمولاً حذفش می‌کنند وقتی معلوم است — خط ۴ سورا را ببین.',
     lineRef: L(3),
     fsrs: { w: 'w-fm01-watashi', s: 's-fm01-watashi' },
     surfaceInLine: 'わたし',
