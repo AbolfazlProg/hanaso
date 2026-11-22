@@ -48,10 +48,13 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'من', 'شما / تو', 'آن شخص', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: '«شما / تو» مخاطب را خطاب می‌کند — واژهٔ شنیده‌شده دربارهٔ خودِ گوینده است.',
+      b: '«آن شخص» یعنی あのかた — شخصِ سوم؛ این واژه اول شخص است.',
+    },
     feedback: {
-      f1Fa: 'به کارت واژه برگرد و دوباره گوش بده — این واژه اولِ خط ۳ و دربارهٔ خودِ گوینده است.',
-      f2HintFa: 'اولین واژهٔ خط ۳؛ دربارهٔ خودِ گوینده.',
+      f1Fa: 'صدا همین‌جا قابل پخش است — واژهٔ اولِ جمله، دربارهٔ خودِ گوینده است.',
+      f2HintFa: 'اولین واژهٔ جمله؛ دربارهٔ خودِ گوینده.',
       f3ExplainFa: 'わたし = من (ضمیر اول شخص).',
     },
     assessmentRole: 'practice',
@@ -69,7 +72,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'ژاپنی', 'چینی', 'کره‌ای', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'چینی = ちゅうごくじん — صدای شنیده‌شده با «نی» شروع می‌شد، نه «چی».',
+      c: 'کره‌ای = かんこくじん — صدای شنیده‌شده «نی‌هون» بود، نه «کان».',
+    },
     feedback: {
       /*
        * UX-AUDIT #138/#139/#140 (data fixes): く was a PERSIAN ک (U+06A9);
@@ -79,8 +85,8 @@ export const FM01_EXERCISES: Exercise[] = [
        * content-contract CI gate keeps every future chapter inside the rules
        * (Japanese charset, no answer leak in F1/F2, Persian translit).
        */
-      f1Fa: 'به ملیتِ خط ۳ گوش کن — にほんじん و ちゅうごくじん را قاطی نکن.',
-      f2HintFa: 'نی‌هون‌جین؛ در خط ۳ یامادا دربارهٔ خودش می‌گوید.',
+      f1Fa: 'ملیتِ گوینده را از صدا تشخیص بده — にほんじん و ちゅうごくじん را قاطی نکن.',
+      f2HintFa: 'نی‌هون‌جین؛ یامادا دربارهٔ خودش می‌گوید.',
       f3ExplainFa: 'にほんじん = ژاپنی (اهل ژاپن).',
     },
     assessmentRole: 'practice',
@@ -99,7 +105,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'چینی', 'ژاپنی', 'ایرانی', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'ژاپنی = にほんじん — صدای شنیده‌شده «چیووگوکو» بود.',
+      b: 'ایرانی = イランじん — صدای شنیده‌شده «چیووگوکو» بود.',
+    },
     feedback: {
       /* UX-AUDIT #139 (data): the F1 line named the answer («چینی بود»). */
       f1Fa: 'به ملیتی گوش کن که سورا دربارهٔ خودش می‌گوید — کانای «چ» کشیده را با «جو» قاطی نکن.',
@@ -128,7 +137,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'معلم = せんせい — ربط کار/مکان را قاطی نکن.',
     },
     feedback: {
-      f1Fa: 'به کارت واژه برگرد — این واژه محلِ کارِ علیِ استاد است؛ «د» با صدا، «گ» هم.',
+      f1Fa: 'این واژه محلِ کارِ علیِ استاد است؛ «د» با صدا، «گ» هم.',
       f2HintFa: 'محل کارِ علیِ استاد — だいがくの せんせい.',
       f3ExplainFa: 'だいがく = دانشگاه (الگو: だい=بزرگ + がく=مکتب/علم).',
     },
@@ -150,15 +159,15 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'かんこくじん در خط ۱۱ می‌آید — بعداً می‌آموزیم.',
-      c: 'ちゅうごくじん در خط ۵ و ۶ است، نه ۸.',
+      a: 'かんこくじん = کره‌ای — واژهٔ نیمهٔ دوم مکالمه است.',
+      b: 'ちゅうごくじん = چینی — مالِ سورا در نیمهٔ اول مکالمه.',
     },
     feedback: {
       /* UX-AUDIT #139 (data): a WRONG-path F1 line began with «درست!» — the
        * verdict belongs to the feedback engine, never inside authored copy. */
-      f1Fa: 'به خط ۸ گوش کن — جملهٔ دربارهٔ علی، نه یامادا.',
+      f1Fa: 'صدای پخش‌شده دربارهٔ علی است، نه یامادا.',
       f2HintFa: 'یامادا سه جمله دربارهٔ علی می‌گوید؛ ملیت او کدام است؟',
-      f3ExplainFa: 'خط ۸: アリさん です。イランじん です。だいがくの せんせい です。',
+      f3ExplainFa: 'アリさん です。イランじん です。だいがくの せんせい です。',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'blk-v1-card-iranjin',
@@ -204,7 +213,7 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'ですか = پرسش — این جمله خبری است.',
+      a: 'ですか پرسش می‌سازد — این جمله خبری است.',
       c: 'ですね = تأیید شنیده‌ها — این‌جا معرفی است نه تأیید.',
     },
     feedback: {
@@ -232,7 +241,7 @@ export const FM01_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'یک چیپ اضافه داری — این جمله خبری است.',
       f2HintFa: 'سه چیپ کافی است: موضوع + هویت + پایان‌بندی.',
-      f3ExplainFa: 'わたしは イランじんです — همان الگوی خط ۳.',
+      f3ExplainFa: 'わたしは イランじんです — الگوی AはBです.',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'blk-g1-rule',
@@ -326,19 +335,20 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-desu-qa',
     lineRef: L(5),
     difficulty: 2,
-    promptFa: 'جای خالی: «پس سورا هستید. چینی هستید؟»',
-    promptJa: 'ソラさん___。ちゅうごくじん___か。',
-    clozeTokens: ['ソラさん', null, '。', 'ちゅうごくじん', null, 'か', '。'],
+    promptFa: 'جای خالی: «پس سورا هستید، نه؟ — چینی هستید؟»',
+    promptJa: 'ソラさんですね。ちゅうごくじん___か。',
+    clozeTokens: ['ソラさん', 'ですね', '。', 'ちゅうごくじん', null, 'か', '。'],
     ...(() => {
       const { options, correctOptionId } = o3('x', 'です', 'ですか', 'ですね', 0);
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'دو جای خالی داری — اولی تأیید (ですね)، دومی پرسش (です).',
+      b: 'پیش از か دوبار پرسش‌ساز می‌شود — جمله か را دارد؛ です کافی است.',
+      c: 'ね تأییدِ شنیده‌هاست — این‌جا پرسش با か ساخته می‌شود.',
     },
     feedback: {
-      f1Fa: 'خالی اول تأیید است: ですね؛ خالی دوم گزارهٔ پرسش: です.',
-      f2HintFa: 'خط ۵ هر دو را یکجا دارد — به آن نگاه کن.',
+      f1Fa: 'خالی در جملهٔ پرسشی است: گزاره + か.',
+      f2HintFa: 'جملهٔ نمایش‌داده با か تمام می‌شود — جای خالی، گزارهٔ پرسش است.',
       f3ExplainFa: 'ソラさんですね (تأیید) + ちゅうごくじんですか (پرسش).',
     },
     assessmentRole: 'practice',
@@ -384,8 +394,8 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'ترتیب: موضوع+も → هویت → です → か.',
-      f2HintFa: 'همان پرسش خط ۵، فقط は به も تبدیل شده.',
-      f3ExplainFa: 'キムさんも ちゅうごくじんですか — پرسشِ خط ۱۰!',
+      f2HintFa: '«هم» روی موضوع می‌نشیند: キムさんも — بعد هویت و پرسش.',
+      f3ExplainFa: 'キムさんも ちゅうごくじんですか — پرسش با も.',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'blk-g2-rule',
@@ -404,7 +414,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'پرسش (ですか)', 'تأیید (ですね)', 'خبر (です)', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'تأیید (ですね) با آهنگ نیمه‌پایان می‌آید — این جمله با か و آهنگ بالا تمام شد.',
+      b: 'خبر (です) با آهنگ پایین تمام می‌شود — شنیده‌شده بالا تمام شد.',
+    },
     feedback: {
       f1Fa: 'آهنگ پایانی بالا بود → پرسش با か.',
       f2HintFa: 'به آخر جمله گوش کن: بالا = پرسش، پایین = خبر/تأیید.',
@@ -435,8 +448,8 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'پایان آیین با よろしく おねがいします.',
-      f2HintFa: 'کارت: «از رابطهٔمان خوشحال می‌شوم» — بستن آیین.',
-      f3ExplainFa: 'نوبت ۱۳: هر دو با هم می‌گویند よろしく おねがいします.',
+      f2HintFa: 'معنایش: «از رابطهٔمان خوشحال می‌شوم» — بستن آیین.',
+      f3ExplainFa: 'هر دو طرف در پایان با هم می‌گویند よろしく おねがいします.',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'blk-e1-card-yoroshiku',
@@ -459,8 +472,8 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'پرسش مؤدبانه دربارهٔ شخص سوم: あのかたは どなたですか.',
-      f2HintFa: 'کارت: «آن [آقا/خانم] کیست؟» — با あのかた.',
-      f3ExplainFa: 'نوبت ۷ میکی همین را می‌پرسد.',
+      f2HintFa: 'معنایش: «آن [آقا/خانم] کیست؟» — با あのかた.',
+      f3ExplainFa: 'میکی همین را دربارهٔ شخصِ سوم می‌پرسد.',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'blk-e1-card-anokata',
@@ -483,7 +496,7 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: 'آغاز آیین آشنایی با はじめまして است.',
-      f2HintFa: 'ترتیب خط ۳ را یادت هست: اول «از آشنایی خوشبختم»، بعد معرفی، بعد یوروشیکو.',
+      f2HintFa: 'ترتیب آیین: اول «از آشنایی خوشبختم»، بعد معرفی، بعد یوروشیکو.',
       f3ExplainFa: 'はじめまして = از آشنایی‌تان خوشبختم — فقط اولین ملاقات.',
     },
     assessmentRole: 'practice',
@@ -502,12 +515,12 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'はじめまして آغاز است، نه پایان.',
+      a: 'はじめまして آغاز است، نه پایان.',
       c: 'そうですか واکنش به اطلاعات تازه است — جای آیین معرفی نیست.',
     },
     feedback: {
       f1Fa: 'پایان آیین آشنایی با よろしく おねがいします.',
-      f2HintFa: 'هر دو طرف در پایان با هم می‌گویندش (خط ۱۳).',
+      f2HintFa: 'هر دو طرف در پایان با هم می‌گویندش.',
       f3ExplainFa: 'よろしく おねがいします = از رابطه‌مان خوشحالم / بردم را بدار.',
     },
     assessmentRole: 'practice',
@@ -530,7 +543,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'ترتیب آیین: خوشبختم → معرفی → یوروشیکو.',
-      f2HintFa: 'خط ۳ یامادا دقیقاً همین ترتیب را نشان می‌دهد.',
+      f2HintFa: 'اول خوشبختم می‌آید — معرفی وسط است و بستنِ آیین آخر.',
       f3ExplainFa: 'はじめまして、やまだです。よろしく おねがいします。',
     },
     assessmentRole: 'practice',
@@ -556,7 +569,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'せんせい', 'せんせ', 'せんせえ', 0);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: 'せんせ دو موراست — «سِنسِ» واژهٔ ژاپنی نیست؛ آخرین واکه جا افتاده.',
+      c: 'せんせえ کشش را با «اِ» می‌نویسد — در این واژه کشش با «ی» نوشته می‌شود (え+い).',
+    },
     feedback: {
       f1Fa: 'آخرین واکه کشیده بود — せんせい.',
       f2HintFa: 'قاعدهٔ همین درس: せんせい چهار مورا و آخرش بلند.',
@@ -585,11 +601,14 @@ export const FM01_EXERCISES: Exercise[] = [
       );
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: 'سفارش قهوه در این مکالمه نیست — آغاز مکالمه آیینِ آشنایی است.',
+      c: 'پرسش دربارهٔ علی بعداً مطرح می‌شود — این نوبت معرفیِ خودِ گوینده است.',
+    },
     feedback: {
-      f1Fa: 'کل خط ۳ یک معرفی کامل است: نام + ملیت + یوروشیکو.',
-      f2HintFa: 'کلمهٔ はじめまて را که شنیدی، یعنی آغاز آشنایی.',
-      f3ExplainFa: 'خط ۳ = معرفی کامل یامادا (はじめまして、やまだです…).',
+      f1Fa: 'کل آنچه شنیدی یک معرفی کامل است: نام + ملیت + یوروشیکو.',
+      f2HintFa: 'کلمهٔ はじめまして را که شنیدی، یعنی آغاز آشنایی.',
+      f3ExplainFa: 'معرفی کامل یامادا: はじめまして、やまだです…',
     },
     assessmentRole: 'practice',
   },
@@ -607,11 +626,14 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'سورا', 'یامادا', 'میکی', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'یامادا خودش را ژاپنی معرفی کرده — «من چینی‌ام» از او نیست.',
+      b: 'میکی خودش سؤال می‌پرسد — این جمله پاسخِ «بله» است.',
+    },
     feedback: {
       f1Fa: 'جمله دربارهٔ خودِ گوینده است — کسی که چینی است.',
       f2HintFa: 'یامادا ژاپنی است؛ پس «من چینی‌ام» از او نیست.',
-      f3ExplainFa: 'سورا (خط ۶): はい、わたしは ちゅうごくじんです.',
+      f3ExplainFa: 'سورا: はい、わたしは ちゅうごくじんです.',
     },
     assessmentRole: 'practice',
   },
@@ -629,7 +651,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'せんせい (استاد)', 'せんせ (؟)', 'せんせえ (؟)', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'せんせ دو موراست — شنیده‌شده چهار مورا داشت.',
+      c: 'せんせえ با «اِ» کشیده می‌شود — شنیده‌شده با «ای» تمام شد.',
+    },
     feedback: {
       f1Fa: 'واکهٔ پایانی در ژاپنی کشیده است: せんせい (سِنسِی).',
       f2HintFa: 'دو مورا: せ+んせ+い — آخرین واکه کامل شنیده می‌شود.',
@@ -651,7 +676,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'ちゅうごく (چین)', 'ちゅごく (؟)', 'ちゅうご (؟)', 0);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: 'ちゅごく واکهٔ کشیدهٔ «او» را جا انداخته — شنیده‌شده «چیوو» داشت.',
+      c: 'ちゅうご مورای پایانی «کو» را جا انداخته — شنیده‌شده کامل بود.',
+    },
     feedback: {
       f1Fa: 'واکهٔ «او» در میانه کشیده است: ちゅうごく (چیووگوکو).',
       f2HintFa: 'دو مورا در میانه: ちゅ+う — «اوی» بلند.',
@@ -674,11 +702,14 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'من', 'شما / تو', 'دوست', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: '«شما / تو» مخاطب را خطاب می‌کند — واژهٔ شنیده‌شده خودِ گوینده را می‌گوید.',
+      c: '«دوست» جزو واژه‌های این فصل نیست — واژهٔ شنیده‌شده ضمیر اول شخص است.',
+    },
     feedback: {
       f1Fa: 'この واژه یعنی «من».',
-      f2HintFa: 'خط ۶: わたしは ちゅうごくじんです.',
-      f3ExplainFa: 'わたし یعنی «من» — خط ۶: わたしは ちゅうごくじんです.',
+      f2HintFa: 'جملهٔ کامل: わたしは ちゅうごくじんです.',
+      f3ExplainFa: 'わたし یعنی «من» — جملهٔ کامل: わたしは ちゅうごくじんです.',
     },
     assessmentRole: 'practice',
   },
@@ -694,10 +725,13 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'ایرانی', 'چینی', 'ژاپنی', 0);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: 'چینی = ちゅうごくじん — صدای شنیده‌شده «ایران» داشت.',
+      c: 'ژاپنی = にほんじん — صدای شنیده‌شده با «ایران» شروع می‌شد.',
+    },
     feedback: {
       f1Fa: 'イランじん = ایرانی.',
-      f2HintFa: 'خط ۸ — دربارهٔ علی.',
+      f2HintFa: 'صدا دربارهٔ علی است.',
       f3ExplainFa: 'イランじん = ایرانی (الگوی 〜じん).',
     },
     assessmentRole: 'practice',
@@ -720,7 +754,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'موضوع → هویت → です.',
-      f2HintFa: 'خط ۳ را به یاد بیاور.',
+      f2HintFa: 'やまだは اول، にほんじん بعد، です آخر.',
       f3ExplainFa: 'やまだは にほんじんです.',
     },
     assessmentRole: 'practice',
@@ -739,14 +773,11 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'ですか', 'です', 'ですね', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {
-      b: 'با です خبری می‌شود نه پرسش.',
-      c: 'ですね تأکید/تأیید است.',
-    },
+    distractorRationaleFa: { a: 'با です خبری می‌شود نه پرسش.', b: 'ですね تأکید/تأیید است.' },
     feedback: {
       f1Fa: 'پرسش با ですか ساخته می‌شود.',
       f2HintFa: 'آهنگ پایانی بالا — か.',
-      f3ExplainFa: 'あのかたは どなたですか (خط ۷).',
+      f3ExplainFa: 'あのかたは どなたですか.',
     },
     assessmentRole: 'practice',
   },
@@ -767,7 +798,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'سه تکه: موضوع + هویت + です.',
-      f2HintFa: 'خط ۶ سورا همین را می‌گوید.',
+      f2HintFa: 'با わたしは شروع کن — جمله دربارهٔ خودِ گوینده است.',
       f3ExplainFa: 'わたしは ちゅうごくじんです.',
     },
     assessmentRole: 'practice',
@@ -786,11 +817,14 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'نام + ملیت + شغل', 'فقط نام', 'نام + سن', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'فقط نام نیست — سه جملهٔ پشت‌سرهم دربارهٔ او شنیدید.',
+      c: 'سنی در مکالمه نیست — جملهٔ سوم شغل او را می‌گوید.',
+    },
     feedback: {
       f1Fa: 'سه جملهٔ پشت‌سرهم: نام، ملیت، شغل.',
       f2HintFa: 'アリさん です。イランじん です。だいがくの せんせい です。',
-      f3ExplainFa: 'خط ۸ = معرفی سه‌بخشی علی.',
+      f3ExplainFa: 'معرفی سه‌بخشی علی: アリさん، イランじん、だいがくの せんせい.',
     },
     assessmentRole: 'practice',
   },
@@ -808,7 +842,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'せんせい', 'せんせ', 'せいせん', 0);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: 'せんせ کوتاه است — شنیده‌شده چهار مورا داشت.',
+      c: 'せいせん ترتیب موراها را جابه‌جا کرده — شنیده‌شده せ+ん+せ+い بود.',
+    },
     feedback: {
       f1Fa: 'واکهٔ آخر せんせい کشیده است (سِنسِی).',
       f2HintFa: 'せ+ん+せ+い: چهار مورا.',
@@ -831,7 +868,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'sensee', 'sensei', 'sensen', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'i کوتاه — استاندارد HANASO دوبل‌واکه است.', c: 'آخرین واکه n نیست.' },
+    distractorRationaleFa: { a: 'i کوتاه — استاندارد HANASO دوبل‌واکه است.', b: 'آخرین واکه n نیست.' },
     feedback: {
       f1Fa: 'واکهٔ پایانی بلند است — دوبل بنویس.',
       f2HintFa: 'せ+ん+せ+い.',
@@ -853,7 +890,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'chuugokujin', 'chugokujin', 'chuugokujin؟', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'uu را نیفکن — دو موراست.', c: 'پرسشی نیست!' },
+    distractorRationaleFa: { a: 'uu را نیفکن — دو موراست.', c: 'پرسشی نیست!' },
     feedback: {
       f1Fa: 'uu و oo کشیده‌اند.',
       f2HintFa: 'ちょ+う+ご+く+じ+ん.',
@@ -900,7 +937,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'nihonjin', 'nihonjen', 'ninhonjin', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'واکهٔ آخر «اِ» نیست.', c: 'ん این‌جا خیشومیِ سبک است — にほん (نی‌هون).' },
+    distractorRationaleFa: { a: 'واکهٔ آخر «اِ» نیست.', b: 'ん این‌جا خیشومیِ سبک است — にほん (نی‌هون).' },
     feedback: {
       f1Fa: 'موراها را کامل بگو: にほんじん (نی‌هون‌جین).',
       f2HintFa: 'に+ほ+ん+じ+ん.',
@@ -921,7 +958,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'کره‌ای', 'چینی', 'ژاپنی', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'چینی = ちゅうごくじん — صدای شنیده‌شده «کان» داشت.',
+      c: 'ژاپنی = にほんじん — صدای شنیده‌شده «کان‌کوکو» بود.',
+    },
     feedback: {
       f1Fa: 'かんこくじん = کره‌ای — ん خیشومی را کامل بگو.',
       f2HintFa: 'موراها را کامل بگو: かんこくじん (کان‌کوکوجین).',
@@ -942,7 +982,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', '«از» — نشانهٔ خاستگاه', '«به» — جهت', '«در» — مکان', 0);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: '«به» جهتِ حرکت را می‌دهد — から خاستگاه را.',
+      c: '«در» مکان را می‌دهد — から مبدأِ حرکت است.',
+    },
     feedback: {
       f1Fa: 'から = از (خاستگاه).',
       f2HintFa: 'かんこくから = از کره.',
@@ -964,13 +1007,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'آمد (گذشتهٔ مؤدبانه)', 'می‌آید (اکنون)', 'خواهد آمد', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {
-      b: 'حال استعلایی است — شکل きます؛ این گذشته است.',
-      c: 'آینده در این سطح نیست.',
-    },
+    distractorRationaleFa: { a: 'حال استعلایی است — شکل きます؛ این گذشته است.', b: 'آینده در این سطح نیست.' },
     feedback: {
       f1Fa: 'きました = آمد (مؤدبانه، گذشته).',
-      f2HintFa: 'خط ۱۳: کیم می‌گوید از کره …',
+      f2HintFa: 'کیم دربارهٔ آمدنِ خودش می‌گوید — かんこくから …',
       f3ExplainFa: 'かんこくから きました = از کره آمدم.',
     },
     assessmentRole: 'practice',
@@ -1042,10 +1082,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'では ありません', 'です', 'でした', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {
-      b: 'です یعنی «است» — این‌جا نفی لازم است.',
-      c: 'でした گذشته است — در این مکالمه نیست.',
-    },
+    distractorRationaleFa: { a: 'です یعنی «است» — این‌جا نفی لازم است.', b: 'でした گذشته است — در این مکالمه نیست.' },
     feedback: {
       f1Fa: 'نفی مؤدبانه: では ありません.',
       f2HintFa: 'سورا فرض یامادا را رد می‌کند — نه + درست.',
@@ -1092,12 +1129,12 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'はی یعنی تأیید حدسِ غلط!',
+      a: 'はい یعنی تأیید حدسِ غلط!',
       c: 'そうですか برای اطلاعات تازه است — این‌جا باید اصلاح کنی.',
     },
     feedback: {
       f1Fa: 'اول いいえ، بعد جملهٔ درست.',
-      f2HintFa: 'خط ۱۱ سورا: いいえ、キムさんは…',
+      f2HintFa: 'ردِّ سورا با いいえ شروع می‌شود: いいえ、キムさんは…',
       f3ExplainFa: 'いいえ + نفی + هویتِ درست = ردّ مؤدبانهٔ کامل.',
     },
     assessmentRole: 'practice',
@@ -1143,7 +1180,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'اول واکنش به خبر (そうですか)، بعد دریافت (わかりました).',
-      f2HintFa: 'دو جملهٔ پشت‌سرهم در خط ۱۲.',
+      f2HintFa: 'واکنشِ به خبرِ تازه اول می‌آید، دریافت بعدش.',
       f3ExplainFa: 'そうですか。わかりました。',
     },
     assessmentRole: 'practice',
@@ -1169,7 +1206,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'رد مؤدب = نه + نفی + هویت درست.',
-      f2HintFa: 'خط ۱۱ را مرحله‌به‌مرحله بساز.',
+      f2HintFa: 'با いいえ شروع کن و با かんこくじんです تمام کن.',
       f3ExplainFa: 'いいえ、キムさんは ちゅうごくじんでは ありません。かんこくじんです。',
     },
     assessmentRole: 'practice',
@@ -1197,10 +1234,13 @@ export const FM01_EXERCISES: Exercise[] = [
       );
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'سفارش نوشیدنی نیست — یک آیینِ معرفی کامل شنیدید.',
+      c: 'این معرفیِ خودِ کیم است — پرسشی دربارهٔ علی در کار نیست.',
+    },
     feedback: {
-      f1Fa: 'خط ۱۳ معرفی کامل است: نام + خاستگاه + یوروشیکو.',
-      f2HintFa: 'はじめまて را که شنیدی، معرفی است.',
+      f1Fa: 'معرفی کاملِ تازه‌وارد است: نام + خاستگاه + یوروشیکو.',
+      f2HintFa: 'はじめまして را که شنیدی، معرفی است.',
       f3ExplainFa: 'はじめまして、キムです。かんこくから きました。',
     },
     assessmentRole: 'practice',
@@ -1219,7 +1259,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'かんこく (کره)', 'かこく (؟)', 'かここ (؟)', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: { a: 'かこく مورای خیشومیِ ん را جا انداخته.', b: 'かここ مورای پایانیِ く را جا انداخته.' },
     feedback: {
       f1Fa: 'ん کامل ادا می‌شود: かんこく (کان‌کوکو).',
       f2HintFa: 'یک مورای خیشومی در میانه هست.',
@@ -1241,11 +1281,14 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'سورا', 'یامادا', 'کیم', 0);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: 'یامادا همان کسی است که فرضِ غلط را ساخت — اصلاح از او نیست.',
+      c: 'کیم خودش تازه رسیده و در پایان می‌آید — این اصلاح از کسی دیگر است.',
+    },
     feedback: {
       f1Fa: 'کسی که همکلاسی‌اش را معرفی می‌کند.',
-      f2HintFa: 'کیم خودش این‌جا تازه رسیده و در خط ۱۳ حرف می‌زند.',
-      f3ExplainFa: 'سورا (خط ۱۱) فرض یامادا را اصلاح می‌کند.',
+      f2HintFa: 'این رد دربارهٔ کیم است — پس خودِ کیم نیست.',
+      f3ExplainFa: 'سورا فرض یامادا را اصلاح می‌کند.',
     },
     assessmentRole: 'practice',
   },
@@ -1263,7 +1306,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'پرسش با も', 'خبر ساده', 'نفی', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'خبرِ ساده آهنگِ پایینی دارد — این جمله بالا تمام شد و か داشت.',
+      c: 'نفی با では ありません می‌آید — این جمله پرسشِ か داشت.',
+    },
     feedback: {
       f1Fa: 'آهنگ پایانی بالا + ですか = پرسش.',
       f2HintFa: 'دربارهٔ کیم و شبیه‌بودن به سورا.',
@@ -1333,7 +1379,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'も', 'は', 'ね', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'は معنی «هم» ندارد.', c: 'ね تأکید است، جای موضوع نیست.' },
+    distractorRationaleFa: { a: 'は معنی «هم» ندارد.', c: 'ね تأکید است، جای موضوع نیست.' },
     feedback: {
       f1Fa: 'معنی «هم» با も ساخته می‌شود.',
       f2HintFa: 'مثل کیم/سورا — به همان گروه اضافه شدن.',
@@ -1405,8 +1451,8 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: '«ک» پایانی با く می‌آید، نه با کنسونان لاتین.',
-      c: 'موراها را کامل بگو: だいがく (دایگاکو).',
+      a: 'پایان واژه く است، نه き — «داایگاکی» نیست.',
+      b: 'だい واکهٔ کشیده دارد (دای) — digaku آن را کوتاه کرده.',
     },
     feedback: {
       f1Fa: 'موراها را کامل بگو: だいがく (دایگاکو).',
@@ -1482,7 +1528,7 @@ export const FM01_EXERCISES: Exercise[] = [
       );
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'برعکس شد!', c: 'جملهٔ دوم نفی لازم دارد.' },
+    distractorRationaleFa: { a: 'برعکس شد!', b: 'جملهٔ دوم نفی لازم دارد.' },
     feedback: {
       f1Fa: 'اولی خبر مثبت، دومی نفی.',
       f2HintFa: 'ایرانی است / ژاپنی نیست.',
@@ -1508,7 +1554,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'آیین معرفی: خوشبختم → خاستگاه → یوروشیکو.',
-      f2HintFa: 'خط ۱۳ را بازپخش کن.',
+      f2HintFa: 'خوشبختم → خاستگاه (かんこくから) → یوروشیکو.',
       f3ExplainFa: 'はじめまして、キムです。かんこくから きました。よろしく おねがいします。',
     },
     assessmentRole: 'practice',
@@ -1573,7 +1619,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'مهندس', 'پزشک', 'کارمند شرکت', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'پزشک = いしゃ.', c: 'کارمند شرکت = かいしゃいん.' },
+    distractorRationaleFa: { a: 'پزشک = いしゃ.', c: 'کارمند شرکت = かいしゃいん.' },
     feedback: {
       f1Fa: 'エンジニア = مهندس (واژهٔ خارجی با کاتاکانا).',
       f2HintFa: 'صدای «انجینیر» انگلیسی.',
@@ -1597,7 +1643,7 @@ export const FM01_EXERCISES: Exercise[] = [
     acceptedChipOrder: ['jb1', 'jb2', 'jb3'],
     feedback: {
       f1Fa: 'الگوی گزاره: AはBです.',
-      f2HintFa: 'الگوی خط ۳ و ۸.',
+      f2HintFa: 'الگوی AはBです — مثل معرفی یامادا و علی.',
       f3ExplainFa: 'わたしは エンジニアです.',
     },
     assessmentRole: 'practice',
@@ -1618,7 +1664,7 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'مورای آخر («ای») جا افتاده — «سِنسِ» واژهٔ ژاپنی نیست.',
+      a: 'مورای آخر («ای») جا افتاده — «سِنسِ» واژهٔ ژاپنی نیست.',
       c: 'کشش با «اِ» نوشته شد (せんせえ)؛ در این واژه کشش با «ی» نوشته می‌شود (え+い).',
     },
     feedback: {
@@ -1643,11 +1689,14 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'ですね', 'ですか', 'です', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'پرسش است.', c: 'خبر ساده است — یامادا شنیده‌اش را تأیید می‌کند.' },
+    distractorRationaleFa: {
+      a: 'پرسش می‌سازد — این‌جا تأیید می‌خواهی.',
+      b: 'خبر ساده است — یامادا شنیده‌اش را تأیید می‌کند.',
+    },
     feedback: {
       f1Fa: 'یامادا چیزی را که می‌داند تأیید می‌کند: ね.',
       f2HintFa: '«پس سورا هستید…»',
-      f3ExplainFa: 'ソラさんですね (خط ۵).',
+      f3ExplainFa: 'ソラさんですね — تأییدِ شنیده‌ها.',
     },
     assessmentRole: 'practice',
   },
@@ -1700,8 +1749,8 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'مسیر داستان: سلام → معرفی → پرسش → اصلاح → ورود کیم.',
-      f2HintFa: 'به شمارهٔ نوبت‌ها فکر کن.',
-      f3ExplainFa: 'L1-L2 → L3-L4 → L5-L8 → L9-L10 → L12.',
+      f2HintFa: 'از سلامِ آغاز تا ورودِ کیمِ تازه‌وارد.',
+      f3ExplainFa: 'رویدادها به همین ترتیب رخ می‌دهند و مکالمه با معرفیِ کیم بسته می‌شود.',
     },
     assessmentRole: 'mastery_M1',
   },
@@ -1723,7 +1772,7 @@ export const FM01_EXERCISES: Exercise[] = [
       );
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'همه کامل معرفی شدند.', c: 'هیچ تنش‌ای نیست!' },
+    distractorRationaleFa: { a: 'همه کامل معرفی شدند.', c: 'هیچ تنش‌ای نیست!' },
     feedback: {
       f1Fa: 'よろしく おねがいします فرمول بستن آشنایی است.',
       f2HintFa: 'هر دو طرف با هم می‌گویند.',
@@ -1745,9 +1794,9 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'دانشگاه', 'کلاس', 'کتاب', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'کلاس = クラス.', c: 'کتاب = ほん.' },
+    distractorRationaleFa: { a: 'کلاس = クラス.', b: 'کتاب = ほん.' },
     feedback: {
-      f1Fa: 'だいがく = دانشگاه.',
+      f1Fa: 'واژهٔ مرکب است: だい (بزرگ) + がく (علم/مکتب) — جای بزرگِ علم و تحصیل.',
       f2HintFa: 'だいがくの せんせい = استاد دانشگاه.',
       f3ExplainFa: 'だいがく = دانشگاه.',
     },
@@ -1766,7 +1815,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'کره‌ای', 'چینی', 'ژاپنی', 0);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      b: 'چینی = ちゅうごくじん — همان فرضِ یامادا بود که رد شد.',
+      c: 'ژاپنی = にほんじん — خودِ یامادا ژاپنی است، نه کیم.',
+    },
     feedback: {
       f1Fa: 'ملیتِ کیم: かんこくじんです.',
       f2HintFa: 'سورا فرض یامادا را اصلاح می‌کند.',
@@ -1787,7 +1839,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'شنیده‌شده را تأیید می‌کند', 'پرسش می‌سازد', '«هم» می‌دهد', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'آن کار か است.', c: 'آن کار も است.' },
+    distractorRationaleFa: { a: 'پرسش‌سازی کارِ か است.', b: '«هم» دادن کارِ も است.' },
     feedback: {
       f1Fa: 'ね = تأیید شنیده‌ها.',
       f2HintFa: '«پس سورا هستید…»',
@@ -1809,10 +1861,13 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'では ありません', 'です', 'ですか', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'مثبت شد!', c: 'پرسش شد!' },
+    distractorRationaleFa: {
+      a: 'مثبت شد — «نیستم» نفی می‌خواهد.',
+      c: 'جمله را پرسشی کردی — این‌جا خبرِ منفی لازم است.',
+    },
     feedback: {
       f1Fa: 'نفی مؤدبانه.',
-      f2HintFa: '「نیستم» — خط ۱۱.',
+      f2HintFa: 'ترجمهٔ فارسی «نیستم» می‌گوید: نفی لازم است.',
       f3ExplainFa: 'がくせいでは ありません = دانشجو نیستم.',
     },
     assessmentRole: 'mastery_M3',
@@ -1833,7 +1888,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'خاستگاه + から + فعل.',
-      f2HintFa: 'خط ۱۳.',
+      f2HintFa: 'かんこく اول می‌نشیند؛ فعل きました آخر.',
       f3ExplainFa: 'かんこくから きました.',
     },
     assessmentRole: 'mastery_M3',
@@ -1853,7 +1908,10 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'شخص سومی که کنار پنجره است', 'خودِ گوینده', 'صاحب کافه', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: {},
+    distractorRationaleFa: {
+      a: 'あのかた شخصِ سوم را می‌گوید — گوینده از خودش نمی‌پرسد.',
+      c: 'گوینده خودش صاحب کافه است — این پرسش دربارهٔ شخصِ سوم بود.',
+    },
     feedback: {
       f1Fa: 'あのかた = شخص سوم.',
       f2HintFa: 'پرسش دربارهٔ حاضرِ گفت‌وگو نیست.',
@@ -1875,11 +1933,14 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'آیا کیم هم چینی است؟', 'آیا کیم معلم است؟', 'کیم از کجا آمد؟', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'شغل در خط ۸ دربارهٔ علی بود.', c: 'خاستگاه در خط ۱۳ خود کیم می‌گوید.' },
+    distractorRationaleFa: {
+      a: 'پرسش دربارهٔ شغل نبود — شغلِ علی مطرح شد، نه کیم.',
+      b: 'خاستگاهِ کیم را خودِ کیم در معرفی‌اش می‌گوید — این پرسش با も دربارهٔ هم‌گروهی با سورا بود.',
+    },
     feedback: {
       f1Fa: 'پرسش دربارهٔ ملیتِ کیم با も.',
       f2HintFa: 'キムさんも…',
-      f3ExplainFa: 'キムさんも ちゅうごくじんですか (خط ۱۰).',
+      f3ExplainFa: 'キムさんも ちゅうごくじんですか.',
     },
     assessmentRole: 'mastery_M4',
   },
@@ -1904,10 +1965,13 @@ export const FM01_EXERCISES: Exercise[] = [
       );
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'ناراحتی در کار نیست — اصلاح اطلاعات است.', c: 'کیم در خط ۱۳ حرف می‌زند.' },
+    distractorRationaleFa: {
+      b: 'ناراحتی در کار نیست — اصلاح اطلاعات است.',
+      c: 'گویندهٔ این رد سوراست — کیم فقط موضوعِ جمله است.',
+    },
     feedback: {
       f1Fa: 'いいえ ردِّ اطلاعاتِ غلط است، نه شخص.',
-      f2HintFa: 'خط ۱۱.',
+      f2HintFa: 'صدا همین‌جا قابل پخش است: لحن آرام است — いいえ یعنی «نه»، ردّ مؤدبانهٔ فرض؛ نه خشم و نه معرفی.',
       f3ExplainFa: 'سورا: いいえ、キムさんは ちゅうごくじんでは ありません。',
     },
     assessmentRole: 'mastery_M5',
@@ -1930,7 +1994,10 @@ export const FM01_EXERCISES: Exercise[] = [
       );
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'این معرفیِ خودِ کیم است (خط ۱۳).', c: 'این معرفی یامادا در خط ۳ است.' },
+    distractorRationaleFa: {
+      a: 'این معرفیِ خودِ کیم است — واکنشِ یامادا نیست.',
+      c: 'این معرفیِ خودِ یامادا در آغاز مکالمه بود — واکنش به خبرِ کیم این نیست.',
+    },
     feedback: {
       f1Fa: 'واکنش = دریافت اطلاعات.',
       f2HintFa: 'دو جملهٔ پشت‌سرهم.',
@@ -1954,7 +2021,7 @@ export const FM01_EXERCISES: Exercise[] = [
       const { options, correctOptionId } = o3('x', 'も', 'は', 'ね', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'は فقط موضوع را علامت می‌زند — «هم» نمی‌دهد.', c: 'ね تأکید است.' },
+    distractorRationaleFa: { a: 'は فقط موضوع را علامت می‌زند — «هم» نمی‌دهد.', c: 'ね تأکید است.' },
     feedback: {
       f1Fa: 'معنی «هم» با も ساخته می‌شود.',
       f2HintFa: 'مثل سورا بودن → も.',
@@ -1983,12 +2050,12 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {
       b: 'کلاس درس نیست — میکی و یامادا در کافه با هم سلام و احوال‌پرسی می‌کنند.',
-      c: 'کتابخانه نیست — صحنهٔ داستان کافهٔ یاماداست.',
+      c: 'کتابخانه نیست — داستان در کافهٔ یامادا می‌گذرد.',
     },
     feedback: {
-      f1Fa: 'به صحنهٔ ابتدای درس برگرد: میکی وارد کافهٔ یامادا می‌شود.',
+      f1Fa: 'در ابتدای مکالمه، میکی وارد کافهٔ یامادا می‌شود.',
       f2HintFa: 'سلام آقای یامادا — صاحب کافه.',
-      f3ExplainFa: 'صحنهٔ فصل: کافه‌ای کوچک نزدیک دانشگاه در توکیو.',
+      f3ExplainFa: 'محیطِ داستان: کافه‌ای کوچک نزدیک دانشگاه در توکیو.',
     },
     assessmentRole: 'practice',
   },
@@ -1999,7 +2066,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'greet-first-meeting',
     assessesConcepts: ['greet-first-meeting'],
     difficulty: 1,
-    promptFa: 'به پیش‌بینی وسط مکالمه برگرد — سورا اهل کجاست؟',
+    promptFa: 'در مکالمه‌ای که دیدی، سورا اهل کجاست؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'چین', 'کره', 'ژاپن', 0);
       return { options, correctOptionId };
@@ -2009,9 +2076,9 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'سورا ژاپنی نیست — او مهمان تازهٔ کافه است.',
     },
     feedback: {
-      f1Fa: 'پاسخ پرسش ملیت را دیدی: سورا چینی است.',
+      f1Fa: 'سورا در ابتدای مکالمه خودش را معرفی می‌کند — ملیتش بخشی از همان معرفی است.',
       f2HintFa: 'فرمول مکالمه: نام + ملیت.',
-      f3ExplainFa: 'سورا در همان ابتدا می‌گوید: «من چینی‌ام» — پیش‌بینی همین را نشان داد.',
+      f3ExplainFa: 'سورا در همان ابتدا می‌گوید: «من چینی‌ام».',
     },
     assessmentRole: 'practice',
   },
@@ -2051,7 +2118,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'greet-first-meeting',
     assessesConcepts: ['greet-first-meeting'],
     difficulty: 1,
-    promptFa: 'به پیش‌بینی همین درس برگرد — کیم اهل کجاست؟',
+    promptFa: 'در مکالمه‌ای که دیدی، کیم اهل کجاست؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'کره', 'چین', 'ژاپن', 0);
       return { options, correctOptionId };
@@ -2061,7 +2128,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'کیم ژاپنی نیست — او هم مثل سورا مهمان تازه است.',
     },
     feedback: {
-      f1Fa: 'پیش‌بینی همین را نشان داد.',
+      f1Fa: 'فرضِ یامادا دربارهٔ کیم درست از آب درنیامد.',
       f2HintFa: 'کشوری غیر از چین — کشوری که یامادا گمانش را نکرد.',
       f3ExplainFa: 'کیم می‌گوید: «از کره آمده‌ام» — ردّ مؤدبانهٔ فرض یامادا.',
     },
@@ -2119,7 +2186,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'تأیید نبود — پاسخ با «نه» شروع شد.',
     },
     feedback: {
-      f1Fa: 'اولین واژهٔ پاسخ سورا را به یاد بیاور: «نه».',
+      f1Fa: 'پاسخ سورا با واژهٔ «نه» شروع می‌شود و بعد با اصلاح ادامه پیدا می‌کند.',
       f2HintFa: 'نه + اصلاح + واقعیت.',
       f3ExplainFa: 'سورا گفت: «نه، خانم کیم چینی نیست؛ کره‌ای است.»',
     },
