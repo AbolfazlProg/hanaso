@@ -73,8 +73,8 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      a: 'چینی = ちゅうごくじん — صدای شنیده‌شده با «نی» شروع می‌شد، نه «چی».',
-      c: 'کره‌ای = かんこくじん — صدای شنیده‌شده «نی‌هون» بود، نه «کان».',
+      a: 'چینی = ちゅうごくじん — در جملهٔ شنیده‌شده، واژهٔ ملیت با «نی» آغاز می‌شد (にほんじん)، نه با «چی».',
+      c: 'کره‌ای = かんこくじん — در جملهٔ شنیده‌شده «نی‌هون‌جین» را شنیدی (にほんじん)، نه «کان‌کوکو».',
     },
     feedback: {
       /*
@@ -106,8 +106,8 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      a: 'ژاپنی = にほんじん — صدای شنیده‌شده «چیووگوکو» بود.',
-      b: 'ایرانی = イランじん — صدای شنیده‌شده «چیووگوکو» بود.',
+      a: 'ژاپنی = にほんじん — در جملهٔ شنیده‌شده واژهٔ «چیووگوکوجین» را شنیدی، نه «نی‌هونجین».',
+      b: 'ایرانی = イランじん — در جملهٔ شنیده‌شده واژهٔ «چیووگوکوجین» را شنیدی، نه «ایران‌جین».',
     },
     feedback: {
       /* UX-AUDIT #139 (data): the F1 line named the answer («چینی بود»). */
@@ -152,7 +152,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'voc-iranjin',
     lineRef: L(8),
     difficulty: 1,
-    promptFa: 'کدام واژه در نوبت ۸ آمده است؟',
+    promptFa: 'کدام واژه در خط ۸ آمده است؟',
     promptJa: 'イランじん',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'イランじん', 'かんこくじん', 'ちゅうごくじん', 2);
@@ -603,7 +603,7 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {
       b: 'سفارش قهوه در این مکالمه نیست — آغاز مکالمه آیینِ آشنایی است.',
-      c: 'پرسش دربارهٔ علی بعداً مطرح می‌شود — این نوبت معرفیِ خودِ گوینده است.',
+      c: 'پرسش دربارهٔ علی بعداً مطرح می‌شود — این خط، معرفیِ خودِ گوینده است.',
     },
     feedback: {
       f1Fa: 'کل آنچه شنیدی یک معرفی کامل است: نام + ملیت + یوروشیکو.',
@@ -726,8 +726,8 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'چینی = ちゅうごくじん — صدای شنیده‌شده «ایران» داشت.',
-      c: 'ژاپنی = にほんじん — صدای شنیده‌شده با «ایران» شروع می‌شد.',
+      b: 'چینی = ちゅうごくじん — در جملهٔ شنیده‌شده «ایران» را شنیدی، نه «چیووگوکو».',
+      c: 'ژاپنی = にほんじん — در جملهٔ شنیده‌شده، واژهٔ ملیت با «ایران» آغاز می‌شد (イランじん)، نه «نی‌هون».',
     },
     feedback: {
       f1Fa: 'イランじん = ایرانی.',
@@ -959,8 +959,8 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      a: 'چینی = ちゅうごくじん — صدای شنیده‌شده «کان» داشت.',
-      c: 'ژاپنی = にほんじん — صدای شنیده‌شده «کان‌کوکو» بود.',
+      a: 'چینی = ちゅうごくじん — در جملهٔ شنیده‌شده «کان‌کوکوجین» را شنیدی (かんこくじん)، نه «چیووگوکو».',
+      c: 'ژاپنی = にほんじん — در جملهٔ شنیده‌شده واژهٔ «کان‌کوکوجین» را شنیدی، نه «نی‌هونجین».',
     },
     feedback: {
       f1Fa: 'かんこくじん = کره‌ای — ん خیشومی را کامل بگو.',
@@ -1710,7 +1710,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-mo',
     lineRef: L(9),
     difficulty: 2,
-    promptFa: 'در نوبت ۱۰، も چه کاری می‌کند؟',
+    promptFa: 'در خط ۱۰، も چه کاری می‌کند؟',
     ...(() => {
       const { options, correctOptionId } = o3(
         'x',
@@ -1834,7 +1834,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-desu-qa',
     lineRef: L(5),
     difficulty: 2,
-    promptFa: 'در نوبت ۵، ね چه می‌کند؟',
+    promptFa: 'در خط ۵، ね چه می‌کند؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'شنیده‌شده را تأیید می‌کند', 'پرسش می‌سازد', '«هم» می‌دهد', 2);
       return { options, correctOptionId };

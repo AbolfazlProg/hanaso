@@ -30,9 +30,10 @@ describe('W-C — station row markers', () => {
     expect(startBlock).toContain('border-ink bg-paper text-ink');
   });
 
-  it('completed stays the filled INK circle + check (the old ladder intact)', () => {
+  it('completed is the filled SUCCESS-GREEN circle + check (JOURNEY-FIX 2026-11-23 §۲ — green reads as done at reading distance, distinct from the indigo in-progress and the ink outline start)', () => {
     const reviewBlock = /case 'review':[\s\S]*?case 'continue':/.exec(sj)![0];
-    expect(reviewBlock).toContain('border-ink bg-ink text-paper');
+    expect(reviewBlock).toContain('border-success bg-success text-paper');
+    expect(reviewBlock).toContain('data-row-marker="done"');
   });
 
   it('locked keeps dashed + faint + flash (untouched access semantics)', () => {

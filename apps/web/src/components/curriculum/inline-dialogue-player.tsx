@@ -17,10 +17,13 @@
  *     behavior from its authored [scene, dialogue-player] anchor blocks — no
  *     per-chapter code.
  *
- * Subtitle contract (same owner order): the TEACHING stage starts with the
- * Persian subtitle ON regardless of the learner's stored settings (the
- * comprehension-check stage after the dialogue keeps its no-transcript,
- * gradual-hint exercise flow — unchanged).
+ * Subtitle contract (JOURNEY-FIX 2026-11-23 §۴ — supersedes the 2026-11-21
+ * order for the FIRST listen): the anchor's first full-conversation playback
+ * is PURE LISTENING — the Persian subtitle starts OFF and PINNED off (the
+ * «شکاف دانستن» knowledge-gap experience; the mid-playback toggle stays
+ * available). TEACHING replays (the revisit blocks) keep the subtitle ON by
+ * default, and the comprehension-check stage after the dialogue keeps its
+ * no-transcript, gradual-hint exercise flow — unchanged.
  *
  * Prediction grading stays the honest server round-trip (SKL-013): the block
  * arrives pre-stripped (no correctOptionId / revealFa) and grades through
@@ -69,6 +72,23 @@ export interface InlineDialoguePlayerProps {
    */
   onFinished: () => void;
   /**
+   * JOURNEY-FIX 2026-11-23 §۶: the chapter's standard item-label map
+   * (words/expressions/grammar) — resolves the transcript's «teaches» chips
+   * to learner-facing labels; the raw registry ids never render.
+   */
+  itemLabels?: Record<string, string>;
+  /**
+   * JOURNEY-FIX 2026-11-23 §۴ (subtitle policy — «شکاف دانستن» first listen):
+   * TRUE on the chapter's FIRST full-conversation encounter (the anchor
+   * station): the Persian subtitle starts OFF and PINNED off (pure listening —
+   * the knowledge-gap experience; the mid-playback toggle stays available).
+   * FALSE on every TEACHING replay (the revisit blocks): subtitle ON by
+   * default, exactly as the 2026-11-21 teaching order. The comprehension-check
+   * stage keeps its own no-transcript flow unchanged.
+   * Data-driven at the runner from the STATION TYPE — never a chapter hardcode.
+   */
+  firstListen?: boolean;
+  /**
    * The line the player starts positioned at (a REVISIT block starts at its
    * first focus line; the chapter-opening dialogue starts from the top — null).
    * Never auto-plays: the learner's own «پخش» press is the user-gesture chain.
@@ -83,6 +103,8 @@ export function InlineDialoguePlayer({
   block,
   bundle,
   onFinished,
+  firstListen = false,
+  itemLabels,
   startAtLine = null,
 }: InlineDialoguePlayerProps) {
   const prediction = block.prediction;
@@ -135,7 +157,11 @@ export function InlineDialoguePlayer({
           the SAME section (context preparation, not an intermediate step) */}
       {scene && (
         <div className="rounded-md border border-ink-faint bg-surface-warm px-4 py-3">
-          <p className="text-small font-bold text-ink">{scene.titleFa}</p>
+          {/* JOURNEY-FIX 2026-11-23 §۱: scene title/body render through the shared
+              mixed-direction renderer (a scene title may embed a Japanese run). */}
+          <p className="text-small font-bold text-ink">
+            <MixedFaJaText text={scene.titleFa} />
+          </p>
           <p className="mt-1 text-small leading-[var(--leading-fa)] text-ink-soft">
             <MixedFaJaText text={scene.bodyFa} />
           </p>
@@ -192,8 +218,9 @@ export function InlineDialoguePlayer({
       {/* the proven multi-speaker player, INLINE in the lesson walk:
           TASK-LEARNING-07 / Issue #101 `embedded` — every PoC navigation surface
           hidden; the WALK owns completion (onFinished → the next section).
-          Owner order 2026-11-21: the teaching stage's subtitle starts ON
-          (subtitleDefaultOn) regardless of the stored settings. */}
+          JOURNEY-FIX 2026-11-23 §۴: firstListen (the anchor's first full
+          encounter) pins the Persian subtitle OFF — pure listening, the toggle
+          remains mid-playback; teaching replays keep the ON default. */}
       <DialogueScene
         bundle={{
           dialogue: bundle.dialogue,
@@ -204,7 +231,9 @@ export function InlineDialoguePlayer({
         initialLineId={startLineId}
         autoStart={false}
         embedded
-        subtitleDefaultOn
+        subtitleDefaultOn={!firstListen}
+        subtitlePinned={firstListen}
+        itemLabels={itemLabels}
         onFinish={onFinished}
       />
 

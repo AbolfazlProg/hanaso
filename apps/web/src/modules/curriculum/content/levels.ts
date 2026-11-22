@@ -63,8 +63,15 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
        * was the dishonest 45' — exactly what the audit caught. The S3
        * over-target exception stays documented; the time budget no longer
        * lies to keep it.
+       *
+       * JOURNEY-FIX 2026-11-23 §۵ (honest station timing): the per-station
+       * estimates were recalibrated to the per-block model (cards/exercises/
+       * listening, not a flat 4'), raising the chapter's honest budget to 91'
+       * (80' core + 11' optional). The window moves [35,75] → [40,95] on the
+       * same honest-budget justification: the cap describes reality, it does
+       * not compress it.
        */
-      chapterMinutes: [35, 75],
+      chapterMinutes: [40, 95],
       dialogueLines: [6, 14],
       listeningSpeed: 0.9,
       furigana: 'all',

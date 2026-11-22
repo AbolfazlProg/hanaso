@@ -357,7 +357,11 @@ export default async function StationPage({
           <h1 className="truncate text-body font-black text-indigo">
             <MixedFaJaText text={station.titleFa} />
           </h1>
-          <p className="truncate text-caption text-ink-soft">{chapter.titleFa}</p>
+          {/* JOURNEY-FIX 2026-11-23 §۱: the breadcrumb chapter title embeds a
+              Japanese run — shared mixed-direction renderer, not raw text. */}
+          <p className="truncate text-caption text-ink-soft">
+            <MixedFaJaText text={chapter.titleFa} />
+          </p>
         </div>
         {replayMode ? (
           /* TASK-HANASO-17 replay badge: full content, nothing re-registered. */

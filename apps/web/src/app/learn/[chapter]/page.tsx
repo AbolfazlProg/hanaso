@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft, Clock3, Map, Sparkles } from 'lucide-react';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { fa } from '@/messages/fa';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
+import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 
 /**
  * /learn/[chapter] — TASK-LEARNING-01 page 1: chapter intro.
@@ -44,8 +46,13 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
         <p className="text-caption text-ink-soft">
           {fa.curriculum.chapterBadge} ۱ · {fa.curriculum.levelLabel} {chapter.levelCode}
         </p>
-        <h1 className="text-h1 font-black text-indigo">{chapter.titleFa}</h1>
-        <p className="text-lead text-ink-soft">{chapter.summaryFa}</p>
+        <h1 className="text-h1 font-black text-indigo">
+          {/* JOURNEY-FIX 2026-11-23 §۱: mixed-direction title — shared renderer. */}
+          <MixedFaJaText text={chapter.titleFa} />
+        </h1>
+        <p className="text-lead text-ink-soft">
+          <MixedFaJaText text={chapter.summaryFa} />
+        </p>
         <p className="flex items-center gap-2 text-small text-ink-soft">
           <Clock3 aria-hidden className="size-4" />~{new Intl.NumberFormat('fa-IR').format(chapter.estMinutes)}{' '}
           {fa.curriculum.minutes} ·{' '}
@@ -64,7 +71,9 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
           <Sparkles aria-hidden className="size-5" />
           {fa.curriculum.canDoTitle}
         </h2>
-        <p className="mt-3 text-lead leading-[var(--leading-fa)]">{chapter.canDoFa}</p>
+        <p className="mt-3 text-lead leading-[var(--leading-fa)]">
+          <MixedFaJaText text={chapter.canDoFa} />
+        </p>
         {/*
          * #94 (Wave 3): the prerequisite note renders ONLY on chapters that declare
          * one — the copy now states the soft lock honestly (no «شروع بدون آن»).
@@ -87,14 +96,29 @@ export default async function ChapterIntroPage({ params }: { params: Promise<{ c
         </ul>
       </section>
 
-      {/* CTA into stage A */}
-      <a
-        href={`/learn/${chapter.slug}/dialogue`}
-        className="flex h-14 items-center justify-center gap-3 rounded-md bg-indigo px-6 text-lead font-black text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
-      >
-        {fa.curriculum.startChapter}
-        <ArrowLeft aria-hidden className="size-5" />
-      </a>
+      {/* CTA into stage A
+       * JOURNEY-FIX 2026-11-23 §۳ (conversation = the lesson's first section):
+       * the intro's primary CTA used to hop to the SEPARATE /dialogue page — a
+       * parallel anchor experience outside the walk. It now enters the ANCHOR
+       * STATION of the journey (the lesson page whose first real section IS the
+       * conversation, inline) — resolved from the chapter's own station data
+       * (anchor type, else the first core station in walk order), never a
+       * per-chapter hardcode. The /dialogue route stays as a deep link. */}
+      {(() => {
+        const anchorSlug =
+          chapter.stations.find((s) => s.type === 'anchor')?.slug ??
+          [...chapter.stations].sort((a, b) => a.order - b.order).find((s) => s.core)?.slug;
+        const href = anchorSlug ? `/learn/${chapter.slug}/journey/${anchorSlug}` : `/learn/${chapter.slug}/journey`;
+        return (
+          <Link
+            href={href}
+            className="flex h-14 items-center justify-center gap-3 rounded-md bg-indigo px-6 text-lead font-black text-paper transition-colors hover:bg-indigo-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+          >
+            {fa.curriculum.startChapter}
+            <ArrowLeft aria-hidden className="size-5" />
+          </Link>
+        );
+      })()}
 
       <p className="flex items-center gap-2 text-caption text-ink-faint">
         <Map aria-hidden className="size-4" />

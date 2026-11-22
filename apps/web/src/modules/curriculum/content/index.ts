@@ -18,14 +18,19 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
   levelCode: 'L2',
   titleFa: 'فصل ۰۲ — اولین مکالمه: わたしは学生です',
   canDoFa:
-    'در پایان این فصل می‌توانی خودت را کامل معرفی کنی (نام، ملیت، خاستگاه)، هویت دیگران را بپرسی و تأیید کنی، فرض غلط را مؤدبانه رد کنی — و کل مکالمهٔ ۱۴ نوبتی را بفهمی.',
+    'در پایان این فصل می‌توانی خودت را کامل معرفی کنی (نام، ملیت، خاستگاه)، هویت دیگران را بپرسی و تأیید کنی، فرض غلط را مؤدبانه رد کنی — و کل مکالمهٔ ۱۳ خطی را بفهمی.',
   summaryFa:
-    'میکی دوستش سورا را به کافهٔ یامادا می‌آورد؛ کنار پنجره علی کتاب می‌خواند و کمی بعد کیم — همکلاسی کره‌ای سورا — وارد می‌شود. یک مکالمه، دو واحد داستانی، و در پایان گیت فهم.',
+    'میکی دوستش سورا را به کافهٔ یامادا می‌آورد؛ کنار پنجره علی کتاب می‌خواند و کمی بعد کیم — همکلاسی کره‌ای سورا — وارد می‌شود. یک مکالمه، دو بخش داستانی، و در پایان دروازهٔ فهم.',
   dialogueSlug: 'first-meeting-01',
   orderInLevel: 1,
-  /* ENGINE-REFORM 2026-11-22 §۲: +1' for the LISTEN-1 vowel-length teaching
-   * block (71 → 72, still inside the L2 [35, 75] window). */
-  estMinutes: 72,
+  /* JOURNEY-FIX 2026-11-23 §۵ (honest station timing): the per-station
+   * estMinutes were recalibrated to the per-block model (card ≈45″, exercise ≈
+   * 30″, full listen = 13 lines × 8″ + gist checks, rule/DIA block ≈1.5′) — the
+   * old flat «4′ for everything» lied about the real beginner pace. The sum
+   * 91′ (= 80′ core + 11′ optional) updates chapter.estMinutes; the L2 window
+   * is raised with the same honest-budget justification (TASK-HANASO-21
+   * precedent: the time budget no longer lies to keep the old cap). */
+  estMinutes: 91,
   estLoad: 'medium',
   bandArc: 'cafe-intro',
   sceneFa:
@@ -52,11 +57,19 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
   },
   // T-79 (DD-123): the two story units of the 05B map — one anchor dialogue,
   // two narrative halves, one comprehension gate at the end.
+  /* JOURNEY-FIX 2026-11-23 §۵ (beginner-friendly section naming): the unit
+  // titles are Persian-first with the Japanese name as a labelled gloss — the
+  // old «واحد ۱ — 最初のあいさつ (نوبت‌های ۱–۸)» asked an absolute beginner to
+  // parse a bare Japanese title plus a turn-range. «واحد» (military/academic
+  // register) became «بخش» (matching the UI shell's own vocabulary), and
+  // «نوبت» (turn) became «خط» (line) — the exact term the dialogue player
+  // itself uses, so one concept carries ONE name across every surface. The
+  // real line range is 1–13 (13 lines — the old «۹–۱۴»/«۱۴ نوبتی» data lied). */
   units: [
     {
       slug: 'unit-02-1-saijo-no-aisatsu',
-      titleFa: 'واحد ۱ — 最初のあいさつ (نوبت‌های ۱–۸)',
-      summaryFa: 'سلام و معرفی: ۸ واژهٔ هویت + は+です + پرسش/تأیید + آیین آشنایی',
+      titleFa: 'بخش ۱ — سلام و آشنایی (最初のあいさつ)',
+      summaryFa: 'خط‌های ۱ تا ۸ مکالمه: ۸ واژهٔ هویت + は+です + پرسش/تأیید + آیین آشنایی',
       stationSlugs: [
         'stn-fm01-01-anchor',
         'stn-fm01-02-vocab',
@@ -71,8 +84,8 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
     },
     {
       slug: 'unit-02-2-kimu-san-no-shookai',
-      titleFa: 'واحد ۲ — キムさんの紹介 (نوبت‌های ۹–۱۴)',
-      summaryFa: 'ورود کیم: も + نفی مؤدبانه + خاستگاه + واکنش‌ها — و گیت فهم فصل',
+      titleFa: 'بخش ۲ — ورود کیم و معرفی (キムさんの紹介)',
+      summaryFa: 'خط‌های ۹ تا ۱۳ مکالمه: も + نفی مؤدبانه + خاستگاه + واکنش‌ها — و دروازهٔ فهم فصل',
       stationSlugs: [
         'stn-fm01-10-reconnect',
         'stn-fm01-11-vocab2',

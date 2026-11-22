@@ -36,18 +36,20 @@ export interface LineAudioButtonProps {
   onPlayed?: () => void;
 }
 
-export function LineAudioButton({
-  lineId,
-  audioUrl,
-  audioUrlFallback,
-  audioAvailable,
-  label,
-  disabled,
-  className,
-  rate = 1,
-  autoPlay = false,
-  onPlayed,
-}: LineAudioButtonProps) {
+export function LineAudioButton(props: LineAudioButtonProps) {
+  /* `props.lineId` stays the caller's asset identity (documented above) but no
+   * longer rides the accessible name — JOURNEY-FIX 2026-11-23 §۶. */
+  const {
+    audioUrl,
+    audioUrlFallback,
+    audioAvailable,
+    label,
+    disabled,
+    className,
+    rate = 1,
+    autoPlay = false,
+    onPlayed,
+  } = props;
   const ref = useRef<HTMLAudioElement | null>(null);
   const [state, setState] = useState<'idle' | 'loading' | 'playing'>('idle');
 
@@ -104,7 +106,12 @@ export function LineAudioButton({
 
   return (
     <AudioSentenceButton
-      aria-label={`${label ?? fa.curriculum.playLine} (${lineId})`}
+      /* JOURNEY-FIX 2026-11-23 §۶ (no internal ids in learner-facing text): the
+       * raw line/asset id (e.g. «s-first-meeting-01-l3») used to ride inside the
+       * accessible name — screen-reader users heard internal registry keys. The
+       * label alone (caller-provided Persian verb) is the honest name; the id
+       * stays a prop for the effect keys, never learner copy. */
+      aria-label={label ?? fa.curriculum.playLine}
       state={state}
       disabled={disabled || !audioAvailable}
       onClick={play}

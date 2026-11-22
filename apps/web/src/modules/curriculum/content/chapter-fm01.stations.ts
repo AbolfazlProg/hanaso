@@ -27,8 +27,8 @@ export const FM01_STATIONS: Station[] = [
   {
     slug: 'stn-fm01-01-anchor',
     type: 'anchor',
-    titleFa: 'اولین مواجهه — کل مکالمه',
-    objectiveFa: 'کل مکالمهٔ ۱۳ نوبتی را یک‌بار بشنو و حس «شکاف دانستن» را تجربه کن',
+    titleFa: 'اولین برخورد — کل مکالمه',
+    objectiveFa: 'کل مکالمهٔ ۱۳ خطی را فقط با گوش بشنو (بدون زیرنویس) و حس «شکاف دانستن» را تجربه کن',
     core: true,
     order: 1,
     prerequisites: [],
@@ -37,7 +37,7 @@ export const FM01_STATIONS: Station[] = [
      * (both hosts speaking よろしく together). */
     lineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(10), L(11), L(12), L(13)],
     objectiveCode: 'greet-first-meeting',
-    estMinutes: 4,
+    estMinutes: 7,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -54,8 +54,10 @@ export const FM01_STATIONS: Station[] = [
          * کاملاً حذف شود»): the GRADED pre-viewing prediction is REMOVED —
          * the learner was forced to GUESS content they had neither been taught
          * nor even heard. The anchor is now the pure viewing experience
-         * (subtitles ON) + the post-viewing gist checks below, which are
-         * answerable straight from what was just seen. */
+         * (JOURNEY-FIX 2026-11-23 §۴: the FIRST LISTEN plays with the Persian
+         * subtitle OFF + pinned — «شکاف دانستن» pure listening; teaching
+         * replays and the post-viewing gist checks below are unchanged, the
+         * checks answerable straight from what was just heard). */
         kind: 'dialogue-player',
         id: 'blk-a1-dialogue',
         focusLineRefs: [L(1), L(2), L(3), L(4), L(5), L(6), L(7), L(8), L(9), L(10), L(11), L(12), L(13)],
@@ -74,7 +76,7 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-01-anchor'],
     lineRefs: [L(1), L(3), L(5), L(6), L(7), L(8)],
     objectiveCode: 'identity-vocab-core',
-    estMinutes: 4,
+    estMinutes: 9,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -132,7 +134,7 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-02-vocab'],
     lineRefs: [L(3), L(6), L(8)],
     objectiveCode: 'identity-statement',
-    estMinutes: 4,
+    estMinutes: 5,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -213,7 +215,7 @@ export const FM01_STATIONS: Station[] = [
       {
         kind: 'structured-input',
         id: 'blk-g1-input',
-        questionFa: 'در نوبت ۸، چه کسی せんせい است؟',
+        questionFa: 'در خط ۸، چه کسی せんせい است؟',
         lineRef: L(8),
         assessesConcepts: ['gr-desu-identity', 'voc-sensee', 'voc-daigaku'],
         options: [
@@ -232,13 +234,13 @@ export const FM01_STATIONS: Station[] = [
     slug: 'stn-fm01-04-structure',
     type: 'structure',
     titleFa: 'ترتیب ژاپنی و پل فارسی',
-    objectiveFa: 'بفهم چرا سورا در نوبت ۴ «من» را نمی‌گوید — و چرا ترتیب برای تو غریبه نیست',
+    objectiveFa: 'بفهم چرا سورا در خط ۴ «من» را نمی‌گوید — و چرا ترتیب برای تو غریبه نیست',
     core: true,
     order: 4,
     prerequisites: ['stn-fm01-03-grammar-desu'],
     lineRefs: [L(3), L(4)],
     objectiveCode: 'sov-bridge-persian',
-    estMinutes: 2,
+    estMinutes: 3,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -249,9 +251,9 @@ export const FM01_STATIONS: Station[] = [
         patternJa: '(わたしは) …です',
         titleFa: 'حذف موضوع + ترتیب مشترک',
         bodyFa:
-          'ژاپنی مثل فارسی موضوعِ معلوم را لازم نمی‌گوید: سورا در نوبت ۴ فقط می‌گوید «سورا هستم» — わたし حذف شد. و هر دو زبان فعل را آخر می‌آورند؛ پس ترتیب ژاپنی از روز اول برای تو آشناست.',
+          'ژاپنی مثل فارسی موضوعِ معلوم را لازم نمی‌گوید: سورا در خط ۴ فقط می‌گوید «سورا هستم» — わたし حذف شد. و هر دو زبان فعل را آخر می‌آورند؛ پس ترتیب ژاپنی از روز اول برای تو آشناست.',
         structureTable: {
-          headers: ['نوبت ۳ (با موضوع)', 'نوبت ۴ (حذف‌شده)'],
+          headers: ['خط ۳ (با موضوع)', 'خط ۴ (حذف‌شده)'],
           rows: [['はじめまして、やまだです。わたしは にほんじんです。', 'はじめまして、ソラです。']],
         },
         persianBridgeFa: 'فارسی هم می‌گوید «(من) رفتم» بدون «من» — ژاپنی همین کار را می‌کند.',
@@ -267,7 +269,7 @@ export const FM01_STATIONS: Station[] = [
             ja: 'わたしは にほんじんです。',
             reading: 'watashi wa nihonjin desu',
             fa: 'من ژاپنی‌ام. (با موضوع)',
-            whyFa: 'نوبت ۳ — کامل.',
+            whyFa: 'خط ۳ — کامل.',
             lineRef: L(3),
           },
           {
@@ -276,7 +278,7 @@ export const FM01_STATIONS: Station[] = [
             ja: 'はじめまして、ソラです。',
             reading: 'hajimemashite, sora desu',
             fa: 'از آشنایی‌تان خوشبختم؛ سورا هستم. (بدون わたしは)',
-            whyFa: 'نوبت ۴ — موضوع حذف شد چون معلوم است.',
+            whyFa: 'خط ۴ — موضوع حذف شد چون معلوم است.',
             lineRef: L(4),
           },
         ],
@@ -296,7 +298,7 @@ export const FM01_STATIONS: Station[] = [
     lineRefs: [L(5), L(7)],
     objectiveCode: 'identity-question',
     teachesConcepts: ['listen-final-intonation'],
-    estMinutes: 4,
+    estMinutes: 5,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -339,7 +341,7 @@ export const FM01_STATIONS: Station[] = [
             ja: 'ソラさんですね。ちゅうごくじんですか。',
             reading: 'sora-san desu ne. chuugokujin desu ka.',
             fa: 'پس سورا هستید. چینی هستید؟',
-            whyFa: 'بهترین جفتِ آموزشی مکالمه — هر دو در یک نوبت (خط ۵).',
+            whyFa: 'بهترین جفتِ آموزشی مکالمه — هر دو در خط ۵.',
             lineRef: L(5),
           },
           {
@@ -406,7 +408,7 @@ export const FM01_STATIONS: Station[] = [
   {
     slug: 'stn-fm01-07-listen',
     type: 'listen',
-    titleFa: 'گوشِ اول — طول واکه و آهنگ',
+    titleFa: 'گوشِ اول — صداهای کشیده و آهنگ جمله',
     objectiveFa: 'بدون متن دنبال کن: جیست، چه‌کسی، و تفاوت‌های صدایی',
     core: true,
     order: 7,
@@ -432,7 +434,7 @@ export const FM01_STATIONS: Station[] = [
         kind: 'rule-card',
         id: 'blk-l1-vl-rule',
         patternJa: 'せんせい ↔ せんせ',
-        titleFa: 'طول واکه — بلند یا کوتاه',
+        titleFa: 'صدای کشیده — بلند یا کوتاه',
         bodyFa:
           'در ژاپنی طول واکه معنا را عوض می‌کند. せんせい (استاد) چهار موراست و واکهٔ پایانی‌اش کشیده است؛ کوتاهش کنی (せんせ) واژه نابود می‌شود. همین‌طور ちゅうごく (چین): «اوی» وسط واژه کشیده است — ちゅごک نادرست است.',
         structureTable: {
@@ -459,8 +461,8 @@ export const FM01_STATIONS: Station[] = [
   {
     slug: 'stn-fm01-08-practice',
     type: 'practice',
-    titleFa: 'تمرین — تثبیت واحد اول',
-    objectiveFa: 'همهٔ آموخته‌های نوبت‌های ۱–۸ را بازیابی کن',
+    titleFa: 'تمرین — تثبیت بخش اول',
+    objectiveFa: 'همهٔ آموخته‌های خط‌های ۱ تا ۸ را بازیابی کن',
     core: true,
     order: 8,
     prerequisites: [
@@ -472,7 +474,7 @@ export const FM01_STATIONS: Station[] = [
     ],
     lineRefs: [L(3), L(5), L(6), L(8)],
     objectiveCode: 'identity-vocab-core',
-    estMinutes: 4,
+    estMinutes: 5,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
@@ -489,7 +491,7 @@ export const FM01_STATIONS: Station[] = [
       {
         kind: 'wrap-up',
         id: 'blk-p1-wrap',
-        titleFa: 'واحد اول تمام شد!',
+        titleFa: 'بخش اول تمام شد!',
         itemsFa: [
           '۸ واژه + ۲ الگو + ۴ فرمول + اولین معرفی‌ات را داری.',
           'قسمت بعد: کیم خودش می‌آید — و یامادا یک پرسش دیگر دارد…',
@@ -561,7 +563,7 @@ export const FM01_STATIONS: Station[] = [
     slug: 'stn-fm01-10-reconnect',
     type: 'anchor',
     titleFa: 'بازگشت به مکالمه — این‌بار به کیم گوش کن',
-    objectiveFa: 'همان مکالمه را با تمرکز نوبت‌های ۹–۱۴ دوباره بشنو',
+    objectiveFa: 'همان مکالمه را با تمرکز خط‌های ۹ تا ۱۳ دوباره بشنو',
     core: true,
     order: 10,
     prerequisites: ['stn-fm01-09-integrate'],
@@ -602,14 +604,14 @@ export const FM01_STATIONS: Station[] = [
   {
     slug: 'stn-fm01-11-vocab2',
     type: 'vocab',
-    titleFa: 'واژه‌های واحد دوم',
+    titleFa: 'واژه‌های بخش دوم',
     objectiveFa: '۳ واژهٔ تازه (کره‌ای، از، آمد) + بازیافت واژه‌های قبل',
     core: true,
     order: 11,
     prerequisites: ['stn-fm01-10-reconnect'],
     lineRefs: [L(9), L(10), L(12)],
     objectiveCode: 'identity-vocab-core',
-    estMinutes: 3,
+    estMinutes: 4,
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -645,7 +647,7 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-11-vocab2'],
     lineRefs: [L(6), L(9)],
     objectiveCode: 'identity-question',
-    estMinutes: 3,
+    estMinutes: 5,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -657,7 +659,7 @@ export const FM01_STATIONS: Station[] = [
         displayLineRef: L(9),
         highlightSurfaces: ['キムさんも'],
         compareLineRef: L(6),
-        questionFa: 'جملهٔ نوبت ۶ را با نوبت ۱۰ مقایسه کن — も چه چیزی را عوض کرد؟',
+        questionFa: 'جملهٔ خط ۶ را با خط ۱۰ مقایسه کن — も چه چیزی را عوض کرد؟',
         options: [
           { id: 'a', label: '«هم» را می‌رساند: مثل سورا' },
           { id: 'b', label: 'پرسش را مؤدبانه می‌کند' },
@@ -729,7 +731,7 @@ export const FM01_STATIONS: Station[] = [
     // NB: only L10 — keeping L9 here would double-anchor gr-mo (EQA-1 cluster warning).
     lineRefs: [L(10)],
     objectiveCode: 'identity-statement',
-    estMinutes: 4,
+    estMinutes: 5,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -858,7 +860,7 @@ export const FM01_STATIONS: Station[] = [
     prerequisites: ['stn-fm01-11-vocab2'],
     lineRefs: [L(12)],
     objectiveCode: 'origin-statement',
-    estMinutes: 3,
+    estMinutes: 5,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
@@ -935,14 +937,14 @@ export const FM01_STATIONS: Station[] = [
   {
     slug: 'stn-fm01-17-practice',
     type: 'practice',
-    titleFa: 'تمرین — درهم‌آمیزی دو واحد',
-    objectiveFa: 'الگوهای هر دو واحد را کنار هم بازیابی کن: は/も · ですか/ではありません · خاستگاه',
+    titleFa: 'تمرین — درهم‌آمیزی دو بخش',
+    objectiveFa: 'الگوهای هر دو بخش را کنار هم بازیابی کن: は/も · ですか/ではありません · خاستگاه',
     core: true,
     order: 17,
     prerequisites: ['stn-fm01-16-grammar-kara', 'stn-fm01-15-listen'],
     lineRefs: [L(9), L(10), L(12)],
     objectiveCode: 'identity-vocab-core',
-    estMinutes: 4,
+    estMinutes: 5,
     estLoad: 'medium',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.7 },
@@ -953,7 +955,7 @@ export const FM01_STATIONS: Station[] = [
       {
         kind: 'wrap-up',
         id: 'blk-p2-wrap',
-        titleFa: 'هر دو واحد تثبیت شد',
+        titleFa: 'هر دو بخش تثبیت شد',
         itemsFa: [
           'حالا هر دو واحد داری: هویت + پرسش + «هم» + نفی + خاستگاه.',
           'گام بعد: بازگشت به کل مکالمه و گیت فهم — «این مکالمه را فهمیدی» منتظر توست.',
@@ -1221,7 +1223,7 @@ export const FM01_STATIONS: Station[] = [
     slug: 'stn-fm01-opt-drill',
     type: 'review',
     titleFa: 'دریل تمایزی (اختیاری)',
-    objectiveFa: 'جفت‌های مرگبار فصل را جدا کن: ですか/ですね · は/も · طول واکه',
+    objectiveFa: 'جفت‌های مرگبار فصل را جدا کن: ですか/ですね · は/も · صداهای کشیده',
     core: false,
     order: 22,
     prerequisites: ['stn-fm01-17-practice'],

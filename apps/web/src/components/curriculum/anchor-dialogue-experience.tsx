@@ -176,8 +176,11 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
 
       {/* the proven multi-speaker player (parameterized slug — analytics stay honest).
           TASK-LEARNING-07 / Issue #101: `embedded` hides every PoC navigation surface
-          (nav, /poc/lesson links, finish CTA) — this station owns completion. */}
-      <DialogueScene bundle={bundle} dialogueSlug={chapterSlug} embedded />
+          (nav, /poc/lesson links, finish CTA) — this station owns completion.
+          JOURNEY-FIX 2026-11-23 §۴: this page IS the anchor's first full-conversation
+          listen — the Persian subtitle starts OFF and PINNED off («شکاف دانستن»
+          pure listening); the mid-playback toggle remains the learner's own choice. */}
+      <DialogueScene bundle={bundle} dialogueSlug={chapterSlug} embedded subtitlePinned />
 
       {/* TASK-LEARNING-02: real-TTS provenance + VOICEVOX character credit (terms) */}
       {bundle.audio.audioSource === 'voicevox' && bundle.audio.voiceCredits?.length ? (

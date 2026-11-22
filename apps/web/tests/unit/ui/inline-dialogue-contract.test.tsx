@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 /**
- * Owner order 2026-11-21 — the three fixes' regression contract:
+ * Owner order 2026-11-21 (amended 2026-11-23 §۴ — JOURNEY-FIX) — the regression
+ * contract of the inline conversation:
  *
  *  1) «فصل دوم قابل پیدا کردن و انتخاب» — the PUBLISHED-chapter catalog:
  *     every published chapter listed in course order with its honest state;
@@ -8,8 +9,12 @@
  *  2) «مکالمه درون درس» — the inline anchor dialogue: the first lesson of a
  *     chapter opens with the conversation itself on screen (the grouped
  *     [scene → dialogue-player] section) — NO button, NO separate dialogue
- *     page hop; the teaching stage's subtitles default ON regardless of the
- *     stored settings; advancing continues the SAME lesson.
+ *     page hop; advancing continues the SAME lesson.
+ *     SUBTITLE POLICY (2026-11-23 order «زیرنویس از اولین پخش مکالمه»): the
+ *     anchor's FIRST listen starts with the Persian subtitle OFF and PINNED
+ *     off — even a stored «روشن» device default cannot pre-load the text onto
+ *     the first listening («شکاف دانستن»); the TEACHING replays keep the ON
+ *     default; the mid-playback toggle remains available in both.
  *  3) «دیالوگ فعال به کف باکس نچسبد» — the transcript comfort band: the pure
  *     scroll math pins the active line at the TOP-THIRD of the transcript
  *     viewport (near the character stage), never at the bottom edge.
@@ -95,7 +100,7 @@ describe('comfortScrollTarget — the active line NEVER glued to the transcript 
 
 const fixture = loadDialogueBundle('first-meeting-01');
 
-describe('DialogueScene — subtitle defaults (owner order: teaching ON, comprehension-first elsewhere)', () => {
+describe('DialogueScene — subtitle defaults (2026-11-23 order: first listen OFF+PINNED, teaching ON)', () => {
   it('the TEACHING stage (subtitleDefaultOn) starts with the Persian subtitle visible', () => {
     const m = renderToStaticMarkup(
       <DialogueScene bundle={fixture} dialogueSlug="first-meeting-01" embedded subtitleDefaultOn />,
@@ -108,6 +113,19 @@ describe('DialogueScene — subtitle defaults (owner order: teaching ON, compreh
   it('the default player stays comprehension-first (subtitle OFF until toggled)', () => {
     const m = renderToStaticMarkup(<DialogueScene bundle={fixture} dialogueSlug="first-meeting-01" />);
     expect(m).toContain('زیرنویس فارسی: خاموش');
+  });
+
+  it('the FIRST LISTEN (subtitlePinned) stays text-free even against a stored «روشن» device default', () => {
+    // JOURNEY-FIX 2026-11-23 §۴: a stored ON default must NOT pre-load the
+    // subtitle onto the anchor's first full-conversation listen. The gloss
+    // SPAN stays absent (the play-button aria-labels carry no translation).
+    window.localStorage.setItem('hanaso.prefs.subtitleFa', 'on');
+    const m = renderToStaticMarkup(
+      <DialogueScene bundle={fixture} dialogueSlug="first-meeting-01" embedded subtitlePinned />,
+    );
+    expect(m).toContain('زیرنویس فارسی: خاموش');
+    expect(m).not.toContain(`<span class="text-body text-ink-soft">${fixture.dialogue.lines[0]!.fa}</span>`);
+    expect(m).not.toContain(`— ${fixture.dialogue.lines[0]!.fa}`);
   });
 
   it('the stored «خاموش» setting cannot leave the teaching stage unsubtitled — the ON default wins', () => {
@@ -151,11 +169,36 @@ describe('InlineDialoguePlayer — the dialogue section renders INLINE (no page 
     // the multi-speaker player itself is inline
     expect(m).toContain('poc-scene-transcript');
     expect(m).toContain('aria-label="خطوط مکالمه"');
-    // subtitles default ON in the teaching stage
+    // the TEACHING default (firstListen=false) keeps the subtitle ON
     expect(m).toContain('زیرنویس فارسی: روشن');
     // NO navigation to a separate dialogue page — the legacy hop is gone
     expect(m).not.toContain('/dialogue');
     expect(m).not.toContain(fa.curriculum.dialogueGoToListen);
+  });
+
+  it('the ANCHOR first listen (firstListen) starts text-free — the subtitle is OFF and the Persian glosses hidden', () => {
+    // JOURNEY-FIX 2026-11-23 §۴: the anchor station's inline dialogue is the
+    // chapter's FIRST full-conversation listen — pure listening.
+    const strippedBlock = toClientStation(station).blocks.find((b) => b.kind === 'dialogue-player')! as never;
+    const m = renderToStaticMarkup(
+      <InlineDialoguePlayer
+        chapterSlug="first-meeting-01"
+        stationSlug="stn-fm01-01-anchor"
+        scene={{ titleFa: 'کافه، بعدازظهر', bodyFa: 'میکی دوستش سورا را برای اولین بار به کافهٔ یامادا می‌آورد.' }}
+        block={strippedBlock}
+        bundle={{
+          dialogueSlug: 'first-meeting-01',
+          dialogue: fixture.dialogue,
+          characters: fixture.characters,
+          audio: fixture.audio,
+        }}
+        onFinished={() => {}}
+        firstListen
+      />,
+    );
+    expect(m).toContain('زیرنویس فارسی: خاموش');
+    expect(m).not.toContain(`<span class="text-body text-ink-soft">${fixture.dialogue.lines[0]!.fa}</span>`);
+    expect(m).not.toContain(`— ${fixture.dialogue.lines[0]!.fa}`);
   });
 });
 
@@ -218,8 +261,9 @@ describe('StationRunner — the anchor station walks the dialogue INLINE', () =>
       expect(screen.queryByText(fa.curriculum.dialogueGoToListen)).toBeNull();
       // the character stage is present — the visual anchor of the section
       expect(document.querySelectorAll('[data-hnsp-scene-order]').length).toBeGreaterThan(0);
-      // subtitles are ON by default in the teaching stage
-      expect(screen.getByRole('button', { name: /زیرنویس فارسی: روشن/ })).toBeTruthy();
+      // JOURNEY-FIX 2026-11-23 §۴: the anchor's FIRST listen starts text-free —
+      // the Persian subtitle is OFF (the toggle remains available mid-playback)
+      expect(screen.getByRole('button', { name: /زیرنویس فارسی: خاموش/ })).toBeTruthy();
     },
   );
 
