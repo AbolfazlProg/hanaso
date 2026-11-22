@@ -92,6 +92,9 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
    * Draft/Published lifecycle and the prereq gates themselves stay intact).
    */
   const catalog = await listPublishedChapterCatalog(learnerId);
+  /* ENGINE-NEXTGEN W-C: the owner preview panel's raw hex colors were the
+     last untokenized color set in the app (tokens.css forbids raw hex in
+     components) — every color below is now a design token reference. */
 
   const panelBtn = (href: string, label: string, active: boolean) =>
     active ? (
@@ -100,8 +103,8 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
         style={{
           padding: '6px 12px',
           borderRadius: 8,
-          background: '#1d4ed8',
-          color: '#fff',
+          background: 'var(--color-ai)',
+          color: 'var(--color-paper)',
           fontSize: 13,
           fontWeight: 700,
         }}
@@ -115,9 +118,9 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
         style={{
           padding: '6px 12px',
           borderRadius: 8,
-          border: '1px solid #cbd5e1',
+          border: '1px solid var(--color-indigo-mist)',
           background: '#fff',
-          color: '#1d4ed8',
+          color: 'var(--color-ai)',
           fontSize: 13,
           fontWeight: 700,
           textDecoration: 'none',
@@ -133,8 +136,8 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
       {unlockEverything && !previewActive && (
         <div
           style={{
-            background: '#14532d',
-            color: '#dcfce7',
+            background: 'var(--color-success)',
+            color: 'var(--color-paper)',
             padding: '10px 16px',
             fontSize: 13,
             borderRadius: 10,
@@ -158,8 +161,8 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
       {previewActive && (
         <div
           style={{
-            background: '#1e293b',
-            color: '#e2e8f0',
+            background: 'var(--color-indigo-deep)',
+            color: 'var(--color-indigo-mist)',
             padding: '10px 16px',
             fontSize: 13,
             borderRadius: 10,
@@ -177,7 +180,10 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
               ? 'قفل‌ها فعال‌اند — مسیر واقعی زبان‌آموز در فضای پیش‌نمایش آزمایش می‌شود.'
               : 'همهٔ درس‌ها بازند؛ پیشرفت در فضای جداگانه ذخیره می‌شود.'}
           </span>
-          <a href="/preview/exit" style={{ color: '#93c5fd', textDecoration: 'underline', marginLeft: 'auto' }}>
+          <a
+            href="/preview/exit"
+            style={{ color: 'var(--color-indigo-mist)', textDecoration: 'underline', marginLeft: 'auto' }}
+          >
             خروج از پیش‌نمایش
           </a>
         </div>
@@ -188,8 +194,8 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
             maxWidth: 720,
             margin: '12px auto',
             padding: '12px 16px',
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
+            background: 'var(--color-paper)',
+            border: '1px solid var(--color-indigo-mist)',
             borderRadius: 10,
             fontSize: 14,
           }}
@@ -203,9 +209,9 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 10 }}>
             {previewActive ? (
               <>
-                <span style={{ fontSize: 13, color: '#334155' }}>
+                <span style={{ fontSize: 13, color: 'var(--color-ink-soft)' }}>
                   وضعیت قفل‌ها:{' '}
-                  <strong style={{ color: locksMode === 'enforce' ? '#b91c1c' : '#166534' }}>
+                  <strong style={{ color: locksMode === 'enforce' ? 'var(--color-error)' : 'var(--color-success)' }}>
                     {locksMode === 'enforce' ? 'فعال (قفل‌ها و پیش‌نیازهای عادی)' : 'باز (همهٔ درس‌ها بدون قفل)'}
                   </strong>
                 </span>
@@ -213,8 +219,9 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
                 {panelBtn('/preview/locks?mode=enforce', 'فعال‌کردن قفل‌ها', locksMode === 'enforce')}
               </>
             ) : (
-              <span style={{ fontSize: 13, color: '#334155' }}>
-                وضعیت قفل‌ها: <strong style={{ color: '#166534' }}>باز (همهٔ درس‌ها برای همه بازند — موقت)</strong>
+              <span style={{ fontSize: 13, color: 'var(--color-ink-soft)' }}>
+                وضعیت قفل‌ها:{' '}
+                <strong style={{ color: 'var(--color-success)' }}>باز (همهٔ درس‌ها برای همه بازند — موقت)</strong>
               </span>
             )}
           </div>
@@ -224,10 +231,18 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
               const locked = locksMode === 'enforce' && (access?.locked ?? false);
               return (
                 <li key={c.slug}>
-                  <a href={`/learn/${c.slug}/journey`} style={{ color: '#1d4ed8', textDecoration: 'underline' }}>
+                  <a
+                    href={`/learn/${c.slug}/journey`}
+                    style={{ color: 'var(--color-ai)', textDecoration: 'underline' }}
+                  >
                     {c.titleFa}
                   </a>{' '}
-                  <span style={{ color: locked ? '#b91c1c' : c.draft ? '#b45309' : '#64748b', fontSize: 12 }}>
+                  <span
+                    style={{
+                      color: locked ? 'var(--color-error)' : c.draft ? 'var(--color-warning)' : 'var(--color-ink-soft)',
+                      fontSize: 12,
+                    }}
+                  >
                     ({c.draft ? `پیش‌نویس${locksMode === 'enforce' ? ' · قفل‌های داخلی فعال' : ''}` : 'منتشرشده'} ·{' '}
                     {c.levelCode}
                     {locked ? ` · قفل — پیش‌نیاز: ${access?.prerequisiteTitleFa ?? 'فصل قبل'}` : ''})
