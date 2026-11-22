@@ -36,7 +36,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این が است — か با دو خطِ راست‌بالا. خوانشش «گا» است.',
       f2HintFa: 'فقط ゛ فرق دارد: か «کا» (گلو بی‌لرزش) — が «گا» (گلو لرزان).',
-      f3ExplainFa: 'が با خوانش «گا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'が = «گا» — همان か با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -63,7 +63,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ぎ است — き با دو خطِ راست‌بالا. خوانشش «گی» است.',
       f2HintFa: 'فقط ゛ فرق دارد: き «کی» — ぎ «گی».',
-      f3ExplainFa: 'ぎ با خوانش «گی» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ぎ = «گی» — همان き با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -90,7 +90,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ぐ است — く با دو خطِ راست‌بالا. خوانشش «گو» است.',
       f2HintFa: 'فقط ゛ فرق دارد: く «کو» — ぐ «گو».',
-      f3ExplainFa: 'ぐ با خوانش «گو» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ぐ = «گو» — همان く با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -117,7 +117,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این げ است — け با دو خطِ راست‌بالا. خوانشش «گِ» است.',
       f2HintFa: 'فقط ゛ فرق دارد: け «کِ» — げ «گِ».',
-      f3ExplainFa: 'げ با خوانش «گِ» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'げ = «گِ» — همان け با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -144,7 +144,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ご است — こ با دو خطِ راست‌بالا. خوانشش «گو» است.',
       f2HintFa: 'فقط ゛ فرق دارد: こ «کو» — ご «گو».',
-      f3ExplainFa: 'ご با خوانش «گو» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ご = «گو» — همان こ با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -225,7 +225,7 @@ export const KXP_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: '«کایگی» — واژه‌ی جلسه — همان نمونهٔ بالای ایستگاه.',
-      f2HintFa: 'کارتِ نمونه را یادت هست؟ か+い+ぎ — «کا・ای・گی» سه ضربه.',
+      f2HintFa: 'واژه را ضربه‌به‌ضربه بخوان: か+い+ぎ — «کا・ای・گی» سه ضربه.',
       f3ExplainFa: 'かいぎ = «کایگی» (جلسه).',
     },
     assessmentRole: 'practice',
@@ -309,7 +309,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ざ است — さ با دو خطِ راست‌بالا. خوانشش «زا» است.',
       f2HintFa: 'فقط ゛ فرق دارد: さ «سا» (گلو بی‌لرزش) — ざ «زا» (گلو لرزان).',
-      f3ExplainFa: 'ざ با خوانش «زا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ざ = «زا» — همان さ با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -338,7 +338,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ぜ است — せ با دو خطِ راست‌بالا. خوانشش «زه» است.',
       f2HintFa: 'فقط ゛ فرق دارد: せ «سِ» — ぜ «زه».',
-      f3ExplainFa: 'ぜ با خوانش «زه» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ぜ = «زه» — همان せ با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -419,7 +419,7 @@ export const KXP_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: '«زَش‌شی» — واژهٔ مجله — همان نمونهٔ بالای ایستگاه.',
-      f2HintFa: 'کارتِ نمونه را یادت هست؟ ざ+っ+し — «زا・(توقف)・شی» سه ضربه.',
+      f2HintFa: 'واژه را ضربه‌به‌ضربه بخوان: ざ+っ+し — «زا・(توقف)・شی» سه ضربه.',
       f3ExplainFa: 'ざっし = «زَش‌شی» (مجله).',
     },
     assessmentRole: 'practice',
@@ -502,7 +502,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این だ است — た با دو خطِ راست‌بالا. خوانشش «دا» است.',
       f2HintFa: 'た «تا» — だ «دا»؛ فرق ت/د همان ゛ است.',
-      f3ExplainFa: 'だ با خوانش «دا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'だ = «دا» — همان た با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -659,7 +659,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ば است — は با دو خطِ راست‌بالا. خوانشش «با» است.',
       f2HintFa: 'は «وا/ها» — ば «با»؛ ゛ ه را واک‌دار می‌کند.',
-      f3ExplainFa: 'ば با خوانش «با» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ば = «با» — همان は با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -818,7 +818,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ぱ است — は با دایرهٔ ゜. خوانشش «پا» است.',
       f2HintFa: 'فقط ゜ فرق دارد: は «ها» — ぱ «پا»؛ دایره، نه دو خط.',
-      f3ExplainFa: 'ぱ با خوانش «پا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ぱ = «پا» — همان は با ゜.',
     },
     assessmentRole: 'practice',
   },
@@ -847,7 +847,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ぺ است — へ با دایرهٔ ゜. خوانشش «پِ» است.',
       f2HintFa: 'فقط ゜ فرق دارد: へ «هِ» — ぺ «پِ».',
-      f3ExplainFa: 'ぺ با خوانش «پِ» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ぺ = «پِ» — همان へ با ゜.',
     },
     assessmentRole: 'practice',
   },
@@ -928,7 +928,7 @@ export const KXP_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: '«پان» — واژهٔ نان — همان نمونهٔ بالای ایستگاه.',
-      f2HintFa: 'کارتِ نمونه را یادت هست؟ ぱ+ん — «پا・ن» دو ضربه.',
+      f2HintFa: 'واژه را ضربه‌به‌ضربه بخوان: ぱ+ん — «پا・ن» دو ضربه.',
       f3ExplainFa: 'ぱん = «پان» (نان).',
     },
     assessmentRole: 'practice',
@@ -1012,7 +1012,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این きゃ است — き با ゃ کوچکِ چسبیده. خوانشش «کیا» است.',
       f2HintFa: 'ゃ کوچک فشرده (کیا) — や بزرگ جدا (کی‌یا). اندازه معنا دارد.',
-      f3ExplainFa: 'きゃ با خوانش «کیا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'きゃ = «کیا» — き + ゃ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -1040,7 +1040,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این しゃ است — し با ゃ کوچک. خوانشش «شا» در یک ضربه است.',
       f2HintFa: 'ゃ کوچک فشرده می‌کند: し «شی» + ゃ = «شا» — یک مورا.',
-      f3ExplainFa: 'しゃ با خوانش «شا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'しゃ = «شا» — し + ゃ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -1120,7 +1120,7 @@ export const KXP_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: '«کایشا» — واژه‌ی شرکت — همان نمونهٔ بالای ایستگاه.',
-      f2HintFa: 'کارتِ نمونه را یادت هست؟ か+い+しゃ — «کا・ای・شا» سه ضربه.',
+      f2HintFa: 'واژه را ضربه‌به‌ضربه بخوان: か+い+しゃ — «کا・ای・شا» سه ضربه.',
       f3ExplainFa: 'かいしゃ = «کایشا» (شرکت).',
     },
     assessmentRole: 'practice',
@@ -1202,7 +1202,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ちゃ است — ち با ゃ کوچکِ چسبیده. خوانشش «چا» است.',
       f2HintFa: 'ちゃ فشرده — ちや «چی‌یا» جدا.',
-      f3ExplainFa: 'ちゃ با خوانش «چا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ちゃ = «چا» — ち + ゃ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -1359,7 +1359,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ひゃ است — ひ با ゃ کوچکِ چسبیده. خوانشش «هیا» است.',
       f2HintFa: 'ひゃ فشرده — ひや «هی‌یا» جدا.',
-      f3ExplainFa: 'ひゃ با خوانش «هیا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ひゃ = «هیا» — ひ + ゃ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -1490,7 +1490,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این りゃ است — り با ゃ کوچکِ چسبیده. خوانشش «ریا» است.',
       f2HintFa: 'りゃ فشرده — りや «ری‌یا» جدا.',
-      f3ExplainFa: 'りゃ با خوانش «ریا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'りゃ = «ریا» — り + ゃ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -1623,7 +1623,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ガ است — カ با دو خطِ راست‌بالا. خوانشش «گا» است.',
       f2HintFa: 'فقط ゛ فرق دارد: カ «کا» (گلو بی‌لرزش) — ガ «گا» (گلو لرزان).',
-      f3ExplainFa: 'ガ با خوانش «گا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ガ = «گا» — همان カ با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -1652,7 +1652,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ゲ است — ケ با دو خطِ راست‌بالا. خوانشش «گِ» است.',
       f2HintFa: 'فقط ゛ فرق دارد: ケ «کِ» — ゲ «گِ».',
-      f3ExplainFa: 'ゲ با خوانش «گِ» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ゲ = «گِ» — همان ケ با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -1733,7 +1733,7 @@ export const KXP_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: '«گوراسُ» — واژهٔ لیوان — همان نمونهٔ بالای ایستگاه.',
-      f2HintFa: 'کارتِ نمونه را یادت هست؟ グ+ラ+ス — «گو・را・سُ» سه ضربه.',
+      f2HintFa: 'واژه را ضربه‌به‌ضربه بخوان: グ+ラ+ス — «گو・را・سُ» سه ضربه.',
       f3ExplainFa: 'グラス = «گوراسُ» (لیوان).',
     },
     assessmentRole: 'practice',
@@ -1816,7 +1816,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ザ است — サ با دو خطِ راست‌بالا. خوانشش «زا» است.',
       f2HintFa: 'サ «سا» — ザ «زا»؛ ゛.',
-      f3ExplainFa: 'ザ با خوانش «زا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ザ = «زا» — همان サ با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -1947,7 +1947,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ダ است — タ با دو خطِ راست‌بالا. خوانشش «دا» است.',
       f2HintFa: 'タ «تا» — ダ «دا»؛ ゛.',
-      f3ExplainFa: 'ダ با خوانش «دا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ダ = «دا» — همان タ با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -2104,7 +2104,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این バ است — ハ با دو خطِ راست‌بالا. خوانشش «با» است.',
       f2HintFa: 'ハ «ها» — バ «با»؛ ゛.',
-      f3ExplainFa: 'バ با خوانش «با» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'バ = «با» — همان ハ با ゛.',
     },
     assessmentRole: 'practice',
   },
@@ -2261,7 +2261,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این パ است — ハ با یک دایرهٔ کوچکِ راست‌بالا. خوانشش «پا» است.',
       f2HintFa: 'سه‌گانه: ハ «ها» · バ «با» (゛) · パ «پا» (゜).',
-      f3ExplainFa: 'パ با خوانش «پا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'パ = «پا» — همان ハ با ゜.',
     },
     assessmentRole: 'practice',
   },
@@ -2394,7 +2394,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این キャ است — キ با ャ کوچک. خوانشش «کیا» است — یک مورا.',
       f2HintFa: 'ャ کوچک فشرده می‌کند: キ+ヤ «کی‌یا» (۲ ضربه) — キャ «کیا» (۱ ضربه).',
-      f3ExplainFa: 'キャ با خوانش «کیا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'キャ = «کیا» — キ + ャ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -2423,7 +2423,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این シャ است — シ با ャ کوچک. خوانشش «شا» در یک ضربه است.',
       f2HintFa: 'ャ کوچک فشرده می‌کند: シ «شی» + ャ = «شا» — یک مورا.',
-      f3ExplainFa: 'シャ با خوانش «شا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'シャ = «شا» — シ + ャ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -2504,7 +2504,7 @@ export const KXP_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: '«کیان‌پُ» — واژهٔ کمپ — همان نمونهٔ بالای ایستگاه.',
-      f2HintFa: 'کارتِ نمونه را یادت هست؟ キ+ャ+ン+プ — «کیا・ن・پُ» سه ضربه.',
+      f2HintFa: 'واژه را ضربه‌به‌ضربه بخوان: キ+ャ+ン+プ — «کیا・ن・پُ» سه ضربه.',
       f3ExplainFa: 'キャンプ = «کیان‌پُ» (کمپ).',
     },
     assessmentRole: 'practice',
@@ -2587,7 +2587,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این シュ است — シ با ュ کوچک. خوانشش «شو» است.',
       f2HintFa: 'シュ فشرده — シユ «شی‌یو» جدا.',
-      f3ExplainFa: 'シュ با خوانش «شو» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'シュ = «شو» — シ + ュ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -2718,7 +2718,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این チュ است — チ با ュ کوچک. خوانشش «چو» است.',
       f2HintFa: 'チュ فشرده — チユ «چی‌یو» جدا.',
-      f3ExplainFa: 'チュ با خوانش «چو» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'チュ = «چو» — チ + ュ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -2849,7 +2849,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ニュ است — ニ با ュ کوچک. خوانشش «نیو» است.',
       f2HintFa: 'ニュ فشرده — ニユ «نی‌یو» جدا.',
-      f3ExplainFa: 'ニュ با خوانش «نیو» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ニュ = «نیو» — ニ + ュ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -2982,7 +2982,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این ミャ است — ミ با ャ کوچک. خوانشش «میا» است — یک مورا.',
       f2HintFa: 'ャ کوچک فشرده می‌کند: ミ+ヤ «می‌یا» (۲ ضربه) — ミャ «میا» (۱ ضربه).',
-      f3ExplainFa: 'ミャ با خوانش «میا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'ミャ = «میا» — ミ + ャ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -3011,7 +3011,7 @@ export const KXP_EXERCISES: Exercise[] = [
     feedback: {
       f1Fa: 'این リャ است — リ با ャ کوچک. خوانشش «ریا» است — یک مورا.',
       f2HintFa: 'ャ کوچک فشرده می‌کند: リ+ヤ «ری‌یا» — リャ «ریا».',
-      f3ExplainFa: 'リャ با خوانش «ریا» خوانده می‌شود — کارتش را در همین ایستگاه دیدی.',
+      f3ExplainFa: 'リャ = «ریا» — リ + ャ کوچک (یک مورا).',
     },
     assessmentRole: 'practice',
   },
@@ -3144,7 +3144,7 @@ export const KXP_EXERCISES: Exercise[] = [
     },
     feedback: {
       f1Fa: '«میان‌ما» — واژهٔ میانمار — همان نمونهٔ بالای ایستگاه.',
-      f2HintFa: 'کارتِ نمونه را یادت هست؟ ミ+ャ+ン+マ+ー — «میا・ن・ما(کشش)» سه ضربه.',
+      f2HintFa: 'واژه را ضربه‌به‌ضربه بخوان: ミ+ャ+ン+マ+ー — «میا・ن・ما(کشش)» سه ضربه.',
       f3ExplainFa: 'ミャンマー = «میان‌ما» (میانمار).',
     },
     assessmentRole: 'practice',

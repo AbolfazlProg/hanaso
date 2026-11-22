@@ -520,7 +520,13 @@ export function DialogueScene({
           className="flex min-h-11 items-center justify-center gap-1.5 rounded-md border-2 border-indigo px-3 py-2 text-small font-bold text-indigo hover:bg-indigo-wash disabled:pointer-events-none disabled:opacity-45"
           aria-label="خط قبلی"
         >
-          <SkipBack aria-hidden className="size-4" />
+          {/* ENGINE-NEXTGEN W-A: sequence navigation follows the app-wide
+              RTL convention — previous points RIGHT (→), next points LEFT (←).
+              In RTL the «قبلی» button renders on the right and «بعدی» on the
+              left; the old SkipBack/SkipForward glyphs both pointed at each
+              other's territory (visually backwards). Play/Pause/RotateCcw stay
+              unmirrored per the documented media convention. */}
+          <SkipForward aria-hidden className="size-4" />
           قبلی
         </button>
         <button
@@ -541,7 +547,7 @@ export function DialogueScene({
           aria-label="خط بعدی"
         >
           بعدی
-          <SkipForward aria-hidden className="size-4" />
+          <SkipBack aria-hidden className="size-4" />
         </button>
         <button
           type="button"

@@ -59,6 +59,13 @@ export interface KnowledgeEntry {
   surface: string;
   reading?: string;
   romaji?: string;
+  /**
+   * ENGINE-NEXTGEN W-D — the Persian transliteration of the reading, derived
+   * by the ONE locked word-level standard (content/translit-standard.ts —
+   * card-truth mora labels; never hand-authored, never guessed: an uncovered
+   * glyph leaves this undefined and files a registry note instead).
+   */
+  translitFa?: string;
   meaningFa?: string;
   /** THE defining first-teaching point (single home — anti-duplication). */
   firstTaught: KnowledgePoint;

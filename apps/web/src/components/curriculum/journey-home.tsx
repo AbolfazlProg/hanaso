@@ -31,6 +31,7 @@ import {
   LibraryBig,
   Lock,
   Map as MapIcon,
+  Play,
   Sparkles,
 } from 'lucide-react';
 import { SectionJourney, type SectionDto, type StationContentKind } from './section-journey';
@@ -282,11 +283,15 @@ export function JourneyHome(props: JourneyHomeProps) {
                   {fa.curriculum.chapterCatalogUnderstoodChip}
                 </span>
               ) : row.status === 'in_progress' ? (
-                <span className="rounded-full border border-ai px-2.5 py-0.5 text-caption font-bold text-ai">
+                /* ENGINE-NEXTGEN W-C: every catalog chip carries an ICON now —
+                 * in-progress (Play) and ready (Compass) were text+color only. */
+                <span className="flex items-center gap-1 rounded-full border border-ai px-2.5 py-0.5 text-caption font-bold text-ai">
+                  <Play aria-hidden className="size-3.5 fill-current" />
                   {fa.curriculum.chapterCatalogInProgressChip}
                 </span>
               ) : (
-                <span className="rounded-full border border-ink-faint px-2.5 py-0.5 text-caption text-ink-soft">
+                <span className="flex items-center gap-1 rounded-full border border-ink-faint px-2.5 py-0.5 text-caption text-ink-soft">
+                  <Compass aria-hidden className="size-3.5" />
                   {fa.curriculum.chapterCatalogReadyChip}
                 </span>
               );

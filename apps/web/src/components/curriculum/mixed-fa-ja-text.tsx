@@ -1,30 +1,35 @@
 'use client';
 /**
- * HANASO — MixedFaJaText (TASK-LEARNING-01 — SKL-003 §۵ bidi boundaries).
+ * HANASO — MixedFaJaText (ENGINE-NEXTGEN W-A — the shared mixed-direction text).
  *
- * Persian UI text that embeds Japanese fragments (station titles like
- * «الگوی هویت: AはBです») scrambles under the bidi algorithm unless each
- * Japanese run is isolated. This component wraps every CJK/kana run in <bdi>
- * (plus dir/lang on the span) so the RTL flow stays intact and the Japanese
- * reads LTR — the same guarantee JaBlock gives whole blocks, for inline runs.
+ * Persian UI text that embeds Japanese fragments, Latin romaji, or numbers
+ * (station titles like «الگوی هویت: AはBです», feedback lines like
+ * «ترتیب: موضوع+も → هویت → です») scrambles under the bidi algorithm unless
+ * every run is isolated — and arrows between Persian words point BACKWARDS
+ * (the → glyph is not bidi-mirrored by browsers).
+ *
+ * This component is now the product-wide renderer over the shared run engine
+ * (`src/lib/bidi-runs.ts`): every LTR run (Japanese / Latin / number) is a
+ * `<bdi dir="ltr">` island (lang="ja" + the ja-block font stack for Japanese),
+ * and arrows in RTL prose are direction-corrected to point at the NEXT-read
+ * item while arrows inside LTR runs stay verbatim. One engine, every surface:
+ * titles, sentences, feedback, hints, table cells, options — no per-component
+ * CSS, no content rewrites required for direction fixes.
  */
 import type { ReactNode } from 'react';
-
-/** CJK ideographs, kana, prolonged sound mark, CJK punctuation. */
-const JA_RUN =
-  /([\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3005\u3006\u30fc\u3001\u3002\uff0c\uff01\uff1f]+)/g;
+import { segmentForDisplay } from '@/lib/bidi-runs';
 
 export function MixedFaJaText({ text, className }: { text: string; className?: string }): ReactNode {
-  const parts = text.split(JA_RUN);
+  const parts = segmentForDisplay(text);
   return (
     <span className={className}>
       {parts.map((part, i) =>
-        i % 2 === 1 ? (
-          <bdi key={i} dir="ltr" lang="ja" className="ja-block">
-            {part}
+        part.dir === 'ltr' ? (
+          <bdi key={i} dir="ltr" lang={part.lang ?? undefined} className={part.lang === 'ja' ? 'ja-block' : undefined}>
+            {part.text}
           </bdi>
         ) : (
-          <span key={i}>{part}</span>
+          <span key={i}>{part.text}</span>
         ),
       )}
     </span>

@@ -141,7 +141,7 @@ export function SiteNav({ active, reviewDueCount }: SiteNavProps) {
                   <Icon aria-hidden className="size-5" />
                   {key === 'review' && dueCount !== null && dueCount > 0 ? (
                     <span
-                      className="absolute -end-2.5 -top-1.5 grid min-w-4 place-items-center rounded-full bg-shu px-1 text-[10px] font-black text-paper"
+                      className="absolute -end-2.5 -top-1.5 grid min-w-4 place-items-center rounded-full bg-shu px-1 text-micro font-black text-paper"
                       data-review-badge
                     >
                       {new Intl.NumberFormat('fa-IR').format(dueCount)}

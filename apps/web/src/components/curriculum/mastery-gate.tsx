@@ -16,7 +16,7 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CircleCheck, Ear, Loader2, RotateCcw, Volume2 } from 'lucide-react';
+import { ArrowLeft, Ear, Loader2, Repeat2, RotateCcw, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 import { JaBlock } from '@/components/patterns/ja-block';
@@ -207,7 +207,10 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
                     href={`/learn/${chapterSlug}/journey/${slug}`}
                     className="flex min-h-11 items-center gap-2 rounded-md border border-ai bg-indigo-wash/40 px-4 text-body transition-colors hover:bg-indigo-wash"
                   >
-                    <CircleCheck aria-hidden className="size-4 text-ai" />
+                    {/* ENGINE-NEXTGEN W-C: remediation targets are REPEAT-worthy
+                        stations, not completed ones — a checkmark glyph here was
+                        semantically misleading next to real success checks. */}
+                    <Repeat2 aria-hidden className="size-4 text-ai" />
                     {stationTitles[slug] ?? slug}
                   </Link>
                 </li>

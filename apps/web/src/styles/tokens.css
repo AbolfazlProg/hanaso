@@ -86,6 +86,11 @@
   --font-ja-serif: var(--font-ja-serif-loaded, 'Noto Serif JP'), 'Hiragino Mincho ProN', 'Yu Mincho', serif;
   --font-ja-ud:
     'BIZ UDPGothic', 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif; /* بارگذاری: تسک مؤخر (بودجهٔ §۶-۲ اسپایک M0-07) */
+  /* ENGINE-NEXTGEN W-B: --font-jp was referenced by 6 components as a no-op
+     (no token behind it — the JP font never actually applied on the kana
+     picker buttons). Defining it as the JP UI stack makes `font-jp` a real
+     utility with the SAME canonical stack as --font-ja-ui (one source). */
+  --font-jp: var(--font-ja-ui-loaded, 'Zen Kaku Gothic New'), 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
 
   /* مقیاس (rem — ریشه 16px؛ body فارسی ≥16) */
   --text-caption: 0.75rem; /* 12 — furigana floor/micro meta */
@@ -102,6 +107,16 @@
   --text-glyph-display: clamp(2.75rem, 11vw, 4rem);
   --text-glyph-hero: clamp(3.25rem, 14vw, 5rem); /* Aizen hero — Vazirmatn 900 (40→70) */
   --text-hero-ja: clamp(1.75rem, 3.4vw, 2.625rem); /* Aizen JA hero — Zen Kaku 900 (28→42) */
+  /* ENGINE-NEXTGEN W-B (JP typography standard — the word-hero roles that had
+     raw clamp() in five components, now one content-role token each):
+     word hero = one TARGET WORD studied as a hero (rule/contrast/example) */
+  --text-word-hero: clamp(1.75rem, 7vw, 2.35rem); /* 28→37.6 word hero */
+  --text-word-hero-lg: clamp(2rem, 9vw, 3rem); /* 32→48 rule-prereq glyph hero */
+  /* micro badges/counts — non-learner meta ONLY (JP text never goes here;
+     the token definition also un-noops the 7 pre-existing text-micro uses) */
+  --text-micro: 0.625rem; /* 10 — nav badge/chips */
+  /* aizen seal art glyphs (SVG <text> font shorthand) */
+  --text-seal-glyph: 2.0625rem; /* 33px — 藍/染 seal */
 
   --leading-fa: 1.8; /* ALREQ */
   --leading-ja: 1.9; /* JLREQ — ruby-bearing lines */

@@ -10,11 +10,12 @@
  */
 import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Ear, Loader2, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Ear, Loader2, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
+import { WordPronunciation } from '@/components/curriculum/word-pronunciation';
 import { getCachedAudio, reportPlaybackError } from '@/modules/audio/client-cache';
 import type { ResolvedReviewCard } from '@/modules/fsrs/item-registry';
 
@@ -122,7 +123,9 @@ export function ReviewRunner({
           className="mx-auto flex h-12 w-fit items-center gap-2 rounded-md bg-indigo px-6 text-body font-bold text-paper transition-colors hover:bg-indigo-deep"
         >
           {fa.review.backHome}
-          <ArrowLeft aria-hidden className="size-4" />
+          {/* ENGINE-NEXTGEN W-A: a RETURN home points RIGHT (→) — the app-wide
+           * back-link convention; forward CTAs keep ArrowLeft. */}
+          <ArrowRight aria-hidden className="size-4" />
         </Link>
       </div>
     );
@@ -150,7 +153,10 @@ export function ReviewRunner({
           </div>
         ) : card.glyph ? (
           <>
-            <JaBlock className="text-h1 font-black text-hero-ja">{card.glyph}</JaBlock>
+            {/* ENGINE-NEXTGEN W-B: two font-size utilities collided on this
+               element (h1 vs hero-ja — cascade-dependent winner) — the hero
+               token alone IS the intended kana-glyph review size. */}
+            <JaBlock className="text-hero-ja font-black">{card.glyph}</JaBlock>
             {card.audio ? (
               <button
                 type="button"
@@ -172,10 +178,23 @@ export function ReviewRunner({
               <JaBlock className="text-h2 font-black">{card.term}</JaBlock>
             )}
             <p className="text-lead font-bold text-ink">{card.meaningFa}</p>
+            {/* ENGINE-NEXTGEN W-D: word cards carry the SAME derived dual
+             * pronunciation the teaching card shows — the ONE shared component
+             * (reading · romaji + آوانویسی). Cards without romaji (expression
+             * cards) keep the plain reading. */}
             {card.readingKana ? (
-              <p className="text-small text-ink-soft" dir="ltr" lang="ja">
-                {card.readingKana}
-              </p>
+              card.romaji ? (
+                <WordPronunciation
+                  className="mt-0.5"
+                  readingKana={card.readingKana}
+                  romaji={card.romaji}
+                  translitFa={card.translitFa}
+                />
+              ) : (
+                <p className="text-small text-ink-soft" dir="ltr" lang="ja">
+                  {card.readingKana}
+                </p>
+              )
             ) : null}
             {card.audio ? (
               <button

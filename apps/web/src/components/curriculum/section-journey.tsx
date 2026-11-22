@@ -191,7 +191,10 @@ function ContentTypeTile({ kind, locked }: { kind: StationContentKind; locked: b
 
 /** Seigaiha wave band (DD-084) — subtle SVG texture for the section plaque. */
 
-/** Row state marker: shape + icon (never color alone — island §۸ honest states). */
+/** Row state marker: shape + icon (never color alone — island §۸ honest states).
+ * ENGINE-NEXTGEN W-C: continue is a FILLED indigo marker (start stays outline
+ * paper/ink) — the in-progress vs available-but-untouched distinction is now
+ * carried by FILL + icon + halo, not icon glyph alone. */
 function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean }) {
   const box = 'grid size-7 shrink-0 place-items-center rounded-full border-2';
   switch (action) {
@@ -204,7 +207,7 @@ function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean
     case 'continue':
       return (
         <span
-          className={`${box} border-ink bg-paper text-ink shadow-[0_0_0_3px_var(--color-surface-warm)]`}
+          className={`${box} border-indigo bg-indigo text-paper shadow-[0_0_0_3px_var(--color-indigo-wash)]`}
           aria-hidden
         >
           <Play className="size-3.5 fill-current" />
@@ -464,8 +467,10 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                 {fa.curriculum.sectionStatusCompleted}
               </span>
             ) : section.status === 'locked' ? (
-              <span className="flex items-center gap-1.5 text-ink-faint">
-                <Lock aria-hidden className="size-4" />
+              /* ENGINE-NEXTGEN W-C: ink-faint (3.6:1) is the token reserved for
+                 NON-TEXT hairlines — status TEXT moves to ink-soft (AA 6.4:1). */
+              <span className="flex items-center gap-1.5 text-ink-soft">
+                <Lock aria-hidden className="size-4 text-ink-faint" />
                 {fa.curriculum.sectionStatusLocked}
               </span>
             ) : (
@@ -572,6 +577,19 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                   <Link
                     href={row.href}
                     aria-current={isCurrent ? 'true' : undefined}
+                    /* ENGINE-NEXTGEN W-C (WCAG 1.3.1): the row's ACCESS STATE joins
+                     * the accessible name (the markers are aria-hidden decorative
+                     * shapes) — screen readers now hear «مرور/ادامه/شروع» like
+                     * sighted learners see it; locked rows already carried «قفل». */
+                    aria-label={`${row.titleFa} — ${
+                      row.action === 'review'
+                        ? fa.curriculum.rowReview
+                        : row.action === 'continue'
+                          ? fa.curriculum.rowContinue
+                          : row.action === 'start'
+                            ? fa.curriculum.rowStart
+                            : fa.curriculum.rowLocked
+                    }`}
                     className="group flex items-center gap-3 p-4 transition-colors hover:bg-indigo-wash focus-visible:bg-indigo-wash focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ai sm:gap-4 sm:p-5"
                   >
                     {body}

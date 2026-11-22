@@ -92,6 +92,12 @@ const REQUIRED_TOKENS = [
   '--touch-main',
   '--frame-scene-w',
   '--focus-ring',
+  // ENGINE-NEXTGEN W-B — JP typography standard (word heroes + micro + seal + font-jp)
+  '--text-word-hero',
+  '--text-word-hero-lg',
+  '--text-micro',
+  '--text-seal-glyph',
+  '--font-jp',
 ];
 
 describe('tokens.css — پورت کامل (مقادیر Aizen · DD-084/AC-3)', () => {

@@ -96,7 +96,9 @@ function FocusLineCard({
         <div className="flex min-w-0 flex-col">
           <p className="text-small font-bold" style={{ color: `var(--color-${line.speaker.colorToken})` }}>
             {line.speaker.nameFa}{' '}
-            <span lang="ja" dir="ltr" className="text-caption">
+            <span lang="ja" dir="ltr" className="text-small">
+              {/* ENGINE-NEXTGEN W-B: katakana speaker name — raised from the
+                 12px caption floor; a NAME the learner is learning to read. */}
               ({line.speaker.nameJa})
             </span>
           </p>

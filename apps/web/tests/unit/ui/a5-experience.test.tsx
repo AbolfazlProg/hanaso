@@ -352,8 +352,9 @@ describe('Addendum-5 §6 — example card readability + pronunciation guides', (
       expect(c, 'example card rendered').not.toBeNull();
       return c as HTMLElement;
     });
-    // hero Japanese word (clamp-sized JaBlock) + the play control beside it
-    expect(card.querySelector('.ja-block')!.className).toContain('text-[clamp(1.75rem,7vw,2.35rem)]');
+    // hero Japanese word (word-hero TOKEN JaBlock — ENGINE-NEXTGEN W-B replaced
+    // the raw clamp) + the play control beside it
+    expect(card.querySelector('.ja-block')!.className).toContain('text-word-hero');
     expect(card.querySelector('[data-example-audio]')).not.toBeNull();
     // the Persian reading: BIG (text-h3) + bold + separated from the meaning
     const reading = card.querySelector('p.text-h3.font-bold');
