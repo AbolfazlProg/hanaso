@@ -50,8 +50,7 @@ export interface DisplaySegment {
 /* ---------------------------------------------------------------- character */
 
 /* Persian/Arabic block (+ presentation forms, Hebrew) — strong RTL. */
-const R_RE =
-  /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u0590-\u05FF]/;
+const R_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u0590-\u05FF]/;
 /* Kana, CJK ideographs, CJK punctuation, halfwidth katakana — strong LTR. */
 const J_RE =
   /[\u3040-\u30FF\u3100-\u312F\u31F0-\u31FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\u3005\u3006\u3000-\u303F\uFF66-\uFF9F]/;
@@ -111,9 +110,7 @@ function baseSegment(text: string): DisplaySegment[] {
     i += 1;
   }
 
-  const strongs = atoms
-    .filter((a) => a.cls !== 'N')
-    .map((a) => ({ at: a.start, ltr: a.cls !== 'R' }));
+  const strongs = atoms.filter((a) => a.cls !== 'N').map((a) => ({ at: a.start, ltr: a.cls !== 'R' }));
   const prevStrongBefore = (idx: number): boolean | null => {
     let out: boolean | null = null;
     for (const s of strongs) {
@@ -160,9 +157,11 @@ function baseSegment(text: string): DisplaySegment[] {
   for (let a = 0; a < atoms.length; a++) {
     if (resolved[a] === 'num') {
       const prevAtom = atoms[a - 1];
-      const adjacentLeft = prevAtom !== undefined && prevAtom.start + prevAtom.len === atoms[a]!.start && curDir === 'ltr';
+      const adjacentLeft =
+        prevAtom !== undefined && prevAtom.start + prevAtom.len === atoms[a]!.start && curDir === 'ltr';
       const nextAtom = atoms[a + 1];
-      const adjacentRight = nextAtom !== undefined && atoms[a]!.start + atoms[a]!.len === nextAtom.start && resolved[a + 1] === 'ltr';
+      const adjacentRight =
+        nextAtom !== undefined && atoms[a]!.start + atoms[a]!.len === nextAtom.start && resolved[a + 1] === 'ltr';
       if (adjacentLeft) continue; // flows into the current ltr run (L1-L2, v1.2)
       if (adjacentRight) {
         flushTo(atoms[a]!.start);
@@ -265,8 +264,12 @@ function analyzeChains(text: string): Chain[] {
   /* Edge classification by the tokens touching each arrow. */
   const edges: Array<{ type: 'J' | 'L' | 'M'; leftTok?: Tok; rightTok?: Tok }> = [];
   for (let e = 0; e < arrowAt.length; e++) {
-    const left = parts[e]!.filter((t) => t.cls !== 'M' || /[A-Za-z\u3040-\u30ff\u4e00-\u9fff\u0600-\u06ff]/.test(t.text)).at(-1);
-    const right = parts[e + 1]!.find((t) => t.cls !== 'M' || /[A-Za-z\u3040-\u30ff\u4e00-\u9fff\u0600-\u06ff]/.test(t.text));
+    const left = parts[e]!.filter(
+      (t) => t.cls !== 'M' || /[A-Za-z\u3040-\u30ff\u4e00-\u9fff\u0600-\u06ff]/.test(t.text),
+    ).at(-1);
+    const right = parts[e + 1]!.find(
+      (t) => t.cls !== 'M' || /[A-Za-z\u3040-\u30ff\u4e00-\u9fff\u0600-\u06ff]/.test(t.text),
+    );
     let type: 'J' | 'L' | 'M';
     if (left && right && left.cls === right.cls && (left.cls === 'J' || left.cls === 'L')) type = left.cls;
     else type = 'M';

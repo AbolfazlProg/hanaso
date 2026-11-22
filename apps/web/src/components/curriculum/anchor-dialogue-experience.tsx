@@ -209,8 +209,8 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
           >
             {fa.curriculum.journeyTitle}
             {/* ENGINE-NEXTGEN W-A: back links point RIGHT (→) app-wide —
-                 * this is a RETURN to the journey, matching the station header's
-                 * «بازگشت به مسیر» ArrowRight convention. */}
+             * this is a RETURN to the journey, matching the station header's
+             * «بازگشت به مسیر» ArrowRight convention. */}
             <ArrowRight aria-hidden className="size-4" />
           </a>
         </div>
