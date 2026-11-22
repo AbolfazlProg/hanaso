@@ -194,13 +194,23 @@ function ContentTypeTile({ kind, locked }: { kind: StationContentKind; locked: b
 /** Row state marker: shape + icon (never color alone — island §۸ honest states).
  * ENGINE-NEXTGEN W-C: continue is a FILLED indigo marker (start stays outline
  * paper/ink) — the in-progress vs available-but-untouched distinction is now
- * carried by FILL + icon + halo, not icon glyph alone. */
+ * carried by FILL + icon + halo, not icon glyph alone.
+ * JOURNEY-FIX 2026-11-23 §۲ (station-state clarity): the three walk states are
+ * now unmistakable at reading distance — done = FILLED success-green check on
+ * every completed row, in-progress = filled indigo play + halo, locked = dashed
+ * lock (unchanged), fresh start = outline compass. The marker grew size-7 →
+ * size-8 so the state survives a quick glance; completed rows additionally carry
+ * a visible «انجام شد» chip + a quiet success start-edge (see the row classes). */
 function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean }) {
-  const box = 'grid size-7 shrink-0 place-items-center rounded-full border-2';
+  const box = 'grid size-8 shrink-0 place-items-center rounded-full border-2';
   switch (action) {
     case 'review':
       return (
-        <span className={`${box} border-ink bg-ink text-paper`} aria-hidden>
+        <span
+          className={`${box} border-success bg-success text-paper`}
+          aria-hidden
+          data-row-marker="done"
+        >
           <CircleCheck className="size-4" />
         </span>
       );
@@ -209,14 +219,15 @@ function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean
         <span
           className={`${box} border-indigo bg-indigo text-paper shadow-[0_0_0_3px_var(--color-indigo-wash)]`}
           aria-hidden
+          data-row-marker="in-progress"
         >
-          <Play className="size-3.5 fill-current" />
+          <Play className="size-4 fill-current" />
         </span>
       );
     case 'start':
       return (
-        <span className={`${box} border-ink bg-paper text-ink`} aria-hidden>
-          <Compass className="size-4" />
+        <span className={`${box} border-ink bg-paper text-ink`} aria-hidden data-row-marker="start">
+          <Compass className="size-4.5" />
         </span>
       );
     default:
@@ -225,8 +236,9 @@ function RowMarker({ action, flash }: { action: SectionRowAction; flash: boolean
         <span
           className={`${box} border-dashed border-ink-faint text-ink-faint${flash ? ' locked-flash' : ''}`}
           aria-hidden
+          data-row-marker="locked"
         >
-          <Lock className="size-3.5" />
+          <Lock className="size-4" />
         </span>
       );
   }
@@ -529,6 +541,15 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                         {fa.curriculum.rowCurrentChip}
                       </span>
                     ) : null}
+                    {/* JOURNEY-FIX 2026-11-23 §۲: a COMPLETED row states its state in
+                        words too (shape+color alone was not enough at reading
+                        distance) — the same chip pattern as the current row. */}
+                    {row.action === 'review' ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-success/60 bg-success/10 px-2 py-0.5 text-caption font-bold text-success">
+                        <CircleCheck aria-hidden className="size-3" />
+                        {fa.curriculum.rowDoneChip}
+                      </span>
+                    ) : null}
                     {row.contentKind === 'milestone' ? (
                       /* TASK-28 R7 — real-world milestone stations get a vermilion
                        * chip next to the title: «این یکی، دنیای واقعی است». */
@@ -556,10 +577,18 @@ export function SectionJourney({ chapterSlug, initialSectionSlug, nextStationSlu
                 key={row.slug}
                 ref={rowRef}
                 data-testid={isCurrent ? 'journey-current-row' : undefined}
+                data-row-state={row.action === 'review' ? 'done' : row.action === 'continue' ? 'in-progress' : row.action === 'locked' ? 'locked' : 'start'}
                 className={
                   [
                     'relative',
                     shaking ? 'locked-shake' : '',
+                    /* JOURNEY-FIX 2026-11-23 §۲: the state also paints the ROW —
+                     * completed = quiet success wash + green start-edge; current =
+                     * indigo wash + indigo edge (unchanged); fresh/locked rows stay
+                     * neutral so the three states separate at a glance. */
+                    row.action === 'review'
+                      ? 'bg-success/10 before:absolute before:inset-y-0 before:start-0 before:w-1 before:bg-success'
+                      : '',
                     isCurrent
                       ? 'bg-indigo-wash/60 before:absolute before:inset-y-0 before:start-0 before:w-1 before:bg-indigo'
                       : '',

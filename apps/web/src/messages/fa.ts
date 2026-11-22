@@ -265,6 +265,8 @@ export const fa = {
     rowOptional: 'اختیاری',
     /* TASK-HANASO-28 — journey focus + section switcher labels */
     rowCurrentChip: 'ایستگاه فعلی',
+    /* JOURNEY-FIX 2026-11-23 §۲ — the completed-row state chip (station-state clarity). */
+    rowDoneChip: 'انجام شد',
     rowMilestoneChip: 'ایستگاه واقعی',
     rowMinutesShort: (m: number) => `${new Intl.NumberFormat('fa-IR').format(m)}′`,
     sectionSwitcherLabel: 'انتخاب بخش فصل',
