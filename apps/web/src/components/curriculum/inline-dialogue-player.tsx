@@ -72,6 +72,12 @@ export interface InlineDialoguePlayerProps {
    */
   onFinished: () => void;
   /**
+   * JOURNEY-FIX 2026-11-23 §۶: the chapter's standard item-label map
+   * (words/expressions/grammar) — resolves the transcript's «teaches» chips
+   * to learner-facing labels; the raw registry ids never render.
+   */
+  itemLabels?: Record<string, string>;
+  /**
    * JOURNEY-FIX 2026-11-23 §۴ (subtitle policy — «شکاف دانستن» first listen):
    * TRUE on the chapter's FIRST full-conversation encounter (the anchor
    * station): the Persian subtitle starts OFF and PINNED off (pure listening —
@@ -98,6 +104,7 @@ export function InlineDialoguePlayer({
   bundle,
   onFinished,
   firstListen = false,
+  itemLabels,
   startAtLine = null,
 }: InlineDialoguePlayerProps) {
   const prediction = block.prediction;
@@ -226,6 +233,7 @@ export function InlineDialoguePlayer({
         embedded
         subtitleDefaultOn={!firstListen}
         subtitlePinned={firstListen}
+        itemLabels={itemLabels}
         onFinish={onFinished}
       />
 

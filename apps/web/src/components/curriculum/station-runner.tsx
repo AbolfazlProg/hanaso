@@ -1909,7 +1909,9 @@ function BlockView({
   chapterSlug: string;
   chapter: Pick<Chapter, 'words' | 'expressions'>;
   clientExercises: Record<string, ClientExercise>;
-  /** ENGINE-REFORM §۳ — labels for the focused-line teaching view's teaches chips. */
+  /** ENGINE-REFORM §۳ — labels for the focused-line teaching view's teaches chips
+   * (JOURNEY-FIX 2026-11-23 §۶: also threaded to the inline dialogue player —
+   * the transcript's «teaches» chips render resolved labels, never raw ids). */
   dialogueItemLabels?: Record<string, string>;
   lineById: Map<string, Line>;
   speakers: Record<string, string>;
@@ -1996,6 +1998,7 @@ function BlockView({
             bundle={dialogueScene}
             onFinished={onDialogueFinished}
             firstListen={dialogueFirstListen === true}
+            itemLabels={dialogueItemLabels}
           />
         );
       }
@@ -2068,12 +2071,17 @@ function BlockView({
                * term follows second with furigana (never hidden, just re-weighted).
                */}
               <p className="text-h2 font-black leading-tight text-ink">{word.meaningFa}</p>
+              {/* JOURNEY-FIX 2026-11-23 §۶ (JP text size): the studied term is
+               * the WORD-HERO role — the shared --text-word-hero token
+               * (28→37.6px, responsive) — not the 18px JP body size; the
+               * furigana floor (max(0.5em,12px)) scales with it, so the
+                 reading guides stay readable next to the hero term. */}
               {word.termFurigana ? (
-                <JaBlock className="mt-2 text-lead font-bold">
+                <JaBlock className="mt-2 text-word-hero font-bold leading-snug">
                   <FuriganaText>{word.termFurigana}</FuriganaText>
                 </JaBlock>
               ) : (
-                <JaBlock className="mt-2 text-lead font-bold">{word.term}</JaBlock>
+                <JaBlock className="mt-2 text-word-hero font-bold leading-snug">{word.term}</JaBlock>
               )}
               {/* ENGINE-NEXTGEN W-D: the dual pronunciation renders through
                * the ONE shared component (reading · romaji + the derived
@@ -2759,6 +2767,8 @@ function BlockView({
             block={block}
             bundle={dialogueScene}
             onFinished={onDialogueFinished}
+            firstListen={dialogueFirstListen === true}
+            itemLabels={dialogueItemLabels}
             startAtLine={dialogueStartAtLine ?? null}
           />
         );

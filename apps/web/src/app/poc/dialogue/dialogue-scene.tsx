@@ -99,6 +99,16 @@ export interface DialogueSceneProps {
    */
   subtitlePinned?: boolean;
   /**
+   * JOURNEY-FIX 2026-11-23 §۶ (no internal ids reach the learner): the
+   * transcript's «teaches» chips render the RESOLVED item labels
+   * (chapter words/expressions/grammar — the same standard map the
+   * focused-line teaching view uses), NOT the raw registry ids
+   * («voc-watashi»/«chrk-konnichiwa»). An unresolvable id renders NOTHING
+   * — never the internal key. PoC-only mode (no map) keeps the id chips
+   * for its own debug page.
+   */
+  itemLabels?: Record<string, string>;
+  /**
    * Start AT `initialLineId` WITHOUT auto-playing (a lesson-walk replay block
    * seeks to its focus line and waits for the learner's own play press — the
    * user-gesture chain stays intact). Default: the legacy seek+play behavior
@@ -156,6 +166,7 @@ export function DialogueScene({
   onFinish,
   subtitleDefaultOn = false,
   subtitlePinned = false,
+  itemLabels,
   autoStart = true,
 }: DialogueSceneProps) {
   const logSceneEvent = makeSceneLogger(dialogueSlug);
@@ -680,22 +691,32 @@ export function DialogueScene({
               </div>
               {(line.teaches?.length ?? 0) > 0 && (
                 <div className="flex flex-wrap gap-1 ps-8">
-                  {line.teaches?.map((id) =>
-                    embedded ? (
-                      /* Issue #101: plain chip — no PoC lesson link in the product flow. */
-                      <span key={id} className="rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft">
-                        {id}
-                      </span>
-                    ) : (
+                  {line.teaches?.map((id) => {
+                    /* JOURNEY-FIX 2026-11-23 §۶: the embedded/product transcript
+                     * resolves each teaches id through the chapter's standard
+                     * label map — the raw internal id never reaches the learner;
+                     * an unmapped id renders NOTHING (honest omit). */
+                    const label = itemLabels?.[id];
+                    if (embedded) {
+                      return label ? (
+                        <span
+                          key={id}
+                          className="rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft"
+                        >
+                          {label}
+                        </span>
+                      ) : null;
+                    }
+                    return (
                       <a
                         key={id}
                         href={`/poc/lesson#item-${id}`}
                         className="rounded-sm bg-surface-muted px-1.5 py-0.5 text-caption text-ink-soft"
                       >
-                        {id}
+                        {label ?? id}
                       </a>
-                    ),
-                  )}
+                    );
+                  })}
                 </div>
               )}
             </li>

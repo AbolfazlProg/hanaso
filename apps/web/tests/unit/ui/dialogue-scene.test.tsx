@@ -100,14 +100,22 @@ describe('DialogueScene — PoC mode (standalone /poc/dialogue instance)', () =>
 });
 
 describe('DialogueScene — embedded mode (Issue #101: no PoC leak into product)', () => {
-  it('hides the bottom nav, ALL /poc/lesson links and the teaches chips stay plain', () => {
-    const m = renderToStaticMarkup(<DialogueScene bundle={bundle} embedded />);
-    expect(m).not.toContain('/poc'); // no PoC route anywhere
-    expect(m).not.toContain('<nav'); // bottom nav gone
-    // teaches chips render as plain spans (chrk-* ids still visible as plain chips)
-    expect(m).toContain('>chrk-yoroshiku<');
-    // token chunks inside the JP line are NOT links in embedded mode
-    expect(m).not.toContain('class="poc-token-link');
+  it('hides the bottom nav, ALL /poc/lesson links and the teaches chips never leak registry ids', () => {
+    // JOURNEY-FIX 2026-11-23 §۶: embedded (product) mode renders the teaches
+    // chips through the chapter's item-label map — WITHOUT a map an
+    // unresolvable id renders NOTHING (never the raw «chrk-…» key), WITH the
+    // map the resolved learner-facing label renders as a plain span.
+    const bare = renderToStaticMarkup(<DialogueScene bundle={bundle} embedded />);
+    expect(bare).not.toContain('/poc'); // no PoC route anywhere
+    expect(bare).not.toContain('<nav'); // bottom nav gone
+    expect(bare).not.toContain('chrk-yoroshiku'); // the raw registry id is GONE
+    expect(bare).not.toContain('class="poc-token-link'); // token chunks not links
+    const labeled = renderToStaticMarkup(
+      <DialogueScene bundle={bundle} embedded itemLabels={{ 'chrk-yoroshiku': 'よろしく おねがいします — «از رابطه‌مان خوشحال می‌شوم»' }} />,
+    );
+    expect(labeled).toContain('از رابطه‌مان خوشحال می‌شوم');
+    expect(labeled).not.toContain('chrk-yoroshiku');
+    expect(labeled).not.toContain('/poc');
   });
 
   it('hides the finish CTA entirely when no onFinish is provided (station owns completion)', () => {

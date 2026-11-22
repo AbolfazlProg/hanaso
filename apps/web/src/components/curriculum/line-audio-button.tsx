@@ -104,7 +104,12 @@ export function LineAudioButton({
 
   return (
     <AudioSentenceButton
-      aria-label={`${label ?? fa.curriculum.playLine} (${lineId})`}
+      /* JOURNEY-FIX 2026-11-23 §۶ (no internal ids in learner-facing text): the
+       * raw line/asset id (e.g. «s-first-meeting-01-l3») used to ride inside the
+       * accessible name — screen-reader users heard internal registry keys. The
+       * label alone (caller-provided Persian verb) is the honest name; the id
+       * stays a prop for the effect keys, never learner copy. */
+      aria-label={label ?? fa.curriculum.playLine}
       state={state}
       disabled={disabled || !audioAvailable}
       onClick={play}

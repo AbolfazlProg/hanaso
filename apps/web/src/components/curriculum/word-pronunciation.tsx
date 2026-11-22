@@ -27,11 +27,14 @@ export interface WordPronunciationProps {
 export function WordPronunciation({ readingKana, romaji, translitFa, className }: WordPronunciationProps) {
   return (
     <div className={className}>
-      <p className="text-small text-ink-soft" dir="ltr" lang="ja">
+      {/* JOURNEY-FIX 2026-11-23 §۶: the dual pronunciation grew to text-body —
+         * next to a word-hero term the 14px caption read as fine print; the
+         * romaji/kana pairing is core reading data for a beginner, not metadata. */}
+      <p className="text-body text-ink-soft" dir="ltr" lang="ja">
         {readingKana} · {romaji}
       </p>
       {translitFa ? (
-        <p className="mt-0.5 text-small text-ink-soft">
+        <p className="mt-0.5 text-body text-ink-soft">
           <span className="text-ink-faint">{fa.curriculum.wordTranslitLabel}: </span>
           <span className="font-bold" dir="rtl">
             {translitFa}
