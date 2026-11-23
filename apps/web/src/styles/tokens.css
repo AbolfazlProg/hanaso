@@ -124,8 +124,10 @@
   --tracking-poster: 0.22em; /* Aizen — CJK poster letter-spacing (signboard language) */
   --tracking-fa-display: -0.015em; /* Aizen — compact Persian display setting */
 
-  /* Furigana: نسبت ۵۰٪ + کف ۱۲px خوانا (اصلاح R4-V7) */
-  --furigana-size: max(0.5em, 12px);
+  /* Furigana: نسبت ۵۵٪ + کف ۱۴px خوانا (اصلاح R4-V7 + KANJI-TYPO 2026-11-24 —
+     کفِ ۱۲ پیکسلی در عمل ریز و ناخوانا بود؛ ارتفاع کف به ۱۴ و نسبت به ۵۵٪
+     برداشته شد تا فوریگانا در همهٔ والد‌ها خوانا بماند) */
+  --furigana-size: max(0.55em, 14px);
 
   /* -- ۳. فاصله: مقیاس 4px — همان مقیاس پیش‌فرض Tailwind 4 (p-1=4px … p-24=96px) */
 

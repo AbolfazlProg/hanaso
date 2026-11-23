@@ -22,7 +22,7 @@ import { segmentForDisplay } from '@/lib/bidi-runs';
 export function MixedFaJaText({ text, className }: { text: string; className?: string }): ReactNode {
   const parts = segmentForDisplay(text);
   return (
-    <span className={className}>
+    <span className={className ? `${className} mixed-ja` : 'mixed-ja'}>
       {parts.map((part, i) =>
         part.dir === 'ltr' ? (
           <bdi key={i} dir="ltr" lang={part.lang ?? undefined} className={part.lang === 'ja' ? 'ja-block' : undefined}>

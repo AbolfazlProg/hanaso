@@ -13,7 +13,10 @@
  *   1 intro    the numbered stroke-order teaching pass in the big canvas
  *              (KanjiVG data — 1024² centerline, stroke badge, start dot,
  *              direction arrow) with the live Persian stroke narration
- *   2 ready    the ONE confirm CTA («شروع تمرین نوشتن»)
+ *   2 ready    the ONE confirm CTA («شروع تمرین نوشتن») — the kana-parity
+ *              FOOTER CTA (big, bold, at the very end of the slide — the
+ *              «ادامه» slot; 2026-11-24 owner order «بولدتر و سرِ جای دکمهٔ
+ *              ادامه»)
  *   3 guided   tracing on the dashed guide + start dot; wrong direction /
  *              order gets the engine's Persian feedback; 2nd miss flashes
  *              the stroke guide (help escalation); accepted strokes morph
@@ -28,7 +31,7 @@
  * where it lives (D-0006).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Ear, Layers, Play, RotateCcw } from 'lucide-react';
+import { Ear, Layers, Play, RotateCcw, ArrowLeft } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { SmartJaText } from '@/components/patterns/smart-ja-text';
@@ -439,7 +442,13 @@ export function KanjiWritingCard({
                 <p className="mt-2 text-caption leading-[var(--leading-fa)] text-ink-soft">{strokeInfo.movementFa}</p>
               </div>
             ) : null}
-            {/* the controls: replay / hint / restart / the ready CTA */}
+            {/* the controls: replay / hint / restart — the ready CTA lives in
+             * the slide's FOOTER now (kana parity): ONE big bold primary at
+             * the very end of the card, exactly where every other block keeps
+             * its «ادامه» (the walk's forward button is gated off kanji
+             * writing slides — KANJI-WRITE-FIX §۲ — so the footer IS the
+             * forward slot; 2026-11-24 owner order «بولدتر و سرِ جای دکمهٔ
+             * ادامه»). */}
             <div className="flex flex-wrap justify-center gap-2" dir="rtl">
               <button
                 type="button"
@@ -450,16 +459,6 @@ export function KanjiWritingCard({
                 <Play aria-hidden className="size-4" />
                 {fa.curriculum.kanaReplayTeaching}
               </button>
-              {!showingTeaching && !inPractice ? (
-                <button
-                  type="button"
-                  onClick={() => beginPractice('guided')}
-                  data-ready-cta
-                  className="flex min-h-10 items-center gap-1 rounded-md border border-ai px-3 text-caption font-bold text-ai transition-colors hover:bg-indigo-wash"
-                >
-                  {fa.curriculum.kanaStageReadyCta}
-                </button>
-              ) : null}
               {inPractice ? (
                 <>
                   <button
@@ -560,6 +559,34 @@ export function KanjiWritingCard({
           </div>
         </div>
       )}
+
+      {/* ══════════ CTA footer — TASK-HANASO-CTA-01 §۴ parity (2026-11-24
+          owner order: «دکمهٔ شروع تمرین نوشتن بولدتر و واضح‌تر، سرِ جایی که در
+          بقیهٔ بخش‌ها دکمهٔ ادامه بود») ══════════
+          The ONE primary action of the slide — the SAME footer CTA the kana
+          card ends with (divider + lead + the big bold primary), sitting at the
+          very end of the slide content: exactly the slot where every other
+          block's «ادامه» lives (the walk gates its own forward button off
+          kanji writing slides — KANJI-WRITE-FIX §۲ — so THIS footer is the
+          forward slot). Only in the ready beat: intro auto-plays on entry and
+          guided/free advance themselves. */}
+      {!allDone && stage === 'ready' && !inPractice ? (
+        <footer
+          className="flex flex-col items-center gap-3 border-t border-ink-faint pt-4 text-center"
+          data-kj-cta-footer
+        >
+          <p className="text-body font-bold text-ink">{fa.curriculum.kanaIntroFooterLead}</p>
+          <button
+            type="button"
+            onClick={() => beginPractice('guided')}
+            className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-ai px-8 text-lead font-bold text-paper shadow-card transition-all hover:bg-indigo-deep hover:shadow-card active:translate-y-0.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai sm:w-auto sm:min-w-[18rem]"
+            data-ready-cta
+          >
+            {fa.curriculum.kanaStageReadyCta}
+            <ArrowLeft aria-hidden className="size-5" />
+          </button>
+        </footer>
+      ) : null}
     </section>
   );
 }

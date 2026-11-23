@@ -1227,16 +1227,24 @@ export interface OptionRowProps {
 }
 
 /**
- * Addendum-4 §4 — an option that is nothing but a short kana string is a
- * SHAPE the learner must recognize (kana-recall «کانای «آ» کدام است؟») — render
- * it as a glyph (font-jp, h2, bold), never as 16px body text. Words/sentences
- * and Persian labels keep the uniform radio look (SKL-004 §۶).
+ * Addendum-4 §4 (extended — KANJI-TYPO 2026-11-24): an option that is nothing
+ * but a SHORT Japanese glyph run — kana AND/OR kanji — is a SHAPE the learner
+ * must discriminate (kana-recall «کانای «آ» کدام است؟», kanji-recall «کدام
+ * کانجی آخرِ واژه است؟») — render it as a glyph (font-jp, h2, bold), never as
+ * 16px body text. The whole row must sit at ONE scale: a 16px/thin kanji tile
+ * beside a 28px/bold kana tile makes the kanji unreadable (the owner's live
+ * audit of the kanji-station exit quiz — 人/国 at 16px w400 next to ひと at
+ * 28px w700). Words/sentences and Persian labels keep the uniform radio look
+ * (SKL-004 §۶).
  */
-const KANA_OPTION_RE = /^[\u3040-\u30ff\u31f0-\u31ff]+$/;
-/* TL-13: word-length options (rule-listening pairs like おばあさん/いえ/いいえ —
- * up to 6 kana) render as big glyphs too: the SHAPE is what the learner is
- * discriminating; body text would hide the very difference being taught. */
-const isKanaGlyphOption = (label: string): boolean => KANA_OPTION_RE.test(label) && label.length <= 6;
+const GLYPH_OPTION_RE = /^[\u3040-\u30ff\u31f0-\u31ff\u3400-\u9fff\uf900-\ufaff]+$/;
+/* TL-13 + KANJI-TYPO: word-length runs (rule-listening pairs like おばあさん/
+ * いえ/いいえ and short kanji shapes like 人/国/ひと) render as big glyphs
+ * too: the SHAPE is what the learner is discriminating; body text would hide
+ * the very difference being taught. Pure-glyph labels render PLAIN — never
+ * ruby: a lone kanji's reading could leak the answer (the SmartJaText
+ * «standalone kanji runs» law), and a quiz shape needs no reading ride. */
+const isGlyphOption = (label: string): boolean => GLYPH_OPTION_RE.test(label) && label.length <= 6;
 
 /** The select row — uniform radios (SKL-004 §۶) with #106 F2 elimination states.
  *  TASK-LEARNING-09 §۸: the options flow into TWO columns once the card has
@@ -1272,10 +1280,12 @@ export function OptionRow({ options, selected, eliminated, locked, onSelect, ver
                   : 'border-ink-faint bg-card text-ink hover:border-ai',
             ].join(' ')}
           >
-            {isKanaGlyphOption(opt.label) ? (
-              /* Addendum-4 §4 — a kana-shape option renders as a real JP glyph
-                 (ja-block stack — `font-jp` alone is a no-op utility), big and
-                 bold; the plain span stays for words/sentences/Persian labels. */
+            {isGlyphOption(opt.label) ? (
+              /* Addendum-4 §4 + KANJI-TYPO — a kana OR kanji glyph option
+                 renders as a real JP glyph (ja-block stack — `font-jp` alone is
+                 a no-op utility), big and bold at ONE scale for the whole row;
+                 plain (no ruby — a lone kanji's reading could leak the answer);
+                 the plain span below stays for words/sentences/Persian labels. */
               <JaBlock className={'text-h2 font-bold' + (isEliminated ? ' line-through' : '')}>{opt.label}</JaBlock>
             ) : (
               /* SMART-RUBY §۲ — a kanji-bearing option label rides the same LAW

@@ -121,3 +121,54 @@ describe('ReturnToTeachingButton — F4 (Issue #106)', () => {
     expect(m).not.toMatch(/[⏸⏮⏭↺▶✓✗✨]/);
   });
 });
+
+describe('OptionRow — KANJI-TYPO 2026-11-24: ONE glyph scale for kana AND kanji options', () => {
+  /* The owner's live audit of the kanji-station exit quiz
+   * («گوش بده — این واژه با کدام کانجی تمام می‌شود؟»): the kanji options
+   * 人/国 rendered at 16px thin while the kana option ひと rendered at 28px
+   * bold — the kanji were unreadable next to it. A short pure-CJK label is a
+   * SHAPE the learner discriminates → ONE big bold glyph scale for the whole
+   * row, plain (no ruby: a lone kanji's reading could leak the answer). */
+  it('kanji options sit at the SAME big bold glyph scale as kana options', () => {
+    const kanjiEx = {
+      ...ex,
+      options: [
+        { id: 'opt-a', label: '人' },
+        { id: 'opt-b', label: '国' },
+        { id: 'opt-c', label: 'ひと' },
+      ],
+    } satisfies ClientExercise;
+    const m = renderToStaticMarkup(
+      <OptionRow options={kanjiEx.options} selected={null} eliminated={[]} locked={false} onSelect={() => {}} />,
+    );
+    // every option renders through the ja-block glyph stack at h2 bold
+    const glyphTiles = m.split('ja-block').length - 1;
+    expect(glyphTiles).toBe(3);
+    expect(count(m, 'text-h2')).toBe(3);
+    expect(count(m, 'font-bold')).toBeGreaterThanOrEqual(3);
+    // the kanji labels ride the glyph tiles as PLAIN text — never ruby
+    // (an rt over 人 would leak the ひと option's answer)
+    expect(m).not.toContain('<rt');
+    expect(m).toContain('>人<');
+    expect(m).toContain('>国<');
+    expect(m).toContain('>ひと<');
+    // no SmartJaText island inside a glyph option (the plain-span path is for
+    // longer words/sentences — not for short CJK shapes)
+    expect(m).not.toContain('data-smart-ja');
+  });
+
+  it('longer kanji-bearing labels keep the SmartJaText ruby law (uniform radio look)', () => {
+    const wordEx = {
+      ...ex,
+      options: [
+        { id: 'opt-a', label: 'わたしは学生です' },
+        { id: 'opt-b', label: 'おはようございます' },
+      ],
+    } satisfies ClientExercise;
+    const m = renderToStaticMarkup(
+      <OptionRow options={wordEx.options} selected={null} eliminated={[]} locked={false} onSelect={() => {}} />,
+    );
+    expect(m).toContain('data-smart-ja'); // the ruby law path (LearnerJaProvider defaults outside a provider)
+    expect(m).not.toContain('text-h2'); // words are NOT big glyph tiles
+  });
+});

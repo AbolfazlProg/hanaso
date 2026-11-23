@@ -123,7 +123,9 @@ describe('tokens.css — پورت کامل (مقادیر Aizen · DD-084/AC-3)',
       '--radius-full': '9999px',
       '--touch-main': '48px',
       '--frame-scene-w': '1024px',
-      '--furigana-size': 'max(0.5em, 12px)',
+      // KANJI-TYPO 2026-11-24 (owner audit «فوریگانا ریز»): کف ۱۲px → ۱۴px،
+      // نسبت ۵۰٪ → ۵۵٪ — حاشیهٔ خوانا در همهٔ والد‌ها
+      '--furigana-size': 'max(0.55em, 14px)',
       '--dur-spin': '800ms',
       '--dur-shimmer': '1400ms',
       '--leading-fa': '1.8',
