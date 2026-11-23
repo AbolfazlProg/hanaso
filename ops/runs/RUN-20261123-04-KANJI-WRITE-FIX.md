@@ -55,7 +55,7 @@
 ## §۶ — انتشار (روال استاندارد مالک، دوبار)
 
 PR #174 → CI سبز → squash `d4566b8a` → main CI سبز → ایمیج GHCR → دپلوی V3 مرحله‌ای (پری‌فلایت → SHA → بکاپ امن `db-pre-kanji-write-fix-*.sql` → pull پین‌شده [اولین اجرا: خطای گذرای containerd در layer — **صفر تغییر**، abort امن؛ retry → موفق] → sync سورس → تعویض خط ایمیج → migrate one-shot idempotent → compose up web+worker → گیت سه‌لایه → ready → content truth: `stn-fm01-23-kanji` row سالم) → **LIVE d4566b8a**؛ سپس فیکس key: PR #175 (rebase روی main) → CI سبز → squash `4cce5c7` → main CI سبز → دپلوی V3 دوباره (`db-pre-kanji-key-fix-*.sql`) → **LIVE 4cce5c7**.
-لاگ‌ها: `/root/deploy-d4566b8a.log` + `/root/deploy-4cce5c7.log`؛ بکاپ‌ها: `/root/hanaso-backups/db-pre-kanji-{write,key}-fix-*.sql`.
+لاگ‌ها: `/root/deploy-d4566b8a.log` + `/root/deploy-4cce5c7.log`؛ بکاپ‌ها: `/root/hanaso-backups/db-pre-kanji-{write,key}-fix-*.sql`؛ شواهد: `/root/kanji-write-fix-evidence/`.
 
 ## §۷ — راستی‌آزمایی مرورگر واقعی production (دسکتاپ + موبایل + لمس)
 
@@ -66,7 +66,7 @@ PR #174 → CI سبز → squash `d4566b8a` → main CI سبز → ایمیج GH
 - **اسلاید 国 تازه و سالم** (پس از فیکس key): intro خودش (ضربهٔ ۲ از ۸)، بوم خودش، **پنل تکمیلِ 人 نشت نکرده**؛ ۸ ضربه guided + ۸ ضربه free با pointer واقعی accept شد → **walk خودکار به تمرین خوانش بعدی** («بررسی پاسخ» رندر شد).
 - **موبایل (emulation iPhone 16, 393px):** بدون overflow افقی، بوم تمام‌عرض؛ **لمس** (pointerType touch): ۸ ضربه free با لمس accept → پیشروی خودکار.
 - **resume بین‌دستگاهی با شناسه‌های split:** مرورگر تازه (localStorage پاک) از لنگر سروری روی اسلاید 国 بازیابی شد؛ بازگشت با «مرحلهٔ قبل» به اسلاید 人 = کارت تازه با intro تازه.
-- شواهد: `download/kanji-write-fix-evidence/` (۸ اسکرین‌شات: ready 人 / نشتِ قبل-فیکس روی 4cce-پیشین برای مقایسه / guided 人 / اسلاید تازهٔ 国 / guided کامل 国 / اسلاید تمرین بعد / موبایل / لمس-موفق).
+- شواهد: `download/kanji-write-fix-evidence/` (۸ اسکرین‌شات: ready 人 / نشتِ قبل-فیکس برای مقایسه / guided 人 / اسلاید تازهٔ 国 / guided کامل 国 / اسلاید تمرین بعد / موبایل / لمس-موفق) — **نسخهٔ ماندگار روی VPS:** `/root/kanji-write-fix-evidence/` (رکورد + ۷ اسکرین‌شات کلیدی، sha256-verified در انتقال).
 
 ## §۸ — قیدها
 
