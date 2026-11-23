@@ -38,7 +38,7 @@ export async function GET(req: Request) {
   }
   const chapter = bundle.chapter;
   const level = LEVELS_BY_CODE[chapter.levelCode]!;
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
 
   const stationStore = getStationProgressStore();
   const chapterStore = getChapterProgressStore();

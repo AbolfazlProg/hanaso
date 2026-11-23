@@ -47,7 +47,7 @@ export async function GET(req: Request) {
       status: 400,
     });
   }
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   if (userId === GUEST_LEARNER_ID) return noIdentity();
   const progress = await getProgressStore().get(userId, dialogueId);
   return NextResponse.json(ok({ userId, dialogueId, progress }), {
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     });
   }
 
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   if (userId === GUEST_LEARNER_ID) return noIdentity();
 
   const { dialogueId, event } = parsed.data;

@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     });
   }
   const { chapterSlug, answers } = parsed.data;
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   if (userId === GUEST_LEARNER_ID) {
     return NextResponse.json(
       fail({

@@ -24,7 +24,7 @@ import { fail } from '@/modules/shared';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request): Promise<NextResponse> {
-  const guard = requireLearner(req);
+  const guard = await requireLearner(req);
   if (!guard.ok) return guard.response;
 
   const url = new URL(req.url);

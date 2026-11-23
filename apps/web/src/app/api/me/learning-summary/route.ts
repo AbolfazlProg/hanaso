@@ -45,7 +45,7 @@ const TERMINAL = new Set(['completed', 'needs_retry', 'skipped']);
 const LIVE = new Set(['in_progress', 'needs_retry']);
 
 export async function GET(req: Request): Promise<NextResponse> {
-  const guard = requireLearner(req);
+  const guard = await requireLearner(req);
   if (!guard.ok) return guard.response;
   const userId = guard.userId;
 

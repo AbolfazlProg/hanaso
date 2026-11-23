@@ -35,7 +35,7 @@ function noIdentity(): NextResponse {
 }
 
 export async function GET(req: Request) {
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   if (userId === GUEST_LEARNER_ID) return noIdentity();
   const url = new URL(req.url);
   const dialogueId = url.searchParams.get('dialogueId') ?? undefined;
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
   }
 
   const { dialogueId, answers } = parsed.data;
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   if (userId === GUEST_LEARNER_ID) return noIdentity();
   // `dialogueId` is the content id (`dlg-<slug>`); the loader wants the slug.
   const slug = dialogueId.replace(/^dlg-/, '');

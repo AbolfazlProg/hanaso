@@ -47,7 +47,7 @@ const batchSchema = z.object({
 const singleSchema = eventSchema;
 
 export async function POST(req: Request): Promise<NextResponse> {
-  const guard = requireLearner(req);
+  const guard = await requireLearner(req);
   if (!guard.ok) return guard.response;
 
   const body = await readJson(req);
@@ -113,7 +113,7 @@ export async function GET(req: Request): Promise<NextResponse> {
    * Caller-scoped observability (the TASK-HANASO-24 IDOR fix, now durable):
    * a valid session sees ONLY its own recent events, user_id stripped.
    */
-  const guard = requireLearner(req);
+  const guard = await requireLearner(req);
   if (!guard.ok) return guard.response;
   try {
     const events = await getLearningEventsStore().listForUser(guard.userId, 50);
