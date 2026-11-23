@@ -41,6 +41,7 @@ import { getDbClient, resetDbClientForTests } from '@/db/client';
 import {
   authIdentities,
   learnerMerges,
+  authRateEvents,
   mnemonicPendingRegistrations,
   oauthStates,
   stationProgress,
@@ -395,7 +396,12 @@ describe('email OTP login/link — the REAL transport path (no fake login)', () 
     );
     expect(right.ok).toBe(true);
     expect(right.data.linked).toBe(true);
-    // now EMAIL LOGIN reaches user2 — the method is attached to the SAME account
+    // now EMAIL LOGIN reaches user2 — the method is attached to the SAME account.
+    // (clear ONLY this destination's send-limiter rows — the 1/min bucket would
+    // otherwise 429 the re-request seconds after the link request; the limiter
+    // itself has its own dedicated assertions below.)
+    const ledger = getDbClient();
+    await ledger.db.delete(authRateEvents).where(eq(authRateEvents.bucket, `otp:send:destination:${email}`));
     await emailRequestRoute(post(`${BASE}/auth/email/request`, { email, purpose: 'login' }));
     const login = await json<{ ok: boolean; data: { userId: string; method: string } }>(
       await emailVerifyRoute(post(`${BASE}/auth/email/verify`, { email, code: sentCode, purpose: 'login' })),
@@ -611,14 +617,18 @@ describe('methods management + the honest dead ends', () => {
       await methodsRoute(new Request(`${BASE}/auth/methods`, { headers: { cookie } })),
     );
     expect(body.ok).toBe(true);
-    expect(body.data.methods.map((m) => m.provider).sort()).toEqual(['email', 'mnemonic']);
+    expect(body.data.methods.map((m) => m.provider).sort()).toEqual(['email', 'google', 'mnemonic']);
     expect(body.data.sessions.length).toBeGreaterThan(0);
   });
 
   it('unlink never removes the LAST method', async () => {
     const cookie = await user2Cookie();
+    // user2 holds email + google + mnemonic here (the dedupe test attached google)
     const removeEmail = await unlinkRoute(post(`${BASE}/auth/methods/unlink`, { provider: 'email' }, cookie));
     expect(removeEmail.status).toBe(200);
+    const removeGoogle = await unlinkRoute(post(`${BASE}/auth/methods/unlink`, { provider: 'google' }, cookie));
+    expect(removeGoogle.status).toBe(200);
+    // only the mnemonic anchor remains — removing it would lock the account out
     const removeLast = await json<{ ok: boolean; error: { code: string } }>(
       await unlinkRoute(post(`${BASE}/auth/methods/unlink`, { provider: 'mnemonic' }, cookie)),
     );

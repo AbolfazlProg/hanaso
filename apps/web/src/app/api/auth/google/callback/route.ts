@@ -32,7 +32,7 @@ import {
   resolveGoogleLogin,
   touchMethodUsage,
 } from '@/modules/auth/identities';
-import { exchangeCodeForTokens, googleEnv, verifyGoogleIdToken } from '@/modules/auth/google';
+import { exchangeCodeForTokens, googleEnv, pkceVerifierHash, verifyGoogleIdToken } from '@/modules/auth/google';
 
 export const dynamic = 'force-dynamic';
 
@@ -83,7 +83,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${origin}/auth/login?${FAILURES.expired}`);
   }
   const cookie = verifyOauthCookie(req.cookies.get(OAUTH_COOKIE_NAME)?.value);
-  if (!cookie || cookie.state !== state) {
+  if (!cookie || cookie.state !== state || pkceVerifierHash(cookie.verifier) !== row.codeVerifierHash) {
+    // the cookie↔row PAIR proof: the signed cookie must echo the state AND its
+    // verifier hash must equal the row's — a validly-signed but foreign cookie
+    // (or a row replayed with a different verifier) is dead here, BEFORE any
+    // network exchange.
     return NextResponse.redirect(`${origin}/auth/login?${FAILURES.cookie}`);
   }
   const env = googleEnv();
