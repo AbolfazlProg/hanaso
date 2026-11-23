@@ -117,3 +117,14 @@ describe('quiz positions & verification (the signup gate)', () => {
     for (const w of wordsOf(phrase)) expect(redacted.includes(w)).toBe(false);
   });
 });
+
+describe('the bundled JSON wordlist stays in sync with the canonical .txt', () => {
+  it('JSON === TXT (the audit file and the runtime module are the same list)', () => {
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    const txt = readFileSync('src/modules/auth/content/bip39-english.txt', 'utf8')
+      .split('\n')
+      .map((w) => w.trim())
+      .filter((w) => w.length > 0);
+    expect([...getWordlist()]).toEqual(txt);
+  });
+});

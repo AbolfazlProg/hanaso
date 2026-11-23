@@ -1,51 +1,39 @@
 /**
  * HANASO — BIP39 English wordlist loader (M1 · AUTH-ACCOUNTS 2026-11-24).
  *
- * The 2048-word list is vendored at src/modules/auth/content/bip39-english.txt
- * (public domain — see WORDLIST-NOTES.md) so generation NEVER depends on a
- * network fetch at runtime. Loaded once per process, validated once
- * (2048 · sorted · unique · 3..8 lowercase letters) — a corrupted file is a
- * boot error, never a silently weakened phrase space.
+ * The 2048-word list ships as a JSON MODULE (bundled into the build — the
+ * production lesson: a runtime readFileSync(__dirname…) does NOT survive the
+ * Next.js standalone output, it 500'd the signup page live). The canonical
+ * `.txt` stays beside it for audits; a unit test pins JSON == TXT so the two
+ * can never drift. Validated once per process (2048 · unique · 3..8
+ * lowercase) — a corrupted file is a boot error, never a weakened phrase
+ * space.
  */
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
+import rawList from './content/bip39-english.json';
 
-/** Path to the vendored list — resolved from THIS module file (cwd-independent). */
-const WORDLIST_PATH = path.join(__dirname, 'content', 'bip39-english.txt');
+const cached: readonly string[] = (rawList as unknown as string[]).slice();
 
-let cached: string[] | null = null;
-
-/** Load + validate the list once. `app` dir is read-only at runtime — safe. */
-function loadWordlist(): string[] {
-  if (cached) return cached;
-  const raw = readFileSync(WORDLIST_PATH, 'utf8');
-  const words = raw
-    .split('\n')
-    .map((w) => w.trim())
-    .filter((w) => w.length > 0);
-  if (words.length !== 2048) {
-    throw new Error(`anaso/auth] BIP39 wordlist must have exactly 2048 entries (found ${words.length}).`);
+/** Load + validate once (module scope — the list is compile-time data now). */
+if (cached.length !== 2048) {
+  throw new Error(`anaso/auth] BIP39 wordlist must have exactly 2048 entries (found ${cached.length}).`);
+}
+const seen = new Set<string>();
+for (const w of cached) {
+  if (!/^[a-z]{3,8}$/.test(w)) {
+    throw new Error(`anaso/auth] BIP39 wordlist entry "${w}" is malformed.`);
   }
-  const seen = new Set<string>();
-  for (const w of words) {
-    if (!/^[a-z]{3,8}$/.test(w)) {
-      throw new Error(`anaso/auth] BIP39 wordlist entry "${w}" is malformed.`);
-    }
-    if (seen.has(w)) {
-      throw new Error(`anaso/auth] BIP39 wordlist entry "${w}" is duplicated.`);
-    }
-    seen.add(w);
+  if (seen.has(w)) {
+    throw new Error(`anaso/auth] BIP39 wordlist entry "${w}" is duplicated.`);
   }
-  cached = words;
-  return words;
+  seen.add(w);
 }
 
-/** The immutable 2048-word array (defensive copy per call is unnecessary — frozen). */
+/** The immutable 2048-word array (frozen — the phrase space is fixed). */
 export function getWordlist(): readonly string[] {
-  return Object.freeze(loadWordlist());
+  return cached;
 }
 
 /** Word → 11-bit index (−1 when not in the list — the input sanitizer's fast path). */
 export function wordIndex(word: string): number {
-  return loadWordlist().indexOf(word);
+  return cached.indexOf(word);
 }
