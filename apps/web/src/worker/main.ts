@@ -24,9 +24,12 @@ import {
   JOB_DB_VERIFY_CRON,
   JOB_EVENTS_RETENTION,
   JOB_EVENTS_RETENTION_CRON,
+  JOB_AUTH_SWEEP,
+  JOB_AUTH_SWEEP_CRON,
   JOB_TZ,
 } from './schedules';
 import { runEventsRetention } from './events-retention';
+import { runAuthSweep } from './auth-sweep';
 
 function requiredEnv(name: string): string {
   const value = process.env[name];
@@ -63,6 +66,7 @@ export async function main(): Promise<void> {
   await boss.createQueue(JOB_BACKUP);
   await boss.createQueue(JOB_DB_VERIFY);
   await boss.createQueue(JOB_EVENTS_RETENTION);
+  await boss.createQueue(JOB_AUTH_SWEEP);
 
   await boss.work(JOB_BACKUP, { pollingIntervalSeconds: 15 }, async (jobs: Job<null>[]) => {
     let outcome: Awaited<ReturnType<typeof runBackup>> | null = null;
@@ -91,14 +95,24 @@ export async function main(): Promise<void> {
     return report;
   });
 
+  await boss.work(JOB_AUTH_SWEEP, { pollingIntervalSeconds: 15 }, async (jobs: Job<null>[]) => {
+    let report: Awaited<ReturnType<typeof runAuthSweep>> | null = null;
+    for (const job of jobs) {
+      report = await runAuthSweep();
+      log(JOB_AUTH_SWEEP, `auth sweep ok (job ${job.id})`, report);
+    }
+    return report;
+  });
+
   // Idempotent upserts on every boot (pg-boss scheduling docs) — tz pinned to the users' zone.
   await boss.schedule(JOB_BACKUP, JOB_BACKUP_CRON, null, { tz: JOB_TZ });
   await boss.schedule(JOB_DB_VERIFY, JOB_DB_VERIFY_CRON, null, { tz: JOB_TZ });
   await boss.schedule(JOB_EVENTS_RETENTION, JOB_EVENTS_RETENTION_CRON, null, { tz: JOB_TZ });
+  await boss.schedule(JOB_AUTH_SWEEP, JOB_AUTH_SWEEP_CRON, null, { tz: JOB_TZ });
 
   log(
     'worker',
-    `started — jobs: ${JOB_BACKUP} (${JOB_BACKUP_CRON}), ${JOB_DB_VERIFY} (${JOB_DB_VERIFY_CRON}), ${JOB_EVENTS_RETENTION} (${JOB_EVENTS_RETENTION_CRON}) @ ${JOB_TZ}`,
+    `started — jobs: ${JOB_BACKUP} (${JOB_BACKUP_CRON}), ${JOB_DB_VERIFY} (${JOB_DB_VERIFY_CRON}), ${JOB_EVENTS_RETENTION} (${JOB_EVENTS_RETENTION_CRON}), ${JOB_AUTH_SWEEP} (${JOB_AUTH_SWEEP_CRON}) @ ${JOB_TZ}`,
   );
 
   const shutdown = async (signal: string) => {

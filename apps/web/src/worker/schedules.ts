@@ -17,6 +17,9 @@ export const JOB_DB_VERIFY_CRON = '0 4 * * *'; // 04:00 — consistency counts a
 export const JOB_EVENTS_RETENTION = 'ops.events-retention';
 export const JOB_EVENTS_RETENTION_CRON = '10 4 * * *'; // 04:10 — durable learning_events retention sweep
 
+export const JOB_AUTH_SWEEP = 'ops.auth-sweep';
+export const JOB_AUTH_SWEEP_CRON = '20 4 * * *'; // 04:20 — auth artifacts: sealed phrases, OTPs, oauth states, rate events
+
 /** Crons fire in the users' timezone (owner + learners are in Iran). */
 export const JOB_TZ = 'Asia/Tehran';
 
@@ -25,4 +28,5 @@ export const WORKER_SCHEDULES: ReadonlyArray<{ name: string; cron: string }> = [
   { name: JOB_BACKUP, cron: JOB_BACKUP_CRON },
   { name: JOB_DB_VERIFY, cron: JOB_DB_VERIFY_CRON },
   { name: JOB_EVENTS_RETENTION, cron: JOB_EVENTS_RETENTION_CRON },
+  { name: JOB_AUTH_SWEEP, cron: JOB_AUTH_SWEEP_CRON },
 ];
