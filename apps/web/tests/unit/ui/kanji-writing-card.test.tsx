@@ -386,4 +386,133 @@ describe('KanjiWritingCard — kana-writing parity over the shared engine', () =
       expect(container.querySelector('[data-ready-cta]'), 'no stray CTA while practicing').toBeNull();
     },
   );
+
+  /* KANJI-SHAKE-FIX 2026-11-24 — owner report: «وقتی داری ضربه‌های کانجی رو
+   * مینویسی صفحه مدام تکون میخوره و بالا پایین میشه — مخصوصا ضربهٔ دوم به
+   * بعد، البته نه همیشه». Root cause: the per-stroke feedback paragraph
+   * MOUNTED/UNMOUNTED with every judgement (the engine returns feedbackFa:
+   * null on a clean accept) and its 1-3-line Persian texts changed height
+   * stroke-to-stroke → the canvas column reflowed on EVERY stroke → the page
+   * jumped up/down mid-write (clean runs showed no box at all, hence «نه
+   * همیشه»). The pinned law: while practicing, ONE permanent height-reserved
+   * slot ([data-writing-feedback-slot]) carries the feedback — it never
+   * mounts/unmounts, the min-height reserve absorbs every text swap, and the
+   * idle standing content is zero-spoiler-safe (guided narrates the NEXT
+   * stroke's start+direction — the same assist level as the dashed guide;
+   * free shows the memory hint, never the position). */
+  it(
+    'the practice feedback SLOT is permanent + height-reserved (no per-stroke reflow)',
+    { timeout: 30000 },
+    async () => {
+      const { container } = render(
+        <KanjiWritingCard
+          blockId="wp-kanji-jin-kuni@人"
+          chapterSlug="first-meeting-01"
+          stationSlug="stn-fm01-23-kanji"
+          characters={[ENTRIES[0]!]}
+          initialStageByLiteral={{ 人: 'ready' }}
+        />,
+      );
+      // ready: the slot does NOT exist yet (practice-only law)
+      await waitFor(() => {
+        expect(container.querySelector('[data-ready-cta]')).not.toBeNull();
+      });
+      expect(container.querySelector('[data-writing-feedback-slot]'), 'no slot before practice').toBeNull();
+
+      // the CTA starts guided practice
+      await act(async () => {
+        fireEvent.click(container.querySelector('[data-ready-cta]')!);
+      });
+      await waitFor(() => {
+        expect(container.querySelector('[data-kj-stage]')?.getAttribute('data-kj-stage')).toBe('guided');
+      });
+      const svg = await waitFor(() => {
+        const s = container.querySelector('svg[role="img"]');
+        expect(s).not.toBeNull();
+        return s as Element;
+      });
+
+      // ① the slot EXISTS from the first moment of practice, BEFORE any
+      //    feedback — idle standing content = the next stroke's narration
+      //    (the same assist level as the dashed guide on the canvas)
+      const slot = container.querySelector('[data-writing-feedback-slot]')!;
+      expect(slot, 'the slot is present from practice start (never a per-stroke box)').toBeTruthy();
+      expect(slot.getAttribute('data-feedback-state')).toBe('idle');
+      // the height reserve — 3 phone lines / 2 md lines of text-small at the
+      // 1.8 FA leading (+ padding): every text swap is absorbed, zero reflow
+      expect(slot.className).toContain('min-h-[5.875rem]');
+      expect(slot.className).toContain('md:min-h-[4.25rem]');
+      expect(slot.textContent).toContain('شروع کن');
+      expect(slot.textContent).toContain('بکش');
+
+      // ② a REJECTED stroke renders its feedback INSIDE the SAME node — the
+      //    slot never unmounts/remounts across judgements (no reflow)
+      fireEvent.pointerDown(svg, { pointerId: 1, pointerType: 'mouse', clientX: 150, clientY: 155 });
+      fireEvent.pointerUp(svg, { pointerId: 1, pointerType: 'mouse', clientX: 152, clientY: 156 });
+      await waitFor(() => {
+        expect(container.querySelector('[data-writing-feedback-slot]')?.getAttribute('data-feedback-state')).toBe(
+          'text',
+        );
+      });
+      const slotAfterMiss = container.querySelector('[data-writing-feedback-slot]')!;
+      expect(slotAfterMiss === slot, 'the SAME slot node across a judgement (no reflow)').toBe(true);
+      expect(slotAfterMiss.querySelector('[data-writing-feedback]')?.textContent).toContain('ناقص');
+
+      // ③ the whole guided write → the free stage's idle standing content is
+      //    ZERO-SPOILER (the memory hint, never the stroke's position/direction)
+      drawAll(svg, JIN_DATA.medians);
+      await waitFor(
+        () => {
+          expect(container.querySelector('[data-kj-stage]')?.getAttribute('data-kj-stage')).toBe('free');
+        },
+        { timeout: 6000 },
+      );
+      const freeSlot = container.querySelector('[data-writing-feedback-slot]')!;
+      expect(freeSlot === slot, 'the slot persists across the guided→free transition').toBe(true);
+      await waitFor(() => {
+        expect(freeSlot.getAttribute('data-feedback-state')).toBe('idle');
+      });
+      expect(freeSlot.textContent).toContain('لو نمی‌دهد');
+      expect(freeSlot.textContent).not.toContain('بکش');
+    },
+  );
+
+  /* KANJI-SHAKE-FIX — the kana Addendum-5 §1 parity: every practice (re)start
+   * anchors the canvas into view. The kanji card was missing the kana card's
+   * measured soft-scroll entirely — after the footer CTA (the very end of the
+   * slide) the canvas sat above the fold and the learner wrote mid-page where
+   * every reflow was maximally visible. Pinned: the CTA click scrolls (smooth,
+   * header-aware) — the same contract the a5-experience suite pins for kana. */
+  it('practice begins anchored on the canvas — the kana Addendum-5 §1 scroll parity', async () => {
+    const scrollToSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+    try {
+      const { container } = render(
+        <KanjiWritingCard
+          blockId="wp-kanji-jin-kuni@人"
+          chapterSlug="first-meeting-01"
+          stationSlug="stn-fm01-23-kanji"
+          characters={[ENTRIES[0]!]}
+          initialStageByLiteral={{ 人: 'ready' }}
+        />,
+      );
+      await waitFor(() => {
+        expect(container.querySelector('[data-ready-cta]')).not.toBeNull();
+      });
+      await act(async () => {
+        fireEvent.click(container.querySelector('[data-ready-cta]')!);
+      });
+      await waitFor(() => {
+        expect(container.querySelector('[data-kj-stage]')?.getAttribute('data-kj-stage')).toBe('guided');
+      });
+      // …and the canvas is scrolled fully into view (smooth, header-aware)
+      await waitFor(() => {
+        expect(scrollToSpy).toHaveBeenCalled();
+        const call = scrollToSpy.mock.calls[0]![0] as { top?: number; behavior?: string };
+        expect(call?.top).toBeGreaterThanOrEqual(0);
+        expect(call?.behavior).toBe('smooth');
+      });
+    } finally {
+      scrollToSpy.mockRestore();
+    }
+  });
 });

@@ -25,6 +25,13 @@
  *              glyph overlay after completion
  *   done       → auto-advance to the next kanji of the block
  *
+ * KANJI-SHAKE-FIX 2026-11-24 (owner report: the page «تکون میخورد و بالا پایین
+ * میشه» mid-write) — TWO engine-level laws while practicing, both kana-parity:
+ *   ① the practice FEEDBACK SLOT is permanent and height-reserved (the
+ *     per-stroke feedback used to mount/unmount per judgement and reflow the
+ *     canvas column on EVERY stroke — see the slot's own comment below);
+ *   ② every practice (re)start anchors the canvas into view (the same
+ *     measured scrollToCanvas the KanaCard performs — Addendum-5 §1).
  * Touch/pen/mouse are unified by the canvas (pointer events + capture); the
  * anchor words (the carriers the learner was already taught, K3) ride beside
  * the canvas with their OWN standalone audio — the kanji's reading is heard
@@ -187,6 +194,26 @@ export function KanjiWritingCard({
     setStage(active.literal, 'ready');
   }, [active.literal, setStage]);
 
+  /* KANJI-SHAKE-FIX 2026-11-24 — kana parity (KanaCard Addendum-5 §1):
+   * every practice (re)start soft-scrolls the writing canvas fully into view
+   * (below the sticky header, measured at run time — the canvas must never
+   * sit under the bar or above the fold). The kanji card was MISSING this
+   * whole beat: after the «شروع تمرین نوشتن» footer CTA (the very END of the
+   * slide) the canvas sat above the fold on phones and the learner had to
+   * hunt for it — then wrote mid-page where every reflow was maximally
+   * visible. With the anchor, the canvas is the fixed focal point at every
+   * (re)start: same measured scroll the kana card performs. */
+  const canvasAnchorRef = useRef<HTMLDivElement | null>(null);
+  const scrollToCanvas = useCallback(() => {
+    if (typeof window === 'undefined' || !canvasAnchorRef.current) return;
+    const el = canvasAnchorRef.current;
+    const header = document.querySelector('header.sticky');
+    const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+    const top = el.getBoundingClientRect().top + window.scrollY - Math.max(0, headerBottom) - 12;
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
+  }, []);
+
   const beginPractice = useCallback(
     (next: 'guided' | 'free') => {
       attemptStartRef.current = Date.now();
@@ -194,8 +221,11 @@ export function KanjiWritingCard({
       setRestartSignal((n) => n + 1);
       setAttempt(createAttemptState(active.literal));
       setStage(active.literal, next);
+      // the canvas becomes the focal point the moment practice begins — after
+      // React commits the new stage (rAF → next paint). KanaCard parity.
+      requestAnimationFrame(() => scrollToCanvas());
     },
-    [active.literal, setStage],
+    [active.literal, setStage, scrollToCanvas],
   );
 
   const replayTeaching = useCallback(() => {
@@ -371,7 +401,7 @@ export function KanjiWritingCard({
       ) : (
         <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[minmax(18rem,26rem)_minmax(16rem,22rem)] md:justify-center">
           {/* group 1 «رسم و ترتیب نوشتن» — the big canvas + progress + actions */}
-          <div className="flex min-w-0 flex-col gap-3" data-canvas-anchor>
+          <div ref={canvasAnchorRef} className="flex min-w-0 flex-col gap-3" data-canvas-anchor>
             <WritingCanvas
               key={`${active.literal}-${restartSignal}`}
               character={active.literal}
@@ -483,14 +513,58 @@ export function KanjiWritingCard({
                 </>
               ) : null}
             </div>
-            {feedback ? (
-              <p
-                role="status"
-                aria-live="polite"
-                className="rounded-md border border-shu/40 bg-surface-warm px-3 py-2 text-small leading-[var(--leading-fa)] text-ink"
+            {/* ══════════ KANJI-SHAKE-FIX 2026-11-24 — the PRACTICE FEEDBACK SLOT.
+                Owner report: «وقتی داری ضربه‌های کانجی رو مینویسی صفحه مدام تکون
+                میخوره و بالا پایین میشه — مخصوصا ضربهٔ دوم به بعد، البته نه
+                همیشه». Root cause: the per-stroke feedback paragraph MOUNTED and
+                UNMOUNTED with every judgement (the engine returns feedbackFa:
+                null on a clean accept — see judgeStroke) and its 1-3-line
+                Persian texts changed height from stroke to stroke → the canvas
+                column reflowed on EVERY stroke → the page visibly jumped
+                up/down mid-write (worst from stroke 2+ where misses/assists
+                begin; clean runs never showed a box, hence «نه همیشه»). The
+                kana card answers this with its ALWAYS-ON stage panel
+                (Addendum-4 §3: «every slot is ALWAYS present in the SAME order
+                — no box ever appears from nowhere»); this card had no practice
+                panel, so its feedback box appeared from nowhere per stroke.
+                The fix is that SAME LAW, at the card/engine level — every
+                future kanji station inherits it: while practicing, the slot is
+                a PERMANENT, height-reserved region — it never mounts or
+                unmounts, and the reserved min-height (3 lines of text-small at
+                the 1.8 FA leading on phones / 2 on md+) absorbs every text
+                swap — NOTHING above or below the canvas moves while writing.
+                Idle content is honest and zero-spoiler-safe: guided narrates
+                where the NEXT stroke starts and where it goes (the same assist
+                level as the dashed on-canvas guide); free keeps the memory
+                test (kanaStageMemoryHint — nothing given away, the owner's
+                zero-spoiler rule). ══════════ */}
+            {inPractice ? (
+              <div
+                data-writing-feedback-slot
+                data-feedback-state={feedback ? 'text' : 'idle'}
+                className={`flex min-h-[5.875rem] items-center justify-center rounded-md border px-3 py-2 md:min-h-[4.25rem] ${
+                  feedback ? 'border-shu/40 bg-surface-warm' : 'border-ink-faint/50 bg-transparent'
+                }`}
               >
-                {feedback}
-              </p>
+                {feedback ? (
+                  <p
+                    role="status"
+                    aria-live="polite"
+                    className="w-full max-w-xl text-start text-small leading-[var(--leading-fa)] text-ink"
+                    data-writing-feedback
+                  >
+                    {feedback}
+                  </p>
+                ) : stage === 'guided' && strokeInfo ? (
+                  <p className="w-full max-w-xl text-start text-small leading-[var(--leading-fa)] text-ink-soft">
+                    {strokeInfo.label} — {strokeInfo.startFa} و {strokeInfo.directionFa}
+                  </p>
+                ) : (
+                  <p className="w-full max-w-xl text-start text-small leading-[var(--leading-fa)] text-ink-soft">
+                    {stage === 'guided' ? fa.curriculum.kanaStageGuidedHint : fa.curriculum.kanaStageMemoryHint}
+                  </p>
+                )}
+              </div>
             ) : null}
           </div>
 
