@@ -10,6 +10,7 @@
 import type { ContrastWord, Station, TeachingBlock, UserReplySpec } from './types';
 import type { ClientExercise } from './grading';
 import { toClientExercise } from './grading';
+import { isKanjiChar } from './knowledge/reading-model';
 
 /** A teaching block with all answer material stripped for client transport. */
 export type ClientTeachingBlock =
@@ -322,8 +323,78 @@ export function toClientStation(station: Station): ClientStation {
     objectiveFa: station.objectiveFa,
     core: station.core,
     completion: station.completion,
-    blocks: station.blocks.map(stripBlock),
+    blocks: expandKanjiWritingBlocks(station.blocks.map(stripBlock)),
   };
+}
+
+/* KANJI-WRITE-FIX 2026-11-23 §۱ (owner order «هر کانجی اسلاید مخصوص خودش را
+ * دارد، از موتور»): a kanji writing deck travels to the walk as ONE SLIDE PER
+ * KANJI. The authored `writing-practice` block may legally list several
+ * kanji (the authoring agent's natural form); the ENGINE expands it during
+ * client transport — every kanji receives its own dedicated slide with its own
+ * staged writing timeline (auto intro pass → the ONE confirm → guided trace →
+ * free from memory → auto-advance). This is the single chokepoint every
+ * station surface passes through, so a future agent-authored kanji station
+ * can never regress into "several kanji sharing one slide".
+ *
+ * Deterministic ids `${block.id}@${literal}` keep walk-position anchors,
+ * block-stage snapshots and blockResults stable across renders. Kana decks
+ * (and mixed decks) pass through untouched — the kana drill host keeps its
+ * row-of-kana picker (owner: the kana side is the reference, unchanged). */
+function expandKanjiWritingBlocks(blocks: ClientTeachingBlock[]): ClientTeachingBlock[] {
+  const out: ClientTeachingBlock[] = [];
+  for (const block of blocks) {
+    if (block.kind !== 'writing-practice' || block.characters.length <= 1) {
+      out.push(block);
+      continue;
+    }
+    const isKanjiDeck = block.characters.every((ch) => ch.split('').every(isKanjiChar));
+    if (!isKanjiDeck) {
+      out.push(block);
+      continue;
+    }
+    for (const literal of block.characters) {
+      out.push({
+        kind: 'writing-practice',
+        id: `${block.id}@${literal}`,
+        characters: [literal],
+        initialMode: block.initialMode,
+        ...(block.focusPairs ? { focusPairs: block.focusPairs } : {}),
+        ...(block.instructionsFa ? { instructionsFa: block.instructionsFa } : {}),
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * KANJI-WRITE-FIX §۱ — the authored Station shape carries the UN-split deck
+ * (pages that consume the richer Station type); the same per-kanji-slide law
+ * applies: kanji writing decks expand, everything else keeps its block list.
+ */
+export function splitKanjiWritingBlocks(station: Station): Station {
+  const blocks: TeachingBlock[] = [];
+  for (const block of station.blocks) {
+    if (block.kind !== 'writing-practice' || block.characters.length <= 1) {
+      blocks.push(block);
+      continue;
+    }
+    const isKanjiDeck = block.characters.every((ch) => ch.split('').every(isKanjiChar));
+    if (!isKanjiDeck) {
+      blocks.push(block);
+      continue;
+    }
+    for (const literal of block.characters) {
+      blocks.push({
+        ...block,
+        id: `${block.id}@${literal}`,
+        characters: [literal],
+      } as TeachingBlock);
+    }
+  }
+  return station.blocks.length === blocks.length && station.blocks.every((b, i) => b === blocks[i])
+    ? station
+    : { ...station, blocks };
 }
 
 /**
@@ -333,7 +404,7 @@ export function toClientStation(station: Station): ClientStation {
  * client islands consume the richer Station type.
  */
 export function stripStationAnswerMaterial(station: Station): Station {
-  return {
+  const strippedStation: Station = {
     ...station,
     blocks: station.blocks.map((block) => {
       const stripped = stripBlock(block) as unknown as TeachingBlock;
@@ -423,6 +494,9 @@ export function stripStationAnswerMaterial(station: Station): Station {
       return block;
     }) as Station['blocks'],
   };
+  /* KANJI-WRITE-FIX §۱ — the same per-kanji-slide law as toClientStation: a
+   * kanji writing deck never crosses into a client island as one shared slide. */
+  return splitKanjiWritingBlocks(strippedStation);
 }
 
 /** Server-side lookup of a block answer (grading side — never sent to the client). */

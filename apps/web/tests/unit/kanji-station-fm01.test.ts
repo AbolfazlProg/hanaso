@@ -25,6 +25,7 @@ import { gateEqa12 } from '@/modules/curriculum/knowledge/kanji-contract';
 import { KANJI_ITEMS_BY_ID, kanjiInSurface } from '@/modules/curriculum/kanji';
 import { collectChapterSurfaces } from '@/modules/curriculum/knowledge/surfaces';
 import { stationsInWalkOrder } from '@/modules/curriculum/eqa/model';
+import { toClientStation, stripStationAnswerMaterial } from '@/modules/curriculum/client-transport';
 
 function fm01() {
   return getChapter('first-meeting-01')!;
@@ -242,6 +243,94 @@ describe('KANJI §۲ — the dedicated station of chapter 02 (the real path)', (
       const registry = buildKnowledgeRegistry([chapter]);
       const findings = gateEqa12(chapter, registry);
       expect(findings.filter((f) => f.rule !== 'kanji-exercise-outside-target')).toEqual([]);
+    });
+  });
+
+  /* ── KANJI-WRITE-FIX 2026-11-23 §۱ (owner order «هر کانجی اسلاید مخصوص خودش
+   * را دارد، از موتور»): the transport ENGINE splits every kanji writing deck
+   * into ONE SLIDE PER KANJI — the authored multi-kanji block is legal
+   * authoring form, and the walk can never regress into several kanji sharing
+   * one slide. §۳ (K7): the writing deck may only carry the station's own
+   * target kanji, and kanji writing lives only in a dedicated kanji station. */
+  describe('KANJI-WRITE-FIX §۱ — the engine splits the deck into one slide per kanji', () => {
+    it('toClientStation expands the REAL deck: wp-kanji-jin-kuni@人 then @国, each with ONE kanji', () => {
+      const chapter = fm01();
+      const station = chapter.stations.find((s) => s.slug === STATION_SLUG)!;
+      const client = toClientStation(station);
+      const decks = client.blocks.filter((b) => b.kind === 'writing-practice');
+      expect(decks.map((b) => b.id)).toEqual(['wp-kanji-jin-kuni@人', 'wp-kanji-jin-kuni@国']);
+      expect(decks.map((b) => (b as { characters: string[] }).characters)).toEqual([['人'], ['国']]);
+      // every OTHER authored block keeps its identity (id + count − split offset)
+      const authoredIds = station.blocks.map((b) => b.id);
+      const clientIds = client.blocks.map((b) => b.id);
+      expect(clientIds.length).toBe(authoredIds.length + 1); // 1 deck → 2 slides
+      for (const id of authoredIds) {
+        if (id === 'wp-kanji-jin-kuni') {
+          expect(clientIds).not.toContain(id); // the shared slide is gone
+          continue;
+        }
+        expect(clientIds).toContain(id);
+      }
+    });
+
+    it('stripStationAnswerMaterial applies the same per-kanji-slide law', () => {
+      const chapter = fm01();
+      const station = chapter.stations.find((s) => s.slug === STATION_SLUG)!;
+      const stripped = stripStationAnswerMaterial(station);
+      const decks = stripped.blocks.filter((b) => b.kind === 'writing-practice');
+      expect(decks.map((b) => b.id)).toEqual(['wp-kanji-jin-kuni@人', 'wp-kanji-jin-kuni@国']);
+    });
+
+    it('a KANA deck passes through UNCHANGED (one drill block — the owner reference)', () => {
+      const kanaChapter = getChapter('kana-foundation-01')!;
+      const h1 = kanaChapter.stations.find((s) => s.slug === 'stn-kana-h1')!;
+      const client = toClientStation(h1);
+      const decks = client.blocks.filter((b) => b.kind === 'writing-practice');
+      expect(decks.length).toBe(1);
+      expect(decks[0]!.id).toBe((h1.blocks.find((b) => b.kind === 'writing-practice') as { id: string }).id);
+      expect((decks[0] as { characters: string[] }).characters.length).toBe(5); // あ い う え お
+    });
+  });
+
+  describe('K7 — the kanji-station WRITING scope (engine guard for future kanji stations)', () => {
+    it('the REAL station is clean (K7 finds nothing)', () => {
+      const chapter = fm01();
+      const registry = buildKnowledgeRegistry([chapter]);
+      const findings = gateEqa12(chapter, registry);
+      expect(findings.filter((f) => f.rule.startsWith('kanji-writing-'))).toEqual([]);
+    });
+
+    it('the ENGINE rejects a writing deck that smuggles an off-target kanji (mutation)', () => {
+      const chapter = fm01();
+      const registry = buildKnowledgeRegistry([chapter]);
+      const poisoned = JSON.parse(JSON.stringify(chapter)) as typeof chapter;
+      const station = poisoned.stations.find((s) => s.slug === STATION_SLUG)!;
+      const deck = station.blocks.find((b) => b.kind === 'writing-practice') as {
+        kind: 'writing-practice';
+        characters: string[];
+      };
+      deck.characters = ['人', '国', '本']; // 本 — off-target for this station
+      const findings = gateEqa12(poisoned, registry);
+      const k7 = findings.filter((f) => f.rule === 'kanji-writing-outside-target');
+      expect(k7.length).toBeGreaterThanOrEqual(1);
+      expect(k7[0]!.messageFa).toContain('«本»');
+    });
+
+    it('the ENGINE rejects kanji writing practice outside a dedicated kanji station (mutation)', () => {
+      const chapter = fm01();
+      const registry = buildKnowledgeRegistry([chapter]);
+      const poisoned = JSON.parse(JSON.stringify(chapter)) as typeof chapter;
+      const vocabStation = poisoned.stations.find((s) => s.slug === 'stn-fm01-02-vocab')!;
+      vocabStation.blocks.push({
+        kind: 'writing-practice',
+        id: 'wp-smuggled-jin',
+        characters: ['人'],
+        initialMode: 'guided',
+      } as never);
+      const findings = gateEqa12(poisoned, registry);
+      const k7 = findings.filter((f) => f.rule === 'kanji-writing-outside-kanji-station');
+      expect(k7.length).toBeGreaterThanOrEqual(1);
+      expect(k7[0]!.messageFa).toContain('人');
     });
   });
 });

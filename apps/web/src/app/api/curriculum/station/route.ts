@@ -12,6 +12,9 @@ import {
   findBlockAnswer,
   type ExerciseAnswerPayload,
 } from '@/modules/curriculum';
+/* KANJI-WRITE-FIX §۱ — the walk view of a station (kanji writing decks travel
+ * as one slide per kanji): the resume anchor validates against it. */
+import { splitKanjiWritingBlocks } from '@/modules/curriculum/client-transport';
 import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
 import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
@@ -291,9 +294,14 @@ async function handleStationPost(req: Request): Promise<Response> {
     const next = applyStationEvent(current ?? undefined, { type: 'station_entered', stationSlug: station.slug });
     // WP-5: keep the resume anchor (currentBlock) fresh — the walk position is
     // part of the stored state, not just the client's memory.
+    // KANJI-WRITE-FIX §۱ (2026-11-23): the anchor is validated against the
+    // WALK view of the station — the same engine law the client walk uses
+    // (kanji writing decks travel as one slide per kanji, `${deckId}@${literal}`);
+    // an authored (un-split) id still validates too.
+    const walkBlocks = splitKanjiWritingBlocks(station).blocks;
     const anchorBlockId = 'currentBlockId' in payload ? payload.currentBlockId : undefined;
     const anchorValid =
-      anchorBlockId !== undefined && station.blocks.some((b) => b.id === anchorBlockId) ? anchorBlockId : undefined;
+      anchorBlockId !== undefined && walkBlocks.some((b) => b.id === anchorBlockId) ? anchorBlockId : undefined;
     const base = next ?? current;
     /*
      * TASK-HANASO-17 (§۸ — resume expiration, server-authoritative):
