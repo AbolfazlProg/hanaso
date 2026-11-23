@@ -228,10 +228,17 @@ describe('KANJI-WRITE-FIX — the real kanji-station walk (engine level)', () =>
       const reachedKuni = await untilTrue(() => Boolean(container.querySelector('[data-kj-active="国"]')), 24, 5000);
       expect(reachedKuni, 'completing the free write advanced the walk to the 国 slide').toBe(true);
 
-      // the 国 slide is its OWN slide: fresh intro (no state leak from 人's done)
+      // the 国 slide is its OWN slide: a FRESH mount (keyed per block — no
+      // state leak from 人's completed slide: the canvas is present, the
+      // completion panel is gone, the stage is its own fresh intro)
       const kuniStage = container.querySelector('[data-kj-stage]')?.getAttribute('data-kj-stage');
       expect(['intro', 'ready']).toContain(kuniStage!);
       expect(container.querySelector('[data-kj-stage="done"]'), 'no stage leak from 人 into 国').toBeNull();
+      expect(
+        container.querySelector('[data-kanji-writing-done]'),
+        'the 国 slide is a FRESH card — never 人’s completion panel',
+      ).toBeNull();
+      expect(container.querySelector('svg[role="img"]'), 'the 国 slide has its own canvas').not.toBeNull();
 
       // §۲ holds on the 国 slide too — the skip button stays gone
       const forward2 = [...container.querySelectorAll('button')].find(
