@@ -72,6 +72,10 @@ export interface KanjiWritingCardProps {
   initialStageByLiteral?: Record<string, string>;
   /** Stage persistence hook (the walk's block-stage map). */
   onProgress?: (literal: string, stage: KanjiWritingStage) => void;
+  /** KANJI-WRITE-FIX §۲ — the (single-kanji) deck's free-writing completed →
+   * the walk continues (the SAME #117 §8 gate semantics as the kana card).
+   * Fires once per deck completion. */
+  onWritingDone?: () => void;
 }
 
 function normalizeStage(stage: string | undefined): KanjiWritingStage {
@@ -89,6 +93,7 @@ export function KanjiWritingCard({
   instructionsFa,
   initialStageByLiteral,
   onProgress,
+  onWritingDone,
 }: KanjiWritingCardProps): React.JSX.Element {
   const { model } = useLearnerJa();
 
@@ -254,14 +259,21 @@ export function KanjiWritingCard({
     setFeedback(fa.curriculum.kanaStageFreeDone);
     beat(() => {
       setStage(active.literal, 'done');
-      // the NEXT kanji of the block starts its own teaching pass
+      /* KANJI-WRITE-FIX §۲ — writing is REQUIRED: completing the deck owns the
+       * walk's forward movement (the same auto-advance as the kana card —
+       * the «ادامه» button is never offered on this slide). The transport
+       * feeds this card ONE kanji per slide, so the deck completes after THIS
+       * kanji's free write; the multi-kanji fallback (an un-split deck that
+       * slipped through) advances internally and fires on the LAST kanji. */
       if (activeIdx < characters.length - 1) {
+        // the NEXT kanji of the block starts its own teaching pass
         setActiveIdx(activeIdx + 1);
       } else {
         setAllDone(true);
+        onWritingDone?.();
       }
     }, EXPERIENCE.kanaReviewPauseMs);
-  }, [beat, active.literal, setStage, activeIdx, characters.length, reportAttempt]);
+  }, [beat, active.literal, setStage, activeIdx, characters.length, reportAttempt, onWritingDone]);
 
   /* derived panel data (KanaCard parity: the live narration + progress dots) */
   const showingTeaching = stage === 'intro' || replayRunning;
@@ -299,44 +311,48 @@ export function KanjiWritingCard({
       <h3 className="text-h3 font-bold">{fa.curriculum.writingBlockTitle}</h3>
       {instructionsFa ? <p className="text-body leading-[var(--leading-fa)] text-ink-soft">{instructionsFa}</p> : null}
 
-      {/* the kanji picker with per-kanji progress (stage chips — RTL grid) */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-small text-ink-faint">{fa.curriculum.writingPickChar}</span>
-        {characters.map((c, i) => {
-          const cStage = stageByLiteral[c.literal] ?? 'intro';
-          const done = cStage === 'done';
-          return (
-            <button
-              key={c.literal}
-              type="button"
-              onClick={() => {
-                setActiveIdx(i);
-                setFeedback(null);
-                setRestartSignal((n) => n + 1);
-              }}
-              aria-pressed={i === activeIdx}
-              className={`flex min-h-11 items-center gap-2 rounded-md border-2 px-3 font-jp text-h3 font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai ${
-                i === activeIdx
-                  ? 'border-indigo bg-indigo text-paper'
-                  : done
-                    ? 'border-success bg-card text-success'
-                    : 'border-ink-faint bg-card text-ink hover:bg-surface-warm'
-              }`}
-            >
-              {c.literal}
-              <span className="text-micro font-normal">
-                {done
-                  ? fa.curriculum.kanaStageChipDone
-                  : cStage === 'intro' || cStage === 'ready'
-                    ? fa.curriculum.kanaStageChipIntro
-                    : cStage === 'guided'
-                      ? fa.curriculum.kanaStageChipGuided
-                      : fa.curriculum.kanaStageChipFree}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      {/* the kanji picker with per-kanji progress (stage chips — RTL grid).
+       * KANJI-WRITE-FIX §۱: the transport feeds ONE kanji per slide — a
+       * single-entry deck renders NO picker (the slide IS the kanji's own). */}
+      {characters.length > 1 ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-small text-ink-faint">{fa.curriculum.writingPickChar}</span>
+          {characters.map((c, i) => {
+            const cStage = stageByLiteral[c.literal] ?? 'intro';
+            const done = cStage === 'done';
+            return (
+              <button
+                key={c.literal}
+                type="button"
+                onClick={() => {
+                  setActiveIdx(i);
+                  setFeedback(null);
+                  setRestartSignal((n) => n + 1);
+                }}
+                aria-pressed={i === activeIdx}
+                className={`flex min-h-11 items-center gap-2 rounded-md border-2 px-3 font-jp text-h3 font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai ${
+                  i === activeIdx
+                    ? 'border-indigo bg-indigo text-paper'
+                    : done
+                      ? 'border-success bg-card text-success'
+                      : 'border-ink-faint bg-card text-ink hover:bg-surface-warm'
+                }`}
+              >
+                {c.literal}
+                <span className="text-micro font-normal">
+                  {done
+                    ? fa.curriculum.kanaStageChipDone
+                    : cStage === 'intro' || cStage === 'ready'
+                      ? fa.curriculum.kanaStageChipIntro
+                      : cStage === 'guided'
+                        ? fa.curriculum.kanaStageChipGuided
+                        : fa.curriculum.kanaStageChipFree}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
 
       {allDone ? (
         <div

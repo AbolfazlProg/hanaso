@@ -75,6 +75,22 @@ import { getCachedAudio, preloadAudio } from '@/modules/audio/client-cache';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
+/**
+ * KANJI-WRITE-FIX 2026-11-23 §۲ — a kanji writing deck (the transport feeds it
+ * ONE kanji per slide): the walk treats it like a kana-card — writing is a
+ * REQUIRED interaction. The «ادامه» forward button is never offered on such a
+ * slide; the card owns its CTA («شروع تمرین نوشتن») and auto-advances the walk
+ * when the free-writing stage completes (onWritingDone — #117 §8 semantics,
+ * now the kanji law too). Kana drill decks stay practice-layer (DD-106) with
+ * the forward button — the kana side is the owner's reference, unchanged.
+ */
+function isKanjiWritingDeck(
+  block: Extract<ClientTeachingBlock, { kind: 'writing-practice' }> | undefined | null,
+): boolean {
+  if (!block) return false;
+  return (block.characters[0] ?? '').split('').some(isKanjiChar);
+}
+
 interface Line {
   id: string;
   /* SMART-RUBY §۲ — the transport carries the full DialogueToken (reading
@@ -1410,8 +1426,9 @@ export function StationRunner(props: StationRunnerProps) {
               prev[block.id] === progress.stage ? prev : { ...prev, [block.id]: progress.stage },
             );
           }}
-          onKanaWritingDone={() => {
-            // #117 §8: the writing stage completed — the walk continues.
+          onWritingDone={() => {
+            // #117 §8 + KANJI-WRITE-FIX §۲: the writing stage completed — the walk
+            // continues. Serves BOTH kana cards and kanji writing slides.
             if (step < blocks.length - 1) setStep((s) => s + 1);
             else void finishSession(null);
           }}
@@ -1445,14 +1462,18 @@ export function StationRunner(props: StationRunnerProps) {
       {/*
        * Action row (Issue #102 + #117 §8): «مرحلهٔ قبل» appears from the 2nd block
        * onward; the forward button keeps its exercise/scene exceptions AND the
-       * kana-card gate (writing is required — no skipping past a kana card by
-       * button until its free-writing stage completes; the card owns its CTA
-       * and auto-advances via onKanaWritingDone).
+       * writing gate (writing is required — no skipping past a kana card OR a
+       * kanji writing slide by button until its free-writing stage completes;
+       * the card owns its CTA and auto-advances via onWritingDone).
        */}
       {!completed &&
         !replayEnded &&
         (step > 0 ||
-          (block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card')) && (
+          (block &&
+            block.kind !== 'exercise' &&
+            block.kind !== 'character-scene' &&
+            block.kind !== 'kana-card' &&
+            !isKanjiWritingDeck(block.kind === 'writing-practice' ? block : null))) && (
           <div className="flex items-center gap-3">
             {step > 0 && (
               <button
@@ -1464,19 +1485,23 @@ export function StationRunner(props: StationRunnerProps) {
                 {fa.curriculum.prevBlock}
               </button>
             )}
-            {block && block.kind !== 'exercise' && block.kind !== 'character-scene' && block.kind !== 'kana-card' && (
-              <button
-                type="button"
-                onClick={next}
-                disabled={completing}
-                className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
-              >
-                {/* TL-10 §6/§7: a plain forward action — a status text is never
+            {block &&
+              block.kind !== 'exercise' &&
+              block.kind !== 'character-scene' &&
+              block.kind !== 'kana-card' &&
+              !isKanjiWritingDeck(block.kind === 'writing-practice' ? block : null) && (
+                <button
+                  type="button"
+                  onClick={next}
+                  disabled={completing}
+                  className="flex h-11 items-center gap-2 rounded-md bg-indigo px-5 text-body font-bold text-paper transition-[background-color,translate] hover:bg-indigo-deep active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai disabled:opacity-45"
+                >
+                  {/* TL-10 §6/§7: a plain forward action — a status text is never
                  posed as a button, and a normal action is never red. */}
-                {fa.curriculum.continueBlock}
-                <ArrowLeft aria-hidden className="size-4" />
-              </button>
-            )}
+                  {fa.curriculum.continueBlock}
+                  <ArrowLeft aria-hidden className="size-4" />
+                </button>
+              )}
           </div>
         )}
 
@@ -1922,7 +1947,7 @@ function BlockView({
   onKanaProgress,
   kanjiWritingStages,
   onKanjiWritingProgress,
-  onKanaWritingDone,
+  onWritingDone,
   relatedExamplesByKanaId,
   taughtKana,
 }: {
@@ -1996,8 +2021,9 @@ function BlockView({
   kanjiWritingStages?: Record<string, string>;
   /** SMART-RUBY §۴ — kanji-writing stage persistence reporter. */
   onKanjiWritingProgress?: (blockId: string, literal: string, stage: string) => void;
-  /** #117 §8: the staged writing experience completed → the walk continues. */
-  onKanaWritingDone?: () => void;
+  /** #117 §8 + KANJI-WRITE-FIX §۲ — fires when a REQUIRED writing deck (a kana
+   * card or a kanji writing slide) completes its free-writing stage. */
+  onWritingDone?: () => void;
   /** TASK-HANASO-CTA-01 §۴: kanaId → its related usage examples (station-wide). */
   relatedExamplesByKanaId?: Record<string, KanaRelatedExample[]>;
   /**
@@ -2234,7 +2260,7 @@ function BlockView({
           taughtKana={taughtKana}
           initialProgress={kanaCardStage ? ({ stage: kanaCardStage } as KanaCardProgress) : undefined}
           onProgress={onKanaProgress}
-          onWritingDone={onKanaWritingDone}
+          onWritingDone={onWritingDone}
           onWritingAttempt={(summary) => {
             void recordWritingPractice({
               chapterSlug,
@@ -2596,14 +2622,20 @@ function BlockView({
     }
 
     case 'writing-practice': {
-      /* SMART-RUBY §۴ (mission «اصلاح بخش نوشتاری کانجی»): a KANJI writing
-       * block renders the staged kanji writing card — the kana-writing
-       * experience over the SAME shared WritingCanvas/engine (intro teaching
-       * pass → guided trace → free from memory → next kanji; per-stroke
-       * narration, progress dots, hint escalation, replay, restart; the
-       * anchor words with their own audio beside the canvas). Kana drill
-       * blocks keep their drill host (TASK-LEARNING-07 DD-105/DD-111). */
-      const isKanjiDeck = (block.characters[0] ?? '').split('').some(isKanjiChar);
+      /* SMART-RUBY §۴ + KANJI-WRITE-FIX 2026-11-23 §۱/§۲ (owner order «هر کانجی
+       * اسلاید مخصوص خودش، بدون دکمهٔ رد شدن»): a KANJI writing block renders
+       * the staged kanji writing card — the kana-writing experience over the SAME
+       * shared WritingCanvas/engine (auto intro teaching pass resting on the
+       * finished glyph → the ONE confirm CTA → guided trace → free from memory
+       * → the walk auto-advances; per-stroke narration, progress dots, hint
+       * escalation, replay, restart; the anchor words with their own audio
+       * beside the canvas). The transport feeds it ONE kanji per slide
+       * (`wp-…@人`), so every kanji gets its own dedicated slide — the card keeps
+       * its multi-kanji fallback for any un-split deck that slips through. The
+       * deck is a REQUIRED interaction: no «ادامه» button, onWritingDone
+       * continues the walk (#117 §8 semantics). Kana drill blocks keep their
+       * drill host (TASK-LEARNING-07 DD-105/DD-111). */
+      const isKanjiDeck = isKanjiWritingDeck(block);
       if (isKanjiDeck) {
         const entries: KanjiWritingEntry[] = block.characters.flatMap((ch) => {
           const data = Object.values(kanjiDataByKanjiId ?? {}).find((k) => k?.literal === ch);
@@ -2634,6 +2666,7 @@ function BlockView({
               instructionsFa={block.instructionsFa}
               initialStageByLiteral={kanjiWritingStages}
               onProgress={(literal, stage) => onKanjiWritingProgress?.(block.id, literal, stage)}
+              onWritingDone={onWritingDone}
             />
           );
         }

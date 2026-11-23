@@ -31,6 +31,16 @@
  *               taught or not. (Teaching surfaces — the kanji-cards and the
  *               wrap-up recap — stay exempt: carriers/lookalike notes are
  *               teaching material, K3-gated.)
+ *   K7 (error)  KANJI-WRITE-SCOPE (KANJI-WRITE-FIX 2026-11-23 §۳): the writing
+ *               practice of a kanji station may only carry the station's OWN
+ *               target kanji — every kanji literal of a `writing-practice`
+ *               deck must be one of the literals the station's kanji-cards
+ *               teach, and a deck carrying kanji lives ONLY in a type-'kanji'
+ *               station (writing a kanji IS teaching it — K1's law for decks).
+ *               The transport splits every deck into one slide per kanji
+ *               (§۱ — «هر کانجی اسلاید مخصوص خودش، از موتور»), so a future
+ *               agent-authored station can never smuggle an off-target or
+ *               untaught kanji into the writing experience.
  *
  * The number of kanji stations per chapter is NOT fixed — one or more as
  * content needs («تعداد ثابت و تصنعی تعیین نکن»); nothing here imposes one.
@@ -45,6 +55,7 @@ import { stationsInWalkOrder } from '../eqa/model';
 import type { KnowledgeRegistry } from './types';
 import { KANJI_ITEMS_BY_ID, kanjiInSurface } from '../kanji';
 import { collectChapterSurfaces } from './surfaces';
+import { isKanjiChar } from './reading-model';
 
 const KANJI_STATION_BUDGET_MAX = 4; // kanji-interaction-blueprint «۲–۴ کانجی/ایستگاه»
 
@@ -84,6 +95,20 @@ export function gateEqa12(chapter: Chapter, registry: KnowledgeRegistry): EqaFin
           `کانجی‌کارت ${card.id} در ایستگاه ${station.slug} از نوع ${station.type} است — تدریس کانجی فقط در ایستگاه اختصاصی kanji مجاز است؛ معرفی در کارت واژه/ایستگاه دیگر به معنی تدریس کانجی نیست (K1).`,
         );
       }
+      /* K7 (the other half) — a writing deck carrying kanji lives ONLY in a
+       * type-'kanji' station: writing a kanji IS teaching it (K1's law). */
+      for (const b of station.blocks) {
+        if (b.kind !== 'writing-practice') continue;
+        const deck = b as Extract<(typeof station.blocks)[number], { kind: 'writing-practice' }>;
+        const deckKanji = deck.characters.flatMap((ch) => ch.split('').filter(isKanjiChar));
+        if (deckKanji.length === 0) continue;
+        push(
+          'kanji-writing-outside-kanji-station',
+          'error',
+          deck.id,
+          `بخش تمرین نوشتن ${deck.id} در ایستگاه ${station.slug} از نوع ${station.type} کانجی دارد (${deckKanji.join('، ')}) — تمرین نوشتنِ کانجی فقط در ایستگاه اختصاصی kanji مجاز است؛ نوشتن کانجی یعنی تدریس آن (K7).`,
+        );
+      }
       continue;
     }
 
@@ -114,6 +139,27 @@ export function gateEqa12(chapter: Chapter, registry: KnowledgeRegistry): EqaFin
       const card = b as Extract<(typeof station.blocks)[number], { kind: 'kanji-card' }>;
       const ref = KANJI_ITEMS_BY_ID.get(card.kanjiId);
       if (ref) targetLiterals.add(ref.literal);
+    }
+
+    /* K7 — the kanji-station WRITING scope (KANJI-WRITE-FIX §۳): every kanji
+     * literal of the station's writing decks must be one of the station's own
+     * target literals — the writing slides are per-target-kanji (the transport
+     * splits every deck — «هر کانجی اسلاید مخصوص خودش، از موتور»), so a deck
+     * may never carry a kanji this station does not teach. */
+    for (const b of station.blocks) {
+      if (b.kind !== 'writing-practice') continue;
+      const deck = b as Extract<(typeof station.blocks)[number], { kind: 'writing-practice' }>;
+      for (const ch of deck.characters) {
+        for (const literal of ch.split('').filter(isKanjiChar)) {
+          if (targetLiterals.has(literal)) continue;
+          push(
+            'kanji-writing-outside-target',
+            'error',
+            deck.id,
+            `بخش تمرین نوشتن ${deck.id} در ایستگاه کانجیِ ${station.slug} کانجیِ «${literal}» را دارد که از کانجی‌های هدف همین ایستگاه نیست — اسلایدهای تمرین نوشتن فقط باید همان کانجی‌های هدف ایستگاه را (هر کانجی یک اسلاید، از موتور) تمرین بدهند (K7).`,
+          );
+        }
+      }
     }
     for (const surface of chapterSurfaces) {
       if (surface.stationSlug !== station.slug || surface.role !== 'assess') continue;

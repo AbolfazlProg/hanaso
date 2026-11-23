@@ -22,6 +22,9 @@ import * as React from 'react';
 
 import { KanjiWritingCard } from '@/components/curriculum/kanji-writing-card';
 import type { KanjiWritingEntry } from '@/components/curriculum/kanji-writing-card';
+import { fa } from '@/messages/fa';
+
+const faCurriculumPickChar = fa.curriculum.writingPickChar;
 
 const webRoot = join(__dirname, '..', '..', '..');
 const INDEX = readFileSync(join(webRoot, 'public', 'writing-data', 'index.json'), 'utf8');
@@ -145,6 +148,64 @@ describe('KanjiWritingCard — kana-writing parity over the shared engine', () =
       expect(container.querySelector('[data-stroke-info]')).toBeTruthy();
     });
   });
+
+  /* KANJI-WRITE-FIX §۱/§۲ — the transport feeds ONE kanji per slide
+   * (`wp-…@人`): the card is the kanji's OWN dedicated slide — no picker, and
+   * completing the free write hands the walk its forward movement
+   * (onWritingDone — the same #117 §8 gate semantics as the kana card). */
+  it(
+    'a single-kanji slide: NO picker, and the completed free write fires onWritingDone once',
+    { timeout: 30000 },
+    async () => {
+      vi.useFakeTimers();
+      const writingDone = vi.fn();
+      const { container } = render(
+        <KanjiWritingCard
+          blockId="wp-kanji-jin-kuni@人"
+          chapterSlug="first-meeting-01"
+          stationSlug="stn-fm01-23-kanji"
+          characters={[ENTRIES[0]!]}
+          onWritingDone={writingDone}
+        />,
+      );
+      // the slide IS the kanji's own — no character picker on a per-kanji slide
+      expect(container.textContent).not.toContain(faCurriculumPickChar);
+
+      // intro auto-plays → ready → the ONE confirm CTA
+      for (let k = 0; k < 20; k += 1) {
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(5000);
+        });
+        if (container.querySelector('[data-kj-stage="ready"]')) break;
+      }
+      expect(container.querySelector('[data-kj-stage="ready"]'), 'intro auto-flowed to ready').toBeTruthy();
+      await act(async () => {
+        fireEvent.click(container.querySelector('[data-ready-cta]')!);
+      });
+      for (let k = 0; k < 16; k += 1) {
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(5000);
+        });
+        if (container.querySelector('[data-kj-stage="guided"]')) break;
+      }
+      expect(container.querySelector('[data-kj-stage="guided"]')).toBeTruthy();
+
+      // guided → free → done (the walk-level completion of THIS slide's kanji)
+      let svg = container.querySelector('svg[role="img"]');
+      drawAll(svg!, JIN_DATA.medians);
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+      expect(container.querySelector('[data-kj-stage="free"]')).toBeTruthy();
+      svg = container.querySelector('svg[role="img"]');
+      drawAll(svg!, JIN_DATA.medians);
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(3000);
+      });
+      expect(container.querySelector('[data-kanji-writing-done]'), 'the slide completed').toBeTruthy();
+      expect(writingDone, 'onWritingDone fired exactly once for the deck').toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('auto-flows intro → ready → guided and writes 人 (the full staged timeline)', { timeout: 30000 }, async () => {
     vi.useFakeTimers();

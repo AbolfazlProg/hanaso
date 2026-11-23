@@ -6,7 +6,7 @@ import { sectionOfStation } from '@/modules/curriculum/journey';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { getStationProgressStore } from '@/lib/poc/stores';
 import { previewUnlockAll, unlockAllMode } from '@/lib/preview';
-import { toClientExercise, toClientStation } from '@/modules/curriculum';
+import { toClientExercise, toClientStation, splitKanjiWritingBlocks } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
 import {
   wordAudioUrls,
@@ -190,8 +190,11 @@ export default async function StationPage({
    * here. A validated block id moves the walk POINTER only (client-side walk
    * position, the same trust level as the resume anchor) — it grants no
    * progress: completion still runs the ordinary walk/completion flow.
+   * KANJI-WRITE-FIX §۱ (2026-11-23): the id validates against the WALK view —
+   * kanji writing decks travel as one slide per kanji (`${deckId}@${literal}`).
    */
-  const initialBlockId = block && station.blocks.some((b) => b.id === block) ? block : undefined;
+  const walkBlockIds = new Set(splitKanjiWritingBlocks(station).blocks.map((b) => b.id));
+  const initialBlockId = block && walkBlockIds.has(block) ? block : undefined;
 
   /*
    * Part-2 ط (G1 truly in the execution path): when THIS is the last core

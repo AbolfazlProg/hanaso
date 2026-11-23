@@ -1298,12 +1298,19 @@ export const FM01_STATIONS: Station[] = [
       },
       ex('blk-ex-kanji-kuni-cloze', ['ex-fm01-kj-kuni-cloze']),
       {
+        /* KANJI-WRITE-FIX 2026-11-23 §۱ (owner order «هر کانجی اسلاید مخصوص خودش
+         * را دارد، از موتور»): the authored deck may list its kanji together —
+         * the transport ENGINE splits it into ONE SLIDE PER KANJI
+         * (`wp-kanji-jin-kuni@人` / `wp-kanji-jin-kuni@国`), each with its own
+         * staged writing timeline (auto intro pass → confirm → guided trace →
+         * free from memory → auto-advance). The instructions stay generic so
+         * they read correctly on EVERY per-kanji slide. */
         kind: 'writing-practice',
         id: 'wp-kanji-jin-kuni',
         characters: ['人', '国'],
         initialMode: 'guided',
         instructionsFa:
-          'اول ترتیب ضربه‌ها را روی هر کانجی تماشا کن (人 دو ضربه · 国 هشت ضربه)، بعد با حالت «ردیابی» روی مسیر بکش و در پایان از حافظه بنویس.',
+          'اول تماشا کن: ترتیب ضربه‌های این کانجی خودش در بوم نوشته می‌شود و شکلِ نهایی‌اش همان‌جا می‌ماند. بعد با دکمهٔ «شروع تمرین نوشتن» وارد تمرین شو — یک بار با راهنمای خط‌چین بکش و در پایان از حافظه بنویس.',
       },
       ex('blk-ex-kanji-kuni-reading', ['ex-fm01-kj-kuni-reading']),
       ex('blk-ex-kanji-exit', ['ex-fm01-kj-exit']),
