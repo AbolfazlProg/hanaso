@@ -21,6 +21,16 @@
  *               via EQA-9, never a hard cliff mid-chapter).
  *   K5 (error)  kanji-card ids must resolve in the N5 reference; a dedicated
  *               station exists for every kanji the chapter declares.
+ *   K6 (error)  KANJI-SCOPE (SMART-RUBY §۳ 2026-11-23): every question of a
+ *               kanji station teaches/assesses ONLY the station's own target
+ *               kanji — every kanji literal in any ASSESS surface of the
+ *               station (prompt, options incl. distractors, cloze context,
+ *               chunks/chips, hints, feedback, rationales) must be one of
+ *               the literals the station's kanji-cards teach. A kanji-station
+ *               question may never presuppose knowledge of another kanji —
+ *               taught or not. (Teaching surfaces — the kanji-cards and the
+ *               wrap-up recap — stay exempt: carriers/lookalike notes are
+ *               teaching material, K3-gated.)
  *
  * The number of kanji stations per chapter is NOT fixed — one or more as
  * content needs («تعداد ثابت و تصنعی تعیین نکن»); nothing here imposes one.
@@ -33,7 +43,8 @@ import type { Chapter } from '../types';
 import type { EqaFinding } from '../eqa/policy';
 import { stationsInWalkOrder } from '../eqa/model';
 import type { KnowledgeRegistry } from './types';
-import { KANJI_ITEMS_BY_ID } from '../kanji';
+import { KANJI_ITEMS_BY_ID, kanjiInSurface } from '../kanji';
+import { collectChapterSurfaces } from './surfaces';
 
 const KANJI_STATION_BUDGET_MAX = 4; // kanji-interaction-blueprint «۲–۴ کانجی/ایستگاه»
 
@@ -49,6 +60,10 @@ export function gateEqa12(chapter: Chapter, registry: KnowledgeRegistry): EqaFin
       ruleRef: 'KANJI-TWO-PHASE §۲ · kanji-interaction-blueprint (D-0006) · Knowledge Registry',
     });
   };
+
+  /* SMART-RUBY §۳ — the ASSESS-surface inventory of the chapter, computed once
+   * (K6 walks exactly the surfaces the prerequisite engine already audits). */
+  const chapterSurfaces = collectChapterSurfaces(chapter);
 
   const declared = new Set((chapter.kanji ?? []).map((k) => k.kanjiId));
   const taughtHere = new Set<string>();
@@ -89,6 +104,28 @@ export function gateEqa12(chapter: Chapter, registry: KnowledgeRegistry): EqaFin
         station.slug,
         `ایستگاه ${station.slug} ${kanjiCards.length} کانجی‌کارت دارد — سقف طراحی ${KANJI_STATION_BUDGET_MAX} کانجی/ایستگاه (۲–۴؛ عدد کالیبرهٔ فریم‌ورک — بازبینی EQA-9).`,
       );
+    }
+
+    /* K6 — the kanji-station question scope (SMART-RUBY §۳): the station's
+     * target literals are exactly what its kanji-cards teach; every kanji in
+     * any assess surface of THIS station must be one of them. */
+    const targetLiterals = new Set<string>();
+    for (const b of kanjiCards) {
+      const card = b as Extract<(typeof station.blocks)[number], { kind: 'kanji-card' }>;
+      const ref = KANJI_ITEMS_BY_ID.get(card.kanjiId);
+      if (ref) targetLiterals.add(ref.literal);
+    }
+    for (const surface of chapterSurfaces) {
+      if (surface.stationSlug !== station.slug || surface.role !== 'assess') continue;
+      for (const literal of kanjiInSurface(surface.text)) {
+        if (targetLiterals.has(literal)) continue;
+        push(
+          'kanji-exercise-outside-target',
+          'error',
+          surface.exerciseId ?? surface.blockId,
+          `پرسش ${surface.exerciseId ?? surface.blockId} (فیلد ${surface.field}) در ایستگاه کانجیِ ${station.slug} کانجیِ «${literal}» را دارد که از کانجی‌های هدف همین ایستگاه نیست — پرسش‌های ایستگاه کانجی فقط باید همان کانجی هدف را بیاموزند و بسنجند و نباید شناخت کانجی دیگری را پیش‌فرض بگیرند (K6).`,
+        );
+      }
     }
 
     for (const b of kanjiCards) {

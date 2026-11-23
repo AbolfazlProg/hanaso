@@ -1305,7 +1305,7 @@ export const FM01_STATIONS: Station[] = [
         instructionsFa:
           'اول ترتیب ضربه‌ها را روی هر کانجی تماشا کن (人 دو ضربه · 国 هشت ضربه)، بعد با حالت «ردیابی» روی مسیر بکش و در پایان از حافظه بنویس.',
       },
-      ex('blk-ex-kanji-cloze-jin', ['ex-fm01-kj-cloze-jin']),
+      ex('blk-ex-kanji-kuni-reading', ['ex-fm01-kj-kuni-reading']),
       ex('blk-ex-kanji-exit', ['ex-fm01-kj-exit']),
       {
         kind: 'wrap-up',

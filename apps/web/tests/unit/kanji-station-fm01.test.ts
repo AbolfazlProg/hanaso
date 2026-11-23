@@ -22,7 +22,8 @@ import path from 'node:path';
 import { getChapter } from '@/modules/curriculum/content';
 import { buildKnowledgeRegistry } from '@/modules/curriculum/knowledge/registry';
 import { gateEqa12 } from '@/modules/curriculum/knowledge/kanji-contract';
-import { KANJI_ITEMS_BY_ID } from '@/modules/curriculum/kanji';
+import { KANJI_ITEMS_BY_ID, kanjiInSurface } from '@/modules/curriculum/kanji';
+import { collectChapterSurfaces } from '@/modules/curriculum/knowledge/surfaces';
 import { stationsInWalkOrder } from '@/modules/curriculum/eqa/model';
 
 function fm01() {
@@ -172,5 +173,75 @@ describe('KANJI §۲ — the dedicated station of chapter 02 (the real path)', (
         ).toBeLessThan(stationPos);
       }
     }
+  });
+
+  /* ── K6 (SMART-RUBY §۳ 2026-11-23 — mission «محدودکردن سؤال‌های ایستگاه کانجی
+   * به کانجی هدف»): a kanji-station question may only involve the station's
+   * own target kanji — no other kanji (taught or not) in prompts, options,
+   * distractors, cloze context, hints, feedback or rationales. Permanent
+   * battery: the real station is pinned clean AND the engine rule itself is
+   * mutation-tested (an out-of-target kanji MUST produce a violation). */
+  describe('K6 — kanji-station question scope (only the target kanji)', () => {
+    it('the REAL station is clean: no kanji outside {人, 国} in any assess surface', () => {
+      const chapter = fm01();
+      const station = chapter.stations.find((s) => s.slug === STATION_SLUG)!;
+      const targets = new Set(
+        station.blocks
+          .filter((b) => b.kind === 'kanji-card')
+          .map((b) => KANJI_ITEMS_BY_ID.get((b as { kanjiId: string }).kanjiId)?.literal),
+      );
+      expect([...targets].sort()).toEqual(['人', '国']);
+      const surfaces = collectChapterSurfaces(chapter).filter(
+        (s) => s.stationSlug === STATION_SLUG && s.role === 'assess',
+      );
+      expect(surfaces.length).toBeGreaterThan(0);
+      for (const surface of surfaces) {
+        for (const literal of kanjiInSurface(surface.text)) {
+          expect(
+            targets.has(literal),
+            `${surface.exerciseId ?? surface.blockId} · ${surface.field}: «${literal}»`,
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('the retired offenders are gone: no 入/八/大/中/日/学/韓 in any kanji-station question', () => {
+      const chapter = fm01();
+      const surfaces = collectChapterSurfaces(chapter).filter(
+        (s) => s.stationSlug === STATION_SLUG && s.role === 'assess',
+      );
+      const offenders = new Set(['入', '八', '大', '中', '日', '学', '韓', '本']);
+      for (const surface of surfaces) {
+        for (const literal of kanjiInSurface(surface.text)) {
+          expect(offenders.has(literal), `retired distractor «${literal}» back in ${surface.field}`).toBe(false);
+        }
+      }
+    });
+
+    it('the ENGINE rejects a kanji-station question that smuggles another kanji (mutation)', () => {
+      const chapter = fm01();
+      const registry = buildKnowledgeRegistry([chapter]);
+      const poisoned = JSON.parse(JSON.stringify(chapter)) as typeof chapter;
+      const ex = poisoned.exercises['ex-fm01-kj-kuni-cloze']!;
+      ex.options = [
+        { id: 'a', label: '人' },
+        { id: 'b', label: '大学' },
+        { id: 'c', label: '国' },
+      ];
+      ex.correctOptionId = 'c';
+      const findings = gateEqa12(poisoned, registry);
+      const k6 = findings.filter((f) => f.rule === 'kanji-exercise-outside-target');
+      expect(k6.length).toBeGreaterThanOrEqual(1);
+      expect(k6[0]!.messageFa).toContain('«大»');
+      // and the clean real chapter stays clean
+      expect(gateEqa12(chapter, registry).filter((f) => f.rule === 'kanji-exercise-outside-target')).toEqual([]);
+    });
+
+    it('carrier words still TAUGHT BEFORE the station (K3 unchanged by the scope rewrite)', () => {
+      const chapter = fm01();
+      const registry = buildKnowledgeRegistry([chapter]);
+      const findings = gateEqa12(chapter, registry);
+      expect(findings.filter((f) => f.rule !== 'kanji-exercise-outside-target')).toEqual([]);
+    });
   });
 });

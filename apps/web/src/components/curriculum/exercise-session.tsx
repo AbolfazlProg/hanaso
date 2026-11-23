@@ -36,7 +36,7 @@ import type { ClientExercise } from '@/modules/curriculum/grading';
 import { mergeEliminated } from '@/modules/curriculum/station-walk';
 import { readLearnerName, writeLearnerName } from '@/lib/learner/preferences';
 import { JaBlock } from '@/components/patterns/ja-block';
-import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
+import { SmartJaText, SmartMixedFaJaText } from '@/components/patterns/smart-ja-text';
 import { getCachedAudio, preloadAudio, reportPlaybackError } from '@/modules/audio/client-cache';
 import { LineAudioButton } from './line-audio-button';
 
@@ -840,7 +840,8 @@ export function ExerciseSession({
                     {selected ? labelFor(ex, selected) : '？'}
                   </span>
                 ) : (
-                  <span key={i}>{tok}</span>
+                  /* SMART-RUBY §۲ — cloze context runs through the law too. */
+                  <SmartJaText key={i} text={tok} />
                 ),
               )}
             </JaBlock>
@@ -855,7 +856,12 @@ export function ExerciseSession({
               </JaBlock>
             </span>
           ) : (
-            <JaBlock className="text-lead">{ex.promptJa}</JaBlock>
+            /* SMART-RUBY §۲ — the prompt's Japanese renders through the
+               learner-aware furigana law (kanji prompts like 人 stay plain —
+               a ruby over a quiz glyph could leak the answer). */
+            <JaBlock className="text-lead">
+              <SmartJaText text={ex.promptJa} />
+            </JaBlock>
           )}
           {ex.promptJaReading && ex.promptJa && feedback && (
             /* PART1-FIX-5: post-answer only — pre-answer this field carried the
@@ -1066,14 +1072,17 @@ export function ExerciseSession({
                * renders through the shared MixedFaJaText engine so runs are
                * isolated and RTL-context arrows point at the next-read item.
                */}
-              <MixedFaJaText text={feedback.feedbackFa} />
+              {/* SMART-RUBY §۲ — the ladder copy's Japanese runs ride the
+                  learner-aware law (kana fragments unchanged, kanji-bearing
+                  fragments get learner-aware ruby + tap-to-inspect). */}
+              <SmartMixedFaJaText text={feedback.feedbackFa} />
             </p>
           )}
           {/* TASK-HANASO-20 (BUG-007): the picked distractor's OWN rationale —
               why *this* choice is wrong, straight under the ladder line. */}
           {feedback.distractorRationaleFa && (
             <p data-distractor-rationale className="ja-instruct text-small leading-[var(--leading-fa)] text-ink-soft">
-              <MixedFaJaText text={feedback.distractorRationaleFa} />
+              <SmartMixedFaJaText text={feedback.distractorRationaleFa} />
             </p>
           )}
           {feedback.reveal && (
@@ -1133,7 +1142,7 @@ export function ExerciseSession({
               data-testid="hint-text"
             >
               <span className="font-bold">{fa.curriculum.showHint}: </span>
-              <MixedFaJaText text={hintFa} />
+              <SmartMixedFaJaText text={hintFa} />
             </p>
           )}
         </div>
@@ -1269,8 +1278,12 @@ export function OptionRow({ options, selected, eliminated, locked, onSelect, ver
                  bold; the plain span stays for words/sentences/Persian labels. */
               <JaBlock className={'text-h2 font-bold' + (isEliminated ? ' line-through' : '')}>{opt.label}</JaBlock>
             ) : (
+              /* SMART-RUBY §۲ — a kanji-bearing option label rides the same LAW
+                 (ruby over untaught kanji, hidden once taught) but WITHOUT the
+                 tap affordance — a nested control inside the answer button
+                 would break the answer interaction itself. */
               <span dir="auto" className={isEliminated ? 'line-through' : undefined}>
-                {opt.label}
+                <SmartJaText text={opt.label} inspect={false} />
               </span>
             )}
             {isEliminated && (

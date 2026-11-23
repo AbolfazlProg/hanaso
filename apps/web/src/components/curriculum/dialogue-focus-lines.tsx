@@ -27,6 +27,7 @@ import { useEffect, useRef } from 'react';
 import { MessagesSquare, Quote } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
+import { SmartJaText } from '@/components/patterns/smart-ja-text';
 import { LineAudioButton } from '@/components/curriculum/line-audio-button';
 import { SvgPlaceholderRenderer, listCharacters } from '@/modules/character';
 import type { CharacterAssetManifest } from '@/modules/character';
@@ -119,9 +120,22 @@ function FocusLineCard({
 
       {/* the line itself — ONLY this line's Japanese, with its own audio */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-surface-warm p-3">
+        {/* SMART-RUBY §۲ — the focused line renders through the learner-aware
+            furigana law: a kanji token's reading rides above it until the kanji
+            AND that reading are taught to THIS learner (completed stations only
+            — this dialogue encounter is never teaching), then hides and the
+            kanji becomes tap-to-inspect. Kana tokens stay plain; the highlight
+            emphasis is preserved on both. */}
         <JaBlock className="text-lead font-bold leading-snug text-ink">
           {line.tokens.map((t, i) => {
             const hl = highlightSurfaces?.some((h) => h.length > 0 && t.surface.endsWith(h));
+            if (t.reading && t.reading !== t.surface) {
+              return (
+                <span key={i} className={hl ? 'rounded-sm bg-indigo-wash px-0.5 font-bold text-shu' : undefined}>
+                  <SmartJaText tokens={[{ surface: t.surface, reading: t.reading }]} />
+                </span>
+              );
+            }
             return (
               <span key={i} className={hl ? 'rounded-sm bg-indigo-wash px-0.5 font-bold text-shu' : undefined}>
                 {t.surface}

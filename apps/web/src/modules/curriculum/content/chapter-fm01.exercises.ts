@@ -2230,15 +2230,23 @@ export const FM01_EXERCISES: Exercise[] = [
     assessmentRole: 'practice',
   },
 
-  /* ════════════════════════ KANJI STATION (stn-fm01-23-kanji) — AUDIO-UNIT/KANJI 2026-11-23 ════════════════════════
+  /* ════════════════════════ KANJI STATION (stn-fm01-23-kanji) — AUDIO-UNIT/KANJI + SMART-RUBY §۳ ════════════════════════
    * The DEDICATED kanji station of chapter 02 (the kanji-pilot plan's station —
    * P1-green: 人 ۴ anchor / 国 ۲ anchor, readings ride inside the anchor words
    * D-0006). Every kanji-target item sits AFTER its kanji-card in the same
    * station deck (EQA-1/EQA-8 R5 — teach before assess); the audio-meaning
    * items play the ANCHOR WORD's standalone asset (EQA-13 word-anchor binding).
-   * Deck: 3 recognition (shape discrimination / reading-in-anchor / audio exit)
-   * + 2 recall (kanji-tail cloze / word-form cloze) — the recall-first share is
-   * the chapter-pool contract (EQA-3 ≥60%). */
+   *
+   * KANJI-SCOPE (mission §۳, EQA-12 K6 — 2026-11-23): every question of this
+   * station teaches/assesses ONLY the station's own target kanji (人, 国). No
+   * other kanji — taught or not — appears in any prompt, option, distractor,
+   * cloze context, hint, feedback or rationale: answering never presupposes
+   * knowledge of another kanji (the previous 入/八/大/中/日/學 distractor set
+   * is retired). The full written nationality forms (韓国人…) stay on the
+   * TEACHING card (kanji-card anchors — carriers taught before, K3) and in
+   * the smart-ruby rendering; the QUESTIONS work with the target kanji, kana
+   * and Persian only. Deck: shape→meaning / reading-in-anchor (audio) /
+   * kanji-tail cloze / 国 reading (audio) / sound→ending-kanji exit. */
   {
     id: 'ex-fm01-kj-jin-shape',
     type: 'meaning-select',
@@ -2247,25 +2255,24 @@ export const FM01_EXERCISES: Exercise[] = [
     assessesConcepts: ['kj-4eba'],
     lineRef: L(3),
     difficulty: 1,
-    promptFa: 'کدام شکل، کانجیِ «انسان/شخص» است؟',
-    /* AUDIO-UNIT/KANJI: NO promptJa — the target shape must NOT be shown in
-     * the prompt (that was an answer leak); the learner RETRIEVES the learned
-     * shape from the meaning cue and discriminates it from the lookalikes. */
+    promptFa: 'این کانجی چه معنایی دارد؟',
+    /* The glyph is the question vessel (meaning→recognition direction): the
+     * learner RETRIEVES the meaning 人's kanji-card taught. Options are
+     * PERSIAN meanings — no other kanji shape is on screen (K6). */
+    promptJa: '人',
     ...(() => {
-      const { options, correctOptionId } = o3('x', '人', '入', '八', 2);
+      const { options, correctOptionId } = o3('x', 'انسان، شخص', 'سرزمین، کشور', 'یادگیری، درس', 2);
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      /* options after o3(splice at 2): a=入 b=八 c=人(correct) — the rationales
-       * cover the two DISTRACTOR ids only (W-E3/E4 contract). */
-      a: '入 یعنی «ورود» — ضربه‌هایش پایین‌تر همدیگر را قطع می‌کنند؛ در 人 دو پا از بالا جدا می‌شوند و هیچ‌کدام دیگری را قطع نمی‌کند.',
-      b: '八 یعنی «هشت» — دو ضربه‌اش از وسط به بیرون باز می‌شوند و یکدیگر را قطع نمی‌کنند؛ شکل 人 از بالا شروع می‌شود و به پایین باز می‌شود.',
+      /* options after o3(splice at 2): a=سرزمین، کشور b=یادگیری، درس c=انسان، شخص(correct). */
+      a: 'این معنای 国 است — کانجیِ دیگرِ همین ایستگاه؛ 人 یعنی خودِ آدم.',
+      b: 'یادگیری/درس معنای واژه‌های دیگری از فصل‌های بعد است — 人 با آن‌ها کاری ندارد.',
     },
     feedback: {
-      f1Fa: 'شکل درست همان است که یاد گرفتی: دو ضربهٔ جدا از بالا — 人.',
-      f2HintFa: 'به جایی که دو ضربه از هم جدا می‌شوند نگاه کن: در 人 از بالاست.',
-      f3ExplainFa:
-        '人 (انسان) دو ضربه دارد که از بالا جدا می‌شوند — برخلاف 入 (ورود) که ضربه‌ها همدیگر را قطع می‌کنند، و 八 (هشت) که از وسط باز می‌شود.',
+      f1Fa: '人 یعنی «انسان، شخص» — دو ضربهٔ جدا از بالا.',
+      f2HintFa: 'به شکل نگاه کن: دو ضربه که از بالا شروع می‌شوند و به پایین باز می‌شوند.',
+      f3ExplainFa: '人 = انسان/شخص. دو ضربهٔ جدا از بالا؛ همین کانجی آخرِ همهٔ واژه‌های ملیت این فصل می‌نشیند.',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'kcard-jin',
@@ -2281,7 +2288,8 @@ export const FM01_EXERCISES: Exercise[] = [
     promptFa: 'گوش بده — در این واژه، کانجی 人 چه خوانشی دارد؟',
     /* AUDIO-UNIT (word-anchor): the sound is the anchor word's standalone
      * asset (にほんじん) — the learner maps the kanji's reading INSIDE the
-     * heard word (D-0006 — readings ride inside anchor words). */
+     * heard word (D-0006 — readings ride inside anchor words). Options are
+     * KANA readings (K6: no other kanji shape on screen). */
     audio: { unit: 'word', wordId: 'voc-nihonjin' },
     ...(() => {
       const { options, correctOptionId } = o3('x', 'じん', 'にん', 'ひと', 0);
@@ -2289,13 +2297,13 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: {
       b: 'にん خوانشِ دیگری از همین کانجی است که در شمارش آدم‌ها می‌آید (さんにん = سه نفر) — در واژه‌های ملیت، «جین» می‌شنوی.',
-      c: 'ひと یعنی «انسان» وقتی کانجی تنها و بدون پسوند است — در にほんじん آخرِ واژه «جین» است.',
+      c: 'ひと خوانشی است که وقتی کانجی تنها و بدون پسوند است می‌آید — در にほんじん آخرِ واژه «جین» است.',
     },
     feedback: {
       f1Fa: 'واژهٔ شنیده‌شده با «نی‌هون‌جین» تمام شد — 人 داخل آن «جین» خوانده می‌شود.',
       f2HintFa: 'آخر واژه را بشنو: …جین.',
       f3ExplainFa:
-        'در にほんじん (日本人) کانجی 人 با خوانش «じん» می‌آید — همهٔ ملیت‌های این فصل همین خوانش را دارند.',
+        'در にほんじん (نی‌هون‌جین) کانجی 人 با خوانش «じん» می‌آید — همهٔ ملیت‌های این فصل همین خوانش را دارند.',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'kcard-jin',
@@ -2311,52 +2319,54 @@ export const FM01_EXERCISES: Exercise[] = [
     promptFa: 'عبارت کیم را با کانجی درست کامل کن (خط ۱۲): «از کره آمدم»',
     promptJa: 'かんこく___ きました。',
     clozeTokens: ['かんこく', null, ' きました。'],
-    /* AUDIO-UNIT/KANJI: the blank is a SINGLE KANJI shape — the tail of the
-     * taught word かんこくじん; the distractors are the taught 国 and the
-     * word-form 大 (شکل‌های ناآشنا = متریال دیداری عمدی — warning-tier). */
+    /* AUDIO-UNIT/KANJI + K6: the blank is a SINGLE KANJI shape — the tail of
+     * the taught word かんこくじん; the distractors are the station's own
+     * OTHER target kanji (国) and the kana standalone reading (ひと) —
+     * no untaught kanji anywhere. */
     ...(() => {
-      const { options, correctOptionId } = o3('x', '人', '国', '大', 0);
+      const { options, correctOptionId } = o3('x', '人', '国', 'ひと', 0);
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'かんこく خودش «کره» است و 国 درونش دارد — بعد از آن «انسانِ آن سرزمین» می‌آید: 人؛ 国 دوباره نمی‌آید.',
-      c: '大 سرِ واژهٔ 大学 (だいがく — دانشگاه) است — دربارهٔ مکان تحصیل است، نه ملیت.',
+      b: '国 سرِ واژه‌های سرزمین می‌نشیند (かんこく، ちゅうごく) — دنبالهٔ واژه «اهلِ آن سرزمین» یعنی 人 است؛ 国 دوباره آخرِ واژه نمی‌نشیند.',
+      c: 'ひと خوانشِ تنها-خواندنِ این کانجی است — در واژه‌های ملیت، دنباله با じん خوانده می‌شود و شکل نوشتاری‌اش 人 است.',
     },
     feedback: {
       f1Fa: 'かんこく = کره؛ آخرش «انسانِ آن سرزمین» می‌نشیند — 人.',
       f2HintFa: 'واژهٔ شنیده‌شدهٔ مکالمه: かんこくじん.',
-      f3ExplainFa: 'かんこくじん (韓国人) = かんこく + 人 — دنبالهٔ هر ملیت همین کانجی است.',
+      f3ExplainFa: 'かんこくじん (کره‌ای) = かんこく + 人 — دنبالهٔ هر ملیت همین کانجی است.',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'kcard-kuni',
   },
   {
-    id: 'ex-fm01-kj-cloze-jin',
+    id: 'ex-fm01-kj-kuni-reading',
     type: 'cloze',
     targetSkill: 'vocab',
-    targetConcept: 'voc-chuugokujin',
-    assessesConcepts: ['kj-4eba', 'kj-56fd', 'voc-chuugokujin'],
-    lineRef: L(6),
+    targetConcept: 'kj-56fd',
+    assessesConcepts: ['kj-56fd', 'voc-kankokujin'],
+    lineRef: L(10),
     difficulty: 2,
-    promptFa: 'جملهٔ سورا (خط ۶) را با شکل نوشتاری درست کامل کن: «بله، من چینی‌ام»',
-    promptJa: 'はい、わたしは ___ です。',
-    clozeTokens: ['はい、わたしは ', null, ' です。'],
-    /* The options are the REGISTERED word forms (written kanji surfaces of the
-     * taught nationalities) — the learner retrieves the kanji form from the
-     * sentence context. */
+    promptFa: 'خوانش کانجی 国 را در این واژه کامل کن (خط ۱۰): «کره‌ای»',
+    /* The learner RECONSTRUCTS the taught word's reading structure:
+     * かんこくじん = かん + [こく = 国] + じん — producing 国's reading
+     * inside its anchor word (D-0006). KANA-only stem and options (K6: no
+     * kanji but the station's own target on screen). */
+    promptJa: 'かん___じん',
+    clozeTokens: ['かん', null, 'じん'],
     ...(() => {
-      const { options, correctOptionId } = o3('x', '中国人', '韓国人', 'イラン人', 1);
+      const { options, correctOptionId } = o3('x', 'こく', 'くに', 'ごく', 0);
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      /* options after o3(splice at 1): a=韓国人 b=中国人(correct) c=イラン人. */
-      a: '韓国人 (かんこくじん) کره‌ای است — خودِ سورا در همین جمله می‌گوید چینی است، نه کره‌ای.',
-      c: 'イラン人 (イランじん) ایرانی است — این جملهٔ سورا، دانشجوی چینی است؛ علی ایرانی است، نه سورا.',
+      b: 'くに خوانشِ تنها-خواندنِ 国 است — وقتی کانجی بی‌هیچ واژه‌ای تنها می‌آید؛ داخل واژه‌های سرزمین با «کُوک» می‌آید.',
+      c: 'ごく همان خوانشِ وسطِ ちゅうごくじん (چینی) است — در かんこくじん سرِ واژه بدون تغییر می‌آید: かん-こく-じん.',
     },
     feedback: {
-      f1Fa: 'سورا در مکالمه خودش را ちゅうごくじん معرفی می‌کند — شکل نوشتاری‌اش همین است.',
-      f2HintFa: 'جملهٔ کامل: はい、わたしは ちゅうごくじんです.',
-      f3ExplainFa: '中国人 (ちゅうごくじん) = چینی — 国 (سرزمین) + 人 (انسانِ آن سرزمین).',
+      f1Fa: 'かんこくじん = かん + こく + じん — 国 در سرِ واژه «کُوک» خوانده می‌شود.',
+      f2HintFa: 'وسط واژه را بشنو: …کُوک…',
+      f3ExplainFa:
+        'かんこくじん = かん + こく + じん — 国 در سرِ واژه‌های سرزمین با こく می‌آید؛ در ちゅうごく خوانش به ごく تغییر می‌کند.',
     },
     assessmentRole: 'practice',
     referenceBlockId: 'kcard-kuni',
@@ -2365,26 +2375,28 @@ export const FM01_EXERCISES: Exercise[] = [
     id: 'ex-fm01-kj-exit',
     type: 'audio-meaning',
     targetSkill: 'vocab',
-    targetConcept: 'voc-kankokujin',
-    assessesConcepts: ['kj-4eba', 'kj-56fd', 'voc-kankokujin'],
-    lineRef: L(10),
+    targetConcept: 'voc-chuugokujin',
+    assessesConcepts: ['kj-4eba', 'voc-chuugokujin'],
+    lineRef: L(6),
     difficulty: 2,
-    promptFa: 'گوش بده — این واژه با کدام شکل نوشته می‌شود؟',
-    /* AUDIO-UNIT: sound→written-form exit — the WORD's standalone asset (the
-     * learner maps the heard word to its kanji-bearing surface). */
-    audio: { unit: 'word', wordId: 'voc-kankokujin' },
+    promptFa: 'گوش بده — این واژه با کدام کانجی تمام می‌شود؟',
+    /* AUDIO-UNIT: sound→ending-kanji exit — the WORD's standalone asset (the
+     * learner maps the heard word's TAIL to its kanji shape; options are the
+     * station's own targets + the kana standalone reading — K6 clean). */
+    audio: { unit: 'word', wordId: 'voc-chuugokujin' },
     ...(() => {
-      const { options, correctOptionId } = o3('x', '韓国人', '日本人', '大学', 0);
+      const { options, correctOptionId } = o3('x', '人', '国', 'ひと', 0);
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: '日本人 (にほんじん) «نی‌هون‌جین» است — شنیده‌شده با «کان» شروع شد (かんこくじん)، نه با «نی».',
-      c: '大学 (だいがく) «دای‌گاکو» است — شنیده‌شده نه 国 داشت و نه کشور، آدمِ سرزمین داشت.',
+      b: '国 سرِ واژه‌های سرزمین می‌نشیند (かんこく، ちゅうごく) — دنبالهٔ واژه‌های ملیت نیست.',
+      c: 'ひと خوانشِ تنها-خواندن است، نه شکلِ نوشتاری — دنبالهٔ ملیت‌ها کانجی 人 است.',
     },
     feedback: {
-      f1Fa: 'شنیده‌شده かんこくじん (کان‌کوکوجین) بود: 韓国人 یعنی «انسانِ سرزمین کره».',
-      f2HintFa: 'اولین بخش واژه «کان» است — همان かんこく (کره).',
-      f3ExplainFa: '韓国人 = かんこくじん = کره‌ای: 国 (کشور) + 人 (انسان) — دو کانجی همین ایستگاه.',
+      f1Fa: 'شنیده‌شده ちゅうごくじん (چینی) بود — همهٔ ملیت‌ها با 人 تمام می‌شوند.',
+      f2HintFa: 'آخرِ واژه را بشنو: …جین.',
+      f3ExplainFa:
+        'ちゅうごくじん = سرزمینِ چین + 人 (انسانِ آن سرزمین) — دنبالهٔ همهٔ ملیت‌های این فصل همین کانجی است.',
     },
     assessmentRole: 'practice',
   },
