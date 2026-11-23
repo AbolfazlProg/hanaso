@@ -461,7 +461,7 @@ export function SmartMixedFaJaText({
 }) {
   const parts = segmentForDisplay(text);
   return (
-    <span className={className}>
+    <span className={className ? `${className} mixed-ja` : 'mixed-ja'}>
       {parts.map((part, i) =>
         part.dir === 'ltr' ? (
           <bdi key={i} dir="ltr" lang={part.lang ?? undefined}>

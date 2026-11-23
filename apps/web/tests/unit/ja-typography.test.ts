@@ -11,7 +11,8 @@
  *  - the review glyph front carries ONE size utility (text-hero-ja);
  *  - dead classes are real tokens now (text-micro=10px, font-jp=JP UI stack);
  *  - studied Japanese reading surfaces sit at ≥ --text-small (14px);
- *  - the furigana floor --furigana-size = max(0.5em, 12px) stays locked.
+ *  - the furigana floor --furigana-size = max(0.55em, 14px) stays locked
+ *    (KANJI-TYPO 2026-11-24 — raised from 12px/50% by the owner's audit).
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -47,8 +48,10 @@ describe('ENGINE-NEXTGEN W-B — the JP typography tokens', () => {
     expect(tokensCss).toContain('--font-jp: var(--font-ja-ui-loaded');
   });
 
-  it('the furigana readability floor stays locked (50% + 12px minimum)', () => {
-    expect(tokensCss).toContain('--furigana-size: max(0.5em, 12px)');
+  it('the furigana readability floor stays locked (55% + 14px minimum — KANJI-TYPO 2026-11-24)', () => {
+    // the owner's live audit («فوریگانأ ریز») raised the floor: 12px/50% →
+    // 14px/55% — annotation kana must stay readable in every parent.
+    expect(tokensCss).toContain('--furigana-size: max(0.55em, 14px)');
     expect(tokensCss).toContain('--text-ja: 1.0625rem'); // 17px JP body
     expect(tokensCss).toContain('--leading-ja: 1.9'); // ruby-bearing lines
   });

@@ -235,10 +235,11 @@ body {
   ruby-position: under;
 }
 .fg rt {
-  font-size: var(--furigana-size); /* 50% + 12px floor (KB token) */
-  font-weight: 400;
+  font-size: var(--furigana-size); /* 55% + 14px floor (KB token, KANJI-TYPO 2026-11-24) */
+  font-weight: 500; /* thin kana strokes at annotation size were unreadable (owner audit) */
   letter-spacing: 0;
-  line-height: 1; /* 17px box → ~12px; less bleed into previous line */
+  line-height: 1.15; /* a hair of air — dakuten/handakuten must not clip */
+  /* 17px box → ~14px; less bleed into previous line */
   color: var(--color-ink-soft);
   user-select: none; /* clean copy — text output must come from `base`s */
 }
@@ -246,6 +247,18 @@ body {
 .fg-block,
 :has(> .fg) {
   line-height: 2;
+}
+
+/*
+ * KANJI-TYPO 2026-11-24 — فاصله‌گذاری جزیره‌های ژاپنی در نثرِ ترکیبی: a hair of
+ * breathing room around every Japanese run embedded in Persian prose (the
+ * owner's «فاصله‌ها رعایت نشده» audit) — 0.08em inline padding, scoped to the
+ * MIXED renderers (.mixed-ja roots) only, so pure-Japanese surfaces (dialogue
+ * boards, vocab cards) never grow seams between their runs.
+ */
+.mixed-ja .fg,
+.mixed-ja .ja-block {
+  padding-inline: 0.08em;
 }
 
 /* -- Focus visibility (WCAG 2.4.7 / 2.5.8) --------------------------------- */
