@@ -43,6 +43,13 @@
       "when": 1795108899125,
       "tag": "0005_fsrs_review_and_learning_events",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795464179042,
+      "tag": "0006_thin_spyke",
+      "breakpoints": true
     }
   ]
 }

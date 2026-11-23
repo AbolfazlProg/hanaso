@@ -6,7 +6,7 @@ import { defineConfig } from 'drizzle-kit';
  * two-schema Drizzle model. `push`/`migrate` run later with DATABASE_URL (M0-10/M1).
  */
 export default defineConfig({
-  schema: ['./db/schema/content.ts', './db/schema/app.ts'],
+  schema: ['./db/schema/content.ts', './db/schema/app.ts', './db/schema/auth.ts'],
   out: './db/migrations',
   dialect: 'postgresql',
   strict: true,

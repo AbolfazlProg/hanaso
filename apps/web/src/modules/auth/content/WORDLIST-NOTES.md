@@ -1,0 +1,1 @@
+The BIP39 English wordlist (2048 words) — public domain, from\nhttps://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/english.txt\n(sha256 2f5eed53a4727b4bf8880d8f3f199efc90e58503646d9ff8eff3a2ed3b24dbda).\nUsed ONLY to generate/parse HANASO recovery phrases; sorted, unique, 2048 entries.\n

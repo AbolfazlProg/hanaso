@@ -7,5 +7,7 @@
  */
 export * as contentSchema from './content';
 export * as appSchema from './app';
+export * as authSchema from './auth';
 export * from './content';
 export * from './app';
+export * from './auth';
