@@ -335,51 +335,55 @@ describe('KanjiWritingCard — kana-writing parity over the shared engine', () =
    * on the card, living inside [data-kj-cta-footer], carrying the kana footer
    * CTA classes (text-lead font-bold bg-ai min-h-12 min-w-[18rem]) — and it
    * exists ONLY in the ready beat (never during intro/guided/free/done). */
-  it('the ready CTA is the kana-parity FOOTER CTA — bold, primary, in the «ادامه» slot', { timeout: 30000 }, async () => {
-    vi.useFakeTimers();
-    const { container } = render(
-      <KanjiWritingCard
-        blockId="wp-kanji-jin-kuni@人"
-        chapterSlug="first-meeting-01"
-        stationSlug="stn-fm01-23-kanji"
-        characters={[ENTRIES[0]!]}
-      />,
-    );
-    // intro (no CTA yet) → ready (the footer CTA appears)
-    for (let k = 0; k < 20; k += 1) {
-      await act(async () => {
-        await vi.advanceTimersByTimeAsync(5000);
-      });
-      if (container.querySelector('[data-kj-stage="ready"]')) break;
-    }
-    const ctas = container.querySelectorAll('[data-ready-cta]');
-    expect(ctas.length, 'exactly ONE confirm CTA on the slide').toBe(1);
-    const footer = container.querySelector('[data-kj-cta-footer]');
-    expect(footer, 'the CTA lives in the slide footer (the «ادامه» slot)').toBeTruthy();
-    expect(footer!.contains(ctas[0]!), 'the ONE CTA is the footer CTA').toBe(true);
-    const cls = ctas[0]!.className;
-    expect(cls).toContain('bg-ai'); // primary fill (bolder than the old outline button)
-    expect(cls).toContain('text-lead'); // 18px label (was text-caption 12px)
-    expect(cls).toContain('font-bold');
-    expect(cls).toContain('min-h-12'); // 48px target
-    expect(cls).toContain('sm:min-w-[18rem]'); // the kana footer width floor
-    expect(ctas[0]!.textContent).toContain(fa.curriculum.kanaStageReadyCta);
-    // the footer is the LAST element of the card section — nothing sits below it
-    const section = container.querySelector('[data-kanji-writing-block]')!;
-    const lastElement = section.lastElementChild!;
-    expect(lastElement === footer, 'nothing renders below the CTA footer').toBe(true);
+  it(
+    'the ready CTA is the kana-parity FOOTER CTA — bold, primary, in the «ادامه» slot',
+    { timeout: 30000 },
+    async () => {
+      vi.useFakeTimers();
+      const { container } = render(
+        <KanjiWritingCard
+          blockId="wp-kanji-jin-kuni@人"
+          chapterSlug="first-meeting-01"
+          stationSlug="stn-fm01-23-kanji"
+          characters={[ENTRIES[0]!]}
+        />,
+      );
+      // intro (no CTA yet) → ready (the footer CTA appears)
+      for (let k = 0; k < 20; k += 1) {
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(5000);
+        });
+        if (container.querySelector('[data-kj-stage="ready"]')) break;
+      }
+      const ctas = container.querySelectorAll('[data-ready-cta]');
+      expect(ctas.length, 'exactly ONE confirm CTA on the slide').toBe(1);
+      const footer = container.querySelector('[data-kj-cta-footer]');
+      expect(footer, 'the CTA lives in the slide footer (the «ادامه» slot)').toBeTruthy();
+      expect(footer!.contains(ctas[0]!), 'the ONE CTA is the footer CTA').toBe(true);
+      const cls = ctas[0]!.className;
+      expect(cls).toContain('bg-ai'); // primary fill (bolder than the old outline button)
+      expect(cls).toContain('text-lead'); // 18px label (was text-caption 12px)
+      expect(cls).toContain('font-bold');
+      expect(cls).toContain('min-h-12'); // 48px target
+      expect(cls).toContain('sm:min-w-[18rem]'); // the kana footer width floor
+      expect(ctas[0]!.textContent).toContain(fa.curriculum.kanaStageReadyCta);
+      // the footer is the LAST element of the card section — nothing sits below it
+      const section = container.querySelector('[data-kanji-writing-block]')!;
+      const lastElement = section.lastElementChild!;
+      expect(lastElement === footer, 'nothing renders below the CTA footer').toBe(true);
 
-    // the CTA exists ONLY in the ready beat: start guided → footer disappears
-    await act(async () => {
-      fireEvent.click(ctas[0]!);
-    });
-    for (let k = 0; k < 16; k += 1) {
+      // the CTA exists ONLY in the ready beat: start guided → footer disappears
       await act(async () => {
-        await vi.advanceTimersByTimeAsync(5000);
+        fireEvent.click(ctas[0]!);
       });
-      if (container.querySelector('[data-kj-stage="guided"]')) break;
-    }
-    expect(container.querySelector('[data-kj-cta-footer]'), 'no footer CTA while practicing').toBeNull();
-    expect(container.querySelector('[data-ready-cta]'), 'no stray CTA while practicing').toBeNull();
-  });
+      for (let k = 0; k < 16; k += 1) {
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(5000);
+        });
+        if (container.querySelector('[data-kj-stage="guided"]')) break;
+      }
+      expect(container.querySelector('[data-kj-cta-footer]'), 'no footer CTA while practicing').toBeNull();
+      expect(container.querySelector('[data-ready-cta]'), 'no stray CTA while practicing').toBeNull();
+    },
+  );
 });
