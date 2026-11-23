@@ -70,13 +70,31 @@ export function kunRoot(readings: string): string {
 
 /** Rendaku voicing tables (first-mora voicing of a candidate reading). */
 const VOICE_MAP: Record<string, string[]> = {
-  か: ['が'], き: ['ぎ'], く: ['ぐ'], け: ['げ'], こ: ['ご'],
-  さ: ['ざ'], し: ['じ'], す: ['ず'], せ: ['ぜ'], そ: ['ぞ'],
-  た: ['だ', 'た'], ち: ['ぢ'], つ: ['づ', 'っ'], て: ['で'], と: ['ど'],
-  は: ['ば', 'ぱ'], ひ: ['び', 'ぴ'], ふ: ['ぶ', 'ぷ'], へ: ['べ', 'ぺ'], ほ: ['ぼ', 'ぽ'],
+  か: ['が'],
+  き: ['ぎ'],
+  く: ['ぐ'],
+  け: ['げ'],
+  こ: ['ご'],
+  さ: ['ざ'],
+  し: ['じ'],
+  す: ['ず'],
+  せ: ['ぜ'],
+  そ: ['ぞ'],
+  た: ['だ', 'た'],
+  ち: ['ぢ'],
+  つ: ['づ', 'っ'],
+  て: ['で'],
+  と: ['ど'],
+  は: ['ば', 'ぱ'],
+  ひ: ['び', 'ぴ'],
+  ふ: ['ぶ', 'ぷ'],
+  へ: ['べ', 'ぺ'],
+  ほ: ['ぼ', 'ぽ'],
 };
 const VOICE_EXTRA: Record<string, string[]> = {
-  た: ['だ'], ち: ['ぢ'], つ: ['づ'],
+  た: ['だ'],
+  ち: ['ぢ'],
+  つ: ['づ'],
 };
 
 /** All rendaku-voiced variants of a kana reading (e.g. こく → ごく). */
@@ -210,7 +228,14 @@ function bootstrapUnknownReadings(
     let changed = false;
     for (const w of words) {
       if (!w.surface.split('').some(isKanjiChar)) continue;
-      if (alignBaseToReading(w.surface, w.reading, { wordsBySurface, surfacesByFirst: new Map(), kanjiByLiteral, chapterSlugs: [] })) {
+      if (
+        alignBaseToReading(w.surface, w.reading, {
+          wordsBySurface,
+          surfacesByFirst: new Map(),
+          kanjiByLiteral,
+          chapterSlugs: [],
+        })
+      ) {
         continue; // already strict-alignable
       }
       const segs = alignWild(w.surface, foldKana(w.reading), kanjiByLiteral, []);
@@ -239,9 +264,7 @@ function alignWild(
   const ch = base[0]!;
   if (isKanjiChar(ch)) {
     const entry = kanjiByLiteral.get(ch);
-    const candidates = entry
-      ? [...entry.candidates, ...entry.candidates.flatMap((c) => voicedVariants(c))]
-      : [];
+    const candidates = entry ? [...entry.candidates, ...entry.candidates.flatMap((c) => voicedVariants(c))] : [];
     candidates.sort((a, b) => b.length - a.length || a.localeCompare(b));
     for (const cand of candidates) {
       if (reading.startsWith(cand)) {
@@ -325,9 +348,7 @@ function alignFrom(
   const ch = base[bi]!;
   if (isKanjiChar(ch)) {
     const entry = model.kanjiByLiteral.get(ch);
-    const candidates = entry
-      ? [...entry.candidates, ...entry.candidates.flatMap((c) => voicedVariants(c))]
-      : [];
+    const candidates = entry ? [...entry.candidates, ...entry.candidates.flatMap((c) => voicedVariants(c))] : [];
     // deterministic preference: longest candidate first, then lexicographic
     candidates.sort((a, b) => b.length - a.length || a.localeCompare(b));
     for (const cand of candidates) {
