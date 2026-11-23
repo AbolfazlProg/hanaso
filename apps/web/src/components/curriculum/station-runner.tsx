@@ -2659,6 +2659,7 @@ function BlockView({
         if (entries.length === block.characters.length) {
           return (
             <KanjiWritingCard
+              key={block.id}
               blockId={block.id}
               chapterSlug={chapterSlug}
               stationSlug={stationSlug}
@@ -2672,8 +2673,10 @@ function BlockView({
         }
       }
       /* practice-layer drill (kana) — the forward button stays available;
-         summaries are recorded best-effort (never a gate). */
-      return <WritingPracticeBlock block={block} chapterSlug={chapterSlug} stationSlug={stationSlug} />;
+         summaries are recorded best-effort (never a gate). keyed per block: two
+         writing decks that sit back-to-back (possible since the kanji split)
+         never share drill state. */
+      return <WritingPracticeBlock key={block.id} block={block} chapterSlug={chapterSlug} stationSlug={stationSlug} />;
     }
 
     case 'exercise': {
