@@ -63,6 +63,8 @@ import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
 import { KanjiCard, type KanjiCardData } from './kanji-card';
 import { SmartJaText } from '@/components/patterns/smart-ja-text';
+import { KanjiWritingCard, type KanjiWritingEntry } from '@/components/curriculum/kanji-writing-card';
+import { isKanjiChar } from '@/modules/curriculum/knowledge/reading-model';
 import { ExampleAudioButton } from './example-audio-button';
 import { KANA_ITEMS_BY_ID, KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
 import { readabilityLabel } from '@/modules/curriculum/content/readability';
@@ -1395,6 +1397,12 @@ export function StationRunner(props: StationRunnerProps) {
             else void finishSession(null);
           }}
           kanaCardStage={block.kind === 'kana-card' ? normalizeKanaStage(kanaCardStages[block.id]) : undefined}
+          kanjiWritingStages={kanaCardStages}
+          onKanjiWritingProgress={(blockId, literal, stage) => {
+            setKanaCardStages((prev) =>
+              prev[`${blockId}:${literal}`] === stage ? prev : { ...prev, [`${blockId}:${literal}`]: stage },
+            );
+          }}
           relatedExamplesByKanaId={relatedExamplesByKanaId}
           onKanaProgress={(progress: { stage: string }) => {
             if (block.kind !== 'kana-card') return;
@@ -1912,6 +1920,8 @@ function BlockView({
   onSceneDone,
   kanaCardStage,
   onKanaProgress,
+  kanjiWritingStages,
+  onKanjiWritingProgress,
   onKanaWritingDone,
   relatedExamplesByKanaId,
   taughtKana,
@@ -1981,6 +1991,11 @@ function BlockView({
   kanaCardStage?: string;
   /** #117 §10: stage persistence reporter. */
   onKanaProgress?: (progress: { stage: string }) => void;
+  /** SMART-RUBY §۴ — the raw block-stage map (kanji writing restores
+      per `${blockId}:${literal}` — the same walk snapshot map). */
+  kanjiWritingStages?: Record<string, string>;
+  /** SMART-RUBY §۴ — kanji-writing stage persistence reporter. */
+  onKanjiWritingProgress?: (blockId: string, literal: string, stage: string) => void;
   /** #117 §8: the staged writing experience completed → the walk continues. */
   onKanaWritingDone?: () => void;
   /** TASK-HANASO-CTA-01 §۴: kanaId → its related usage examples (station-wide). */
@@ -2580,10 +2595,53 @@ function BlockView({
       );
     }
 
-    case 'writing-practice':
-      /* TASK-LEARNING-07 (DD-105/DD-111): practice-layer block — the forward
-       * button stays available; summaries are recorded best-effort (never a gate). */
+    case 'writing-practice': {
+      /* SMART-RUBY §۴ (mission «اصلاح بخش نوشتاری کانجی»): a KANJI writing
+       * block renders the staged kanji writing card — the kana-writing
+       * experience over the SAME shared WritingCanvas/engine (intro teaching
+       * pass → guided trace → free from memory → next kanji; per-stroke
+       * narration, progress dots, hint escalation, replay, restart; the
+       * anchor words with their own audio beside the canvas). Kana drill
+       * blocks keep their drill host (TASK-LEARNING-07 DD-105/DD-111). */
+      const isKanjiDeck = (block.characters[0] ?? '').split('').some(isKanjiChar);
+      if (isKanjiDeck) {
+        const entries: KanjiWritingEntry[] = block.characters.flatMap((ch) => {
+          const data = Object.values(kanjiDataByKanjiId ?? {}).find((k) => k?.literal === ch);
+          if (!data) return [];
+          return [
+            {
+              literal: data.literal,
+              meaningFa: data.meaningFa,
+              strokeCount: data.strokeCount,
+              kanjiId: data.kanjiId,
+              anchors: data.anchors.map((a) => ({
+                wordId: a.wordId,
+                term: a.term,
+                readingKana: a.readingKana,
+                meaningFa: a.meaningFa,
+                audio: a.audio,
+              })),
+            },
+          ];
+        });
+        if (entries.length === block.characters.length) {
+          return (
+            <KanjiWritingCard
+              blockId={block.id}
+              chapterSlug={chapterSlug}
+              stationSlug={stationSlug}
+              characters={entries}
+              instructionsFa={block.instructionsFa}
+              initialStageByLiteral={kanjiWritingStages}
+              onProgress={(literal, stage) => onKanjiWritingProgress?.(block.id, literal, stage)}
+            />
+          );
+        }
+      }
+      /* practice-layer drill (kana) — the forward button stays available;
+         summaries are recorded best-effort (never a gate). */
       return <WritingPracticeBlock block={block} chapterSlug={chapterSlug} stationSlug={stationSlug} />;
+    }
 
     case 'exercise': {
       const items = block.exerciseIds
