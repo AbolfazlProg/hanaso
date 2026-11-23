@@ -18,7 +18,7 @@ import { getLearnerJaView, listCourseStationSlugs } from '@/modules/curriculum/k
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   if (!userId || !isLearnerScope(userId)) {
     // read-only guest view: no completed stations — every ruby shows
     return NextResponse.json(ok(getLearnerJaView(new Set())));

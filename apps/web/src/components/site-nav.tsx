@@ -22,9 +22,10 @@
  * (no emoji), state = weight + underline (never color alone).
  */
 import Link from 'next/link';
-import { Home, Map, Repeat2, Settings } from 'lucide-react';
+import { Home, LogIn, Map, Repeat2, Settings, UserRound } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { resolveLearnerId } from '@/lib/learner/server';
+import { resolveAccount } from '@/lib/auth/server';
 import { getFsrsReviewStore } from '@/lib/poc/stores';
 
 export type NavDestination = 'home' | 'learn' | 'review';
@@ -55,7 +56,12 @@ export async function resolveReviewDueCount(): Promise<number | null> {
   }
 }
 
-export function SiteNav({ active, reviewDueCount }: SiteNavProps) {
+export function SiteNav({
+  active,
+  reviewDueCount,
+  accountHref,
+  accountLabel,
+}: SiteNavProps & { accountHref?: string; accountLabel?: string }) {
   const dueCount = reviewDueCount ?? null;
 
   const reviewLabel = (label: string) =>
@@ -103,6 +109,9 @@ export function SiteNav({ active, reviewDueCount }: SiteNavProps) {
               {key === 'review' ? reviewLabel(label) : label}
             </Link>
           ))}
+          {/* M1 · AUTH-ACCOUNTS: the account door — logged-in users manage
+           * their security methods, anonymous visitors reach the login hub. */}
+          <AuthNavLink accountHref={accountHref} accountLabel={accountLabel} />
           {/* settings gear — the shell's control surface (#144; was a 404) */}
           <Link
             href="/settings"
@@ -156,4 +165,33 @@ export function SiteNav({ active, reviewDueCount }: SiteNavProps) {
       </nav>
     </>
   );
+}
+
+/** M1 · AUTH-ACCOUNTS — the account door on the top bar (all sizes). */
+function AuthNavLink({ accountHref, accountLabel }: { accountHref?: string; accountLabel?: string }) {
+  const href = accountHref ?? '/auth/login';
+  const label = accountLabel ?? fa.auth.navLogin;
+  const AuthIcon = accountHref ? UserRound : LogIn;
+  return (
+    <Link
+      href={href}
+      hrefLang="fa"
+      aria-label={label}
+      className="inline-flex h-11 items-center gap-1.5 rounded-md px-3 text-small font-bold text-ink-soft transition-colors hover:bg-surface-warm hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai"
+    >
+      <AuthIcon aria-hidden className="size-5" />
+      <span className="hidden sm:inline">{label}</span>
+    </Link>
+  );
+}
+
+/** M1: where should the account door point? (server-resolved per render) */
+export async function resolveAccountDoor(): Promise<{ href: string; label: string }> {
+  try {
+    const account = await resolveAccount();
+    if (account) return { href: '/settings/security', label: fa.auth.navAccount };
+  } catch {
+    /* store unavailable — anonymous door */
+  }
+  return { href: '/auth/login', label: fa.auth.navLogin };
 }

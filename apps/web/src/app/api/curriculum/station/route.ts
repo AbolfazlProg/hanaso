@@ -201,7 +201,7 @@ async function handleStationPost(req: Request): Promise<Response> {
     });
   }
   const payload = parsed.data;
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   /*
    * TASK-HANASO-20 (BUG-001 remediation): a cookie-less client must never
    * write into a shared store. With the middleware every real request carries
@@ -773,7 +773,7 @@ export async function GET(req: Request) {
       status: 400,
     });
   }
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   const state: StationState | null = await getStationProgressStore().get(userId, stationSlug);
   /* TASK-HANASO-17 §۸: the server is the source of truth for resume expiry —
    * the client never decides alone (multi-device consistency, §10). */

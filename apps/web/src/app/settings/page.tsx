@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { ArrowLeft, CircleCheck, Repeat2 } from 'lucide-react';
-import { SiteNav, resolveReviewDueCount } from '@/components/site-nav';
+import { ArrowLeft, CircleCheck, Repeat2, ShieldCheck } from 'lucide-react';
+import { SiteNav, resolveReviewDueCount, resolveAccountDoor } from '@/components/site-nav';
 import { fa } from '@/messages/fa';
 import { LearnerSettingsForm } from './settings-form';
 import { hasPreviewAccess } from '@/lib/preview';
@@ -22,6 +22,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage() {
   const reviewDueCount = await resolveReviewDueCount();
+  const accountDoor = await resolveAccountDoor();
   const learnerId = await resolveLearnerId();
   let previewActive = false;
   try {
@@ -32,7 +33,12 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <SiteNav active="home" reviewDueCount={reviewDueCount} />
+      <SiteNav
+        accountHref={accountDoor.href}
+        accountLabel={accountDoor.label}
+        active="home"
+        reviewDueCount={reviewDueCount}
+      />
       <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-6 px-4 pb-28 pt-10 md:pb-12">
         <header className="flex flex-col gap-2">
           <h1 className="text-h1 font-black text-indigo">{fa.settings.title}</h1>
@@ -60,6 +66,20 @@ export default async function SettingsPage() {
           >
             {fa.settings.reviewCta}
             <ArrowLeft aria-hidden className="size-4" />
+          </Link>
+        </section>
+
+        {/* ---- M1 · AUTH-ACCOUNTS: the security door ---- */}
+        <section className="flex flex-col gap-2 rounded-md border-2 border-indigo/30 bg-card p-5">
+          <h2 className="text-h3 font-bold text-ink">{fa.settings.securityLink}</h2>
+          <p className="text-small text-ink-soft">{fa.settings.securityHint}</p>
+          <Link
+            href="/settings/security"
+            hrefLang="fa"
+            className="flex h-11 items-center gap-2 rounded-md border-2 border-indigo px-5 text-small font-bold text-indigo transition-colors hover:bg-indigo-wash"
+          >
+            <ShieldCheck aria-hidden className="size-4" />
+            {fa.settings.securityLink}
           </Link>
         </section>
 

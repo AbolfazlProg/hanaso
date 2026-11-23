@@ -41,7 +41,7 @@ async function completedKanaStations(userId: string): Promise<Set<string>> {
 }
 
 export async function GET(req: Request) {
-  const userId = resolveLearnerIdFromRequest(req);
+  const userId = await resolveLearnerIdFromRequest(req);
   if (userId === GUEST_LEARNER_ID) {
     return NextResponse.json(fail({ code: 'learner/no_identity', message: 'شناسهٔ زبان‌آموز یافت نشد.' }), {
       status: 401,

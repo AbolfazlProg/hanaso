@@ -31,6 +31,7 @@ import { cookies } from 'next/headers';
 import { LEARNER_COOKIE_NAME, isLearnerId } from './identity';
 import { verifySessionTokenSync } from './session-node';
 import { hasPreviewAccessFromRequest, previewCookieValid, previewLearnerId } from '@/lib/preview';
+import { resolveAccount, resolveAccountFromRequest } from '@/lib/auth/server';
 
 export { LEARNER_COOKIE_NAME, isLearnerId };
 export { signSessionTokenSync, verifySessionTokenSync } from './session-node';
@@ -60,15 +61,25 @@ function safeDecode(raw: string): string {
  * The learner id for an RSC render (cookie-resolved via next/headers).
  * Absent/invalid/unsigned cookie → GUEST_LEARNER_ID (empty honest state),
  * NEVER the shared poc-user.
+ *
+ * M1 · AUTH-ACCOUNTS precedence (see lib/auth/server.ts): an authenticated
+ * `hanaso_session` wins over the guest cookie — the account's user id keys
+ * every progress row. PREVIEW MODE still outranks BOTH (its pv- namespace
+ * protects real data during owner QA, logged-in or not).
  */
 export async function resolveLearnerId(): Promise<string> {
   const jar = await cookies();
-  const resolved = resolveSessionTokenValue(safeDecode(jar.get(LEARNER_COOKIE_NAME)?.value ?? ''));
   // PREVIEW MODE (FINALIZATION): the owner's preview cookie remaps EVERY read AND
-  // write to the pv- namespace — the real learner's progress is never touched
-  // while the owner browses with locks bypassed.
-  if (previewCookieValid(jar.get('hanaso_preview')?.value)) return previewLearnerId(resolved);
-  return resolved;
+  // write to the pv- namespace — the real learner's (or account's) progress is
+  // never touched while the owner browses with locks bypassed.
+  if (previewCookieValid(jar.get('hanaso_preview')?.value)) {
+    const resolved = resolveSessionTokenValue(safeDecode(jar.get(LEARNER_COOKIE_NAME)?.value ?? ''));
+    return previewLearnerId(resolved);
+  }
+  // Authenticated account (M1): the DB-verified session cookie wins.
+  const account = await resolveAccount();
+  if (account) return account.userId;
+  return resolveSessionTokenValue(safeDecode(jar.get(LEARNER_COOKIE_NAME)?.value ?? ''));
 }
 
 /**
@@ -84,15 +95,27 @@ export async function resolveLearnerId(): Promise<string> {
  * value (sibling-subdomain cookie injection) can no longer diverge from what
  * the middleware resolved for the very same request.
  */
-export function resolveLearnerIdFromRequest(req: Request): string {
+export async function resolveLearnerIdFromRequest(req: Request): Promise<string> {
+  // PREVIEW MODE: same pv- remap on the route-handler seam (station walk API etc.).
+  if (hasPreviewAccessFromRequest(req)) {
+    const resolved = resolveSessionTokenValue(guestCookieOf(req));
+    return previewLearnerId(resolved);
+  }
+  // Authenticated account (M1): the DB-verified session cookie wins — the
+  // account's user id keys every write; the guest cookie only serves
+  // anonymous browsers.
+  const account = await resolveAccountFromRequest(req);
+  if (account) return account.userId;
+  return resolveSessionTokenValue(guestCookieOf(req));
+}
+
+/** Parse the LAST signed guest cookie value off the Request (shared helper). */
+function guestCookieOf(req: Request): string | null {
   const header = req.headers.get('cookie') ?? '';
   const re = new RegExp(`(?:^|;\\s*)${LEARNER_COOKIE_NAME}=([^;]+)`, 'g');
   let last: string | null = null;
   for (const m of header.matchAll(re)) last = m[1] ?? null;
-  const resolved = resolveSessionTokenValue(last ? safeDecode(last) : null);
-  // PREVIEW MODE: same pv- remap on the route-handler seam (station walk API etc.).
-  if (hasPreviewAccessFromRequest(req)) return previewLearnerId(resolved);
-  return resolved;
+  return last ? safeDecode(last) : null;
 }
 
 /** Shared policy: verify the signature (constant-time) → uuid | guest. */

@@ -49,7 +49,7 @@ interface SubmitRow {
 }
 
 export async function POST(req: Request): Promise<NextResponse> {
-  const guard = requireLearner(req);
+  const guard = await requireLearner(req);
   if (!guard.ok) return guard.response;
 
   const body = await readJson(req);

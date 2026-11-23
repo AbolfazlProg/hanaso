@@ -33,8 +33,8 @@ export type LearnerGuard = { ok: true; userId: string } | { ok: false; response:
  * middleware). Guest/absent/unsigned → the canonical 401 envelope — one guard,
  * one message, one code (`learner/no_identity`) everywhere.
  */
-export function requireLearner(req: Request): LearnerGuard {
-  const userId = resolveLearnerIdFromRequest(req);
+export async function requireLearner(req: Request): Promise<LearnerGuard> {
+  const userId = await resolveLearnerIdFromRequest(req);
   if (userId === GUEST_LEARNER_ID) {
     return {
       ok: false,

@@ -9,7 +9,7 @@ import { previewUnlockAll, unlockAllMode } from '@/lib/preview';
 import { resolveLearnerId } from '@/lib/learner/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
-import { SiteNav, resolveReviewDueCount } from '@/components/site-nav';
+import { SiteNav, resolveReviewDueCount, resolveAccountDoor } from '@/components/site-nav';
 
 /**
  * /learn/[chapter]/journey — TASK-HANASO-16: the one-section-at-a-time journey
@@ -36,6 +36,7 @@ export default async function JourneyPage({
   const { chapter: slug } = await params;
   const { s } = await searchParams;
   const reviewDueCount = await resolveReviewDueCount();
+  const accountDoor = await resolveAccountDoor();
 
   let bundle;
   try {
@@ -52,7 +53,12 @@ export default async function JourneyPage({
   if (access.locked) {
     return (
       <>
-        <SiteNav active="learn" reviewDueCount={reviewDueCount} />
+        <SiteNav
+          accountHref={accountDoor.href}
+          accountLabel={accountDoor.label}
+          active="learn"
+          reviewDueCount={reviewDueCount}
+        />
         <ChapterLockedNotice
           chapterTitleFa={chapter.titleFa}
           prerequisiteSlug={access.prerequisiteSlug}
