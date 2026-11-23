@@ -14,7 +14,6 @@ import { ArrowLeft, ArrowRight, Ear, Loader2, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { SmartJaText, SmartMixedFaJaText } from '@/components/patterns/smart-ja-text';
-import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import { WordPronunciation } from '@/components/curriculum/word-pronunciation';
 import { getCachedAudio, reportPlaybackError } from '@/modules/audio/client-cache';
 import type { ResolvedReviewCard } from '@/modules/fsrs/item-registry';

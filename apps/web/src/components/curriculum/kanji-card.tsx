@@ -19,7 +19,6 @@
 import { BookOpenText, Layers } from 'lucide-react';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { SmartJaText, SmartMixedFaJaText } from '@/components/patterns/smart-ja-text';
-import { FuriganaText } from '@/components/patterns/furigana-text';
 import { LineAudioButton } from '@/components/curriculum/line-audio-button';
 import { fa } from '@/messages/fa';
 

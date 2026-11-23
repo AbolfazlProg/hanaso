@@ -36,7 +36,6 @@ import type { ClientExercise } from '@/modules/curriculum/grading';
 import { mergeEliminated } from '@/modules/curriculum/station-walk';
 import { readLearnerName, writeLearnerName } from '@/lib/learner/preferences';
 import { JaBlock } from '@/components/patterns/ja-block';
-import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import { SmartJaText, SmartMixedFaJaText } from '@/components/patterns/smart-ja-text';
 import { getCachedAudio, preloadAudio, reportPlaybackError } from '@/modules/audio/client-cache';
 import { LineAudioButton } from './line-audio-button';

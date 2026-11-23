@@ -352,7 +352,6 @@ function KanjiPopover({
     };
   }, [onClose, anchorRef]);
 
-  const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
   return (
     <div
       ref={panelRef}

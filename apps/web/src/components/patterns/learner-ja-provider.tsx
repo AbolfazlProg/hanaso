@@ -53,7 +53,7 @@ export function LearnerJaProvider({ model, children }: { model: ReadingModel; ch
     if (cached) {
       setView(cached);
       setLoading(false);
-      if (Date.now() - cachedAt(cached) < CACHE_TTL_MS) return; // fresh enough
+      if (Date.now() - cachedAt() < CACHE_TTL_MS) return; // fresh enough
     }
 
     fetch('/api/curriculum/learner-ja')
@@ -103,10 +103,8 @@ function readCache(): LearnerJaView | null {
     return null;
   }
 }
-function cachedAt(view: LearnerJaView): number {
-  // the payload carries no clock — approximate with the fetch cycle: stale
-  // entries always revalidate (the return above only short-circuits when the
-  // age is fresh), so the timestamp lives in a sidecar slot
+function cachedAt(): number {
+  // the payload carries no clock — the timestamp lives in a sidecar slot
   try {
     const t = sessionStorage.getItem(`${CACHE_KEY}.at`);
     return t ? Number(t) : 0;
