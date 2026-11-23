@@ -53,6 +53,24 @@ export async function listActiveMethods(userId: string): Promise<ActiveMethod[]>
   }));
 }
 
+/** The mnemonic login lookup: by the DETERMINISTIC lookup key (the anchor's
+ * providerAccountId is the account id — NOT searchable by the phrase). */
+export async function findMnemonicIdentity(lookupKey: string) {
+  const { db } = getDbClient();
+  const rows = await db
+    .select()
+    .from(authIdentities)
+    .where(and(eq(authIdentities.provider, 'mnemonic'), eq(authIdentities.lookupKey, lookupKey)))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+/** Stamp usage on a located identity row (id-based — no providerAccountId guessing). */
+export async function touchIdentityUsage(id: string): Promise<void> {
+  const { db } = getDbClient();
+  await db.update(authIdentities).set({ lastUsedAt: new Date() }).where(eq(authIdentities.id, id));
+}
+
 export async function findIdentity(provider: ProviderName, providerAccountId: string) {
   const { db } = getDbClient();
   const rows = await db

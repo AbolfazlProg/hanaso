@@ -75,7 +75,7 @@ const GUEST_COOKIE = `${LEARNER_COOKIE_NAME}=${signSessionTokenSync(GUEST_UUID)}
 function post(url: string, body: unknown, cookie: string = GUEST_COOKIE): Request {
   return new Request(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', cookie, ...ORIGIN, ...UA },
+    headers: { 'content-type': 'application/json', host: 'localhost', cookie, ...ORIGIN, ...UA },
     body: JSON.stringify(body),
   });
 }

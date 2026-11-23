@@ -15,7 +15,7 @@ import { z } from 'zod';
 import { authNoStore, clientContext, establishSession, sameOriginOk } from '@/lib/auth/api';
 import { normalizeMnemonicInput, redactPhrase } from '@/modules/auth/mnemonic';
 import { deriveLookupKey, verifySecret } from '@/modules/auth/credentials';
-import { findIdentity, touchMethodUsage } from '@/modules/auth/identities';
+import { findMnemonicIdentity, touchIdentityUsage } from '@/modules/auth/identities';
 import { RATE_BUCKETS, recordRateEvent, tooManyEvents } from '@/modules/auth/rate-limit';
 import { fail, ok } from '@/modules/shared';
 
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const identity = await findIdentity('mnemonic', lookupKey);
+  const identity = await findMnemonicIdentity(lookupKey);
   const valid = identity && !identity.disabledAt ? verifySecret(phrase, identity.credentialHash) : false;
   if (!identity || !valid) {
     await recordRateEvent(failBucket);
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
     );
   }
 
-  await touchMethodUsage('mnemonic', lookupKey);
+  await touchIdentityUsage(identity.id);
   const response = NextResponse.json(ok({ userId: identity.userId, method: 'mnemonic' }));
   const { mergedGuest } = await establishSession(response, req, identity.userId, 'mnemonic');
   console.info(

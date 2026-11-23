@@ -16,25 +16,30 @@ import { resolveLearnerIdFromRequest } from '@/lib/learner/server';
 
 /** The mutating-auth CSRF gate: false → answer the ready 403 envelope. */
 export function sameOriginOk(req: Request): boolean {
-  const host = req.headers.get('host');
+  // The request's own host — the Host header when present (every real
+  // browser/proxy request), else the URL's host (direct-call route tests).
+  const url = safeUrl(req.url);
+  const host = req.headers.get('host') ?? url?.host;
   if (!host) return false;
   const origin = req.headers.get('origin');
   if (origin) {
-    try {
-      return new URL(origin).host === host;
-    } catch {
-      return false;
-    }
+    const parsed = safeUrl(origin);
+    return parsed?.host === host;
   }
   const referer = req.headers.get('referer');
   if (referer) {
-    try {
-      return new URL(referer).host === host;
-    } catch {
-      return false;
-    }
+    const parsed = safeUrl(referer);
+    return parsed?.host === host;
   }
   return false; // no origin evidence at all on a state-changing request — refuse
+}
+
+function safeUrl(raw: string): URL | null {
+  try {
+    return new URL(raw);
+  } catch {
+    return null;
+  }
 }
 
 /** Attach `cache-control: no-store` to an auth response (identity data). */
