@@ -323,9 +323,18 @@ function KanjiPopover({
 
   useLayoutEffect(() => {
     const anchor = anchorRef.current;
+    const panel = panelRef.current;
     if (!anchor) return;
     const r = anchor.getBoundingClientRect();
-    setPos({ top: Math.max(8, r.bottom + 6), left: Math.max(8, Math.min(r.left, window.innerWidth - 8 - 260)) });
+    /* two-pass placement: the panel renders hidden, gets MEASURED, then takes
+     * the position that fits — below the kanji, flipping above it when the
+     * viewport bottom is too close (mobile), always clamped inside the viewport. */
+    const pw = panel ? panel.offsetWidth : 256;
+    const ph = panel ? panel.offsetHeight : 240;
+    const left = Math.max(8, Math.min(r.left, window.innerWidth - 8 - pw));
+    const below = r.bottom + 6;
+    const top = below + ph > window.innerHeight - 8 ? Math.max(8, r.top - ph - 6) : Math.max(8, below);
+    setPos({ top, left: Math.max(8, left) });
   }, [anchorRef]);
 
   useEffect(() => {
@@ -359,7 +368,7 @@ function KanjiPopover({
       aria-label={fa.curriculum.smartRubyTapHint(inspect.literal)}
       dir="rtl"
       data-kanji-popover={inspect.literal}
-      className="fixed z-50 w-64 max-w-[85vw] rounded-md border border-ink-faint bg-card p-4 shadow-lg"
+      className="fixed z-50 w-64 max-w-[85vw] max-h-[70vh] overflow-y-auto rounded-md border border-ink-faint bg-card p-4 shadow-lg"
       style={pos ? { top: pos.top, left: pos.left } : { visibility: 'hidden' }}
     >
       <div className="flex items-start justify-between gap-3">
