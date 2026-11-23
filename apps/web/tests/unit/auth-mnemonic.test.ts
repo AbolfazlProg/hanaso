@@ -7,6 +7,7 @@
  * tolerant-but-strict; quiz positions are 1..12, distinct, unpredictable;
  * quiz verification is exact-position.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   MNEMONIC_WORD_COUNT,
@@ -120,7 +121,6 @@ describe('quiz positions & verification (the signup gate)', () => {
 
 describe('the bundled JSON wordlist stays in sync with the canonical .txt', () => {
   it('JSON === TXT (the audit file and the runtime module are the same list)', () => {
-    const { readFileSync } = require('node:fs') as typeof import('node:fs');
     const txt = readFileSync('src/modules/auth/content/bip39-english.txt', 'utf8')
       .split('\n')
       .map((w) => w.trim())
