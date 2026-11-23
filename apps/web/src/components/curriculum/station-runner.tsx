@@ -51,7 +51,6 @@ import {
  * (never only localStorage AND never only the server — both layers agree). */
 import { resumeFreshness } from '@/modules/curriculum/resume-policy';
 import { JaBlock } from '@/components/patterns/ja-block';
-import { FuriganaText } from '@/components/patterns/furigana-text';
 import { MixedFaJaText } from './mixed-fa-ja-text';
 import { NameKatakana } from '@/components/curriculum/name-katakana';
 import { LineAudioButton } from './line-audio-button';
@@ -63,6 +62,7 @@ import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
 import { KanjiCard, type KanjiCardData } from './kanji-card';
+import { SmartJaText } from '@/components/patterns/smart-ja-text';
 import { ExampleAudioButton } from './example-audio-button';
 import { KANA_ITEMS_BY_ID, KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
 import { readabilityLabel } from '@/modules/curriculum/content/readability';
@@ -75,7 +75,10 @@ const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
 interface Line {
   id: string;
-  tokens: { surface: string }[];
+  /* SMART-RUBY §۲ — the transport carries the full DialogueToken (reading
+   * included) from the dialogue bundle; the in-context snippets render the
+   * learner-aware ruby off these readings. */
+  tokens: { surface: string; reading?: string }[];
   fa: string;
   speaker: string;
 }
@@ -2092,13 +2095,14 @@ function BlockView({
                * (28→37.6px, responsive) — not the 18px JP body size; the
                * furigana floor (max(0.5em,12px)) scales with it, so the
                  reading guides stay readable next to the hero term. */}
-              {word.termFurigana ? (
-                <JaBlock className="mt-2 text-word-hero font-bold leading-snug">
-                  <FuriganaText>{word.termFurigana}</FuriganaText>
-                </JaBlock>
-              ) : (
-                <JaBlock className="mt-2 text-word-hero font-bold leading-snug">{word.term}</JaBlock>
-              )}
+              {/* SMART-RUBY §۲ — the learner-aware furigana law on the word
+                  hero: the word's own reading rides above the term until the
+                  kanji AND the exhibited reading are taught to THIS learner
+                  (completed stations only); then it hides by default and the
+                  kanji becomes tap-to-inspect. */}
+              <JaBlock className="mt-2 text-word-hero font-bold leading-snug">
+                <SmartJaText tokens={[{ surface: word.term, reading: word.readingKana }]} />
+              </JaBlock>
               {/* ENGINE-NEXTGEN W-D: the dual pronunciation renders through
                * the ONE shared component (reading · romaji + the derived
                * Persian transliteration) — no inline per-surface habit. */}
@@ -2140,19 +2144,25 @@ function BlockView({
           {line && (
             <div className="mt-4 rounded-md bg-surface-warm p-4">
               <p className="text-caption text-ink-soft">{fa.curriculum.inDialogue}:</p>
+              {/* SMART-RUBY §۲ — the in-context line renders through the same
+                  learner-aware law (its tokens carry authored readings). */}
               <JaBlock className="mt-2 text-body">
-                {line.tokens.map((t, i) => (
-                  <span
-                    key={i}
-                    className={
-                      word.surfaceInLine && t.surface.includes(word.surfaceInLine.slice(0, 2))
-                        ? 'rounded-sm bg-indigo-wash px-0.5 font-bold text-indigo'
-                        : undefined
-                    }
-                  >
-                    {t.surface}
-                  </span>
-                ))}
+                {line.tokens.map((t, i) =>
+                  t.reading && t.reading !== t.surface ? (
+                    <SmartJaText key={i} tokens={[{ surface: t.surface, reading: t.reading }]} />
+                  ) : (
+                    <span
+                      key={i}
+                      className={
+                        word.surfaceInLine && t.surface.includes(word.surfaceInLine.slice(0, 2))
+                          ? 'rounded-sm bg-indigo-wash px-0.5 font-bold text-indigo'
+                          : undefined
+                      }
+                    >
+                      {t.surface}
+                    </span>
+                  ),
+                )}
               </JaBlock>
               <p className="mt-2 text-small text-ink-soft">{line.fa}</p>
             </div>
@@ -2236,7 +2246,10 @@ function BlockView({
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <JaBlock className="text-h3 font-bold">{expr.ja}</JaBlock>
+            {/* SMART-RUBY §۲ — the expression rides the learner-aware law. */}
+            <JaBlock className="text-h3 font-bold">
+              <SmartJaText text={expr.ja} />
+            </JaBlock>
             {line && (
               <LineAudioButton
                 lineId={line.id}
@@ -2386,7 +2399,10 @@ function BlockView({
                   thumb-sized) — the audio is part of the example, not a footer
                   decoration. */}
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                  <JaBlock className="text-word-hero font-bold leading-snug text-ink">{example.ja}</JaBlock>
+                  {/* SMART-RUBY §۲ — examples ride the learner-aware law. */}
+                  <JaBlock className="text-word-hero font-bold leading-snug text-ink">
+                    <SmartJaText text={example.ja} />
+                  </JaBlock>
                   {/* Addendum-4 §7 — every example word gets its OWN playable
                     audio (independent asset bound to THIS word; normal ⇄ slow
                     cycle like every other teaching sound). No asset → no
@@ -2679,7 +2695,9 @@ function BlockView({
                       className="flex items-baseline justify-between gap-3 border-b border-dashed border-ink-faint pb-2 last:border-none last:pb-0"
                     >
                       <span className="flex min-w-0 flex-col gap-0.5">
-                        <JaBlock className="text-body font-bold">{item.ja}</JaBlock>
+                        <JaBlock className="text-body font-bold">
+                          <SmartJaText text={item.ja} />
+                        </JaBlock>
                         {block.showGloss && item.glossFa ? (
                           <span className="text-caption text-ink-soft">{item.glossFa}</span>
                         ) : null}

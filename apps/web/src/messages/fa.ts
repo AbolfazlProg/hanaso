@@ -534,6 +534,19 @@ export const fa = {
     wordAudioPlay: 'پخش تلفظ واژه',
     kanjiCardNote: 'آموزش کانجی',
     kanjiCardMissing: (kanjiId: string) => `کانجی «${kanjiId}» در مرجع N5 پیدا نشد — محتوای ایستگاه ناقص است.`,
+    /* SMART-RUBY 2026-11-23 §۲ — the learner-aware furigana law (SmartJaText):
+     * the tap-to-inspect popover on any kanji (readings, meaning, strokes,
+     * the learner's own taught state — never a guess). */
+    smartRubyTapHint: (literal: string) => `جزئیات کانجی ${literal} — خوانش، معنی و وضعیت آموزشت`,
+    smartRubyReadingsTitle: 'خوانش‌هایی که دیده‌ای',
+    smartRubyOnTitle: 'خوانش‌های چینی (on)',
+    smartRubyKunTitle: 'خوانش‌های ژاپنی (kun)',
+    smartRubyMeaningTitle: 'معنی',
+    smartRubyStrokes: (n: number) => `${new Intl.NumberFormat('fa-IR').format(n)} ضربه`,
+    smartRubyStatusTaught: (station: string) => `آموزش دیده‌ای — در «${station}»`,
+    smartRubyStatusUntaught: 'هنوز آموزش داده نشده — تا یادش بگیری، خوانشش بالای کانجی می‌ماند.',
+    smartRubyNotInReference: 'در مرجع N5 ثبت نشده — فقط داخل واژه‌های همین مسیر دیده می‌شود.',
+    smartRubyClose: 'بستن',
     /* ENGINE-NEXTGEN W-D — the dual-pronunciation guide label (WordPronunciation). */
     wordTranslitLabel: 'آوانویسی',
     gradingUnavailable: 'ارتباط با سرور برقرار نشد — نمره‌گذاری فعلاً در دسترس نیست؛ بعداً دوباره تلاش کن.',

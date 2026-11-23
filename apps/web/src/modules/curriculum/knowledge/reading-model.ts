@@ -313,6 +313,34 @@ function dedupeStable(items: string[]): string[] {
   return [...seen];
 }
 
+/**
+ * The CLIENT transport of the model: the ruby-relevant subset — the
+ * kanji-BEARING words (only they can render ruby; kana words' reading equals
+ * their surface, so they drop out) + the full kanji facts (annotation of
+ * standalone kanji runs + the popover payload + the decision alignment all
+ * need them). The SAME ReadingModel shape, so the SAME pure functions
+ * (annotateJa / rubyState / kanjiInspect) run on the client — zero drift
+ * between the server validation model and the display model.
+ */
+export function rubyTransportModel(model: ReadingModel): ReadingModel {
+  const wordsBySurface = new Map<string, ReadingModelWord>();
+  for (const w of model.wordsBySurface.values()) {
+    if (!w.surface.split('').some(isKanjiChar)) continue;
+    wordsBySurface.set(w.surface, w);
+  }
+  const surfacesByFirst = new Map<string, ReadingModelWord[]>();
+  for (const w of wordsBySurface.values()) {
+    const key = w.surface[0]!;
+    const list = surfacesByFirst.get(key) ?? [];
+    list.push(w);
+    surfacesByFirst.set(key, list);
+  }
+  for (const list of surfacesByFirst.values()) {
+    list.sort((a, b) => b.surface.length - a.surface.length || a.surface.localeCompare(b.surface));
+  }
+  return { wordsBySurface, surfacesByFirst, kanjiByLiteral: model.kanjiByLiteral, chapterSlugs: model.chapterSlugs };
+}
+
 /* ------------------------------------------------------------- alignment */
 
 export interface AlignedSegment {

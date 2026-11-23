@@ -18,6 +18,7 @@
  */
 import { BookOpenText, Layers } from 'lucide-react';
 import { JaBlock } from '@/components/patterns/ja-block';
+import { SmartJaText, SmartMixedFaJaText } from '@/components/patterns/smart-ja-text';
 import { FuriganaText } from '@/components/patterns/furigana-text';
 import { LineAudioButton } from '@/components/curriculum/line-audio-button';
 import { fa } from '@/messages/fa';
@@ -52,14 +53,14 @@ export function KanjiCard({ kanji, noteFa }: { kanji: KanjiCardData; noteFa?: st
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-h2 font-black leading-tight text-ink">{kanji.meaningFa}</p>
-          <span
+          {/* SMART-RUBY §۲ — the kanji itself is tap-to-inspect: readings the
+              learner has met, the meaning, the stroke count, and the learner's
+              own taught state (never a guess — the per-learner view). */}
+          <SmartJaText
             lang="ja"
-            dir="ltr"
             className="mt-1 block text-[length:var(--text-word-hero)] font-bold leading-[1.15] text-ink"
-            aria-label={`کانجی ${kanji.meaningFa}`}
-          >
-            {kanji.literal}
-          </span>
+            tokens={[{ surface: kanji.literal }]}
+          />
         </div>
         <span className="flex items-center gap-1.5 rounded-full border border-ink-faint bg-surface-warm px-3 py-1.5 text-caption font-bold text-ink">
           <Layers aria-hidden className="size-3.5" />
@@ -76,8 +77,12 @@ export function KanjiCard({ kanji, noteFa }: { kanji: KanjiCardData; noteFa?: st
           {kanji.anchors.map((w) => (
             <li key={w.wordId} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
               <div className="min-w-0">
+                {/* SMART-RUBY §۲ — the anchor words ride the learner-aware law:
+                    the reading shows until the kanji+reading are TAUGHT to this
+                    learner (completed stations only — presence here is not
+                    teaching), then hides and becomes tap-to-inspect. */}
                 <JaBlock className="text-body font-bold">
-                  {w.termFurigana ? <FuriganaText>{w.termFurigana}</FuriganaText> : w.term}
+                  <SmartJaText tokens={[{ surface: w.term, reading: w.readingKana }]} />
                 </JaBlock>
                 <span className="text-caption text-ink-soft"> — {w.meaningFa}</span>
               </div>
@@ -106,7 +111,7 @@ export function KanjiCard({ kanji, noteFa }: { kanji: KanjiCardData; noteFa?: st
           <BookOpenText aria-hidden className="mt-0.5 size-4 shrink-0" />
           <span>
             <b>{fa.curriculum.kanjiCardNote}: </b>
-            {noteFa}
+            <SmartMixedFaJaText text={noteFa} />
           </span>
         </p>
       )}

@@ -39,7 +39,8 @@ import {
   type PlaybackStatus,
 } from '@/modules/dialogue';
 import { logEvent, postProgressEvent } from '@/lib/poc/client';
-import { JpLine, POC_SCENE_CSS } from '../jp-text';
+import { POC_SCENE_CSS } from '../jp-text';
+import { SmartJpLine } from '@/components/curriculum/smart-jp-line';
 
 export interface DialogueSceneProps {
   bundle: {
@@ -680,10 +681,14 @@ export function DialogueScene({
                   >
                     {speakerLabel(line, characters)}
                   </span>
-                  <JpLine
+                  {/* SMART-RUBY §۲ — the transcript line renders through the
+                      learner-aware furigana law (reading rides an untaught
+                      kanji; hides once taught; kanji tap-to-inspect). The PoC
+                      lesson links stay PoC-only (#101: embedded = none). */}
+                  <SmartJpLine
                     tokens={line.tokens}
-                    className={`text-ja ${active ? 'font-bold' : ''}`}
-                    /* Issue #101: embedded scenes never link into the PoC lesson pages. */
+                    className="text-ja"
+                    active={active}
                     getHref={(t) => (!embedded && t.chunk ? `/poc/lesson#item-${t.chunk}` : null)}
                   />
                   {showFa && <span className="text-body text-ink-soft">{line.fa}</span>}

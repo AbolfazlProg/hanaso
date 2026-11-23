@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Ear, Loader2, Volume2 } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
-import { FuriganaText } from '@/components/patterns/furigana-text';
+import { SmartJaText, SmartMixedFaJaText } from '@/components/patterns/smart-ja-text';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import { WordPronunciation } from '@/components/curriculum/word-pronunciation';
 import { getCachedAudio, reportPlaybackError } from '@/modules/audio/client-cache';
@@ -191,13 +191,14 @@ export function ReviewRunner({
           </>
         ) : card.term ? (
           <>
-            {card.termFurigana ? (
-              <JaBlock className="text-h2 font-black">
-                <FuriganaText>{card.termFurigana}</FuriganaText>
-              </JaBlock>
-            ) : (
-              <JaBlock className="text-h2 font-black">{card.term}</JaBlock>
-            )}
+            {/* SMART-RUBY §۲ — the Memory Station front rides the learner-aware
+                law: the reading rides above an untaught kanji and HIDES once
+                the kanji + that reading are taught to THIS learner (the front
+                stays a honest recall target; the reveal shows it regardless).
+                No tap affordance here — inspecting would spoil the recall. */}
+            <JaBlock className="text-h2 font-black">
+              <SmartJaText tokens={[{ surface: card.term, reading: card.readingKana }]} inspect={false} />
+            </JaBlock>
             <p className="text-lead font-bold text-ink">{card.meaningFa}</p>
             {/* ENGINE-NEXTGEN W-D: word cards carry the SAME derived dual
              * pronunciation the teaching card shows — the ONE shared component
@@ -232,7 +233,7 @@ export function ReviewRunner({
 
         {card.note ? (
           <p className="text-small text-ink-soft">
-            <MixedFaJaText text={card.note} />
+            <SmartMixedFaJaText text={card.note} />
           </p>
         ) : null}
 
@@ -275,7 +276,9 @@ export function ReviewRunner({
               <ul className="flex flex-col items-center gap-1 pt-1" dir="ltr" lang="ja">
                 {card.anchorWords.slice(0, 3).map((a) => (
                   <li key={a.term} className="text-small text-ink-soft">
-                    <span className="font-bold text-ink">{a.term}</span>
+                    <span className="font-bold text-ink">
+                      <SmartJaText tokens={[{ surface: a.term, reading: a.readingKana }]} />
+                    </span>
                     <span className="text-ink-faint"> · </span>
                     {a.meaningFa}
                   </li>

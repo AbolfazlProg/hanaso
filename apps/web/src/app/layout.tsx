@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/toast';
 import { LearnerIdBootstrap } from '@/lib/learner/bootstrap';
+import { LearnerJaProvider } from '@/components/patterns/learner-ja-provider';
+import { getRubyTransportModel } from '@/modules/curriculum/knowledge/learner-ja-server';
 import { notoSerifJP, vazirmatn, zenkaku } from '@/styles/fonts';
 import '@/styles/globals.css';
 
@@ -21,7 +23,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           {/* TASK-LEARNING-08 (WP-5/#109): stable per-browser learner id — every
               RSC render / API call after the first visit keys progress to it. */}
           <LearnerIdBootstrap />
-          {children}
+          {/* SMART-RUBY §۲ — the learner-aware furigana law mounts app-wide:
+              the compact ruby transport (course data, RSC prop) + the
+              per-learner view fetched once per session by the provider. */}
+          <LearnerJaProvider model={getRubyTransportModel()}>{children}</LearnerJaProvider>
           <Toaster />
         </Providers>
       </body>
