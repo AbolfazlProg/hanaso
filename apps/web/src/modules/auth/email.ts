@@ -50,7 +50,11 @@ export function emailFrom(): string {
 }
 
 /** The 6-digit code email (login + link share the template, only the lead differs). */
-export function otpEmailBody(code: string, purpose: 'login' | 'link', ttlMinutes: number): { subject: string; text: string; html: string } {
+export function otpEmailBody(
+  code: string,
+  purpose: 'login' | 'link',
+  ttlMinutes: number,
+): { subject: string; text: string; html: string } {
   const lead = purpose === 'login' ? 'کد ورود شما به هاناسو' : 'کد تأیید اتصال ایمیل به حساب هاناسو';
   const ttlFa = new Intl.NumberFormat('fa-IR').format(ttlMinutes);
   const subject = `هاناسو — ${lead}`;
@@ -105,7 +109,13 @@ async function sendViaResend(input: { to: string; subject: string; text: string;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ from: emailFrom(), to: [input.to], subject: input.subject, text: input.text, html: input.html }),
+    body: JSON.stringify({
+      from: emailFrom(),
+      to: [input.to],
+      subject: input.subject,
+      text: input.text,
+      html: input.html,
+    }),
     signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) return { ok: false, reason: 'send_failed' };
@@ -121,6 +131,12 @@ async function sendViaSmtp(input: { to: string; subject: string; text: string; h
     secure: port === 465,
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
   });
-  await transport.sendMail({ from: emailFrom(), to: input.to, subject: input.subject, text: input.text, html: input.html });
+  await transport.sendMail({
+    from: emailFrom(),
+    to: input.to,
+    subject: input.subject,
+    text: input.text,
+    html: input.html,
+  });
   return { ok: true };
 }

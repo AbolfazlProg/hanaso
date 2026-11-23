@@ -16,8 +16,12 @@ describe('hashSecret / verifySecret (scrypt verifier)', () => {
   it('roundtrip: the exact secret verifies; a different secret never does', () => {
     const encoded = hashSecret('legal winner thank year wave sausage worth useful legal winner thank yellow');
     expect(encoded.startsWith('scrypt$')).toBe(true);
-    expect(verifySecret('legal winner thank year wave sausage worth useful legal winner thank yellow', encoded)).toBe(true);
-    expect(verifySecret('legal winner thank year wave sausage worth useful legal winner thank zzzzzz', encoded)).toBe(false);
+    expect(verifySecret('legal winner thank year wave sausage worth useful legal winner thank yellow', encoded)).toBe(
+      true,
+    );
+    expect(verifySecret('legal winner thank year wave sausage worth useful legal winner thank zzzzzz', encoded)).toBe(
+      false,
+    );
     expect(verifySecret('', encoded)).toBe(false);
   });
   it('the encoded form never contains the secret in any recoverable form', () => {
@@ -42,7 +46,9 @@ describe('deriveLookupKey — deterministic O(1) routing key', () => {
   const phrase = 'legal winner thank year wave sausage worth useful legal winner thank yellow';
   it('same phrase → identical key; different phrase → different key', () => {
     expect(deriveLookupKey(phrase)).toBe(deriveLookupKey(phrase));
-    expect(deriveLookupKey(phrase)).not.toBe(deriveLookupKey('abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'));
+    expect(deriveLookupKey(phrase)).not.toBe(
+      deriveLookupKey('abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'),
+    );
   });
   it('the key is a compact base64url value, never the phrase', () => {
     const key = deriveLookupKey(phrase);

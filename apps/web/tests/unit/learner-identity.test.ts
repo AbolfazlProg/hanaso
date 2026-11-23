@@ -65,7 +65,9 @@ describe('resolveLearnerIdFromRequest', () => {
   });
 
   it('degrades to the GUEST scope on a MALFORMED learner cookie (never trusts it as a key)', async () => {
-    expect(await resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=not-a-uuid`))).toBe(GUEST_LEARNER_ID);
+    expect(await resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=not-a-uuid`))).toBe(
+      GUEST_LEARNER_ID,
+    );
     expect(await resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=`))).toBe(GUEST_LEARNER_ID);
     // the retired shared id must never resurface through any path
     expect(await resolveLearnerIdFromRequest(reqWithCookie(`${LEARNER_COOKIE_NAME}=poc-user`))).toBe(GUEST_LEARNER_ID);

@@ -26,7 +26,12 @@ import { getDbClient } from '@/db/client';
 import { oauthStates } from '../../../../../../db/schema';
 import { OAUTH_COOKIE_NAME, verifyOauthCookie } from '@/lib/auth/oauth-cookie';
 import { establishSession } from '@/lib/auth/api';
-import { attachGoogleIdentity, createAccountWithIdentity, resolveGoogleLogin, touchMethodUsage } from '@/modules/auth/identities';
+import {
+  attachGoogleIdentity,
+  createAccountWithIdentity,
+  resolveGoogleLogin,
+  touchMethodUsage,
+} from '@/modules/auth/identities';
 import { exchangeCodeForTokens, googleEnv, verifyGoogleIdToken } from '@/modules/auth/google';
 
 export const dynamic = 'force-dynamic';
@@ -59,7 +64,9 @@ export async function GET(req: NextRequest) {
   const backPath = () => `${origin}/auth/login`;
 
   if (errorParam) {
-    return NextResponse.redirect(backPath() + (errorParam === 'access_denied' ? '?google=cancelled' : '?google=provider_error'));
+    return NextResponse.redirect(
+      backPath() + (errorParam === 'access_denied' ? '?google=cancelled' : '?google=provider_error'),
+    );
   }
   if (!code || !state) {
     return NextResponse.redirect(`${origin}/auth/login?google=invalid_state`);
@@ -94,7 +101,10 @@ export async function GET(req: NextRequest) {
   const { sub, email, emailVerified } = verified.identity;
   // consume the row NOW (guarded — only if still unconsumed): the flow is
   // single-use from this point on
-  await db.update(oauthStates).set({ consumedAt: new Date() }).where(and(eq(oauthStates.state, state), isNull(oauthStates.consumedAt)));
+  await db
+    .update(oauthStates)
+    .set({ consumedAt: new Date() })
+    .where(and(eq(oauthStates.state, state), isNull(oauthStates.consumedAt)));
 
   const destination = row.redirectTo.startsWith('/') ? row.redirectTo : '/';
 
@@ -102,7 +112,8 @@ export async function GET(req: NextRequest) {
     const userId = row.userId!;
     const attached = await attachGoogleIdentity({ userId, sub, email, emailVerified });
     if (!attached.ok) {
-      const marker = attached.reason === 'google_already_linked_to_other' ? FAILURES.linked_other : FAILURES.email_other;
+      const marker =
+        attached.reason === 'google_already_linked_to_other' ? FAILURES.linked_other : FAILURES.email_other;
       return NextResponse.redirect(`${origin}/settings/security?${marker}`);
     }
     return NextResponse.redirect(`${origin}${destination}?google=linked`);

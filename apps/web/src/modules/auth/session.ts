@@ -77,15 +77,15 @@ export async function resolveSession(token: string | null | undefined): Promise<
   const { db } = getDbClient();
   const tokenHash = tokenHashOf(token);
   const rows = await db
-    .select({ id: sessions.id, userId: sessions.userId, method: sessions.method, expiresAt: sessions.expiresAt, lastSeenAt: sessions.lastSeenAt })
+    .select({
+      id: sessions.id,
+      userId: sessions.userId,
+      method: sessions.method,
+      expiresAt: sessions.expiresAt,
+      lastSeenAt: sessions.lastSeenAt,
+    })
     .from(sessions)
-    .where(
-      and(
-        eq(sessions.tokenHash, tokenHash),
-        isNull(sessions.revokedAt),
-        gt(sessions.expiresAt, sql`now()`),
-      ),
-    )
+    .where(and(eq(sessions.tokenHash, tokenHash), isNull(sessions.revokedAt), gt(sessions.expiresAt, sql`now()`)))
     .limit(1);
   const row = rows[0];
   if (!row) return null;
@@ -108,7 +108,10 @@ export async function revokeSession(sessionId: string): Promise<void> {
 /** Revoke EVERY session of a user — «خروج از همه دستگاه‌ها». */
 export async function revokeAllSessions(userId: string): Promise<void> {
   const { db } = getDbClient();
-  await db.update(sessions).set({ revokedAt: new Date() }).where(and(eq(sessions.userId, userId), isNull(sessions.revokedAt)));
+  await db
+    .update(sessions)
+    .set({ revokedAt: new Date() })
+    .where(and(eq(sessions.userId, userId), isNull(sessions.revokedAt)));
 }
 
 /** The active (unrevoked, unexpired) sessions of a user — the devices list. */
@@ -155,7 +158,13 @@ export function clearSessionCookie(response: NextResponse): void {
 export async function getUserById(userId: string) {
   const { db } = getDbClient();
   const rows = await db
-    .select({ id: users.id, displayName: users.displayName, email: users.email, emailVerifiedAt: users.emailVerifiedAt, createdAt: users.createdAt })
+    .select({
+      id: users.id,
+      displayName: users.displayName,
+      email: users.email,
+      emailVerifiedAt: users.emailVerifiedAt,
+      createdAt: users.createdAt,
+    })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);

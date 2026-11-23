@@ -25,12 +25,19 @@ const loginSchema = z.object({ phrase: z.string().min(1).max(600) });
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }),
+    );
   }
   const { ipPrefix } = clientContext(req);
   const ipBucket = `${RATE_BUCKETS.loginIp}:${ipPrefix ?? 'unknown'}`;
   if (await tooManyEvents(ipBucket, 60 * 60 * 1000, 40)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/rate_limited', message: 'تلاش‌های ورود بیش از حد مجاز است — یک ساعت دیگر تلاش کن.' }), { status: 429 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({ code: 'auth/rate_limited', message: 'تلاش‌های ورود بیش از حد مجاز است — یک ساعت دیگر تلاش کن.' }),
+        { status: 429 },
+      ),
+    );
   }
   await recordRateEvent(ipBucket);
 
@@ -38,17 +45,26 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }),
+    );
   }
   const parsed = loginSchema.safeParse(body);
   if (!parsed.success) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/validation_failed', message: 'عبارت واردشده خوانا نیست.' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/validation_failed', message: 'عبارت واردشده خوانا نیست.' }), {
+        status: 400,
+      }),
+    );
   }
   const phrase = normalizeMnemonicInput(parsed.data.phrase);
   if (!phrase) {
     return authNoStore(
       NextResponse.json(
-        fail({ code: 'auth/phrase_malformed', message: 'عبارت باید ۱۲ کلمهٔ دقیق فهرست باشد — بررسی کن که همهٔ کلمات کامل نوشته شده باشند.' }),
+        fail({
+          code: 'auth/phrase_malformed',
+          message: 'عبارت باید ۱۲ کلمهٔ دقیق فهرست باشد — بررسی کن که همهٔ کلمات کامل نوشته شده باشند.',
+        }),
         { status: 400 },
       ),
     );
@@ -57,7 +73,15 @@ export async function POST(req: Request) {
   const lookupKey = deriveLookupKey(phrase);
   const failBucket = `${RATE_BUCKETS.phraseLoginFail}:${lookupKey}`;
   if (await tooManyEvents(failBucket, 15 * 60 * 1000, 5)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/locked', message: 'به‌دلیل تلاش‌های ناموفق، این مسیر ورود موقتاً قفل شده — ۱۵ دقیقه بعد دوباره تلاش کن.' }), { status: 429 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({
+          code: 'auth/locked',
+          message: 'به‌دلیل تلاش‌های ناموفق، این مسیر ورود موقتاً قفل شده — ۱۵ دقیقه بعد دوباره تلاش کن.',
+        }),
+        { status: 429 },
+      ),
+    );
   }
 
   const identity = await findIdentity('mnemonic', lookupKey);
@@ -66,12 +90,18 @@ export async function POST(req: Request) {
     await recordRateEvent(failBucket);
     // ONE honest message for unknown phrase, wrong phrase, and disabled anchor —
     // no information about which check failed (mission: no sensitive leakage).
-    return authNoStore(NextResponse.json(fail({ code: 'auth/phrase_rejected', message: 'عبارت واردشده با هیچ حسابی مطابقت ندارد.' }), { status: 401 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/phrase_rejected', message: 'عبارت واردشده با هیچ حسابی مطابقت ندارد.' }), {
+        status: 401,
+      }),
+    );
   }
 
   await touchMethodUsage('mnemonic', lookupKey);
   const response = NextResponse.json(ok({ userId: identity.userId, method: 'mnemonic' }));
   const { mergedGuest } = await establishSession(response, req, identity.userId, 'mnemonic');
-  console.info(`[auth] mnemonic login user=${identity.userId} phrase=${redactPhrase(phrase)} mergedGuest=${mergedGuest}`);
+  console.info(
+    `[auth] mnemonic login user=${identity.userId} phrase=${redactPhrase(phrase)} mergedGuest=${mergedGuest}`,
+  );
   return authNoStore(response);
 }

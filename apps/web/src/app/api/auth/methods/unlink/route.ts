@@ -20,21 +20,31 @@ const unlinkSchema = z.object({ provider: z.enum(['mnemonic', 'google', 'email',
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }),
+    );
   }
   const account = await resolveAccountFromRequest(req);
   if (!account) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/no_session', message: 'برای مدیریت روش‌های ورود، وارد حساب خودت شو.' }), { status: 401 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/no_session', message: 'برای مدیریت روش‌های ورود، وارد حساب خودت شو.' }), {
+        status: 401,
+      }),
+    );
   }
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }),
+    );
   }
   const parsed = unlinkSchema.safeParse(body);
   if (!parsed.success || parsed.data.provider === 'sms') {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/validation_failed', message: 'روش درخواستی معتبر نیست.' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/validation_failed', message: 'روش درخواستی معتبر نیست.' }), { status: 400 }),
+    );
   }
   const result = await unlinkMethod(account.userId, parsed.data.provider as ProviderName);
   if (!result.ok) {
@@ -49,7 +59,11 @@ export async function POST(req: Request) {
         ),
       );
     }
-    return authNoStore(NextResponse.json(fail({ code: 'auth/method_not_found', message: 'این روش روی حساب تو فعال نیست.' }), { status: 404 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/method_not_found', message: 'این روش روی حساب تو فعال نیست.' }), {
+        status: 404,
+      }),
+    );
   }
   console.info(`[auth] unlink provider=${parsed.data.provider} user=${account.userId}`);
   return authNoStore(NextResponse.json(ok({ removed: parsed.data.provider })));

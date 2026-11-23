@@ -28,27 +28,43 @@ const WRONG_QUIZ = 'کلمات انتخابی درست نیست — عبارت �
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }),
+    );
   }
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }),
+    );
   }
   const parsed = answerSchema.safeParse(body);
   if (!parsed.success) {
     return authNoStore(
-      NextResponse.json(fail({ code: 'auth/validation_failed', message: 'پاسخ‌های تأیید شکل درستی ندارند.' }), { status: 400 }),
+      NextResponse.json(fail({ code: 'auth/validation_failed', message: 'پاسخ‌های تأیید شکل درستی ندارند.' }), {
+        status: 400,
+      }),
     );
   }
   const guestId = await resolveLearnerIdFromRequest(req);
   if (guestId === GUEST_LEARNER_ID) {
     return authNoStore(
-      NextResponse.json(fail({ code: 'auth/no_browser_identity', message: 'نشست ساخت حساب این مرورگر یافت نشد — از اول فرایند را شروع کن.' }), { status: 400 }),
+      NextResponse.json(
+        fail({
+          code: 'auth/no_browser_identity',
+          message: 'نشست ساخت حساب این مرورگر یافت نشد — از اول فرایند را شروع کن.',
+        }),
+        { status: 400 },
+      ),
     );
   }
-  const outcome = await completeWizard({ registrationId: parsed.data.registrationId, guestLearnerId: guestId, answers: parsed.data.answers });
+  const outcome = await completeWizard({
+    registrationId: parsed.data.registrationId,
+    guestLearnerId: guestId,
+    answers: parsed.data.answers,
+  });
   switch (outcome.kind) {
     case 'ok': {
       const response = NextResponse.json(
@@ -64,15 +80,26 @@ export async function POST(req: Request) {
     case 'expired':
     case 'not_found':
       return authNoStore(
-        NextResponse.json(fail({ code: 'auth/wizard_expired', message: 'فرصت تأیید عبارت تمام شده — دوباره از اول شروع کن.' }), { status: 410 }),
+        NextResponse.json(
+          fail({ code: 'auth/wizard_expired', message: 'فرصت تأیید عبارت تمام شده — دوباره از اول شروع کن.' }),
+          { status: 410 },
+        ),
       );
     case 'bound':
       return authNoStore(
-        NextResponse.json(fail({ code: 'auth/wizard_bound', message: 'این فرایند ثبت‌نام متعلق به این مرورگر نیست.' }), { status: 403 }),
+        NextResponse.json(
+          fail({ code: 'auth/wizard_bound', message: 'این فرایند ثبت‌نام متعلق به این مرورگر نیست.' }),
+          { status: 403 },
+        ),
       );
     case 'phrase_seal':
     case 'already_enrolled':
     default:
-      return authNoStore(NextResponse.json(fail({ code: 'auth/wizard_state', message: 'وضعیت فرایند نامعتبر است — دوباره از اول شروع کن.' }), { status: 400 }));
+      return authNoStore(
+        NextResponse.json(
+          fail({ code: 'auth/wizard_state', message: 'وضعیت فرایند نامعتبر است — دوباره از اول شروع کن.' }),
+          { status: 400 },
+        ),
+      );
   }
 }

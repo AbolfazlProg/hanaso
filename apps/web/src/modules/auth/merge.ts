@@ -52,7 +52,11 @@ export async function mergeGuestProgress(guestLearnerId: string, toUserId: strin
   if (!isLearnerId(guestLearnerId)) return { merged: false, reason: 'not_an_identity' };
   const { db } = getDbClient();
   // Already merged once → no-op (the ledger row is the proof).
-  const merged = await db.select({ from: learnerMerges.fromLearnerId }).from(learnerMerges).where(eq(learnerMerges.fromLearnerId, guestLearnerId)).limit(1);
+  const merged = await db
+    .select({ from: learnerMerges.fromLearnerId })
+    .from(learnerMerges)
+    .where(eq(learnerMerges.fromLearnerId, guestLearnerId))
+    .limit(1);
   if (merged[0]) return { merged: false, reason: 'already_merged' };
   // The guest id must not be a live account id (tamper paranoia — never move
   // an account's rows onto another account).
@@ -76,7 +80,11 @@ export async function mergeGuestProgress(guestLearnerId: string, toUserId: strin
              SELECT 1 FROM ${table} u WHERE u.user_id = '${sqlEscaped(toUserId)}' AND u.${key} = g.${key})`,
         ),
       );
-      await d.execute(sql.raw(`UPDATE ${table} SET user_id = '${sqlEscaped(toUserId)}' WHERE user_id = '${sqlEscaped(guestLearnerId)}'`));
+      await d.execute(
+        sql.raw(
+          `UPDATE ${table} SET user_id = '${sqlEscaped(toUserId)}' WHERE user_id = '${sqlEscaped(guestLearnerId)}'`,
+        ),
+      );
     }
     // attempts: unique (user_id, dialogue_id, attempt_no)
     await d.execute(
@@ -88,10 +96,16 @@ export async function mergeGuestProgress(guestLearnerId: string, toUserId: strin
       ),
     );
     await d.execute(
-      sql.raw(`UPDATE ${USER_SCOPED_TABLES.attemptKeyed[0]} SET user_id = '${sqlEscaped(toUserId)}' WHERE user_id = '${sqlEscaped(guestLearnerId)}'`),
+      sql.raw(
+        `UPDATE ${USER_SCOPED_TABLES.attemptKeyed[0]} SET user_id = '${sqlEscaped(toUserId)}' WHERE user_id = '${sqlEscaped(guestLearnerId)}'`,
+      ),
     );
     for (const table of USER_SCOPED_TABLES.plain) {
-      await d.execute(sql.raw(`UPDATE ${table} SET user_id = '${sqlEscaped(toUserId)}' WHERE user_id = '${sqlEscaped(guestLearnerId)}'`));
+      await d.execute(
+        sql.raw(
+          `UPDATE ${table} SET user_id = '${sqlEscaped(toUserId)}' WHERE user_id = '${sqlEscaped(guestLearnerId)}'`,
+        ),
+      );
     }
     await d.insert(learnerMerges).values({ fromLearnerId: guestLearnerId, toUserId }).onConflictDoNothing();
   });

@@ -19,10 +19,13 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   const account = await resolveAccountFromRequest(req);
   if (!account) {
-    return NextResponse.json(fail({ code: 'auth/no_session', message: 'برای مدیریت روش‌های ورود، وارد حساب خودت شو.' }), {
-      status: 401,
-      headers: { 'cache-control': 'no-store' },
-    });
+    return NextResponse.json(
+      fail({ code: 'auth/no_session', message: 'برای مدیریت روش‌های ورود، وارد حساب خودت شو.' }),
+      {
+        status: 401,
+        headers: { 'cache-control': 'no-store' },
+      },
+    );
   }
   return NextResponse.json(
     {

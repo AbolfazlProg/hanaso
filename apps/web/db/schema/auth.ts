@@ -29,24 +29,28 @@ import { app } from './app';
 
 /* ------------------------------------------------------------- users (M1) */
 /** One HANASO account = one row. Login methods hang off auth_identities. */
-export const users = app.table('users', {
-  id: uuid('id')
-    .primaryKey()
-    .default(sql`uuidv7()`),
-  /** Optional friendly name (settings) — never required, never used for login. */
-  displayName: text('display_name'),
-  /**
-   * Contact email (lowercase) — the most recently VERIFIED address (google or
-   * email-OTP). Nullable: mnemonic-only accounts may have none. UNIQUE where
-   * not null (postgres treats NULLs as distinct). Login linkage itself lives
-   * in auth_identities — this column is for display/communication only.
-   */
-  email: text('email'),
-  /** When the contact email above was proven (id_token / OTP). */
-  emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-}, (t) => [uniqueIndex('users_email_key').on(t.email)]);
+export const users = app.table(
+  'users',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    /** Optional friendly name (settings) — never required, never used for login. */
+    displayName: text('display_name'),
+    /**
+     * Contact email (lowercase) — the most recently VERIFIED address (google or
+     * email-OTP). Nullable: mnemonic-only accounts may have none. UNIQUE where
+     * not null (postgres treats NULLs as distinct). Login linkage itself lives
+     * in auth_identities — this column is for display/communication only.
+     */
+    email: text('email'),
+    /** When the contact email above was proven (id_token / OTP). */
+    emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('users_email_key').on(t.email)],
+);
 
 /* ------------------------------------------------------- auth_identities */
 /**
@@ -128,10 +132,7 @@ export const sessions = app.table(
     /** Set by logout / logout-everywhere / owner revoke. */
     revokedAt: timestamp('revoked_at', { withTimezone: true }),
   },
-  (t) => [
-    uniqueIndex('sessions_token_hash_key').on(t.tokenHash),
-    index('sessions_user_idx').on(t.userId),
-  ],
+  (t) => [uniqueIndex('sessions_token_hash_key').on(t.tokenHash), index('sessions_user_idx').on(t.userId)],
 );
 
 /* --------------------------------------------------------- oauth_states */
@@ -264,11 +265,15 @@ export const mnemonicPendingRegistrations = app.table(
  * same browser never re-merges (double-merge guard) and the old id can never
  * be resurrected as someone else's.
  */
-export const learnerMerges = app.table('learner_merges', {
-  /** The former guest cookie uuid (primary key — merged exactly once). */
-  fromLearnerId: text('from_learner_id').primaryKey(),
-  toUserId: uuid('to_user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  mergedAt: timestamp('merged_at', { withTimezone: true }).notNull().defaultNow(),
-}, (t) => [index('learner_merges_to_user_idx').on(t.toUserId)]);
+export const learnerMerges = app.table(
+  'learner_merges',
+  {
+    /** The former guest cookie uuid (primary key — merged exactly once). */
+    fromLearnerId: text('from_learner_id').primaryKey(),
+    toUserId: uuid('to_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    mergedAt: timestamp('merged_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('learner_merges_to_user_idx').on(t.toUserId)],
+);

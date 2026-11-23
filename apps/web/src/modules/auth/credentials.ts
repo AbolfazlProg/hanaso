@@ -61,7 +61,10 @@ export function sealingKey(): Buffer {
 /** scrypt-hash a secret (phrase or OTP) → self-describing encoded string. */
 export function hashSecret(secret: string): string {
   const salt = randomBytes(SALT_LEN);
-  return encodeScrypt(salt, scryptSync(secret, salt, SCRYPT_KEYLEN, { N: SCRYPT_N, r: SCRYPT_R, p: SCRYPT_P, maxmem: 64 << 20 }));
+  return encodeScrypt(
+    salt,
+    scryptSync(secret, salt, SCRYPT_KEYLEN, { N: SCRYPT_N, r: SCRYPT_R, p: SCRYPT_P, maxmem: 64 << 20 }),
+  );
 }
 
 function encodeScrypt(salt: Buffer, hash: Buffer): string {

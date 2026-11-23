@@ -2,7 +2,7 @@ import { resolveLearnerId } from '@/lib/learner/server';
 import { getFsrsReviewStore } from '@/lib/poc/stores';
 import { resolveReviewCard } from '@/modules/fsrs/item-registry';
 import { ReviewRunner } from '@/app/review/review-runner';
-import { SiteNav } from '@/components/site-nav';
+import { SiteNav, resolveAccountDoor } from '@/components/site-nav';
 import { fa } from '@/messages/fa';
 
 /**
@@ -43,10 +43,16 @@ export default async function ReviewPage() {
   }
 
   const cards = queue.map((q) => resolveReviewCard(q.itemId, q.kind));
+  const accountDoor = await resolveAccountDoor();
 
   return (
     <>
-      <SiteNav active="learn" reviewDueCount={dueCount} />
+      <SiteNav
+        accountHref={accountDoor.href}
+        accountLabel={accountDoor.label}
+        active="learn"
+        reviewDueCount={dueCount}
+      />
       <main className="mx-auto min-h-dvh w-full max-w-2xl px-4 pb-24 pt-10">
         <header className="mb-6 flex flex-col gap-2">
           <h1 className="text-h1 font-black text-indigo">{fa.review.title}</h1>

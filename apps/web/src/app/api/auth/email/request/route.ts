@@ -31,17 +31,23 @@ const UNCONFIGURED =
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }),
+    );
   }
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }),
+    );
   }
   const parsed = requestSchema.safeParse(body);
   if (!parsed.success) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/validation_failed', message: 'نشانی ایمیل معتبر نیست.' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/validation_failed', message: 'نشانی ایمیل معتبر نیست.' }), { status: 400 }),
+    );
   }
   const email = parsed.data.email.toLowerCase();
   const account = await resolveAccountFromRequest(req);
@@ -49,38 +55,65 @@ export async function POST(req: Request) {
   // (a logged-in browser = attaching the method, an anonymous one = login).
   const purpose = parsed.data.purpose ?? (account ? 'link' : 'login');
   if (purpose === 'link' && !account) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/no_session', message: 'برای اتصال ایمیل به حساب، ابتدا وارد حساب خودت شو.' }), { status: 401 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({ code: 'auth/no_session', message: 'برای اتصال ایمیل به حساب، ابتدا وارد حساب خودت شو.' }),
+        { status: 401 },
+      ),
+    );
   }
 
   // The honest activation gate — before ANY code is generated.
   const transport = emailTransportInfo();
   if (!transport.configured) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/email_not_configured', message: UNCONFIGURED }), { status: 503 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/email_not_configured', message: UNCONFIGURED }), { status: 503 }),
+    );
   }
 
   const { ipPrefix } = clientContext(req);
   const destBucket = `${RATE_BUCKETS.otpSendDestination}:${email}`;
   const ipBucket = `${RATE_BUCKETS.otpSendIp}:${ipPrefix ?? 'unknown'}`;
   if ((await tooManyEvents(destBucket, 60 * 1000, 1)) || (await tooManyEvents(destBucket, 60 * 60 * 1000, 5))) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/rate_limited', message: 'درخواست کد بیش از حد مجاز است — کمی صبر کن و دوباره تلاش کن.' }), { status: 429 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({ code: 'auth/rate_limited', message: 'درخواست کد بیش از حد مجاز است — کمی صبر کن و دوباره تلاش کن.' }),
+        { status: 429 },
+      ),
+    );
   }
   if (await tooManyEvents(ipBucket, 60 * 60 * 1000, 10)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/rate_limited', message: 'درخواست‌های این نشست بیش از حد مجاز است — یک ساعت دیگر تلاش کن.' }), { status: 429 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({ code: 'auth/rate_limited', message: 'درخواست‌های این نشست بیش از حد مجاز است — یک ساعت دیگر تلاش کن.' }),
+        { status: 429 },
+      ),
+    );
   }
   await recordRateEvent(destBucket);
   await recordRateEvent(ipBucket);
 
-  const { id: otpId, code } = await issueOtp({ channel: 'email', destination: email, purpose, userId: account?.userId ?? null });
+  const { id: otpId, code } = await issueOtp({
+    channel: 'email',
+    destination: email,
+    purpose,
+    userId: account?.userId ?? null,
+  });
   const { subject, text, html } = otpEmailBody(code, purpose, Math.round(OTP_TTL_MS / 60_000));
   const sent = await sendEmail({ to: email, subject, text, html });
   if (!sent.ok) {
     // nothing arrived — retire the row so no usable orphan code exists
     await retireOtp(otpId);
     return authNoStore(
-      NextResponse.json(fail({ code: 'auth/email_send_failed', message: 'ارسال ایمیل موفق نشد — کمی بعد دوباره تلاش کن.' }), { status: 502 }),
+      NextResponse.json(
+        fail({ code: 'auth/email_send_failed', message: 'ارسال ایمیل موفق نشد — کمی بعد دوباره تلاش کن.' }),
+        { status: 502 },
+      ),
     );
   }
   return authNoStore(
-    NextResponse.json(ok({ sentTo: email, purpose, expiresAt: new Date(Date.now() + OTP_TTL_MS).toISOString() }), { status: 202 }),
+    NextResponse.json(ok({ sentTo: email, purpose, expiresAt: new Date(Date.now() + OTP_TTL_MS).toISOString() }), {
+      status: 202,
+    }),
   );
 }

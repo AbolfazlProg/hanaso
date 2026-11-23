@@ -18,19 +18,42 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }),
+    );
   }
   const account = await resolveAccountFromRequest(req);
   if (!account) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/no_session', message: 'برای فعال‌سازی عبارت بازیابی باید وارد حساب خودت باشی.' }), { status: 401 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({ code: 'auth/no_session', message: 'برای فعال‌سازی عبارت بازیابی باید وارد حساب خودت باشی.' }),
+        { status: 401 },
+      ),
+    );
   }
   const guestId = await resolveLearnerIdFromRequest(req);
   if (guestId === GUEST_LEARNER_ID) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/no_browser_identity', message: 'مرورگر باید کوکی هویت را پذیرفته باشد — کوکی‌ها را فعال کن و دوباره تلاش کن.' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({
+          code: 'auth/no_browser_identity',
+          message: 'مرورگر باید کوکی هویت را پذیرفته باشد — کوکی‌ها را فعال کن و دوباره تلاش کن.',
+        }),
+        { status: 400 },
+      ),
+    );
   }
   const bucket = `${RATE_BUCKETS.signupGuest}:${guestId}`;
   if (await tooManyEvents(bucket, 60 * 60 * 1000, 3)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/rate_limited', message: 'درخواست‌های فعال‌سازی بیش از حد مجاز است — یک ساعت دیگر تلاش کن.' }), { status: 429 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({
+          code: 'auth/rate_limited',
+          message: 'درخواست‌های فعال‌سازی بیش از حد مجاز است — یک ساعت دیگر تلاش کن.',
+        }),
+        { status: 429 },
+      ),
+    );
   }
   await recordRateEvent(bucket);
   const wizard = await startWizard({ guestLearnerId: guestId, purpose: 'enroll', userId: account.userId });

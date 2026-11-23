@@ -134,15 +134,25 @@ describe('verifyGoogleIdToken — the full chain', () => {
     expect(result).toEqual({ ok: false, reason: 'bad_issuer' });
   });
   it('expired → expired; future iat → future_token', async () => {
-    const expired = await verifyGoogleIdToken(mintIdToken({ nonce: 'n', exp: Math.floor(Date.now() / 1000) - 10 }), 'n', CLIENT_ID);
+    const expired = await verifyGoogleIdToken(
+      mintIdToken({ nonce: 'n', exp: Math.floor(Date.now() / 1000) - 10 }),
+      'n',
+      CLIENT_ID,
+    );
     expect(expired).toEqual({ ok: false, reason: 'expired' });
-    const future = await verifyGoogleIdToken(mintIdToken({ nonce: 'n', iat: Math.floor(Date.now() / 1000) + 1000 }), 'n', CLIENT_ID);
+    const future = await verifyGoogleIdToken(
+      mintIdToken({ nonce: 'n', iat: Math.floor(Date.now() / 1000) + 1000 }),
+      'n',
+      CLIENT_ID,
+    );
     expect(future).toEqual({ ok: false, reason: 'future_token' });
   });
   it('tampered payload (signature covers other bytes) → bad_signature', async () => {
     const token = mintIdToken({ nonce: 'n1' });
     const [h, p, s] = token.split('.');
-    const forgedPayload = b64url(JSON.stringify({ ...(JSON.parse(Buffer.from(p!, 'base64url').toString()) as object), nonce: 'n2' }));
+    const forgedPayload = b64url(
+      JSON.stringify({ ...(JSON.parse(Buffer.from(p!, 'base64url').toString()) as object), nonce: 'n2' }),
+    );
     const result = await verifyGoogleIdToken(`${h}.${forgedPayload}.${s}`, 'n2', CLIENT_ID);
     expect(result).toEqual({ ok: false, reason: 'bad_signature' });
   });

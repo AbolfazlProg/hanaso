@@ -81,7 +81,10 @@ describe('sendEmail — no fake success without a transport', () => {
   });
   it('the simulate hook (tests only) captures and answers ok', async () => {
     const sent: { to: string; subject: string }[] = [];
-    const result = await sendEmail({ to: 'x@example.com', subject: 's', text: 't', html: 'h' }, { simulate: (m) => sent.push(m) });
+    const result = await sendEmail(
+      { to: 'x@example.com', subject: 's', text: 't', html: 'h' },
+      { simulate: (m) => sent.push(m) },
+    );
     expect(result).toEqual({ ok: true });
     expect(sent).toHaveLength(1);
     expect(sent[0]!.to).toBe('x@example.com');

@@ -21,7 +21,9 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }),
+    );
   }
   const guestId = await resolveLearnerIdFromRequest(req);
   if (guestId === GUEST_LEARNER_ID) {
@@ -29,7 +31,8 @@ export async function POST(req: Request) {
       NextResponse.json(
         fail({
           code: 'auth/no_browser_identity',
-          message: 'برای ساخت حساب، مرورگر باید کوکی هویت را پذیرفته باشد — کوکی‌ها را فعال کن و صفحه را دوباره باز کن.',
+          message:
+            'برای ساخت حساب، مرورگر باید کوکی هویت را پذیرفته باشد — کوکی‌ها را فعال کن و صفحه را دوباره باز کن.',
         }),
         { status: 400 },
       ),
@@ -38,7 +41,13 @@ export async function POST(req: Request) {
   const bucket = `${RATE_BUCKETS.signupGuest}:${guestId}`;
   if (await tooManyEvents(bucket, 60 * 60 * 1000, 3)) {
     return authNoStore(
-      NextResponse.json(fail({ code: 'auth/rate_limited', message: 'درخواست‌های ساخت حساب بیش از حد مجاز است — یک ساعت دیگر تلاش کن.' }), { status: 429 }),
+      NextResponse.json(
+        fail({
+          code: 'auth/rate_limited',
+          message: 'درخواست‌های ساخت حساب بیش از حد مجاز است — یک ساعت دیگر تلاش کن.',
+        }),
+        { status: 429 },
+      ),
     );
   }
   await recordRateEvent(bucket);

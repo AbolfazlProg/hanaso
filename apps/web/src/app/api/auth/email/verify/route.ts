@@ -29,17 +29,23 @@ const verifySchema = z.object({
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/csrf', message: 'درخواست از مبدا غیرمجاز رد شد.' }), { status: 403 }),
+    );
   }
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/invalid_json', message: 'body must be JSON' }), { status: 400 }),
+    );
   }
   const parsed = verifySchema.safeParse(body);
   if (!parsed.success) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/validation_failed', message: 'کد باید ۶ رقم باشد.' }), { status: 400 }));
+    return authNoStore(
+      NextResponse.json(fail({ code: 'auth/validation_failed', message: 'کد باید ۶ رقم باشد.' }), { status: 400 }),
+    );
   }
   const email = parsed.data.email.toLowerCase();
   const account = await resolveAccountFromRequest(req);
@@ -47,7 +53,12 @@ export async function POST(req: Request) {
 
   const failBucket = `${RATE_BUCKETS.otpVerifyDestination}:${email}`;
   if (await tooManyEvents(failBucket, 60 * 60 * 1000, 10)) {
-    return authNoStore(NextResponse.json(fail({ code: 'auth/rate_limited', message: 'تلاش‌های تأیید بیش از حد مجاز است — یک ساعت دیگر تلاش کن.' }), { status: 429 }));
+    return authNoStore(
+      NextResponse.json(
+        fail({ code: 'auth/rate_limited', message: 'تلاش‌های تأیید بیش از حد مجاز است — یک ساعت دیگر تلاش کن.' }),
+        { status: 429 },
+      ),
+    );
   }
 
   const result = await verifyOtp({ channel: 'email', destination: email, purpose, code: parsed.data.code });
@@ -67,13 +78,21 @@ export async function POST(req: Request) {
   if (purpose === 'link') {
     const targetUserId = result.userId ?? account?.userId;
     if (!targetUserId) {
-      return authNoStore(NextResponse.json(fail({ code: 'auth/no_session', message: 'نشست اتصال ایمیل یافت نشد — دوباره درخواست کد بده.' }), { status: 401 }));
+      return authNoStore(
+        NextResponse.json(
+          fail({ code: 'auth/no_session', message: 'نشست اتصال ایمیل یافت نشد — دوباره درخواست کد بده.' }),
+          { status: 401 },
+        ),
+      );
     }
     const attached = await attachEmailIdentity({ userId: targetUserId, email });
     if (!attached.ok) {
       return authNoStore(
         NextResponse.json(
-          fail({ code: 'auth/email_owned_by_other', message: 'این ایمیل به حساب دیگری متصل است — برای مدیریت آن وارد همان حساب شو.' }),
+          fail({
+            code: 'auth/email_owned_by_other',
+            message: 'این ایمیل به حساب دیگری متصل است — برای مدیریت آن وارد همان حساب شو.',
+          }),
           { status: 409 },
         ),
       );
@@ -86,7 +105,10 @@ export async function POST(req: Request) {
   if (!identity || identity.disabledAt) {
     return authNoStore(
       NextResponse.json(
-        fail({ code: 'auth/no_account_for_email', message: 'حسابی با این ایمیل پیدا نشد — ابتدا ثبت‌نام کن یا از روش دیگری وارد شو.' }),
+        fail({
+          code: 'auth/no_account_for_email',
+          message: 'حسابی با این ایمیل پیدا نشد — ابتدا ثبت‌نام کن یا از روش دیگری وارد شو.',
+        }),
         { status: 404 },
       ),
     );

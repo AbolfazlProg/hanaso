@@ -15,7 +15,7 @@ import {
   listPublishedChapterCatalog,
 } from '@/modules/curriculum/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
-import { SiteNav, resolveReviewDueCount } from '@/components/site-nav';
+import { SiteNav, resolveReviewDueCount, resolveAccountDoor } from '@/components/site-nav';
 
 /**
  * /learn — the LEARNING JOURNEY home (TASK-HANASO-16).
@@ -41,6 +41,7 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
   const { s } = await searchParams;
   const learnerId = await resolveLearnerId();
   const reviewDueCount = await resolveReviewDueCount();
+  const accountDoor = await resolveAccountDoor();
   const previewActive = await hasPreviewAccess();
   // TEMPORARY SITE-WIDE UNLOCK (UNLOCK_ALL_MODE=1): owner-only site for now —
   // the full index renders for EVERY visitor and every gate is open, no cookie.
@@ -132,7 +133,12 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
 
   return (
     <>
-      <SiteNav active="learn" reviewDueCount={reviewDueCount} />
+      <SiteNav
+        accountHref={accountDoor.href}
+        accountLabel={accountDoor.label}
+        active="learn"
+        reviewDueCount={reviewDueCount}
+      />
       {unlockEverything && !previewActive && (
         <div
           style={{

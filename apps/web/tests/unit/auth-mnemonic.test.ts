@@ -61,7 +61,11 @@ describe('BIP39 conformance vectors (entropy → phrase)', () => {
     expect(isChecksumValid(phrase)).toBe(true);
   });
   it('a tampered phrase fails the checksum (typo detector)', () => {
-    expect(isChecksumValid('abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon')).toBe(false);
+    expect(
+      isChecksumValid(
+        'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon',
+      ),
+    ).toBe(false);
   });
 });
 
@@ -79,7 +83,11 @@ describe('normalizeMnemonicInput — tolerant reader, strict gate', () => {
     expect(normalizeMnemonicInput('abandon ability able')).toBeNull();
     expect(normalizeMnemonicInput(`${phrase} zoo`)).toBeNull();
     expect(normalizeMnemonicInput('سلام دنیا این عبارت معتبر نیست و نباید پذیرفته شود هیچ')).toBeNull();
-    expect(normalizeMnemonicInput('abandon ability able about above absent absorb abstract absurd abuse access accident xyzzy')).toBeNull();
+    expect(
+      normalizeMnemonicInput(
+        'abandon ability able about above absent absorb abstract absurd abuse access accident xyzzy',
+      ),
+    ).toBeNull();
   });
 });
 

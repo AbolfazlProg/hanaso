@@ -14,7 +14,13 @@
  * Activation: GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET env vars. Without them
  * the start route answers 503 (به‌زودی-style honest state) — no fake flow.
  */
-import { createHash, createPublicKey, randomBytes, verify as rsaVerify, type JsonWebKey as cryptoJsonWebKey } from 'node:crypto';
+import {
+  createHash,
+  createPublicKey,
+  randomBytes,
+  verify as rsaVerify,
+  type JsonWebKey as cryptoJsonWebKey,
+} from 'node:crypto';
 
 export const GOOGLE_AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
 export const GOOGLE_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';

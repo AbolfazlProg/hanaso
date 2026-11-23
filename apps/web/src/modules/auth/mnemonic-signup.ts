@@ -18,7 +18,14 @@
 import { and, eq, gt, isNull, sql } from 'drizzle-orm';
 import { getDbClient } from '@/db/client';
 import { authIdentities, mnemonicPendingRegistrations, users } from '../../../db/schema';
-import { QUIZ_POSITION_COUNT, checkQuizAnswers, generateMnemonicPhrase, pickQuizPositions, redactPhrase, wordsOf } from './mnemonic';
+import {
+  QUIZ_POSITION_COUNT,
+  checkQuizAnswers,
+  generateMnemonicPhrase,
+  pickQuizPositions,
+  redactPhrase,
+  wordsOf,
+} from './mnemonic';
 import { deriveLookupKey, hashSecret } from './credentials';
 import { sealPhrase, unsealPhrase } from './seal';
 import { findIdentity } from './identities';
@@ -52,7 +59,9 @@ export async function startWizard(input: {
     })
     .returning({ id: mnemonicPendingRegistrations.id });
   const row = inserted[0]!;
-  console.info(`[auth] mnemonic wizard start registration=${row.id} purpose=${input.purpose} phrase=${redactPhrase(phrase)}`);
+  console.info(
+    `[auth] mnemonic wizard start registration=${row.id} purpose=${input.purpose} phrase=${redactPhrase(phrase)}`,
+  );
   return { registrationId: row.id, words: wordsOf(phrase), positions, expiresAt: new Date(Date.now() + WIZARD_TTL_MS) };
 }
 
@@ -62,7 +71,13 @@ export async function refetchPhrase(registrationId: string, guestLearnerId: stri
   const rows = await db
     .select()
     .from(mnemonicPendingRegistrations)
-    .where(and(eq(mnemonicPendingRegistrations.id, registrationId), isNull(mnemonicPendingRegistrations.consumedAt), gt(mnemonicPendingRegistrations.expiresAt, sql`now()`)))
+    .where(
+      and(
+        eq(mnemonicPendingRegistrations.id, registrationId),
+        isNull(mnemonicPendingRegistrations.consumedAt),
+        gt(mnemonicPendingRegistrations.expiresAt, sql`now()`),
+      ),
+    )
     .limit(1);
   const row = rows[0];
   if (!row || row.guestLearnerId !== guestLearnerId) return null;
@@ -91,7 +106,9 @@ export async function completeWizard(input: {
   const rows = await db
     .select()
     .from(mnemonicPendingRegistrations)
-    .where(and(eq(mnemonicPendingRegistrations.id, input.registrationId), isNull(mnemonicPendingRegistrations.consumedAt)))
+    .where(
+      and(eq(mnemonicPendingRegistrations.id, input.registrationId), isNull(mnemonicPendingRegistrations.consumedAt)),
+    )
     .limit(1);
   const row = rows[0];
   if (!row) return { kind: 'not_found' };
@@ -122,10 +139,7 @@ export async function completeWizard(input: {
     return { kind: 'ok', userId, newAccount: false };
   }
   // signup: account + anchor identity, then the pending row dies with its seal
-  const created = await db
-    .insert(users)
-    .values({})
-    .returning({ id: users.id });
+  const created = await db.insert(users).values({}).returning({ id: users.id });
   const userId = created[0]!.id;
   await db.insert(authIdentities).values({
     userId,

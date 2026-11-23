@@ -33,7 +33,10 @@ export function verifyOauthCookie(value: string | null | undefined): { state: st
   const signature = parts[2];
   if (!state || !verifier || !signature) return null;
   if (state.length > 128 || verifier.length > 128 || signature.length !== 43) return null;
-  const expected = Buffer.from(createHmac('sha256', getSessionSecret()).update(`${DOMAIN}${state}:${verifier}`, 'utf8').digest('base64url'), 'utf8');
+  const expected = Buffer.from(
+    createHmac('sha256', getSessionSecret()).update(`${DOMAIN}${state}:${verifier}`, 'utf8').digest('base64url'),
+    'utf8',
+  );
   const given = Buffer.from(signature, 'utf8');
   if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;
   return { state, verifier };

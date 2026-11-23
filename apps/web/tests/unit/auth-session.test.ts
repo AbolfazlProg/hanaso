@@ -44,7 +44,9 @@ describe('session token minting', () => {
 describe('device + IP privacy', () => {
   it('device labels are coarse (browser · OS) and fall back to Persian unknowns', () => {
     expect(deviceLabelFromUserAgent('Mozilla/5.0 (Windows NT 10.0) Chrome/120.0')).toBe('Chrome · Windows');
-    expect(deviceLabelFromUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0) Version/17.0 Mobile/15E148 Safari/604.1')).toBe('Safari · iOS');
+    expect(
+      deviceLabelFromUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0) Version/17.0 Mobile/15E148 Safari/604.1'),
+    ).toBe('Safari · iOS');
     expect(deviceLabelFromUserAgent('Mozilla/5.0 (Linux; Android 14) Firefox/121.0')).toBe('Firefox · Android');
     expect(deviceLabelFromUserAgent('')).toBe('دستگاه ناشناخته');
     expect(deviceLabelFromUserAgent(null)).toBe('دستگاه ناشناخته');

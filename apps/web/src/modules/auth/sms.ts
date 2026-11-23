@@ -40,7 +40,11 @@ export function normalizePhone(raw: string): string | null {
  * TODAY so the activation is a transport swap only. Refuses (never sends,
  * never returns fake success) while the gateway is unconfigured.
  */
-export async function sendSmsCode(input: { destination: string; code: string; purpose: 'login' | 'link' }): Promise<SendResult> {
+export async function sendSmsCode(input: {
+  destination: string;
+  code: string;
+  purpose: 'login' | 'link';
+}): Promise<SendResult> {
   void input;
   void sendEmail;
   return { ok: false, reason: 'transport_not_configured' };

@@ -69,11 +69,13 @@ export async function findUserEmailIdentity(email: string) {
 
 /** The login decision table for google (see the module docblock). */
 export type GoogleLoginResolution =
-  | { kind: 'login'; userId: string }
-  | { kind: 'attach_and_login'; userId: string }
-  | { kind: 'create_account' };
+  { kind: 'login'; userId: string } | { kind: 'attach_and_login'; userId: string } | { kind: 'create_account' };
 
-export async function resolveGoogleLogin(input: { sub: string; email: string; emailVerified: boolean }): Promise<GoogleLoginResolution> {
+export async function resolveGoogleLogin(input: {
+  sub: string;
+  email: string;
+  emailVerified: boolean;
+}): Promise<GoogleLoginResolution> {
   const googleIdentity = await findIdentity('google', input.sub);
   if (googleIdentity && !googleIdentity.disabledAt) return { kind: 'login', userId: googleIdentity.userId };
   if (input.emailVerified && input.email) {
@@ -154,7 +156,10 @@ export async function attachGoogleIdentity(input: {
 }
 
 /** Attach a VERIFIED email method to an account (the OTP link purpose atom). */
-export async function attachEmailIdentity(input: { userId: string; email: string }): Promise<{ ok: true } | { ok: false; reason: 'email_owned_by_other' }> {
+export async function attachEmailIdentity(input: {
+  userId: string;
+  email: string;
+}): Promise<{ ok: true } | { ok: false; reason: 'email_owned_by_other' }> {
   const { db } = getDbClient();
   const existing = await findUserEmailIdentity(input.email);
   if (existing && existing.userId !== input.userId) return { ok: false, reason: 'email_owned_by_other' };
@@ -184,10 +189,7 @@ async function refreshAccountEmail(userId: string, email: string): Promise<void>
   const { db } = getDbClient();
   const claim = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
   if (claim[0] && claim[0].id !== userId) return; // another account's contact email — skip
-  await db
-    .update(users)
-    .set({ email, emailVerifiedAt: new Date(), updatedAt: new Date() })
-    .where(eq(users.id, userId));
+  await db.update(users).set({ email, emailVerifiedAt: new Date(), updatedAt: new Date() }).where(eq(users.id, userId));
 }
 
 /** Stamp lastUsedAt for a used method (best-effort, never blocks login). */
@@ -216,7 +218,9 @@ export async function unlinkMethod(
   const updated = await db
     .update(authIdentities)
     .set({ disabledAt: new Date() })
-    .where(and(eq(authIdentities.userId, userId), eq(authIdentities.provider, provider), isNull(authIdentities.disabledAt)))
+    .where(
+      and(eq(authIdentities.userId, userId), eq(authIdentities.provider, provider), isNull(authIdentities.disabledAt)),
+    )
     .returning({ id: authIdentities.id });
   if (updated.length === 0) return { ok: false, reason: 'not_found' };
   return { ok: true };
