@@ -112,7 +112,7 @@ test('E2E answer key integrity — every practice exercise in both chapters is w
     }
   }
   // sanity: the real curriculum shape
-  expect(stations).toHaveLength(80); // 38 kana foundation (TASK-HANASO-22/27) + 20 kana expansion (Issue #146) + 22 fm01
+  expect(stations).toHaveLength(81); // 38 kana foundation (TASK-HANASO-22/27) + 20 kana expansion (Issue #146) + 23 fm01 (18+4 optional+1 dedicated kanji station — AUDIO-UNIT/KANJI 2026-11-23)
   expect(exerciseCount).toBeGreaterThan(300);
 
   if (process.env.H21_E2E_DUMP) {

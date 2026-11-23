@@ -6,6 +6,8 @@ import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-noti
 import { resolveLearnerId } from '@/lib/learner/server';
 import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
+import { teachingAudioUrls, contentIdOfBinding } from '@/modules/audio/word-audio';
+import { resolveExerciseAudioBinding } from '@/modules/curriculum/audio-contract';
 import { fa } from '@/messages/fa';
 import type { ClientExercise } from '@/modules/curriculum/grading';
 
@@ -68,6 +70,21 @@ export default async function AssessmentPage({ params }: { params: Promise<{ cha
         ce.promptAudio = hostWordAudioUrls(ex.promptJa);
         ce.promptJa = undefined;
         ce.promptJaReading = undefined;
+      }
+      /*
+       * AUDIO-UNIT 2026-11-23 §۱ — the structured word/sentence binding owns
+       * the question's unit at the mastery gate too (ex-fm01-gate-m2-2: the
+       * word's standalone asset, never the correction line). One unit per
+       * question: audioLineRef drops when the binding is present. */
+      const audioBinding = resolveExerciseAudioBinding(ex);
+      if (
+        audioBinding &&
+        (audioBinding.unit === 'word' || audioBinding.unit === 'word-form' || audioBinding.unit === 'sentence')
+      ) {
+        const wordsById = new Map(chapter.words.map((w) => [w.id, w] as const));
+        const contentId = contentIdOfBinding(audioBinding, wordsById);
+        ce.promptAudio = contentId ? teachingAudioUrls(contentId) : null;
+        ce.audioLineRef = undefined;
       }
       /* PART1-FIX-5: same answer-leak rule as the station page — a decode
        * question's Persian reading IS the answer; it never crosses pre-answer. */

@@ -527,6 +527,13 @@ export const fa = {
     playLine: 'پخش صدای این خط',
     inDialogue: 'در مکالمه ببین',
     wordCardNote: 'نکته',
+    /* AUDIO-UNIT 2026-11-23 §۱ — the honest absence label when a word card has
+     * no committed standalone audio yet (never a line-audio substitute). */
+    wordAudioPending: 'تلفظ مستقل این واژه هنوز تولید نشده',
+    /* AUDIO-UNIT/KANJI §۲ — the kanji card's anchor-word audio control + note label. */
+    wordAudioPlay: 'پخش تلفظ واژه',
+    kanjiCardNote: 'آموزش کانجی',
+    kanjiCardMissing: (kanjiId: string) => `کانجی «${kanjiId}» در مرجع N5 پیدا نشد — محتوای ایستگاه ناقص است.`,
     /* ENGINE-NEXTGEN W-D — the dual-pronunciation guide label (WordPronunciation). */
     wordTranslitLabel: 'آوانویسی',
     gradingUnavailable: 'ارتباط با سرور برقرار نشد — نمره‌گذاری فعلاً در دسترس نیست؛ بعداً دوباره تلاش کن.',

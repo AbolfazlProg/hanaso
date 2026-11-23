@@ -302,7 +302,31 @@ expressions:
       artifact: chapter-first-meeting-01
       lesson: 1
       locator: s-first-meeting-01-l11
-kanji: []
+kanji:
+  # AUDIO-UNIT/KANJI 2026-11-23 §۲ — the two kanji the chapter's dedicated
+  # station (order 23) actually teaches (the kanji-pilot plan's declarations,
+  # now in the chapter's OWN plan — the plan and the shipped chapter stay in
+  # sync: G2-PLAN fidelity).
+  - character: 人
+    anchorWordIds:
+      - voc-nihonjin
+      - voc-chuugokujin
+      - voc-iranjin
+      - voc-kankokujin
+    teachStationId: stn-fm01-23-kanji
+    sourceRef:
+      artifact: chapter-first-meeting-01
+      lesson: 1
+      locator: word-surfaces
+  - character: 国
+    anchorWordIds:
+      - voc-chuugokujin
+      - voc-kankokujin
+    teachStationId: stn-fm01-23-kanji
+    sourceRef:
+      artifact: chapter-first-meeting-01
+      lesson: 1
+      locator: word-surfaces
 stations:
   - id: stn-fm01-01-anchor
     domain: anchor
@@ -464,6 +488,17 @@ stations:
     order: 22
     prerequisites:
       - stn-fm01-17-practice
+  # AUDIO-UNIT/KANJI 2026-11-23 §۲ — the DEDICATED kanji station (the shipped
+  # stn-fm01-23-kanji): placed after both anchor-word vocab stations; the
+  # kanji-pilot P1-green position.
+  - id: stn-fm01-23-kanji
+    domain: kanji
+    type: teaching
+    objectiveFa: دو کانجیِ نهفته در واژه‌های ملیتی که یاد گرفتی (日本人، 中国人، イラン人، 韓国人) را بشناس — شکل، معنا، اجزا، خوانش درون واژه و ترتیب نوشتن
+    order: 23
+    prerequisites:
+      - stn-fm01-02-vocab
+      - stn-fm01-11-vocab2
 notes:
   - کانجی 日 فقط ۱ واژهٔ anchor در این فصل دارد — تدریس اختصاصی به فصل بعدی موکول شود (قاعدهٔ ≥۲ anchor).
   - کانجی 本 فقط ۱ واژهٔ anchor در این فصل دارد — تدریس اختصاصی به فصل بعدی موکول شود (قاعدهٔ ≥۲ anchor).

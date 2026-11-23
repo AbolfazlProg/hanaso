@@ -70,8 +70,12 @@ export const LEVEL_POLICIES: LevelPolicy[] = [
        * (80' core + 11' optional). The window moves [35,75] → [40,95] on the
        * same honest-budget justification: the cap describes reality, it does
        * not compress it.
+       *
+       * AUDIO-UNIT/KANJI 2026-11-23 §۲: the dedicated kanji station
+       * (stn-fm01-23-kanji, +7') raises the honest budget to 98' (87' core +
+       * 11' optional) — the window moves [40,95] → [40,105] on the same rule.
        */
-      chapterMinutes: [40, 95],
+      chapterMinutes: [40, 105],
       dialogueLines: [6, 14],
       listeningSpeed: 0.9,
       furigana: 'all',

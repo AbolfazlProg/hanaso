@@ -160,7 +160,10 @@ describe('Gate P2 — publish readiness (the real chapter + the specimen)', () =
 
   it('[T-6] a chapter that only passed EXTRACTION (the plan’s kanji station never authored) CANNOT pass Gate P2', () => {
     const plan = loadPlan('first-meeting-01-kanji-pilot.plan.yaml');
-    const chapter = structuredClone(getChapter('first-meeting-01')!); // NO kanji station, NO kanji list
+    /* MUTATION: strip the shipped kanji station + declarations (the real chapter\n     * now carries them — the mutation recreates the extraction-only state). */
+    const chapter = structuredClone(getChapter('first-meeting-01')!);
+    chapter.stations = chapter.stations.filter((s) => s.type !== 'kanji');
+    chapter.kanji = undefined;
     const gate2 = gateP2PublishReadiness(chapter, { plan, validation: GREEN, publishPermission: false });
     expect(gate2.passed).toBe(false);
     const rules = gate2.findings.filter((f) => f.severity === 'hard').map((f) => f.rule);

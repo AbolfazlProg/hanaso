@@ -25,7 +25,7 @@ import type { ExerciseType, StationType, TeachingBlock } from '../types';
 export type EqaSeverity = 'error' | 'warning' | 'info';
 
 export type EqaGateId =
-  'EQA-1' | 'EQA-2' | 'EQA-3' | 'EQA-4' | 'EQA-5' | 'EQA-6' | 'EQA-7' | 'EQA-8' | 'EQA-10' | 'EQA-12';
+  'EQA-1' | 'EQA-2' | 'EQA-3' | 'EQA-4' | 'EQA-5' | 'EQA-6' | 'EQA-7' | 'EQA-8' | 'EQA-10' | 'EQA-12' | 'EQA-13';
 
 export interface EqaFinding {
   gate: EqaGateId;
@@ -295,6 +295,16 @@ export const EQA_GATE_REGISTRY: readonly EqaGateSpec[] = [
       'KANJI-TWO-PHASE 2026-11-22 §۲ · kanji-interaction-blueprint (D-0006، ≥۲ anchor) · KANJIDIC2/KanjiVG N5 reference (docs/domain/KANJI-N5-REFERENCE.md)',
     scope:
       'خطا: کانجی‌کارت بیرون از ایستگاه kanji (K1)؛ کانجی تدریس‌شده بدون اعلام در chapter.kanji یا اعلام بدون کانجی‌کارت (K2)؛ واژهٔ anchor نامعتبر/ناقل کانجی/ثبت‌نشده/تدریس‌شده پس از ایستگاه کانجی یا کمتر از ۲ anchor (K3)؛ ایستگاه kanji بدون کانجی‌کارت (K4)؛ شناسهٔ کانجی خارج از مرجع N5 (K5). هشدار: بیش از ۴ کانجی در یک ایستگاه (عدد کالیبرهٔ فریم‌ورک). سنجش کانجی پیش از تدریس اختصاصی از مسیر عمومی EQA-1/R5 رد می‌شود (شناسهٔ کانجی = مفهوم ثبت‌شدهٔ رجیستری). تعداد ایستگاه‌های کانجی هر فصل داده است — یک یا چند، بدون عدد ثابت. مرجع N5 هرگز «رسمی JLPT» معرفی نمی‌شود (JLPT فهرست رسمی منتشر نمی‌کند).',
+    owner: 'Content Author + CI',
+  },
+  {
+    id: 'EQA-13',
+    ruleFa:
+      'قرارداد واحد صوتی: واحد صوتی هر فعالیت باید دقیقاً با واحد آموزشی/سنجشی همان فعالیت متناسب باشد — سؤال معنی/تلفظ یک واژه فقط صدای مستقل همان واژه؛ آموزش گرامر در قالب جمله، جملهٔ همان گرامر؛ درک جمله/مکالمه، خط/مکالمه',
+    source:
+      'AUDIO-UNIT 2026-11-23 §۱ (فرمان مالک) · DD-119 (صدای مستقل واژه — تصمیم مالک ۲۰۲۶-۱۱-۰۴) · word-audio registry (public/audio/words/manifest.json)',
+    scope:
+      'خطا: تمرین audio-meaning/listen-minimal-pair دربارهٔ یک واژه که به خط مکالمه/جملهٔ کامل وصل شده (AU-1 — واحد صوتی اشتباه)؛ binding به واژهٔ ناموجود/متفاوت با هدف سنجش، یا شکل صوتی بی‌ربط به واژهٔ هدف (AU-2)؛ نبود فایل صوتی مستقل معتبر برای فعالیتی که به Word Audio نیاز دارد، یا فایل بدون راستی‌آزمایی ASR (AU-3)؛ اختلاف متن ثبت‌شدهٔ رجیستری با متن موردنیاز binding یا نوع صوت ناهماهنگ (AU-4)؛ binding دوگانهٔ audio+audioLineRef (AU-5). جایگزین‌کردن صدای جمله/مکالمه به‌جای فایل مستقل واژه مطلقاً رد می‌شود — نبود صوت باید صادقانه دیده شود و فایل درست تولید شود، نه پنهان شود.',
     owner: 'Content Author + CI',
   },
 ] as const;

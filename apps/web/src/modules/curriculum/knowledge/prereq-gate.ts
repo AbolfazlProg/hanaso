@@ -224,13 +224,41 @@ export function gateEqa8(chapter: Chapter, registry: KnowledgeRegistry): EqaFind
         }
       }
 
-      /* R4 — kanji coverage (unknown content = traceable error, never silent). */
+      /* R4 — kanji coverage (unknown content = traceable error, never silent).
+       *
+       * AUDIO-UNIT/KANJI 2026-11-23 §۲ — two engine-level extensions that the
+       * real kanji stations need (each maps to a mission line):
+       *  1. TAUGHT KANJI COUNT AS COVERAGE: a registered kanji (taught by its
+       *     dedicated kanji-card — the registry's kind 'kanji' entries, fold at
+       *     deck order) covers its own literal in a surface. «حضور کانجی در
+       *     مکالمه یا مثال به‌عنوان آموزش معتبر محسوب نمی‌شود» — but a surface
+       *     that USES a taught kanji is using known content, never unknown.
+       *  2. SHAPE DISTRACTORS of a kanji-target exercise are deliberate VISUAL
+       *     material («تشخیص شکل صحیح و اشتباه» — the discrimination exercise
+       *     the framework requires): a single-kanji option label of an exercise
+       *     whose declared concepts include a registered kanji id is collected
+       *     as a WARNING (EQA-9 human review, visible in every report) — never
+       *     an error, never silently accepted. */
       if ((s.role === 'use' || s.role === 'assess') && KANJI_RE.test(s.text)) {
         const covered = new Set<number>();
         for (const match of wordsInSurface(registry, s.text)) {
           if (!known.has(match.entry.id)) continue; // unknown words already flagged by R3
           for (let i = match.start; i < match.start + match.length; i++) covered.add(i);
         }
+        for (const entry of registry.entries) {
+          /* extension 1 — the taught kanji's own literal covers itself. */
+          if (entry.kind !== 'kanji' || !known.has(entry.id)) continue;
+          if (entry.surface.length !== 1) continue;
+          let from = 0;
+          for (;;) {
+            const at = s.text.indexOf(entry.surface, from);
+            if (at < 0) break;
+            covered.add(at);
+            from = at + 1;
+          }
+        }
+        const isKanjiShapeMaterial =
+          s.role === 'assess' && s.text.length === 1 && (s.declaredConcepts ?? []).some((c) => c.startsWith('kj-'));
         for (let i = 0; i < s.text.length; i++) {
           if (!KANJI_RE.test(s.text[i] ?? '')) continue;
           if (covered.has(i)) continue;
@@ -238,10 +266,16 @@ export function gateEqa8(chapter: Chapter, registry: KnowledgeRegistry): EqaFind
           report(
             'kanji-unregistered',
             station.slug,
-            s.role === 'assess' ? 'error' : selfSupporting ? 'warning' : 'error',
-            s.role === 'assess' || !selfSupporting
+            s.role === 'assess' && !isKanjiShapeMaterial
+              ? 'error'
+              : selfSupporting || isKanjiShapeMaterial
+                ? 'warning'
+                : 'error',
+            s.role === 'assess' && !isKanjiShapeMaterial
               ? `ایستگاه ${station.slug} در سطح «${s.field}» نویسهٔ کانجی «${s.text[i]}» را بدون هرگونه ثبت در رجیستری دانش استفاده می‌کند — محتوای ناشناخته باید خطای قابل‌پیگیری بدهد، نه بی‌صدا پذیرفته شود.`
-              : `ایستگاه ${station.slug} در سطح «${s.field}» نویسهٔ کانجی «${s.text[i]}» را در متریال دریافتِ خود-پشتیبان (گلاوس/لحظهٔ خواندن) استفاده می‌کند — ثبت‌نشده در رجیستری؛ بازبینی انسانی (EQA-9).`,
+              : isKanjiShapeMaterial
+                ? `ایستگاه ${station.slug} در سطح «${s.field}» نویسهٔ کانجی «${s.text[i]}» را به‌عنوان متریال شکل (گزینه/توضیح تمایز دیداری کانجی هدف) استفاده می‌کند — متریال دیداری عمدی؛ بازبینی انسانی (EQA-9).`
+                : `ایستگاه ${station.slug} در سطح «${s.field}» نویسهٔ کانجی «${s.text[i]}» را در متریال دریافتِ خود-پشتیبان (گلاوس/لحظهٔ خواندن) استفاده می‌کند — ثبت‌نشده در رجیستری؛ بازبینی انسانی (EQA-9).`,
             'ENGINE-REFORM §۳ R4 · Knowledge Registry',
             `${s.field}: ${s.text.slice(0, 24)}`,
           );

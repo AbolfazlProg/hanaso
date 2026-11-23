@@ -149,6 +149,85 @@ export type ExerciseType =
 
 export type TargetSkill = 'vocab' | 'grammar' | 'listening' | 'expression' | 'production' | 'structure';
 
+/* ------------------------------------------------------------------ audio units (AUDIO-UNIT 2026-11-23) */
+
+/**
+ * The closed catalogue of TEACHING AUDIO UNITS (the owner's mission §۱ —
+ * «واحد صوتی باید دقیقاً با واحدی که زبان‌آموز قرار است یاد بگیرد یا تشخیص
+ * دهد متناسب باشد»). Every audio-bearing exercise declares WHICH unit it
+ * plays; the EQA-13 gate verifies the unit matches the assessed unit:
+ *
+ *  - `word`      — the target word's OWN standalone pronunciation (the
+ *                  wordAudio registry — DD-119: «صدای واژه باید واقعاً همان
+ *                  واژه باشد»), for word-meaning / word-pronunciation items;
+ *  - `word-form` — a standalone form of the word family (e.g. ちゅうごく for
+ *                  the minimal pair inside ちゅうごくじん) — its own committed
+ *                  asset, still ONE spoken form, never a dialogue cut;
+ *  - `sentence`  — ONE full sentence (grammar taught in sentence form plays
+ *                  the sentence carrying that grammar);
+ *  - `line`      — the dialogue line (a line-level comprehension/multi-sentence
+ *                  stretch; the legacy `audioLineRef` binding);
+ *  - `context`  — a word heard INSIDE an example sentence — a separate
+ *                  capability from the standalone word asset (declared, never
+ *                  a substitute for it).
+ */
+export type AudioUnitKind = 'word' | 'word-form' | 'sentence' | 'line' | 'context';
+
+/** The structured audio binding of an audio-bearing exercise (EQA-13). */
+export type ExerciseAudioBinding =
+  | { unit: 'word'; wordId: string }
+  | { unit: 'word-form'; text: string; /** The word whose family this form belongs to. */ wordId: string }
+  | { unit: 'sentence'; text: string }
+  | { unit: 'line'; lineRef: string }
+  | { unit: 'context'; text: string; wordId: string };
+
+/**
+ * One committed teaching-audio asset's STRUCTURAL metadata (AUDIO-UNIT §۱ —
+ * the registry record of every generated file: the exact spoken text, the
+ * target item, the unit type, the pedagogical role, the voice, the production
+ * source, the file paths and the validation state — «برای هر فایل صوتی
+ * مشخصات ساختاریافته داشته باش»).
+ */
+export interface TeachingAudioEntry {
+  /** The EXACT text spoken in the file (registry text ↔ content contract). */
+  text: string;
+  /** The teaching target this asset serves (word id / kanji id / null for sentences). */
+  targetId: string | null;
+  /** Which unit kind this asset is. */
+  audioType: AudioUnitKind;
+  /** Persian pedagogical role (نقش آموزشی) — what the learner does with it. */
+  roleFa: string;
+  /** The speaker of the recording. */
+  voice: { speakerId: number; name: string; style: string };
+  /** Production provenance (engine + where it ran + the generating script). */
+  source: { engine: string; generatedAt: string; script: string };
+  /** Committed file paths (under public/audio/words). */
+  path: { opus: string; m4a: string };
+  bytes: number;
+  bytesM4a?: number;
+  durationMs?: number;
+  /** Content hash (sha256(text|voice), 16 hex chars) — the DD-119 content↔file contract. */
+  hash: string;
+  /**
+   * Validation state — «وضعیت اعتبارسنجی». `asr-verified` = an independent ASR
+   * pass on the committed file reproduced the registered text; anything else
+   * fails the EQA-13 gate (a registry row whose file does not say the text it
+   * claims is a build failure, never a silent mismatch).
+   */
+  validation:
+    | { status: 'asr-verified'; transcript: string; engine: string; checkedAt: string }
+    | { status: 'pending-asr' }
+    | { status: 'asr-mismatch'; transcript: string; engine: string; checkedAt: string };
+}
+
+/** The word-audio manifest shape with the AUDIO-UNIT structural metadata. */
+export interface TeachingAudioAssets {
+  generatedBy: string;
+  format: 'voicevox-opus-m4a';
+  /** content-id → structural entry. */
+  entries: Record<string, TeachingAudioEntry>;
+}
+
 /**
  * One exercise — server record (QUESTION_ARCH §۵ 16-field shape, v1 fields).
  * `correctOptionId`/`correctOrder`/`acceptedChipOrder`/`feedback` NEVER reach the
@@ -177,7 +256,22 @@ export interface Exercise {
   promptJa?: string;
   /** Reading of promptJa. */
   promptJaReading?: string;
-  /** Audio line to play (Q2/Q6/Q14/gist). */
+  /**
+   * AUDIO-UNIT 2026-11-23 §۱ — the structured audio binding of an audio-bearing
+   * exercise. The UNIT must match the unit the learner is being taught or asked
+   * to recognise (the owner's mission):
+   *   - a question about a WORD's meaning/pronunciation binds the WORD's own
+   *     standalone asset (never the whole dialogue line — cognitive-load +
+   *     measurement validity);
+   *   - a grammar question in sentence form binds the SENTENCE carrying that
+   *     grammar;
+   *   - sentence/dialogue comprehension keeps the LINE binding.
+   * `audioLineRef` stays as the legacy line binding (equivalent to
+   * `{ unit: 'line' }`); the two are mutually exclusive when `audio` is present.
+   * Enforced by gate EQA-13 (knowledge/audio-unit-contract).
+   */
+  audio?: ExerciseAudioBinding;
+  /** Audio line to play (Q2/Q6/Q14/gist) — legacy line-unit binding. */
   audioLineRef?: string;
   /** Choice options (MCQ — exactly 3 per QUESTION §۲-۳). */
   options?: { id: string; label: string }[];

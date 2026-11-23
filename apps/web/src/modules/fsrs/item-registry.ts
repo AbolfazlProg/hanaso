@@ -20,7 +20,7 @@
 import { listChapters } from '@/modules/curriculum/content';
 import { KANA_ITEMS } from '@/modules/curriculum/content/kana-items';
 import { transliterateKanaToFa } from '@/modules/curriculum/content/translit-standard';
-import { listChapterCards, type FsrsCardDescriptor } from './integration';
+import { listChapterCards, type FsrsCardKind, type FsrsCardDescriptor } from './integration';
 import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { loadDialogueBundle } from '@/lib/poc/dialogue-bundle';
@@ -127,12 +127,16 @@ export function resolveReviewCard(itemId: string, kind: string): ResolvedReviewC
     const kanjiId = itemId.slice(itemId.indexOf('-', 3) + 1); // strip kj-rec-/kj-wri-
     const ref = KANJI_ITEMS_BY_ID.get(kanjiId);
     if (!ref) return unknown;
+    /* AUDIO-UNIT/KANJI 2026-11-23 — the card's kind derives from its stable
+     * itemId prefix (never the caller's convenience param: the template
+     * contract decides servability by the item's OWN kind). */
+    const kjKind: FsrsCardKind = itemId.startsWith('kj-rec-') ? 'kj-rec' : 'kj-wri';
     const descriptor = cardIndex().get(itemId);
     const chapter = descriptor ? listChapters().find((c) => c.slug === descriptor.chapterSlug) : undefined;
     const anchors = (chapter?.words ?? []).filter((w) => w.term.includes(ref.literal));
     const card: ResolvedReviewCard = {
       itemId,
-      kind,
+      kind: kjKind,
       glyph: ref.literal,
       meaningFa: ref.meaningFa,
       on: ref.on,

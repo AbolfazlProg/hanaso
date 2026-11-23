@@ -50,7 +50,7 @@ function registryOf(chapters: Chapter[]) {
 /* ================================================================ POSITIVE */
 
 describe('the kanji teaching contract over the REAL course + specimen', () => {
-  it('the shipped course (no kanji chapters yet) is CLEAN under EQA-12', () => {
+  it('the shipped course (chapter 02 now carries its REAL kanji station) is CLEAN under EQA-12', () => {
     const registry = registryOf(listChapters());
     for (const ch of listChapters()) {
       expect(
@@ -58,8 +58,14 @@ describe('the kanji teaching contract over the REAL course + specimen', () => {
         `${ch.slug} — no kanji-contract findings`,
       ).toEqual([]);
     }
-    // no kanji registered anywhere yet — the honest current state
-    expect(registry.entries.filter((e) => e.kind === 'kanji')).toEqual([]);
+    /* AUDIO-UNIT/KANJI 2026-11-23 §۲ — the REAL dedicated station of chapter 02
+     * (stn-fm01-23-kanji) registers its two kanji exactly at that station. */
+    const shipped = registry.entries.filter((e) => e.kind === 'kanji');
+    expect(shipped.map((e) => e.id).sort()).toEqual(['kj-4eba', 'kj-56fd']);
+    for (const e of shipped) {
+      expect(e.firstTaught.chapterSlug).toBe('first-meeting-01');
+      expect(e.firstTaught.stationSlug).toBe('stn-fm01-23-kanji');
+    }
   });
 
   it('the specimen station registers BOTH kanji at their dedicated station with the anchor contract satisfied', () => {

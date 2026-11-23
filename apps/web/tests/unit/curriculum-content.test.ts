@@ -191,16 +191,19 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
     expect(violations).toEqual([]);
   });
 
-  it('carries the 05B blueprint numbers: 18 core stations + 4 optional, 11 words, 5 clusters, 13 lines, 8 expressions', () => {
+  it('carries the 05B blueprint numbers: 19 core stations (18 + the dedicated kanji station) + 4 optional, 11 words, 5 clusters, 13 lines, 8 expressions', () => {
     // TASK-LEARNING-06 (05B — KB section 19): two story units · the 13-turn
     // source-faithful anchor (TASK-LEARNING-07 audit fix: 12 single-speaker turns +
     // 1 JOINT final turn) · gate = the assessment page (never a walk station).
-    expect(chapter.stations.filter((s) => s.core)).toHaveLength(18);
+    // AUDIO-UNIT/KANJI 2026-11-23 §۲: +1 core = the dedicated kanji station
+    // (stn-fm01-23-kanji, 人/国) — the kanji-pilot plan's P1-green position.
+    expect(chapter.stations.filter((s) => s.core)).toHaveLength(19);
     expect(chapter.stations.filter((s) => !s.core)).toHaveLength(4);
     expect(chapter.words).toHaveLength(11);
     expect(chapter.grammar).toHaveLength(5);
     expect(dialogue.lines).toHaveLength(13);
     expect(chapter.expressions).toHaveLength(8);
+    expect(chapter.kanji).toHaveLength(2);
     expect(chapter.units?.length).toBe(2);
     expect(chapter.prerequisiteChapterSlug).toBe('kana-foundation-01');
   });
@@ -233,6 +236,10 @@ describe('chapter first-meeting-01 vs L2 policy', () => {
       'stn-fm01-opt-review-desu',
       'stn-fm01-opt-jobs',
       'stn-fm01-opt-drill',
+      // AUDIO-UNIT/KANJI 2026-11-23 §۲ — the dedicated kanji station closes the
+      // core path (after the optionals in order 23; prereqs = the two vocab
+      // stations whose words carry 人/国).
+      'stn-fm01-23-kanji',
     ]);
     // prerequisites always precede
     const byslug = new Map(chapter.stations.map((s) => [s.slug, s]));
@@ -281,7 +288,7 @@ describe('journey resolution', () => {
   it('starts with only the anchor available (everything else locked)', () => {
     const journey = resolveJourney(chapter, level, [], null);
     expect(journey.coreCompleted).toBe(0);
-    expect(journey.coreTotal).toBe(18);
+    expect(journey.coreTotal).toBe(19); // 18 core + the dedicated kanji station (AUDIO-UNIT/KANJI)
     const availabilities = journey.nodes.map((n) => `${n.station.slug}:${n.availability}`);
     expect(availabilities[0]).toBe('stn-fm01-01-anchor:available');
     expect(availabilities.filter((a) => a.endsWith(':available'))).toHaveLength(1);
@@ -319,7 +326,7 @@ describe('journey resolution', () => {
       attemptCount: 3,
     }));
     const journey = resolveJourney(chapter, level, done, null);
-    expect(journey.coreCompleted).toBe(18);
+    expect(journey.coreCompleted).toBe(19); // 18 + the dedicated kanji station (AUDIO-UNIT/KANJI)
     // TASK-LEARNING-06 (05B): the gate is the ASSESSMENT PAGE — no mastery walk station.
     expect(masteryStation(chapter)).toBeNull();
   });
@@ -335,7 +342,7 @@ describe('journey resolution', () => {
         attemptCount: 6,
       }));
     const journey = resolveJourney(chapter, level, done, null);
-    expect(journey.coreCompleted).toBe(18);
+    expect(journey.coreCompleted).toBe(19); // 18 + the dedicated kanji station (AUDIO-UNIT/KANJI)
   });
 });
 

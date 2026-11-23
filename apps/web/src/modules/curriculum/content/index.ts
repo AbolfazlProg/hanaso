@@ -11,6 +11,28 @@ import { FM01_EXERCISES } from './chapter-fm01.exercises';
 import { FM01_STATIONS } from './chapter-fm01.stations';
 import { CHAPTER_KANA_FOUNDATION } from './chapter-kana01';
 import { CHAPTER_KANA_EXPANSION } from './chapter-kana-expansion';
+import type { KanjiItem } from '../types';
+
+/*
+ * AUDIO-UNIT/KANJI 2026-11-23 §۲ — the chapter's DEDICATED kanji teaching
+ * targets (the kanji-pilot plan's declarations, now in the REAL chapter):
+ * 人 (kj-4eba) rides inside four already-taught nationality words; 国
+ * (kj-56fd) inside two of them. Facts live in the N5 reference; the
+ * declaration is what makes the kanji «taught» in the course (the registry
+ * reads the kanji-card of stn-fm01-23-kanji — EQA-12 K2 both directions).
+ */
+const FM01_KANJI: KanjiItem[] = [
+  {
+    kanjiId: 'kj-4eba',
+    fsrs: { rec: 'kj-rec-kj-4eba', wri: 'kj-wri-kj-4eba' },
+    anchorWordIds: ['voc-nihonjin', 'voc-chuugokujin', 'voc-iranjin', 'voc-kankokujin'],
+  },
+  {
+    kanjiId: 'kj-56fd',
+    fsrs: { rec: 'kj-rec-kj-56fd', wri: 'kj-wri-kj-56fd' },
+    anchorWordIds: ['voc-chuugokujin', 'voc-kankokujin'],
+  },
+];
 
 /** Chapter 2 — «اولین مکالمه» (unit-first-meeting-01) — the 05B two-unit rebuild (TASK-LEARNING-06). */
 export const CHAPTER_FIRST_MEETING: Chapter = {
@@ -29,8 +51,13 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
    * old flat «4′ for everything» lied about the real beginner pace. The sum
    * 91′ (= 80′ core + 11′ optional) updates chapter.estMinutes; the L2 window
    * is raised with the same honest-budget justification (TASK-HANASO-21
-   * precedent: the time budget no longer lies to keep the old cap). */
-  estMinutes: 91,
+   * precedent: the time budget no longer lies to keep the old cap).
+   *
+   * AUDIO-UNIT/KANJI 2026-11-23 §۲: the dedicated kanji station (+7′ — two
+   * kanji-cards with retrieval, the writing practice, the exit) makes the
+   * honest sum 98′ (= 87′ core + 11′ optional); the window moves to [40,105]
+   * on the same honest-budget rule. */
+  estMinutes: 98,
   estLoad: 'medium',
   bandArc: 'cafe-intro',
   sceneFa:
@@ -39,6 +66,7 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
   grammar: FM01_GRAMMAR,
   expressions: FM01_EXPRESSIONS,
   stations: FM01_STATIONS,
+  kanji: FM01_KANJI,
   exercises: Object.fromEntries(FM01_EXERCISES.map((e) => [e.id, e])),
   mastery: {
     weights: { M1: 0.3, M2: 0.2, M3: 0.2, M4: 0.2, M5: 0.1 },
@@ -103,6 +131,10 @@ export const CHAPTER_FIRST_MEETING: Chapter = {
         'stn-fm01-opt-review-desu',
         'stn-fm01-opt-jobs',
         'stn-fm01-opt-drill',
+        // AUDIO-UNIT/KANJI 2026-11-23 §۲ — the dedicated kanji station closes
+        // unit 02-2: every anchor word is already taught by stn-02/stn-11 and
+        // the learner has USED the nationalities through both grammar arcs.
+        'stn-fm01-23-kanji',
       ],
     },
   ],

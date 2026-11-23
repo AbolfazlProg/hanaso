@@ -16,6 +16,8 @@ import { findingKey } from './policy';
 import { gateEqa1, gateEqa2, gateEqa3, gateEqa4, gateEqa5, gateEqa6, gateEqa7Chapter, gateEqa7Levels } from './gates';
 import { gateEqa8, gateEqa8Course } from '../knowledge/prereq-gate';
 import { gateEqa12 } from '../knowledge/kanji-contract';
+import { gateEqa13 } from '../knowledge/audio-unit-contract';
+import { loadWordAudioAssets } from '../../audio/word-audio';
 import { buildCourseAssessmentEvents, gateEqa10 } from '../knowledge/contracts';
 import { buildKnowledgeRegistry } from '../knowledge/registry';
 import type { EqaWaiver } from './waivers';
@@ -68,6 +70,14 @@ export function runEqa(
   for (const f of courseFindings) allFindings.push({ key: findingKey(f), chapterSlug: '(registry)' });
   const chapterResults: EqaChapterResult[] = [];
 
+  /*
+   * AUDIO-UNIT 2026-11-23 §۱ — EQA-13 runs against the COMMITTED words-registry
+   * manifest (the real files that ship): the runner is pure over (chapters,
+   * entries); the entries load once here (node:fs, CI/test/server context).
+   * A null manifest = nothing committed yet — the gate then reports every
+   * word-unit binding as missing (the honest CI state that forces generation). */
+  const wordAudioEntries = loadWordAudioAssets()?.entries ?? null;
+
   for (const chapter of chapters) {
     const findings: EqaFinding[] = [
       ...gateEqa1(chapter),
@@ -80,6 +90,7 @@ export function runEqa(
       ...gateEqa8(chapter, registry),
       ...gateEqa10(chapter, courseEvents),
       ...gateEqa12(chapter, registry),
+      ...gateEqa13(chapter, { wordAudioEntries }),
     ];
     for (const f of findings) allFindings.push({ key: findingKey(f), chapterSlug: chapter.slug });
 

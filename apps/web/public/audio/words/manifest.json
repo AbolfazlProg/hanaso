@@ -1,0 +1,426 @@
+{
+  "generatedBy": "audio-unit 2026-11-23 §۱ — voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never the VPS/production), speaker 90 (VOICEVOX:ぞん子 ノーマル), speedScale 1.0, offline pre-generation. Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + loudness-match (RMS→−17dBFS, peak≤−1.5dBFS); opus 64k / m4a 128k — identical to the committed kana/hostwords chain. Every entry ASR-verified against its registered text. Credit: VOICEVOX:ぞん子 (VOICEVOX character terms)",
+  "format": "voicevox-opus-m4a",
+  "entries": {
+    "wa-fm01-watashi": {
+      "text": "わたし",
+      "targetId": "voc-watashi",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-watashi.opus",
+        "m4a": "/audio/words/wa-fm01-watashi.m4a"
+      },
+      "bytes": 7700,
+      "bytesM4a": 11856,
+      "durationMs": 764,
+      "hash": "fed8e8e537bba787",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "私",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-san": {
+      "text": "さん",
+      "targetId": "voc-san",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-san.opus",
+        "m4a": "/audio/words/wa-fm01-san.m4a"
+      },
+      "bytes": 6764,
+      "bytesM4a": 9813,
+      "durationMs": 668,
+      "hash": "4da55e8cb5559efa",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "さん",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-nihonjin": {
+      "text": "にほんじん",
+      "targetId": "voc-nihonjin",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-nihonjin.opus",
+        "m4a": "/audio/words/wa-fm01-nihonjin.m4a"
+      },
+      "bytes": 10063,
+      "bytesM4a": 15838,
+      "durationMs": 1041,
+      "hash": "de03178aadff7399",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "日本人",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-chuugokujin": {
+      "text": "ちゅうごくじん",
+      "targetId": "voc-chuugokujin",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-chuugokujin.opus",
+        "m4a": "/audio/words/wa-fm01-chuugokujin.m4a"
+      },
+      "bytes": 11735,
+      "bytesM4a": 17489,
+      "durationMs": 1137,
+      "hash": "6551c91b4a39c639",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "中国人",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-daigaku": {
+      "text": "だいがく",
+      "targetId": "voc-daigaku",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-daigaku.opus",
+        "m4a": "/audio/words/wa-fm01-daigaku.m4a"
+      },
+      "bytes": 9026,
+      "bytesM4a": 12977,
+      "durationMs": 839,
+      "hash": "300104ed0f511e27",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "大学",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-sensee": {
+      "text": "せんせい",
+      "targetId": "voc-sensee",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-sensee.opus",
+        "m4a": "/audio/words/wa-fm01-sensee.m4a"
+      },
+      "bytes": 9104,
+      "bytesM4a": 14266,
+      "durationMs": 924,
+      "hash": "e12a2188ea55f842",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "先生",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-anokata": {
+      "text": "あのかた",
+      "targetId": "voc-anokata",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-anokata.opus",
+        "m4a": "/audio/words/wa-fm01-anokata.m4a"
+      },
+      "bytes": 9010,
+      "bytesM4a": 13288,
+      "durationMs": 849,
+      "hash": "c98d7bb109231374",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "あの方",
+        "engine": "z-ai-asr",
+        "checkedAt": "2026-11-22T23:41:33.226Z"
+      }
+    },
+    "wa-fm01-iranjin": {
+      "text": "イランじん",
+      "targetId": "voc-iranjin",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-iranjin.opus",
+        "m4a": "/audio/words/wa-fm01-iranjin.m4a"
+      },
+      "bytes": 8460,
+      "bytesM4a": 13107,
+      "durationMs": 913,
+      "hash": "31a7496b1d8ea155",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "いらん人",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-kankokujin": {
+      "text": "かんこくじん",
+      "targetId": "voc-kankokujin",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-kankokujin.opus",
+        "m4a": "/audio/words/wa-fm01-kankokujin.m4a"
+      },
+      "bytes": 11244,
+      "bytesM4a": 16555,
+      "durationMs": 1095,
+      "hash": "1d24a334a550f5c9",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "韓国人",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-kara": {
+      "text": "から",
+      "targetId": "voc-kara",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-kara.opus",
+        "m4a": "/audio/words/wa-fm01-kara.m4a"
+      },
+      "bytes": 6630,
+      "bytesM4a": 9122,
+      "durationMs": 593,
+      "hash": "e4e90ab49f660c98",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "から",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "wa-fm01-kimashita": {
+      "text": "きました",
+      "targetId": "voc-kimashita",
+      "audioType": "word",
+      "roleFa": "تلفظ مستقل واژه — کارت واژه و پرسش‌های معنی/تلفظ (DD-119)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/wa-fm01-kimashita.opus",
+        "m4a": "/audio/words/wa-fm01-kimashita.m4a"
+      },
+      "bytes": 8276,
+      "bytesM4a": 12869,
+      "durationMs": 839,
+      "hash": "272696b137db09e8",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "来ました",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "waf-36c3bce15f84bea6": {
+      "text": "ちゅうごく",
+      "targetId": "voc-chuugokujin",
+      "audioType": "word-form",
+      "roleFa": "شکل مستقل واژه برای جفت تمایزی شنیداری (minimal pair)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/waf-36c3bce15f84bea6.opus",
+        "m4a": "/audio/words/waf-36c3bce15f84bea6.m4a"
+      },
+      "bytes": 9766,
+      "bytesM4a": 13901,
+      "durationMs": 913,
+      "hash": "36c3bce15f84bea6",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "中国",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "waf-09204d5319c2fba6": {
+      "text": "かんこく",
+      "targetId": "voc-kankokujin",
+      "audioType": "word-form",
+      "roleFa": "شکل مستقل واژه برای جفت تمایزی شنیداری (minimal pair)",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/waf-09204d5319c2fba6.opus",
+        "m4a": "/audio/words/waf-09204d5319c2fba6.m4a"
+      },
+      "bytes": 9501,
+      "bytesM4a": 13091,
+      "durationMs": 892,
+      "hash": "09204d5319c2fba6",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "韓国",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    },
+    "se-2fcd82d63ab75039": {
+      "text": "かんこくから きました。",
+      "targetId": null,
+      "audioType": "sentence",
+      "roleFa": "جملهٔ حامل گرامر 〜から きました — سنجش کارکرد から در قالب جمله",
+      "voice": {
+        "speakerId": 90,
+        "name": "VOICEVOX:ぞん子",
+        "style": "ノーマル"
+      },
+      "source": {
+        "engine": "voicevox_engine 0.26.2 CPU — ISOLATED OFFLINE RUNNER (sandbox; never the VPS/production — owner constraint 2026-11-21)",
+        "generatedAt": "2026-11-22T22:52:39.571Z",
+        "script": "apps/web/scripts/audio-unit-word-gen.mjs"
+      },
+      "path": {
+        "opus": "/audio/words/se-2fcd82d63ab75039.opus",
+        "m4a": "/audio/words/se-2fcd82d63ab75039.m4a"
+      },
+      "bytes": 18530,
+      "bytesM4a": 27376,
+      "durationMs": 1937,
+      "hash": "2fcd82d63ab75039",
+      "validation": {
+        "status": "asr-verified",
+        "transcript": "韓国から来ました",
+        "engine": "z-ai-asr (single batch pass over the full registry)",
+        "checkedAt": "2026-11-22T23:40:58.384Z"
+      }
+    }
+  }
+}

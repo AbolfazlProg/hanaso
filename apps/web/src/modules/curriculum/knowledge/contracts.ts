@@ -35,7 +35,7 @@ import type { Chapter, TeachingBlock } from '../types';
 import type { EqaFinding } from '../eqa/policy';
 import { stationsInWalkOrder } from '../eqa/model';
 
-const CARD_KINDS = new Set(['kana-card', 'vocab-card', 'expression-card']);
+const CARD_KINDS = new Set(['kana-card', 'vocab-card', 'expression-card', 'kanji-card']);
 const WORKED_MODEL_KINDS = new Set(['example-set', 'realworld-board']);
 
 /** Station types whose decks TEACH new content (the staged contracts apply).
@@ -49,6 +49,11 @@ const TEACHING_STATION_TYPES = new Set([
   'listen',
   'integrate',
   'deepdive',
+  /* AUDIO-UNIT/KANJI 2026-11-23 §۲ — the DEDICATED kanji station teaches new
+   * content (its kanji-cards are the teaching event); the staged contracts
+   * (packet → immediate d1 engage) apply to it exactly like every other
+   * teaching type. */
+  'kanji',
 ]);
 
 /** One assessment event in the course, position-ordered — the staging history. */
@@ -130,6 +135,14 @@ export const STATION_TYPE_CONTRACT: Record<
     ruleFa: 'ایستگاه شنیدن: دست‌کم یک تکلیف شنیداری/پخش مکالمه + یک تمرین',
     requires: (b) => b.kind === 'listening-task' || b.kind === 'dialogue-player',
     requirementFa: 'listening-task/dialogue-player',
+  },
+  /* AUDIO-UNIT/KANJI 2026-11-23 §۲ — the dedicated kanji station's minimal
+   * contract: its kanji-card (the ONLY legal teaching event for kanji —
+   * EQA-12 K1) + an exercise. */
+  kanji: {
+    ruleFa: 'ایستگاه کانجی: دست‌کم یک کانجی‌کارت اختصاصی + یک تمرین',
+    requires: (b) => b.kind === 'kanji-card',
+    requirementFa: 'kanji-card',
   },
   practice: {
     ruleFa: 'ایستگاه تمرین: دست‌کم یک بلوک تمرین (بدون محتوای جدید)',
