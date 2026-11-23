@@ -60,7 +60,16 @@ export function MasteryGate({ chapterSlug, exercises, audioByLine, audioAvailabl
    * exercise-session.tsx — normal speed 1.0, replayable. Round-1 C4: the
    * cleanup PAUSES the outgoing element so two questions' sounds can never
    * overlap when the audio URL changes mid-playback. */
-  const listenPrompt = ex?.type === 'kana-listening' || ex?.type === 'rule-listening' ? (ex.promptAudio ?? null) : null;
+  /* AUDIO-UNIT 2026-11-23 §۱ — a word/sentence-unit audio-meaning item at the
+   * gate joins the same listening-question contract: the standalone asset is
+   * the question (auto-play + replay; the server stripped audioLineRef when
+   * the structured binding owns the unit, so the line button never renders). */
+  const listenPrompt =
+    ex?.type === 'kana-listening' || ex?.type === 'rule-listening'
+      ? (ex.promptAudio ?? null)
+      : (ex?.type === 'audio-meaning' || ex?.type === 'listen-minimal-pair') && !ex.audioLineRef
+        ? (ex.promptAudio ?? null)
+        : null;
   useEffect(() => {
     if (!listenPrompt) return;
     const el = getCachedAudio(listenPrompt.opus);

@@ -697,8 +697,18 @@ export function ExerciseSession({
    * offers replay. Recognition questions NEVER auto-play (the kana sound is
    * the ANSWER there — playing it would leak it «ناخواسته»).
    * TASK-LEARNING-13: rule-listening (word-level minimal-pair discrimination)
-   * shares the exact same behavior — the WORD recording is the question. */
-  const listenPrompt = ex?.type === 'kana-listening' || ex?.type === 'rule-listening' ? (ex.promptAudio ?? null) : null;
+   * shares the exact same behavior — the WORD recording is the question.
+   * AUDIO-UNIT 2026-11-23 §۱ — audio-meaning / listen-minimal-pair with a
+   * structured word/word-form/sentence binding join the same contract: the
+   * standalone asset IS the question (auto-play + replay; exactly one unit —
+   * the LineAudioButton never renders for them because the server stripped
+   * audioLineRef when the binding owns the unit). */
+  const listenPrompt =
+    ex?.type === 'kana-listening' || ex?.type === 'rule-listening'
+      ? (ex.promptAudio ?? null)
+      : (ex?.type === 'audio-meaning' || ex?.type === 'listen-minimal-pair') && !ex.audioLineRef
+        ? (ex.promptAudio ?? null)
+        : null;
   useEffect(() => {
     if (!listenPrompt) return;
     let cancelled = false;
@@ -756,8 +766,14 @@ export function ExerciseSession({
           TASK-LEARNING-13: rule-listening (word-level discrimination) shares
           the same panel — the WORD recording is the question, the written word
           is the answer and never renders pre-answer (the station page strips
-          promptJa for this type). */}
-      {(ex.type === 'kana-listening' || ex.type === 'rule-listening') && ex.promptAudio ? (
+          promptJa for this type).
+          AUDIO-UNIT 2026-11-23 §۱ — the word/word-form/sentence-unit
+          audio-meaning & listen-minimal-pair items share this panel too: the
+          standalone asset is the question (one unit, no line button). */}
+      {(ex.type === 'kana-listening' ||
+        ex.type === 'rule-listening' ||
+        ((ex.type === 'audio-meaning' || ex.type === 'listen-minimal-pair') && !ex.audioLineRef)) &&
+      ex.promptAudio ? (
         <div
           className="flex flex-wrap items-center gap-3 rounded-md border border-ai/40 bg-indigo-wash/30 p-4"
           data-listen-question

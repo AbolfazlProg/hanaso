@@ -8,7 +8,16 @@ import { getStationProgressStore } from '@/lib/poc/stores';
 import { previewUnlockAll, unlockAllMode } from '@/lib/preview';
 import { toClientExercise, toClientStation } from '@/modules/curriculum';
 import { resolveSpeaker } from '@/modules/character';
-import { wordAudioUrls, kanaAudioUrls, hostWordAudioUrls } from '@/modules/audio/server';
+import {
+  wordAudioUrls,
+  kanaAudioUrls,
+  hostWordAudioUrls,
+  teachingAudioUrls,
+  contentIdOfBinding,
+} from '@/modules/audio/server';
+import { resolveExerciseAudioBinding } from '@/modules/curriculum/audio-contract';
+import { KANJI_ITEMS_BY_ID } from '@/modules/curriculum/kanji';
+import type { KanjiCardData } from '@/components/curriculum/kanji-card';
 import { KANA_ITEMS_BY_ID } from '@/modules/curriculum/content/kana-items';
 import { getChapter } from '@/modules/curriculum/content';
 import { StationRunner } from '@/components/curriculum/station-runner';
@@ -223,6 +232,8 @@ export default async function StationPage({
   for (const w of chapter.words) dialogueItemLabels[w.id] = `${w.term} — ${w.meaningFa}`;
   for (const x of chapter.expressions) dialogueItemLabels[x.id] = `${x.ja} — ${x.functionFa}`;
   for (const g of chapter.grammar) dialogueItemLabels[g.id] = `${g.pattern} — ${g.titleFa}`;
+  // AUDIO-UNIT: the words lookup the exercise audio bindings resolve against.
+  const wordsByIdForChapter = new Map(chapter.words.map((w) => [w.id, w] as const));
 
   for (const block of station.blocks) {
     if (block.kind !== 'exercise') continue;
@@ -253,6 +264,26 @@ export default async function StationPage({
          * carries it (correctReading) at reveal time. */
         ce.promptJa = undefined;
         ce.promptJaReading = undefined;
+      }
+      /*
+       * AUDIO-UNIT 2026-11-23 §۱ — the structured binding owns the question's
+       * unit: a word/word-form/sentence binding resolves the QUESTION's own
+       * committed asset from the words registry (DD-119 — the word's standalone
+       * file, NEVER the dialogue line: «سؤال دربارهٔ یک واژه → فقط همان واژه»,
+       * EQA-13 AU-1). The line button must not render beside it — exactly ONE
+       * audio unit per question — so audioLineRef drops from the client
+       * payload when the structured binding is present. A missing asset →
+       * null → no sound control (honest absence; CI fails that state at
+       * authoring time, never a silent line-audio substitute). */
+      const audioBinding = resolveExerciseAudioBinding(ex);
+      if (
+        audioBinding &&
+        (audioBinding.unit === 'word' || audioBinding.unit === 'word-form' || audioBinding.unit === 'sentence')
+      ) {
+        const wordsById = wordsByIdForChapter;
+        const contentId = contentIdOfBinding(audioBinding, wordsById);
+        ce.promptAudio = contentId ? teachingAudioUrls(contentId) : null;
+        ce.audioLineRef = undefined;
       }
       /*
        * PART1-FIX-5 (evaluation criterion 5 — the answer leak): in kana-decode
@@ -338,6 +369,40 @@ export default async function StationPage({
     }
   }
 
+  /*
+   * AUDIO-UNIT/KANJI 2026-11-23 §۲ — the kanji-card data of THIS station's
+   * cards: facts from the N5 reference (shape/meaning/stroke count) + the
+   * anchor words resolved from the chapter's own vocabulary, each carrying
+   * its OWN standalone audio pair (the D-0006 reading display rides inside
+   * the anchor words — never an on/kun list). Serializable RSC transport.
+   */
+  const kanjiDataByKanjiId: Record<string, KanjiCardData | undefined> = {};
+  for (const block of station.blocks) {
+    if (block.kind !== 'kanji-card') continue;
+    const ref = KANJI_ITEMS_BY_ID.get(block.kanjiId);
+    if (!ref) continue;
+    kanjiDataByKanjiId[block.kanjiId] = {
+      kanjiId: block.kanjiId,
+      literal: ref.literal,
+      meaningFa: ref.meaningFa,
+      strokeCount: ref.strokeCount,
+      anchors: block.anchorWordIds.flatMap((wid) => {
+        const w = chapter.words.find((x) => x.id === wid);
+        if (!w) return [];
+        return [
+          {
+            wordId: w.id,
+            term: w.term,
+            termFurigana: w.termFurigana,
+            readingKana: w.readingKana,
+            meaningFa: w.meaningFa,
+            audio: w.wordAudio ? wordAudioUrls(w.wordAudio) : null,
+          },
+        ];
+      }),
+    };
+  }
+
   return (
     /* TASK-LEARNING-09 §۳/§۴ — the lesson container grows with the screen:
      * phones stay compact (42rem), tablets get real horizontal room (50rem),
@@ -415,6 +480,7 @@ export default async function StationPage({
           audioFallbackByLine={audioFallbackByLine}
           audioAvailable={bundle!.bundle.audio.available}
           wordAudioByWord={wordAudioByWord}
+          kanjiDataByKanjiId={kanjiDataByKanjiId}
           kanaAudioByKanaId={kanaAudioByKanaId}
           hostWordAudioByKanaId={hostWordAudioByKanaId}
           exampleAudioByWord={exampleAudioByWord}

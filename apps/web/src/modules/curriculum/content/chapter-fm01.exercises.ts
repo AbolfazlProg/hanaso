@@ -41,7 +41,11 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-watashi',
-    audioLineRef: L(3),
+    /* AUDIO-UNIT 2026-11-23: the question asks ONE word's meaning — the sound
+     * is the WORD's own standalone asset (wa-fm01-watashi), never line 3's
+     * full three-sentence introduction (cognitive load + measurement
+     * validity; EQA-13 AU-1). */
+    audio: { unit: 'word', wordId: 'voc-watashi' },
     difficulty: 1,
     promptFa: 'به صدا گوش بده — این واژه چه معنایی دارد؟',
     ...(() => {
@@ -53,8 +57,8 @@ export const FM01_EXERCISES: Exercise[] = [
       b: '«آن شخص» یعنی あのかた — شخصِ سوم؛ این واژه اول شخص است.',
     },
     feedback: {
-      f1Fa: 'صدا همین‌جا قابل پخش است — واژهٔ اولِ جمله، دربارهٔ خودِ گوینده است.',
-      f2HintFa: 'اولین واژهٔ جمله؛ دربارهٔ خودِ گوینده.',
+      f1Fa: 'صدا همین‌جا قابل پخش است — واژهٔ شنیده‌شده دربارهٔ خودِ گوینده است.',
+      f2HintFa: 'واژه‌ای که گوینده با آن به خودش اشاره می‌کند.',
       f3ExplainFa: 'わたし = من (ضمیر اول شخص).',
     },
     assessmentRole: 'practice',
@@ -65,7 +69,8 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-nihonjin',
-    audioLineRef: L(3),
+    /* AUDIO-UNIT: word-level question → the word's standalone asset. */
+    audio: { unit: 'word', wordId: 'voc-nihonjin' },
     difficulty: 1,
     promptFa: 'به صدا گوش بده — کدام ملیت را شنیدی؟',
     ...(() => {
@@ -73,8 +78,8 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      a: 'چینی = ちゅうごくじん — در جملهٔ شنیده‌شده، واژهٔ ملیت با «نی» آغاز می‌شد (にほんじん)، نه با «چی».',
-      c: 'کره‌ای = かんこくじん — در جملهٔ شنیده‌شده «نی‌هون‌جین» را شنیدی (にほんじん)، نه «کان‌کوکو».',
+      a: 'چینی = ちゅうごくじん — واژهٔ شنیده‌شده با «نی» آغاز می‌شد، نه با «چی».',
+      c: 'کره‌ای = かんこくじん — «نی‌هون‌جین» را شنیدی، نه «کان‌کوکو».',
     },
     feedback: {
       /*
@@ -84,9 +89,11 @@ export const FM01_EXERCISES: Exercise[] = [
        * against the Persian translit standard. All three fixed here; the
        * content-contract CI gate keeps every future chapter inside the rules
        * (Japanese charset, no answer leak in F1/F2, Persian translit).
+       * AUDIO-UNIT 2026-11-23: the «جملهٔ شنیده‌شده» phrasings became the
+       * standalone word — the learner hears にほんじん alone now.
        */
       f1Fa: 'ملیتِ گوینده را از صدا تشخیص بده — にほんじん و ちゅうごくじん را قاطی نکن.',
-      f2HintFa: 'نی‌هون‌جین؛ یامادا دربارهٔ خودش می‌گوید.',
+      f2HintFa: 'نی‌هون‌جین — موراها را کامل بشنو: نی+هون+جین.',
       f3ExplainFa: 'にほんじん = ژاپنی (اهل ژاپن).',
     },
     assessmentRole: 'practice',
@@ -98,7 +105,8 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-chuugokujin',
-    audioLineRef: L(5),
+    /* AUDIO-UNIT: word-level question → the word's standalone asset. */
+    audio: { unit: 'word', wordId: 'voc-chuugokujin' },
     difficulty: 2,
     promptFa: 'به صدا گوش بده — کدام ملیت؟',
     ...(() => {
@@ -106,12 +114,13 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      a: 'ژاپنی = にほんじん — در جملهٔ شنیده‌شده واژهٔ «چیووگوکوجین» را شنیدی، نه «نی‌هونجین».',
-      b: 'ایرانی = イランじん — در جملهٔ شنیده‌شده واژهٔ «چیووگوکوجین» را شنیدی، نه «ایران‌جین».',
+      a: 'ژاپنی = にほんじん — «چیووگوکوجین» را شنیدی، نه «نی‌هونجین».',
+      b: 'ایرانی = イランじん — «چیووگوکوجین» را شنیدی، نه «ایران‌جین».',
     },
     feedback: {
-      /* UX-AUDIT #139 (data): the F1 line named the answer («چینی بود»). */
-      f1Fa: 'به ملیتی گوش کن که سورا دربارهٔ خودش می‌گوید — کانای «چ» کشیده را با «جو» قاطی نکن.',
+      /* UX-AUDIT #139 (data): the F1 line named the answer («چینی بود»);
+       * AUDIO-UNIT 2026-11-23: sentence phrasings → the standalone word. */
+      f1Fa: 'به ملیتی که در واژهٔ شنیده‌شده آمده گوش کن — کانای «چ» کشیده را با «جو» قاطی نکن.',
       /* UX-AUDIT #138 (data): ちゅうごく has ONE long vowel (ちゅう) — not two. */
       f2HintFa: 'دقت کن: در چیووگوکو فقط واکهٔ «چیوو» کشیده است — ごく کوتاه می‌آید.',
       f3ExplainFa: 'ちゅうごくじん = چینی (اهل چین).',
@@ -561,10 +570,13 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'voc-sensee',
     assessesConcepts: ['listen-vowel-length'],
-    audioLineRef: L(8),
+    /* AUDIO-UNIT: a minimal pair about ONE word's vowel length — the sound
+     * is the word's standalone asset (せんせい), not line 8's three
+     * sentences. */
+    audio: { unit: 'word', wordId: 'voc-sensee' },
     lineRef: L(8),
     difficulty: 1,
-    promptFa: 'گوش بده (خط ۸): واژهٔ «استاد» را با کدام شکل شنیدی؟',
+    promptFa: 'گوش بده: واژهٔ «استاد» را با کدام شکل شنیدی؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'せんせい', 'せんせ', 'せんせえ', 0);
       return { options, correctOptionId };
@@ -643,7 +655,8 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'voc-sensee',
     assessesConcepts: ['listen-vowel-length'],
-    audioLineRef: L(8),
+    /* AUDIO-UNIT: the pair is the word's own pronunciation — standalone asset. */
+    audio: { unit: 'word', wordId: 'voc-sensee' },
     lineRef: L(8),
     difficulty: 3,
     promptFa: 'گوش بده: کدام را شنیدی؟ (تفاوت طول واکه)',
@@ -668,7 +681,10 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'voc-chuugokujin',
     assessesConcepts: ['listen-vowel-length'],
-    audioLineRef: L(5),
+    /* AUDIO-UNIT: the tested surface is the COUNTRY form ちゅうごく (the
+     * options are ちゅうごく/ちゅごく/ちゅうご) — a standalone word-form
+     * asset of the ちゅうごくじん family, never the whole line. */
+    audio: { unit: 'word-form', text: 'ちゅうごく', wordId: 'voc-chuugokujin' },
     lineRef: L(5),
     difficulty: 3,
     promptFa: 'گوش بده: کدام ملیت؟',
@@ -695,7 +711,8 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-watashi',
-    audioLineRef: L(6),
+    /* AUDIO-UNIT: warm-up word recall — the standalone word, not line 6. */
+    audio: { unit: 'word', wordId: 'voc-watashi' },
     difficulty: 1,
     promptFa: 'گرم‌کردن: این واژه چه بود؟',
     ...(() => {
@@ -718,7 +735,8 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-iranjin',
-    audioLineRef: L(8),
+    /* AUDIO-UNIT: word-level question → the word's standalone asset. */
+    audio: { unit: 'word', wordId: 'voc-iranjin' },
     difficulty: 1,
     promptFa: 'گرم‌کردن: این ملیت چه بود؟',
     ...(() => {
@@ -726,8 +744,8 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: 'چینی = ちゅうごくじん — در جملهٔ شنیده‌شده «ایران» را شنیدی، نه «چیووگوکو».',
-      c: 'ژاپنی = にほんじん — در جملهٔ شنیده‌شده، واژهٔ ملیت با «ایران» آغاز می‌شد (イランじん)، نه «نی‌هون».',
+      b: 'چینی = ちゅうごくじん — «ایران» را شنیدی، نه «چیووگوکو».',
+      c: 'ژاپنی = にほんじん — واژهٔ شنیده‌شده با «ایران» آغاز می‌شد (イランじん)، نه «نی‌هون».',
     },
     feedback: {
       f1Fa: 'イランじん = ایرانی.',
@@ -834,7 +852,8 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'voc-sensee',
     assessesConcepts: ['listen-vowel-length'],
-    audioLineRef: L(8),
+    /* AUDIO-UNIT: minimal pair → the word's standalone asset. */
+    audio: { unit: 'word', wordId: 'voc-sensee' },
     lineRef: L(8),
     difficulty: 3,
     promptFa: 'کدام را شنیدی؟',
@@ -951,7 +970,8 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-kankokujin',
-    audioLineRef: L(10),
+    /* AUDIO-UNIT: word-level question → the word's standalone asset. */
+    audio: { unit: 'word', wordId: 'voc-kankokujin' },
     difficulty: 2,
     promptFa: 'به صدا گوش بده — کدام ملیت؟',
     ...(() => {
@@ -959,8 +979,8 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      a: 'چینی = ちゅうごくじん — در جملهٔ شنیده‌شده «کان‌کوکوجین» را شنیدی (かんこくじん)، نه «چیووگوکو».',
-      c: 'ژاپنی = にほんじん — در جملهٔ شنیده‌شده واژهٔ «کان‌کوکوجین» را شنیدی، نه «نی‌هونجین».',
+      a: 'چینی = ちゅうごくじん — «کان‌کوکوجین» را شنیدی (かんこくじん)، نه «چیووگوکو».',
+      c: 'ژاپنی = にほんじん — واژهٔ «کان‌کوکوجین» را شنیدی، نه «نی‌هونجین».',
     },
     feedback: {
       f1Fa: 'かんこくじん = کره‌ای — ん خیشومی را کامل بگو.',
@@ -975,7 +995,10 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-kara',
-    audioLineRef: L(12),
+    /* AUDIO-UNIT: a grammar-particle FUNCTION question — grammar taught in
+     * sentence form plays the SENTENCE carrying that grammar (かんこくから
+     * きました), not Kim's whole 3-sentence line 12. */
+    audio: { unit: 'sentence', text: 'かんこくから きました。' },
     difficulty: 1,
     promptFa: 'به صدا گوش بده — から چه کار می‌کند؟',
     ...(() => {
@@ -1223,7 +1246,10 @@ export const FM01_EXERCISES: Exercise[] = [
     audioLineRef: L(12),
     lineRef: L(12),
     difficulty: 2,
-    promptFa: 'گوش بده (خط ۱۳): کیم چه کرد؟',
+    /* AUDIO-UNIT: line-level comprehension — the correct unit; the label
+     * was renumbered to the REAL line (L12 = Kim's introduction — the old
+     * «خط ۱۳» text was off by one). */
+    promptFa: 'گوش بده (خط ۱۲): کیم چه کرد؟',
     ...(() => {
       const { options, correctOptionId } = o3(
         'x',
@@ -1251,7 +1277,9 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'voc-kankokujin',
     assessesConcepts: ['listen-nasal-mora'],
-    audioLineRef: L(10),
+    /* AUDIO-UNIT: the tested surface is the COUNTRY form かんこく (options
+     * かんこく/かこく/かここ) — a standalone word-form asset. */
+    audio: { unit: 'word-form', text: 'かんこく', wordId: 'voc-kankokujin' },
     lineRef: L(10),
     difficulty: 3,
     promptFa: 'گوش بده: کدام را شنیدی؟ (تفاوت ん خیشومی)',
@@ -1301,7 +1329,11 @@ export const FM01_EXERCISES: Exercise[] = [
     audioLineRef: L(9),
     lineRef: L(9),
     difficulty: 2,
-    promptFa: 'گوش بده (خط ۱۰): یامادا چه نوع جمله‌ای گفت؟',
+    /* AUDIO-UNIT: sentence-TYPE question (question vs statement) — the
+     * line unit is the correct unit here; the label was renumbered to the
+     * REAL line (L9 = キムさんも ちゅうごくじんですか — the old «خط ۱۰» text
+     * pointed at the wrong line). */
+    promptFa: 'گوش بده (خط ۹): یامادا چه نوع جمله‌ای گفت؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'پرسش با も', 'خبر ساده', 'نفی', 1);
       return { options, correctOptionId };
@@ -1655,7 +1687,8 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'voc-sensee',
     assessesConcepts: ['listen-vowel-length'],
-    audioLineRef: L(8),
+    /* AUDIO-UNIT: minimal pair → the word's standalone asset. */
+    audio: { unit: 'word', wordId: 'voc-sensee' },
     lineRef: L(8),
     difficulty: 3,
     promptFa: 'دریل تمایزی: کدام؟',
@@ -1807,10 +1840,12 @@ export const FM01_EXERCISES: Exercise[] = [
     type: 'audio-meaning',
     targetSkill: 'vocab',
     targetConcept: 'voc-kankokujin',
-    audioLineRef: L(10),
+    /* AUDIO-UNIT: word-level mastery item → the word's standalone asset
+     * (the old binding played Sora's whole two-sentence correction line). */
+    audio: { unit: 'word', wordId: 'voc-kankokujin' },
     lineRef: L(10),
     difficulty: 2,
-    promptFa: 'گوش بده (خط ۱۱): کیم چه ملیتی است؟',
+    promptFa: 'گوش بده: کیم چه ملیتی است؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'کره‌ای', 'چینی', 'ژاپنی', 0);
       return { options, correctOptionId };
@@ -1928,7 +1963,9 @@ export const FM01_EXERCISES: Exercise[] = [
     audioLineRef: L(9),
     lineRef: L(9),
     difficulty: 3,
-    promptFa: 'گوش بده (خط ۱۰): چه پرسشی پرسیده شد؟',
+    /* AUDIO-UNIT: line-level «what was asked» — correct unit; label
+     * renumbered to the REAL line (L9 — the も question; «خط ۱۰» was wrong). */
+    promptFa: 'گوش بده (خط ۹): چه پرسشی پرسیده شد؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'آیا کیم هم چینی است؟', 'آیا کیم معلم است؟', 'کیم از کجا آمد؟', 2);
       return { options, correctOptionId };
@@ -2189,6 +2226,165 @@ export const FM01_EXERCISES: Exercise[] = [
       f1Fa: 'پاسخ سورا با واژهٔ «نه» شروع می‌شود و بعد با اصلاح ادامه پیدا می‌کند.',
       f2HintFa: 'نه + اصلاح + واقعیت.',
       f3ExplainFa: 'سورا گفت: «نه، خانم کیم چینی نیست؛ کره‌ای است.»',
+    },
+    assessmentRole: 'practice',
+  },
+
+  /* ════════════════════════ KANJI STATION (stn-fm01-23-kanji) — AUDIO-UNIT/KANJI 2026-11-23 ════════════════════════
+   * The DEDICATED kanji station of chapter 02 (the kanji-pilot plan's station —
+   * P1-green: 人 ۴ anchor / 国 ۲ anchor, readings ride inside the anchor words
+   * D-0006). Every kanji-target item sits AFTER its kanji-card in the same
+   * station deck (EQA-1/EQA-8 R5 — teach before assess); the audio-meaning
+   * items play the ANCHOR WORD's standalone asset (EQA-13 word-anchor binding).
+   * Deck: 3 recognition (shape discrimination / reading-in-anchor / audio exit)
+   * + 2 recall (kanji-tail cloze / word-form cloze) — the recall-first share is
+   * the chapter-pool contract (EQA-3 ≥60%). */
+  {
+    id: 'ex-fm01-kj-jin-shape',
+    type: 'meaning-select',
+    targetSkill: 'vocab',
+    targetConcept: 'kj-4eba',
+    assessesConcepts: ['kj-4eba'],
+    lineRef: L(3),
+    difficulty: 1,
+    promptFa: 'کدام شکل، کانجیِ «انسان/شخص» است؟',
+    /* AUDIO-UNIT/KANJI: NO promptJa — the target shape must NOT be shown in
+     * the prompt (that was an answer leak); the learner RETRIEVES the learned
+     * shape from the meaning cue and discriminates it from the lookalikes. */
+    ...(() => {
+      const { options, correctOptionId } = o3('x', '人', '入', '八', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      /* options after o3(splice at 2): a=入 b=八 c=人(correct) — the rationales
+       * cover the two DISTRACTOR ids only (W-E3/E4 contract). */
+      a: '入 یعنی «ورود» — ضربه‌هایش پایین‌تر همدیگر را قطع می‌کنند؛ در 人 دو پا از بالا جدا می‌شوند و هیچ‌کدام دیگری را قطع نمی‌کند.',
+      b: '八 یعنی «هشت» — دو ضربه‌اش از وسط به بیرون باز می‌شوند و یکدیگر را قطع نمی‌کنند؛ شکل 人 از بالا شروع می‌شود و به پایین باز می‌شود.',
+    },
+    feedback: {
+      f1Fa: 'شکل درست همان است که یاد گرفتی: دو ضربهٔ جدا از بالا — 人.',
+      f2HintFa: 'به جایی که دو ضربه از هم جدا می‌شوند نگاه کن: در 人 از بالاست.',
+      f3ExplainFa:
+        '人 (انسان) دو ضربه دارد که از بالا جدا می‌شوند — برخلاف 入 (ورود) که ضربه‌ها همدیگر را قطع می‌کنند، و 八 (هشت) که از وسط باز می‌شود.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'kcard-jin',
+  },
+  {
+    id: 'ex-fm01-kj-jin-reading',
+    type: 'audio-meaning',
+    targetSkill: 'vocab',
+    targetConcept: 'kj-4eba',
+    assessesConcepts: ['kj-4eba', 'voc-nihonjin'],
+    lineRef: L(3),
+    difficulty: 2,
+    promptFa: 'گوش بده — در این واژه، کانجی 人 چه خوانشی دارد؟',
+    /* AUDIO-UNIT (word-anchor): the sound is the anchor word's standalone
+     * asset (にほんじん) — the learner maps the kanji's reading INSIDE the
+     * heard word (D-0006 — readings ride inside anchor words). */
+    audio: { unit: 'word', wordId: 'voc-nihonjin' },
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'じん', 'にん', 'ひと', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'にん خوانشِ دیگری از همین کانجی است که در شمارش آدم‌ها می‌آید (さんにん = سه نفر) — در واژه‌های ملیت، «جین» می‌شنوی.',
+      c: 'ひと یعنی «انسان» وقتی کانجی تنها و بدون پسوند است — در にほんじん آخرِ واژه «جین» است.',
+    },
+    feedback: {
+      f1Fa: 'واژهٔ شنیده‌شده با «نی‌هون‌جین» تمام شد — 人 داخل آن «جین» خوانده می‌شود.',
+      f2HintFa: 'آخر واژه را بشنو: …جین.',
+      f3ExplainFa:
+        'در にほんじん (日本人) کانجی 人 با خوانش «じん» می‌آید — همهٔ ملیت‌های این فصل همین خوانش را دارند.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'kcard-jin',
+  },
+  {
+    id: 'ex-fm01-kj-kuni-cloze',
+    type: 'cloze',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-kankokujin',
+    assessesConcepts: ['kj-4eba', 'kj-56fd', 'voc-kankokujin'],
+    lineRef: L(12),
+    difficulty: 1,
+    promptFa: 'عبارت کیم را با کانجی درست کامل کن (خط ۱۲): «از کره آمدم»',
+    promptJa: 'かんこく___ きました。',
+    clozeTokens: ['かんこく', null, ' きました。'],
+    /* AUDIO-UNIT/KANJI: the blank is a SINGLE KANJI shape — the tail of the
+     * taught word かんこくじん; the distractors are the taught 国 and the
+     * word-form 大 (شکل‌های ناآشنا = متریال دیداری عمدی — warning-tier). */
+    ...(() => {
+      const { options, correctOptionId } = o3('x', '人', '国', '大', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'かんこく خودش «کره» است و 国 درونش دارد — بعد از آن «انسانِ آن سرزمین» می‌آید: 人؛ 国 دوباره نمی‌آید.',
+      c: '大 سرِ واژهٔ 大学 (だいがく — دانشگاه) است — دربارهٔ مکان تحصیل است، نه ملیت.',
+    },
+    feedback: {
+      f1Fa: 'かんこく = کره؛ آخرش «انسانِ آن سرزمین» می‌نشیند — 人.',
+      f2HintFa: 'واژهٔ شنیده‌شدهٔ مکالمه: かんこくじん.',
+      f3ExplainFa: 'かんこくじん (韓国人) = かんこく + 人 — دنبالهٔ هر ملیت همین کانجی است.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'kcard-kuni',
+  },
+  {
+    id: 'ex-fm01-kj-cloze-jin',
+    type: 'cloze',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-chuugokujin',
+    assessesConcepts: ['kj-4eba', 'kj-56fd', 'voc-chuugokujin'],
+    lineRef: L(6),
+    difficulty: 2,
+    promptFa: 'جملهٔ سورا (خط ۶) را با شکل نوشتاری درست کامل کن: «بله، من چینی‌ام»',
+    promptJa: 'はい、わたしは ___ です。',
+    clozeTokens: ['はい、わたしは ', null, ' です。'],
+    /* The options are the REGISTERED word forms (written kanji surfaces of the
+     * taught nationalities) — the learner retrieves the kanji form from the
+     * sentence context. */
+    ...(() => {
+      const { options, correctOptionId } = o3('x', '中国人', '韓国人', 'イラン人', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      /* options after o3(splice at 1): a=韓国人 b=中国人(correct) c=イラン人. */
+      a: '韓国人 (かんこくじん) کره‌ای است — خودِ سورا در همین جمله می‌گوید چینی است، نه کره‌ای.',
+      c: 'イラン人 (イランじん) ایرانی است — این جملهٔ سورا، دانشجوی چینی است؛ علی ایرانی است، نه سورا.',
+    },
+    feedback: {
+      f1Fa: 'سورا در مکالمه خودش را ちゅうごくじん معرفی می‌کند — شکل نوشتاری‌اش همین است.',
+      f2HintFa: 'جملهٔ کامل: はい、わたしは ちゅうごくじんです.',
+      f3ExplainFa: '中国人 (ちゅうごくじん) = چینی — 国 (سرزمین) + 人 (انسانِ آن سرزمین).',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'kcard-kuni',
+  },
+  {
+    id: 'ex-fm01-kj-exit',
+    type: 'audio-meaning',
+    targetSkill: 'vocab',
+    targetConcept: 'voc-kankokujin',
+    assessesConcepts: ['kj-4eba', 'kj-56fd', 'voc-kankokujin'],
+    lineRef: L(10),
+    difficulty: 2,
+    promptFa: 'گوش بده — این واژه با کدام شکل نوشته می‌شود؟',
+    /* AUDIO-UNIT: sound→written-form exit — the WORD's standalone asset (the
+     * learner maps the heard word to its kanji-bearing surface). */
+    audio: { unit: 'word', wordId: 'voc-kankokujin' },
+    ...(() => {
+      const { options, correctOptionId } = o3('x', '韓国人', '日本人', '大学', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: '日本人 (にほんじん) «نی‌هون‌جین» است — شنیده‌شده با «کان» شروع شد (かんこくじん)، نه با «نی».',
+      c: '大学 (だいがく) «دای‌گاکو» است — شنیده‌شده نه 国 داشت و نه کشور، آدمِ سرزمین داشت.',
+    },
+    feedback: {
+      f1Fa: 'شنیده‌شده かんこくじん (کان‌کوکوجین) بود: 韓国人 یعنی «انسانِ سرزمین کره».',
+      f2HintFa: 'اولین بخش واژه «کان» است — همان かんこく (کره).',
+      f3ExplainFa: '韓国人 = かんこくじん = کره‌ای: 国 (کشور) + 人 (انسان) — دو کانجی همین ایستگاه.',
     },
     assessmentRole: 'practice',
   },

@@ -18,8 +18,20 @@ export {
 } from './audio-manifest';
 // TASK-LEARNING-07 Wave 2 (Issue #103): the word-audio registry (DD-119) resolves
 // server-side only (node:fs) — RSC pages import it through this public entry.
-export { wordAudioAvailable, wordAudioUrls } from './word-audio';
-export type { WordAudioAssets } from './word-audio';
+// AUDIO-UNIT 2026-11-23: the registry now carries the full structural metadata
+// (text/target/unit/role/voice/source/path/validation) and resolves every
+// teaching-audio content id (word / word-form / sentence).
+export {
+  wordAudioAvailable,
+  wordAudioUrls,
+  teachingAudioUrls,
+  contentIdOfBinding,
+  wordFormAudioId,
+  sentenceAudioId,
+  audioContentHash,
+} from './word-audio';
+export type { WordAudioAssets, TeachingAudioAssets } from './word-audio';
+export type { TeachingAudioEntry, AudioUnitKind } from '@/modules/curriculum/types';
 // TASK-LEARNING-08 (WP-3): the kana-audio registry (DD-081/DD-121) — same rule.
 export { kanaAudioUrls } from './kana-audio';
 export type { KanaAudioAssets } from './kana-audio';

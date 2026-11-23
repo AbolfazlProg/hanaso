@@ -107,9 +107,14 @@ describe('the Memory review-contract (the per-kind template table)', () => {
 
 describe('the mission rejection cases (memory admission)', () => {
   it('[M-3] a kanji with NO dedicated station enrolls NOWHERE (its cards match no station)', () => {
-    // MUTATION: the kanji declarations exist but the dedicated station is gone.
+    // MUTATION: the kanji declarations exist but the dedicated station is gone
+    // (the real chapter now SHIPS stn-fm01-23-kanji — the mutation removes it).
     const base = structuredClone(getChapter('first-meeting-01')!);
-    const mutated: Chapter = { ...base, kanji: KANJI_PILOT_KANJI_ITEMS };
+    const mutated: Chapter = {
+      ...base,
+      kanji: KANJI_PILOT_KANJI_ITEMS,
+      stations: base.stations.filter((s) => s.type !== 'kanji'),
+    };
     const cards = cardsOf(mutated);
     const kj = cards.filter((c) => c.kind === 'kj-rec' || c.kind === 'kj-wri');
     expect(kj.length).toBe(4);
@@ -124,11 +129,17 @@ describe('the mission rejection cases (memory admission)', () => {
   });
 
   it('[M-3b] a kanji-card shoved into a vocab station does NOT enroll its kj cards either (word-card teaching ≠ kanji teaching)', () => {
+    // MUTATION: the real dedicated station is removed and the card is shoved
+    // into a VOCAB station — only the type-kanji host may enroll kanji cards.
     const base = structuredClone(getChapter('first-meeting-01')!);
     const kanjiCard = structuredClone(KANJI_PILOT_STATION.blocks.find((b) => b.id === 'kcard-jin')!);
     const vocabStation = base.stations.find((s) => s.slug === 'stn-fm01-02-vocab')!;
     vocabStation.blocks.push(kanjiCard);
-    const mutated: Chapter = { ...base, kanji: KANJI_PILOT_KANJI_ITEMS };
+    const mutated: Chapter = {
+      ...base,
+      kanji: KANJI_PILOT_KANJI_ITEMS,
+      stations: base.stations.filter((s) => s.type !== 'kanji'),
+    };
     const cards = cardsOf(mutated).filter((c) => c.kind === 'kj-rec' || c.kind === 'kj-wri');
     // the host lookup requires type === 'kanji' — the vocab station does not enroll kanji
     for (const c of cards)

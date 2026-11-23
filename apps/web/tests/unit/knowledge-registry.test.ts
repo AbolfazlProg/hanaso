@@ -40,6 +40,9 @@ describe('Knowledge Registry — derivation integrity', () => {
       'expression',
       'grammar',
       'kana',
+      /* AUDIO-UNIT/KANJI 2026-11-23 §۲ — the dedicated kanji station of
+       * chapter 02 registers its two kanji (kj-4eba/kj-56fd). */
+      'kanji',
       'rule-mark',
       'word',
     ]);

@@ -62,6 +62,7 @@ import { resolveDialogueFocus } from '@/modules/curriculum/dialogue-focus';
 import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 import { WritingCanvas } from '@/components/writing/writing-canvas';
 import { KanaCard, normalizeKanaStage, type KanaCardProgress, type KanaRelatedExample } from './kana-card';
+import { KanjiCard, type KanjiCardData } from './kanji-card';
 import { ExampleAudioButton } from './example-audio-button';
 import { KANA_ITEMS_BY_ID, KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
 import { readabilityLabel } from '@/modules/curriculum/content/readability';
@@ -205,10 +206,15 @@ export interface StationRunnerProps {
   audioAvailable: boolean;
   /**
    * Issue #103 (TASK-LEARNING-07): wordId → resolved INDEPENDENT word-audio URL pair
-   * (wordAudio registry — DD-119, resolved server-side). Null/absent = honest fallback
-   * to the source-line audio on the vocab card.
+   * (wordAudio registry — DD-119, resolved server-side). Null/absent = honest
+   * absence — NO audio control (AUDIO-UNIT 2026-11-23: never the line audio).
    */
   wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /**
+   * AUDIO-UNIT/KANJI 2026-11-23 §۲ — kanjiId → the resolved KanjiCard data
+   * (facts from the N5 reference + anchor words with standalone audio).
+   */
+  kanjiDataByKanjiId?: Record<string, KanjiCardData | undefined>;
   /**
    * TASK-LEARNING-08 (WP-2/WP-3): kanaId → resolved PRE-GENERATED audio pair
    * (public/audio/kana registry — DD-081). Null = no committed asset yet; the
@@ -474,6 +480,7 @@ export function StationRunner(props: StationRunnerProps) {
     audioFallbackByLine,
     audioAvailable,
     wordAudioByWord,
+    kanjiDataByKanjiId,
     kanaAudioByKanaId,
     hostWordAudioByKanaId,
     exampleAudioByWord,
@@ -1325,6 +1332,7 @@ export function StationRunner(props: StationRunnerProps) {
           audioFallbackByLine={audioFallbackByLine}
           audioAvailable={audioAvailable}
           wordAudioByWord={wordAudioByWord}
+          kanjiDataByKanjiId={kanjiDataByKanjiId}
           kanaAudioByKanaId={kanaAudioByKanaId}
           hostWordAudioByKanaId={hostWordAudioByKanaId}
           exampleAudioByWord={exampleAudioByWord}
@@ -1879,6 +1887,7 @@ function BlockView({
   audioFallbackByLine,
   audioAvailable,
   wordAudioByWord,
+  kanjiDataByKanjiId,
   kanaAudioByKanaId,
   hostWordAudioByKanaId,
   exampleAudioByWord,
@@ -1933,6 +1942,9 @@ function BlockView({
   /** The inline player's finish CTA → continue the SAME lesson's walk. */
   onDialogueFinished?: () => void;
   wordAudioByWord?: Record<string, { opus: string; m4a: string } | null>;
+  /** AUDIO-UNIT/KANJI 2026-11-23 §۲ — resolved kanji-card data (facts from the
+   * N5 reference + this chapter's anchor words with their standalone audio). */
+  kanjiDataByKanjiId?: Record<string, KanjiCardData | undefined>;
   /** WP-2/WP-3: resolved kana audio pairs (kanaId → opus+m4a | null). */
   kanaAudioByKanaId?: Record<string, { opus: string; m4a: string } | null>;
   /** Addendum-3 §9: the host word's own audio pair (kanaId → opus+m4a | null). */
@@ -2054,13 +2066,17 @@ function BlockView({
       // an uncovered glyph honestly omits the guide (never guesses).
       const derivedTranslit = transliterateKanaToFa(word.readingKana);
       const translitFa = derivedTranslit.errors.length === 0 ? derivedTranslit.fa : undefined;
-      // Issue #103: prefer the word's INDEPENDENT audio when the registry has a
-      // committed asset; honest fallback to the source-line audio otherwise.
+      // Issue #103 (DD-119) + AUDIO-UNIT 2026-11-23 §۱: the word card plays the
+      // word's OWN committed standalone audio — and when no committed asset
+      // exists there is NO audio control at all (honest absence), NEVER the
+      // dialogue-line audio as a substitute (owner rule: «اگر صوت مستقل واژه
+      // وجود ندارد، آن را با صوت مکالمه جایگزین نکن؛ نبود صوت را صادقانه مشخص
+      // کن تا فایل درست تولید شود» — EQA-13 AU-3 fails the build for a
+      // required-but-missing word asset, so shipped content always resolves).
       const wordAudio = wordAudioByWord?.[word.id] ?? null;
       const useWordAudio = wordAudio !== null;
-      const audioLineId = useWordAudio ? word.id : line?.id;
-      const audioUrl = useWordAudio ? wordAudio!.opus : line ? (audioByLine[line.id] ?? '') : '';
-      const audioFallback = useWordAudio ? wordAudio!.m4a : line ? audioFallbackByLine?.[line.id] : undefined;
+      const audioUrl = useWordAudio ? wordAudio.opus : '';
+      const audioFallback = useWordAudio ? wordAudio.m4a : undefined;
       return (
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -2093,16 +2109,23 @@ function BlockView({
                 translitFa={translitFa}
               />
             </div>
-            {(useWordAudio || line) && (
+            {useWordAudio ? (
               <LineAudioButton
-                lineId={audioLineId!}
+                lineId={word.id}
                 audioUrl={audioUrl}
                 audioUrlFallback={audioFallback}
                 /* a resolved word asset is playable even when the dialogue-level
                    audio is still pending generation (bytes live in the registry) */
-                audioAvailable={useWordAudio || audioAvailable}
-                label={useWordAudio ? 'پخش تلفظ واژه' : fa.curriculum.playLine}
+                audioAvailable
+                label="پخش تلفظ واژه"
               />
+            ) : (
+              /* AUDIO-UNIT: no committed standalone asset → the honest absence
+               * note (a real "sound pending" label — never the line-audio
+               * substitution, never a dead button). */
+              <span className="flex items-center gap-1.5 rounded-md border border-dashed border-ink-faint px-3 py-2 text-caption text-ink-soft">
+                {fa.curriculum.wordAudioPending}
+              </span>
             )}
           </div>
           {word.noteFa && (
@@ -2136,6 +2159,26 @@ function BlockView({
           )}
         </section>
       );
+    }
+
+    case 'kanji-card': {
+      /*
+       * AUDIO-UNIT/KANJI 2026-11-23 §۲ — the DEDICATED kanji teaching card
+       * (K1+K2 of the kanji-interaction-blueprint): shape & meaning + the
+       * anchor words the kanji rides inside (each with its OWN standalone
+       * audio — D-0006: the reading lives inside the anchor words, never a
+       * displayed on/kun list) + the authored teaching note. The data resolves
+       * server-side from the N5 reference + the chapter's words.
+       */
+      const kanji = kanjiDataByKanjiId?.[block.kanjiId];
+      if (!kanji) {
+        return (
+          <section className="rounded-md border border-danger/40 bg-card p-5">
+            <p className="text-body text-ink">{fa.curriculum.kanjiCardMissing(block.kanjiId)}</p>
+          </section>
+        );
+      }
+      return <KanjiCard key={block.id} kanji={kanji} noteFa={block.noteFa} />;
     }
 
     case 'kana-card': {

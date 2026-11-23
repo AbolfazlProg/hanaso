@@ -1236,4 +1236,88 @@ export const FM01_STATIONS: Station[] = [
     blocks: [ex('blk-or2-drill', ['ex-fm01-or2-mp-1', 'ex-fm01-or2-cloze-1', 'ex-fm01-or2-cloze-2'])],
     fsrsItems: [],
   },
+
+  /* ════════════════════════ KANJI — the dedicated station (stn-fm01-23-kanji) ════════════════════════
+   * AUDIO-UNIT/KANJI 2026-11-23 §۲ — the REAL kanji teaching station of chapter
+   * 02, at exactly the kanji-pilot plan's position (P1-green: order 23, after
+   * both anchor-word vocab stations 2 and 11 — every anchor word is taught
+   * BEFORE this station; EQA-12 K3 enforces it).
+   *
+   * Deck design — the kanji-interaction-blueprint K-flow over the engine's own
+   * block types: K0 scene encounter → kanji-card 人 (K1+K2 merged — pictographic,
+   * per the blueprint's merge rule) → immediate retrieval (meaning + shape
+   * discrimination) → reading-in-anchor-word (audio-meaning on the ANCHOR
+   * WORD's standalone asset — D-0006 + the AUDIO-UNIT word-anchor binding) →
+   * kanji-card 国 (K1+K2: the 囗+玉 decomposition) → retrieval + word-vessel
+   * scanning → writing-practice 人/国 (K5 — KanjiVG stroke data committed in
+   * writing-data; guided order observation → trace → free) → sound→form exit →
+   * wrap-up. Readings ride INSIDE the anchor words (no on/kun list display —
+   * the reference stays the reference); the kanji enter the Memory Station as
+   * kj-rec/kj-wri cards through this station's completion (all-type FSRS). */
+  {
+    slug: 'stn-fm01-23-kanji',
+    type: 'kanji',
+    titleFa: 'کانجی‌های 人 و 国 — شکل نوشتاری ملیت‌ها',
+    objectiveFa:
+      'دو کانجیِ نهفته در واژه‌های ملیتی که یاد گرفتی (日本人، 中国人، イラン人، 韓国人) را بشناس: شکل، معنا، اجزا، خوانش درون واژه و ترتیب نوشتن',
+    core: true,
+    order: 23,
+    prerequisites: ['stn-fm01-02-vocab', 'stn-fm01-11-vocab2'],
+    lineRefs: [L(3), L(5), L(8), L(10)],
+    objectiveCode: 'OBJ-FM01-KANJI-JIN-KUNI',
+    teachesConcepts: ['kanji-jin-in-nationalities', 'kanji-kuni-in-countries'],
+    estMinutes: 7,
+    estLoad: 'light',
+    completion: { kind: 'task_completed' },
+    mastery: { threshold: 0.6 },
+    blocks: [
+      {
+        kind: 'scene',
+        id: 'sc-kanji-intro',
+        titleFa: 'دو کانجی که تا حالا دیده‌ای',
+        bodyFa:
+          'چهار واژهٔ ملیت این فصل — 日本人 (にほんじん)، 中国人 (ちゅうごくじん)، イラン人 (イランじん) و 韓国人 (かんこくじん) — همه از دو کانجی مشترک ساخته شده‌اند: 人 (انسان) و 国 (کشور). تا حالا صدایشان را شنیدی و معنی‌شان را یاد گرفتی؛ حالا خودِ شکل‌ها را جدا می‌کنیم.',
+      },
+      {
+        kind: 'kanji-card',
+        id: 'kcard-jin',
+        kanjiId: 'kj-4eba',
+        anchorWordIds: ['voc-nihonjin', 'voc-chuugokujin', 'voc-iranjin', 'voc-kankokujin'],
+        noteFa:
+          '人 یعنی «انسان/شخص». کانجی تصویری است: دو ضربه که از بالا شروع می‌شوند و به پایین باز می‌شوند — مثل دو پای آدمی که راه می‌رود (K1+K2 ادغام‌شده: کانجی ساده، جزء مستقل ندارد). این کانجی آخرِ همهٔ ملیت‌های این فصل می‌نشیند و «بودنِ آدمِ آن سرزمین» را می‌سازد: 日本人 = ژاپنی، 中国人 = چینی، イラン人 = ایرانی، 韓国人 = کره‌ای. با 入 (ورود) قاطی‌اش نکن — ضربه‌های 入 پایین‌تر همدیگر را قطع می‌کنند؛ دو پای 人 هیچ‌وقت همدیگر را قطع نمی‌کنند.',
+      },
+      ex('blk-ex-kanji-jin-shape', ['ex-fm01-kj-jin-shape']),
+      ex('blk-ex-kanji-jin-reading', ['ex-fm01-kj-jin-reading']),
+      {
+        kind: 'kanji-card',
+        id: 'kcard-kuni',
+        kanjiId: 'kj-56fd',
+        anchorWordIds: ['voc-chuugokujin', 'voc-kankokujin'],
+        noteFa:
+          '国 یعنی «کشور». کانجی ترکیبی است: یک قاب چهارگوش (囗 — مرز یک سرزمین) و داخلش 玉 (گنج/گوهر): «سرزمینی که چیزهای گران‌بها دارد». 中国 (ちゅうごく) یعنی چین — «سرزمین میانه» — و 韓国 (かんこく) یعنی کره؛ 国 در هر دو «کشور» را می‌سازد. در واژه‌های این فصل با خوانش «کُوک» می‌آید: ちゅうごく、かんこく.',
+      },
+      ex('blk-ex-kanji-kuni-cloze', ['ex-fm01-kj-kuni-cloze']),
+      {
+        kind: 'writing-practice',
+        id: 'wp-kanji-jin-kuni',
+        characters: ['人', '国'],
+        initialMode: 'guided',
+        instructionsFa:
+          'اول ترتیب ضربه‌ها را روی هر کانجی تماشا کن (人 دو ضربه · 国 هشت ضربه)، بعد با حالت «ردیابی» روی مسیر بکش و در پایان از حافظه بنویس.',
+      },
+      ex('blk-ex-kanji-cloze-jin', ['ex-fm01-kj-cloze-jin']),
+      ex('blk-ex-kanji-exit', ['ex-fm01-kj-exit']),
+      {
+        kind: 'wrap-up',
+        id: 'wrapup-kanji',
+        titleFa: 'جمع‌بندی ایستگاه کانجی',
+        itemsFa: [
+          '人 = انسان/شخص — دو ضربهٔ جدا از بالا؛ آخرِ هر ملیت (日本人، 中国人、イラン人، 韓国人) با خوانش «جین»',
+          '国 = کشور — قاب مرز + گوهر داخل؛ 中国 چین و 韓国 کره با خوانش «کُوک»',
+          'هر دو کانجی حالا وارد مرور روزانهٔ حافظه‌ات می‌شوند — هم به شکلِ تشخیص (دیدن و یادآوری) هم به شکل نوشتن (kj-rec / kj-wri).',
+        ],
+      },
+    ],
+    fsrsItems: ['kj-rec-kj-4eba', 'kj-wri-kj-4eba', 'kj-rec-kj-56fd', 'kj-wri-kj-56fd'],
+  },
 ];
