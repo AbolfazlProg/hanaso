@@ -119,3 +119,9 @@ async function bumpAttempts(id: string): Promise<void> {
     .set({ attempts: sql`${otpCodes.attempts} + 1` })
     .where(eq(otpCodes.id, id));
 }
+
+/** Retire a code (send-failure cleanup — never leave a usable orphan row). */
+export async function retireOtp(id: string): Promise<void> {
+  const { db } = getDbClient();
+  await db.update(otpCodes).set({ consumedAt: new Date() }).where(eq(otpCodes.id, id));
+}
