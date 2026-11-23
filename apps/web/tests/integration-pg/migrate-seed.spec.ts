@@ -59,12 +59,14 @@ describe('seed (idempotent, deterministic ids)', () => {
     // HANASO-PRODUCTION-REMEDIATION correction: the stale 57 predated TASK-27
     // (118c1d2, Nov 14) which added the 4 integrated practice stations p1..p4 to
     // the journey — its CI run was format-red, so the integration pin never re-ran.
-    // Content truth now: 1 anchor B_lesson + 80 stations (38 kana-foundation-01
-    // incl. 4 practice + 20 kana-expansion-01 [Issue #146] + 22 first-meeting-01).
+    // Content truth now: 1 anchor B_lesson + 81 stations (38 kana-foundation-01
+    // incl. 4 practice + 20 kana-expansion-01 [Issue #146] + 23 first-meeting-01).
+    // AUDIO-UNIT/KANJI 2026-11-23 §۲: the dedicated kanji station
+    // (stn-fm01-23-kanji) is Ch02's 23rd station → 82 rows total.
     expect(await counts('content.characters')).toBe(4);
     expect(await counts('content.dialogues')).toBe(4); // + kana-expansion-01 (Issue #146)
     expect(await counts('content.dialogue_lines')).toBe(29); // + the expansion anchor's 3 lines
-    expect(await counts('content.lessons')).toBe(81); // 1 anchor B_lesson + 80 stations (38+20+22)
+    expect(await counts('content.lessons')).toBe(82); // 1 anchor B_lesson + 81 stations (38+20+23)
   });
 
   it('uses deterministic uuidv5 ids — re-seeding updates the same rows', async () => {

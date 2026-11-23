@@ -6,12 +6,15 @@
  * - the curriculum seed lands levels/units/stations with FK-correct ids
  *   (station_progress FK → content.lessons);
  * - the station/chapter repositories round-trip through the Pg stores;
- * - the full walk (18 core stations → stations_complete) + a passed gate →
+ * - the full walk (19 core stations → stations_complete) + a passed gate →
  *   `understood` — the DD-048 invariant against the real database.
  *
  * TASK-LEARNING-06/07: Ch02 was rebuilt to the 05B map (18 core + 4 optional
  * stations, unit est 45min, no in-walk mastery station — the gate is the
  * assessment PAGE per G1); these expectations track the CURRENT content.
+ * AUDIO-UNIT/KANJI 2026-11-23 §۲: the dedicated kanji station
+ * (stn-fm01-23-kanji, core, order 23 — after both anchor-word vocab stations)
+ * raises the map to 19 core + 4 optional and the honest unit budget 91'→98'.
  */
 import { randomUUID } from 'node:crypto';
 import { Pool } from 'pg';
@@ -39,7 +42,7 @@ afterAll(async () => {
 });
 
 describe('curriculum seed (content rows)', () => {
-  it('seeds L2 + the chapter unit + all 22 station lesson rows idempotently', async () => {
+  it('seeds L2 + the chapter unit + all 23 station lesson rows idempotently', async () => {
     const { rows: levelRows } = await pool!.query("select code from content.levels where code = 'L2'");
     expect(levelRows).toHaveLength(1);
 
@@ -55,7 +58,9 @@ describe('curriculum seed (content rows)', () => {
     // JOURNEY-FIX 2026-11-23 §۵: the per-station estimates were recalibrated to
     // the per-block model — the honest sum is 91 (80′ core + 11′ optional), the
     // L2 window moved [35,75]→[40,95] with the same honest-budget justification.
-    expect(unit.est_minutes).toBe(91);
+    // AUDIO-UNIT/KANJI 2026-11-23 §۲: the dedicated kanji station (+7′) raises
+    // the honest sum to 98 (87′ core + 11′ optional); window [40,95]→[40,105].
+    expect(unit.est_minutes).toBe(98);
 
     const { rows: stationRows } = await pool!.query(
       'select slug, type, core, "order" from content.lessons where unit_id = $1 order by "order"',
@@ -63,8 +68,12 @@ describe('curriculum seed (content rows)', () => {
     );
     // 05B map (TASK-LEARNING-06 W2): 18 core + 4 optional; the mastery GATE is
     // the chapter assessment page, not a station — so no mastery row exists.
-    expect(stationRows).toHaveLength(22);
-    expect(stationRows.filter((r: { core: boolean }) => r.core)).toHaveLength(18);
+    // AUDIO-UNIT/KANJI 2026-11-23 §۲: +stn-fm01-23-kanji (core) → 19 core +
+    // 4 optional = 23 rows; kanji sits last by order (23) so the pinned
+    // head/position-9 rows above are unchanged.
+    expect(stationRows).toHaveLength(23);
+    expect(stationRows.filter((r: { core: boolean }) => r.core)).toHaveLength(19);
+    expect(stationRows[22]).toMatchObject({ slug: 'stn-fm01-23-kanji', type: 'kanji' });
     expect(stationRows[0]).toMatchObject({ slug: 'stn-fm01-01-anchor', type: 'anchor' });
     expect(stationRows[9]).toMatchObject({ slug: 'stn-fm01-10-reconnect', type: 'anchor' });
   });
@@ -102,7 +111,7 @@ describe('island walk through the Postgres stores', () => {
       POC_DEFAULT_USER_ID,
       chapter.stations.map((s) => s.slug),
     );
-    expect(states).toHaveLength(18);
+    expect(states).toHaveLength(19);
     expect(states.every((s) => s.status === 'completed')).toBe(true);
 
     const journey = resolveJourney(
@@ -111,7 +120,7 @@ describe('island walk through the Postgres stores', () => {
       states,
       (await chapterStore.get(POC_DEFAULT_USER_ID, chapter.slug)) ?? null,
     );
-    expect(journey.coreCompleted).toBe(18);
+    expect(journey.coreCompleted).toBe(19);
     expect(nextStation(journey)).toBeNull(); // nothing left to unlock
 
     // the station route's aggregate logic: all core done → stations_complete
@@ -155,6 +164,6 @@ describe('island walk through the Postgres stores', () => {
       POC_DEFAULT_USER_ID,
       getChapter('first-meeting-01')!.stations.map((s) => s.slug),
     );
-    expect(before.filter((s) => s.status === 'completed')).toHaveLength(18);
+    expect(before.filter((s) => s.status === 'completed')).toHaveLength(19);
   });
 });
