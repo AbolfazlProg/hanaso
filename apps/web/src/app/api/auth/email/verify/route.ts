@@ -1,21 +1,21 @@
 /**
- * HANASO — POST /api/auth/email/verify (M1 · AUTH-ACCOUNTS — mission §۱-ج).
+ * HANASO — POST /api/auth/email/verify (M1 §۱-ج → M2 · AUTH-PASSWORD).
  *
- * Verifies the 6-digit code and completes the flow:
- *  - login purpose: the (email) identity must already exist (only an
- *    OTP-verified mailbox can create one) → session + guest-progress merge;
- *  - link purpose: the OTP row's target user (the account that requested it)
- *    gains the (email) identity — proof the mailbox consented.
+ * Verifies the 6-digit code and completes the LINK flow: the authenticated
+ * account gains the (email) identity — the OTP row's target user proves the
+ * mailbox consented. The M1 email-OTP LOGIN purpose is retired (M2: login
+ * is username/email + PASSWORD; the email code now serves verification and
+ * password recovery only — see /api/auth/recover/email/*).
  *
  * Anti-abuse: the code row itself caps attempts (5) and expires (10 min);
  * per-destination verify failures are also ledgered (10/hour).
  */
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { authNoStore, establishSession, sameOriginOk } from '@/lib/auth/api';
+import { authNoStore, sameOriginOk } from '@/lib/auth/api';
 import { resolveAccountFromRequest } from '@/lib/auth/server';
 import { verifyOtp } from '@/modules/auth/email-otp';
-import { attachEmailIdentity, findUserEmailIdentity, touchMethodUsage } from '@/modules/auth/identities';
+import { attachEmailIdentity } from '@/modules/auth/identities';
 import { RATE_BUCKETS, recordRateEvent, tooManyEvents } from '@/modules/auth/rate-limit';
 import { fail, ok } from '@/modules/shared';
 
@@ -24,7 +24,7 @@ export const dynamic = 'force-dynamic';
 const verifySchema = z.object({
   email: z.string().email().max(254),
   code: z.string().regex(/^\d{6}$/),
-  purpose: z.enum(['login', 'link']).optional(),
+  purpose: z.literal('link').optional(),
 });
 
 export async function POST(req: Request) {
@@ -49,7 +49,14 @@ export async function POST(req: Request) {
   }
   const email = parsed.data.email.toLowerCase();
   const account = await resolveAccountFromRequest(req);
-  const purpose = parsed.data.purpose ?? (account ? 'link' : 'login');
+  if (!account) {
+    return authNoStore(
+      NextResponse.json(
+        fail({ code: 'auth/no_session', message: 'برای اتصال ایمیل به حساب، ابتدا وارد حساب خودت شو.' }),
+        { status: 401 },
+      ),
+    );
+  }
 
   const failBucket = `${RATE_BUCKETS.otpVerifyDestination}:${email}`;
   if (await tooManyEvents(failBucket, 60 * 60 * 1000, 10)) {
@@ -61,7 +68,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const result = await verifyOtp({ channel: 'email', destination: email, purpose, code: parsed.data.code });
+  const result = await verifyOtp({ channel: 'email', destination: email, purpose: 'link', code: parsed.data.code });
   if (result.outcome !== 'ok') {
     await recordRateEvent(failBucket);
     const message =
@@ -75,47 +82,17 @@ export async function POST(req: Request) {
     return authNoStore(NextResponse.json(fail({ code: `auth/otp_${result.outcome}`, message }), { status: 401 }));
   }
 
-  if (purpose === 'link') {
-    const targetUserId = result.userId ?? account?.userId;
-    if (!targetUserId) {
-      return authNoStore(
-        NextResponse.json(
-          fail({ code: 'auth/no_session', message: 'نشست اتصال ایمیل یافت نشد — دوباره درخواست کد بده.' }),
-          { status: 401 },
-        ),
-      );
-    }
-    const attached = await attachEmailIdentity({ userId: targetUserId, email });
-    if (!attached.ok) {
-      return authNoStore(
-        NextResponse.json(
-          fail({
-            code: 'auth/email_owned_by_other',
-            message: 'این ایمیل به حساب دیگری متصل است — برای مدیریت آن وارد همان حساب شو.',
-          }),
-          { status: 409 },
-        ),
-      );
-    }
-    return authNoStore(NextResponse.json(ok({ method: 'email', linked: true })));
-  }
-
-  // login: the identity must exist
-  const identity = await findUserEmailIdentity(email);
-  if (!identity || identity.disabledAt) {
+  const attached = await attachEmailIdentity({ userId: account.userId, email });
+  if (!attached.ok) {
     return authNoStore(
       NextResponse.json(
         fail({
-          code: 'auth/no_account_for_email',
-          message: 'حسابی با این ایمیل پیدا نشد — ابتدا ثبت‌نام کن یا از روش دیگری وارد شو.',
+          code: 'auth/email_owned_by_other',
+          message: 'این ایمیل به حساب دیگری متصل است — برای مدیریت آن وارد همان حساب شو.',
         }),
-        { status: 404 },
+        { status: 409 },
       ),
     );
   }
-  await touchMethodUsage('email', email);
-  const response = NextResponse.json(ok({ userId: identity.userId, method: 'email' }));
-  const { mergedGuest } = await establishSession(response, req, identity.userId, 'email');
-  console.info(`[auth] email login user=${identity.userId} mergedGuest=${mergedGuest}`);
-  return authNoStore(response);
+  return authNoStore(NextResponse.json(ok({ method: 'email', linked: true })));
 }

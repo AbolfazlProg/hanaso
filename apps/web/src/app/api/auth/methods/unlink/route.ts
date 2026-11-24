@@ -1,22 +1,23 @@
 /**
- * HANASO — POST /api/auth/methods/unlink (M1 · AUTH-ACCOUNTS — mission §۲).
+ * HANASO — POST /api/auth/methods/unlink (M1 §۲ → M2 · AUTH-PASSWORD).
  *
- * Remove a login method from the account (the user-managed methods surface).
- * The ONE hard rule: never the LAST active method (lockout protection) —
- * 409 with the exact consequence message. Google/email unlink = disable the
- * identity row (relinkable later); mnemonic removal is warned by the UI with
- * its exact consequence text before this call.
+ * Remove a recovery/login method from the account (the user-managed methods
+ * surface). The hard rules: never the LAST active method (lockout
+ * protection) — 409 with the exact consequence message; the PASSWORD is not
+ * a removable method at all (M2: it is the primary credential — changed via
+ * /api/auth/password/change, never unlinked) — 409 password_immutable.
+ * Google/email unlink = disable the identity row (relinkable later).
  */
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authNoStore, sameOriginOk } from '@/lib/auth/api';
 import { resolveAccountFromRequest } from '@/lib/auth/server';
-import { unlinkMethod, type ProviderName } from '@/modules/auth/identities';
+import { unlinkMethod } from '@/modules/auth/identities';
 import { fail, ok } from '@/modules/shared';
 
 export const dynamic = 'force-dynamic';
 
-const unlinkSchema = z.object({ provider: z.enum(['mnemonic', 'google', 'email', 'sms']) });
+const unlinkSchema = z.object({ provider: z.enum(['password', 'mnemonic', 'google', 'email', 'sms']) });
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
       NextResponse.json(fail({ code: 'auth/validation_failed', message: 'روش درخواستی معتبر نیست.' }), { status: 400 }),
     );
   }
-  const result = await unlinkMethod(account.userId, parsed.data.provider as ProviderName);
+  const result = await unlinkMethod(account.userId, parsed.data.provider);
   if (!result.ok) {
     if (result.reason === 'last_method') {
       return authNoStore(
@@ -54,6 +55,17 @@ export async function POST(req: Request) {
           fail({
             code: 'auth/last_method',
             message: 'این تنها روش ورود فعال حساب است — برای حذف آن، ابتدا روش دیگری را فعال کن تا حساب قفل نشود.',
+          }),
+          { status: 409 },
+        ),
+      );
+    }
+    if (result.reason === 'password_immutable') {
+      return authNoStore(
+        NextResponse.json(
+          fail({
+            code: 'auth/password_immutable',
+            message: 'رمز عبور روش اصلی ورود است — حذف نمی‌شود؛ از «تغییر رمز عبور» استفاده کن.',
           }),
           { status: 409 },
         ),

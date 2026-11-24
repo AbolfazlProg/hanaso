@@ -13,7 +13,7 @@
  * drive the pure parts and integration tests the DB parts.
  */
 import { createHash, randomBytes } from 'node:crypto';
-import { and, eq, gt, isNull, sql } from 'drizzle-orm';
+import { and, eq, gt, isNull, ne, sql } from 'drizzle-orm';
 import type { NextResponse } from 'next/server';
 import { getDbClient } from '@/db/client';
 import { sessions, users } from '../../../db/schema';
@@ -114,6 +114,18 @@ export async function revokeAllSessions(userId: string): Promise<void> {
     .where(and(eq(sessions.userId, userId), isNull(sessions.revokedAt)));
 }
 
+/**
+ * Revoke every session of a user EXCEPT one (M2 · password change: the
+ * current device stays signed in, everything else dies).
+ */
+export async function revokeOtherSessions(userId: string, keepSessionId: string): Promise<void> {
+  const { db } = getDbClient();
+  await db
+    .update(sessions)
+    .set({ revokedAt: new Date() })
+    .where(and(eq(sessions.userId, userId), isNull(sessions.revokedAt), ne(sessions.id, keepSessionId)));
+}
+
 /** The active (unrevoked, unexpired) sessions of a user — the devices list. */
 export async function listSessions(userId: string) {
   const { db } = getDbClient();
@@ -160,6 +172,7 @@ export async function getUserById(userId: string) {
   const rows = await db
     .select({
       id: users.id,
+      username: users.username,
       displayName: users.displayName,
       email: users.email,
       emailVerifiedAt: users.emailVerifiedAt,
