@@ -655,9 +655,12 @@ export const fa = {
     /* nav + shell */
     navAccount: 'حساب',
     navLogin: 'ورود',
-    /* the shared brand shell (login/signup/recover) */
+    /* the shared brand shell (login/signup/recover) — HANASO teaches JAPANESE
+     * (owner 2026-11-25: «سایتم برای آموزش زبان ژاپنیه بعد نوشته آموزش زبان
+     * چینی؟» — the tagline said Chinese; fixed at the root, one key, every
+     * auth page inherits it). */
     brandTitle: 'هاناسو',
-    brandTagline: 'مسیر درستِ یادگیری زبان چینی',
+    brandTagline: 'مسیر درستِ یادگیری زبان ژاپنی',
     brandPanelLine1:
       'حساب یک‌نفرهٔ هاناسو، خانهٔ مشترک همهٔ روش‌های ورود است — پیشرفت درس‌ها، کارت‌های مرور و تنظیمات، همهٔ آن‌جا.',
     brandPanelLine2: 'یک نام کاربری و یک رمز قوی انتخاب کن؛ اگر روزی رمزت را فراموش کردی، راه‌های بازیابی آماده است.',
@@ -666,6 +669,8 @@ export const fa = {
     loginLead: 'با نام کاربری و رمز عبورت وارد شو — همهٔ پیشرفت و کارت‌های مرورت همان‌جا منتظرت است.',
     identifierLabel: 'نام کاربری یا ایمیل',
     identifierPlaceholder: 'username',
+    identifierHint: 'نام کاربری‌ات یا ایمیل تأییدشده‌ات — با هر دو می‌شود وارد شد.',
+    loginNextNotice: 'برای ادامه به آن صفحه، اول وارد حساب‌ات شو.',
     passwordLabel: 'رمز عبور',
     loginSubmit: 'ورود',
     loginOk: 'خوش آمدی! وارد حساب‌ات شدی.',
@@ -712,7 +717,8 @@ export const fa = {
       'عبارت بازیابی، ۱۲ کلمه‌ای است که اگر روزی رمزت را فراموش کردی، حساب‌ات را با آن پس می‌گیری. ساختنش یک دقیقه بیشتر طول نمی‌کشد.',
     phraseOfferCta: 'ساخت عبارت بازیابی',
     phraseOfferSkip: 'فعلاً نه — بعداً از تنظیمات',
-    phraseOfferSkippedNote: 'هر وقت خواستی، از «تنظیمات امنیتی» می‌توانی عبارت بازیابی بسازی.',
+    phraseOfferSkippedNote:
+      'هر وقت خواستی، از «تنظیمات امنیتی» می‌توانی عبارت بازیابی بسازی — اما تا وقتی هیچ راه بازیابی‌ای فعال نباشد، فراموشی رمز یعنی از دست رفتن حساب. بهتر است پیش از بستن این صفحه، یکی از راه‌ها را فعال کنی.',
     /* phrase display + quiz (signup offer and settings enroll) */
     signupStepPhraseTitle: 'عبارت بازیابی‌ات',
     signupStepPhraseBody:
@@ -728,6 +734,22 @@ export const fa = {
     signupRetry: 'شروع دوباره',
     signupShowPhraseAgain: 'نمایش دوبارهٔ عبارت',
     phraseEnrollOk: 'عبارت ساخته و به همین حساب متصل شد — آن را در جای امن نگه دار.',
+    /* the shared backup panel (signup offer + security settings — ONE component,
+     * owner 2026-11-25: the phrase must leave the page as TEXT the user can
+     * copy/download: TXT + PDF + clipboard) */
+    phraseBackupHint: 'این صفحه تنها جای دیدن عبارت است — کپی کن یا فایل پشتیبانش را بردار:',
+    phraseCopyCta: 'کپی عبارت',
+    phraseCopiedOk: 'کپی شد',
+    phraseDownloadTxt: 'دانلود متن (TXT)',
+    phraseDownloadPdf: 'دانلود PDF',
+    phraseFileTitle: 'عبارت بازیابی حساب هاناسو',
+    phraseFileIntro: (u: string | null) => (u ? `حساب: ${u}` : 'حساب هاناسو'),
+    phraseFileGeneratedAt: (d: string) => `ساخته‌شده در ${d}`,
+    phraseFileWarning:
+      'این ۱۲ کلمه کلید بازگرداندن حساب توست. آن را در جای امن و فقط برای خودت نگه دار؛ در هیچ سایتی واردش نکن و به کسی نشانش نده. اگر گم شود و رمزت را هم فراموش کنی و راه بازیابی دیگری فعال نباشد، حساب‌ات از دست می‌رود.',
+    phraseRegenerateCta: 'ساخت عبارت تازه',
+    phraseRegenerateBody:
+      'عبارت ذخیره‌شده دوباره نمایش داده نمی‌شود (نوشتنش روی کاغذ/فایل توست). اگر گم شده، این‌جا عبارت تازه بساز — با فعال‌شدنش، عبارت قبلی بی‌اثر می‌شود.',
     /* recovery hub */
     recoverTitle: 'بازیابی رمز عبور',
     recoverLead: 'رمزت را فراموش کرده‌ای؟ با یکی از این راه‌ها به حساب‌ات برمی‌گردی و رمز تازه می‌گذاری:',
@@ -792,6 +814,17 @@ export const fa = {
     mnemonicMissingBody:
       'پیشنهاد می‌کنیم عبارت بازیابی بسازی و ذخیره کنی — اگر رمزت را فراموش کنی، این کلید پشتیبان مستقیم خودت است.',
     mnemonicEnrollCta: 'ساخت عبارت بازیابی',
+    /* the recovery-readiness warning (owner 2026-11-25: users must be nudged
+     * to activate at least one recovery method, else a forgotten password
+     * loses the account) */
+    recoveryNoneActiveTitle: 'هیچ راه بازیابی فعالی نداری',
+    recoveryNoneActiveBody:
+      'اگر رمزت را فراموش کنی و هیچ راه بازیابی (عبارت، ایمیل یا گوگل) فعال نباشد، راهی برای بازگرداندن حساب‌ات نمی‌ماند و حساب از دست می‌رود. حداقل یکی را همین حالا فعال کن.',
+    recoveryNudgeTitle: 'پیش از فراموشی رمز، یک راه بازیابی فعال کن',
+    recoveryNudgeBody:
+      'برای حساب‌ات هنوز هیچ راه بازیابی‌ای فعال نیست — با فراموش شدن رمز، حساب از دست می‌رود. از تنظیمات امنیتی، عبارت بازیابی بساز یا ایمیل/گوگل را وصل کن.',
+    recoveryNudgeCta: 'فعال‌کردن راه بازیابی',
+    recoveryNudgeDismiss: 'بعداً یادآوری بده',
     emailLinkTitle: 'افزودن ایمیل بازیابی',
     emailLinkBody: 'کد به ایمیلت می‌رود؛ با تأییدش، ایمیل به‌عنوان راه بازیابی رمز به همین حساب وصل می‌شود.',
     emailLinkCta: 'اتصال ایمیل',
@@ -812,6 +845,18 @@ export const fa = {
     smsSoon: 'بازیابی با پیامک هنوز آماده نیست — به‌زودی در دسترس می‌شود.',
     genericError: 'چیزی درست پیش نرفت — دوباره تلاش کن.',
     rateLimited: 'تلاش‌ها بیش از حد مجاز بود — کمی بعد دوباره امتحان کن.',
+    /* the guest study door (owner 2026-11-25: browsing and lesson LISTS are
+     * open to everyone; STARTING a lesson requires an account) */
+    guestNoticeTitle: 'مهمان هاناسو هستی',
+    guestNoticeBody:
+      'درس‌ها و فهرست‌ها را آزاد ببین؛ برای شروع خواندن، ورود به حساب لازم است — پیشرفت‌ات هم فقط با حساب ذخیره می‌شود.',
+    guestNoticeCta: 'ورود / ساخت حساب',
+    guestDoorTitle: 'برای خواندن این درس، وارد حساب‌ات شو',
+    guestDoorBody:
+      'مهمان‌ها می‌توانند فهرست درس‌ها را ببینند، اما خواندن و تمرین درس‌ها با حساب هاناسو انجام می‌شود — تا پیشرفت‌ات روی خودت بماند.',
+    guestDoorLoginCta: 'ورود به حساب',
+    guestDoorSignupCta: 'ساخت حساب رایگان',
+    guestDoorBack: 'بازگشت به فهرست درس‌ها',
   },
 } as const;
 

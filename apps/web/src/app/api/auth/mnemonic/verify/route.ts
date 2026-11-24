@@ -110,7 +110,6 @@ export async function POST(req: Request) {
         ),
       );
     case 'phrase_seal':
-    case 'already_enrolled':
     default:
       return authNoStore(
         NextResponse.json(

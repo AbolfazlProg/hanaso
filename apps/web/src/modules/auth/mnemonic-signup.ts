@@ -28,7 +28,6 @@ import {
 } from './mnemonic';
 import { deriveLookupKey, hashSecret } from './credentials';
 import { sealPhrase, unsealPhrase } from './seal';
-import { findIdentity } from './identities';
 
 /** 15 minutes — the wizard window. */
 export const WIZARD_TTL_MS = 15 * 60 * 1000;
@@ -87,7 +86,7 @@ export async function refetchPhrase(registrationId: string, guestLearnerId: stri
 
 export type CompleteOutcome =
   | { kind: 'ok'; userId: string; newAccount: boolean }
-  | { kind: 'not_found' | 'expired' | 'wrong' | 'bound' | 'phrase_seal' | 'already_enrolled' };
+  | { kind: 'not_found' | 'expired' | 'wrong' | 'bound' | 'phrase_seal' };
 
 /**
  * Verify the quiz and finish the wizard:
@@ -126,7 +125,15 @@ export async function completeWizard(input: {
   if (row.purpose === 'enroll') {
     const userId = row.userId!;
     await db.delete(mnemonicPendingRegistrations).where(eq(mnemonicPendingRegistrations.id, row.id));
-    if (await findIdentity('mnemonic', userId)) return { kind: 'already_enrolled' };
+    /* Owner revision 2026-11-25 («از داخل بخش تنظیمات هم باید باشه»): the
+     * phrase plaintext is NEVER stored (scrypt verifier only — M1's audited
+     * stance, unchanged), so settings offers RE-ENROLL: a fresh phrase that
+     * REPLACES the old identity in the same verified step. The user must
+     * hold the new words (quiz passed) before anything is retired. */
+    const replaced = await db
+      .delete(authIdentities)
+      .where(and(eq(authIdentities.userId, userId), eq(authIdentities.provider, 'mnemonic')))
+      .returning({ id: authIdentities.id });
     await db.insert(authIdentities).values({
       userId,
       provider: 'mnemonic',
@@ -135,7 +142,9 @@ export async function completeWizard(input: {
       credentialHash: row.phraseHash,
       verifiedAt: new Date(),
     });
-    console.info(`[auth] mnemonic enrolled to user=${userId}`);
+    console.info(
+      `[auth] mnemonic enrolled to user=${userId}${replaced.length > 0 ? ' (replaced previous phrase)' : ''}`,
+    );
     return { kind: 'ok', userId, newAccount: false };
   }
   // signup: account + anchor identity, then the pending row dies with its seal
