@@ -18,7 +18,16 @@ import { Button } from '@/components/ui/button';
 import { AuthBanner, AuthField, GoogleButton, OrDivider, PasswordField } from '@/components/auth/auth-fields';
 import { fa } from '@/messages/fa';
 
-export function LoginView({ googleConfigured, notice }: { googleConfigured: boolean; notice: string | null }) {
+export function LoginView({
+  googleConfigured,
+  notice,
+  next = null,
+}: {
+  googleConfigured: boolean;
+  notice: string | null;
+  /** the sanitized return path (the guest study door / protected surfaces). */
+  next?: string | null;
+}) {
   const router = useRouter();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -40,7 +49,7 @@ export function LoginView({ googleConfigured, notice }: { googleConfigured: bool
         return;
       }
       router.refresh();
-      router.push('/');
+      router.push(next ?? '/');
     } catch {
       setError(fa.auth.genericError);
     } finally {
@@ -50,6 +59,11 @@ export function LoginView({ googleConfigured, notice }: { googleConfigured: bool
 
   return (
     <div className="flex flex-col gap-5">
+      {next ? (
+        <AuthBanner tone="notice" role="status">
+          {fa.auth.loginNextNotice}
+        </AuthBanner>
+      ) : null}
       {notice ? <AuthBanner tone="notice">{notice}</AuthBanner> : null}
       {error ? <AuthBanner tone="error">{error}</AuthBanner> : null}
 
@@ -62,10 +76,12 @@ export function LoginView({ googleConfigured, notice }: { googleConfigured: bool
       >
         <AuthField
           label={fa.auth.identifierLabel}
+          hint={fa.auth.identifierHint}
           latin
           required
           name="identifier"
           autoComplete="username"
+          placeholder={fa.auth.identifierPlaceholder}
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
         />
@@ -92,7 +108,11 @@ export function LoginView({ googleConfigured, notice }: { googleConfigured: bool
       <OrDivider />
 
       {googleConfigured ? (
-        <GoogleButton href="/api/auth/google/start" label={fa.auth.googleStart} hint={fa.auth.loginGoogleHint} />
+        <GoogleButton
+          href={next ? `/api/auth/google/start?redirectTo=${encodeURIComponent(next)}` : '/api/auth/google/start'}
+          label={fa.auth.googleStart}
+          hint={fa.auth.loginGoogleHint}
+        />
       ) : (
         <AuthBanner tone="notice" role="status">
           {fa.auth.googleUnconfigured}

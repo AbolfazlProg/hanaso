@@ -43,32 +43,34 @@ export function AuthBrand({ onIndigo = true }: { onIndigo?: boolean }) {
 
 export function AuthShell({ title, lead, children, backLink }: AuthShellProps) {
   return (
-    <main className="min-h-dvh bg-paper md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:items-stretch">
+    <main className="min-h-dvh bg-paper md:grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:items-stretch">
       {/* ---- the structural indigo band (desktop: full-height start column;
-       * mobile: a compact identity strip) ---- */}
-      <aside className="band-indigo relative flex flex-col justify-between gap-6 p-6 md:p-10">
+       * mobile: a compact identity strip — the form arrives fast, one thumb
+       * column, no scrolling past a poster before the first input) ---- */}
+      <aside className="band-indigo relative flex flex-col justify-between gap-5 p-5 pb-7 md:gap-6 md:p-10">
         <div className="flex items-center justify-between gap-4">
           <AuthBrand />
           <span
             aria-hidden
-            className="select-none font-ja-serif text-[2.75rem] font-bold leading-none text-paper/25 md:text-[3.5rem]"
+            className="select-none font-ja-serif text-[2.5rem] font-bold leading-none text-paper/25 md:text-[3.5rem]"
           >
             藍染
           </span>
         </div>
-        <div className="max-w-sm pb-8 md:pb-2">
+        <div className="max-w-sm md:pb-2">
           <p className="text-lead font-black leading-relaxed text-paper md:text-h3">{fa.auth.brandTagline}</p>
-          <p className="mt-3 text-small leading-relaxed text-indigo-mist">{fa.auth.brandPanelLine1}</p>
+          <p className="mt-2 text-small leading-relaxed text-indigo-mist md:mt-3">{fa.auth.brandPanelLine1}</p>
           <p className="mt-2 text-small leading-relaxed text-indigo-mist">{fa.auth.brandPanelLine2}</p>
         </div>
       </aside>
 
-      {/* ---- the form column ---- */}
-      <div className="flex flex-col gap-5 px-4 pb-16 pt-8 md:mx-auto md:w-full md:max-w-lg md:justify-center md:px-10 md:py-14">
+      {/* ---- the form column: title → status lead → the card (the explicit
+       * hierarchy the owner asked for), vertically centered on desktop ---- */}
+      <div className="flex flex-col gap-5 px-4 pb-16 pt-8 md:mx-auto md:w-full md:max-w-[34rem] md:justify-center md:px-10 md:py-14">
         {backLink}
         <header className="flex flex-col gap-2">
           <h1 className="text-h1 font-black tracking-fa-display text-indigo">{title}</h1>
-          <p className="text-body leading-relaxed text-ink-soft">{lead}</p>
+          <p className="text-body leading-[var(--leading-fa)] text-ink-soft">{lead}</p>
         </header>
         <section className="frame-ink rounded-md bg-card p-5 shadow-raised sm:p-7" aria-label={title}>
           {children}

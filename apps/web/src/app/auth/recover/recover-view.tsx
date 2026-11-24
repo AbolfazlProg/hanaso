@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BadgeCheck, KeyRound, Mail, MessageSquare, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AuthBanner, AuthField, GoogleButton, PasswordField } from '@/components/auth/auth-fields';
+import { AUTH_INPUT_BASE, AuthBanner, AuthField, GoogleButton, PasswordField } from '@/components/auth/auth-fields';
 import { fa } from '@/messages/fa';
 import { validatePassword } from '@/modules/auth/password-policy';
 
@@ -213,7 +213,7 @@ export function RecoverView({
               value={phrase}
               onChange={(e) => setPhrase(e.target.value)}
               placeholder={fa.auth.recoverPhrasePlaceholder}
-              className="w-full rounded-md border-2 border-ink/25 bg-paper px-3 py-2.5 text-left font-mono text-small text-ink placeholder:text-ink-faint transition-[border-color,box-shadow] duration-150 focus:border-shu focus:shadow-focus-input focus:outline-none"
+              className={AUTH_INPUT_BASE + 'text-left font-mono text-small'}
               autoComplete="off"
               spellCheck={false}
             />
