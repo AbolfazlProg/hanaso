@@ -23,7 +23,7 @@ import { getWordlist, wordIndex } from '@/modules/auth/wordlist';
 
 const WORDLIST = getWordlist();
 
-describe('BIP39 wordlist (vendored file integrity)', () => {
+describe('BIP39 wordlist (the @scure/bip39 library list)', () => {
   it('has exactly 2048 entries, all 3..8 lowercase letters', () => {
     expect(WORDLIST.length).toBe(2048);
     expect(WORDLIST.every((w) => /^[a-z]{3,8}$/.test(w))).toBe(true);
@@ -119,8 +119,8 @@ describe('quiz positions & verification (the signup gate)', () => {
   });
 });
 
-describe('the bundled JSON wordlist stays in sync with the canonical .txt', () => {
-  it('JSON === TXT (the audit file and the runtime module are the same list)', () => {
+describe('the library wordlist stays in sync with the canonical official .txt (supply-chain pin)', () => {
+  it('library === TXT (a compromised dependency update cannot silently swap the phrase space)', () => {
     const txt = readFileSync('src/modules/auth/content/bip39-english.txt', 'utf8')
       .split('\n')
       .map((w) => w.trim())

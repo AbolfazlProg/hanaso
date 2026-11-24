@@ -1,28 +1,40 @@
 /**
- * HANASO — POST /api/auth/recover/email/request (M2 · AUTH-PASSWORD — door ۲).
+ * HANASO — POST /api/auth/recover/email/request (M2 · AUTH-PASSWORD — door ۲;
+ * M3 hardening: throttle-before-issue + the scrypt timing shield).
  *
  * Password recovery via the account's VERIFIED email: the user gives their
  * username OR email; a 6-digit OTP (purpose='password_reset') goes to the
  * verified address on file.
  *
- * ANTI-ENUMERATION by design (mission §۴: no sensitive leakage): unknown
- * identifiers, accounts without a verified email — all answer the SAME 202
- * envelope («اگر حسابی با این شناسه باشد…») and nothing is sent. Only a real
- * verified-email account triggers a send. The transport-unconfigured state
- * stays honestly 503 (owner rule — never a fake «code sent»).
+ * ANTI-ENUMERATION, content AND latency (mission §۴: no sensitive leakage):
+ * unknown identifiers, accounts without a verified email, and throttled
+ * mailboxes all answer the SAME neutral 202 envelope («اگر حسابی با این
+ * شناسه باشد…») — and the unknown/throttled paths burn one scrypt hash so
+ * the response TIME resembles the real path too. Only a real verified-email
+ * account triggers a send, and a throttled mailbox never mints or retires
+ * a code. The transport-unconfigured state stays honestly 503 (owner rule).
  */
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authNoStore, clientContext, sameOriginOk } from '@/lib/auth/api';
+import { hashSecret } from '@/modules/auth/credentials';
 import { emailTransportInfo, otpEmailBody, sendEmail } from '@/modules/auth/email';
 import { OTP_TTL_MS } from '@/modules/auth/email-otp';
-import { issuePasswordResetOtp } from '@/modules/auth/recover';
+import { issuePasswordResetForTarget, resolvePasswordResetTarget } from '@/modules/auth/recover';
 import { RATE_BUCKETS, recordRateEvent, tooManyEvents } from '@/modules/auth/rate-limit';
 import { fail, ok } from '@/modules/shared';
 
 export const dynamic = 'force-dynamic';
 
 const requestSchema = z.object({ identifier: z.string().min(1).max(254) });
+
+/** The one answer for every identifier we did NOT send for. */
+function neutral202() {
+  // M3 timing shield: the real path burns one scrypt hash (~40ms) before its
+  // network send; burn one here so latency cannot leak identifier existence.
+  hashSecret('hanaso-timing-shield-sentinel');
+  return authNoStore(NextResponse.json(ok({ sent: true }), { status: 202 }));
+}
 
 export async function POST(req: Request) {
   if (!sameOriginOk(req)) {
@@ -59,7 +71,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // destination-level throttles (protect the mailbox, not the secret)
+  // IP-level throttle (protects the endpoint itself)
   const { ipPrefix } = clientContext(req);
   const ipBucket = `${RATE_BUCKETS.otpSendIp}:${ipPrefix ?? 'unknown'}`;
   if (await tooManyEvents(ipBucket, 60 * 60 * 1000, 10)) {
@@ -70,22 +82,25 @@ export async function POST(req: Request) {
       ),
     );
   }
-  await recordRateEvent(ipBucket);
 
-  const issued = await issuePasswordResetOtp(identifier);
-  if (!issued) {
+  // resolve WITHOUT issuing (a throttled mailbox must never mint/retire a code)
+  const target = await resolvePasswordResetTarget(identifier);
+  if (!target) {
     // unknown identifier / no verified email — the SAME neutral envelope
-    return authNoStore(NextResponse.json(ok({ sent: true }), { status: 202 }));
+    return neutral202();
   }
-  const destBucket = `${RATE_BUCKETS.otpSendDestination}:${issued.email}`;
+  const destBucket = `${RATE_BUCKETS.otpSendDestination}:${target.email}`;
   if ((await tooManyEvents(destBucket, 60 * 1000, 1)) || (await tooManyEvents(destBucket, 60 * 60 * 1000, 5))) {
-    // throttled mailbox — still no leak (same envelope, no send)
-    return authNoStore(NextResponse.json(ok({ sent: true }), { status: 202 }));
+    // throttled mailbox — still no leak (same envelope, no send, no issue)
+    return neutral202();
   }
+
+  await recordRateEvent(ipBucket);
   await recordRateEvent(destBucket);
 
-  const { subject, text, html } = otpEmailBody(issued.code, 'password_reset', Math.round(OTP_TTL_MS / 60_000));
-  const sent = await sendEmail({ to: issued.email, subject, text, html });
+  const { code } = await issuePasswordResetForTarget(target.userId, target.email);
+  const { subject, text, html } = otpEmailBody(code, 'password_reset', Math.round(OTP_TTL_MS / 60_000));
+  const sent = await sendEmail({ to: target.email, subject, text, html });
   if (!sent.ok) {
     // the account exists but the mail never left — say so honestly (the user
     // knows their own address; this leaks nothing an attacker can use)

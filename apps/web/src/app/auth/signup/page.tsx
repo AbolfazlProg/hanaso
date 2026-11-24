@@ -8,7 +8,6 @@
  */
 import { fa } from '@/messages/fa';
 import { emailTransportInfo } from '@/modules/auth/email';
-import { getWordlist } from '@/modules/auth/wordlist';
 import { AuthShell } from '@/components/auth/auth-shell';
 import { SignupWizard } from './signup-wizard';
 
@@ -17,7 +16,7 @@ export const dynamic = 'force-dynamic';
 export default function SignupPage() {
   return (
     <AuthShell title={fa.auth.signupTitle} lead={fa.auth.signupLead}>
-      <SignupWizard wordlist={getWordlist()} emailConfigured={emailTransportInfo().configured} />
+      <SignupWizard emailConfigured={emailTransportInfo().configured} />
     </AuthShell>
   );
 }

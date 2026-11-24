@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { authNoStore, establishSession, sameOriginOk } from '@/lib/auth/api';
 import { GUEST_LEARNER_ID, resolveLearnerIdFromRequest } from '@/lib/learner/server';
 import { completeWizard } from '@/modules/auth/mnemonic-signup';
+import { RATE_BUCKETS, recordRateEvent, tooManyEvents } from '@/modules/auth/rate-limit';
 import { fail, ok } from '@/modules/shared';
 
 export const dynamic = 'force-dynamic';
@@ -60,6 +61,21 @@ export async function POST(req: Request) {
       ),
     );
   }
+  // M3 security review: cap the quiz attempts per wizard — a wrong-answer
+  // brute force is already 1-in-2^33 per try, but the window must not be an
+  // unlimited oracle either. 5 fails / 15 min per registrationId → 429.
+  const quizBucket = `${RATE_BUCKETS.quizVerifyFail}:${parsed.data.registrationId}`;
+  if (await tooManyEvents(quizBucket, 15 * 60 * 1000, 5)) {
+    return authNoStore(
+      NextResponse.json(
+        fail({
+          code: 'auth/locked',
+          message: 'تلاش‌های این مرحله بیش از حد مجاز بود — از اول شروع کن و عبارت را دوباره ذخیره کن.',
+        }),
+        { status: 429 },
+      ),
+    );
+  }
   const outcome = await completeWizard({
     registrationId: parsed.data.registrationId,
     guestLearnerId: guestId,
@@ -76,6 +92,7 @@ export async function POST(req: Request) {
       return authNoStore(response);
     }
     case 'wrong':
+      await recordRateEvent(quizBucket);
       return authNoStore(NextResponse.json(fail({ code: 'auth/quiz_wrong', message: WRONG_QUIZ }), { status: 400 }));
     case 'expired':
     case 'not_found':

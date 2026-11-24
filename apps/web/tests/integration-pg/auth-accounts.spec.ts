@@ -396,6 +396,39 @@ describe('recovery door ۱ — the phrase (enroll → quiz → reset)', () => {
     G.__PW__ = PASSWORD2;
   });
 
+  it('M3: the quiz is capped — the 5th wrong answer on one wizard 429s (brute-force cap)', async () => {
+    await clearRateLedger();
+    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, pw())}`;
+    const prep = await json<{ ok: boolean; data: { registrationId: string; words: string[]; positions: number[] } }>(
+      await enrollRoute(post(`${BASE}/auth/mnemonic/enroll`, {}, cookie)),
+    );
+    expect(prep.ok).toBe(true);
+    const wrong = prep.data.positions.map((p) => ({ position: p, word: 'abandon' }));
+    let last = 400;
+    for (let i = 0; i < 6; i++) {
+      last = (
+        await verifyRoute(
+          post(`${BASE}/auth/mnemonic/verify`, { registrationId: prep.data.registrationId, answers: wrong }, cookie),
+        )
+      ).status;
+      expect(last).toBe(i < 5 ? 400 : 429); // 5 recorded fails → the 6th is locked out
+    }
+    // the ledger is per-wizard: a FRESH wizard still works (the cap punishes
+    // the brute force, not the user)
+    const prep2 = await json<{ ok: boolean; data: { registrationId: string; words: string[]; positions: number[] } }>(
+      await enrollRoute(post(`${BASE}/auth/mnemonic/enroll`, {}, cookie)),
+    );
+    expect(prep2.ok).toBe(true);
+    const right = prep2.data.positions.map((p) => ({ position: p, word: prep2.data.words[p - 1]! }));
+    const done = await json<{ ok: boolean; data: { userId: string } }>(
+      await verifyRoute(
+        post(`${BASE}/auth/mnemonic/verify`, { registrationId: prep2.data.registrationId, answers: right }, cookie),
+      ),
+    );
+    expect(done.ok).toBe(true);
+    G.__USER1_PHRASE__ = prep2.data.words.join(' ');
+  });
+
   it('a wrong phrase answers ONE honest 401', async () => {
     const body = await json<{ ok: boolean; error: { code: string } }>(
       await recoverPhraseRoute(

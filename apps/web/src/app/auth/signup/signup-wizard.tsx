@@ -44,7 +44,7 @@ const USERNAME_MESSAGES: Record<string, string> = {
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
-export function SignupWizard({ wordlist, emailConfigured }: { wordlist: readonly string[]; emailConfigured: boolean }) {
+export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>('form');
   const [username, setUsername] = useState('');
@@ -343,7 +343,6 @@ export function SignupWizard({ wordlist, emailConfigured }: { wordlist: readonly
             <label key={position} className="flex flex-col gap-1.5">
               <span className="text-small font-bold text-ink">{fa.auth.signupQuizInput(position)}</span>
               <input
-                list="hanaso-bip39-words"
                 dir="ltr"
                 value={answers[position] ?? ''}
                 onChange={(e) => setAnswers((prev) => ({ ...prev, [position]: e.target.value }))}
@@ -353,11 +352,6 @@ export function SignupWizard({ wordlist, emailConfigured }: { wordlist: readonly
               />
             </label>
           ))}
-          <datalist id="hanaso-bip39-words">
-            {wordlist.map((w) => (
-              <option key={w} value={w} />
-            ))}
-          </datalist>
           <Button variant="cta" size="main" loading={busy} onClick={() => void verify()}>
             {fa.auth.signupQuizSubmit}
           </Button>
