@@ -413,20 +413,19 @@ describe('recovery door ۱ — the phrase (enroll → quiz → reset)', () => {
       ).status;
       expect(last).toBe(i < 5 ? 400 : 429); // 5 recorded fails → the 6th is locked out
     }
-    // the ledger is per-wizard: a FRESH wizard still works (the cap punishes
-    // the brute force, not the user)
-    const prep2 = await json<{ ok: boolean; data: { registrationId: string; words: string[]; positions: number[] } }>(
+    // the ledger is per-wizard: a FRESH wizard is not locked (the cap punishes
+    // the brute force, not the user) — its first wrong answer is a normal 400
+    // (the account already holds a phrase, so a full completion would answer
+    // already_enrolled; the lockout-free restart is what this proves)
+    const prep2 = await json<{ ok: boolean; data: { registrationId: string; positions: number[] } }>(
       await enrollRoute(post(`${BASE}/auth/mnemonic/enroll`, {}, cookie)),
     );
     expect(prep2.ok).toBe(true);
-    const right = prep2.data.positions.map((p) => ({ position: p, word: prep2.data.words[p - 1]! }));
-    const done = await json<{ ok: boolean; data: { userId: string } }>(
-      await verifyRoute(
-        post(`${BASE}/auth/mnemonic/verify`, { registrationId: prep2.data.registrationId, answers: right }, cookie),
-      ),
+    const wrong2 = prep2.data.positions.map((p) => ({ position: p, word: 'abandon' }));
+    const fresh = await verifyRoute(
+      post(`${BASE}/auth/mnemonic/verify`, { registrationId: prep2.data.registrationId, answers: wrong2 }, cookie),
     );
-    expect(done.ok).toBe(true);
-    G.__USER1_PHRASE__ = prep2.data.words.join(' ');
+    expect(fresh.status).toBe(400); // NOT 429 — the fresh wizard has its own budget
   });
 
   it('a wrong phrase answers ONE honest 401', async () => {
