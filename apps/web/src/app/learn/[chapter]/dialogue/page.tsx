@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
 import { resolveLearnerId } from '@/lib/learner/server';
+import { resolveStudyAccess } from '@/lib/auth/study-gate';
+import { StudyDoor } from '@/components/auth/study-door';
 import { stripStationAnswerMaterial } from '@/modules/curriculum/client-transport';
 import { AnchorDialogueExperience } from '@/components/curriculum/anchor-dialogue-experience';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
@@ -32,6 +34,12 @@ export default async function AnchorDialoguePage({ params }: { params: Promise<{
   // use the BUNDLE's chapter — loadChapterBundle resolves Lesson-Engine drafts
   // too, while getChapter only knows published registry entries (null for a draft).
   const chapter = bundle.chapter;
+
+  // The STUDY GATE (owner 2026-11-25): reading is for accounts — a guest
+  // gets the door before any dialogue material is composed.
+  if ((await resolveStudyAccess()).mode === 'guest') {
+    return <StudyDoor next={`/learn/${slug}/dialogue`} chapterTitleFa={chapter.titleFa} />;
+  }
 
   // #94: entering the chapter (stage A) is gated exactly like the journey map.
   const learnerId = await resolveLearnerId();

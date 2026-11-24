@@ -1,4 +1,6 @@
 import { resolveLearnerId } from '@/lib/learner/server';
+import { resolveStudyAccess } from '@/lib/auth/study-gate';
+import { StudyDoor } from '@/components/auth/study-door';
 import { getFsrsReviewStore } from '@/lib/poc/stores';
 import { resolveReviewCard } from '@/modules/fsrs/item-registry';
 import { ReviewRunner } from '@/app/review/review-runner';
@@ -25,6 +27,19 @@ import { fa } from '@/messages/fa';
 export const dynamic = 'force-dynamic';
 
 export default async function ReviewPage() {
+  // The STUDY GATE (owner 2026-11-25): review is a study surface.
+  if ((await resolveStudyAccess()).mode === 'guest') {
+    const accountDoor = await resolveAccountDoor();
+    return (
+      <>
+        <SiteNav accountHref={accountDoor.href} accountLabel={accountDoor.label} active="learn" reviewDueCount={0} />
+        <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col justify-center px-4 pb-24 pt-10">
+          <StudyDoor next="/review" />
+        </main>
+      </>
+    );
+  }
+
   const learnerId = await resolveLearnerId();
 
   let queue: { itemId: string; kind: string; dueAt: string }[] = [];

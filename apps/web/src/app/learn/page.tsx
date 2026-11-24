@@ -16,6 +16,9 @@ import {
 } from '@/modules/curriculum/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { SiteNav, resolveReviewDueCount, resolveAccountDoor } from '@/components/site-nav';
+import { resolveStudyAccess } from '@/lib/auth/study-gate';
+import { RecoveryNudge } from '@/components/auth/recovery-nudge';
+import { GuestStudyNotice } from '@/components/auth/guest-study-notice';
 
 /**
  * /learn — the LEARNING JOURNEY home (TASK-HANASO-16).
@@ -42,6 +45,11 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
   const learnerId = await resolveLearnerId();
   const reviewDueCount = await resolveReviewDueCount();
   const accountDoor = await resolveAccountDoor();
+  /* The study gate (owner 2026-11-25): this page stays OPEN for guests (the
+   * lesson lists render), but the rule must be said out loud — and logged-in
+   * accounts without any recovery method get the nudge right where they
+   * decide to study. */
+  const studyAccess = await resolveStudyAccess();
   const previewActive = await hasPreviewAccess();
   // TEMPORARY SITE-WIDE UNLOCK (UNLOCK_ALL_MODE=1): owner-only site for now —
   // the full index renders for EVERY visitor and every gate is open, no cookie.
@@ -139,6 +147,9 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
         active="learn"
         reviewDueCount={reviewDueCount}
       />
+      <div className="mx-auto mt-3 flex w-full max-w-3xl flex-col gap-3 px-4">
+        {studyAccess.mode === 'guest' ? <GuestStudyNotice /> : <RecoveryNudge />}
+      </div>
       {unlockEverything && !previewActive && (
         <div
           style={{

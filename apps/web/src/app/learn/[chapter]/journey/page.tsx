@@ -10,6 +10,9 @@ import { resolveLearnerId } from '@/lib/learner/server';
 import { JourneyHome } from '@/components/curriculum/journey-home';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 import { SiteNav, resolveReviewDueCount, resolveAccountDoor } from '@/components/site-nav';
+import { resolveStudyAccess } from '@/lib/auth/study-gate';
+import { RecoveryNudge } from '@/components/auth/recovery-nudge';
+import { GuestStudyNotice } from '@/components/auth/guest-study-notice';
 
 /**
  * /learn/[chapter]/journey — TASK-HANASO-16: the one-section-at-a-time journey
@@ -37,6 +40,9 @@ export default async function JourneyPage({
   const { s } = await searchParams;
   const reviewDueCount = await resolveReviewDueCount();
   const accountDoor = await resolveAccountDoor();
+  /* The study gate (owner 2026-11-25): the chapter MAP stays open for guests
+   * (this is the lesson list), with the rule said out loud. */
+  const studyAccess = await resolveStudyAccess();
 
   let bundle;
   try {
@@ -88,6 +94,9 @@ export default async function JourneyPage({
        * renders here (desktop bar + mobile bottom tabs). The station pages
        * stay immersive (nav never renders inside a lesson). */}
       <SiteNav active="learn" reviewDueCount={reviewDueCount} />
+      <div className="mx-auto mt-3 flex w-full max-w-3xl flex-col gap-3 px-4">
+        {studyAccess.mode === 'guest' ? <GuestStudyNotice /> : <RecoveryNudge />}
+      </div>
       <JourneyHome
         chapterSlug={home.chapter.slug}
         chapterTitleFa={home.chapter.titleFa}

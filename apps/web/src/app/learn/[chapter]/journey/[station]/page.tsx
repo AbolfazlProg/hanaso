@@ -4,6 +4,8 @@ import { ArrowRight, Lock, Repeat2 } from 'lucide-react';
 import { loadChapterBundle, chapterAccessStatus } from '@/modules/curriculum/server';
 import { sectionOfStation } from '@/modules/curriculum/journey';
 import { resolveLearnerId } from '@/lib/learner/server';
+import { resolveStudyAccess } from '@/lib/auth/study-gate';
+import { StudyDoor } from '@/components/auth/study-door';
 import { getStationProgressStore } from '@/lib/poc/stores';
 import { previewUnlockAll, unlockAllMode } from '@/lib/preview';
 import { toClientExercise, toClientStation, splitKanjiWritingBlocks } from '@/modules/curriculum';
@@ -63,6 +65,17 @@ export default async function StationPage({
     notFound();
   }
   const chapter = bundle!.chapter;
+
+  /*
+   * The STUDY GATE (owner 2026-11-25): lists are open, READING is for
+   * accounts. A guest gets the door (with this lesson as the return path)
+   * before any content is composed — the page never ships lesson material
+   * to a logged-out visitor. The owner's preview cookie passes (QA).
+   */
+  const studyAccess = await resolveStudyAccess();
+  if (studyAccess.mode === 'guest') {
+    return <StudyDoor next={`/learn/${chapterSlug}/journey/${stationSlug}`} />;
+  }
 
   // #94: the station walk is gated exactly like the journey map.
   const learnerId = await resolveLearnerId();
