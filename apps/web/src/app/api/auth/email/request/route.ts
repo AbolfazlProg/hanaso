@@ -23,7 +23,7 @@ export const dynamic = 'force-dynamic';
 
 const requestSchema = z.object({
   email: z.string().email().max(254),
-  purpose: z.enum(['login', 'link']).optional(),
+  purpose: z.literal('link').optional(),
 });
 
 const UNCONFIGURED =
@@ -51,17 +51,19 @@ export async function POST(req: Request) {
   }
   const email = parsed.data.email.toLowerCase();
   const account = await resolveAccountFromRequest(req);
-  // purpose: explicit body override wins; otherwise the session decides
-  // (a logged-in browser = attaching the method, an anonymous one = login).
-  const purpose = parsed.data.purpose ?? (account ? 'link' : 'login');
-  if (purpose === 'link' && !account) {
+  if (!account) {
     return authNoStore(
       NextResponse.json(
-        fail({ code: 'auth/no_session', message: 'برای اتصال ایمیل به حساب، ابتدا وارد حساب خودت شو.' }),
+        fail({
+          code: 'auth/no_session',
+          message:
+            'کد ایمیل فقط برای تأیید اتصال صادر می‌شود — برای ورود، از فرم نام کاربری و رمز عبور استفاده کن؛ رمزت را فراموش کرده‌ای از «بازیابی رمز عبور» ادامه بده.',
+        }),
         { status: 401 },
       ),
     );
   }
+  const purpose = 'link';
 
   // The honest activation gate — before ANY code is generated.
   const transport = emailTransportInfo();

@@ -26,7 +26,7 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { getDbClient } from '@/db/client';
 import { authIdentities, users } from '../../../db/schema';
 
-export type ProviderName = 'mnemonic' | 'google' | 'email' | 'sms';
+export type ProviderName = 'password' | 'mnemonic' | 'google' | 'email' | 'sms';
 
 /** A login method as the security-settings page sees it. */
 export interface ActiveMethod {
@@ -221,14 +221,18 @@ export async function touchMethodUsage(provider: ProviderName, providerAccountId
 
 /**
  * Remove a method from an account (mission §۲ — user-managed methods).
- * Rules: never the LAST active method (lockout protection); anything else is
- * allowed (mnemonic removal keeps the data — the account simply loses that
- * door; the UI warns with the exact consequence text).
+ * Rules:
+ *  - the PASSWORD is not a removable "method" — it is the primary credential
+ *    and is CHANGED via /api/auth/password/change (M2); unlink refuses it;
+ *  - never the LAST active login/recovery method (lockout protection);
+ *  - anything else is allowed (mnemonic removal keeps the data — the account
+ *    simply loses that door; the UI warns with the exact consequence text).
  */
 export async function unlinkMethod(
   userId: string,
   provider: ProviderName,
-): Promise<{ ok: true } | { ok: false; reason: 'last_method' | 'not_found' }> {
+): Promise<{ ok: true } | { ok: false; reason: 'last_method' | 'not_found' | 'password_immutable' }> {
+  if (provider === 'password') return { ok: false, reason: 'password_immutable' };
   const active = await listActiveMethods(userId);
   const only = active[0];
   if (active.length === 1 && only?.provider === provider) return { ok: false, reason: 'last_method' };

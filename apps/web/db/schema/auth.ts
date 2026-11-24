@@ -38,6 +38,14 @@ export const users = app.table(
     /** Optional friendly name (settings) — never required, never used for login. */
     displayName: text('display_name'),
     /**
+     * The LOGIN HANDLE (M2 · AUTH-PASSWORD — owner revision 2026-11-24):
+     * lowercase [a-z0-9_]{3,30}, NFKC-normalized, UNIQUE where not null.
+     * Nullable: google-created accounts may set it later from security
+     * settings (the “phrase users can set a username” rule). Login accepts
+     * username OR verified email + password.
+     */
+    username: text('username'),
+    /**
      * Contact email (lowercase) — the most recently VERIFIED address (google or
      * email-OTP). Nullable: mnemonic-only accounts may have none. UNIQUE where
      * not null (postgres treats NULLs as distinct). Login linkage itself lives
@@ -46,19 +54,28 @@ export const users = app.table(
     email: text('email'),
     /** When the contact email above was proven (id_token / OTP). */
     emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
+    /**
+     * Phone (E.164) — M2 infrastructure column for the SMS path (به‌زودی in the
+     * UI until a real gateway exists). Never trusted until phone_verified_at.
+     */
+    phone: text('phone'),
+    phoneVerifiedAt: timestamp('phone_verified_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [uniqueIndex('users_email_key').on(t.email)],
+  (t) => [uniqueIndex('users_email_key').on(t.email), uniqueIndex('users_username_key').on(t.username)],
 );
 
 /* ------------------------------------------------------- auth_identities */
 /**
- * The linked login methods of ONE account (mission §۲):
- *   provider='mnemonic' → providerAccountId = the user's own id (one anchor)
- *   provider='google'   → providerAccountId = the Google `sub` (one per user)
- *   provider='email'    → providerAccountId = the lowercase email address
- *   provider='sms'      → providerAccountId = the phone in E.164 (future)
+ * The linked login/recovery methods of ONE account (mission §۲):
+ *   provider='password'  → providerAccountId = the user's own id (M2 primary
+ *                          credential; credential_hash = scrypt of the password)
+ *   provider='mnemonic'  → providerAccountId = the user's own id (the recovery
+ *                          phrase — M2 repositioned as a RECOVERY method)
+ *   provider='google'    → providerAccountId = the Google `sub` (one per user)
+ *   provider='email'     → providerAccountId = the lowercase email address
+ *   provider='sms'       → providerAccountId = the phone in E.164 (future)
  *
  * UNIQUE (provider, provider_account_id) is the anti-duplicate gate: a google
  * sub or an email can point at exactly ONE account, ever. UNIQUE (user_id,

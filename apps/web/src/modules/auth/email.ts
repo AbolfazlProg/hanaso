@@ -49,13 +49,18 @@ export function emailFrom(): string {
   return process.env.EMAIL_FROM ?? 'HANASO <no-reply@hanaso.ir>';
 }
 
-/** The 6-digit code email (login + link share the template, only the lead differs). */
+/** The 6-digit code email (login + link + password recovery share the template, only the lead differs). */
 export function otpEmailBody(
   code: string,
-  purpose: 'login' | 'link',
+  purpose: 'login' | 'link' | 'password_reset',
   ttlMinutes: number,
 ): { subject: string; text: string; html: string } {
-  const lead = purpose === 'login' ? 'کد ورود شما به هاناسو' : 'کد تأیید اتصال ایمیل به حساب هاناسو';
+  const lead =
+    purpose === 'login'
+      ? 'کد ورود شما به هاناسو'
+      : purpose === 'password_reset'
+        ? 'کد بازیابی رمز عبور هاناسو'
+        : 'کد تأیید اتصال ایمیل به حساب هاناسو';
   const ttlFa = new Intl.NumberFormat('fa-IR').format(ttlMinutes);
   const subject = `هاناسو — ${lead}`;
   const text = [

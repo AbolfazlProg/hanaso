@@ -1,7 +1,9 @@
 /**
- * HANASO — Email OTP service (M1 · AUTH-ACCOUNTS — mission §۱-ج).
+ * HANASO — Email OTP service (M1 · AUTH-ACCOUNTS — mission §۱-ج; M2 adds the
+ * 'password_reset' purpose).
  *
- * One-time 6-digit codes for email login AND email linking:
+ * One-time 6-digit codes for email login, email linking AND password
+ * recovery (M2):
  *  - generate 10-minute codes with rejection-sampled randomBytes (no bias);
  *  - store ONLY the scrypt hash (never the code);
  *  - ONE live code per (destination, purpose) — a new request retires the old;
@@ -36,7 +38,7 @@ export function generateOtpCode(): string {
 export async function issueOtp(input: {
   channel: 'email' | 'sms';
   destination: string;
-  purpose: 'login' | 'link';
+  purpose: 'login' | 'link' | 'password_reset';
   userId?: string | null;
 }): Promise<{ id: string; code: string; expiresAt: Date }> {
   const code = generateOtpCode();
@@ -79,7 +81,7 @@ export type VerifyOutcome = 'ok' | 'no_active_code' | 'wrong_code' | 'expired' |
 export async function verifyOtp(input: {
   channel: 'email' | 'sms';
   destination: string;
-  purpose: 'login' | 'link';
+  purpose: 'login' | 'link' | 'password_reset';
   code: string;
 }): Promise<{ outcome: VerifyOutcome; userId?: string | null }> {
   const { db } = getDbClient();

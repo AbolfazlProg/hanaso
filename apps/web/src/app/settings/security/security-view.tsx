@@ -1,19 +1,22 @@
 /**
- * HANASO — the security settings client twin (M1 · AUTH-ACCOUNTS).
+ * HANASO — the security settings client twin (M2 · AUTH-PASSWORD).
  *
- * Renders /api/auth/methods: the method cards (with unlink), the mnemonic
- * activation wizard (inline — same prepare→phrase→quiz flow, purpose=enroll),
- * the email linking form, the google linking redirect, and the devices list
- * with logout/logout-all. Every state message is the API's honest Persian
- * envelope text or fa.auth copy — never internals.
+ * Sections: password (change — or SET, when the account was born
+ * google/phrase), username (the login handle, settable once), the
+ * recovery/login method cards (mnemonic enroll, email link, google link —
+ * unlinkable except the password, which is CHANGED not removed), and the
+ * devices list with logout/logout-all. Every state message is the API's
+ * honest Persian envelope text or fa.auth copy — never internals.
  */
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BadgeCheck, Laptop, Mail, ShieldCheck } from 'lucide-react';
+import { AtSign, BadgeCheck, KeyRound, Laptop, Mail, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AuthBanner, AuthField, PasswordField } from '@/components/auth/auth-fields';
 import { fa } from '@/messages/fa';
+import { validatePassword, validateUsername } from '@/modules/auth/password-policy';
 
 interface MethodRow {
   provider: string;
@@ -31,13 +34,14 @@ interface SessionRow {
   current: boolean;
 }
 interface MethodsData {
-  user: { id: string; displayName: string | null; email: string | null } | null;
+  user: { id: string; username: string | null; displayName: string | null; email: string | null } | null;
   methods: MethodRow[];
   sessions: SessionRow[];
   featureState: { email: boolean; google: boolean; sms: boolean };
 }
 
 const PROVIDER_LABEL: Record<string, string> = {
+  password: fa.auth.methodPassword,
   mnemonic: fa.auth.methodMnemonic,
   email: fa.auth.methodEmail,
   google: fa.auth.methodGoogle,
@@ -45,6 +49,7 @@ const PROVIDER_LABEL: Record<string, string> = {
 };
 
 const faDate = (iso: string) => new Intl.DateTimeFormat('fa-IR', { dateStyle: 'medium' }).format(new Date(iso));
+const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
 export function SecurityView() {
   const router = useRouter();
@@ -52,9 +57,23 @@ export function SecurityView() {
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  /* password change/set */
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newConfirm, setNewConfirm] = useState('');
+  const [pwError, setPwError] = useState<string | null>(null);
+
+  /* username set */
+  const [username, setUsername] = useState('');
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+
+  /* email link */
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [codeSent, setCodeSent] = useState(false);
+
+  /* mnemonic enroll wizard */
   const [wizard, setWizard] = useState<{ registrationId: string; words: string[]; positions: number[] } | null>(null);
   const [wizardStep, setWizardStep] = useState<'phrase' | 'quiz'>('phrase');
   const [confirmed, setConfirmed] = useState(false);
@@ -86,6 +105,81 @@ export function SecurityView() {
     });
     const json = (await res.json()) as { ok?: boolean; data?: Record<string, unknown>; error?: { message?: string } };
     return { res, json };
+  }
+
+  async function changePassword() {
+    const hasNow = has('password');
+    const check = validatePassword(newPassword, {
+      username: data?.user?.username ?? null,
+      email: data?.user?.email ?? null,
+    });
+    if (!check.ok) {
+      setPwError(
+        check.reason === 'too_short'
+          ? 'رمز عبور جدید باید دست‌کم ۸ نویسه باشد.'
+          : check.reason === 'too_common'
+            ? 'این رمز خیلی رایج است — یکی نامعمول‌تر انتخاب کن.'
+            : check.reason === 'contains_identifier'
+              ? 'رمز عبور نباید نام کاربری یا ایمیلت را در خود داشته باشد.'
+              : fa.auth.strengthNeeds,
+      );
+      return;
+    }
+    if (newPassword !== newConfirm) {
+      setPwError(fa.auth.passwordsDontMatch);
+      return;
+    }
+    setPwError(null);
+    setBusy(true);
+    setError(null);
+    setOk(null);
+    try {
+      const payload: Record<string, string> = { newPassword };
+      if (hasNow) payload.currentPassword = currentPassword;
+      const { res, json } = await call('/api/auth/password/change', payload);
+      if (!res.ok || !json.ok) {
+        setError(json.error?.message ?? fa.auth.genericError);
+        return;
+      }
+      setCurrentPassword('');
+      setNewPassword('');
+      setNewConfirm('');
+      setOk(hasNow ? fa.auth.passwordChangeOk : fa.auth.passwordSetOk);
+      await load();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function setUsernameSubmit() {
+    const check = validateUsername(username);
+    if (!check.ok) {
+      setUsernameError(
+        check.reason === 'too_short'
+          ? 'نام کاربری باید دست‌کم ۳ نویسه باشد.'
+          : check.reason === 'too_long'
+            ? 'نام کاربری حداکثر ۳۰ نویسه می‌تواند باشد.'
+            : check.reason === 'reserved'
+              ? 'این نام کاربری رزرو شده است.'
+              : 'فقط حروف انگلیسی، رقم و ـ (خط زیر) — ۳ تا ۳۰ نویسه.',
+      );
+      return;
+    }
+    setUsernameError(null);
+    setBusy(true);
+    setError(null);
+    setOk(null);
+    try {
+      const { res, json } = await call('/api/auth/account/username', { username });
+      if (!res.ok || !json.ok) {
+        setUsernameError(json.error?.message ?? fa.auth.genericError);
+        return;
+      }
+      setOk(fa.auth.usernameSetOk);
+      await load();
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function unlink(provider: string) {
@@ -155,7 +249,7 @@ export function SecurityView() {
         return;
       }
       setWizard(null);
-      setOk(fa.auth.mnemonicEnrollOk);
+      setOk(fa.auth.phraseEnrollOk);
       await load();
     } finally {
       setBusy(false);
@@ -173,7 +267,7 @@ export function SecurityView() {
         return;
       }
       setCodeSent(true);
-      setOk(fa.auth.emailRequestOk);
+      setOk('کد به ایمیلت رفت — پوشهٔ هرزنامه را هم چک کن.');
     } finally {
       setBusy(false);
     }
@@ -202,46 +296,138 @@ export function SecurityView() {
   }
 
   const has = (provider: string) => data.methods.some((m) => m.provider === provider);
-  const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
   return (
     <div className="flex flex-col gap-8">
-      {error && (
-        <p
-          className="rounded-md border-2 border-shu/60 bg-surface-warm px-3 py-2 text-small font-bold text-shu"
-          role="alert"
-        >
-          {error}
-        </p>
-      )}
-      {ok && (
-        <p className="rounded-md border-2 border-matcha/50 bg-matcha-wash px-3 py-2 text-small font-bold text-ink">
+      {error ? <AuthBanner tone="error">{error}</AuthBanner> : null}
+      {ok ? (
+        <AuthBanner tone="success" role="status">
           {ok}
-        </p>
-      )}
+        </AuthBanner>
+      ) : null}
 
-      {/* ---- methods ---- */}
+      {/* ---- password: change or set ---- */}
+      <section className="flex flex-col gap-3">
+        <h2 className="flex items-center gap-2 text-lead font-black text-ink">
+          <KeyRound aria-hidden className="size-5 text-indigo" />
+          {fa.auth.passwordSectionTitle}
+        </h2>
+        <form
+          className="flex flex-col gap-3 rounded-md border-2 border-indigo/25 bg-card p-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void changePassword();
+          }}
+        >
+          <p className="text-small leading-relaxed text-ink-soft">
+            {has('password') ? fa.auth.passwordChangeBody : fa.auth.passwordSetBody}
+          </p>
+          {has('password') ? (
+            <PasswordField
+              label={fa.auth.currentPasswordLabel}
+              required
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+          ) : null}
+          <PasswordField
+            label={fa.auth.newPasswordLabel}
+            meter
+            required
+            autoComplete="new-password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <PasswordField
+            label={fa.auth.confirmLabel}
+            required
+            autoComplete="new-password"
+            value={newConfirm}
+            onChange={(e) => setNewConfirm(e.target.value)}
+          />
+          {pwError ? <AuthBanner tone="error">{pwError}</AuthBanner> : null}
+          <Button type="submit" variant="cta" size="main" loading={busy} className="w-full sm:w-auto">
+            {has('password') ? fa.auth.passwordChangeCta : fa.auth.passwordSetCta}
+          </Button>
+        </form>
+      </section>
+
+      {/* ---- username: the login handle ---- */}
+      <section className="flex flex-col gap-3">
+        <h2 className="flex items-center gap-2 text-lead font-black text-ink">
+          <AtSign aria-hidden className="size-5 text-indigo" />
+          {fa.auth.usernameSectionTitle}
+        </h2>
+        {data.user?.username ? (
+          <p className="rounded-md border-2 border-success/40 bg-success/5 px-3 py-2.5 text-small font-bold text-success">
+            {fa.auth.usernameCurrent(data.user.username)}
+          </p>
+        ) : (
+          <form
+            className="flex flex-col gap-3 rounded-md border-2 border-indigo/25 bg-card p-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void setUsernameSubmit();
+            }}
+          >
+            <p className="text-small leading-relaxed text-ink-soft">{fa.auth.usernameSetBody}</p>
+            <AuthField
+              label={fa.auth.usernameLabel}
+              hint={fa.auth.usernameHint}
+              latin
+              required
+              autoComplete="username"
+              placeholder={fa.auth.usernamePlaceholder}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            {usernameError ? <AuthBanner tone="error">{usernameError}</AuthBanner> : null}
+            <Button type="submit" size="main" loading={busy} className="w-full sm:w-auto">
+              {fa.auth.usernameSetCta}
+            </Button>
+          </form>
+        )}
+      </section>
+
+      {/* ---- the recovery/login method cards ---- */}
       <section className="flex flex-col gap-3">
         <h2 className="text-lead font-black text-ink">{fa.auth.methodsTitle}</h2>
         <div className="flex flex-col gap-2">
-          {(['mnemonic', 'google', 'email'] as const).map((provider) => {
+          {(['password', 'mnemonic', 'google', 'email', 'sms'] as const).map((provider) => {
             const row = data.methods.find((m) => m.provider === provider);
+            const icon =
+              provider === 'password' ? (
+                <KeyRound aria-hidden className="size-5 text-indigo" />
+              ) : provider === 'mnemonic' ? (
+                <ShieldCheck aria-hidden className="size-5 text-indigo" />
+              ) : provider === 'google' ? (
+                <BadgeCheck aria-hidden className="size-5 text-indigo" />
+              ) : provider === 'sms' ? (
+                <Laptop aria-hidden className="size-5 text-indigo" />
+              ) : (
+                <Mail aria-hidden className="size-5 text-indigo" />
+              );
+            const disabledRow = provider === 'sms';
             return (
               <div
                 key={provider}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md border-2 border-indigo/30 bg-surface-warm px-3 py-2.5"
+                className={[
+                  'flex flex-wrap items-center justify-between gap-2 rounded-md border-2 px-3 py-2.5',
+                  disabledRow
+                    ? 'border-dashed border-ink-faint/40 bg-surface-warm/50'
+                    : 'border-indigo/30 bg-surface-warm',
+                ].join(' ')}
               >
                 <span className="inline-flex items-center gap-2 text-body font-bold text-ink">
-                  {provider === 'mnemonic' ? (
-                    <ShieldCheck aria-hidden className="size-5 text-indigo" />
-                  ) : provider === 'google' ? (
-                    <BadgeCheck aria-hidden className="size-5 text-indigo" />
-                  ) : (
-                    <Mail aria-hidden className="size-5 text-indigo" />
-                  )}
+                  {icon}
                   {PROVIDER_LABEL[provider]}
-                  {row ? (
-                    <span className="rounded-full bg-matcha/20 px-2 py-0.5 text-micro font-black text-ink">
+                  {disabledRow ? (
+                    <span className="rounded-full bg-ink-soft/10 px-2 py-0.5 text-micro font-bold text-ink-soft">
+                      {fa.auth.soon}
+                    </span>
+                  ) : row ? (
+                    <span className="rounded-full bg-success/15 px-2 py-0.5 text-micro font-black text-success">
                       {fa.auth.methodActive}
                     </span>
                   ) : (
@@ -250,18 +436,20 @@ export function SecurityView() {
                     </span>
                   )}
                 </span>
-                {row ? (
+                {provider === 'password' && row ? (
+                  <span className="text-caption text-ink-soft">{fa.auth.methodPrimaryHint}</span>
+                ) : row ? (
                   <button
                     type="button"
                     onClick={() => void unlink(provider)}
                     disabled={busy}
-                    className="text-micro font-bold text-shu underline decoration-2 underline-offset-4 disabled:opacity-50"
+                    className="cursor-pointer text-caption font-bold text-shu underline decoration-2 underline-offset-4 disabled:opacity-50"
                   >
                     {fa.auth.methodRemove}
                   </button>
-                ) : (
-                  <span className="text-micro text-ink-soft">{fa.auth.emailNotConfigured}</span>
-                )}
+                ) : disabledRow ? (
+                  <span className="text-caption text-ink-soft">{fa.auth.smsSoon}</span>
+                ) : null}
               </div>
             );
           })}
@@ -270,10 +458,19 @@ export function SecurityView() {
 
       {/* ---- the mnemonic activation prompt (never mandatory) ---- */}
       {!has('mnemonic') && !wizard && (
-        <section className="flex flex-col gap-3 rounded-md border-2 border-indigo/40 bg-indigo-wash px-3 py-4">
-          <h3 className="text-body font-black text-indigo">{fa.auth.mnemonicMissing}</h3>
-          <p className="text-small text-ink-soft">{fa.auth.mnemonicMissingBody}</p>
-          <Button size="sm" onClick={() => void startEnroll()} loading={busy}>
+        <section className="flex flex-col gap-3 rounded-md border-2 border-indigo/40 bg-indigo-wash px-4 py-4">
+          <h3 className="flex items-center gap-2 text-body font-black text-indigo">
+            <ShieldCheck aria-hidden className="size-5" />
+            {fa.auth.mnemonicMissing}
+          </h3>
+          <p className="text-small leading-relaxed text-ink-soft">{fa.auth.mnemonicMissingBody}</p>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => void startEnroll()}
+            loading={busy}
+            className="self-start"
+          >
             {fa.auth.mnemonicEnrollCta}
           </Button>
         </section>
@@ -281,16 +478,16 @@ export function SecurityView() {
 
       {/* ---- the inline enroll wizard ---- */}
       {wizard && (
-        <section className="flex flex-col gap-3 rounded-md border-2 border-indigo bg-paper px-3 py-4">
+        <section className="flex flex-col gap-3 rounded-md border-2 border-indigo bg-card px-4 py-4">
           {wizardStep === 'phrase' && (
             <>
               <h3 className="text-body font-black text-ink">{fa.auth.signupStepPhraseTitle}</h3>
-              <p className="text-micro text-ink-soft">{fa.auth.signupStepPhraseBody}</p>
+              <p className="text-caption leading-relaxed text-ink-soft">{fa.auth.signupStepPhraseBody}</p>
               <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                 {wizard.words.map((word, i) => (
                   <div
                     key={`${word}-${i}`}
-                    className="flex items-baseline gap-1.5 rounded border border-indigo/20 bg-indigo-wash px-1.5 py-1"
+                    className="flex items-baseline gap-1.5 rounded-sm border border-indigo/20 bg-paper px-1.5 py-1"
                   >
                     <span className="text-micro font-black text-indigo/70">{faNum(i + 1)}</span>
                     <span dir="ltr" className="font-mono text-small font-bold text-ink">
@@ -306,7 +503,7 @@ export function SecurityView() {
                   onChange={(e) => setConfirmed(e.target.checked)}
                   className="mt-1 size-4 accent-indigo"
                 />
-                <span>{fa.auth.signupConfirmSaved}</span>
+                <span className="leading-relaxed">{fa.auth.signupConfirmSaved}</span>
               </label>
               <Button size="sm" disabled={!confirmed} onClick={() => setWizardStep('quiz')}>
                 {fa.common.continue}
@@ -316,7 +513,7 @@ export function SecurityView() {
           {wizardStep === 'quiz' && (
             <>
               <h3 className="text-body font-black text-ink">{fa.auth.signupStepQuizTitle}</h3>
-              <p className="text-micro text-ink-soft">{fa.auth.signupStepQuizBody}</p>
+              <p className="text-caption leading-relaxed text-ink-soft">{fa.auth.signupStepQuizBody}</p>
               {wizard.positions.map((position) => (
                 <input
                   key={position}
@@ -324,12 +521,12 @@ export function SecurityView() {
                   value={answers[position] ?? ''}
                   onChange={(e) => setAnswers((prev) => ({ ...prev, [position]: e.target.value }))}
                   placeholder={fa.auth.signupQuizInput(position)}
-                  className="rounded-md border-2 border-indigo/40 bg-paper px-3 py-2 font-mono text-small text-ink focus-visible:border-indigo focus-visible:outline-2 focus-visible:outline-ai"
+                  className="w-full rounded-md border-2 border-ink/25 bg-paper px-3 py-2.5 text-left font-mono text-small text-ink placeholder:text-ink-faint transition-[border-color,box-shadow] duration-150 focus:border-shu focus:shadow-focus-input focus:outline-none"
                   autoComplete="off"
                   spellCheck={false}
                 />
               ))}
-              <Button size="sm" loading={busy} onClick={() => void verifyEnroll()}>
+              <Button size="sm" variant="cta" loading={busy} onClick={() => void verifyEnroll()}>
                 {fa.auth.signupQuizSubmit}
               </Button>
             </>
@@ -339,9 +536,9 @@ export function SecurityView() {
 
       {/* ---- linking: email ---- */}
       {!has('email') && (
-        <section className="flex flex-col gap-3 rounded-md border-2 border-indigo/25 px-3 py-4">
+        <section className="flex flex-col gap-3 rounded-md border-2 border-indigo/25 px-4 py-4">
           <h3 className="text-body font-black text-ink">{fa.auth.emailLinkTitle}</h3>
-          <p className="text-small text-ink-soft">
+          <p className="text-small leading-relaxed text-ink-soft">
             {data.featureState.email ? fa.auth.emailLinkBody : fa.auth.emailNotConfigured}
           </p>
           {data.featureState.email && (
@@ -352,29 +549,31 @@ export function SecurityView() {
                 void (codeSent ? verifyLinkCode() : requestLinkCode());
               }}
             >
-              <input
+              <AuthField
+                label={fa.auth.emailOptionalLabel}
+                latin
                 required
                 type="email"
-                dir="ltr"
+                autoComplete="email"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={fa.auth.emailPlaceholder}
-                className="rounded-md border-2 border-indigo/40 bg-paper px-3 py-2 text-small text-ink focus-visible:border-indigo focus-visible:outline-2 focus-visible:outline-ai"
               />
-              {codeSent && (
-                <input
+              {codeSent ? (
+                <AuthField
+                  label={fa.auth.recoverEmailCodeLabel}
+                  latin
                   required
                   inputMode="numeric"
                   pattern="\d{6}"
-                  dir="ltr"
+                  autoComplete="one-time-code"
+                  placeholder={fa.auth.recoverEmailCodePlaceholder}
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  placeholder={fa.auth.emailCodePlaceholder}
-                  className="rounded-md border-2 border-indigo/40 bg-paper px-3 py-2 text-center font-mono text-small text-ink focus-visible:border-indigo focus-visible:outline-2 focus-visible:outline-ai"
                 />
-              )}
-              <Button type="submit" size="sm" loading={busy}>
-                {codeSent ? fa.auth.emailVerify : fa.auth.emailLinkCta}
+              ) : null}
+              <Button type="submit" size="sm" className="self-start" loading={busy}>
+                {codeSent ? 'تأیید و اتصال' : fa.auth.emailLinkCta}
               </Button>
             </form>
           )}
@@ -383,15 +582,15 @@ export function SecurityView() {
 
       {/* ---- linking: google ---- */}
       {!has('google') && (
-        <section className="flex flex-col gap-3 rounded-md border-2 border-indigo/25 px-3 py-4">
+        <section className="flex flex-col gap-3 rounded-md border-2 border-indigo/25 px-4 py-4">
           <h3 className="text-body font-black text-ink">{fa.auth.googleLinkTitle}</h3>
-          <p className="text-small text-ink-soft">
+          <p className="text-small leading-relaxed text-ink-soft">
             {data.featureState.google ? fa.auth.googleLinkBody : fa.auth.googleUnconfigured}
           </p>
           {data.featureState.google && (
             <a
               href="/api/auth/google/start?purpose=link&redirectTo=/settings/security"
-              className="self-start rounded-md border-2 border-indigo bg-paper px-4 py-2 text-small font-bold text-ink transition-colors hover:bg-surface-warm"
+              className="self-start rounded-md border-2 border-indigo bg-card px-4 py-2 text-small font-bold text-ink transition-colors hover:bg-indigo-wash"
             >
               {fa.auth.googleLinkCta}
             </a>
@@ -411,13 +610,13 @@ export function SecurityView() {
               <span className="inline-flex items-center gap-2 text-small font-bold text-ink">
                 <Laptop aria-hidden className="size-4 text-indigo" />
                 {s.deviceLabel ?? '—'}
-                {s.current && (
+                {s.current ? (
                   <span className="rounded-full bg-indigo/10 px-2 py-0.5 text-micro font-black text-indigo">
                     {fa.auth.deviceCurrent}
                   </span>
-                )}
+                ) : null}
               </span>
-              <span className="text-micro text-ink-soft">
+              <span className="text-caption text-ink-soft">
                 {fa.auth.deviceLastSeen(faDate(s.lastSeenAt))} · {PROVIDER_LABEL[s.method ?? ''] ?? '—'}
               </span>
             </div>

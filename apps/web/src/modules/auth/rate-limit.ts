@@ -10,12 +10,15 @@
  *
  * Buckets (the freeze — add only with an ADR note):
  *   'login:phrase:fail'      + <lookupKey>   → 5 fails / 15 min  → lockout 15 min
+ *   'login:password:fail'    + <identifier>  → 5 fails / 15 min  → lockout 15 min (M2)
  *   'login:ip'              + <ipPrefix>    → 40 attempts / hour
  *   'otp:send:destination'  + <dest>        → 1 / min AND 5 / hour
  *   'otp:send:ip'           + <ipPrefix>    → 10 / hour
  *   'otp:verify:destination'+ <dest>        → 10 fails / hour (code rows also cap attempts)
  *   'signup:guest'          + <guestLearnerId> → 3 wizards / hour
  *   'oauth:start:ip'        + <ipPrefix>    → 20 / hour
+ *   'password:change'       + <userId>      → 5 changes / hour (M2)
+ *   'username:change'       + <userId>      → 5 sets / hour (M2)
  *
  * Sweeping: the expired-rows sweep lives in the same cleanup pass as OTP/pending
  * registrations (see sweep.ts) — old events age out of every window anyway.
@@ -27,6 +30,7 @@ import { authRateEvents } from '../../../db/schema';
 /** The canonical bucket prefix registry (see module docblock). */
 export const RATE_BUCKETS = {
   phraseLoginFail: 'login:phrase:fail',
+  passwordLoginFail: 'login:password:fail',
   loginIp: 'login:ip',
   otpSendDestination: 'otp:send:destination',
   otpSendIp: 'otp:send:ip',
@@ -34,6 +38,8 @@ export const RATE_BUCKETS = {
   signupGuest: 'signup:guest',
   oauthStartIp: 'oauth:start:ip',
   emailVerifyFail: 'email:verify:fail',
+  passwordChange: 'password:change',
+  usernameSet: 'username:change',
 } as const;
 
 /** One event — recorded at the moment the throttled action is ATTEMPTED/FAILED. */
