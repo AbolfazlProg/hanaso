@@ -19,6 +19,7 @@
  *   'oauth:start:ip'        + <ipPrefix>    → 20 / hour
  *   'password:change'       + <userId>      → 5 changes / hour (M2)
  *   'username:change'       + <userId>      → 5 sets / hour (M2)
+ *   'quiz:verify:fail'      + <registrationId> → 5 fails / 15 min (M3 — quiz brute-force cap)
  *
  * Sweeping: the expired-rows sweep lives in the same cleanup pass as OTP/pending
  * registrations (see sweep.ts) — old events age out of every window anyway.
@@ -40,6 +41,7 @@ export const RATE_BUCKETS = {
   emailVerifyFail: 'email:verify:fail',
   passwordChange: 'password:change',
   usernameSet: 'username:change',
+  quizVerifyFail: 'quiz:verify:fail',
 } as const;
 
 /** One event — recorded at the moment the throttled action is ATTEMPTED/FAILED. */

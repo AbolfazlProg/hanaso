@@ -69,13 +69,14 @@ export async function verifiedEmailOf(userId: string): Promise<string | null> {
 }
 
 /**
- * Issue a password-reset OTP for an identifier (door ۲). Anti-enumeration by
+ * Resolve the reset target for an identifier (door ۲). Anti-enumeration by
  * design: returns `null` for unknown identifiers / accounts without a
- * verified email — the ROUTE answers the same neutral envelope either way.
+ * verified email — the ROUTE answers the same neutral envelope either way
+ * (plus a scrypt timing shield on the unknown path).
  */
-export async function issuePasswordResetOtp(
+export async function resolvePasswordResetTarget(
   identifierRaw: string,
-): Promise<{ email: string; code: string; otpId: string } | null> {
+): Promise<{ userId: string; email: string } | null> {
   const identifier = parseLoginIdentifier(identifierRaw);
   if (!identifier) return null;
   const { db } = getDbClient();
@@ -100,8 +101,20 @@ export async function issuePasswordResetOtp(
   if (!userId) return null;
   const email = await verifiedEmailOf(userId);
   if (!email) return null;
+  return { userId, email };
+}
+
+/**
+ * Issue the password-reset OTP for an ALREADY RESOLVED target (the route
+ * throttles the mailbox BEFORE this — a throttled request must never mint
+ * or retire a code).
+ */
+export async function issuePasswordResetForTarget(
+  userId: string,
+  email: string,
+): Promise<{ otpId: string; code: string }> {
   const { id, code } = await issueOtp({ channel: 'email', destination: email, purpose: 'password_reset', userId });
-  return { email, code, otpId: id };
+  return { otpId: id, code };
 }
 
 /**
