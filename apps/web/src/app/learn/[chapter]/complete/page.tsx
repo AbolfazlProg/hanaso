@@ -6,6 +6,8 @@ import { listChapterCards } from '@/modules/fsrs/integration';
 
 const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 import { resolveLearnerId } from '@/lib/learner/server';
+import { resolveStudyAccess } from '@/lib/auth/study-gate';
+import { StudyDoor } from '@/components/auth/study-door';
 import { fa } from '@/messages/fa';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
@@ -28,6 +30,11 @@ export default async function ChapterCompletePage({ params }: { params: Promise<
     notFound();
   }
   const chapter = bundle!.chapter;
+
+  // The STUDY GATE (owner 2026-11-25): the completion verdict is account work.
+  if ((await resolveStudyAccess()).mode === 'guest') {
+    return <StudyDoor next={`/learn/${slug}/complete`} chapterTitleFa={chapter.titleFa} />;
+  }
 
   const learnerId = await resolveLearnerId();
   const access = await chapterAccessStatus(chapter, learnerId);

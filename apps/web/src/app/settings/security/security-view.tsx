@@ -12,9 +12,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AtSign, BadgeCheck, KeyRound, Laptop, Mail, ShieldCheck } from 'lucide-react';
+import { AtSign, BadgeCheck, KeyRound, Laptop, Mail, ShieldCheck, TriangleAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AuthBanner, AuthField, PasswordField } from '@/components/auth/auth-fields';
+import { AUTH_INPUT_BASE, AuthBanner, AuthField, PasswordField } from '@/components/auth/auth-fields';
+import { PhraseBackupPanel } from '@/components/auth/phrase-backup-panel';
 import { fa } from '@/messages/fa';
 import { validatePassword, validateUsername } from '@/modules/auth/password-policy';
 
@@ -49,7 +50,6 @@ const PROVIDER_LABEL: Record<string, string> = {
 };
 
 const faDate = (iso: string) => new Intl.DateTimeFormat('fa-IR', { dateStyle: 'medium' }).format(new Date(iso));
-const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 
 export function SecurityView() {
   const router = useRouter();
@@ -296,6 +296,9 @@ export function SecurityView() {
   }
 
   const has = (provider: string) => data.methods.some((m) => m.provider === provider);
+  /* Recovery readiness: a password alone cannot save a forgotten password —
+   * the owner's rule: nudge until at least ONE recovery door is active. */
+  const recoveryReady = has('mnemonic') || has('email') || has('google');
 
   return (
     <div className="flex flex-col gap-8">
@@ -304,6 +307,17 @@ export function SecurityView() {
         <AuthBanner tone="success" role="status">
           {ok}
         </AuthBanner>
+      ) : null}
+
+      {/* ---- the recovery-readiness warning (owner 2026-11-25) ---- */}
+      {!recoveryReady ? (
+        <section role="alert" className="flex flex-col gap-2 rounded-md border-2 border-shu/60 bg-shu/5 px-4 py-3.5">
+          <h2 className="flex items-center gap-2 text-body font-black text-shu-deep">
+            <TriangleAlert aria-hidden className="size-5 shrink-0" />
+            {fa.auth.recoveryNoneActiveTitle}
+          </h2>
+          <p className="text-small leading-[var(--leading-fa)] text-ink">{fa.auth.recoveryNoneActiveBody}</p>
+        </section>
       ) : null}
 
       {/* ---- password: change or set ---- */}
@@ -438,6 +452,15 @@ export function SecurityView() {
                 </span>
                 {provider === 'password' && row ? (
                   <span className="text-caption text-ink-soft">{fa.auth.methodPrimaryHint}</span>
+                ) : provider === 'mnemonic' && row ? (
+                  <button
+                    type="button"
+                    onClick={() => void startEnroll()}
+                    disabled={busy || wizard !== null}
+                    className="cursor-pointer rounded-sm text-caption font-bold text-ai underline decoration-2 underline-offset-4 transition-colors hover:text-ai-deep focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-shu disabled:opacity-50"
+                  >
+                    {fa.auth.phraseRegenerateCta}
+                  </button>
                 ) : row ? (
                   <button
                     type="button"
@@ -460,7 +483,7 @@ export function SecurityView() {
       {!has('mnemonic') && !wizard && (
         <section className="flex flex-col gap-3 rounded-md border-2 border-indigo/40 bg-indigo-wash px-4 py-4">
           <h3 className="flex items-center gap-2 text-body font-black text-indigo">
-            <ShieldCheck aria-hidden className="size-5" />
+            <ShieldCheck aria-hidden className="size-5 shrink-0" />
             {fa.auth.mnemonicMissing}
           </h3>
           <p className="text-small leading-relaxed text-ink-soft">{fa.auth.mnemonicMissingBody}</p>
@@ -476,26 +499,16 @@ export function SecurityView() {
         </section>
       )}
 
-      {/* ---- the inline enroll wizard ---- */}
+      {/* ---- the inline enroll wizard (fresh phrase OR replacement — the
+       * plaintext is never stored, so «seeing it again» IS building a new
+       * one; the old phrase retires the moment the new quiz passes) ---- */}
       {wizard && (
         <section className="flex flex-col gap-3 rounded-md border-2 border-indigo bg-card px-4 py-4">
           {wizardStep === 'phrase' && (
             <>
               <h3 className="text-body font-black text-ink">{fa.auth.signupStepPhraseTitle}</h3>
               <p className="text-caption leading-relaxed text-ink-soft">{fa.auth.signupStepPhraseBody}</p>
-              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-                {wizard.words.map((word, i) => (
-                  <div
-                    key={`${word}-${i}`}
-                    className="flex items-baseline gap-1.5 rounded-sm border border-indigo/20 bg-paper px-1.5 py-1"
-                  >
-                    <span className="text-micro font-black text-indigo/70">{faNum(i + 1)}</span>
-                    <span dir="ltr" className="font-mono text-small font-bold text-ink">
-                      {word}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <PhraseBackupPanel words={wizard.words} username={data.user?.username ?? null} />
               <label className="flex items-start gap-2 text-small text-ink">
                 <input
                   type="checkbox"
@@ -505,7 +518,13 @@ export function SecurityView() {
                 />
                 <span className="leading-relaxed">{fa.auth.signupConfirmSaved}</span>
               </label>
-              <Button size="sm" disabled={!confirmed} onClick={() => setWizardStep('quiz')}>
+              <Button
+                variant="cta"
+                size="main"
+                disabled={!confirmed}
+                onClick={() => setWizardStep('quiz')}
+                className="w-full sm:w-auto"
+              >
                 {fa.common.continue}
               </Button>
             </>
@@ -521,7 +540,7 @@ export function SecurityView() {
                   value={answers[position] ?? ''}
                   onChange={(e) => setAnswers((prev) => ({ ...prev, [position]: e.target.value }))}
                   placeholder={fa.auth.signupQuizInput(position)}
-                  className="w-full rounded-md border-2 border-ink/25 bg-paper px-3 py-2.5 text-left font-mono text-small text-ink placeholder:text-ink-faint transition-[border-color,box-shadow] duration-150 focus:border-shu focus:shadow-focus-input focus:outline-none"
+                  className={AUTH_INPUT_BASE + 'text-left font-mono text-small'}
                   autoComplete="off"
                   spellCheck={false}
                 />

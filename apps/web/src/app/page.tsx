@@ -3,6 +3,7 @@ import { ArrowLeft, BookOpenText, CircleCheck, Compass, Repeat2 } from 'lucide-r
 import { resolveLearnerId } from '@/lib/learner/server';
 import { resolveHome } from '@/modules/home/server';
 import { SiteNav, resolveReviewDueCount, resolveAccountDoor } from '@/components/site-nav';
+import { RecoveryNudge } from '@/components/auth/recovery-nudge';
 import { fa } from '@/messages/fa';
 
 /**
@@ -63,6 +64,11 @@ export default async function HomePage() {
             {dateLine} · {fa.home.lead}
           </p>
         </header>
+
+        {/* ---- the recovery-readiness nudge (owner 2026-11-25): the honest
+         * «activate one recovery door or a forgotten password loses the
+         * account» warning, right on the dashboard ---- */}
+        <RecoveryNudge />
 
         {/* ---- THE primary card — the single main CTA of the whole page ---- */}
         <article className="relative overflow-hidden rounded-md border-2 border-indigo bg-card p-5 shadow-[var(--shadow-card)] sm:p-6">

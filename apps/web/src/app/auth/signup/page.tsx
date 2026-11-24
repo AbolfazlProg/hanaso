@@ -3,8 +3,8 @@
  *
  * The primary registration: username + password (+ optional verified email).
  * After the account exists, the recovery-phrase offer runs inside the same
- * wizard (recommended, skippable). The BIP39 wordlist ships as a bundled
- * JSON module (8f5da6a) — the quiz datalist needs it.
+ * wizard (recommended, skippable). The phrase engine is @scure/bip39 (M3,
+ * 1f2f821) and the quiz is a pure recall test — no autocomplete datalist.
  */
 import { fa } from '@/messages/fa';
 import { emailTransportInfo } from '@/modules/auth/email';

@@ -18,7 +18,7 @@
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createSign, generateKeyPairSync } from 'node:crypto';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { NextRequest } from 'next/server';
 
 import { POST as phraseRoute } from '@/app/api/auth/mnemonic/phrase/route';
@@ -394,6 +394,46 @@ describe('recovery door ۱ — the phrase (enroll → quiz → reset)', () => {
       200,
     );
     G.__PW__ = PASSWORD2;
+  });
+
+  it('M4 (2026-11-25): settings re-enroll REPLACES the phrase — the old one dies, the new one works', async () => {
+    await clearRateLedger();
+    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, pw())}`;
+    const oldPhrase = u1Phrase();
+    // the settings flow: a fresh wizard on the account that ALREADY holds a phrase
+    const prep = await json<{ ok: boolean; data: { registrationId: string; words: string[]; positions: number[] } }>(
+      await enrollRoute(post(`${BASE}/auth/mnemonic/enroll`, {}, cookie)),
+    );
+    expect(prep.ok).toBe(true);
+    expect(prep.data.words).toHaveLength(12);
+    expect(prep.data.words.join(' ')).not.toBe(oldPhrase); // a FRESH phrase, never a re-show
+    const answers = prep.data.positions.map((p) => ({ position: p, word: prep.data.words[p - 1]! }));
+    const done = await json<{ ok: boolean; data: { userId: string; newAccount: boolean } }>(
+      await verifyRoute(
+        post(`${BASE}/auth/mnemonic/verify`, { registrationId: prep.data.registrationId, answers }, cookie),
+      ),
+    );
+    expect(done.ok).toBe(true);
+    expect(done.data.userId).toBe(u1());
+    // exactly ONE mnemonic identity survives — the replacement, not a second row
+    const { db } = getDbClient();
+    const mnemonicRows = await db
+      .select()
+      .from(authIdentities)
+      .where(and(eq(authIdentities.provider, 'mnemonic'), eq(authIdentities.userId, u1())));
+    expect(mnemonicRows).toHaveLength(1);
+    // the OLD phrase no longer opens the account
+    const oldAttempt = await recoverPhraseRoute(
+      post(`${BASE}/auth/recover/phrase`, { phrase: oldPhrase, newPassword: 'SomeNewPw#2026x' }),
+    );
+    expect(oldAttempt.status).toBe(401);
+    // the NEW phrase does (and rotates back to a known password)
+    const newAttempt = await recoverPhraseRoute(
+      post(`${BASE}/auth/recover/phrase`, { phrase: prep.data.words.join(' '), newPassword: PASSWORD2 }),
+    );
+    expect(newAttempt.status).toBe(200);
+    G.__PW__ = PASSWORD2;
+    G.__USER1_PHRASE__ = prep.data.words.join(' ');
   });
 
   it('M3: the quiz is capped — the 5th wrong answer on one wizard 429s (brute-force cap)', async () => {

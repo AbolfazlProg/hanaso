@@ -4,6 +4,8 @@ import { toClientExercise } from '@/modules/curriculum';
 import { MasteryGate } from '@/components/curriculum/mastery-gate';
 import { ChapterLockedNotice } from '@/components/curriculum/chapter-locked-notice';
 import { resolveLearnerId } from '@/lib/learner/server';
+import { resolveStudyAccess } from '@/lib/auth/study-gate';
+import { StudyDoor } from '@/components/auth/study-door';
 import { kanaAudioUrls } from '@/modules/audio/kana-audio';
 import { hostWordAudioUrls } from '@/modules/audio/hostword-audio';
 import { teachingAudioUrls, contentIdOfBinding } from '@/modules/audio/word-audio';
@@ -36,6 +38,11 @@ export default async function AssessmentPage({ params }: { params: Promise<{ cha
     notFound();
   }
   const chapter = bundle!.chapter;
+
+  // The STUDY GATE (owner 2026-11-25): the mastery gate is a reading surface.
+  if ((await resolveStudyAccess()).mode === 'guest') {
+    return <StudyDoor next={`/learn/${slug}/assessment`} chapterTitleFa={chapter.titleFa} />;
+  }
 
   const learnerId = await resolveLearnerId();
   const access = await chapterAccessStatus(chapter, learnerId);

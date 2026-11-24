@@ -1,5 +1,7 @@
 /**
- * HANASO — auth form primitives (M2 · AUTH-PASSWORD).
+ * HANASO — auth form primitives (M2 · AUTH-PASSWORD; harmonized 2026-11-25
+ * — the owner's signup-page review became a shared-contract fix: ONE input
+ * class, ONE field-error convention, ONE button grammar for every auth page).
  *
  * The professional input set for the identity surface — consistent with the
  * Aizen system: 2px ink-line borders on paper, the vermilion focus ring
@@ -10,6 +12,12 @@
  * `PasswordField` adds the show/hide toggle and (for NEW passwords) the
  * four-segment strength meter + character-class chips, driven by the SAME
  * pure policy module the server enforces (password-policy.ts — zero drift).
+ *
+ * The BUTTON GRAMMAR every auth page follows (one grammar, no per-page ideas):
+ *  - primary (the one form goal)   → <Button variant="cta"   size="main" className="w-full">
+ *  - secondary (equal choice)      → <Button variant="secondary" size="main" className="w-full sm:flex-1">
+ *  - utility (copy/download/…)    → <Button variant="ghost"    size="sm"> + size-4 icon
+ *  - the google door               → <GoogleButton> (min-h-12, matches the main CTA)
  */
 'use client';
 
@@ -18,26 +26,42 @@ import { Eye, EyeOff } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { passwordClasses, scorePassword } from '@/modules/auth/password-policy';
 
-const INPUT_BASE =
+/** ONE input class for every auth surface (fields, quiz inputs, textareas):
+ * min-h-11 matches the button floor, so a form never renders mixed heights. */
+export const AUTH_INPUT_BASE =
   [
-    'w-full rounded-md border-2 border-ink/25 bg-paper px-3 py-2.5 text-body text-ink',
+    'w-full min-h-11 rounded-md border-2 border-ink/25 bg-paper px-3 py-2.5 text-body text-ink',
     'placeholder:text-ink-faint',
     'transition-[border-color,box-shadow] duration-150',
     'focus:border-shu focus:shadow-focus-input focus:outline-none',
     'disabled:cursor-not-allowed disabled:opacity-50',
   ].join(' ') + ' ';
 
+const INPUT_BASE = AUTH_INPUT_BASE;
+
+/** The inline field-error line — ONE convention everywhere (aria-wired). */
+function FieldError({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <p id={id} className="text-caption font-bold leading-relaxed text-error">
+      {children}
+    </p>
+  );
+}
+
 export interface AuthFieldProps extends ComponentPropsWithoutRef<'input'> {
   label: string;
   hint?: string;
   /** Latin content (username/email/password) → dir="ltr" + left text. */
   latin?: boolean;
+  /** The inline field error (client-side validation contract). */
+  error?: string;
 }
 
 /** A labelled single-line field (the base of every auth form input). */
-export function AuthField({ label, hint, latin = false, className, ...rest }: AuthFieldProps) {
+export function AuthField({ label, hint, error, latin = false, className, ...rest }: AuthFieldProps) {
   const id = useId();
   const hintId = hint ? `${id}-hint` : undefined;
+  const errId = error ? `${id}-error` : undefined;
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-small font-bold text-ink">
@@ -47,9 +71,12 @@ export function AuthField({ label, hint, latin = false, className, ...rest }: Au
         id={id}
         dir={latin ? 'ltr' : undefined}
         className={INPUT_BASE + (latin ? 'text-left ' : '') + (className ?? '')}
-        aria-describedby={hintId}
+        aria-describedby={[hintId, errId].filter(Boolean).join(' ') || undefined}
+        aria-invalid={error ? true : undefined}
+        aria-errormessage={errId}
         {...rest}
       />
+      {error ? <FieldError id={errId!}>{error}</FieldError> : null}
       {hint ? (
         <p id={hintId} className="text-caption leading-relaxed text-ink-soft">
           {hint}
@@ -66,11 +93,12 @@ export interface PasswordFieldProps extends Omit<AuthFieldProps, 'type' | 'autoC
 }
 
 /** A password field with the show/hide toggle and the optional strength meter. */
-export function PasswordField({ label, hint, meter = false, autoComplete, ...rest }: PasswordFieldProps) {
+export function PasswordField({ label, hint, error, meter = false, autoComplete, ...rest }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
   const [internal, setInternal] = useState('');
   const id = useId();
   const meterId = `${id}-meter`;
+  const errId = error ? `${id}-error` : undefined;
 
   // controlled when the parent passes `value` (confirm-match checks need it);
   // otherwise self-contained — the meter works in both modes.
@@ -89,7 +117,7 @@ export function PasswordField({ label, hint, meter = false, autoComplete, ...res
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          className="inline-flex cursor-pointer items-center gap-1 text-caption font-bold text-ai hover:text-ai-deep"
+          className="inline-flex cursor-pointer items-center gap-1 rounded-sm px-1 text-caption font-bold text-ai underline-offset-2 transition-colors hover:text-ai-deep focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-shu"
           aria-pressed={visible}
         >
           {visible ? <EyeOff aria-hidden className="size-3.5" /> : <Eye aria-hidden className="size-3.5" />}
@@ -102,7 +130,9 @@ export function PasswordField({ label, hint, meter = false, autoComplete, ...res
         dir="ltr"
         autoComplete={autoComplete}
         className={INPUT_BASE + 'text-left'}
-        aria-describedby={meter ? meterId : undefined}
+        aria-describedby={[meterId, errId].filter(Boolean).join(' ') || undefined}
+        aria-invalid={error ? true : undefined}
+        aria-errormessage={errId}
         {...rest}
         value={value}
         onChange={(e) => {
@@ -150,6 +180,7 @@ export function PasswordField({ label, hint, meter = false, autoComplete, ...res
         </div>
       ) : null}
 
+      {error ? <FieldError id={errId!}>{error}</FieldError> : null}
       {hint ? <p className="text-caption leading-relaxed text-ink-soft">{hint}</p> : null}
     </div>
   );
@@ -180,12 +211,15 @@ export function OrDivider() {
   );
 }
 
-/** The Google one-click button (the official G mark, framed on card). */
+/** The Google one-click button (the official G mark, framed on card).
+ * Grammar-compliant: min-h-12 like the main CTA, centered label (no ragged
+ * two-line stack), the hint as a quiet second line — the same visual weight
+ * as every other door on the page. */
 export function GoogleButton({ href, label, hint }: { href: string; label: string; hint?: string }) {
   return (
     <a
       href={href}
-      className="group flex min-h-12 items-center justify-center gap-3 rounded-md border-2 border-ink/25 bg-card px-4 text-body font-bold text-ink transition-[border-color,background-color] duration-150 hover:border-ink hover:bg-surface-warm focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-shu"
+      className="group flex min-h-12 w-full items-center justify-center gap-3 rounded-md border-2 border-ink/25 bg-card px-4 py-2 text-body font-bold text-ink transition-[border-color,background-color] duration-150 hover:border-ink hover:bg-surface-warm focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-shu"
     >
       <svg aria-hidden viewBox="0 0 24 24" className="size-5 shrink-0">
         <path
@@ -202,8 +236,8 @@ export function GoogleButton({ href, label, hint }: { href: string; label: strin
           d="M12 4.77c1.76 0 3.34.61 4.58 1.8l3.44-3.44A11.98 11.98 0 0 0 12 0 12 12 0 0 0 1.29 6.62l3.99 3.1C6.22 6.88 8.87 4.77 12 4.77Z"
         />
       </svg>
-      <span className="flex flex-col items-start leading-tight">
-        <span>{label}</span>
+      <span className="flex flex-col items-center leading-tight">
+        <span className="text-center">{label}</span>
         {hint ? <span className="text-caption font-normal text-ink-soft">{hint}</span> : null}
       </span>
     </a>

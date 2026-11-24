@@ -19,9 +19,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Copy, KeyRound, RotateCcw, ShieldCheck } from 'lucide-react';
+import { KeyRound, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AuthBanner, AuthField, PasswordField } from '@/components/auth/auth-fields';
+import { AUTH_INPUT_BASE, AuthBanner, AuthField, PasswordField } from '@/components/auth/auth-fields';
+import { PhraseBackupPanel } from '@/components/auth/phrase-backup-panel';
 import { fa } from '@/messages/fa';
 import { validatePassword, validateUsername } from '@/modules/auth/password-policy';
 
@@ -42,8 +43,6 @@ const USERNAME_MESSAGES: Record<string, string> = {
   reserved: 'این نام کاربری رزرو شده است.',
 };
 
-const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
-
 export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>('form');
@@ -60,7 +59,6 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
   const [data, setData] = useState<WizardData | null>(null);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [confirmed, setConfirmed] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   async function call(
     url: string,
@@ -202,6 +200,7 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
           <AuthField
             label={fa.auth.usernameLabel}
             hint={fa.auth.usernameHint}
+            error={fieldErrors.username}
             latin
             required
             name="username"
@@ -209,35 +208,27 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
             placeholder={fa.auth.usernamePlaceholder}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            aria-invalid={fieldErrors.username ? true : undefined}
           />
-          {fieldErrors.username ? (
-            <p className="-mt-2 text-caption font-bold text-error">{fieldErrors.username}</p>
-          ) : null}
 
           <PasswordField
             label={fa.auth.newPasswordLabel}
             meter
             hint={fa.auth.strengthNeeds}
+            error={fieldErrors.password}
             required
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {fieldErrors.password ? (
-            <p className="-mt-2 text-caption font-bold text-error">{fieldErrors.password}</p>
-          ) : null}
 
           <PasswordField
             label={fa.auth.confirmLabel}
+            error={fieldErrors.confirm}
             required
             autoComplete="new-password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
           />
-          {fieldErrors.confirm ? (
-            <p className="-mt-2 text-caption font-bold text-error">{fieldErrors.confirm}</p>
-          ) : null}
 
           {emailConfigured ? (
             <AuthField
@@ -268,14 +259,22 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
           ) : null}
           <div className="rounded-md border-2 border-indigo/30 bg-indigo-wash p-4">
             <h2 className="flex items-center gap-2 text-h3 font-black text-indigo">
-              <ShieldCheck aria-hidden className="size-5" />
+              <ShieldCheck aria-hidden className="size-5 shrink-0" />
               {fa.auth.phraseOfferTitle}
             </h2>
             <p className="mt-2 text-small leading-relaxed text-ink-soft">{fa.auth.phraseOfferBody}</p>
           </div>
+          {/* ONE button grammar: primary CTA + secondary — full-width on
+           * mobile (no squeezed two-line labels), side-by-side from sm up. */}
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button variant="cta" size="main" loading={busy} onClick={() => void startEnroll()} className="flex-1">
-              <KeyRound aria-hidden className="size-4" />
+            <Button
+              variant="cta"
+              size="main"
+              loading={busy}
+              onClick={() => void startEnroll()}
+              className="w-full sm:flex-1"
+            >
+              <KeyRound aria-hidden className="size-4 shrink-0" />
               {fa.auth.phraseOfferCta}
             </Button>
             <Button
@@ -285,7 +284,7 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
                 setSkippedPhrase(true);
                 setStep('done');
               }}
-              className="flex-1"
+              className="w-full sm:flex-1"
             >
               {fa.auth.phraseOfferSkip}
             </Button>
@@ -297,38 +296,7 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
         <div className="flex flex-col gap-4">
           <h2 className="text-h3 font-black text-ink">{fa.auth.signupStepPhraseTitle}</h2>
           <p className="text-small leading-relaxed text-ink-soft">{fa.auth.signupStepPhraseBody}</p>
-          <div className="grid grid-cols-2 gap-2 rounded-md border-2 border-indigo/40 bg-paper p-3 sm:grid-cols-3">
-            {data.words.map((word, i) => (
-              <div
-                key={`${word}-${i}`}
-                className="flex items-baseline gap-2 rounded-sm border border-indigo/20 bg-card px-2 py-1.5"
-              >
-                <span className="text-micro font-black text-indigo/70">{faNum(i + 1)}</span>
-                <span dir="ltr" className="font-mono text-small font-bold text-ink">
-                  {word}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => void refetchPhrase()} loading={busy}>
-              <RotateCcw aria-hidden className="size-4" />
-              {fa.auth.signupShowPhraseAgain}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                void navigator.clipboard?.writeText(data.words.join(' ')).then(() => {
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 1500);
-                });
-              }}
-            >
-              {copied ? <Check aria-hidden className="size-4" /> : <Copy aria-hidden className="size-4" />}
-              {fa.common.copy}
-            </Button>
-          </div>
+          <PhraseBackupPanel words={data.words} onRefetch={() => void refetchPhrase()} refetchBusy={busy} />
           <label className="flex items-start gap-2 text-small text-ink">
             <input
               type="checkbox"
@@ -339,7 +307,7 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
             />
             <span className="leading-relaxed">{fa.auth.signupConfirmSaved}</span>
           </label>
-          <Button size="main" disabled={!confirmed} onClick={() => setStep('quiz')}>
+          <Button variant="cta" size="main" disabled={!confirmed} onClick={() => setStep('quiz')} className="w-full">
             {fa.common.continue}
           </Button>
         </div>
@@ -356,19 +324,19 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
                 dir="ltr"
                 value={answers[position] ?? ''}
                 onChange={(e) => setAnswers((prev) => ({ ...prev, [position]: e.target.value }))}
-                className="w-full rounded-md border-2 border-ink/25 bg-paper px-3 py-2.5 text-left font-mono text-small text-ink transition-[border-color,box-shadow] duration-150 placeholder:text-ink-faint focus:border-shu focus:shadow-focus-input focus:outline-none"
+                className={AUTH_INPUT_BASE + 'text-left font-mono text-small'}
                 autoComplete="off"
                 spellCheck={false}
               />
             </label>
           ))}
-          <Button variant="cta" size="main" loading={busy} onClick={() => void verify()}>
+          <Button variant="cta" size="main" loading={busy} onClick={() => void verify()} className="w-full">
             {fa.auth.signupQuizSubmit}
           </Button>
           <button
             type="button"
             onClick={() => void refetchPhrase()}
-            className="self-start text-caption font-bold text-ai underline decoration-2 underline-offset-4"
+            className="self-start rounded-sm px-1 text-caption font-bold text-ai underline decoration-2 underline-offset-4 transition-colors hover:text-ai-deep focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-shu"
           >
             {fa.auth.signupShowPhraseAgain}
           </button>
@@ -384,7 +352,7 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
           ) : (
             <AuthBanner tone="success">{fa.auth.phraseEnrollOk}</AuthBanner>
           )}
-          <Button variant="cta" size="main" onClick={() => router.push('/')}>
+          <Button variant="cta" size="main" onClick={() => router.push('/')} className="w-full">
             {fa.notFound.backHome}
           </Button>
         </div>
