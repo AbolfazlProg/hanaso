@@ -17,7 +17,7 @@
  *  - the OTP purpose is 'password_reset' — distinct from login/link codes,
  *    so a login code can never be replayed as a reset code (and vice versa).
  */
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 import { getDbClient } from '@/db/client';
 import { authIdentities, users } from '../../../db/schema';
 import { deriveLookupKey, verifySecret } from './credentials';
@@ -51,14 +51,21 @@ export async function resetPasswordWithPhrase(phrase: string, newPassword: strin
 /** The account's VERIFIED email identity (the only email a reset may go to). */
 export async function verifiedEmailOf(userId: string): Promise<string | null> {
   const { db } = getDbClient();
-  const rows = await db
+  const identRows = await db
     .select({ email: authIdentities.providerAccountId })
     .from(authIdentities)
     .where(
       and(eq(authIdentities.userId, userId), eq(authIdentities.provider, 'email'), isNull(authIdentities.disabledAt)),
     )
     .limit(1);
-  return rows[0]?.email ?? null;
+  if (identRows[0]?.email) return identRows[0].email;
+  // fallback: the account's own VERIFIED contact email (google-attached)
+  const contactRows = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(and(eq(users.id, userId), isNotNull(users.emailVerifiedAt)))
+    .limit(1);
+  return contactRows[0]?.email ?? null;
 }
 
 /**
@@ -103,7 +110,7 @@ export async function issuePasswordResetOtp(
  */
 export async function findUserIdByVerifiedEmail(email: string): Promise<string | null> {
   const { db } = getDbClient();
-  const rows = await db
+  const identRows = await db
     .select({ userId: authIdentities.userId })
     .from(authIdentities)
     .where(
@@ -114,7 +121,14 @@ export async function findUserIdByVerifiedEmail(email: string): Promise<string |
       ),
     )
     .limit(1);
-  return rows[0]?.userId ?? null;
+  if (identRows[0]?.userId) return identRows[0].userId;
+  // fallback: the account's own VERIFIED contact email (google-attached)
+  const contactRows = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.email, email.toLowerCase()), isNotNull(users.emailVerifiedAt)))
+    .limit(1);
+  return contactRows[0]?.id ?? null;
 }
 
 /**

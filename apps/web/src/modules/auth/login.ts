@@ -15,7 +15,7 @@
  *     (a google-created or legacy-phrase account — the UI points at the
  *     google button / recovery page instead of a dead-end error).
  */
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 import { getDbClient } from '@/db/client';
 import { authIdentities, users } from '../../../db/schema';
 import { normalizeUsername } from './password-policy';
@@ -44,8 +44,12 @@ export interface LoginCandidate {
 }
 
 /**
- * Resolve the identifier → the account it belongs to (username column or a
- * VERIFIED email identity). null for unknown identifiers.
+ * Resolve the identifier → the account it belongs to. The email branch
+ * accepts EITHER an OTP-verified email identity OR the account's own
+ * VERIFIED contact email (google-attached — emailVerifiedAt from the
+ * id_token): both are proven mailboxes, and the fallback is what lets a
+ * google-born user's email+password login resolve after they set a password
+ * (and get the honest «no password yet» door-sign before that).
  */
 export async function findLoginCandidate(identifier: LoginIdentifier): Promise<LoginCandidate | null> {
   const { db } = getDbClient();
@@ -59,9 +63,9 @@ export async function findLoginCandidate(identifier: LoginIdentifier): Promise<L
     if (!row) return null;
     return { userId: row.id, username: row.username, email: row.email, hasPassword: await hasPassword(row.id) };
   }
-  // email: only an OTP-verified email identity resolves (no users.email guessing)
-  const rows = await db
-    .select({ userId: authIdentities.userId, verifiedAt: authIdentities.verifiedAt })
+  // email: the OTP-verified identity first, then the verified contact column
+  const identRows = await db
+    .select({ userId: authIdentities.userId })
     .from(authIdentities)
     .where(
       and(
@@ -71,12 +75,20 @@ export async function findLoginCandidate(identifier: LoginIdentifier): Promise<L
       ),
     )
     .limit(1);
-  const row = rows[0];
-  if (!row || !row.verifiedAt) return null;
+  let userId = identRows[0]?.userId ?? null;
+  if (!userId) {
+    const contactRows = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(and(eq(users.email, identifier.value), isNotNull(users.emailVerifiedAt)))
+      .limit(1);
+    userId = contactRows[0]?.id ?? null;
+  }
+  if (!userId) return null;
   const userRows = await db
     .select({ id: users.id, username: users.username, email: users.email })
     .from(users)
-    .where(eq(users.id, row.userId))
+    .where(eq(users.id, userId))
     .limit(1);
   const user = userRows[0];
   if (!user) return null;

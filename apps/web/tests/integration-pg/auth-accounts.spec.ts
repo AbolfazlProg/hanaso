@@ -141,6 +141,17 @@ function cookieOf(res: Response, name: string): string {
   return raw;
 }
 
+/** The live password of user1 (tests reset it through the recovery doors). */
+function pw(): string {
+  return (G.__PW__ ??= PASSWORD);
+}
+
+/** Clear the shared rate ledger — the fast suite must not eat its own limits. */
+async function clearRateLedger(): Promise<void> {
+  const { db } = getDbClient();
+  await db.delete(authRateEvents);
+}
+
 async function loginCookie(identifier: string, password: string): Promise<string> {
   const res = await loginRoute(post(`${BASE}/auth/login`, { identifier, password }));
   return cookieOf(res, SESSION_COOKIE_NAME);
@@ -211,6 +222,7 @@ describe('registration — username + password (THE primary signup)', () => {
     expect(body.ok).toBe(true);
     expect(body.data.username).toBe(USERNAME);
     G.__USER1__ = body.data.userId;
+    G.__PW__ = PASSWORD;
     expect(res.headers.get('set-cookie') ?? '').toContain(`${SESSION_COOKIE_NAME}=`);
     expect(res.headers.get('set-cookie') ?? '').toContain('HttpOnly');
     // users.username + the password identity (scrypt, never raw)
@@ -288,14 +300,12 @@ describe('login — username/email + password (THE primary way in)', () => {
       last = (await loginRoute(post(`${BASE}/auth/login`, { identifier: USERNAME, password: 'Nope!12345' }))).status;
     }
     expect(last).toBe(429);
-    // clear ONLY this identifier's fail bucket so later tests can log in
-    const { db } = getDbClient();
-    await db.delete(authRateEvents).where(eq(authRateEvents.bucket, `login:password:fail:${USERNAME}`));
+    await clearRateLedger();
   });
 
   it('logout revokes the session; logout-all kills EVERY device', async () => {
-    const t1 = await loginCookie(USERNAME, PASSWORD);
-    const t2 = await loginCookie(USERNAME, PASSWORD);
+    const t1 = await loginCookie(USERNAME, pw());
+    const t2 = await loginCookie(USERNAME, pw());
     expect(
       (await methodsRoute(new Request(`${BASE}/auth/methods`, { headers: { cookie: `${SESSION_COOKIE_NAME}=${t1}` } })))
         .status,
@@ -315,7 +325,7 @@ describe('login — username/email + password (THE primary way in)', () => {
 
 describe('recovery door ۱ — the phrase (enroll → quiz → reset)', () => {
   it('enroll on the logged-in account: prepare → phrase re-display → quiz → attached', async () => {
-    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, PASSWORD)}`;
+    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, pw())}`;
     const prep = await json<{ ok: boolean; data: { registrationId: string; words: string[]; positions: number[] } }>(
       await enrollRoute(post(`${BASE}/auth/mnemonic/enroll`, {}, cookie)),
     );
@@ -351,9 +361,10 @@ describe('recovery door ۱ — the phrase (enroll → quiz → reset)', () => {
   });
 
   it('recover/phrase: verify → NEW password → every session revoked → fresh session', async () => {
+    await clearRateLedger();
     // two live sessions before the reset
-    const oldA = await loginCookie(USERNAME, PASSWORD);
-    const oldB = await loginCookie(USERNAME, PASSWORD);
+    const oldA = await loginCookie(USERNAME, pw());
+    const oldB = await loginCookie(USERNAME, pw());
     const res = await recoverPhraseRoute(
       post(`${BASE}/auth/recover/phrase`, { phrase: u1Phrase(), newPassword: PASSWORD2 }),
     );
@@ -378,12 +389,11 @@ describe('recovery door ۱ — the phrase (enroll → quiz → reset)', () => {
       ).status,
     ).toBe(401);
     // the OLD password no longer logs in; the NEW one does
-    expect((await loginRoute(post(`${BASE}/auth/login`, { identifier: USERNAME, password: PASSWORD }))).status).toBe(
-      401,
-    );
+    expect((await loginRoute(post(`${BASE}/auth/login`, { identifier: USERNAME, password: pw() }))).status).toBe(401);
     expect((await loginRoute(post(`${BASE}/auth/login`, { identifier: USERNAME, password: PASSWORD2 }))).status).toBe(
       200,
     );
+    G.__PW__ = PASSWORD2;
   });
 
   it('a wrong phrase answers ONE honest 401', async () => {
@@ -439,12 +449,15 @@ describe('email — the REAL transport path (link + recovery, no fake sends)', (
     const res = await emailRequestRoute(
       post(`${BASE}/auth/email/request`, { email: 'x@example.com', purpose: 'login' }),
     );
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(400); // the schema itself refuses the retired purpose
+    const res2 = await emailRequestRoute(post(`${BASE}/auth/email/request`, { email: 'x@example.com' }));
+    expect(res2.status).toBe(401); // and without it, the session requirement speaks
   });
 
   it('the LINK flow: session + OTP → the email identity attaches to the SAME account', async () => {
     vi.stubGlobal('fetch', resendStub());
-    const cookie = `${GUEST_COOKIE}; ${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, PASSWORD)}`;
+    await clearRateLedger();
+    const cookie = `${GUEST_COOKIE}; ${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, pw())}`;
     const email = 'parisa@example.com';
     const linkReq = await emailRequestRoute(post(`${BASE}/auth/email/request`, { email, purpose: 'link' }, cookie));
     expect(linkReq.status).toBe(202);
@@ -469,7 +482,7 @@ describe('email — the REAL transport path (link + recovery, no fake sends)', (
   });
 
   it('login with the EMAIL identifier + password (the verified email routes)', async () => {
-    const res = await loginRoute(post(`${BASE}/auth/login`, { identifier: 'parisa@example.com', password: PASSWORD2 }));
+    const res = await loginRoute(post(`${BASE}/auth/login`, { identifier: 'parisa@example.com', password: pw() }));
     const body = await json<{ ok: boolean; data: { userId: string } }>(res);
     expect(body.ok).toBe(true);
     expect(body.data.userId).toBe(u1());
@@ -487,14 +500,16 @@ describe('email — the REAL transport path (link + recovery, no fake sends)', (
 
   it('recovery door ۲: identifier → OTP → NEW password → sessions revoked → session issued', async () => {
     vi.stubGlobal('fetch', resendStub());
+    await clearRateLedger();
     // a live session that must die on reset
-    const doomed = await loginCookie(USERNAME, PASSWORD2);
+    const doomed = await loginCookie(USERNAME, pw());
     const req = await recoverEmailRequestRoute(post(`${BASE}/auth/recover/email/request`, { identifier: USERNAME }));
     expect(req.status).toBe(202);
     expect(sentCode).toMatch(/^\d{6}$/);
     const reset = await recoverEmailVerifyRoute(
       post(`${BASE}/auth/recover/email/verify`, { email: 'parisa@example.com', code: sentCode, newPassword: PASSWORD }),
     );
+    G.__PW__ = PASSWORD;
     expect(reset.status).toBe(200);
     expect(reset.headers.get('set-cookie') ?? '').toContain(SESSION_COOKIE_NAME);
     expect(
@@ -505,9 +520,7 @@ describe('email — the REAL transport path (link + recovery, no fake sends)', (
       ).status,
     ).toBe(401);
     // the new password logs in
-    expect((await loginRoute(post(`${BASE}/auth/login`, { identifier: USERNAME, password: PASSWORD }))).status).toBe(
-      200,
-    );
+    expect((await loginRoute(post(`${BASE}/auth/login`, { identifier: USERNAME, password: pw() }))).status).toBe(200);
   });
 
   it('anti-enumeration: an UNKNOWN identifier answers the SAME neutral 202', async () => {
@@ -676,6 +689,7 @@ describe('google OAuth — the full callback chain (self-signed RSA id_token)', 
   });
 
   it('recovery door ۳ (google): set a password on the google-born account, then username+password login', async () => {
+    await clearRateLedger();
     const { db } = getDbClient();
     // log in as the google user (existing sub → login path)
     const { verifier } = generatePkcePair();
@@ -725,6 +739,7 @@ describe('google OAuth — the full callback chain (self-signed RSA id_token)', 
   });
 
   it('username set is ONCE (already_set) and taken handles refuse (409)', async () => {
+    await clearRateLedger();
     const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie('google_learner', 'GoogleBorn!2026')}`;
     const again = await json<{ ok: boolean; error: { code: string } }>(
       await usernameRoute(post(`${BASE}/auth/account/username`, { username: 'other_name' }, cookie)),
@@ -740,23 +755,26 @@ describe('google OAuth — the full callback chain (self-signed RSA id_token)', 
 
 describe('password change + unlink rules', () => {
   it('change requires the CURRENT password (a stolen session cannot rotate)', async () => {
-    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, PASSWORD)}`;
+    await clearRateLedger();
+    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, pw())}`;
     const wrong = await passwordChangeRoute(
       post(`${BASE}/auth/password/change`, { currentPassword: 'NotTheOld!1', newPassword: 'BrandNew#2026!' }, cookie),
     );
     expect(wrong.status).toBe(401);
     const { db } = getDbClient();
-    const pw = (await db.select().from(authIdentities).where(eq(authIdentities.provider, 'password')))[0]!;
-    expect((pw.credentialHash ?? '').includes('BrandNew')).toBe(false);
+    const pwRow = (await db.select().from(authIdentities).where(eq(authIdentities.provider, 'password')))[0]!;
+    expect((pwRow.credentialHash ?? '').includes('BrandNew')).toBe(false);
   });
 
   it('the happy change: other sessions die, the CURRENT device stays', async () => {
-    const current = await loginCookie(USERNAME, PASSWORD);
-    const other = await loginCookie(USERNAME, PASSWORD);
+    await clearRateLedger();
+    const current = await loginCookie(USERNAME, pw());
+    const other = await loginCookie(USERNAME, pw());
     const cookie = `${GUEST_COOKIE}; ${SESSION_COOKIE_NAME}=${current}`;
     const res = await passwordChangeRoute(
-      post(`${BASE}/auth/password/change`, { currentPassword: PASSWORD, newPassword: 'BrandNew#2026!' }, cookie),
+      post(`${BASE}/auth/password/change`, { currentPassword: pw(), newPassword: 'BrandNew#2026!' }, cookie),
     );
+    G.__PW__ = 'BrandNew#2026!';
     const body = await json<{ ok: boolean; data: { otherSessionsRevoked: boolean } }>(res);
     expect(body.ok).toBe(true);
     expect(body.data.otherSessionsRevoked).toBe(true);
@@ -777,13 +795,12 @@ describe('password change + unlink rules', () => {
       ).status,
     ).toBe(401);
     // the new password logs in
-    expect(
-      (await loginRoute(post(`${BASE}/auth/login`, { identifier: USERNAME, password: 'BrandNew#2026!' }))).status,
-    ).toBe(200);
+    expect((await loginRoute(post(`${BASE}/auth/login`, { identifier: USERNAME, password: pw() }))).status).toBe(200);
   });
 
   it('the password method is NEVER unlinkable (immutable — changed, not removed)', async () => {
-    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, 'BrandNew#2026!')}`;
+    await clearRateLedger();
+    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, pw())}`;
     const body = await json<{ ok: boolean; error: { code: string } }>(
       await unlinkRoute(post(`${BASE}/auth/methods/unlink`, { provider: 'password' }, cookie)),
     );
@@ -792,7 +809,8 @@ describe('password change + unlink rules', () => {
   });
 
   it('unlink never removes the LAST active method', async () => {
-    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, 'BrandNew#2026!')}`;
+    await clearRateLedger();
+    const cookie = `${SESSION_COOKIE_NAME}=${await loginCookie(USERNAME, pw())}`;
     // user1 holds password + mnemonic + email(+google attached earlier by dedupe)
     const removeEmail = await unlinkRoute(post(`${BASE}/auth/methods/unlink`, { provider: 'email' }, cookie));
     expect(removeEmail.status).toBe(200);
