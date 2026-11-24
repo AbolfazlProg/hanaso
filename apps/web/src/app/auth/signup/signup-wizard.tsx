@@ -47,6 +47,8 @@ const faNum = (n: number) => new Intl.NumberFormat('fa-IR').format(n);
 export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>('form');
+  /** true when the user SKIPPED the phrase offer (the done copy differs). */
+  const [skippedPhrase, setSkippedPhrase] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -276,7 +278,15 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
               <KeyRound aria-hidden className="size-4" />
               {fa.auth.phraseOfferCta}
             </Button>
-            <Button variant="secondary" size="main" onClick={() => setStep('done')} className="flex-1">
+            <Button
+              variant="secondary"
+              size="main"
+              onClick={() => {
+                setSkippedPhrase(true);
+                setStep('done');
+              }}
+              className="flex-1"
+            >
               {fa.auth.phraseOfferSkip}
             </Button>
           </div>
@@ -367,7 +377,13 @@ export function SignupWizard({ emailConfigured }: { emailConfigured: boolean }) 
 
       {step === 'done' && (
         <div className="flex flex-col gap-4">
-          <AuthBanner tone="success">{fa.auth.phraseEnrollOk}</AuthBanner>
+          {skippedPhrase ? (
+            <AuthBanner tone="notice" role="status">
+              {fa.auth.phraseOfferSkippedNote}
+            </AuthBanner>
+          ) : (
+            <AuthBanner tone="success">{fa.auth.phraseEnrollOk}</AuthBanner>
+          )}
           <Button variant="cta" size="main" onClick={() => router.push('/')}>
             {fa.notFound.backHome}
           </Button>
