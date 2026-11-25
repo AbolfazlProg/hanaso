@@ -26,16 +26,19 @@ export function RecoveryNudgeCard() {
   if (dismissed !== false) return null;
 
   return (
-    <aside
-      role="alert"
-      className="flex flex-col gap-2 rounded-md border-2 border-shu/60 bg-shu/5 px-4 py-3.5 sm:flex-row sm:items-center sm:gap-4"
-    >
+    /* AUTH-M4 FIX 2026-11-25 (owner): the nudge is a VERTICAL card at every
+     * width — title on top → body under it → the two buttons in their place
+     * below. The previous sm:flex-row squeezed title/body/buttons into one
+     * horizontal band on desktop, which broke the reading order the owner
+     * specified. Same stack shape as the settings-security warning block
+     * (security-view.tsx) so both warnings read identically. */
+    <aside role="alert" className="flex flex-col gap-2 rounded-md border-2 border-shu/60 bg-shu/5 px-4 py-3.5">
       <h2 className="flex items-center gap-2 text-body font-black text-shu-deep">
         <TriangleAlert aria-hidden className="size-5 shrink-0" />
         {fa.auth.recoveryNudgeTitle}
       </h2>
-      <p className="text-small leading-[var(--leading-fa)] text-ink sm:flex-1">{fa.auth.recoveryNudgeBody}</p>
-      <div className="flex shrink-0 items-center gap-3">
+      <p className="text-small leading-[var(--leading-fa)] text-ink">{fa.auth.recoveryNudgeBody}</p>
+      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2">
         <a
           href="/settings/security"
           hrefLang="fa"
