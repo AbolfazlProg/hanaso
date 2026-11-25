@@ -994,7 +994,11 @@ export function ExerciseSession({
                 onClick={() => setBuilt((b) => [...b, chip.id])}
                 className="rounded-sm border border-ink-faint bg-card px-3 py-2 text-ja transition-colors hover:border-ai"
               >
-                {chip.ja}
+                {/* B1-REBUILD 2026-11-26 §۲ (the #143 class completed): the
+                 * UNPLACED name tile renders the Persian label too — the
+                 * internal ___NAME___ convention never crosses to the learner
+                 * (the built slot already renders the typed-name input). */}
+                {chip.ja === '___NAME___' ? <span dir="auto">{fa.curriculum.nameChipLabel}</span> : chip.ja}
               </button>
             ))}
           </div>

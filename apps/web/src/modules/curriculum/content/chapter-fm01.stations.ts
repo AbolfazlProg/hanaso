@@ -155,6 +155,11 @@ export const FM01_STATIONS: Station[] = [
         titleFa: 'گزارهٔ هویت',
         bodyFa: '«A هست B»: A (موضوع) + は (علامت موضوع) + B (هویت) + です (پایان مؤدبانه). は اینجا wa خوانده می‌شود.',
         structureTable: {
+          /* B1-REBUILD 2026-11-26 §۳: the columns are the SLOTS of the Japanese
+           * pattern AはBです — the table lays out LTR so the sentence keeps its
+           * real order (the RTL default reversed it into です|B|は|A for the
+           * learner who had just been told Japanese reads left-to-right). */
+          dir: 'ltr',
           headers: ['A (موضوع)', 'は', 'B (هویت)', 'です'],
           rows: [
             ['わたし', 'は', 'にほんじん', 'です'],
@@ -257,7 +262,7 @@ export const FM01_STATIONS: Station[] = [
           rows: [['はじめまして、やまだです。わたしは にほんじんです。', 'はじめまして、ソラです。']],
         },
         persianBridgeFa: 'فارسی هم می‌گوید «(من) رفتم» بدون «من» — ژاپنی همین کار را می‌کند.',
-        honestyLabelFa: 'برتری فارسی‌زبان‌ها در ترتیب SOV: پیش‌بینی ماست (استنتاج تipe‌شناختی)، نه اثبات‌شده.',
+        honestyLabelFa: 'برتری فارسی‌زبان‌ها در ترتیب SOV: پیش‌بینی ماست (استنتاج گونه‌شناختی)، نه اثبات‌شده.',
       },
       {
         kind: 'example-set',

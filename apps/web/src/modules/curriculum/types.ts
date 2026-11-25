@@ -415,7 +415,15 @@ export type TeachingBlock =
       patternJa: string;
       titleFa: string;
       bodyFa: string;
-      structureTable?: { headers: string[]; rows: string[][] };
+      /*
+       * B1-REBUILD 2026-11-26 §۳ (batch-1 QC — the word-order table reads in
+       * JAPANESE order): a structure table whose columns are the SLOTS of a
+       * Japanese pattern (A は B です) must lay out left-to-right — the
+       * sentence is a Japanese utterance and the table's whole point is its
+       * order. Comparison tables with Persian headers (خط ۳ vs خط ۴) stay RTL.
+       * Authored per table; default keeps the page direction (rtl).
+       */
+      structureTable?: { headers: string[]; rows: string[][]; dir?: 'ltr' | 'rtl' };
       /*
        * TASK-HANASO-20 (BUG-008): per-row audible representative for the
        * listening column — a word (usually the compact side of the pair) whose
@@ -554,7 +562,7 @@ export type TeachingBlock =
       titleFa?: string;
       bodyFa: string;
       word?: { ja: string; readingFa: string; fa: string; highlight: string[]; beats?: number };
-      miniTable?: { headers: string[]; rows: string[][] };
+      miniTable?: { headers: string[]; rows: string[][]; dir?: 'ltr' | 'rtl' };
       ask?: MicroAsk;
     }
   | {

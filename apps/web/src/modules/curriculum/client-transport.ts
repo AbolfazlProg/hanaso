@@ -60,7 +60,7 @@ export type ClientTeachingBlock =
       patternJa: string;
       titleFa: string;
       bodyFa: string;
-      structureTable?: { headers: string[]; rows: string[][] };
+      structureTable?: { headers: string[]; rows: string[][]; dir?: 'ltr' | 'rtl' };
       /* TASK-HANASO-20 (BUG-008) — the listening column's per-row audio binding. */
       listenWords?: (string | null)[];
       listenNoteFa?: string;
@@ -125,7 +125,7 @@ export type ClientTeachingBlock =
       titleFa?: string;
       bodyFa: string;
       word?: { ja: string; readingFa: string; fa: string; highlight: string[]; beats?: number };
-      miniTable?: { headers: string[]; rows: string[][] };
+      miniTable?: { headers: string[]; rows: string[][]; dir?: 'ltr' | 'rtl' };
       ask?: { questionFa: string; options: { id: string; label: string }[] };
     }
   | { kind: 'exercise'; id: string; exerciseIds: string[] }

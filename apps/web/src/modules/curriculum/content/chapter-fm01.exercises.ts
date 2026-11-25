@@ -172,9 +172,10 @@ export const FM01_EXERCISES: Exercise[] = [
       b: 'ちゅうごくじん = چینی — مالِ سورا در نیمهٔ اول مکالمه.',
     },
     feedback: {
-      /* UX-AUDIT #139 (data): a WRONG-path F1 line began with «درست!» — the
-       * verdict belongs to the feedback engine, never inside authored copy. */
-      f1Fa: 'صدای پخش‌شده دربارهٔ علی است، نه یامادا.',
+      /* B1-REBUILD 2026-11-26 §۵: this is a TEXT match-in-line question — the
+       * old F1 talked about «صدای پخش‌شده» (leftover from the audio variant);
+       * the hint now points at the line's content. */
+      f1Fa: 'دربارهٔ علی می‌پرسد، نه میکی یا یامادا — واژهٔ ملیتِ علی را انتخاب کن.',
       f2HintFa: 'یامادا سه جمله دربارهٔ علی می‌گوید؛ ملیت او کدام است؟',
       f3ExplainFa: 'アリさん です。イランじん です。だいがくの せんせい です。',
     },
@@ -214,7 +215,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-desu-identity',
     lineRef: L(8),
     difficulty: 1,
-    promptFa: 'جای خالی را پر کن: «آلی استاد دانشگاه است»',
+    promptFa: 'جای خالی را پر کن: «علی استاد دانشگاه است»',
     promptJa: 'アリさんは だいがくの せんせい ___。',
     clozeTokens: ['アリさんは', 'だいがくの', 'せんせい', null, '。'],
     ...(() => {
@@ -226,8 +227,12 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'ですね = تأیید شنیده‌ها — این‌جا معرفی است نه تأیید.',
     },
     feedback: {
-      f1Fa: 'جملهٔ خبری مؤدبانه با です تمام می‌شود.',
-      f2HintFa: 'پرسش نیست، تأیید هم نیست — معرفی ساده.',
+      /* B1-REBUILD 2026-11-26 §۴: F1/F2 never carry the key — the wrong-path
+       * hint redirects to the rule without naming です (the engine's «…»
+       * masking stayed the safety net; the authored copy no longer leans on
+       * it — «با … تمام می‌شود» read broken). */
+      f1Fa: 'این جمله معرفیِ خبری است — نه پرسش، نه تأیید؛ پایانهٔ خبری ساده کافی است.',
+      f2HintFa: 'پرسش نیست و چیزی را تأیید هم نمی‌کند — همان پایان‌بندی سادهٔ الگو.',
       f3ExplainFa: 'AはBです — جملهٔ خبری: アリさんは だいがくの せんせいです。',
     },
     assessmentRole: 'practice',
@@ -274,8 +279,11 @@ export const FM01_EXERCISES: Exercise[] = [
     acceptedChipOrder: ['n1', 'n2', 'n3', 'n4'],
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'ترتیب: نام + は + هویت + です.',
-      f2HintFa: 'がくせい (دانشجو) واژهٔ شناخته‌شدهٔ این فصل است — با همین الگو.',
+      /* B1-REBUILD 2026-11-26 §۴: same no-key law — the hint points at the
+       * slot structure (نام → علامت موضوع → هویت → پایانه) without naming
+       * the tiles. */
+      f1Fa: 'ترتیب: نام، بعد علامت موضوع، بعد هویت، و پایانهٔ مؤدبانه آخر.',
+      f2HintFa: 'واژهٔ «دانشجو» همان هویتِ توست — الگو را با همان سه جزءِ دیگر کامل کن.',
       f3ExplainFa: '[نام]さんは がくせいです — معرفی کامل خودت!',
     },
     assessmentRole: 'practice',
@@ -300,7 +308,9 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'ترتیب فارسی و ژاپنی این‌جا یکی است: موضوع اول، فعل آخر.',
-      f2HintFa: 'فعل/هویت‌ساز (です) همیشه آخر می‌نشیند.',
+      /* B1-REBUILD 2026-11-26 §۴: no key in F2 — the «همیشه آخر» rule without
+       * naming the tile. */
+      f2HintFa: 'فعل/هویت‌ساز جملهٔ ژاپنی همیشه آخر می‌نشیند — موضوع را اول بگذار.',
       f3ExplainFa: 'やまだは にほんじんです — مثل فارسی: «یامادا ژاپنی است».',
     },
     assessmentRole: 'practice',
@@ -330,8 +340,9 @@ export const FM01_EXERCISES: Exercise[] = [
       b: 'پرسش نیست — خبرِ شنیده‌ات را تأیید می‌کنی.',
     },
     feedback: {
-      f1Fa: '«پس …» یعنی تأیید شنیده‌ها — با ね.',
-      f2HintFa: 'جدول قاعده: ですね = تأیید.',
+      /* B1-REBUILD 2026-11-26 §۴: no key in F1/F2 — redirect, don't reveal. */
+      f1Fa: '«پس …» یعنی تأیید شنیده‌ها — پایانهٔ تأکیدی می‌خواهد، نه پرسش و نه خبر ساده.',
+      f2HintFa: 'جدول قاعده: ردیفِ تأیید — همان که «پس اینطور است، نه؟» می‌سازد.',
       f3ExplainFa: 'ソラさんですね — «پس سورا هستید» (تأیید؛ آهنگ نیمه‌پایین).',
     },
     assessmentRole: 'practice',
@@ -378,8 +389,9 @@ export const FM01_EXERCISES: Exercise[] = [
     ],
     acceptedChipOrder: ['q1', 'q2', 'q3'],
     feedback: {
-      f1Fa: 'پرسش با か است، نه ね.',
-      f2HintFa: 'هویت + です + か.',
+      /* B1-REBUILD 2026-11-26 §۴: no key in F1/F2. */
+      f1Fa: 'پرسش مؤدبانه است — پایانهٔ پرسشی می‌خواهد، نه تأکید.',
+      f2HintFa: 'ترتیب: هویت، بعد پایان‌بندی مؤدبانه، بعد ذرهٔ پرسش.',
       f3ExplainFa: 'せんせいですか = استاد است؟ (آهنگ پایانی بالا).',
     },
     assessmentRole: 'practice',
@@ -402,8 +414,9 @@ export const FM01_EXERCISES: Exercise[] = [
     acceptedChipOrder: ['m1', 'm2', 'm3', 'm4'],
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'ترتیب: موضوع+も → هویت → です → か.',
-      f2HintFa: '«هم» روی موضوع می‌نشیند: キムさんも — بعد هویت و پرسش.',
+      /* B1-REBUILD 2026-11-26 §۴: no key in F1/F2. */
+      f1Fa: 'ترتیب: موضوع + «هم» → هویت → پایان‌بندی مؤدبانه → ذرهٔ پرسش.',
+      f2HintFa: '«هم» روی موضوع می‌نشیند — بعد هویت و پرسش.',
       f3ExplainFa: 'キムさんも ちゅうごくじんですか — پرسش با も.',
     },
     assessmentRole: 'practice',
@@ -456,7 +469,9 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'こんにちは سلامِ روزانه است — جای آیین آشنایی نیست.',
     },
     feedback: {
-      f1Fa: 'پایان آیین با よろしく おねがいします.',
+      /* B1-REBUILD 2026-11-26 §۴: no key in F1 — the hint names the STEP of
+       * the ritual, not the phrase. */
+      f1Fa: 'گامِ پایانی آیین — عبارتی که رابطهٔ تازه را جمع می‌بندد، نه سلامِ روزانه و نه آغازگرِ آشنایی.',
       f2HintFa: 'معنایش: «از رابطهٔمان خوشحال می‌شوم» — بستن آیین.',
       f3ExplainFa: 'هر دو طرف در پایان با هم می‌گویند よろしく おねがいします.',
     },
@@ -480,7 +495,9 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'جوابِ معرفی خودت است، نه پرسش.',
     },
     feedback: {
-      f1Fa: 'پرسش مؤدبانه دربارهٔ شخص سوم: あのかたは どなたですか.',
+      /* B1-REBUILD 2026-11-26 §۴: no key in F1 — the hint names the ANCHOR
+       * word of the question, never the full phrase. */
+      f1Fa: 'پرسش با واژهٔ مؤدبانهٔ «آن [آقا/خانم]» آغاز می‌شود و با پرسش‌ساز تمام می‌شود — نه معرفی خودت، نه پرسشِ شغل.',
       f2HintFa: 'معنایش: «آن [آقا/خانم] کیست؟» — با あのかた.',
       f3ExplainFa: 'میکی همین را دربارهٔ شخصِ سوم می‌پرسد.',
     },
@@ -504,7 +521,8 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'よろしく おねがいします پایان آیین آشنایی است، نه آغاز آن.',
     },
     feedback: {
-      f1Fa: 'آغاز آیین آشنایی با はじめまして است.',
+      /* B1-REBUILD 2026-11-26 §۴: no key in F1. */
+      f1Fa: 'آغازگرِ آیین آشنایی — عبارتی که فقط در نخستین دیدار گفته می‌شود، نه سلامِ روزانه و نه گامِ پایانی.',
       f2HintFa: 'ترتیب آیین: اول «از آشنایی خوشبختم»، بعد معرفی، بعد یوروشیکو.',
       f3ExplainFa: 'はじめまして = از آشنایی‌تان خوشبختم — فقط اولین ملاقات.',
     },
@@ -528,7 +546,8 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'そうですか واکنش به اطلاعات تازه است — جای آیین معرفی نیست.',
     },
     feedback: {
-      f1Fa: 'پایان آیین آشنایی با よろしく おねがいします.',
+      /* B1-REBUILD 2026-11-26 §۴: no key in F1. */
+      f1Fa: 'گامِ پایانی آیین — جمع‌بندِ رابطهٔ تازه؛ آغازگر و واکنش‌ها جای این‌جا نیستند.',
       f2HintFa: 'هر دو طرف در پایان با هم می‌گویندش.',
       f3ExplainFa: 'よろしく おねがいします = از رابطه‌مان خوشحالم / بردم را بدار.',
     },
