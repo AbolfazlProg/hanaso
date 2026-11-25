@@ -2365,7 +2365,13 @@ function BlockView({
               {/* ENGINE-NEXTGEN W-B: ja-instruct floors the Japanese runs
                   inside these 14px cells at the JP body token (17px) —
                   grammar tables are STUDIED reading content, never meta. */}
-              <table className="w-full border-collapse text-small ja-instruct">
+              {/* B1-REBUILD 2026-11-26 §۳: a word-order pattern table renders
+                  LTR (authored dir) so the Japanese sentence keeps its real
+                  left-to-right order; comparison tables stay RTL (default). */}
+              <table
+                dir={block.structureTable.dir === 'ltr' ? 'ltr' : 'rtl'}
+                className="w-full border-collapse text-small ja-instruct"
+              >
                 <thead>
                   <tr className="border-b border-ink-faint text-ink-soft">
                     {block.structureTable.headers.map((h) => (
@@ -2611,7 +2617,7 @@ function BlockView({
           <p className="mt-3 text-body leading-[var(--leading-fa)]">
             <MixedFaJaText text={block.bodyFa} />
           </p>
-          {block.miniTable && <RuleTableView table={block.miniTable} />}
+          {block.miniTable && <RuleTableView table={block.miniTable} dir={block.miniTable.dir} />}
           {block.ask && (
             <div className="mt-4">
               <MicroAskPanel chapterSlug={chapterSlug} stationSlug={stationSlug} blockId={block.id} ask={block.ask} />
@@ -3005,10 +3011,17 @@ function HighlightedJa({ ja, highlight, className }: { ja: string; highlight: st
 }
 
 /** Shared structure-table renderer (rule-card + rule-step miniTable). */
-function RuleTableView({ table }: { table: { headers: string[]; rows: string[][] } }) {
+function RuleTableView({
+  table,
+  dir,
+}: {
+  table: { headers: string[]; rows: string[][]; dir?: 'ltr' | 'rtl' };
+  dir?: 'ltr' | 'rtl';
+}) {
   return (
     <div className="mt-4 overflow-x-auto">
-      <table className="w-full border-collapse text-small">
+      {/* B1-REBUILD 2026-11-26 §۳: word-order pattern tables render LTR. */}
+      <table dir={dir === 'ltr' ? 'ltr' : 'rtl'} className="w-full border-collapse text-small">
         <thead>
           <tr className="border-b border-ink-faint text-ink-soft">
             {table.headers.map((h) => (
@@ -3550,7 +3563,10 @@ function CharacterSceneBlock({
                             onClick={() => setBuilt((b) => [...b, chip.id])}
                             className="rounded-sm border border-ink-faint bg-card px-3 py-2 text-ja transition-colors hover:border-ai"
                           >
-                            {chip.ja}
+                            {/* B1-REBUILD 2026-11-26 §۲: same law as the
+                             * exercise-session chips — the unplaced name tile
+                             * shows the Persian label, never ___NAME___. */}
+                            {chip.ja === '___NAME___' ? <span dir="auto">{fa.curriculum.nameChipLabel}</span> : chip.ja}
                           </button>
                         ))}
                     </div>

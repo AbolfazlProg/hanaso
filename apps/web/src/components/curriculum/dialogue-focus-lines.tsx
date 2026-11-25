@@ -83,8 +83,7 @@ function FocusLineCard({
   audioAvailable,
   itemLabels,
   highlightSurfaces,
-  index,
-}: DialogueFocusLinesProps & { line: DialogueFocusLineView; index: number }) {
+}: DialogueFocusLinesProps & { line: DialogueFocusLineView }) {
   const speakerLabel = `${line.speaker.nameFa} (${line.speaker.nameJa})`;
   return (
     <article
@@ -112,7 +111,10 @@ function FocusLineCard({
             </p>
           ) : (
             <p className="text-caption text-ink-faint">
-              {fa.curriculum.dialogueFocusTurn} {index + 1}
+              {/* B1-REBUILD 2026-11-26 §۱: «خط {real position}» — one term with the
+               * dialogue player, one number with every «خط N» cross-reference
+               * in the teaching copy (was «نوبت {within-block index}»). */}
+              {fa.curriculum.dialogueFocusLine} {new Intl.NumberFormat('fa-IR').format(line.lineNo)}
             </p>
           )}
         </div>
@@ -190,8 +192,8 @@ export function DialogueFocusLines(props: DialogueFocusLinesProps) {
         <p className="text-small leading-[var(--leading-fa)] text-ink-soft">{fa.curriculum.dialogueFocusSectionNote}</p>
       </header>
       <div className="flex flex-col gap-4">
-        {props.lines.map((line, i) => (
-          <FocusLineCard key={line.id} {...props} line={line} index={i} />
+        {props.lines.map((line) => (
+          <FocusLineCard key={line.id} {...props} line={line} />
         ))}
       </div>
     </section>

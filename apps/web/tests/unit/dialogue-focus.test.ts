@@ -127,6 +127,17 @@ describe('resolveDialogueFocus — the focused-line teaching view (ENGINE-REFORM
     const view = resolveDialogueFocus(bundle, [], true);
     expect(view.mode).toBe('full');
   });
+
+  /* B1-REBUILD 2026-11-26 §۱ (batch-1 QC — honest line numbering): the card's
+   * «خط N» must be the line's REAL position in the dialogue, matching every
+   * «خط N» cross-reference in the teaching copy (was «نوبت {within-block
+   * index}» — line 3 displayed as «نوبت 1»). */
+  it('lineNo is the REAL 1-based dialogue position — never a within-block index', () => {
+    const view = resolveDialogueFocus(bundle, [L(2), L(3)], true);
+    expect(view.lines.map((l) => l.lineNo)).toEqual([2, 3]);
+    const sparse = resolveDialogueFocus(bundle, [L(3)], true);
+    expect(sparse.lines[0]!.lineNo).toBe(3);
+  });
 });
 
 describe('resolveDialogueFocus — determinism (the engine contract)', () => {

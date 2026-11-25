@@ -28,6 +28,13 @@ import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 /** One extracted teaching line — everything the focused-line card renders. */
 export interface DialogueFocusLineView {
   id: string;
+  /* B1-REBUILD 2026-11-26 §۱ (batch-1 QC — honest line numbering): the line's
+   * REAL 1-based position in the dialogue. The teaching copy around every
+   * focused-line card references «خط N» (rule cards, example sets, prompts);
+   * the card itself must display the same number — a within-block index
+   * («نوبت 1» for dialogue line 3) contradicted every cross-reference the
+   * learner had just read. */
+  lineNo: number;
   /** The speaking character (resolved name + color for the speaker chip). */
   speaker: { id: string; nameJa: string; nameFa: string; colorToken: string };
   /** Joint-turn co-speaker (TASK-LEARNING-07 — shown alongside the speaker). */
@@ -110,11 +117,13 @@ export function resolveDialogueFocus(
   }
 
   /* Extract ONLY the focus lines, in dialogue order — with the speaker's
-   * resolved identity (name + color), readings, translation and teaches. */
+   * resolved identity (name + color), readings, translation and teaches.
+   * lineNo = the line's real 1-based position in the FULL dialogue. */
   const byFocus = new Set(focusIds);
   const lines: DialogueFocusLineView[] = dialogueLines
-    .filter((l) => byFocus.has(l.id))
-    .map((l) => {
+    .map((l, i) => ({ l, lineNo: i + 1 }))
+    .filter(({ l }) => byFocus.has(l.id))
+    .map(({ l, lineNo }) => {
       const speaker = characterView(bundle.characters, l.speaker);
       const coSpeaker = l.coSpeaker ? characterView(bundle.characters, l.coSpeaker) : undefined;
       if (!speaker) {
@@ -122,6 +131,7 @@ export function resolveDialogueFocus(
          * rejects these at load; the resolver degrades honestly to the raw id. */
         return {
           id: l.id,
+          lineNo,
           speaker: { id: l.speaker, nameJa: l.speaker, nameFa: l.speaker, colorToken: 'speaker-1' },
           ...(coSpeaker ? { coSpeaker } : {}),
           tokens: l.tokens.map((t) => ({ surface: t.surface, reading: t.reading })),
@@ -132,6 +142,7 @@ export function resolveDialogueFocus(
       }
       return {
         id: l.id,
+        lineNo,
         speaker,
         ...(coSpeaker ? { coSpeaker } : {}),
         tokens: l.tokens.map((t) => ({ surface: t.surface, reading: t.reading })),

@@ -333,8 +333,13 @@ export const fa = {
      * render, never the whole conversation. ---- */
     dialogueFocusSectionTitle: 'خط‌های آموزشی همین درس',
     dialogueFocusSectionNote:
-      'فقط همان نوبت‌هایی از مکالمه که این درس با آن‌ها آموزش می‌دهد — بقیهٔ گفتگو در جای خودش (درس آغازین) می‌ماند.',
-    dialogueFocusTurn: 'نوبت',
+      'فقط همان خط‌هایی از مکالمه که این درس با آن‌ها آموزش می‌دهد — بقیهٔ گفتگو در جای خودش (درس آغازین) می‌ماند.',
+    /* B1-REBUILD 2026-11-26 §۱ (batch-1 QC): «نوبت» → «خط» — the JOURNEY-FIX
+     * §۵ one-name rule («خط» is the dialogue player's own term); the number is
+     * the line's REAL position in the conversation (the resolver's new
+     * lineNo), never a within-block index that contradicts every «خط N»
+     * reference in the surrounding teaching copy. */
+    dialogueFocusLine: 'خط',
     dialogueFocusTeaches: 'آنچه این خط به تو می‌آموزد',
     chapterUnderstoodBadge: 'فهمیده‌شده',
     teaserTitle: 'بعد از این فصل…',
@@ -591,6 +596,11 @@ export const fa = {
     trailScrolledNotice: 'مسیر روی نقطهٔ ادامهٔ تو تنظیم شد',
     yourTurn: 'نوبت تو',
     typeYourName: 'نامت را بنویس',
+    /* B1-REBUILD 2026-11-26 §۲ (batch-1 QC — the #143 class completed): the
+     * UNPLACED name tile is learner-facing too — it renders this Persian
+     * label, never the internal ___NAME___ convention (the built slot already
+     * renders the typed-name input; the source tile was the last leak). */
+    nameChipLabel: '[نامت]',
     /* mastery gate — TASK-HANASO-25: counts now match the real 25-item kana
      * bank (5 per measure); «ده پرسش» was the audit's honesty finding (13/12
      * served). The FSRS claim is dropped (fsrsItems=[] — BUG-024 family). */

@@ -160,8 +160,11 @@ describe('StationRunner — ISSUE #147: narration-only scene steps are advanceab
       expect(forward(), 'a reply step does not forward before a real registration').toBeNull();
 
       // Build the accepted order ic1 → ic2(name chip) → ic3 → ic4.
+      // B1-REBUILD 2026-11-26 §۲: the unplaced name tile now renders the
+      // Persian label «[نامت]» (fa.curriculum.nameChipLabel) — the internal
+      // ___NAME___ convention never crosses to the learner.
       fireEvent.click(screen.getByRole('button', { name: 'はじめまして、' }));
-      fireEvent.click(screen.getByRole('button', { name: '___NAME___' }));
+      fireEvent.click(screen.getByRole('button', { name: '[نامت]' }));
       const nameInput = screen.getByPlaceholderText('نامت را بنویس') as HTMLInputElement;
       fireEvent.change(nameInput, { target: { value: 'آرش' } });
       fireEvent.click(screen.getByRole('button', { name: 'です。' }));
