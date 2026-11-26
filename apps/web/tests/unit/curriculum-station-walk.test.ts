@@ -13,14 +13,20 @@ import { describe, expect, it } from 'vitest';
 import {
   blockResult,
   canGoPrev,
+  isDialogueOpeningPair,
+  isEmbeddedDialogueBlock,
   mergeEliminated,
   nextStep,
   prevStep,
+  prevWalkStep,
   stationFinishScore,
   stepOfBlock,
+  walkablePosition,
+  walkableSteps,
   withBlockResult,
   type BlockLike,
   type BlockResults,
+  type WalkBlock,
 } from '@/modules/curriculum/station-walk';
 
 const blocks: BlockLike[] = [
@@ -150,5 +156,73 @@ describe('station finishing score — Issue #102 (what a threshold station compl
   it('returns the fallback for stations without exercise blocks (viewed/task stations)', () => {
     expect(stationFinishScore([{ id: 'b1', kind: 'scene' }], {}, null)).toBeNull();
     expect(stationFinishScore([{ id: 'b1', kind: 'scene' }], {}, 0.9)).toBe(0.9);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* LESSON-UX PART1 2026-11-26 — the grouped opening pair (owner report */
+/* «اولین درس فصل اول مکالمه را دو بار نشان می‌دهد»)                      */
+/* ------------------------------------------------------------------ */
+
+/** A station shaped like the anchors: [scene, dialogue-player, check…]. */
+const pairBlocks: WalkBlock[] = [
+  { id: 'blk-scene', kind: 'scene' },
+  { id: 'blk-dialogue', kind: 'dialogue-player' },
+  { id: 'blk-check', kind: 'exercise' },
+  { id: 'blk-wrapup', kind: 'wrap-up' },
+];
+
+describe('LESSON-UX PART1 — the grouped dialogue-opening pair', () => {
+  it('a scene followed by a FULL dialogue-player forms ONE pair; the dialogue block is its embedded half', () => {
+    expect(isDialogueOpeningPair(pairBlocks, 0)).toBe(true);
+    expect(isEmbeddedDialogueBlock(pairBlocks, 1)).toBe(true);
+    expect(isEmbeddedDialogueBlock(pairBlocks, 0)).toBe(false); // the scene head is parkable
+    expect(isEmbeddedDialogueBlock(pairBlocks, 2)).toBe(false);
+  });
+
+  it('a focused-line teaching dialogue block keeps its OWN step (never embedded)', () => {
+    const focused: WalkBlock[] = [
+      { id: 'blk-rule', kind: 'rule-card' },
+      { id: 'blk-scene2', kind: 'scene' },
+      { id: 'blk-focused', kind: 'dialogue-player', lineTeaching: true },
+      { id: 'blk-ex', kind: 'exercise' },
+    ];
+    // a scene before a lineTeaching block does NOT swallow the focused view
+    expect(isDialogueOpeningPair(focused, 1)).toBe(false);
+    expect(isEmbeddedDialogueBlock(focused, 2)).toBe(false);
+    // ids still resolve to their own steps
+    expect(stepOfBlock(focused, 'blk-focused')).toBe(2);
+  });
+
+  it('«مرحلهٔ قبل» hops OVER the embedded half — back from the check lands on the scene step, never a duplicated player', () => {
+    expect(prevWalkStep(pairBlocks, 2)).toBe(0); // the «مکالمه دو بار» bug, fixed
+    expect(prevWalkStep(pairBlocks, 3)).toBe(2);
+    expect(prevWalkStep(pairBlocks, 0)).toBe(0); // clamped like prevStep
+    // consecutive pairs chain correctly: [scene, dialogue, scene, dialogue, ex]
+    const chained: WalkBlock[] = [
+      { id: 's1', kind: 'scene' },
+      { id: 'd1', kind: 'dialogue-player' },
+      { id: 's2', kind: 'scene' },
+      { id: 'd2', kind: 'dialogue-player' },
+      { id: 'x1', kind: 'exercise' },
+    ];
+    expect(prevWalkStep(chained, 4)).toBe(2); // hops d2, parks on s2
+    expect(prevWalkStep(chained, 2)).toBe(0); // hops d1, parks on s1
+  });
+
+  it('id-addressed jumps resolve an embedded dialogue block to its PAIR HEAD (resume, deep links, F4)', () => {
+    expect(stepOfBlock(pairBlocks, 'blk-dialogue')).toBe(0); // → the scene step
+    expect(stepOfBlock(pairBlocks, 'blk-scene')).toBe(0);
+    expect(stepOfBlock(pairBlocks, 'blk-check')).toBe(2);
+    expect(stepOfBlock(pairBlocks, 'blk-elsewhere')).toBeNull();
+  });
+
+  it('the rail math counts PARKABLE sections — the embedded half gets no phantom step', () => {
+    expect(walkableSteps(pairBlocks)).toEqual([0, 2, 3]);
+    expect(walkablePosition(pairBlocks, 0)).toEqual({ current: 1, total: 3 });
+    expect(walkablePosition(pairBlocks, 2)).toEqual({ current: 2, total: 3 });
+    expect(walkablePosition(pairBlocks, 3)).toEqual({ current: 3, total: 3 });
+    // a stale pointer AT an embedded step reports the pair head's position
+    expect(walkablePosition(pairBlocks, 1)).toEqual({ current: 1, total: 3 });
   });
 });

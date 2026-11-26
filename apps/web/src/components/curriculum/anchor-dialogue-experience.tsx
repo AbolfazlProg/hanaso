@@ -13,9 +13,8 @@
  */
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, CircleCheck, MessageCircleQuestion, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CircleCheck, MessageCircleQuestion } from 'lucide-react';
 import { fa } from '@/messages/fa';
-import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import type { CharacterRef, Dialogue } from '@/modules/dialogue';
 import type { Station } from '@/modules/curriculum/types';
 import { DialogueScene } from '@/app/poc/dialogue/dialogue-scene';
@@ -176,19 +175,12 @@ export function AnchorDialogueExperience({ chapterSlug, station, bundle }: Ancho
 
       {/* the proven multi-speaker player (parameterized slug — analytics stay honest).
           TASK-LEARNING-07 / Issue #101: `embedded` hides every PoC navigation surface
-          (nav, /poc/lesson links, finish CTA) — this station owns completion.
+          (nav, /poc/lesson links, finish CTA) — this station owns completion, and the
+          page's own «ادامه» CTA below is the ONE forward action (LESSON-UX PART1).
           JOURNEY-FIX 2026-11-23 §۴: this page IS the anchor's first full-conversation
           listen — the Persian subtitle starts OFF and PINNED off («شکاف دانستن»
           pure listening); the mid-playback toggle remains the learner's own choice. */}
       <DialogueScene bundle={bundle} dialogueSlug={chapterSlug} embedded subtitlePinned />
-
-      {/* TASK-LEARNING-02: real-TTS provenance + VOICEVOX character credit (terms) */}
-      {bundle.audio.audioSource === 'voicevox' && bundle.audio.voiceCredits?.length ? (
-        <p className="flex items-center gap-1.5 text-caption text-ink-soft">
-          <Volume2 aria-hidden className="size-3.5 shrink-0" />
-          صداها با موتور VOICEVOX از پیش تولید شده‌اند — <MixedFaJaText text={bundle.audio.voiceCredits.join('・')} />
-        </p>
-      ) : null}
 
       {!done ? (
         <button

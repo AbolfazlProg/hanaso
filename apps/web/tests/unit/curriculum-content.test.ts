@@ -8,6 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { getChapter, listChapters } from '@/modules/curriculum/content';
+import { anchorIntroLawSatisfied } from '@/modules/curriculum/content/anchor-intro-law';
 import { LEVELS_BY_CODE } from '@/modules/curriculum/content/levels';
 import { validateChapter, validateChapterAgainstDialogue } from '@/modules/curriculum/validation';
 import { orderedStations, resolveJourney, nextStation, masteryStation } from '@/modules/curriculum/journey';
@@ -597,5 +598,59 @@ describe('F4 return-to-teaching contract (TASK-LEARNING-07 Wave 3 — Issue #106
     }
     expect(sawElimination, 'at least one exercise eliminates a wrong option at F2').toBe(true);
     expect(sawReference, 'at least one exercise returns to teaching at F3').toBe(true);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* LESSON-UX PART1 2026-11-26 — the chapter-opening intro law          */
+/* («اول هر فصل یه اسلاید باید بگه طبیعیه بلد نباسی، آخر فصل یاد می‌گیری») */
+/* ------------------------------------------------------------------ */
+
+describe('LESSON-UX PART1 — the chapter-opening intro law (every anchor reassures before the conversation)', () => {
+  it('every chapter anchor opens [reassuring scene → the conversation] — slide 1 says «not knowing is natural», slide 2 is the dialogue', () => {
+    for (const chapter of listChapters()) {
+      const anchor = chapter.stations.find((s) => s.type === 'anchor');
+      /* kana-expansion-01 is a CONTINUATION of chapter 1's arc (the kana bank
+       * completion — Issue #146): no new anchor conversation, so the intro law
+       * has no subject there. Every chapter that DOES open with a conversation
+       * is fully covered by the law. */
+      if (!anchor) continue;
+      const blocks = anchor.blocks;
+      // slide 1 = a scene block carrying BOTH halves of the law
+      const first = blocks[0] as { kind: string; bodyFa?: string; id: string };
+      expect(first.kind, `${chapter.slug}: the anchor must open with a scene block`).toBe('scene');
+      expect(
+        anchorIntroLawSatisfied(first.bodyFa),
+        `${chapter.slug}/${first.id}: the opening scene must embed BOTH law markers (reassurance + chapter-end promise)`,
+      ).toBe(true);
+      // slide 2 = the conversation itself (the full dialogue-player, no teaching subset)
+      const second = blocks[1] as { kind: string; lineTeaching?: boolean; id: string };
+      expect(second.kind, `${chapter.slug}: the second block must be the conversation`).toBe('dialogue-player');
+      expect(
+        second.lineTeaching,
+        `${chapter.slug}/${second.id}: the opening dialogue is the FULL conversation`,
+      ).not.toBe(true);
+    }
+  });
+
+  it('the kana chapter’s first slide dropped the teaching copy — it is the reassurance ONLY', () => {
+    // owner order 2026-11-26 «اسلاید اول فقط این»: the three-scripts teaching
+    // moved to a post-dialogue scene slide; the pre-listen slide carries
+    // nothing but the reassurance.
+    const h0 = getChapter('kana-foundation-01')!.stations.find((s) => s.slug === 'stn-kana-h0')!;
+    const scene = h0.blocks[0] as { bodyFa: string };
+    expect(scene.bodyFa).not.toContain('هیراگانا (خط بومی)');
+    expect(scene.bodyFa).not.toContain('قرارمان ساده است');
+    // …and the post-dialogue scripts scene carries the glyph payoff (line ۲
+    // named them — this slide names what the learner just heard)
+    const scripts = h0.blocks.find((b) => b.id === 'blk-stn-kana-h0-scripts') as { bodyFa: string } | undefined;
+    expect(scripts, 'the three-scripts scene slide must exist after the dialogue').toBeTruthy();
+    expect(scripts!.bodyFa).toContain('ひらがな');
+    expect(scripts!.bodyFa).toContain('カタカナ');
+    expect(scripts!.bodyFa).toContain('かんじ');
+    // the wrap-up keeps Persian-only recap items (EQA-8: use surface)
+    const wrap = h0.blocks.find((b) => b.kind === 'wrap-up') as { itemsFa: string[] };
+    expect(wrap.itemsFa.length).toBeGreaterThan(0);
+    expect(wrap.itemsFa.join(' ')).not.toMatch(/[\u3040-\u30ff\u4e00-\u9faf]/);
   });
 });

@@ -59,6 +59,32 @@ import { loadWritingCharData, writingAvailability, type Point, type WritingCharD
 
 export type WritingMode = 'intro' | 'demo' | 'guided' | 'free' | 'reference';
 
+/**
+ * LESSON-UX PART1 2026-11-26 (owner report «انگشت روی باکس نوشتن هیچ اسکرولی
+ * نمی‌کند»): the canvas owns the touch gesture ONLY while it actually accepts
+ * drawing (the exact same condition `onPointerDown` guards on — one law, no
+ * drift). In every display-only state (intro/demo teaching passes, replays,
+ * the resting reference, a finished free attempt) the gesture must NOT be
+ * captured: `touch-action: pan-y` lets the finger scroll the page straight
+ * through the square. PURE — exported for the regression tests.
+ */
+export function canvasAcceptsDrawing(
+  mode: WritingMode,
+  state: { attemptDone?: boolean; replaying?: boolean } = {},
+): boolean {
+  if (mode !== 'guided' && mode !== 'free') return false;
+  if (state.attemptDone || state.replaying) return false;
+  return true;
+}
+
+/** The tailwind touch-action utility for the current canvas state (see canvasAcceptsDrawing). */
+export function canvasTouchClass(
+  mode: WritingMode,
+  state: { attemptDone?: boolean; replaying?: boolean } = {},
+): 'touch-none' | 'touch-pan-y' {
+  return canvasAcceptsDrawing(mode, state) ? 'touch-none' : 'touch-pan-y';
+}
+
 export interface WritingCanvasProps {
   character: string;
   mode: WritingMode;
@@ -545,8 +571,10 @@ export function WritingCanvas({
 
   const onPointerDown = useCallback(
     (ev: React.PointerEvent<SVGSVGElement>) => {
-      if (mode !== 'guided' && mode !== 'free') return;
-      if (attemptDone || !charData || replaying) return;
+      // the SAME law the touch-action class follows (canvasAcceptsDrawing) —
+      // the guard and the CSS can never drift apart.
+      if (!canvasAcceptsDrawing(mode, { attemptDone, replaying })) return;
+      if (!charData) return;
       try {
         ev.currentTarget.setPointerCapture(ev.pointerId);
       } catch {
@@ -637,12 +665,15 @@ export function WritingCanvas({
   const demoBadgeAt = demoMedian.length >= 2 ? pointAt(demoMedian, 0.62) : null;
 
   return (
+    /* LESSON-UX PART1: touch-action follows the drawing guard — `none` only
+     * while the square accepts pen input; display-only states pass the
+     * vertical page scroll through (`touch-pan-y`). */
     <svg
       ref={svgRef}
       viewBox="0 0 1024 1024"
       role="img"
       aria-label={`محل نوشتن ${character} — ${totalStrokes} ضربه`}
-      className={`frame-ink touch-none select-none rounded-lg bg-paper shadow-card ${className ?? ''}`}
+      className={`frame-ink ${canvasTouchClass(mode, { attemptDone, replaying })} select-none rounded-lg bg-paper shadow-card ${className ?? ''}`}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
