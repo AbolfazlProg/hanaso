@@ -1,5 +1,5 @@
 {
-  "generatedBy": "voicevox:latest (VPS engine) — TASK-LEARNING-08 Addendum-5 §4: speaker 90 (VOICEVOX:ぞん子 ノーマル), speedScale 1.0, offline pre-generation. A/B + word-ASR evidence: ops/checkpoints/TASK-LEARNING-08/OWNER_FEEDBACK_CHECKLIST.md §A5-4 (/root/a5-voice-ab/). Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + loudness-match (RMS→−17dBFS, peak≤−1.5dBFS); opus 64k / m4a 128k. Credit: VOICEVOX:ぞん子 (VOICEVOX character terms) | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 (VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry \"batch\":\"runner-voicevox-0.26.2\" | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 (VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry \"batch\":\"runner-voicevox-0.26.2\"",
+  "generatedBy": "voicevox:latest (VPS engine) — TASK-LEARNING-08 Addendum-5 §4: speaker 90 (VOICEVOX:ぞん子 ノーマル), speedScale 1.0, offline pre-generation. A/B + word-ASR evidence: ops/checkpoints/TASK-LEARNING-08/OWNER_FEEDBACK_CHECKLIST.md §A5-4 (/root/a5-voice-ab/). Mastering: HPF70 + shelf+2.5dB@2.5k + gate(-40dB,r2:1) + loudness-match (RMS→−17dBFS, peak≤−1.5dBFS); opus 64k / m4a 128k. Credit: VOICEVOX:ぞん子 (VOICEVOX character terms) | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 (VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry \"batch\":\"runner-voicevox-0.26.2\" | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 (VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry \"batch\":\"runner-voicevox-0.26.2\" | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 (VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry \"batch\":\"runner-voicevox-0.26.2\" | batch-2 (Issue #146 audio completion): voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER (never on the VPS/production — owner constraint 2026-11-21), same voice speaker 90 (VOICEVOX:ぞん子 ノーマル), same mastering chain; entries carry \"batch\":\"runner-voicevox-0.26.2\"",
   "format": "voicevox-opus-m4a",
   "entries": {
     "あう": {
@@ -1903,6 +1903,1254 @@
       "bytesM4a": 13938,
       "durationMs": 945,
       "hash": "ad083138ffcc4bc0",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "あ": {
+      "file": "w-98fdfc0a7426bbb0",
+      "bytes": 4652,
+      "bytesM4a": 7221,
+      "durationMs": 444,
+      "hash": "25cdbf83c9736b67",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "あさごはん": {
+      "file": "w-4d59411a111ec4e7",
+      "bytes": 9505,
+      "bytesM4a": 15010,
+      "durationMs": 967,
+      "hash": "293558369727c8bb",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "い": {
+      "file": "w-3c01c77f19cdeb6c",
+      "bytes": 4636,
+      "bytesM4a": 6474,
+      "durationMs": 423,
+      "hash": "6a1e299e2f9bc9fe",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "いいえ、": {
+      "file": "w-88aba029d7aa32fc",
+      "bytes": 7454,
+      "bytesM4a": 12331,
+      "durationMs": 753,
+      "hash": "55a77514d076a7e9",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "う": {
+      "file": "w-af2b29a995c771b3",
+      "bytes": 4571,
+      "bytesM4a": 6541,
+      "durationMs": 401,
+      "hash": "d2a35e8374bf1ac0",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "お": {
+      "file": "w-ac6bc7de7112c02d",
+      "bytes": 4341,
+      "bytesM4a": 6156,
+      "durationMs": 412,
+      "hash": "dfc7a16bad681d01",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "おおきい！": {
+      "file": "w-ce61a343fe339064",
+      "bytes": 8438,
+      "bytesM4a": 12672,
+      "durationMs": 860,
+      "hash": "b299217c9a9f536f",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "おなまえは؟": {
+      "file": "w-85c6acc1f15b5591",
+      "bytes": 9276,
+      "bytesM4a": 14194,
+      "durationMs": 945,
+      "hash": "12e8b120b3af771c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "おなまえは？": {
+      "file": "w-7eb703e402b6eaa0",
+      "bytes": 10917,
+      "bytesM4a": 16826,
+      "durationMs": 1095,
+      "hash": "9de527f12f5eb926",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "おんがく": {
+      "file": "w-0c9a3f852968f54c",
+      "bytes": 8687,
+      "bytesM4a": 12296,
+      "durationMs": 849,
+      "hash": "a6458fedaa0d7c6d",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "か": {
+      "file": "w-288c9e077190b860",
+      "bytes": 5350,
+      "bytesM4a": 7598,
+      "durationMs": 487,
+      "hash": "25df08ce480dddd3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "が": {
+      "file": "w-a142816563b38903",
+      "bytes": 5200,
+      "bytesM4a": 7197,
+      "durationMs": 465,
+      "hash": "9d7bbf059f30bc6d",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "き": {
+      "file": "w-27acc76c0055348f",
+      "bytes": 5208,
+      "bytesM4a": 7541,
+      "durationMs": 497,
+      "hash": "23668602ccb6c229",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "きました": {
+      "file": "w-8b1924b261408e32",
+      "bytes": 8276,
+      "bytesM4a": 12869,
+      "durationMs": 839,
+      "hash": "272696b137db09e8",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "きました。": {
+      "file": "w-fc37fac02cd117f8",
+      "bytes": 8276,
+      "bytesM4a": 12869,
+      "durationMs": 839,
+      "hash": "684df4e0e5c3ebd3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "きゃ": {
+      "file": "w-b2b7e45bf39e912d",
+      "bytes": 5999,
+      "bytesM4a": 8322,
+      "durationMs": 551,
+      "hash": "3bd62216ff4c2c11",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "きや": {
+      "file": "w-e2172f1ae409e580",
+      "bytes": 6973,
+      "bytesM4a": 10031,
+      "durationMs": 647,
+      "hash": "e9cf32d67810606b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "きょうの ケーキ": {
+      "file": "w-42772bbf10c5f502",
+      "bytes": 15688,
+      "bytesM4a": 21088,
+      "durationMs": 1543,
+      "hash": "e9a502d40b7ff167",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ぎ": {
+      "file": "w-9a77c2df496e764e",
+      "bytes": 4841,
+      "bytesM4a": 7062,
+      "durationMs": 465,
+      "hash": "a28b42f084a15406",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "く": {
+      "file": "w-ac94e112183c0533",
+      "bytes": 5478,
+      "bytesM4a": 7971,
+      "durationMs": 487,
+      "hash": "f82aa10c61c10a86",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ぐ": {
+      "file": "w-6e159a91b7ceb7c7",
+      "bytes": 5193,
+      "bytesM4a": 7203,
+      "durationMs": 455,
+      "hash": "ebea0291d89071ba",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "け": {
+      "file": "w-d32afeb0abe682c6",
+      "bytes": 5280,
+      "bytesM4a": 7963,
+      "durationMs": 519,
+      "hash": "afad63e0ef6ed874",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "げ": {
+      "file": "w-9167af511d532a10",
+      "bytes": 5274,
+      "bytesM4a": 8015,
+      "durationMs": 487,
+      "hash": "b128949bc37b05b4",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "こ": {
+      "file": "w-91714b00e5a3169d",
+      "bytes": 4992,
+      "bytesM4a": 6892,
+      "durationMs": 476,
+      "hash": "bc84f13cef2677c1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "こんにちは！": {
+      "file": "w-7f5f5acd48cd19eb",
+      "bytes": 9584,
+      "bytesM4a": 13972,
+      "durationMs": 924,
+      "hash": "caa310ea26423f73",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ご": {
+      "file": "w-27a87259d93f8e7b",
+      "bytes": 5127,
+      "bytesM4a": 6641,
+      "durationMs": 455,
+      "hash": "0e5ce7b00e2c2686",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "さ": {
+      "file": "w-7a4faed063b661c5",
+      "bytes": 5927,
+      "bytesM4a": 9127,
+      "durationMs": 583,
+      "hash": "612166a6a8f75fd8",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ざ": {
+      "file": "w-d08b423295117578",
+      "bytes": 5632,
+      "bytesM4a": 7780,
+      "durationMs": 519,
+      "hash": "e5958e1174ef1c99",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "し": {
+      "file": "w-812f45bfcf7e3476",
+      "bytes": 6041,
+      "bytesM4a": 8828,
+      "durationMs": 593,
+      "hash": "2716173ea3c2b260",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "しずか": {
+      "file": "w-75d440e93bca5f85",
+      "bytes": 8336,
+      "bytesM4a": 12903,
+      "durationMs": 828,
+      "hash": "ddd92f00a3c9f45b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "しゃ": {
+      "file": "w-b6e3f9666c7a790b",
+      "bytes": 6025,
+      "bytesM4a": 8551,
+      "durationMs": 583,
+      "hash": "3c754827d2d67b57",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "しや": {
+      "file": "w-752803967f7a431d",
+      "bytes": 7402,
+      "bytesM4a": 10974,
+      "durationMs": 732,
+      "hash": "8b0c5f56a41e7b51",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "す": {
+      "file": "w-5b8252a1e93fdd91",
+      "bytes": 5939,
+      "bytesM4a": 9110,
+      "durationMs": 583,
+      "hash": "a11ee25b018beed0",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "せ": {
+      "file": "w-e1c730bd83c3a8a0",
+      "bytes": 6075,
+      "bytesM4a": 9014,
+      "durationMs": 604,
+      "hash": "5fff452b90939570",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ぜ": {
+      "file": "w-8759dfeb913aebae",
+      "bytes": 5638,
+      "bytesM4a": 8500,
+      "durationMs": 540,
+      "hash": "e97df076f8ee3f71",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "そ": {
+      "file": "w-b345d8cc836859f8",
+      "bytes": 5845,
+      "bytesM4a": 8687,
+      "durationMs": 583,
+      "hash": "677cd547e65c3f55",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "そうですか！わかりました。": {
+      "file": "w-58089b1f1057c094",
+      "bytes": 20706,
+      "bytesM4a": 30576,
+      "durationMs": 2172,
+      "hash": "cc0c4f3bc14e58a5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "た": {
+      "file": "w-cf4d17f99d10d3b8",
+      "bytes": 5161,
+      "bytesM4a": 7048,
+      "durationMs": 476,
+      "hash": "99a1d85d6cc7d54c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "だ": {
+      "file": "w-b3d236275fac3409",
+      "bytes": 5021,
+      "bytesM4a": 7026,
+      "durationMs": 455,
+      "hash": "311974cd0d3b4d8d",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ち": {
+      "file": "w-e022bea2e9d686ab",
+      "bytes": 5798,
+      "bytesM4a": 8022,
+      "durationMs": 551,
+      "hash": "3e7425ff57cece58",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ちゃ": {
+      "file": "w-062957be362f4839",
+      "bytes": 5959,
+      "bytesM4a": 8459,
+      "durationMs": 551,
+      "hash": "2049ab1157da33b3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "つ": {
+      "file": "w-0c414c812bd82ec7",
+      "bytes": 5660,
+      "bytesM4a": 8289,
+      "durationMs": 540,
+      "hash": "e3c394d9792400bb",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "て": {
+      "file": "w-e2d970611589c8cc",
+      "bytes": 5169,
+      "bytesM4a": 7980,
+      "durationMs": 497,
+      "hash": "189af3f639db91c1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "です。": {
+      "file": "w-af2f002973fd8900",
+      "bytes": 6212,
+      "bytesM4a": 10230,
+      "durationMs": 668,
+      "hash": "3da59510e3da7385",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "でんしゃ": {
+      "file": "w-c5b48d951de5dcbf",
+      "bytes": 7420,
+      "bytesM4a": 11102,
+      "durationMs": 711,
+      "hash": "4291b239425ea912",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "と": {
+      "file": "w-a986a7bc9e034c5e",
+      "bytes": 4860,
+      "bytesM4a": 7035,
+      "durationMs": 455,
+      "hash": "6d0229eebf56fe32",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "な": {
+      "file": "w-478d2f9eb1928566",
+      "bytes": 5105,
+      "bytesM4a": 7694,
+      "durationMs": 487,
+      "hash": "6ad00ca0f3d5f8bd",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "に": {
+      "file": "w-de3d1ecc94b26d28",
+      "bytes": 4968,
+      "bytesM4a": 7067,
+      "durationMs": 476,
+      "hash": "6477f8053b57207d",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ぬ": {
+      "file": "w-ad142ed0573db302",
+      "bytes": 5114,
+      "bytesM4a": 7043,
+      "durationMs": 455,
+      "hash": "fe30f2097d9d36c6",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ね": {
+      "file": "w-3a104bbe569eb15e",
+      "bytes": 5290,
+      "bytesM4a": 7911,
+      "durationMs": 508,
+      "hash": "76aef0ab1e0875b1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "は": {
+      "file": "w-1fa0519cfd095c24",
+      "bytes": 5340,
+      "bytesM4a": 7375,
+      "durationMs": 476,
+      "hash": "a07ade8a07bd66a1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "はじめまして、": {
+      "file": "w-00e434c8e4ce7161",
+      "bytes": 11076,
+      "bytesM4a": 17059,
+      "durationMs": 1116,
+      "hash": "58317baa1bbd86da",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "はじめまして、ミキです。": {
+      "file": "w-9c8585a7833c2259",
+      "bytes": 18768,
+      "bytesM4a": 29590,
+      "durationMs": 2001,
+      "hash": "a135b4f4a8d8fd6c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ば": {
+      "file": "w-d8c158e0a2d13823",
+      "bytes": 5154,
+      "bytesM4a": 7313,
+      "durationMs": 476,
+      "hash": "3ee35f3c7f5ad721",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ぱ": {
+      "file": "w-81223f8ee527c6ee",
+      "bytes": 5391,
+      "bytesM4a": 7679,
+      "durationMs": 497,
+      "hash": "437345f392658f47",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ひ": {
+      "file": "w-469e92c9cf65b91a",
+      "bytes": 5417,
+      "bytesM4a": 8445,
+      "durationMs": 529,
+      "hash": "ec5802b5ff252e4f",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ひゃ": {
+      "file": "w-f28cd0be883a8f02",
+      "bytes": 5918,
+      "bytesM4a": 8296,
+      "durationMs": 593,
+      "hash": "8bafb1140039c5c4",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ふ": {
+      "file": "w-382a438fd4c5def5",
+      "bytes": 5613,
+      "bytesM4a": 8036,
+      "durationMs": 540,
+      "hash": "774273c44cb8834b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "へ": {
+      "file": "w-72c746d609d403eb",
+      "bytes": 4497,
+      "bytesM4a": 6818,
+      "durationMs": 433,
+      "hash": "4ad48525e1afc235",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ぺ": {
+      "file": "w-bd1d8044336da756",
+      "bytes": 5601,
+      "bytesM4a": 8701,
+      "durationMs": 529,
+      "hash": "339dc5067cce1bc5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ほ": {
+      "file": "w-5a340fe4758d177c",
+      "bytes": 5353,
+      "bytesM4a": 7295,
+      "durationMs": 529,
+      "hash": "e6db6cd765186149",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ま": {
+      "file": "w-400805e5a9e211f3",
+      "bytes": 5334,
+      "bytesM4a": 7654,
+      "durationMs": 519,
+      "hash": "1c2ecb6ed1e7b0c1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "み": {
+      "file": "w-1c5425dae8c95514",
+      "bytes": 4996,
+      "bytesM4a": 7395,
+      "durationMs": 487,
+      "hash": "fc1c614154707d6a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "む": {
+      "file": "w-50029791cb9f0026",
+      "bytes": 5006,
+      "bytesM4a": 7039,
+      "durationMs": 476,
+      "hash": "1b5040eda7b6bf9f",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "め": {
+      "file": "w-634540f05d981bc8",
+      "bytes": 5391,
+      "bytesM4a": 8702,
+      "durationMs": 529,
+      "hash": "9bf3304f009ed93c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "も": {
+      "file": "w-3c6945772d72d388",
+      "bytes": 5335,
+      "bytesM4a": 7745,
+      "durationMs": 508,
+      "hash": "a43ee82d287523cc",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "や": {
+      "file": "w-bdab1b17397deeba",
+      "bytes": 5579,
+      "bytesM4a": 8462,
+      "durationMs": 540,
+      "hash": "ebc844bb0b5de1fe",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ゆ": {
+      "file": "w-44567171f3358dee",
+      "bytes": 5913,
+      "bytesM4a": 8585,
+      "durationMs": 529,
+      "hash": "e1467c168901f5ea",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "よ": {
+      "file": "w-6f46f7d4a286b015",
+      "bytes": 5481,
+      "bytesM4a": 8278,
+      "durationMs": 529,
+      "hash": "d70bce4c5374ffc9",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "よろしく おねがいします。": {
+      "file": "w-8626863cd41d29d0",
+      "bytes": 18631,
+      "bytesM4a": 29810,
+      "durationMs": 2119,
+      "hash": "f4797662ecc72b71",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ら": {
+      "file": "w-ba7526a5c03fda30",
+      "bytes": 5324,
+      "bytesM4a": 7612,
+      "durationMs": 497,
+      "hash": "f10f72e246e22ce2",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "り": {
+      "file": "w-71d1c63e507f4593",
+      "bytes": 4941,
+      "bytesM4a": 7260,
+      "durationMs": 465,
+      "hash": "94a06922558218dd",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "りゃ": {
+      "file": "w-f58558332c0ce3c4",
+      "bytes": 5562,
+      "bytesM4a": 8317,
+      "durationMs": 529,
+      "hash": "a52b694d395e76cd",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "る": {
+      "file": "w-ffab9d02a311a737",
+      "bytes": 5286,
+      "bytesM4a": 7071,
+      "durationMs": 465,
+      "hash": "01d215f60b1cb76c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "れ": {
+      "file": "w-df82f999c7fbb62a",
+      "bytes": 5349,
+      "bytesM4a": 7677,
+      "durationMs": 497,
+      "hash": "470d30d28582e53a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ろ": {
+      "file": "w-eb766006aba2e3b0",
+      "bytes": 5495,
+      "bytesM4a": 7534,
+      "durationMs": 487,
+      "hash": "7ca8893f473e99ac",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "わ": {
+      "file": "w-dedb707d8398f960",
+      "bytes": 5340,
+      "bytesM4a": 7375,
+      "durationMs": 476,
+      "hash": "6de112fa587879b3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "わたしは": {
+      "file": "w-3fab670e740b36d5",
+      "bytes": 8911,
+      "bytesM4a": 13103,
+      "durationMs": 860,
+      "hash": "39ddec0ce715b931",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "を": {
+      "file": "w-eba95ba0c66639b9",
+      "bytes": 4341,
+      "bytesM4a": 6156,
+      "durationMs": 412,
+      "hash": "2c9483e09ce49c95",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ん": {
+      "file": "w-48a866bfdaf92861",
+      "bytes": 4507,
+      "bytesM4a": 6173,
+      "durationMs": 401,
+      "hash": "6745eb431ae33d9a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ア": {
+      "file": "w-1b4c4cc65ff2ba9f",
+      "bytes": 4652,
+      "bytesM4a": 7221,
+      "durationMs": 444,
+      "hash": "553a1d16b3c7ac1f",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "イ": {
+      "file": "w-b284de61340bafe1",
+      "bytes": 4636,
+      "bytesM4a": 6474,
+      "durationMs": 423,
+      "hash": "a60b988bc2d1e37f",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "イランから": {
+      "file": "w-132cddf72ac2d394",
+      "bytes": 8565,
+      "bytesM4a": 12633,
+      "durationMs": 860,
+      "hash": "a6de623ba0d2b766",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "イランじん": {
+      "file": "w-594046a6e2bc4927",
+      "bytes": 8460,
+      "bytesM4a": 13107,
+      "durationMs": 913,
+      "hash": "31a7496b1d8ea155",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "イランじんです。": {
+      "file": "w-a207a4008966cb9b",
+      "bytes": 9831,
+      "bytesM4a": 17269,
+      "durationMs": 1159,
+      "hash": "c09790aec3e69652",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ウ": {
+      "file": "w-86686c311378ff45",
+      "bytes": 4571,
+      "bytesM4a": 6541,
+      "durationMs": 401,
+      "hash": "cc7e78faeaf42a79",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "エ": {
+      "file": "w-3707bab0c47b5a9a",
+      "bytes": 4497,
+      "bytesM4a": 6818,
+      "durationMs": 433,
+      "hash": "69076152ba26fcc6",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "オ": {
+      "file": "w-06716d34cc81dc16",
+      "bytes": 4341,
+      "bytesM4a": 6156,
+      "durationMs": 412,
+      "hash": "fba4f19081bd7d69",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "オート": {
+      "file": "w-cf9b0be8ddc9713e",
+      "bytes": 7597,
+      "bytesM4a": 10702,
+      "durationMs": 721,
+      "hash": "8ce1cb43d510fc34",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "カ": {
+      "file": "w-00ed9f08e29eb116",
+      "bytes": 5350,
+      "bytesM4a": 7598,
+      "durationMs": 487,
+      "hash": "8602d42ba588d5b2",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ガ": {
+      "file": "w-2cf8934dec55bf85",
+      "bytes": 5200,
+      "bytesM4a": 7197,
+      "durationMs": 465,
+      "hash": "4ab6bf3786a453e1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "キ": {
+      "file": "w-408ae436f0e0fabd",
+      "bytes": 5208,
+      "bytesM4a": 7541,
+      "durationMs": 497,
+      "hash": "495405d9f29283c1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "キャ": {
+      "file": "w-b051252d619fc730",
+      "bytes": 5999,
+      "bytesM4a": 8322,
+      "durationMs": 551,
+      "hash": "425991b496807ea7",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "キャンセル": {
+      "file": "w-269b0f92e460f3dd",
+      "bytes": 8476,
+      "bytesM4a": 12643,
+      "durationMs": 849,
+      "hash": "f80d59278ffb7b2d",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ク": {
+      "file": "w-15901a60a347ade6",
+      "bytes": 5478,
+      "bytesM4a": 7971,
+      "durationMs": 487,
+      "hash": "212fa0a0612d88ab",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "グループ": {
+      "file": "w-7769eea4413b1212",
+      "bytes": 8955,
+      "bytesM4a": 12940,
+      "durationMs": 828,
+      "hash": "341a87fc0c803ebc",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ケ": {
+      "file": "w-b50e4b46f60819bb",
+      "bytes": 5280,
+      "bytesM4a": 7963,
+      "durationMs": 519,
+      "hash": "9534f200f2c17545",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ゲ": {
+      "file": "w-df715d6e09679011",
+      "bytes": 5274,
+      "bytesM4a": 8015,
+      "durationMs": 487,
+      "hash": "829fc682a9ff050c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "コ": {
+      "file": "w-202a6b25e725cfb2",
+      "bytes": 4992,
+      "bytesM4a": 6892,
+      "durationMs": 476,
+      "hash": "9b2adc4e58614eac",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "コーヒー・セット": {
+      "file": "w-0fd44ab4187c9997",
+      "bytes": 15995,
+      "bytesM4a": 23757,
+      "durationMs": 1681,
+      "hash": "bfbe86684353b7b3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "サ": {
+      "file": "w-bf2cbaccbc43602e",
+      "bytes": 5927,
+      "bytesM4a": 9127,
+      "durationMs": 583,
+      "hash": "94d27691580a6e6c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ザ": {
+      "file": "w-bdf380ec22e51f07",
+      "bytes": 5632,
+      "bytesM4a": 7780,
+      "durationMs": 519,
+      "hash": "1f3693d7b21534a0",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "シ": {
+      "file": "w-1afad7703773366d",
+      "bytes": 6041,
+      "bytesM4a": 8828,
+      "durationMs": 593,
+      "hash": "18760ba1fbbc036b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "シャ": {
+      "file": "w-b754a5ae0dcc6330",
+      "bytes": 6025,
+      "bytesM4a": 8551,
+      "durationMs": 583,
+      "hash": "b89fa8cab0fd402c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "シュ": {
+      "file": "w-1583ea07ca02335d",
+      "bytes": 6366,
+      "bytesM4a": 9580,
+      "durationMs": 604,
+      "hash": "780fc119be42e9bd",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ジ": {
+      "file": "w-fcd474ce77e4a9e8",
+      "bytes": 5269,
+      "bytesM4a": 7767,
+      "durationMs": 519,
+      "hash": "e2201dc8493dcaa4",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ス": {
+      "file": "w-4df8398708abc572",
+      "bytes": 5939,
+      "bytesM4a": 9110,
+      "durationMs": 583,
+      "hash": "f147e53d462cc87e",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "セ": {
+      "file": "w-825cec98c4300495",
+      "bytes": 6075,
+      "bytesM4a": 9014,
+      "durationMs": 604,
+      "hash": "0bbfee67b3d2985a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "セール": {
+      "file": "w-536c40f987924647",
+      "bytes": 7808,
+      "bytesM4a": 11488,
+      "durationMs": 764,
+      "hash": "45bc9f7a88545084",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ソ": {
+      "file": "w-7394858d1c1b9a0a",
+      "bytes": 5845,
+      "bytesM4a": 8687,
+      "durationMs": 583,
+      "hash": "9075bcc313ecc212",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "タ": {
+      "file": "w-056cfad24eb23aac",
+      "bytes": 5161,
+      "bytesM4a": 7048,
+      "durationMs": 476,
+      "hash": "8bc519318dd2d3ec",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ダ": {
+      "file": "w-919e596fb58d7664",
+      "bytes": 5021,
+      "bytesM4a": 7026,
+      "durationMs": 455,
+      "hash": "24bf15caebe900f5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ダンス・ショップ": {
+      "file": "w-4b32cc71b0a47280",
+      "bytes": 14646,
+      "bytesM4a": 20696,
+      "durationMs": 1553,
+      "hash": "e73ede8e8907d2a0",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "チ": {
+      "file": "w-7e62c71ff6cf5a63",
+      "bytes": 5798,
+      "bytesM4a": 8022,
+      "durationMs": 551,
+      "hash": "542e2fb4b6c78fea",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "チュ": {
+      "file": "w-7069a936e85c11f1",
+      "bytes": 6195,
+      "bytesM4a": 8549,
+      "durationMs": 551,
+      "hash": "80ad934178bd6311",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ツ": {
+      "file": "w-ee5fe18a7c7601f5",
+      "bytes": 5660,
+      "bytesM4a": 8289,
+      "durationMs": 540,
+      "hash": "e74d76a4b97ea04e",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "テ": {
+      "file": "w-8996011e5796de88",
+      "bytes": 5169,
+      "bytesM4a": 7980,
+      "durationMs": 497,
+      "hash": "9d3958ac49ff4ad6",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ト": {
+      "file": "w-d729bd2b2767a5bc",
+      "bytes": 4860,
+      "bytesM4a": 7035,
+      "durationMs": 455,
+      "hash": "4dbccd419ecd2fa6",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ナ": {
+      "file": "w-8f67916a925b44d0",
+      "bytes": 5105,
+      "bytesM4a": 7694,
+      "durationMs": 487,
+      "hash": "e1e6634a46963b01",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ニ": {
+      "file": "w-d8a8e4205aa7b3c6",
+      "bytes": 4968,
+      "bytesM4a": 7067,
+      "durationMs": 476,
+      "hash": "1022bf275592f9a7",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ニュ": {
+      "file": "w-d3b3fc36dfa4d9f2",
+      "bytes": 6113,
+      "bytesM4a": 8128,
+      "durationMs": 551,
+      "hash": "b02f94e4c433f12e",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ヌ": {
+      "file": "w-065ebce83a18ee5f",
+      "bytes": 5114,
+      "bytesM4a": 7043,
+      "durationMs": 455,
+      "hash": "e9ccde504f6e1880",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ネ": {
+      "file": "w-edc16abe75a1d9e8",
+      "bytes": 5290,
+      "bytesM4a": 7911,
+      "durationMs": 508,
+      "hash": "2ec802c5a0815fe1",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ノ": {
+      "file": "w-6c807d0ae2cdaf3f",
+      "bytes": 5119,
+      "bytesM4a": 7071,
+      "durationMs": 476,
+      "hash": "131f343f584106be",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ハ": {
+      "file": "w-35104655d4d69b7f",
+      "bytes": 5269,
+      "bytesM4a": 7296,
+      "durationMs": 519,
+      "hash": "9d8c9ff7547bf769",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "バ": {
+      "file": "w-2768d02f90986b3c",
+      "bytes": 5154,
+      "bytesM4a": 7313,
+      "durationMs": 476,
+      "hash": "9bf413b4425da2fb",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "パ": {
+      "file": "w-d4c65564c4ada766",
+      "bytes": 5391,
+      "bytesM4a": 7679,
+      "durationMs": 497,
+      "hash": "79997259bdce2559",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ヒ": {
+      "file": "w-9da359d5199d12ea",
+      "bytes": 5417,
+      "bytesM4a": 8445,
+      "durationMs": 529,
+      "hash": "01c66c1241719704",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "フ": {
+      "file": "w-c2fa87c3ddd2ac60",
+      "bytes": 5613,
+      "bytesM4a": 8036,
+      "durationMs": 540,
+      "hash": "7d84fbf914102f24",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ヘ": {
+      "file": "w-5cf428be44746585",
+      "bytes": 5227,
+      "bytesM4a": 8219,
+      "durationMs": 551,
+      "hash": "63e076b8a85bc03a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ホ": {
+      "file": "w-41a11f66f54098dd",
+      "bytes": 5353,
+      "bytesM4a": 7295,
+      "durationMs": 529,
+      "hash": "d70593e80b570d4c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "マ": {
+      "file": "w-55d42f593ce925f6",
+      "bytes": 5334,
+      "bytesM4a": 7654,
+      "durationMs": 519,
+      "hash": "bf2812a2cd4b37e8",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ミ": {
+      "file": "w-651d85849d50110c",
+      "bytes": 4996,
+      "bytesM4a": 7395,
+      "durationMs": 487,
+      "hash": "cd113bd7def431e4",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ミキさんは だいがくの せんせいです": {
+      "file": "w-dd6c3bcdc0c66d47",
+      "bytes": 28712,
+      "bytesM4a": 44689,
+      "durationMs": 3143,
+      "hash": "69f1aa8b2a3ff248",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ミャ": {
+      "file": "w-9fe6e9cb497390f7",
+      "bytes": 6005,
+      "bytesM4a": 8247,
+      "durationMs": 561,
+      "hash": "f02badea894f016a",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ミュージアム": {
+      "file": "w-9831ab8a77b4e8da",
+      "bytes": 9617,
+      "bytesM4a": 14785,
+      "durationMs": 988,
+      "hash": "6e5e82d091a12a64",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ム": {
+      "file": "w-c6abfe26359370a5",
+      "bytes": 5006,
+      "bytesM4a": 7039,
+      "durationMs": 476,
+      "hash": "a291ca8842933cd9",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "メ": {
+      "file": "w-cfc3325ef0618e28",
+      "bytes": 5391,
+      "bytesM4a": 8702,
+      "durationMs": 529,
+      "hash": "e2bb05dbddd5cd71",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "モ": {
+      "file": "w-577210255a869b86",
+      "bytes": 5335,
+      "bytesM4a": 7745,
+      "durationMs": 508,
+      "hash": "f00271a2f73beb26",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ヤ": {
+      "file": "w-8e621f06c4436e37",
+      "bytes": 5579,
+      "bytesM4a": 8462,
+      "durationMs": 540,
+      "hash": "a75a8ac45d1bdeb9",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ユ": {
+      "file": "w-ea633878f249de24",
+      "bytes": 5913,
+      "bytesM4a": 8585,
+      "durationMs": 529,
+      "hash": "d91181f8572935cf",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ヨ": {
+      "file": "w-da6c6a6baf772a8c",
+      "bytes": 5481,
+      "bytesM4a": 8278,
+      "durationMs": 529,
+      "hash": "8fae95704730be88",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ラ": {
+      "file": "w-d5f1ca173fcd4978",
+      "bytes": 5324,
+      "bytesM4a": 7612,
+      "durationMs": 497,
+      "hash": "317217b12d579751",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "リ": {
+      "file": "w-56cb721117e24a8c",
+      "bytes": 4941,
+      "bytesM4a": 7260,
+      "durationMs": 465,
+      "hash": "22eb73c10348865c",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "リャ": {
+      "file": "w-35e4b64905cc4851",
+      "bytes": 5562,
+      "bytesM4a": 8317,
+      "durationMs": 529,
+      "hash": "40efa4ac40ba4ca5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ル": {
+      "file": "w-1d672f91e3ff30ca",
+      "bytes": 5286,
+      "bytesM4a": 7071,
+      "durationMs": 465,
+      "hash": "23b6d051e0aef76e",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "レ": {
+      "file": "w-00859a61c08f1c32",
+      "bytes": 5349,
+      "bytesM4a": 7677,
+      "durationMs": 497,
+      "hash": "ea150e3e182d2bb5",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ロ": {
+      "file": "w-4c1fe526f3636a7d",
+      "bytes": 5495,
+      "bytesM4a": 7534,
+      "durationMs": 487,
+      "hash": "2321e06a19deacf3",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ワ": {
+      "file": "w-a2fbf25469bc1b04",
+      "bytes": 5340,
+      "bytesM4a": 7375,
+      "durationMs": 476,
+      "hash": "441125d302bbf58d",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ヲ": {
+      "file": "w-b40c5f345cb91fc8",
+      "bytes": 4341,
+      "bytesM4a": 6156,
+      "durationMs": 412,
+      "hash": "678c48640da2d827",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "ン": {
+      "file": "w-6ad7ee833add307e",
+      "bytes": 4507,
+      "bytesM4a": 6173,
+      "durationMs": 401,
+      "hash": "0c2bb64a87fe5066",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "人": {
+      "file": "w-4912771a4216d897",
+      "bytes": 6438,
+      "bytesM4a": 9110,
+      "durationMs": 615,
+      "hash": "96b7d6a3b6a09273",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "新入荷": {
+      "file": "w-c7e3e65c4782b9db",
+      "bytes": 11137,
+      "bytesM4a": 16434,
+      "durationMs": 1084,
+      "hash": "b4f7968036259146",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "本日営業": {
+      "file": "w-df2426c690ed75e3",
+      "bytes": 13330,
+      "bytesM4a": 20832,
+      "durationMs": 1361,
+      "hash": "2af88de8ea690b5b",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "４５０": {
+      "file": "w-5784540b3beb113e",
+      "bytes": 12492,
+      "bytesM4a": 19231,
+      "durationMs": 1244,
+      "hash": "c0bb9639a3a56418",
+      "batch": "runner-voicevox-0.26.2"
+    },
+    "５２０": {
+      "file": "w-03686f6779bba2d0",
+      "bytes": 12057,
+      "bytesM4a": 17907,
+      "durationMs": 1159,
+      "hash": "8e79f9cc3c69234c",
       "batch": "runner-voicevox-0.26.2"
     }
   }

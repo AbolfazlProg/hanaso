@@ -12,7 +12,7 @@
  *
  * SAME method as the committed batches (gen-first-meeting-missing-audio.mjs):
  * cast (voices.yaml, style ids verified against the engine at generation time):
- *   miki -> 四国めたん ノーマル (2)   sora -> 九州そら ノーマル (16)
+ *   miki -> 四国めたん ノーマル (2)   sora -> 東北きりたん ノーマル (108 — LESSON-UX P2 #202 re-cast)
  * Params (dialogue manifest): speedScale 0.95, volumeScale 1.0, pitchScale 0.0,
  * intonationScale 1.0, prePhonemeLength 0.06, postPhonemeLength 0.18 + the same
  * sentence-final breath (+0.12s on the last accent phrase).
@@ -50,13 +50,13 @@ const PARAMS = {
 // voiceId → style id (voices.yaml ノーマル styles)
 const STYLES = {
   'vv-female-01-normal': 2, // 四国めたん (miki)
-  'vv-neutral-03-normal': 16, // 九州そら (sora)
+  'vv-female-05-young': 108, // 東北きりたん (sora — LESSON-UX P2 #201 re-cast)
 };
 
 // chr-* → voiceId (the character registry's default casting — mirrors resolveSpeaker)
 const CHARACTER_VOICE = {
   'chr-miki': 'vv-female-01-normal',
-  'chr-sora': 'vv-neutral-03-normal',
+  'chr-sora': 'vv-female-05-young',
 };
 
 // Read the lines straight from the dialogue YAML so code and validator can never
@@ -83,7 +83,7 @@ async function verifyCast() {
   if (!res.ok) throw new Error(`speakers ${res.status}`);
   const speakers = await res.json();
   for (const [voiceId, styleId] of Object.entries(STYLES)) {
-    const speakerName = { 2: '四国めたん', 16: '九州そら' }[styleId];
+    const speakerName = { 2: '四国めたん', 108: '東北きりたん' }[styleId];
     const s = speakers.find((sp) => sp.name === speakerName);
     if (!s) throw new Error(`speaker ${speakerName} not on engine`);
     const style = s.styles.find((st) => st.id === styleId);

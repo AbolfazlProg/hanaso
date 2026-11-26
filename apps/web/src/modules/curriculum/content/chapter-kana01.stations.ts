@@ -2367,11 +2367,23 @@ export const KANA_STATIONS: Station[] = [
      * Prerequisite law (mission §PHASE 8): every word below was ALREADY taught
      * as a kana hostword in H-stations (its glyphs + rules all ≤ h15); nothing
      * new is taught here — the learner READS with what they have.
+     *
+     * LESSON-UX P2 #200 — the reading-sheet rebuild. The owner's brief:
+     * «ایستگاه برگه‌خواندن کلاً ضعیف است و کاربر نمی‌فهمد چی به چی است.
+     * هدفش فقط این است که بتوانی بخوانی. چیزهایی که نوشته‌اند باید وویس
+     * داشته باشند.» The station now IS that one goal, in structure:
+     *   1. the scene states the single goal («فقط می‌خوانی»);
+     *   2. the postcard board is a decode-then-verify loop — every word is
+     *      tappable (reading + meaning + its OWN committed audio on reveal),
+     *      every panel lead is hearable;
+     *   3. the six words are exercised (decode proven);
+     *   4. «کارت‌های واژهٔ تو» closes — the words as WORDS the learner owns
+     *      (shape + reading + meaning + audio — the AUDIO-UNIT contract).
      */
     slug: 'stn-kana-m1-reading',
     type: 'practice',
     titleFa: 'ایستگاه واقعی — برگهٔ خواندن هیراگانا',
-    objectiveFa: 'واژه‌های واقعیِ هیراگانایی را فقط با آموخته‌های خودت می‌خوانی',
+    objectiveFa: 'واژه‌های واقعیِ هیراگانایی را فقط با آموخته‌های خودت می‌خوانی — هدف همین است: بتوانی بخوانی',
     core: true,
     order: 21,
     prerequisites: ['stn-kana-p4'],
@@ -2386,17 +2398,9 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-m1-scene',
         titleFa: 'ایستگاه واقعی — برگهٔ خواندن هیراگانا',
         bodyFa:
-          'تا اینجا همهٔ صداهای پایهٔ هیراگانا و قواعدش را آموخته‌ای. در این ایستگاه هیچ چیز تازه‌ای آموزش داده نمی‌شود — فقط می‌خوانی: یک پست‌کارت واقعی از دوستت میکی که از توکیو برایت فرستاده، با واژه‌هایی که تک‌تک اجزایش را می‌شناسی. این همان کاری است که یک ژاپنی‌دانی که تازه راه افتاده، هر روز با پیام‌ها و تابلوهای ساده می‌کند.',
+          'تا اینجا همهٔ صداهای پایهٔ هیراگانا و قواعدش را آموخته‌ای. هدف این ایستگاه فقط یکی است: بتوانی بخوانی. هیچ چیز تازه‌ای آموزش داده نمی‌شود — یک پست‌کارت واقعی از دوستت میکی از توکیو برایت آمده؛ اول هر واژه را خودت می‌خوانی، بعد با یک لمس خواندن، معنا و صدایش را چک می‌کنی. همین کاری است که ژاپنی‌دانی که تازه راه افتاده هر روز با پیام‌ها و تابلوهای ساده می‌کند.',
       },
       {
-        /*
-         * Part-2 ط (the summary promises «از پیام دوستت تا تابلوی ایستگاه» —
-         * the delivery was six bare word-cards): the FRIEND'S POSTCARD now
-         * leads — a real artifact whose every line is a TAUGHT word. Bare
-         * board (showGloss:false): the gloss would be the answer to the decode
-         * exercises below; the learner reads the artifact first, then proves
-         * the readings in the exercises.
-         */
         kind: 'realworld-board',
         id: 'blk-stn-kana-m1-postcard',
         titleFa: 'پست‌کارتِ میکی از توکیو',
@@ -2408,19 +2412,18 @@ export const KANA_STATIONS: Station[] = [
             titleFa: 'روی کارت — سلامِ میکی',
             leadJa: 'こんにちは！',
             items: [
-              { ja: 'ねこ', sideJa: '' },
-              { ja: 'すし', sideJa: '' },
+              { ja: 'ねこ', readingFa: 'نِکو', glossFa: 'گربه' },
+              { ja: 'すし', readingFa: 'سوشی', glossFa: 'سوشی' },
             ],
           },
           {
             titleFa: 'عکس‌های سفر — نوشتهٔ زیر عکس‌ها',
             leadJa: 'おおきい！', // the taught h4 reading example — nothing new
-
             items: [
-              { ja: 'いぬ', sideJa: '' },
-              { ja: 'えき', sideJa: '' },
-              { ja: 'みず', sideJa: '' },
-              { ja: 'ともだち', sideJa: '' },
+              { ja: 'いぬ', readingFa: 'اینو', glossFa: 'سگ' },
+              { ja: 'えき', readingFa: 'اِکی', glossFa: 'ایستگاه' },
+              { ja: 'みず', readingFa: 'میزو', glossFa: 'آب' },
+              { ja: 'ともだち', readingFa: 'تُمُداتی', glossFa: 'دوست' },
             ],
           },
         ],
@@ -2438,13 +2441,31 @@ export const KANA_STATIONS: Station[] = [
         ],
       },
       {
+        /* LESSON-UX P2 #200 — the words become the learner's own: the closing
+         * wall shows every decoded word as a full word card (reading + meaning
+         * + its own audio). Read one more time, hear it once more, own it. */
+        kind: 'word-wall',
+        id: 'blk-stn-kana-m1-wordwall',
+        titleFa: 'کارت‌های واژهٔ تو — چیزی که از امروز مال خودت است',
+        bodyFa: 'شش واژهٔ واقعی را همین‌جا رمزگشایی کردی؛ حالا هر کدام یک کارتِ کامل است: خواندنش، معنایش و صدایش.',
+        hintFa: 'هر واژه را یک بار دیگر بلند بخوان و صدایش را بشنو.',
+        words: [
+          { ja: 'ねこ', readingFa: 'نِکو', meaningFa: 'گربه' },
+          { ja: 'すし', readingFa: 'سوشی', meaningFa: 'سوشی' },
+          { ja: 'いぬ', readingFa: 'اینو', meaningFa: 'سگ' },
+          { ja: 'えき', readingFa: 'اِکی', meaningFa: 'ایستگاه' },
+          { ja: 'みず', readingFa: 'میزو', meaningFa: 'آب' },
+          { ja: 'ともだち', readingFa: 'تُمُداتی', meaningFa: 'دوست' },
+        ],
+      },
+      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-m1-wrapup',
         titleFa: 'ایستگاه واقعی — جمع‌بندی',
         itemsFa: [
-          'همهٔ صداهای پایه + قواعد کشش، داکوتن، یوئون و سوکوئون را خواندی',
-          'شش واژهٔ واقعیِ هیراگانایی را رمزگشایی کردی — بدون هیچ واژهٔ جدید',
-          'برای بخش کاتاکانا (خط وام‌واژه‌ها) آماده‌ای',
+          'هدف این ایستگاه همین بود و همان شد: خواندی — همهٔ صداهای پایه + قواعد کشش، داکوتن، یوئون و سوکوئون',
+          'شش واژهٔ واقعیِ هیراگانایی را بدون هیچ واژهٔ جدید رمزگشایی کردی و حالا کارت‌های خودت هستند',
+          'برای بخش کاتاکانا (خط وام‌واژه‌ها) آماده‌ای — همان مسیر، با شکل‌های تازه',
         ],
       },
     ],
@@ -4131,11 +4152,18 @@ export const KANA_STATIONS: Station[] = [
      * TASK-HANASO-22 — Real-World Milestone 2 (section B endpoint).
      * Every loanword below is a REGISTERED katakana hostword taught in the
      * K-stations (glyphs + dakuten/handakuten/choonpu all ≤ k13). Nothing new.
+     *
+     * LESSON-UX P2 #200 — the same reading-sheet rebuild for the katakana
+     * side: the bilingual café menu stays (gloss visible = the tourist-menu
+     * reality), every item gains its Persian reading ON TAP + its OWN audio,
+     * the panel leads and the signboard sides become hearable, and the
+     * station closes on «کارت‌های واژهٔ تو» — the eight loanwords as full
+     * word cards. One goal, stated and delivered: بتوانی بخوانی.
      */
     slug: 'stn-kana-m2-realworld',
     type: 'practice',
     titleFa: 'ایستگاه واقعی — منو و تابلوی کاتاکانا',
-    objectiveFa: 'وام‌واژه‌های واقعی (منو، برند، اشیای روزمره) را با کاتاکانا می‌خوانی',
+    objectiveFa: 'وام‌واژه‌های واقعی (منو، برند، اشیای روزمره) را با کاتاکانا می‌خوانی — هدف همین است: بتوانی بخوانی',
     core: true,
     order: 36,
     prerequisites: ['stn-kana-k13'],
@@ -4150,7 +4178,7 @@ export const KANA_STATIONS: Station[] = [
         id: 'blk-stn-kana-m2-scene',
         titleFa: 'ایستگاه واقعی — منو و تابلوی کاتاکانا',
         bodyFa:
-          'کاتاکانا خطِ وام‌واژه‌هاست: برندها، منوها و واژه‌هایی که از زبان‌های دیگر آمده‌اند. در این ایستگاه یک کافهٔ واقعی توکیویی می‌خوانی — منوی رستوران و تابلوی فروشگاه الکترونیک‌فروشیِ آن‌سوی خیابان. همهٔ آیتم‌ها یا با کاتاکانای آموخته‌شدهٔ خودت نوشته شده‌اند یا — مثل هر منوی دوزبانهٔ واقعی — معنی‌شان زیرش هست؛ بعد از دیدنِ صحنه، همان آیتم‌ها را در تمرین می‌شناسی.',
+          'کاتاکانا خطِ وام‌واژه‌هاست: برندها، منوها و واژه‌هایی که از زبان‌های دیگر آمده‌اند. هدف این ایستگاه فقط یکی است: بتوانی بخوانی. وارد کافهٔ واقعی توکیویی می‌شوی — منوی پیشخوان دوزبانه است و از پنجره، تابلوی فروشگاه الکترونیک‌فروشیِ آن‌سوی خیابان پیداست. هر واژه را اول خودت می‌خوانی؛ معنی‌اش زیرش هست، صدایش را با دکمهٔ پخش می‌شنوی و با یک لمس خواندن فارسی‌اش را چک می‌کنی.',
       },
       {
         /*
@@ -4171,20 +4199,20 @@ export const KANA_STATIONS: Station[] = [
             titleFa: 'منوی کافه (ドリンクメニュー)',
             leadJa: 'コーヒー・セット',
             items: [
-              { ja: 'コーヒー', glossFa: 'قهوه', sideJa: '４５０' },
-              { ja: 'サンドイッチ', glossFa: 'ساندویچ', sideJa: '５２۰' },
-              { ja: 'ラジオ', glossFa: 'رادیو — موسیقی پس‌زمینهٔ کافه', sideJa: '' },
-              { ja: 'テスト', glossFa: 'آزمون — برگهٔ سفارش تستِ طعم امروز', sideJa: '' },
+              { ja: 'コーヒー', readingFa: 'کووهیی', glossFa: 'قهوه', sideJa: '４５０' },
+              { ja: 'サンドイッチ', readingFa: 'سان‌دُیچّی', glossFa: 'ساندویچ', sideJa: '５２０' },
+              { ja: 'ラジオ', readingFa: 'راجیو', glossFa: 'رادیو — موسیقی پس‌زمینهٔ کافه', sideJa: '' },
+              { ja: 'テスト', readingFa: 'تِسوتو', glossFa: 'آزمون — برگهٔ سفارش تستِ طعم امروز', sideJa: '' },
             ],
           },
           {
             titleFa: 'تابلوی فروشگاه روبه‌رو (エレクトロニクス)',
             leadJa: '本日営業',
             items: [
-              { ja: 'パソコン', glossFa: 'رایانهٔ شخصی', sideJa: 'セール' },
-              { ja: 'エアコン', glossFa: 'کولر', sideJa: 'セール' },
-              { ja: 'カラオケ', glossFa: 'کارائوکه — دستگاه چندرسانه‌ای', sideJa: '新入荷' },
-              { ja: 'ドア', glossFa: 'در — برچسبِ «درِ خودکار»', sideJa: 'オート' },
+              { ja: 'パソコン', readingFa: 'پاسُکُن', glossFa: 'رایانهٔ شخصی', sideJa: 'セール' },
+              { ja: 'エアコン', readingFa: 'اِاکُن', glossFa: 'کولر', sideJa: 'セール' },
+              { ja: 'カラオケ', readingFa: 'کارائوکه', glossFa: 'کارائوکه — دستگاه چندرسانه‌ای', sideJa: '新入荷' },
+              { ja: 'ドア', readingFa: 'دُوا', glossFa: 'در — برچسبِ «درِ خودکار»', sideJa: 'オート' },
             ],
           },
         ],
@@ -4210,12 +4238,33 @@ export const KANA_STATIONS: Station[] = [
         exerciseIds: ['ex-kana-m2-menu-pc', 'ex-kana-m2-menu-coffee', 'ex-kana-m2-menu-sand'],
       },
       {
+        /* LESSON-UX P2 #200 — the katakana word wall: the eight loanwords of
+         * the menu and the signboard as full word cards (reading + meaning +
+         * their own committed audio). The learner leaves OWNING them. */
+        kind: 'word-wall',
+        id: 'blk-stn-kana-m2-wordwall',
+        titleFa: 'کارت‌های واژهٔ تو — وام‌واژه‌هایی که از امروز می‌خوانی',
+        bodyFa:
+          'هشت واژهٔ واقعی از منو و تابلوی روبه‌رو را خواندی؛ حالا کارت کامل هر کدام پیش توست: خواندن، معنا و صدا.',
+        hintFa: 'هر واژه را یک بار دیگر بلند بخوان و صدایش را بشنو.',
+        words: [
+          { ja: 'コーヒー', readingFa: 'کووهیی', meaningFa: 'قهوه' },
+          { ja: 'サンドイッチ', readingFa: 'سان‌دُیچّی', meaningFa: 'ساندویچ' },
+          { ja: 'ラジオ', readingFa: 'راجیو', meaningFa: 'رادیو' },
+          { ja: 'テスト', readingFa: 'تِسوتو', meaningFa: 'آزمون' },
+          { ja: 'パソコン', readingFa: 'پاسُکُن', meaningFa: 'رایانهٔ شخصی' },
+          { ja: 'エアコン', readingFa: 'اِاکُن', meaningFa: 'کولر' },
+          { ja: 'カラオケ', readingFa: 'کارائوکه', meaningFa: 'کارائوکه' },
+          { ja: 'ドア', readingFa: 'دُوا', meaningFa: 'در' },
+        ],
+      },
+      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-m2-wrapup',
         titleFa: 'ایستگاه واقعی — جمع‌بندی',
         itemsFa: [
           'منو و تابلوی واقعی خواندی — همان کاری که روز اول توکیو می‌کنی',
-          'وام‌واژه‌های واقعی را با کاتاکانا شناختی و در صحنه‌شان جای گرفتی',
+          'وام‌واژه‌های واقعی را با کاتاکانا خواندی و کارت‌هایشان مال خودت شد',
           'دو خط ژاپنی (هیراگانا و کاتاکانا) را از هم تشخیص می‌دهی',
           'مسیر کانای تو کامل شد — دروازهٔ فصل در انتظار توست',
         ],

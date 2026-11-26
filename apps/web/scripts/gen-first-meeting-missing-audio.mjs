@@ -8,7 +8,7 @@
  *   VOICEVOX_URL=http://127.0.0.1:50021 node apps/web/scripts/gen-first-meeting-missing-audio.mjs
  *
  * Cast (voices.yaml, style ids verified against the engine at generation time):
- *   yamada -> 玄野武宏  ノーマル (11)   sora -> 九州そら ノーマル (16)
+ *   yamada -> 玄野武宏  ノーマル (11)   sora -> 東北きりたん ノーマル (108 — LESSON-UX P2 #202 re-cast)
  *   kim    -> 春日部つむぎ ノーマル (8)
  * Params (dialogue manifest): speedScale 0.95, volumeScale 1.0, pitchScale 0.0,
  * intonationScale 1.0, prePhonemeLength 0.06, postPhonemeLength 0.18.
@@ -42,7 +42,7 @@ const PARAMS = {
 // voiceId → style id (voices.yaml ノーマル styles)
 const STYLES = {
   'vv-male-02-normal': 11, // 玄野武宏 (yamada)
-  'vv-neutral-03-normal': 16, // 九州そら (sora)
+  'vv-female-05-young': 108, // 東北きりたん (sora — LESSON-UX P2 #201 re-cast)
   'vv-female-04-bright': 8, // 春日部つむぎ (kim)
 };
 

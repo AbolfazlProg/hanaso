@@ -51,11 +51,11 @@ describe('dialogue content — cafe-morning-01 (KB dialogue-content-schema §۴)
     }
   });
 
-  it('voice F0s match the spec pitch axis: miki 210 / yamada 110 / sora 160 Hz', () => {
+  it('voice F0s match the spec pitch axis: miki 210 / yamada 110 / sora 175 Hz (P2 #201 re-cast)', () => {
     const voices = loadVoices();
     expect(voices.get('vv-female-01-normal')!.f0Hz).toBe(210);
     expect(voices.get('vv-male-02-normal')!.f0Hz).toBe(110);
-    expect(voices.get('vv-neutral-03-normal')!.f0Hz).toBe(160);
+    expect(voices.get('vv-female-05-young')!.f0Hz).toBe(175);
   });
 
   it('every co-present voice pair passes ≥2 of 3 distinctness axes (CONTENT-084)', () => {

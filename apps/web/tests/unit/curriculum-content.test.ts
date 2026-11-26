@@ -536,7 +536,7 @@ describe('TASK-LEARNING-02 — owner-notes fidelity gates', () => {
 
   it('the real audio manifest declares the VOICEVOX casting + credits for every voice in use', () => {
     const assets = loadRealAudioAssets()!;
-    for (const voiceId of ['vv-female-01-normal', 'vv-male-02-normal', 'vv-neutral-03-normal']) {
+    for (const voiceId of ['vv-female-01-normal', 'vv-male-02-normal', 'vv-female-05-young']) {
       const v = assets.voices?.[voiceId];
       expect(v, `casting for ${voiceId}`).toBeDefined();
       expect(v!.engine).toBe('voicevox');

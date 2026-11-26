@@ -605,6 +605,12 @@ export type TeachingBlock =
        * exercises after it read FROM it. `showGloss` decides the honest
        * treatment: glossed (the bilingual-tourist-menu clue — m2) or bare
        * (the decode challenge of taught words — m1).
+       *
+       * LESSON-UX P2 #200 — the reading sheet's ONE goal is «بتوانی بخوانی»:
+       * every item carries its Persian transliteration (`readingFa`) revealed
+       * ON TAP (the decode-then-verify loop), its own committed audio, and —
+       * where showGloss — the bilingual gloss from the start. Nothing written
+       * on the board is silent or unverifiable any more.
        */
       kind: 'realworld-board';
       id: string;
@@ -617,11 +623,36 @@ export type TeachingBlock =
         leadJa?: string;
         items: {
           ja: string;
+          /** Persian transliteration per the ONE standard (translit-standard.ts)
+           * — hidden until the learner taps the word, then shown beside it. */
+          readingFa?: string;
           /** Persian gloss (bilingual-menu style) — only rendered when showGloss. */
           glossFa?: string;
           /** The small right-hand detail of a real board (price, 〜あります). */
           sideJa?: string;
         }[];
+      }[];
+    }
+  | {
+      /**
+       * LESSON-UX P2 #200 — «کارت‌های واژهٔ تو»: the closing word wall of the
+       * reading-sheet stations. Every decodable word the learner just read
+       * becomes a WORD they own: shape + Persian reading + meaning + its own
+       * committed audio (the AUDIO-UNIT per-word contract — never a dialogue
+       * cut). Purely receptive display; the words were already decoded and
+       * exercised on the board/blocks before it.
+       */
+      kind: 'word-wall';
+      id: string;
+      titleFa: string;
+      bodyFa: string;
+      /** One line under the wall explaining the card anatomy (reading/meaning/audio). */
+      hintFa?: string;
+      words: {
+        ja: string;
+        /** Persian transliteration per the ONE standard (translit-standard.ts). */
+        readingFa: string;
+        meaningFa: string;
       }[];
     }
   | {

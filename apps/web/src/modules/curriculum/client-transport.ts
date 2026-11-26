@@ -151,7 +151,9 @@ export type ClientTeachingBlock =
     }
   | { kind: 'listening-task'; id: string; taskId: string }
   | {
-      /** Part-2 د/ط: the real-world board — pure display, no answer material. */
+      /** Part-2 د/ط: the real-world board — pure display, no answer material.
+       * LESSON-UX P2 #200: items carry their Persian reading (revealed on
+       * tap) — still pure display, no answer material to strip. */
       kind: 'realworld-board';
       id: string;
       titleFa: string;
@@ -160,8 +162,18 @@ export type ClientTeachingBlock =
       panels: {
         titleFa: string;
         leadJa?: string;
-        items: { ja: string; glossFa?: string; sideJa?: string }[];
+        items: { ja: string; readingFa?: string; glossFa?: string; sideJa?: string }[];
       }[];
+    }
+  | {
+      /** LESSON-UX P2 #200: the closing word wall — pure display (shape +
+       * reading + meaning; the audio binds client-side per word). */
+      kind: 'word-wall';
+      id: string;
+      titleFa: string;
+      bodyFa: string;
+      hintFa?: string;
+      words: { ja: string; readingFa: string; meaningFa: string }[];
     }
   | {
       /** Part-2 ز: the drill mode picker — pointer ids only, no answer material. */
@@ -261,7 +273,9 @@ function stripBlock(block: TeachingBlock): ClientTeachingBlock {
       };
     /* Part-2 د/ط: the realworld-board is PURE DISPLAY — every field is
        learner-facing content (item surfaces + authored glosses); there is no
-       answer key to strip. The explicit case documents that decision. */
+       answer key to strip. The explicit case documents that decision.
+       LESSON-UX P2 #200: readingFa joins the same pure-display contract
+       (revealed on tap — the decode-then-verify loop, not an answer key). */
     case 'realworld-board':
       return {
         kind: 'realworld-board',
@@ -270,6 +284,17 @@ function stripBlock(block: TeachingBlock): ClientTeachingBlock {
         captionFa: block.captionFa,
         showGloss: block.showGloss,
         panels: block.panels,
+      };
+    /* LESSON-UX P2 #200: the word wall is PURE DISPLAY too — shape + reading
+       + meaning + its own audio binding; nothing to strip. */
+    case 'word-wall':
+      return {
+        kind: 'word-wall',
+        id: block.id,
+        titleFa: block.titleFa,
+        bodyFa: block.bodyFa,
+        hintFa: block.hintFa,
+        words: block.words,
       };
     case 'drill-menu':
       return {

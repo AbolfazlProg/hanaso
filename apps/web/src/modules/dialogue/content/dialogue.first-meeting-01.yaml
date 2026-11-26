@@ -32,7 +32,7 @@
 #
 # AUDIO (TASK-LEARNING-02): pre-generated VOICEVOX (0.15.7, build-time) dual
 # opus+m4a assets committed under public/audio/dialogues/ — see the sidecar
-# manifest there. Voices: miki=四国めたん, yamada=玄野武宏, sora=九州そら.
+# manifest there. Voices: miki=四国めたん, yamada=玄野武宏, sora=東北きりたん (LESSON-UX P2 #201 re-cast).
 # l9..l12 (Kim arc) + l13 co-speaker have NO real audio yet — honest
 # placeholders until the audio task (per TASK-LEARNING-07 scope §12).
 meta:

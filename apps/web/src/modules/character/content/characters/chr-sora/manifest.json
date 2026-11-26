@@ -5,7 +5,7 @@
   "nameFa": "سورا",
   "role": "companion-2",
   "colorToken": "speaker-3",
-  "voiceId": "vv-neutral-03-normal",
+  "voiceId": "vv-female-05-young",
   "states": ["idle", "listening", "speaking"],
   "expressions": {
     "neutral": null,
@@ -23,6 +23,9 @@
     "totalBytes": 0,
     "checksums": {}
   },
-  "performance": { "fps60Mobile": true, "measuredBytes": 0 },
-  "_note": "PLACEHOLDER manifest — final art assets arrive from the character track (ADR-018 §۲-۴); expression refs are null → neutral fallback."
+  "performance": {
+    "fps60Mobile": true,
+    "measuredBytes": 0
+  },
+  "_note": "PLACEHOLDER manifest — final art assets arrive from the character track (ADR-018 §۲-۴); expression refs are null → neutral fallback. LESSON-UX P2 #201: voice re-cast 九州そら → 東北きりたん (owner: the calm-adult reading did not fit the student peer)."
 }
