@@ -74,12 +74,18 @@ export const POC_SCENE_CSS = `
 }
 /* TASK-LEARNING-07 / Issue #98 — fixed stage + transport: the transcript is its own
    inner scroll region so the page never grows and the scene controls stay put.
-   38vh mobile → 48vh from 48rem up; overscroll containment prevents scroll chaining
-   to the page (the active line is scrolled into view programmatically — see the scene). */
+   38vh mobile → 48vh from 48rem up; the active line is scrolled into view
+   programmatically (see the scene).
+   LESSON-UX PART1 2026-11-26 (owner report «انگشت روی کادر مکالمه صفحه را قفل
+   می‌کند»): overscroll-behavior: contain is REMOVED — it cut the scroll chain
+   to the page, so a finger on the transcript froze the whole page whenever the
+   region was at its boundary (or had nothing to scroll). The default (auto)
+   keeps BOTH scrolls honest: the box scrolls its own overflowing content, and
+   at its edges (or when it does not overflow) the gesture chains straight to
+   the page. */
 .poc-scene-transcript {
   max-height: 38vh;
   overflow-y: auto;
-  overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
 @media (min-width: 48rem) {

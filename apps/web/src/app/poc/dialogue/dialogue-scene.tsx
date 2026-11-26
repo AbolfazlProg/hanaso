@@ -18,10 +18,14 @@
  * - #99-adjacent: joint turns mark BOTH speakers (label «فلانی و بهمانی (با هم)»,
  *   both faces highlighted, both mouths animated via coSpeakerId).
  * - #100: last-line eligibility is tracked from lineStart/lineEnd/stateChange AND
- *   the next button — quick skipping can no longer miss it; the finish CTA routes
- *   through `onFinish` when the host provides one.
+ *   the next button — quick skipping can no longer miss it.
  * - #101: `embedded` hides every PoC navigation surface (nav, /poc/lesson token and
- *   teaches links, finish CTA without onFinish) — the PoC routes stay dev-only.
+ *   teaches links, finish CTA) — the PoC routes stay dev-only.
+ * - LESSON-UX PART1 2026-11-26: the finish CTA («پایان مشاهده») is PoC-ONLY — the
+ *   product walk advances through its own «ادامه» button (the owner's «باید فقط یک
+ *   دکمهٔ ادامه باشد» order); the audio-unavailable note is a fixed learner-facing
+ *   sentence (the raw dev note never renders), and the transcript no longer locks
+ *   the page scroll (overscroll chaining restored — see POC_SCENE_CSS).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { readSubtitleDefault, readAudioSpeedDefault } from '@/lib/learner/preferences';
@@ -65,17 +69,14 @@ export interface DialogueSceneProps {
   dialogueSlug?: string;
   /**
    * TASK-LEARNING-07 / Issue #101: the scene is embedded in the PRODUCT chapter flow
-   * (AnchorDialogueExperience). Every PoC navigation surface is then hidden: the
-   * bottom nav, the /poc/lesson token-chunk and teaches links, and the finish CTA
-   * (unless `onFinish` is provided) — the station owns completion.
+   * (AnchorDialogueExperience + the inline lesson-walk player). Every PoC surface is
+   * then hidden: the bottom nav, the /poc/lesson token-chunk and teaches links, and
+   * the finish CTA — the station owns completion and the walk's own «ادامه» is the
+   * ONE forward action (LESSON-UX PART1 2026-11-26: the redundant «پایان مشاهده»
+   * CTA is gone from the product flow entirely — owner order «دکمه‌ای که زیرش دکمهٔ
+   * ادامه هست بی‌فایده است»).
    */
   embedded?: boolean;
-  /**
-   * Issue #100: host-owned finish routing for embedded scenes. When provided, the
-   * finish CTA calls this instead of posting to the PoC progress store and routing
-   * to /poc/lesson. When absent in embedded mode the CTA is hidden entirely.
-   */
-  onFinish?: () => void | Promise<void>;
   /**
    * Owner order 2026-11-21 «زیرنویس پیش‌فرض روشن در مرحلهٔ آموزش مکالمه»: the
    * TEACHING stage (the anchor dialogue inside the lesson walk) starts with
@@ -164,7 +165,6 @@ export function DialogueScene({
   initialLineId,
   dialogueSlug = 'cafe-morning-01',
   embedded = false,
-  onFinish,
   subtitleDefaultOn = false,
   subtitlePinned = false,
   itemLabels,
@@ -463,30 +463,26 @@ export function DialogueScene({
     logSceneEvent('dialogue_line_selected', { line_id: lineId });
   }, []);
 
-  // stage A→B: only after the last line was seen. Issue #100/#101: in embedded mode
-  // the HOST owns routing/recording (onFinish); without onFinish the CTA is hidden —
-  // the PoC progress store + /poc/lesson are only used in the standalone PoC scene.
+  // stage A→B: only after the last line was seen. PoC-ONLY since LESSON-UX PART1
+  // (the product walk advances through its own «ادامه» button — nothing to post here).
   const finishWatching = useCallback(async () => {
     setFinishing(true);
     try {
-      if (onFinish) {
-        await onFinish();
-      } else {
-        const res = await postProgressEvent(bundle.dialogue.id, { type: 'dialogue_watched' });
-        logSceneEvent('dialogue_watched', { recorded: res.ok });
-        router.push('/poc/lesson');
-      }
+      const res = await postProgressEvent(bundle.dialogue.id, { type: 'dialogue_watched' });
+      logSceneEvent('dialogue_watched', { recorded: res.ok });
+      router.push('/poc/lesson');
     } finally {
       setFinishing(false);
     }
-  }, [bundle.dialogue.id, router, onFinish]);
+  }, [bundle.dialogue.id, router]);
 
   // ------------------------------------------------------------------ render
   const activeLine = activeIndex >= 0 ? (dialogue.lines[activeIndex] ?? null) : null;
   const isPlaying = status === 'playing';
   const started = status !== 'idle';
-  // Issue #101: embedded + no host callback → the station owns completion; hide the CTA.
-  const showFinishCta = !embedded || onFinish != null;
+  // Issue #101 + LESSON-UX PART1: the finish CTA is PoC-ONLY — the product walk
+  // never renders it (the walk's «ادامه» is the one forward action).
+  const showFinishCta = !embedded;
 
   return (
     <section className="flex flex-col gap-4" aria-label="صحنهٔ مکالمهٔ کافه">
@@ -494,7 +490,9 @@ export function DialogueScene({
 
       {!audio.available && (
         <p className="rounded-md border border-ink-faint bg-surface-sunken px-4 py-2 text-small text-ink-soft">
-          {audio.note} — پخش بی‌صوت ادامه می‌یابد و مسیر خطا قابل آزمایش است.
+          {/* LESSON-UX PART1: the raw server note (a dev-facing English string) never
+           * reaches the learner — the message is a fixed, honest Persian sentence. */}
+          فایل صوتی این مکالمه هنوز آماده نشده است — می‌توانی بدون صدا ادامه دهی.
         </p>
       )}
 
@@ -730,7 +728,8 @@ export function DialogueScene({
         })}
       </ol>
 
-      {/* --- stage A→B: finish-watching CTA (only after the LAST line was seen) --- */}
+      {/* --- stage A→B: finish-watching CTA (PoC only; the product walk advances
+          through its own «ادامه» — LESSON-UX PART1) --- */}
       {showFinishCta && (
         <div className="flex flex-col gap-1">
           <button
@@ -739,13 +738,11 @@ export function DialogueScene({
             disabled={!lastLineSeen || finishing}
             className="min-h-11 self-start rounded-md bg-indigo px-4 py-2 text-small font-bold text-paper shadow-offset-indigo transition-[background-color,box-shadow] hover:bg-indigo-deep disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none"
           >
-            {finishing ? 'در حال ثبت…' : onFinish ? 'پایان مشاهده' : 'پایان مشاهده — رفتن به درس (B)'}
+            {finishing ? 'در حال ثبت…' : 'پایان مشاهده — رفتن به درس (B)'}
           </button>
           <p className="text-caption text-ink-soft">
             {lastLineSeen
-              ? onFinish
-                ? 'کل مکالمه را دیدی.'
-                : 'کل مکالمه را دیدی — مشاهدهٔ مرحلهٔ A ثبت و به درس می‌روی.'
+              ? 'کل مکالمه را دیدی — مشاهدهٔ مرحلهٔ A ثبت و به درس می‌روی.'
               : 'برای فعال‌شدن این دکمه، مکالمه را تا خط آخر ببین.'}
           </p>
         </div>

@@ -159,7 +159,6 @@ describe('InlineDialoguePlayer — the dialogue section renders INLINE (no page 
           characters: fixture.characters,
           audio: fixture.audio,
         }}
-        onFinished={() => {}}
       />,
     );
     // the scene intro + the section identity
@@ -174,6 +173,11 @@ describe('InlineDialoguePlayer — the dialogue section renders INLINE (no page 
     // NO navigation to a separate dialogue page — the legacy hop is gone
     expect(m).not.toContain('/dialogue');
     expect(m).not.toContain(fa.curriculum.dialogueGoToListen);
+    // LESSON-UX PART1: NO in-player finish CTA (the walk’s «ادامه» is the one
+    // forward action) and NO engine/voice-production meta text for the learner
+    expect(m).not.toContain('پایان مشاهده');
+    expect(m).not.toContain('VOICEVOX');
+    expect(m).not.toContain('موتور');
   });
 
   it('the ANCHOR first listen (firstListen) starts text-free — the subtitle is OFF and the Persian glosses hidden', () => {
@@ -192,7 +196,6 @@ describe('InlineDialoguePlayer — the dialogue section renders INLINE (no page 
           characters: fixture.characters,
           audio: fixture.audio,
         }}
-        onFinished={() => {}}
         firstListen
       />,
     );
@@ -292,13 +295,68 @@ describe('StationRunner — the anchor station walks the dialogue INLINE', () =>
     },
   );
 
-  it('the in-player finish CTA exists and is watch-gated (پایان مشاهده)', async () => {
+  it(
+    'LESSON-UX PART1: «مرحلهٔ قبل» from the block AFTER the pair returns to the grouped scene step — the conversation is NOT rendered twice',
+    { timeout: 30000 },
+    async () => {
+      // owner report «اولین درس فصل اول مکالمه را دو بار نشان می‌دهد»: the old
+      // plain step-1 back-navigation parked the walk on the EMBEDDED dialogue
+      // block, re-rendering a second standalone player right under the first
+      // listen. Back-navigation is pair-aware now — from the gist check the
+      // learner returns to the ONE grouped section (scene + player).
+      renderAnchor();
+      await waitFor(() => {
+        expect(screen.getByLabelText('خطوط مکالمه')).toBeTruthy();
+      });
+      fireEvent.click(screen.getByRole('button', { name: /^ادامه$/ }));
+      await waitFor(() => {
+        expect(screen.queryByLabelText('خطوط مکالمه')).toBeNull();
+      });
+      fireEvent.click(screen.getByRole('button', { name: fa.curriculum.prevBlock }));
+      await waitFor(() => {
+        expect(screen.getByLabelText('خطوط مکالمه')).toBeTruthy();
+      });
+      // exactly ONE transcript on the page — never two players stacked
+      expect(screen.queryAllByLabelText('خطوط مکالمه')).toHaveLength(1);
+      // and the scene intro of the grouped pair is back (the pair head, not a
+      // bare duplicated player)
+      await waitFor(() => {
+        expect(screen.getByText('کافه، بعدازظهر')).toBeTruthy();
+      });
+    },
+  );
+
+  it(
+    'LESSON-UX PART1: the progress rail counts the PARKABLE sections — the embedded dialogue half gets no segment of its own',
+    { timeout: 30000 },
+    async () => {
+      // stn-fm01-01-anchor authors [scene, dialogue-player, exercise]: the
+      // learner walks TWO sections, and the counter says ۱ / ۲ → ۲ / ۲ — never
+      // a phantom «۲ / ۳» step for the embedded conversation.
+      renderAnchor();
+      await waitFor(() => {
+        expect(screen.getByLabelText('خطوط مکالمه')).toBeTruthy();
+      });
+      expect(document.body.textContent).toContain('۱ / ۲');
+      fireEvent.click(screen.getByRole('button', { name: /^ادامه$/ }));
+      await waitFor(() => {
+        expect(screen.queryByLabelText('خطوط مکالمه')).toBeNull();
+      });
+      expect(document.body.textContent).toContain('۲ / ۲');
+    },
+  );
+
+  it('LESSON-UX PART1: the in-player finish CTA is GONE from the product walk — «ادامه» is the one forward action', async () => {
+    // owner order 2026-11-26 «دکمه‌ای که زیرش دکمهٔ ادامه هست بی‌فایده است»:
+    // the player itself renders NO «پایان مشاهده» CTA (and no watch-gate
+    // caption) — only the walk’s own «ادامه» below the section.
     renderAnchor();
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'پایان مشاهده' })).toBeTruthy();
+      expect(screen.getByLabelText('خطوط مکالمه')).toBeTruthy();
     });
-    // gated until the last line is seen (the honest watch rule)
-    expect((screen.getByRole('button', { name: 'پایان مشاهده' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.queryByRole('button', { name: 'پایان مشاهده' })).toBeNull();
+    expect(screen.queryByText('برای فعال‌شدن این دکمه، مکالمه را تا خط آخر ببین.')).toBeNull();
+    expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeTruthy();
   });
 });
 

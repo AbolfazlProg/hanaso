@@ -10,8 +10,9 @@
  *     multi-speaker player) is visible IMMEDIATELY in the lesson page; there
  *     is NO button or intermediate step that «opens» the conversation;
  *   - the learner watches/plays the dialogue in place, then continues to the
- *     next section of the SAME lesson via the in-player CTA (or the walk's own
- *     forward action) — the dialogue never feels like a separate feature;
+ *     next section of the SAME lesson via the WALK's own «ادامه» button
+ *     (LESSON-UX PART1 2026-11-26 — the player's redundant «پایان مشاهده»
+ *     CTA is gone; one forward action, no double CTA);
  *   - implemented ONCE in this shared component + StationRunner's dialogue-player
  *     block rendering, so the first lesson of every FUTURE chapter inherits the
  *     behavior from its authored [scene, dialogue-player] anchor blocks — no
@@ -30,7 +31,7 @@
  * /api/curriculum/station `grade-block` — exactly like the old dialogue page.
  */
 import { useState } from 'react';
-import { MessageCircleQuestion, PlayCircle, Volume2 } from 'lucide-react';
+import { MessageCircleQuestion, PlayCircle } from 'lucide-react';
 import { fa } from '@/messages/fa';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
 import type { CharacterRef, Dialogue } from '@/modules/dialogue';
@@ -47,7 +48,9 @@ export interface InlineDialoguePlayerProps {
   scene?: { titleFa: string; bodyFa: string } | null;
   /** The stripped dialogue-player block (prediction without answers). */
   block: DialoguePlayerBlock;
-  /** The full dialogue bundle (serializable RSC transport — server resolved). */
+  /**
+   * The full dialogue bundle (serializable RSC transport — server resolved).
+   */
   bundle: {
     dialogueSlug: string;
     dialogue: Dialogue;
@@ -67,10 +70,6 @@ export interface InlineDialoguePlayerProps {
       }[];
     };
   };
-  /**
-   * The lesson's own advance: called by the in-player CTA after the viewing.
-   */
-  onFinished: () => void;
   /**
    * JOURNEY-FIX 2026-11-23 §۶: the chapter's standard item-label map
    * (words/expressions/grammar) — resolves the transcript's «teaches» chips
@@ -102,7 +101,6 @@ export function InlineDialoguePlayer({
   scene,
   block,
   bundle,
-  onFinished,
   firstListen = false,
   itemLabels,
   startAtLine = null,
@@ -217,7 +215,8 @@ export function InlineDialoguePlayer({
 
       {/* the proven multi-speaker player, INLINE in the lesson walk:
           TASK-LEARNING-07 / Issue #101 `embedded` — every PoC navigation surface
-          hidden; the WALK owns completion (onFinished → the next section).
+          hidden; the WALK's own «ادامه» advances the lesson (LESSON-UX PART1:
+          no in-player finish CTA — one forward action).
           JOURNEY-FIX 2026-11-23 §۴: firstListen (the anchor's first full
           encounter) pins the Persian subtitle OFF — pure listening, the toggle
           remains mid-playback; teaching replays keep the ON default. */}
@@ -234,16 +233,7 @@ export function InlineDialoguePlayer({
         subtitleDefaultOn={!firstListen}
         subtitlePinned={firstListen}
         itemLabels={itemLabels}
-        onFinish={onFinished}
       />
-
-      {/* real-TTS provenance + VOICEVOX character credit (terms) */}
-      {bundle.audio.audioSource === 'voicevox' && bundle.audio.voiceCredits?.length ? (
-        <p className="flex items-center gap-1.5 text-caption text-ink-soft">
-          <Volume2 aria-hidden className="size-3.5 shrink-0" />
-          صداها با موتور VOICEVOX از پیش تولید شده‌اند — <MixedFaJaText text={bundle.audio.voiceCredits.join('・')} />
-        </p>
-      ) : null}
     </section>
   );
 }

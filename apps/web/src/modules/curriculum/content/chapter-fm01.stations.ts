@@ -16,6 +16,7 @@
  * 05B contract (§3-1: wave-1 = 37 cards — 16+1+2+5+0 / 6+1+2+3+0+1).
  */
 import type { Station, TeachingBlock } from '../types';
+import { ANCHOR_INTRO_PROMISE_MARKER_FA, ANCHOR_INTRO_REASSURANCE_MARKER_FA } from './anchor-intro-law';
 
 const L = (n: number) => `s-first-meeting-01-l${n}`;
 
@@ -46,8 +47,15 @@ export const FM01_STATIONS: Station[] = [
         kind: 'scene',
         id: 'blk-a1-scene',
         titleFa: 'کافه، بعدازظهر',
+        /* LESSON-UX PART1 2026-11-26 — the chapter-opening law (owner order
+         * «اول هر فصل یه اسلاید باید بگه طبیعیه بلد نباسی»): the reassurance
+         * LEADS the slide (both ANCHOR_INTRO_* markers embedded verbatim), then
+         * the who’s-who scene setup for the pure listen that follows. */
         bodyFa:
-          'میکی دوستش سورا را برای اولین بار به کافهٔ یامادا می‌آورد. کنار پنجره، علی — استاد ایرانی — کتاب ژاپنی می‌خواند. گوش کن: سلام، معرفی، پرسش… و کمی بعد یک مهمان تازه وارد می‌شود.',
+          'مکالمهٔ این فصل را فعلاً لازم نیست بفهمی — ' +
+          `${ANCHOR_INTRO_REASSURANCE_MARKER_FA} هیچ‌چیزش را نمی‌فهمی؛ ` +
+          `تا ${ANCHOR_INTRO_PROMISE_MARKER_FA} همهٔ آن را می‌آموزی. ` +
+          'حالا فقط گوش کن: میکی دوستش سورا را برای اولین بار به کافهٔ یامادا می‌آورد. کنار پنجره، علی — استاد ایرانی — کتاب ژاپنی می‌خواند. سلام، معرفی، پرسش… و کمی بعد یک مهمان تازه وارد می‌شود.',
       },
       {
         /* ENGINE-REFORM 2026-11-22 §۲ (owner order «آزمون قبل از آموزش باید

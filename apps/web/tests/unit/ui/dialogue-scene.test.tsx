@@ -3,18 +3,21 @@
  *
  * Static-markup assertions (react-dom/server — effects never run, so the scene
  * renders in its INITIAL state: idle, no line active, finish CTA disabled):
- * - Issue #101: `embedded` hides every PoC navigation surface (bottom nav,
- *   /poc/lesson token-chunk + teaches links, finish CTA without onFinish);
- *   the standalone PoC scene keeps them (PoC routes stay dev-only).
- * - Issue #100: `onFinish` renders the CTA in embedded mode (host-owned routing).
+ * - Issue #101 + LESSON-UX PART1: `embedded` hides every PoC navigation surface
+ *   (bottom nav, /poc/lesson token-chunk + teaches links) and NEVER renders the
+ *   in-player finish CTA — the product walk’s «ادامه» is the one forward action;
+ *   the standalone PoC scene keeps its own CTA (PoC routes stay dev-only).
  * - Joint turns: the bubble label shows BOTH names — «سورا و یامادا (با هم)».
  * - Issue #98: the transcript is an inner scroll region (poc-scene-transcript).
+ * - LESSON-UX PART1 (scroll chaining): the transcript CSS must NOT cut the
+ *   scroll chain to the page (no overscroll-behavior: contain).
  * - No glyph emoji anywhere in the transport controls (Persian labels + lucide
  *   icons with aria-labels) — the repo-wide no-emoji rule for product UI.
  */
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { DialogueScene } from '@/app/poc/dialogue/dialogue-scene';
+import { POC_SCENE_CSS } from '@/app/poc/jp-text';
 import type { CharacterRef, Dialogue, DialogueToken } from '@/modules/dialogue';
 
 vi.mock('next/navigation', () => ({
@@ -123,18 +126,21 @@ describe('DialogueScene — embedded mode (Issue #101: no PoC leak into product)
     expect(labeled).not.toContain('/poc');
   });
 
-  it('hides the finish CTA entirely when no onFinish is provided (station owns completion)', () => {
+  it('hides the finish CTA entirely in embedded mode — the walk owns progression', () => {
     const m = renderToStaticMarkup(<DialogueScene bundle={bundle} embedded />);
     expect(m).not.toContain('پایان مشاهده');
     expect(m).not.toContain('برای فعال‌شدن این دکمه');
   });
 
-  it('renders the finish CTA with host-owned routing when onFinish is provided (Issue #100)', () => {
-    const m = renderToStaticMarkup(<DialogueScene bundle={bundle} embedded onFinish={() => {}} />);
-    expect(m).toContain('>پایان مشاهده</button>'); // the CTA exists …
-    expect(m).not.toContain('رفتن به درس'); // … without the PoC-stage routing label
-    expect(m).toContain('disabled'); // still gated on last-line-seen
-    expect(m).toContain('برای فعال‌شدن این دکمه، مکالمه را تا خط آخر ببین.');
+  it('LESSON-UX PART1: embedded mode NEVER renders the in-player finish CTA — the walk’s «ادامه» is the one forward action', () => {
+    // owner order 2026-11-26 «دکمه‌ای که زیرش دکمهٔ ادامه هست بی‌فایده است»: the
+    // product walk renders its own «ادامه» right below the player — the
+    // in-player «پایان مشاهده» CTA (and its watch-gate caption) is gone from
+    // every embedded host, unconditionally.
+    const m = renderToStaticMarkup(<DialogueScene bundle={bundle} embedded subtitleDefaultOn />);
+    expect(m).not.toContain('پایان مشاهده');
+    expect(m).not.toContain('برای فعال‌شدن این دکمه');
+    expect(m).not.toContain('کل مکالمه را دیدی');
   });
 });
 
@@ -153,6 +159,22 @@ describe('DialogueScene — layout + a11y (Issue #98) + no-emoji rule', () => {
     expect(m).toContain('class="poc-scene-transcript');
     expect(m).toContain('aria-label="خطوط مکالمه"');
     expect(m).toContain('tabindex="0"'); // keyboard-scrollable region
+  });
+
+  it('LESSON-UX PART1: the transcript keeps the scroll chain to the page (no overscroll containment)', () => {
+    // owner report «وقتی دستت را روی کادر مکالمه می‌گذاری صفحه دیگر اسکرول
+    // نمی‌شود»: overscroll-behavior: contain froze the whole page whenever the
+    // finger rested on the transcript at its boundary (or with nothing to
+    // scroll). The region stays its own scrollable area (overflow-y: auto) but
+    // the chain to the page is NEVER cut again.
+    const rule = POC_SCENE_CSS.match(/\.poc-scene-transcript\s*\{[^}]*\}/)?.[0] ?? '';
+    expect(rule).toContain('overflow-y: auto');
+    expect(rule).not.toContain('overscroll-behavior');
+    // no OTHER rule in the stylesheet may reintroduce scroll containment either
+    // (the explanatory comment may NAME the removed property — rules may not)
+    for (const block of POC_SCENE_CSS.match(/\{[^}]*\}/g) ?? []) {
+      expect(block).not.toContain('overscroll-behavior');
+    }
   });
 
   it('transport controls use Persian labels + lucide icons — no glyph emoji anywhere', () => {

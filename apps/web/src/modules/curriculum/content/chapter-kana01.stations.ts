@@ -9,6 +9,7 @@
  * (M-K1..M-K5 via the shared scoring engine — parallel gate systems are forbidden, DD-117).
  */
 import type { Station } from '../types';
+import { ANCHOR_INTRO_PROMISE_MARKER_FA, ANCHOR_INTRO_REASSURANCE_MARKER_FA } from './anchor-intro-law';
 
 export const KANA_STATIONS: Station[] = [
   {
@@ -29,8 +30,16 @@ export const KANA_STATIONS: Station[] = [
         kind: 'scene',
         id: 'blk-stn-kana-h0-scene',
         titleFa: 'خوش‌آمد و سه خط ژاپنی',
+        /* LESSON-UX PART1 2026-11-26 (owner order «اسلاید اول فقط این»): slide 1
+         * of the chapter's first lesson is the REASSURANCE ONLY — you are not
+         * expected to understand the conversation yet; the chapter will teach
+         * it. The three-scripts teaching that used to live here moved to the
+         * wrap-up (after the conversation, as its payoff). Both law markers are
+         * embedded verbatim (ANCHOR_INTRO_* — see content/anchor-intro-law.ts). */
         bodyFa:
-          'در این فصل هر دو خط کانای ژاپنی را می‌آموزی: هیراگانا (خط بومی) و کاتاکانا (خط وام‌واژه‌ها). ژاپنی‌ها این سه خط را کنار هم به کار می‌برند: ひらがな، カタカナ و かんじ. قرارمان ساده است: هر بار چند صدا، چند شکل، و واژه‌های واقعی‌ای که از همان لحظه می‌توانی بخوانی.',
+          'مکالمهٔ کوتاهی که در اسلاید بعد می‌بینی و می‌شنوی را لازم نیست الان بفهمی — ' +
+          `${ANCHOR_INTRO_REASSURANCE_MARKER_FA} هیچ‌کلمه‌اش را بلد نیستی! ` +
+          `قرارمان این است: تا ${ANCHOR_INTRO_PROMISE_MARKER_FA} قدم‌به‌قدم می‌آموزی و آخرش خودت می‌توانی همین مکالمه را بخوانی و بفهمی.`,
       },
       {
         kind: 'dialogue-player',
@@ -38,10 +47,28 @@ export const KANA_STATIONS: Station[] = [
         focusLineRefs: ['s-kana-welcome-01-l1', 's-kana-welcome-01-l2', 's-kana-welcome-01-l3'],
       },
       {
+        kind: 'scene',
+        id: 'blk-stn-kana-h0-scripts',
+        titleFa: 'سه خط ژاپنی',
+        /* the three-scripts teaching, moved from the pre-listen slide to its
+         * natural home AFTER the conversation — the learner just HEARD the
+         * three script names in line ۲; this slide names what they heard. An
+         * EXPOSURE surface by design (EQA-8: scene-body role = exposure — the
+         * glyphs stay legal here exactly as they were in the old pre-listen
+         * body; the wrap-up keeps Persian-only recap items). */
+        bodyFa:
+          'سه خطی که در همین مکالمه شنیدی، سه خط نوشتار ژاپنی‌اند: ひらがな (هیراگانا — خط بومی)، カタカナ (کاتاکانا — خط وام‌واژه‌ها) و かんじ (کانجی — نویسه‌های برگرفته از چینی). در این فصل دو خط اول را می‌آموزی؛ کانجی هم به‌مرور به دیدت می‌آید.',
+      },
+      {
         kind: 'wrap-up',
         id: 'blk-stn-kana-h0-wrapup',
         titleFa: 'خوش‌آمد و سه خط ژاپنی — جمع‌بندی',
-        itemsFa: [],
+        /* Persian-only recap (EQA-8: wrapup items are a USE surface — no
+         * untaught glyphs there; the glyph exposure lives in the scripts scene). */
+        itemsFa: [
+          'در این فصل هر دو خط کانای ژاپنی را می‌آموزی: هیراگانا (خط بومی) و کاتاکانا (خط وام‌واژه‌ها).',
+          'قرارمان ساده است: هر بار چند صدا، چند شکل، و واژه‌های واقعی‌ای که از همان لحظه می‌توانی بخوانی.',
+        ],
       },
     ],
     fsrsItems: [],
