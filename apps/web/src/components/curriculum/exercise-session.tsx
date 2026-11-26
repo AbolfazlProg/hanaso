@@ -754,7 +754,7 @@ export function ExerciseSession({
               the lone Latin-digit holdout. */}
           {faNum(index + 1)} / {faNum(total)}
         </p>
-        <p className="text-caption text-ink-soft">{skillLabel(ex.targetSkill)}</p>
+        <p className="text-caption text-ink-soft">{skillLabel(ex)}</p>
       </header>
 
       <p className="text-body font-medium">{ex.promptFa}</p>
@@ -1339,8 +1339,21 @@ function faNum(n: number): string {
   return String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]!);
 }
 
-function skillLabel(skill: ClientExercise['targetSkill']): string {
-  switch (skill) {
+/**
+ * LESSON-UX P2 #206 — the skill chip must match the QUESTION'S nature, not a
+ * stale targetSkill value: the kana bank items were authored `vocab`, so pure
+ * glyph/sound questions ("این کانا چه صدایی دارد؟") wore a «واژگان» label.
+ * Kana-typed items now carry their own kana label — renderer-level, no data
+ * model change (per the issue's preferred path).
+ */
+/** Exported for the P2-D content gate (tests/unit/lesson-ux-part2.test.ts). */
+export function skillLabel(ex: ClientExercise): string {
+  if (ex.type.startsWith('kana-')) {
+    // Reading a decodable WORD is the kana-reading skill; the rest are kana
+    // glyph/sound discrimination.
+    return ex.type === 'kana-decode' ? 'خواندن کانا' : 'کانا';
+  }
+  switch (ex.targetSkill) {
     case 'vocab':
       return 'واژگان';
     case 'grammar':

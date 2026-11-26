@@ -307,6 +307,18 @@ export const fa = {
     nameExtras: 'کارت‌های اضافهٔ تله',
     boardGlossHint: 'معنی هر آیتم زیرش نوشته شده — منوی دوزبانهٔ واقعی',
     boardDecodeHint: 'این‌ها را با آموخته‌های خودت بخوان — روی کارت معنی‌ای نیست',
+    /* LESSON-UX P2 #200 — the reading-sheet interaction copy: the decode-
+     * then-verify loop (tap the word → reading + meaning + its own audio). */
+    boardDecodeVerifyHint: 'اول هر واژه را خودت بخوان؛ بعد روی خودِ واژه بزن تا خواندن، معنی و صدایش را ببینی',
+    boardGlossAudioHint:
+      'خواندن و معنی هر واژه زیرش هست — برای شنیدن صدایش دکمهٔ پخش را بزن؛ روی خودِ واژه هم می‌توانی بزنی تا خوانش فارسی‌اش را ببینی',
+    boardWordReveal: 'دیدن خواندن و معنا',
+    boardWordRevealed: 'خواندن و معنا',
+    boardSideAudioLabel: (side: string) => `پخش صدای ${side}`,
+    boardLeadAudioLabel: (lead: string) => `پخش صدای ${lead}`,
+    /* LESSON-UX P2 #200 — the closing word wall. */
+    wallChipLabel: 'واژه‌های خودت',
+    wallWordAudioLabel: (word: string) => `پخش صدای واژهٔ ${word}`,
     gateOpenCta: 'دروازهٔ فهم مکالمه',
     chapterGateCta: 'دروازهٔ فصل — گیت فهم کانا',
     archiveTitle: 'فصل‌های گذرانده‌شده',

@@ -59,6 +59,7 @@ import { KANA_READING_FA_BY_GLYPH, KANA_TEACHING_BY_ID } from '@/modules/curricu
 import { KANA_ITEMS_BY_GLYPH } from '@/modules/curriculum/content/kana-items';
 import { readabilityLabel, type ReadabilityLabel } from '@/modules/curriculum/content/readability';
 import { kanaWordRomaji } from '@/modules/curriculum/kana-romaji';
+import { standardWordReadingFa } from '@/modules/curriculum/content/translit-standard';
 import type { KanaItem } from '@/modules/curriculum/types';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { MixedFaJaText } from '@/components/curriculum/mixed-fa-ja-text';
@@ -480,11 +481,17 @@ export function KanaCard({
     if (hostWord) {
       seen.add(hostWord.word);
       const match = (relatedExamples ?? []).find((ex) => ex.ja === hostWord.word);
+      /* LESSON-UX P2 #205 — the host card's Persian reading: the example-set
+       * hand reading when the same word is taught there, else the STANDARD
+       * derivation (translit-standard.ts). Before this fallback a host word
+       * with no example-set match rendered a Latin-only romaji chip
+       * (ドア → "doa") — the audit's finding; the Latin chip stays as the
+       * SEPARATED complement, never the substitute. */
       cards.push({
         key: `host-${hostWord.word}`,
         isHost: true,
         ja: hostWord.word,
-        readingFa: match?.reading ?? null,
+        readingFa: match?.reading ?? standardWordReadingFa(hostWord.word),
         meaningFa: hostWord.meaningFa,
         whyFa: match?.whyFa,
         pronFa: match?.pronFa,

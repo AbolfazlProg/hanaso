@@ -194,11 +194,18 @@ export function collectChapterSurfaces(chapter: Chapter): ContentSurface[] {
             });
             for (const item of panel.items) {
               push(item.ja, 'board-item', 'use', {
-                selfSupporting: Boolean(item.glossFa) || block.showGloss,
+                selfSupporting: Boolean(item.glossFa) || Boolean(item.readingFa) || block.showGloss,
                 glossed: Boolean(item.glossFa) || block.showGloss,
               });
               push(item.sideJa, 'board-side', 'use', { selfSupporting: block.showGloss, glossed: block.showGloss });
             }
+          }
+          break;
+        /* LESSON-UX P2 #200 — the closing word wall: every card is a fully
+         * glossed, self-supporting use surface (reading + meaning authored). */
+        case 'word-wall':
+          for (const w of block.words) {
+            push(w.ja, 'wall-word', 'use', { selfSupporting: true, glossed: true });
           }
           break;
         case 'character-scene':

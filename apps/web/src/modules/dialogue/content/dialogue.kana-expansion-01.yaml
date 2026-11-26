@@ -10,7 +10,7 @@
 # public/audio/dialogues/) — generated on the ISOLATED voicevox_engine 0.26.2 CPU
 # release (sandbox/runner, 127.0.0.1:50021 — NEVER the VPS; production serves the
 # static files only) by scripts/gen-kana-expansion-dialogue-audio.mjs with the same
-# cast (voices.yaml: miki=四国めたん 2, sora=九州そら 16), params and mastering chain
+# cast (voices.yaml: miki=四国めたん 2, sora=東北きりたん 108 — LESSON-UX P2 #201 re-cast), params and mastering chain
 # as the committed dialogue batches; manifest hashes bind to the runtime line text.
 meta:
   id: dlg-kana-expansion-01

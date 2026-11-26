@@ -1,5 +1,5 @@
 {
- "generatedBy": "voicevox:0.15.7 (VPS engine) — TASK-LEARNING-02 pre-generation",
+ "generatedBy": "voicevox:0.15.7 (VPS engine) — TASK-LEARNING-02 pre-generation | LESSON-UX P2 #2026-11-27 re-cast batch: every chr-sora line regenerated with 東北きりたん (speaker 108, voicevox_engine 0.26.2 CPU on an ISOLATED OFFLINE RUNNER — never on the VPS/production), same params + mastering chain + −23.5 dB RMS dialogue level",
  "format": "dual-opus32k-m4a96k",
  "params": {
   "speedScale": 0.95,
@@ -16,17 +16,17 @@
    "speakerStyleId": 11,
    "credit": "VOICEVOX:玄野武宏"
   },
-  "vv-neutral-03-normal": {
-   "engine": "voicevox",
-   "speakerName": "九州そら",
-   "speakerStyleId": 16,
-   "credit": "VOICEVOX:九州そら"
-  },
   "vv-female-01-normal": {
    "engine": "voicevox",
    "speakerName": "四国めたん",
    "speakerStyleId": 2,
    "credit": "VOICEVOX:四国めたん"
+  },
+  "vv-female-05-young": {
+   "engine": "voicevox",
+   "speakerName": "東北きりたん",
+   "speakerStyleId": 108,
+   "credit": "VOICEVOX:東北きりたん"
   }
  },
  "entries": {
@@ -37,10 +37,10 @@
    "hash": "3279393afc9cd491"
   },
   "s-cafe-morning-01-l10": {
-   "bytes": 8408,
-   "bytesM4a": 25929,
-   "durationMs": 2033,
-   "hash": "3f43b51e88db81df"
+   "bytes": 5765,
+   "bytesM4a": 18782,
+   "durationMs": 1564,
+   "hash": "a92259b659356d6b"
   },
   "s-cafe-morning-01-l2": {
    "bytes": 11514,
@@ -55,10 +55,10 @@
    "hash": "9f1ea5b164aedb0a"
   },
   "s-cafe-morning-01-l4": {
-   "bytes": 6947,
-   "bytesM4a": 22123,
-   "durationMs": 1713,
-   "hash": "b8c40d60a1d28984"
+   "bytes": 4929,
+   "bytesM4a": 16056,
+   "durationMs": 1340,
+   "hash": "0f31afec401a0fba"
   },
   "s-cafe-morning-01-l5": {
    "bytes": 10709,
@@ -67,10 +67,10 @@
    "hash": "aa631e7022c12df9"
   },
   "s-cafe-morning-01-l6": {
-   "bytes": 9657,
-   "bytesM4a": 29034,
-   "durationMs": 2289,
-   "hash": "54699ae349d140c3"
+   "bytes": 6958,
+   "bytesM4a": 19845,
+   "durationMs": 1724,
+   "hash": "073b42f32475aeec"
   },
   "s-cafe-morning-01-l7": {
    "bytes": 7099,
@@ -97,10 +97,10 @@
    "hash": "827fd65b82e92522"
   },
   "s-first-meeting-01-l10": {
-   "bytes": 38249,
-   "bytesM4a": 128187,
-   "durationMs": 11356,
-   "hash": "3d363fd4057523a2"
+   "bytes": 17648,
+   "bytesM4a": 54511,
+   "durationMs": 5063,
+   "hash": "3f30b4d819d1c5df"
   },
   "s-first-meeting-01-l11": {
    "bytes": 6769,
@@ -115,10 +115,10 @@
    "hash": "67f730693dfaa235"
   },
   "s-first-meeting-01-l13": {
-   "bytes": 8756,
-   "bytesM4a": 27542,
-   "durationMs": 2172,
-   "hash": "86fbe78d64dc6d07"
+   "bytes": 6631,
+   "bytesM4a": 21038,
+   "durationMs": 1767,
+   "hash": "df32442b15e6dfb1"
   },
   "s-first-meeting-01-l13-co": {
    "bytes": 6790,
@@ -139,10 +139,10 @@
    "hash": "361c04b6b900fba3"
   },
   "s-first-meeting-01-l4": {
-   "bytes": 25244,
-   "bytesM4a": 85466,
-   "durationMs": 6908,
-   "hash": "2bdcb0afe0bbaf2f"
+   "bytes": 13821,
+   "bytesM4a": 44526,
+   "durationMs": 4017,
+   "hash": "44e4004ae513c0d6"
   },
   "s-first-meeting-01-l5": {
    "bytes": 9920,
@@ -151,10 +151,10 @@
    "hash": "2363f724310dfa11"
   },
   "s-first-meeting-01-l6": {
-   "bytes": 15684,
-   "bytesM4a": 52710,
-   "durationMs": 4177,
-   "hash": "0b329cdc84506e6e"
+   "bytes": 9110,
+   "bytesM4a": 28408,
+   "durationMs": 2716,
+   "hash": "75fd58aa5d3da143"
   },
   "s-first-meeting-01-l7": {
    "bytes": 6934,
@@ -181,10 +181,10 @@
    "hash": "36843609e0315533"
   },
   "s-kana-expansion-01-l2": {
-   "bytes": 9188,
-   "bytesM4a": 33812,
-   "durationMs": 2855,
-   "hash": "9272576c2c825d99"
+   "bytes": 4955,
+   "bytesM4a": 14180,
+   "durationMs": 1244,
+   "hash": "ab6e69e2565fdab5"
   },
   "s-kana-expansion-01-l3": {
    "bytes": 5892,
@@ -199,10 +199,10 @@
    "hash": "3230d47dd806deac"
   },
   "s-kana-welcome-01-l2": {
-   "bytes": 9503,
-   "bytesM4a": 32778,
-   "durationMs": 2236,
-   "hash": "b9bdf5f62229076c"
+   "bytes": 6765,
+   "bytesM4a": 22783,
+   "durationMs": 1809,
+   "hash": "996f5850de7a91be"
   },
   "s-kana-welcome-01-l3": {
    "bytes": 5718,

@@ -111,6 +111,21 @@ function contrastAndExerciseWords() {
       if (basicKana.has(ja)) continue;
       if (/[\u3040-\u30ff]/.test(ja)) set.add(ja);
     }
+    /* LESSON-UX P2 #200 — the reading-sheet surfaces join the generation
+     * surface: realworld-board panel leads (こんにちは！ / コーヒー・セット)
+     * and signboard sides (prices, セール, 新入荷…) are all playable. */
+    for (const m of src.matchAll(/\bleadJa:\s*'([^']+)'/g)) {
+      const ja = m[1];
+      if (!ja || /___|NAME|…/.test(ja)) continue;
+      if (basicKana.has(ja)) continue;
+      if (/[\u3040-\u30ff\uff00-\uffef\u4e00-\u9fff]/.test(ja)) set.add(ja);
+    }
+    for (const m of src.matchAll(/\bsideJa:\s*'([^']+)'/g)) {
+      const ja = m[1];
+      if (!ja || /___|NAME|…/.test(ja)) continue;
+      if (basicKana.has(ja)) continue;
+      if (/[\u3040-\u30ff\uff00-\uffef\u4e00-\u9fff]/.test(ja)) set.add(ja);
+    }
   }
   for (const file of [
     'chapter-kana01.exercises.ts',

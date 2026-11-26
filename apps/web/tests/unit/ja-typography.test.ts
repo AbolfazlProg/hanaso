@@ -83,7 +83,9 @@ describe('W-B — no raw sizes on the audited learner surfaces', () => {
 
   it('studied Japanese reading surfaces sit ABOVE the furigana floor', () => {
     // realworld-board sideJa: text-small + the JP font stack
-    expect(read('components/curriculum/station-runner.tsx')).toMatch(
+    // (LESSON-UX P2 #200 — the board rendering moved from station-runner to
+    // realworld-board.tsx; the class contract is unchanged.)
+    expect(read('components/curriculum/realworld-board.tsx')).toMatch(
       /ja-block shrink-0 text-small text-ink-faint[^"]*" dir="ltr" lang="ja"/,
     );
     // post-answer kana reading: text-small

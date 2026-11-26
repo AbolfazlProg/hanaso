@@ -34,9 +34,12 @@ describe('W-D — the controlled derivation', () => {
   });
 
   it('never guesses: an uncovered glyph is an ERROR, not a silent label', () => {
-    // ぢゃ is deliberately OUT of the locked voiced-yōon table (rare).
-    const fa = transliterateKanaToFa('ぢゃん');
-    const rm = transliterateKanaToRomaji('ぢゃん');
+    // づゃ stays OUT of the locked voiced-yōon table (rare — no hostword ever
+    // carried it, so the registration decision has not been forced).
+    // (ぢゃ/ヂャ WERE registered by LESSON-UX P2 #205 — kata-di's hostword
+    // ヂャンクション forced exactly the decision this gate exists to force.)
+    const fa = transliterateKanaToFa('づゃん');
+    const rm = transliterateKanaToRomaji('づゃん');
     expect(fa.errors.length).toBeGreaterThan(0);
     expect(rm.errors.length).toBeGreaterThan(0);
     // the partial output is never trusted — the callers gate on errors

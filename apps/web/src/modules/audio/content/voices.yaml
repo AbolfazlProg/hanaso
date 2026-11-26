@@ -8,9 +8,24 @@
 # Casting (distinctness matrix §۳ — every co-present pair differs on ≥2 of 3 axes):
 #   miki   -> VOICEVOX:四国めたん (ノーマル, style 2)  — bright young female, high pitch
 #   yamada -> VOICEVOX:玄野武宏 (ノーマル, style 11) — mature male, low pitch
-#   sora   -> VOICEVOX:九州そら (ノーマル, style 16)  — calm adult female, mid pitch
-# Credit (VOICEVOX character terms): "VOICEVOX:四国めたん・玄野武宏・九州そら" — surfaced
-# in the dialogue player UI and docs. Per-voice terms re-verified before public launch.
+#   sora   -> VOICEVOX:東北きりたん (ノーマル, style 108) — cheerful young female, mid pitch
+#   kim    -> VOICEVOX:春日部つむぎ (ノーマル, style 8) — bright young female, highest pitch
+#
+# LESSON-UX P2 #201 (2026-11-27) — the Sora re-cast: the owner rejected 九州そら's
+# calm-ADULT reading of the chapter-02 student peer («صدای کاراکتر سورا کلاً مشکله —
+# باید شخصیتش عوض شه»). The re-cast experiment (scripts evidence: measured F0 via
+# autocorrelation over Sora's real lines, presence/harshness per the A5-4 method,
+# never-rejected candidates only — the owner had already disliked 四国めたん,
+# 春日部つむぎ, 冥鳴ひまり and 九州そら for other slots): 東北きりたん wins —
+#   F0 ≈ 250 Hz on three lines (245/253/251 — consistent young-female register),
+#     Δ vs miki −5.2 st, vs kim −6.6 st, vs yamada +10.8 st → pitch axis passes
+#     against every co-present cast member with margin;
+#   harshness 2.1% raw (九州そら was 6.0%) — cleaner than the voice it replaces;
+#   presence 3.9% raw / 4.6% mastered (九州そら: 5.0/6.2) — comparable;
+#   persona: the cheerful young STUDENT the calm-adult voice lacked.
+# Credit (VOICEVOX character terms): "VOICEVOX:四国めたん・玄野武宏・東北きりたん・春日部つむぎ"
+# — surfaced in the dialogue player UI and docs. Per-voice terms re-verified before
+# public launch (TASK-AUD-09).
 voices:
   vv-female-01-normal:
     engine: voicevox
@@ -28,14 +43,17 @@ voices:
     character: chr-yamada
     family: male-mature
     params: { f0Hz: 110, harmonics: [1.0, 0.5, 0.25, 0.1], speedScale: 0.95 }
-  vv-neutral-03-normal:
+  # LESSON-UX P2 #201 — Sora's new voice (was vv-neutral-03-normal / 九州そら,
+  # owner-rejected). f0Hz 175 = the placeholder-synth slot on the legacy scale
+  # (measured real-voice F0 ≈ 250 Hz — see the casting note above).
+  vv-female-05-young:
     engine: voicevox
-    speakerName: 九州そら
-    speakerStyleId: 16
-    credit: VOICEVOX:九州そら
+    speakerName: 東北きりたん
+    speakerStyleId: 108
+    credit: VOICEVOX:東北きりたん
     character: chr-sora
-    family: neutral-mid
-    params: { f0Hz: 160, harmonics: [1.0, 0.4, 0.18], speedScale: 0.95 }
+    family: female-young
+    params: { f0Hz: 175, harmonics: [1.0, 0.4, 0.15], speedScale: 0.95 }
   # TASK-LEARNING-06 (Ch02 unit 02-2 — Kim): bright young female, highest pitch of
   # the cast (placeholder params; VOICEVOX casting for the future audio task —
   # speakerStyleId to be re-verified against the engine at generation time).
@@ -50,26 +68,28 @@ voices:
 
 # Voice distinctness matrix (KB audio-ms §۳) — every co-present pair must differ on ≥2 of 3 axes.
 # Pitch axis: |Δ semitones| between F0s (≥3 semitones required).
-# With real VOICEVOX speakers all three pairs differ on pitch AND timbre (different
-# speaker identities — not the same voice pitch-shifted), so the matrix holds unchanged.
+# With real VOICEVOX speakers the pairs differ on pitch AND timbre (different
+# speaker identities — not the same voice pitch-shifted), so the matrix holds.
+# LESSON-UX P2 #201: the sora pairs re-derived for 東北きりたん (f0Hz 175 on the
+# placeholder scale; measured real F0 ≈ 250 Hz — see the casting note above).
 distinctness_matrix:
   - pair: [vv-female-01-normal, vv-male-02-normal]
     delta_semitones: 11.17
     axes_passed: [pitch, timbre, rhythm]
-  - pair: [vv-female-01-normal, vv-neutral-03-normal]
-    delta_semitones: 4.65
+  - pair: [vv-female-01-normal, vv-female-05-young]
+    delta_semitones: 3.19
     axes_passed: [pitch, timbre]
-  - pair: [vv-male-02-normal, vv-neutral-03-normal]
-    delta_semitones: 6.51
+  - pair: [vv-male-02-normal, vv-female-05-young]
+    delta_semitones: 8.06
     axes_passed: [pitch, timbre, rhythm]
   # TASK-LEARNING-06 — Kim pairs (vs miki 210Hz: 3.34st + different speaker timbre;
-  # vs yamada 110Hz / sora 160Hz: large pitch gaps + timbre).
+  # vs yamada 110Hz / sora 175Hz: large pitch gaps + timbre).
   - pair: [vv-female-04-bright, vv-female-01-normal]
     delta_semitones: 3.34
     axes_passed: [pitch, timbre]
   - pair: [vv-female-04-bright, vv-male-02-normal]
     delta_semitones: 14.52
     axes_passed: [pitch, timbre, rhythm]
-  - pair: [vv-female-04-bright, vv-neutral-03-normal]
-    delta_semitones: 8.14
+  - pair: [vv-female-04-bright, vv-female-05-young]
+    delta_semitones: 6.52
     axes_passed: [pitch, timbre]

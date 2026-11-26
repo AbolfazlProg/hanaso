@@ -11826,8 +11826,9 @@ export const KANA_EXERCISES: Exercise[] = [
     targetConcept: 'kata-wo',
     assessesConcepts: ['kata-wo'],
     difficulty: 2,
+    // LESSON-UX P2 (#203 audit, finding 1): NO promptJa on kana-listening — the
+    // glyph IS the answer; rendering it above the options leaked the key.
     promptFa: 'به صدای پخش‌شده گوش کن — کدام کانای کاتاکانا این صدا را دارد؟',
-    promptJa: 'ヲ',
     options: [
       { id: 'a', label: 'ラ' },
       { id: 'b', label: 'ン' },
@@ -11948,7 +11949,7 @@ export const KANA_EXERCISES: Exercise[] = [
       c: 'ایستگاه = えき — با え شروع می‌شود، نه す.',
     },
     feedback: {
-      f1Fa: 'کانا به کانا بخوان: す+し — «سُشی».',
+      f1Fa: 'کانا به کانا بخوان: す+し — «سوشی».',
       f2HintFa: 'غذای معروف ژاپنی که با برنج و ماهی درست می‌شود.',
       f3ExplainFa: 'すし = سوشی — واژهٔ میزبانِ کانای す.',
     },
@@ -11974,7 +11975,7 @@ export const KANA_EXERCISES: Exercise[] = [
       b: 'آب = みず — با み شروع می‌شود.',
     },
     feedback: {
-      f1Fa: 'ね+こ را بلند بخوان: «نِکُ».',
+      f1Fa: 'ね+こ را بلند بخوان: «نِکو».',
       f2HintFa: 'حیوان خانگی معروف ژاپنی‌ها که در くに هم دیده می‌شود.',
       f3ExplainFa: 'ねこ = گربه — واژهٔ میزبانِ کانای ね.',
     },
@@ -12000,7 +12001,7 @@ export const KANA_EXERCISES: Exercise[] = [
       c: 'دوست = ともだち — واژهٔ بلندتری است.',
     },
     feedback: {
-      f1Fa: 'い+ぬ — «ای‌نُ».',
+      f1Fa: 'い+ぬ — «اینو».',
       f2HintFa: 'حیوان وفاداری که در こいぬ (توله‌سگ) هم می‌آید.',
       f3ExplainFa: 'いぬ = سگ — واژهٔ میزبانِ کانای ぬ.',
     },
@@ -12052,7 +12053,7 @@ export const KANA_EXERCISES: Exercise[] = [
       c: 'بالا / رو = うえ — با う شروع می‌شود.',
     },
     feedback: {
-      f1Fa: 'み+ず — «می‌زُ».',
+      f1Fa: 'み+ず — «میزو».',
       f2HintFa: 'همان چیزی که در چای می‌ریزی؛ واژهٔ میزبانِ کانای み.',
       f3ExplainFa: 'みず = آب.',
     },
@@ -12132,7 +12133,7 @@ export const KANA_EXERCISES: Exercise[] = [
       c: 'آزمون = テスト — با テ شروع می‌شود.',
     },
     feedback: {
-      f1Fa: 'چهار کانا: エ+ア+コ+ン — «اِآکُن».',
+      f1Fa: 'چهار کانا: エ+ア+コ+ン — «اِاکُن».',
       f2HintFa: 'کوتاه‌شدهٔ air conditioner؛ تابستانِ توکیو بدون آن نمی‌شود!',
       f3ExplainFa: 'エアコン = کولر — واژهٔ میزبانِ کانای エ.',
     },
@@ -12158,7 +12159,7 @@ export const KANA_EXERCISES: Exercise[] = [
       b: 'رایانهٔ شخصی = パソコン — با パ شروع می‌شود.',
     },
     feedback: {
-      f1Fa: 'カ+ラ+オ+ケ — «کارائوکِ».',
+      f1Fa: 'カ+ラ+オ+ケ — «کارائوکه».',
       f2HintFa: 'سرگرمی محبوب شب‌های ژاپن با میکروفون.',
       f3ExplainFa: 'カラオケ = کارائوکه — واژهٔ میزبانِ کانای ラ.',
     },
@@ -12210,7 +12211,7 @@ export const KANA_EXERCISES: Exercise[] = [
       c: 'مغازهٔ اجاره = レンタルショップ — با レ شروع می‌شود.',
     },
     feedback: {
-      f1Fa: 'テ+ス+ト — «تِسُتُ».',
+      f1Fa: 'テ+ス+ト — «تِسوتو».',
       f2HintFa: 'همان test انگلیسی — داخل کلاس‌های ژاپن.',
       f3ExplainFa: 'テスト = آزمون — واژهٔ میزبانِ ト.',
     },
@@ -12236,7 +12237,7 @@ export const KANA_EXERCISES: Exercise[] = [
       b: 'کارائوکه = カラオケ — چهار کاناست.',
     },
     feedback: {
-      f1Fa: 'ラ+ジ+オ — «راجیئو».',
+      f1Fa: 'ラ+ジ+オ — «راجیو».',
       f2HintFa: 'صدای موسیقی از دستگاهی که در ماشین است.',
       f3ExplainFa: 'ラジオ = رادیو — واژهٔ میزبانِ ジ.',
     },
@@ -12315,7 +12316,10 @@ export const KANA_EXERCISES: Exercise[] = [
       c: 'パソコン با パ شروع می‌شود — رایانهٔ شخصی.',
     },
     feedback: {
-      f1Fa: 'サ+ン+ド+イ+ッ+チ — «ساندویچ».',
+      // LESSON-UX P2 #200/#205 — the f1 reading now matches the board/wall
+      // reading (the ONE standard): «سان‌دُیچّی» — the Persian gloss stays in
+      // f3 where it belongs.
+      f1Fa: 'サ+ン+ド+イ+ッ+チ — «سان‌دُیچّی».',
       f2HintFa: 'با サ («سا») شروع می‌شود و ّ (سوکوئون) وسطش هست.',
       f3ExplainFa: 'サンドイッチ = ساندویچ — آیتم منوی کافه.',
     },

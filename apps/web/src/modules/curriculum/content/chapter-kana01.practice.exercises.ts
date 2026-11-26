@@ -2148,7 +2148,10 @@ export const PRACTICE_EXERCISES_KANA: Record<string, Exercise> = {
     referenceBlockId: 'blk-stn-kana-h3-card-hira-su',
     difficulty: 2,
     promptFa: 'گوش کن — کدام واژه را شنیدی؟',
-    promptJa: 'すし',
+    // LESSON-UX P2 (#203 audit finding 1, the second instance the walk found):
+    // NO promptJa on kana-listening — the glyph IS the answer and rendered
+    // above the options. The QUESTION's sound is the WORD's own committed asset
+    // (すし — resolved from the hostwords registry by the station page).
     promptJaReading: 'سوشی',
     options: [
       { id: 'a', label: 'すし' },

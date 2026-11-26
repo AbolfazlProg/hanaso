@@ -57,6 +57,24 @@ test('audio honesty gate — no playable word is an orphan (committed or covered
         for (const ex of (b.examples as Array<{ ja: string }> | undefined) ?? []) {
           if (!SCAFFOLD.test(ex.ja)) needed.add(ex.ja);
         }
+        /* LESSON-UX P2 #200 — the reading-sheet law: EVERYTHING written on the
+         * realworld boards (items + panel leads + signboard sides) and the
+         * word walls is a playable surface — the «وویس برای هر چیزی که نوشته
+         * می‌شود» contract joins the orphan gate. */
+        for (const board of (b.kind === 'realworld-board' ? [b] : []) as Array<{
+          panels: { leadJa?: string; items: { ja: string; sideJa?: string }[] }[];
+        }>) {
+          for (const panel of board.panels) {
+            if (panel.leadJa && !SCAFFOLD.test(panel.leadJa)) needed.add(panel.leadJa);
+            for (const item of panel.items) {
+              needed.add(item.ja);
+              if (item.sideJa && !SCAFFOLD.test(item.sideJa)) needed.add(item.sideJa);
+            }
+          }
+        }
+        for (const wall of (b.kind === 'word-wall' ? [b] : []) as Array<{ words: { ja: string }[] }>) {
+          for (const w of wall.words) needed.add(w.ja);
+        }
       }
     }
   }

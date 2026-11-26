@@ -57,6 +57,7 @@ import { resumeFreshness } from '@/modules/curriculum/resume-policy';
 import { JaBlock } from '@/components/patterns/ja-block';
 import { MixedFaJaText } from './mixed-fa-ja-text';
 import { NameKatakana } from '@/components/curriculum/name-katakana';
+import { RealWorldBoard, WordWall } from '@/components/curriculum/realworld-board';
 import { LineAudioButton } from './line-audio-button';
 import { ExerciseSession } from './exercise-session';
 import { InlineDialoguePlayer } from './inline-dialogue-player';
@@ -2736,66 +2737,20 @@ function BlockView({
       );
 
     /*
-     * Part-2 د/ط — the REAL-WORLD board (menu / signboard / postcard): a real
-     * artifact the learner READS, not a card stack. Glossed panels give the
-     * bilingual-tourist clue (m2); bare panels are the decode challenge (m1).
-     * Purely receptive — the following exercise blocks read from it.
+     * LESSON-UX P2 #200 — the REAL-WORLD board (menu / signboard / postcard):
+     * the decode-then-verify loop. Every written surface (items, leads, sides)
+     * carries its OWN committed audio; every item is tappable — the tap
+     * reveals the Persian reading (+ meaning on bare boards). Glossed panels
+     * keep the bilingual-tourist clue visible from the start.
      */
     case 'realworld-board':
-      return (
-        <section className="flex flex-col gap-4 rounded-md border-2 border-ai bg-card p-5" data-realworld-board>
-          <header className="flex flex-col gap-1">
-            <p className="flex items-center gap-2 text-caption font-bold text-ai">
-              <Sparkles aria-hidden className="size-4" />
-              {fa.curriculum.boardCaptionLabel}
-            </p>
-            <h3 className="text-h3 font-bold text-ink">
-              <MixedFaJaText text={block.titleFa} />
-            </h3>
-            {block.captionFa ? (
-              <p className="text-small leading-[var(--leading-fa)] text-ink-soft">
-                <MixedFaJaText text={block.captionFa} />
-              </p>
-            ) : null}
-          </header>
-          <p className="text-caption text-ink-faint">
-            {block.showGloss ? fa.curriculum.boardGlossHint : fa.curriculum.boardDecodeHint}
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {block.panels.map((panel, pi) => (
-              <div key={pi} className="rounded-md border border-ink-faint bg-surface-warm p-4">
-                <p className="text-caption font-black text-indigo">{panel.titleFa}</p>
-                {panel.leadJa ? <JaBlock className="mt-2 text-lead font-bold">{panel.leadJa}</JaBlock> : null}
-                <ul className="mt-3 flex flex-col gap-2" data-board-items>
-                  {panel.items.map((item, ii) => (
-                    <li
-                      key={ii}
-                      className="flex items-baseline justify-between gap-3 border-b border-dashed border-ink-faint pb-2 last:border-none last:pb-0"
-                    >
-                      <span className="flex min-w-0 flex-col gap-0.5">
-                        <JaBlock className="text-body font-bold">
-                          <SmartJaText text={item.ja} />
-                        </JaBlock>
-                        {block.showGloss && item.glossFa ? (
-                          <span className="text-caption text-ink-soft">{item.glossFa}</span>
-                        ) : null}
-                      </span>
-                      {item.sideJa ? (
-                        /* ENGINE-NEXTGEN W-B: real learner-read JP (board side
-                           details: prices, 〜あります) — raised from the 12px
-                           furigana floor to text-small + the JP font stack. */
-                        <span className="ja-block shrink-0 text-small text-ink-faint" dir="ltr" lang="ja">
-                          {item.sideJa}
-                        </span>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-      );
+      return <RealWorldBoard key={block.id} block={block} audioByWord={exampleAudioByWord ?? {}} />;
+
+    /* LESSON-UX P2 #200 — «کارت‌های واژهٔ تو»: the closing wall of the reading
+     * sheet — every decoded word as a full card (shape + reading + meaning +
+     * its own audio). */
+    case 'word-wall':
+      return <WordWall key={block.id} block={block} audioByWord={exampleAudioByWord ?? {}} />;
 
     /*
      * Part-2 ز — the OPTIONAL drill's mode picker: the learner chooses the

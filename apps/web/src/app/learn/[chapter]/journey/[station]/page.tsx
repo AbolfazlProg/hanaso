@@ -270,7 +270,18 @@ export default async function StationPage({
        * asset resolves to null and the client degrades honestly (visual-only) —
        * never a neighboring word's sound, never a dead button. */
       if (ex.type === 'kana-listening' || ex.type === 'kana-recall') {
-        ce.promptAudio = kanaAudioUrls(`kn-${ex.targetConcept}`);
+        /* LESSON-UX P2 #203/#200 — a kana-listening item whose options are
+         * multi-glyph WORDS is a word-listening question: the sound IS the
+         * question and must be the WORD's own committed asset (DD-119 —
+         * «صدای واژه باید واقعاً همان واژه باشد»), never the single-kana
+         * registry cut. Glyph questions (single-kana options) keep the
+         * per-glyph kn-* asset. The correct option's label is server-side
+         * knowledge here — only the resolved audio URL crosses to the client. */
+        const correctLabel = ex.options?.find((o) => o.id === ex.correctOptionId)?.label ?? '';
+        ce.promptAudio =
+          ex.type === 'kana-listening' && correctLabel.length > 1
+            ? hostWordAudioUrls(correctLabel)
+            : kanaAudioUrls(`kn-${ex.targetConcept}`);
       }
       if (ex.type === 'rule-listening' && ex.promptJa) {
         ce.promptAudio = hostWordAudioUrls(ex.promptJa);
@@ -382,6 +393,25 @@ export default async function StationPage({
       for (const w of block.listenWords) {
         if (w) exampleAudioByWord[w] = hostWordAudioUrls(w);
       }
+    }
+    /*
+     * LESSON-UX P2 #200 — the reading sheet's audio law: EVERYTHING written on
+     * the board and the wall is hearable — items, panel leads (こんにちは！ /
+     * コーヒー・セット) and the signboard sides (prices, セール, 新入荷…). Same
+     * per-word hostwords registry as every other surface; null = the control
+     * hides honestly (the h21 inventory gate keeps the set orphan-free).
+     */
+    if (block.kind === 'realworld-board') {
+      for (const panel of block.panels) {
+        if (panel.leadJa) exampleAudioByWord[panel.leadJa] = hostWordAudioUrls(panel.leadJa);
+        for (const item of panel.items) {
+          exampleAudioByWord[item.ja] = hostWordAudioUrls(item.ja);
+          if (item.sideJa) exampleAudioByWord[item.sideJa] = hostWordAudioUrls(item.sideJa);
+        }
+      }
+    }
+    if (block.kind === 'word-wall') {
+      for (const w of block.words) exampleAudioByWord[w.ja] = hostWordAudioUrls(w.ja);
     }
   }
 

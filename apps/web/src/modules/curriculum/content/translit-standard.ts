@@ -162,7 +162,10 @@ const SMALL_KANA = 'ゃゅょぁぃぅぇぉャュョァィゥェォ';
 const SOKUON = 'っッ';
 const CHOOONPU = 'ー';
 const MORAL_NASAL = 'んン';
-const TILDE_PREFIX = '〜~';
+/* LESSON-UX P2 #205 — BOTH tilde codepoints are the prefix mark: the wave
+ * dash U+301C 〜 and the fullwidth tilde U+FF5E ～ (hira-ka's hostword ～かい
+ * carried the fullwidth form and failed the walk). */
+const TILDE_PREFIX = '〜～~';
 const VOWEL_LETTERS = ['ا', 'و', 'ی', 'ه'];
 
 /**
@@ -201,6 +204,16 @@ const VOICED_YOON_FA: Readonly<Record<string, string>> = {
   ピャ: 'پیا',
   ピュ: 'پیو',
   ピョ: 'پیُ',
+  /* LESSON-UX P2 #205 — kata-di's hostword ヂャンクション forced the locked
+   * registration decision the header reserves for exactly this moment:
+   * ぢ/ヂ is the historic-spelling twin of じ/ジ (same sound), so its yōon
+   * compound follows the y-collapsing じゃ=«جا» pattern → ぢゃ/ヂャ=«جا». */
+  ぢゃ: 'جا',
+  ぢゅ: 'جو',
+  ぢょ: 'جُ',
+  ヂャ: 'جا',
+  ヂュ: 'جو',
+  ヂョ: 'جُ',
 };
 const VOICED_YOON_ROMAJI: Readonly<Record<string, string>> = {
   ぎゃ: 'gya',
@@ -227,6 +240,12 @@ const VOICED_YOON_ROMAJI: Readonly<Record<string, string>> = {
   ピャ: 'pya',
   ピュ: 'pyu',
   ピョ: 'pyo',
+  ぢゃ: 'ja',
+  ぢゅ: 'ju',
+  ぢょ: 'jo',
+  ヂャ: 'ja',
+  ヂュ: 'ju',
+  ヂョ: 'jo',
 };
 
 /**
@@ -252,6 +271,11 @@ const FOREIGN_SMALL_FA: Readonly<Record<string, string>> = {
   チェ: 'چه',
   ジェ: 'جه',
   シェ: 'شه',
+  /* LESSON-UX P2 #205 — ウェ (kata-u's hostword ウェイトレス): the glide
+   * compound of ウ, locked per the same mark-foreign-small rule. Persian has
+   * no w/v letter distinction to exploit — «وه» is the shared natural
+   * rendering (cf. ヴェ=«وه»). */
+  ウェ: 'وه',
 };
 const FOREIGN_SMALL_ROMAJI: Readonly<Record<string, string>> = {
   ファ: 'fa',
@@ -268,6 +292,7 @@ const FOREIGN_SMALL_ROMAJI: Readonly<Record<string, string>> = {
   チェ: 'che',
   ジェ: 'je',
   シェ: 'she',
+  ウェ: 'we',
 };
 
 /** The per-mora label table — derived ONCE from the card truth. */
@@ -356,6 +381,18 @@ function walk(reading: string): { events: WalkEvent[]; errors: string[] } {
       i += 1;
       continue;
     }
+    // A standalone vowel + a following small kana can form a LOCKED foreign-small
+    // compound (ウェ — LESSON-UX P2 #205, kata-u's hostword ウェイトレス): the
+    // registered compound wins over the standalone-vowel reading. Checked
+    // BEFORE the vowel branch so ウェ is never split into ウ + a stray ェ.
+    // (`next` must be a REAL char — String.includes('') is true, and a
+    // word-final vowel must keep its medial vowel-table form.)
+    if (next && STANDALONE_VOWELS.includes(ch) && SMALL_KANA.includes(next) && KANA_ROMAJI_BY_GLYPH.has(ch + next)) {
+      events.push({ kind: 'mora', mora: { glyph: ch + next, kata: /[\u30a0-\u30ff]/.test(ch), geminate } });
+      geminate = false;
+      i += 2;
+      continue;
+    }
     // Standalone vowels come FIRST — the vowel tables (initial/medial letter
     // forms) own them, never the bank row labels.
     if (STANDALONE_VOWELS.includes(ch)) {
@@ -424,6 +461,18 @@ function elongateFaPart(part: string): { part: string; ok: boolean } {
     return { part: part.replace(/[َُِ]$/, '') + letter + letter, ok: true };
   }
   return { part: part + letter, ok: true };
+}
+
+/**
+ * LESSON-UX P2 #205 — the standard Persian reading of a word as a nullable
+ * value: null when the walk fails (kanji, uncovered glyphs). This is the
+ * kana-card host-word fallback — a host card with no example-set reading
+ * renders the STANDARD derivation instead of a Latin-only chip; a null keeps
+ * the honest absence.
+ */
+export function standardWordReadingFa(word: string): string | null {
+  const { fa, errors } = transliterateKanaToFa(word);
+  return errors.length ? null : fa;
 }
 
 /** Persian transliteration of a kana reading — the locked word-level standard. */

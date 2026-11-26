@@ -91,6 +91,7 @@ function deckHasTeachingMaterial(blocks: TeachingBlock[]): boolean {
       b.kind === 'scene' ||
       b.kind === 'character-scene' ||
       b.kind === 'realworld-board' ||
+      b.kind === 'word-wall' ||
       b.kind === 'listening-task',
   );
 }
