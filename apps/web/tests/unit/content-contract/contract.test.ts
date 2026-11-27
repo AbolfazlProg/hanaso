@@ -13,7 +13,8 @@
  *  B (Registry/Resolver) → R8 fsrs item registry, R9 link integrity,
  *                          R10 draft/published lifecycle
  *  C (Journey Engine)   → R11 journey invariants (+ the 0/1/N regression)
- *  D (پیام‌رسانی)        → R3 feedback no-leak, R12 wrap-up honesty
+ *  D (پیام‌رسانی)        → R3 feedback no-leak (runtime), R15 authored
+ *                          keylessness (B3), R12 wrap-up honesty
  *  data hygiene         → R1 Japanese charset, R2 option/chunk uniqueness
  *
  * The suite is deliberately CHAPTER-AGNOSTIC: nothing here may hardcode
@@ -614,6 +615,55 @@ describe('R14 — «خط N» mentions are anchored (B2: the off-by-one line cita
               own.has(n),
               `${chapter.slug}/${ex.id} (gate bank): cites «خط ${n}» but its own anchors are {${[...own].join(', ')}}`,
             ).toBe(true);
+          }
+        }
+      }
+    });
+  }
+});
+
+/* ------------------------------------------------------------------ R15 */
+
+/**
+ * B3-REBUILD 2026-11-28 — the authored keylessness law.
+ *
+ * R3 guards the RUNTIME ladder (grading a real wrong answer never returns
+ * the key pre-reveal — the E2 mask redacts both surfaces), but the AUTHORED
+ * f1Fa/f2HintFa copy of chapter 02 still carried the answer key verbatim
+ * («نفی مؤدبانه: では ありません», «…では ありません。…です») — masked on the
+ * wire, yet the authored text kept teaching the wrong habit and the offline
+ * scan (scripts/b2-qc/b2-scan-leaks.ts) had to be run by hand. B3 rebuilt
+ * every fm01 hint keyless and retires the class: this law fails the build
+ * the moment an authored F1/F2 line contains a correct option label or a
+ * correct chunk/chip text of its own exercise.
+ *
+ * PENDING DEBT (honest ledger): the two kana chapters still carry their
+ * pre-rebuild authored leaks (kana-foundation-01: 11, kana-expansion-01:
+ * 121 at the time of this law) — protected at runtime by the same E2 mask,
+ * scheduled for their own rebuilds. The set below is frozen: a chapter
+ * leaves it only by becoming fully keyless, and anything not listed must
+ * be keyless from now on.
+ */
+const KEYLESSNESS_PENDING_CHAPTERS: ReadonlySet<string> = new Set(['kana-foundation-01', 'kana-expansion-01']);
+
+describe('R15 — authored F1/F2 are keyless (B3: the authored answer-key leaks)', () => {
+  it('the pending ledger holds exactly the two kana chapters (their own rebuilds retire them)', () => {
+    expect([...KEYLESSNESS_PENDING_CHAPTERS].sort()).toStrictEqual(['kana-expansion-01', 'kana-foundation-01']);
+  });
+  for (const { chapter, kind } of corpus()) {
+    it(`chapter ${chapter.slug} (${kind})`, () => {
+      if (KEYLESSNESS_PENDING_CHAPTERS.has(chapter.slug)) return;
+      for (const ex of allExercises(chapter)) {
+        for (const [lvl, line] of [
+          ['f1', ex.feedback?.f1Fa],
+          ['f2', ex.feedback?.f2HintFa],
+        ] as const) {
+          if (!line) continue;
+          for (const k of keyTexts(ex)) {
+            expect(
+              k.length >= 2 && line.includes(k),
+              `${chapter.slug}/${ex.id}/${lvl}: authored pre-reveal copy carries the key «${k}» — rewrite the hint keyless (the reveal belongs to F3)`,
+            ).toBe(false);
           }
         }
       }

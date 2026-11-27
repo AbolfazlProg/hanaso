@@ -1154,12 +1154,19 @@ export const FM01_EXERCISES: Exercise[] = [
     promptJa: 'キムさんは ちゅうごくじん___。かんこくじんです。',
     clozeTokens: ['キムさんは', 'ちゅうごくじん', null, '。', 'かんこくじんです', '。'],
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'では ありません', 'です', 'でした', 2);
+      /* B3 §D — でした was never taught in this chapter (the unlearned-surface
+       * law): the distractors are now both real, learned endings. */
+      const { options, correctOptionId } = o3('x', 'では ありません', 'です', 'ですか', 2);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { a: 'です یعنی «است» — این‌جا نفی لازم است.', b: 'でした گذشته است — در این مکالمه نیست.' },
+    distractorRationaleFa: {
+      a: 'です یعنی «است» — این‌جا نفی لازم است.',
+      b: 'ですか پرسش می‌سازد — این‌جا یک نفیِ خبری لازم است.',
+    },
     feedback: {
-      f1Fa: 'نفی مؤدبانه: では ありません.',
+      /* B3 §D (the B1 §۵ law, this batch): F1 is keyless — the answer
+       * arrives only at F3's reveal. */
+      f1Fa: 'ترجمهٔ فارسی «نیست» می‌گوید: پایان‌بندیِ منفیِ مؤدبانه لازم است.',
       f2HintFa: 'سورا فرض یامادا را رد می‌کند — نه + درست.',
       f3ExplainFa: 'ちゅうごくじんでは ありません = چینی نیست.',
     },
@@ -1173,7 +1180,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-dewa-arimasen',
     lineRef: L(10),
     difficulty: 3,
-    promptFa: 'بساز: «او معلم نیست. دانشجو است.»',
+    promptFa: 'بساز: «او استاد نیست. دانشجو است.»',
     chips: [
       { id: 'n1', ja: 'せんせい' },
       { id: 'n2', ja: 'では' },
@@ -1183,7 +1190,9 @@ export const FM01_EXERCISES: Exercise[] = [
     acceptedChipOrder: ['n1', 'n2', 'n3', 'n4'],
     feedback: {
       f1Fa: 'دو جمله داری: نفی + درست — هرکدام یک پایان‌بندی.',
-      f2HintFa: '…では ありません。…です。',
+      /* B3 §D — keyless: the slot ROLES are named, never the chunks
+       * themselves (the old «…では ありません。…です» spelled the answer). */
+      f2HintFa: 'با تکهٔ نفی‌شده شروع کن؛ دو تکهٔ «نیست» وسط؛ تکهٔ هویتِ درست آخر.',
       f3ExplainFa: 'せんせいでは ありません。がくせいです.',
     },
     assessmentRole: 'practice',
@@ -1208,8 +1217,8 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'そうですか برای اطلاعات تازه است — این‌جا باید اصلاح کنی.',
     },
     feedback: {
-      f1Fa: 'اول いいえ، بعد جملهٔ درست.',
-      f2HintFa: 'ردِّ سورا با いいえ شروع می‌شود: いいえ、キムさんは…',
+      f1Fa: 'اول ردّ کن، بعد جملهٔ درست را بگو.',
+      f2HintFa: 'اولین واژهٔ ردِّ مؤدبانه — همان که با آن «نه» می‌گویی.',
       f3ExplainFa: 'いいえ + نفی + هویتِ درست = ردّ مؤدبانهٔ کامل.',
     },
     assessmentRole: 'practice',
@@ -1232,7 +1241,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'پایان آیین معرفی است، نه واکنش به خبر.',
     },
     feedback: {
-      f1Fa: 'そうですか = آه، می‌فهمم — واکنش به اطلاعات نو.',
+      f1Fa: 'آه، می‌فهمم! — واکنش به اطلاعات نو.',
       f2HintFa: 'با آهنگ نزولی.',
       f3ExplainFa: 'そうですか (نزولی) = جالب بود/می‌فهمم.',
     },
@@ -1254,7 +1263,7 @@ export const FM01_EXERCISES: Exercise[] = [
     correctOrder: ['z1', 'z2'],
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'اول واکنش به خبر (そうですか)، بعد دریافت (わかりました).',
+      f1Fa: 'اول واکنش به خبرِ تازه، بعد اعلامِ دریافت.',
       f2HintFa: 'واکنشِ به خبرِ تازه اول می‌آید، دریافت بعدش.',
       f3ExplainFa: 'そうですか。わかりました。',
     },
@@ -1289,6 +1298,38 @@ export const FM01_EXERCISES: Exercise[] = [
   },
 
   /* ════════════════════════ LISTEN-2 (stn-fm01-15-listen) ════════════════════════ */
+  {
+    id: 'ex-fm01-l2-engage-1',
+    type: 'listen-minimal-pair',
+    targetSkill: 'listening',
+    targetConcept: 'voc-kankokujin',
+    assessesConcepts: ['listen-nasal-mora'],
+    /* B3 §D (the B2 §۲ pattern): the station's NEW concept (the nasal
+     * mora) is TAUGHT by blk-l2-nm-rule BEFORE it is tested — this d1
+     * engagement recognizes the modeled form right off the rule card.
+     * AUDIO-UNIT: the tested surface is the country form かんこく — its
+     * standalone word-form asset (the same form the rule card models). */
+    audio: { unit: 'word-form', text: 'かんこく', wordId: 'voc-kankokujin' },
+    lineRef: L(10),
+    difficulty: 1,
+    promptFa: 'گوش بده: واژهٔ «کره» را با کدام شکل شنیدی؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'かんこく', 'かこく', 'かここ', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'かこく مورای خیشومی ん را جا انداخته — «کاکوک» باقی می‌ماند.',
+      c: 'かここ مورای پایانی く را جا انداخته — شنیده‌شده کامل بود.',
+    },
+    feedback: {
+      /* B3 §D (the B1 §۵ law, this batch): F1/F2 are keyless. */
+      f1Fa: 'شنیده‌شده چهار مورا داشت — یکی از آن‌ها صدای خیشومی بود.',
+      f2HintFa: 'قاعدهٔ همین درس: ん یک مورای کامل است، وسطِ همین واژه.',
+      f3ExplainFa: 'かんこく = kankoku = کره — با مورای خیشومی ん.',
+    },
+    assessmentRole: 'practice',
+    referenceBlockId: 'blk-l2-nm-rule',
+  },
   {
     id: 'ex-fm01-l2-gist-1',
     type: 'gist-select',
@@ -1329,21 +1370,26 @@ export const FM01_EXERCISES: Exercise[] = [
     targetSkill: 'listening',
     targetConcept: 'voc-kankokujin',
     assessesConcepts: ['listen-nasal-mora'],
-    /* AUDIO-UNIT: the tested surface is the COUNTRY form かんこく (options
-     * かんこく/かこく/かここ) — a standalone word-form asset. */
-    audio: { unit: 'word-form', text: 'かんこく', wordId: 'voc-kankokujin' },
+    /* B3 §D — AUDIO-UNIT: the independent item discriminates the FULL
+     * nationality word (かんこくじん — the word's own standalone asset), a
+     * different surface from the rule card / engagement's country form;
+     * the distractors are real learner errors (dropped ん / dropped く). */
+    audio: { unit: 'word', wordId: 'voc-kankokujin' },
     lineRef: L(10),
     difficulty: 3,
-    promptFa: 'گوش بده: کدام را شنیدی؟ (تفاوت ん خیشومی)',
+    promptFa: 'گوش بده: کدام ملیت را شنیدی؟ (تفاوت ん خیشومی)',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'かんこく (کره)', 'かこく (؟)', 'かここ (؟)', 2);
+      const { options, correctOptionId } = o3('x', 'かんこくじん (کره‌ای)', 'かここじん', 'かんこじん', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { a: 'かこく مورای خیشومیِ ん را جا انداخته.', b: 'かここ مورای پایانیِ く را جا انداخته.' },
+    distractorRationaleFa: {
+      a: 'かここじん مورای خیشومی ん را جا انداخته — «کاکوجین» باقی می‌ماند.',
+      c: 'かんこじん مورای く را جا انداخته — شنیده‌شده کامل بود.',
+    },
     feedback: {
-      f1Fa: 'ん کامل ادا می‌شود: かんこく (کان‌کوکو).',
+      f1Fa: 'شنیده‌شده شش مورا داشت — مورای خیشومی وسطش کامل ادا شد.',
       f2HintFa: 'یک مورای خیشومی در میانه هست.',
-      f3ExplainFa: 'かんこく = kankoku — بدون ん واژهٔ دیگری می‌شود.',
+      f3ExplainFa: 'かんこくじん = kankokujin — بدون ん واژهٔ دیگری می‌شود.',
     },
     assessmentRole: 'practice',
   },
@@ -1356,7 +1402,7 @@ export const FM01_EXERCISES: Exercise[] = [
     audioLineRef: L(10),
     lineRef: L(10),
     difficulty: 2,
-    promptFa: 'این جمله («نه، کیم چینی نیست. کره‌ای است») را چه کسی می‌گوید؟',
+    promptFa: 'گوش بده: این ردِّ مؤدبانه را چه کسی می‌گوید؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'سورا', 'یامادا', 'کیم', 0);
       return { options, correctOptionId };
@@ -1419,7 +1465,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'مکان + から، بعد فعل.',
-      f2HintFa: 'برعکس فارسی: «از کره» اولِ ژاپنی می‌آید… یعنی かんこくから اول است و فعل آخر.',
+      f2HintFa: 'برعکس فارسی: تکهٔ مکان + «از» اولِ جملهٔ ژاپنی می‌نشیند و فعل همیشه آخر.',
       f3ExplainFa: 'かんこくから きました = از کره آمدم.',
     },
     assessmentRole: 'practice',
@@ -1440,7 +1486,7 @@ export const FM01_EXERCISES: Exercise[] = [
     acceptedChipOrder: ['i1', 'i2'],
     feedback: {
       f1Fa: 'دو تکه کافی است.',
-      f2HintFa: 'مکان+から → きました.',
+      f2HintFa: 'اول تکهٔ مکان، بعد فعلِ گذشتهٔ «آمدن».',
       f3ExplainFa: 'イランから きました = از ایران آمدم — جملهٔ خودت!',
     },
     assessmentRole: 'practice',
@@ -1478,10 +1524,9 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-dewa-arimasen',
     lineRef: L(10),
     difficulty: 3,
-    promptFa:
-      'بساز: «[من] دانشجو نیستم. دانش‌آموز هستم.» (がくせい=دانشجو · がくせい‌های مدرسه را با خودت عوض نکن — همین الگو را بساز)',
+    promptFa: 'بساز: «[او] استاد دانشگاه نیست. دانشجو است.»',
     chips: [
-      { id: 'x1', ja: 'がくせいでは' },
+      { id: 'x1', ja: 'だいがくの せんせいでは' },
       { id: 'x2', ja: 'ありません' },
       { id: 'x3', ja: 'がくせいです' },
     ],
@@ -1489,8 +1534,8 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'نفی کامل + خبر درست.',
-      f2HintFa: '…では ありません。…です。',
-      f3ExplainFa: 'الگوی نفی: AはBでは ありません.',
+      f2HintFa: 'اول تکه‌های «نیست»، بعد هویتِ درست.',
+      f3ExplainFa: 'だいがくの せんせいでは ありません。がくせいです.',
     },
     assessmentRole: 'practice',
   },
@@ -1527,7 +1572,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'voc-daigaku',
     assessesConcepts: ['voc-daigaku'],
     difficulty: 1,
-    promptFa: 'گرم‌کردن — بخوان:',
+    promptFa: 'گرم‌کردن — واژهٔ «دانشگاه» را بخوان:',
     promptJa: 'だいがく',
     promptJaReading: 'daigaku',
     ...(() => {
@@ -1552,7 +1597,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'voc-kankokujin',
     assessesConcepts: ['voc-kankokujin'],
     difficulty: 2,
-    promptFa: 'گرم‌کردن — بخوان:',
+    promptFa: 'گرم‌کردن — واژهٔ «کره‌ای» را بخوان:',
     promptJa: 'かんこくじん',
     promptJaReading: 'kankokujin',
     ...(() => {
@@ -1638,7 +1683,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'آیین معرفی: خوشبختم → خاستگاه → یوروشیکو.',
-      f2HintFa: 'خوشبختم → خاستگاه (かんこくから) → یوروشیکو.',
+      f2HintFa: 'خوشبختم → خاستگاه → یوروشیکو.',
       f3ExplainFa: 'はじめまして、キムです。かんこくから きました。よろしく おねがいします。',
     },
     assessmentRole: 'practice',
@@ -1685,7 +1730,7 @@ export const FM01_EXERCISES: Exercise[] = [
     acceptedChipOrder: ['cp1', 'cp2', 'cp3'],
     feedback: {
       f1Fa: 'سه چیپ کافی است.',
-      f2HintFa: 'AはBです.',
+      f2HintFa: 'سه تکه: موضوع + ملیت + پایان‌بندی — الگوی هر معرفی این فصل.',
       f3ExplainFa: 'わたしは イランじんです.',
     },
     assessmentRole: 'practice',
@@ -1698,14 +1743,14 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'jobs-recognition',
     lineRef: L(8),
     difficulty: 1,
-    promptFa: '「エンジニア» یعنی چه؟',
+    promptFa: '«エンジニア» یعنی چه؟',
     ...(() => {
       const { options, correctOptionId } = o3('x', 'مهندس', 'پزشک', 'کارمند شرکت', 1);
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: { a: 'پزشک = いしゃ.', c: 'کارمند شرکت = かいしゃいん.' },
     feedback: {
-      f1Fa: 'エンジニア = مهندس (واژهٔ خارجی با کاتاکانا).',
+      f1Fa: 'واژه‌ای خارجی با کاتاکانا — نام یک شغل فنی.',
       f2HintFa: 'صدای «انجینیر» انگلیسی.',
       f3ExplainFa: 'エンジニア = مهندس.',
     },
@@ -1726,8 +1771,8 @@ export const FM01_EXERCISES: Exercise[] = [
     ],
     acceptedChipOrder: ['jb1', 'jb2', 'jb3'],
     feedback: {
-      f1Fa: 'الگوی گزاره: AはBです.',
-      f2HintFa: 'الگوی AはBです — مثل معرفی یامادا و علی.',
+      f1Fa: 'سه تکه: موضوع + شغل + پایان‌بندی.',
+      f2HintFa: 'مثل معرفی یامادا و علی — همان الگوی آشنا.',
       f3ExplainFa: 'わたしは エンジニアです.',
     },
     assessmentRole: 'practice',
@@ -1753,7 +1798,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'کشش با «اِ» نوشته شد (せんせえ)؛ در این واژه کشش با «ی» نوشته می‌شود (え+い).',
     },
     feedback: {
-      f1Fa: 'واکهٔ پایانی بلند است: せんせい (سِنسِی).',
+      f1Fa: 'واکهٔ پایانی بلند بود — شنیده‌شده چهار مورا داشت.',
       f2HintFa: 'せ+ん+せ+い — چهار مورا.',
       f3ExplainFa: 'せんせい = sensee = استاد.',
     },
@@ -1779,7 +1824,7 @@ export const FM01_EXERCISES: Exercise[] = [
       b: 'خبر ساده است — یامادا شنیده‌اش را تأیید می‌کند.',
     },
     feedback: {
-      f1Fa: 'یامادا چیزی را که می‌داند تأیید می‌کند: ね.',
+      f1Fa: 'یامادا شنیده‌اش را تأیید می‌کند — پایان‌بندیِ تأیید.',
       f2HintFa: '«پس سورا هستید…»',
       f3ExplainFa: 'ソラさんですね — تأییدِ شنیده‌ها.',
     },
@@ -1882,7 +1927,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: { a: 'کلاس = クラス.', b: 'کتاب = ほん.' },
     feedback: {
       f1Fa: 'واژهٔ مرکب است: だい (بزرگ) + がく (علم/مکتب) — جای بزرگِ علم و تحصیل.',
-      f2HintFa: 'だいがくの せんせい = استاد دانشگاه.',
+      f2HintFa: 'の دو واژه را به هم می‌چسباند: استادِ آن جای بزرگِ درس.',
       f3ExplainFa: 'だいがく = دانشگاه.',
     },
     assessmentRole: 'mastery_M2',
@@ -1975,7 +2020,7 @@ export const FM01_EXERCISES: Exercise[] = [
     distractorRationaleFa: {},
     feedback: {
       f1Fa: 'خاستگاه + から + فعل.',
-      f2HintFa: 'かんこく اول می‌نشیند؛ فعل きました آخر.',
+      f2HintFa: 'مکان اول می‌نشیند؛ فعلِ گذشته آخر.',
       f3ExplainFa: 'かんこくから きました.',
     },
     assessmentRole: 'mastery_M3',
@@ -2322,7 +2367,7 @@ export const FM01_EXERCISES: Exercise[] = [
       b: 'یادگیری/درس معنای واژه‌های دیگری از فصل‌های بعد است — 人 با آن‌ها کاری ندارد.',
     },
     feedback: {
-      f1Fa: '人 یعنی «انسان، شخص» — دو ضربهٔ جدا از بالا.',
+      f1Fa: 'شکلِ خودِ آدم است — دو ضربهٔ جدا از بالا.',
       f2HintFa: 'به شکل نگاه کن: دو ضربه که از بالا شروع می‌شوند و به پایین باز می‌شوند.',
       f3ExplainFa: '人 = انسان/شخص. دو ضربهٔ جدا از بالا؛ همین کانجی آخرِ همهٔ واژه‌های ملیت این فصل می‌نشیند.',
     },
@@ -2415,7 +2460,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'ごく همان خوانشِ وسطِ ちゅうごくじん (چینی) است — در かんこくじん سرِ واژه بدون تغییر می‌آید: かん-こく-じん.',
     },
     feedback: {
-      f1Fa: 'かんこくじん = かん + こく + じん — 国 در سرِ واژه «کُوک» خوانده می‌شود.',
+      f1Fa: 'واژهٔ شنیده‌شده سه بخش دارد: かん + خوانشِ درون‌واژه‌ایِ 国 + じん.',
       f2HintFa: 'وسط واژه را بشنو: …کُوک…',
       f3ExplainFa:
         'かんこくじん = かん + こく + じん — 国 در سرِ واژه‌های سرزمین با こく می‌آید؛ در ちゅうごく خوانش به ごく تغییر می‌کند.',

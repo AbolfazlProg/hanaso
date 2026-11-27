@@ -943,7 +943,7 @@ stations:
             o3: どなた پرسش «کیست» است نه اسم.
           hints:
             - بعد از さん همیشه نامِ شخصِ مقابل می‌آید.
-          feedbackWrongFa: نوبت ۱ — こんにちは、やまださん.
+          feedbackWrongFa: نوبت ۱ — سلامِ صبحگاهی، خطاب به نامِ مخاطب.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -1087,7 +1087,7 @@ stations:
             o3: کارمند شرکت در فصل‌های بعد — در این مکالمه نیست.
           hints:
             - نوبت ۸ — بعد از だいがくの چه می‌آید؟
-          feedbackWrongFa: だいがくの せんせいです — استاد دانشگاه.
+          feedbackWrongFa: نوبت ۸ را دوباره پخش کن — جملهٔ سومِ علی، شغلش را با ترکیبِ «دانشگاه» می‌گوید.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -1118,7 +1118,7 @@ stations:
             o3: دوست ともだち است (فصل‌های بعد).
           hints:
             - 'عنوان جزوهٔ همین درس است: わたしは学生です.'
-          feedbackWrongFa: がくせい = دانشجو — همان عنوان درس.
+          feedbackWrongFa: واژه‌ای که هویتِ درسیِ خودت را می‌سازد — در عنوانِ همین درس.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -1205,9 +1205,9 @@ stations:
           type: order_build
           promptFa: جملهٔ «من دانشجوام» را بچین
           hints:
-            - موضوع + هستهٔ اسم + ですِ مؤدانه در انتها.
+            - 'ترتیب فارسیِ جمله را نگه دار: اول موضوع، بعد هستهٔ اسم، پایان‌بندیِ مؤدانه آخر.'
           feedbackCorrectFa: わたしは がくせいです — عنوان همین درس!
-          feedbackWrongFa: 'الگوی نوبت ۳ را ببین — اول موضوع، بعد هویت با です؛ ترتیب را جابه‌جا نکن.'
+          feedbackWrongFa: 'الگوی نوبت ۳ را ببین — اول موضوع، بعد هویت؛ ترتیب را جابه‌جا نکن.'
           tiles:
             - わたしは
             - がくせい
@@ -1360,8 +1360,8 @@ stations:
             o2: さん پسوند نام است — پایان جمله نیست.
             o3: も ذرهٔ «هم» است و وسط جمله می‌نشیند.
           hints:
-            - 'مثال ۱ جزوه ص۷: わたしは にほんじんです.'
-          feedbackWrongFa: پایان جملهٔ مؤدانه معرفی = です.
+            - 'مثال ۱ جزوه ص۷ — پایان‌بندیِ مؤدانه، آخرِ جملهٔ هویت می‌نشیند.'
+          feedbackWrongFa: پایان‌بندیِ مؤدانهٔ معرفی — همان که آخرِ هر جملهٔ هویت می‌نشیند.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -1450,7 +1450,7 @@ stations:
           type: order_build
           promptFa: مثال ۳ جزوه را بچین — «من دانشجوی هند هستم»
           hints:
-            - اول موضوع با は، بعد هستهٔ طولانی، پایان با です.
+            - 'اول موضوع با は، بعد هستهٔ طولانی؛ پایان‌بندیِ مؤدانه آخر.'
           feedbackCorrectFa: わたしは インドの がくせいです — دقیقاً مثال ۳ جزوه ص۷.
           feedbackWrongFa: شکل منفی اینجا لازم نیست — جملهٔ مثبت است.
           tiles:
@@ -1605,7 +1605,7 @@ stations:
             o3: じゃ بخش شکل منفی است (じゃありません) نه پرسش.
           hints:
             - پایان پرسش مؤدانه = です + ذرهٔ پرسشی.
-          feedbackWrongFa: あなたは エンジニアですか — همان مثال جزوه.
+          feedbackWrongFa: همان مثال جزوه — پرسشِ مؤدانه با پایان‌بندیِ پرسشی.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -1811,7 +1811,7 @@ stations:
             o3: さん برای اسم آدم است نه کشور.
           hints:
             - 'الگو: کشور + じん = آدمِ آن کشور.'
-          feedbackWrongFa: アメリカじん = آمریکایی — همان الگوی にほんじん.
+          feedbackWrongFa: همان الگوی にほんじん — آدمِ آن کشور.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -1846,7 +1846,7 @@ stations:
             o3: ژاپنی بودن یاماداست.
           hints:
             - بعد از منفی، ملیت درست با です می‌آید.
-          feedbackWrongFa: かんこくじん です — کیم کره‌ای است.
+          feedbackWrongFa: نوبت ۱۰ را دوباره پخش کن — آخرِ ردِّ سورا، سرزمین + آدمِ آن می‌آید.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -1877,7 +1877,7 @@ stations:
             o3: محصول پسوند ملیت نمی‌گیرد.
           hints:
             - ご (語) برای زبان، じん (人) برای آدم — دو پسوند دو دنیا.
-          feedbackWrongFa: ご = زبان؛ にほんご = زبان ژاپنی.
+          feedbackWrongFa: پسوندِ زبان‌ها در برابر پسوندِ آدم‌ها — دوتایی که در ضمیمه کنارِ هم دیدی.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -1946,7 +1946,7 @@ stations:
             o3: هند فقط در مثال گرامر جزوه آمد.
           hints:
             - نوبت ۱۲ — بعد از から اسم کشور است.
-          feedbackWrongFa: かんこくから きました — از کره آمده‌ام.
+          feedbackWrongFa: نوبت ۱۲ را دوباره بشنو — سرزمینِ خاستگاه، قبل از ذرهٔ «از» می‌آید.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -2026,7 +2026,7 @@ stations:
             o3: دانشجو موضوع نوبت‌های معرفی خودی‌هاست.
           hints:
             - شنیدار اول — فقط موضوع پرسش را بگیر؛ どなた یعنی «چه کسی».
-          feedbackWrongFa: あのかたは どなたですか — پرسش دربارهٔ آن شخص.
+          feedbackWrongFa: پرسشِ مؤدانه دربارهٔ شخصِ سوم — همان که کنارِ پنجره است.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -2061,7 +2061,7 @@ stations:
             o3: مهندس مثال گرامر جزوه ص۸ است — در این نوبت نیامده.
           hints:
             - بعد از ملیت، جملهٔ سوم نوبت ۸ شغل را می‌گوید.
-          feedbackWrongFa: だいがくの せんせいです — استاد دانشگاه.
+          feedbackWrongFa: جملهٔ سومِ نوبت ۸ — ترکیبِ محلِ تدریس + شغل.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -2238,8 +2238,8 @@ stations:
             o2: でも «اما» است — حرف ربط، نه بخش شکل منفی.
             o3: には الگویی متفاوت دارد که هنوز نیامده.
           hints:
-            - 'شکل رسمی: では؛ شکل خودی: じゃ — جزوه هر دو را داده.'
-          feedbackWrongFa: がくせいでは ありません — では در موقعیت رسمی.
+            - 'شکلِ رسمی در برابر شکلِ خودی (じゃ) — جزوه هر دو را داده.'
+          feedbackWrongFa: ذرهٔ نفیِ رسمی — همان که قبل از ありません می‌نشیند.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -2479,7 +2479,7 @@ stations:
             o3: ご پسوند زبان است.
           hints:
             - نوبت ۹ — یامادا به کیم چه می‌گوید؟
-          feedbackWrongFa: キムさん — نام + さん برای دیگران.
+          feedbackWrongFa: خطابِ مؤدانه = نامِ خانوادگی + ذرهٔ احترام.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -2512,7 +2512,7 @@ stations:
             o3: پرسش دربارهٔ خودت بی‌معنی است.
           hints:
             - نوبت ۷ — میکی دربارهٔ چه کسی پرسید؟
-          feedbackWrongFa: あのかたは どなたですか — جفت مؤدانهٔ کامل.
+          feedbackWrongFa: جفتِ مؤدانهٔ کامل — همان الگوی پرسشِ میکی در نوبت ۷.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -2664,7 +2664,7 @@ stations:
           distractorReasons:
             o2: سورا چینی بودنش را تأیید می‌کند نه نفی.
             o3: も «هم» است و اینجا موضوع جدید است.
-          feedbackWrongFa: はい、わたしは ちゅうごくじん です — تأیید با です.
+          feedbackWrongFa: تأییدِ مثبت با پایان‌بندیِ خبریِ مؤدانه — نوبت ۶ را دوباره بشنو.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -2702,7 +2702,7 @@ stations:
         interaction:
           type: order_build
           promptFa: «استاد دانشگاه است» را بچین
-          feedbackWrongFa: چانک نوبت ۸ — だいがくの せんせい + です.
+          feedbackWrongFa: چانک نوبت ۸ — محلِ تدریس + شغل + پایان‌بندی.
           tiles:
             - だいがくの
             - せんせい
@@ -2792,7 +2792,7 @@ stations:
         interaction:
           type: order_build
           promptFa: «من ژاپنی‌ام» را بچین
-          feedbackWrongFa: مثال ۱ جزوه ص۷ — わたしは にほんじんです.
+          feedbackWrongFa: 'مثال ۱ جزوه ص۷ — ترتیبش: موضوع، ملیت، پایان‌بندی.'
           tiles:
             - わたしは
             - にほんじん
@@ -2914,7 +2914,7 @@ stations:
             o3: فقط اگر مبدأ داشته باشی — بعد از اسم می‌آید.
           hints:
             - 'الگوی نوبت ۳: سلامِ اول → اسم → بستهٔ پایانی.'
-          feedbackWrongFa: はじめまして دروازهٔ معرفی است.
+          feedbackWrongFa: دروازهٔ معرفی — اولین جملهٔ هر آشناییِ تازه.
         transition: on_correct_or_revealed
         flags: []
         card:
@@ -3296,7 +3296,7 @@ masteryBank:
     correctOptionId: o1
     hints:
       - پایان مؤدانهٔ معرفی.
-    feedbackWrongFa: です — مثال ۱ جزوه ص۷.
+    feedbackWrongFa: 'مثال ۱ جزوه ص۷ — پایان‌بندیِ مؤدانهٔ هویت.'
     lineRef: s-first-meeting-01-l3
     promptJa: わたしは がくせい__。
   - id: mb-n5l01-m2b
@@ -3319,7 +3319,7 @@ masteryBank:
     correctOptionId: o1
     hints:
       - نوبت ۸ — جملهٔ خبری مثبت.
-    feedbackWrongFa: です — استاد دانشگاه است.
+    feedbackWrongFa: 'همان الگوی نوبت ۸ — شغل با پایان‌بندیِ مؤدانه.'
     lineRef: s-first-meeting-01-l8
     promptJa: アリさんは だいがくの せんせい__。
   - id: mb-n5l01-m3a
@@ -3386,7 +3386,7 @@ masteryBank:
     correctOptionId: o1
     hints:
       - شکل منفی — مثال ۲ جزوه ص۸.
-    feedbackWrongFa: では ありません.
+    feedbackWrongFa: 'شکل منفیِ مؤدانه — همان که قبل از ありません می‌نشیند.'
     lineRef: s-first-meeting-01-l10
     promptJa: わたしは せんせい__ ありません。
   - id: mb-n5l01-m4b
