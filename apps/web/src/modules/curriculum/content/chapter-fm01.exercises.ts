@@ -605,8 +605,10 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'せんせえ کشش را با «اِ» می‌نویسد — در این واژه کشش با «ی» نوشته می‌شود (え+い).',
     },
     feedback: {
-      f1Fa: 'آخرین واکه کشیده بود — せんせい.',
-      f2HintFa: 'قاعدهٔ همین درس: せんせい چهار مورا و آخرش بلند.',
+      /* B2 §D2 (B1 §۵ law extended to this batch): F1/F2 are keyless and
+       * self-contained — the answer arrives only at F3's reveal. */
+      f1Fa: 'آخرین واکه کشیده بود — شنیده‌شده چهار مورا داشت.',
+      f2HintFa: 'قاعدهٔ همین درس: واکهٔ پایانی این واژه بلند است و با «ای» نوشته می‌شود.',
       f3ExplainFa: 'せんせい (sensee) = استاد — با واکهٔ پایانی کشیده.',
     },
     assessmentRole: 'practice',
@@ -672,27 +674,33 @@ export const FM01_EXERCISES: Exercise[] = [
     id: 'ex-fm01-l1-mp-1',
     type: 'listen-minimal-pair',
     targetSkill: 'listening',
-    targetConcept: 'voc-sensee',
+    targetConcept: 'voc-daigaku',
     assessesConcepts: ['listen-vowel-length'],
-    /* AUDIO-UNIT: the pair is the word's own pronunciation — standalone asset. */
-    audio: { unit: 'word', wordId: 'voc-sensee' },
+    /* B2 §D2 — the SECOND independent pair is the lesson's own THIRD long-
+     * vowel word (だいがく — the university of line 8): the batch's audio
+     * discrimination now spans three different words (せんせい guided →
+     * だいがく independent → ちゅうごく independent) instead of playing the
+     * せんせい asset a third near-identical time. AUDIO-UNIT: the word's
+     * standalone asset (wa-fm01-daigaku), never line 8's three sentences. */
+    audio: { unit: 'word', wordId: 'voc-daigaku' },
     lineRef: L(8),
     difficulty: 3,
-    promptFa: 'گوش بده: کدام را شنیدی؟ (تفاوت طول واکه)',
+    promptFa: 'گوش بده: واژهٔ «دانشگاه» را با کدام شکل شنیدی؟',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'せんせい (استاد)', 'せんせ (؟)', 'せんせえ (؟)', 1);
+      const { options, correctOptionId } = o3('x', 'だいがく (دانشگاه)', 'だがく', 'だいが', 0);
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      a: 'せんせ دو موراست — شنیده‌شده چهار مورا داشت.',
-      c: 'せんせえ با «اِ» کشیده می‌شود — شنیده‌شده با «ای» تمام شد.',
+      b: 'だがく کششِ «آای» آغازین را جا انداخته — شنیده‌شده با واکهٔ بلند شروع شد.',
+      c: 'だいが مورای پایانی «کو» را جا انداخته — شنیده‌شده کامل بود.',
     },
     feedback: {
-      f1Fa: 'واکهٔ پایانی در ژاپنی کشیده است: せんせい (سِنسِی).',
-      f2HintFa: 'دو مورا: せ+んせ+い — آخرین واکه کامل شنیده می‌شود.',
-      f3ExplainFa: 'せんせい = sensee — کوتاه‌کردن واکه یعنی واژهٔ دیگری/بی‌معنا.',
+      f1Fa: 'واکهٔ آغازین کشیده بود — «آای» بلند شنیدی.',
+      f2HintFa: 'دو مورا در آغاز: だ+い — واکهٔ اول بلند است.',
+      f3ExplainFa: 'だいがく = daigaku = دانشگاه — با «آای» کشیده در آغاز.',
     },
     assessmentRole: 'practice',
+    referenceBlockId: 'blk-l1-vl-rule',
   },
   {
     id: 'ex-fm01-l1-mp-2',
@@ -708,7 +716,7 @@ export const FM01_EXERCISES: Exercise[] = [
     difficulty: 3,
     promptFa: 'گوش بده: کدام ملیت؟',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'ちゅうごく (چین)', 'ちゅごく (؟)', 'ちゅうご (؟)', 0);
+      const { options, correctOptionId } = o3('x', 'ちゅうごく (چین)', 'ちゅごく', 'ちゅうご', 0);
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
@@ -716,7 +724,7 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'ちゅうご مورای پایانی «کو» را جا انداخته — شنیده‌شده کامل بود.',
     },
     feedback: {
-      f1Fa: 'واکهٔ «او» در میانه کشیده است: ちゅうごく (چیووگوکو).',
+      f1Fa: 'واکهٔ «او» در میانه کشیده بود — «اوی» بلند شنیدی.',
       f2HintFa: 'دو مورا در میانه: ちゅ+う — «اوی» بلند.',
       f3ExplainFa: 'ちゅうごく = chuugoku — طول واکه معنا را عوض می‌کند.',
     },
@@ -743,7 +751,9 @@ export const FM01_EXERCISES: Exercise[] = [
       c: '«دوست» جزو واژه‌های این فصل نیست — واژهٔ شنیده‌شده ضمیر اول شخص است.',
     },
     feedback: {
-      f1Fa: 'この واژه یعنی «من».',
+      /* B2 §D3 (B1 §۵ law): keyless F1/F2 + the この→این fix (un taugh
+       * Japanese glyph never appears inside Persian feedback copy). */
+      f1Fa: 'این واژه دربارهٔ خودِ گوینده است — ضمیر اول شخص.',
       f2HintFa: 'جملهٔ کامل: わたしは ちゅうごくじんです.',
       f3ExplainFa: 'わたし یعنی «من» — جملهٔ کامل: わたしは ちゅうごくじんです.',
     },
@@ -767,7 +777,8 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'ژاپنی = にほんじん — واژهٔ شنیده‌شده با «ایران» آغاز می‌شد (イランじん)، نه «نی‌هون».',
     },
     feedback: {
-      f1Fa: 'イランじん = ایرانی.',
+      /* B2 §D3 — keyless F1 (the old «イランじん = ایرانی» named the answer). */
+      f1Fa: 'واژهٔ شنیده‌شده با نام کشورِ خودِ تو آغاز شد — الگوی 〜じん.',
       f2HintFa: 'صدا دربارهٔ علی است.',
       f3ExplainFa: 'イランじん = ایرانی (الگوی 〜じん).',
     },
@@ -790,8 +801,10 @@ export const FM01_EXERCISES: Exercise[] = [
     correctOrder: ['w1', 'w2', 'w3'],
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'موضوع → هویت → です.',
-      f2HintFa: 'やまだは اول، にほんじん بعد، です آخر.',
+      /* B2 §D3 — keyless: the slot ROLES are named, never the chunks
+       * themselves (the old «موضوع → هویت → です» half-named the order). */
+      f1Fa: 'ترتیب فارسیِ آن: موضوع، بعد هویت، بعد پایان‌بندی.',
+      f2HintFa: 'با موضوع شروع کن؛ واژهٔ ملیت میانه است؛ پایان‌بندی مؤدب آخر می‌آید.',
       f3ExplainFa: 'やまだは にほんじんです.',
     },
     assessmentRole: 'practice',
@@ -812,8 +825,9 @@ export const FM01_EXERCISES: Exercise[] = [
     })(),
     distractorRationaleFa: { a: 'با です خبری می‌شود نه پرسش.', b: 'ですね تأکید/تأیید است.' },
     feedback: {
-      f1Fa: 'پرسش با ですか ساخته می‌شود.',
-      f2HintFa: 'آهنگ پایانی بالا — か.',
+      /* B2 §D3 — keyless F1/F2 (the old lines named ですか / か). */
+      f1Fa: 'برای پرسش، عبارت باید پایان‌بندی پرسشی بگیرد.',
+      f2HintFa: 'آهنگ پایانی جمله بالا می‌رود — پرسشی است.',
       f3ExplainFa: 'あのかたは どなたですか.',
     },
     assessmentRole: 'practice',
@@ -834,8 +848,9 @@ export const FM01_EXERCISES: Exercise[] = [
     acceptedChipOrder: ['r1', 'r2', 'r3'],
     distractorRationaleFa: {},
     feedback: {
-      f1Fa: 'سه تکه: موضوع + هویت + です.',
-      f2HintFa: 'با わたしは شروع کن — جمله دربارهٔ خودِ گوینده است.',
+      /* B2 §D3 — keyless: slots by role, not by chunk text. */
+      f1Fa: 'سه تکه: موضوع، هویت، پایان‌بندی.',
+      f2HintFa: 'با ضمیر «من» شروع کن — جمله دربارهٔ خودِ گوینده است.',
       f3ExplainFa: 'わたしは ちゅうごくじんです.',
     },
     assessmentRole: 'practice',
@@ -885,8 +900,11 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'せいせん ترتیب موراها را جابه‌جا کرده — شنیده‌شده せ+ん+せ+い بود.',
     },
     feedback: {
-      f1Fa: 'واکهٔ آخر せんせい کشیده است (سِنسِی).',
-      f2HintFa: 'せ+ん+せ+い: چهار مورا.',
+      /* B2 §D3 — keyless F1/F2; this stays the batch's single せんせい
+       * discrimination in the consolidation station (engage-1 + this one
+       * = twice total; だいがく/ちゅうごく carry the rest). */
+      f1Fa: 'واکهٔ آخر کشیده بود — شنیده‌شده چهار مورا داشت.',
+      f2HintFa: 'شنیده‌شده را مورا‌به‌مورا بشمار؛ گزینه‌های نادرست کوتاه‌ترند.',
       f3ExplainFa: 'せんせい (sensee) = استاد.',
     },
     assessmentRole: 'practice',
@@ -925,10 +943,16 @@ export const FM01_EXERCISES: Exercise[] = [
     promptJa: 'ちゅうごくじん',
     promptJaReading: 'chuugokujin',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'chuugokujin', 'chugokujin', 'chuugokujin؟', 1);
+      /* B2 §D3 — the joke «؟»-suffixed distractor (mixed Arabic mark on a
+       * Latin word — the B1 §۴ corruption class) is replaced by a REAL
+       * learner error: the dropped u of the «ku» mora. */
+      const { options, correctOptionId } = o3('x', 'chuugokujin', 'chugokujin', 'chuugokjin', 1);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { a: 'uu را نیفکن — دو موراست.', c: 'پرسشی نیست!' },
+    distractorRationaleFa: {
+      a: 'uu را نیفکن — دو موراست.',
+      c: 'صدای «کو» (ku) ناقص شده — u آن جا افتاده است.',
+    },
     feedback: {
       f1Fa: 'uu و oo کشیده‌اند.',
       f2HintFa: 'ちょ+う+ご+く+じ+ん.',
@@ -950,10 +974,15 @@ export const FM01_EXERCISES: Exercise[] = [
     promptJa: 'ちゅうごくじん',
     promptJaReading: 'chuugokujin',
     ...(() => {
-      const { options, correctOptionId } = o3('x', 'chuugokujin', 'chugokujin', 'chuugokujin؟', 0);
+      /* B2 §D6 — real learner-error distractors (the «؟»-suffixed joke
+       * option was the B1 §۴ mixed-script corruption class). */
+      const { options, correctOptionId } = o3('x', 'chuugokujin', 'chugokujin', 'chuugokjin', 0);
       return { options, correctOptionId };
     })(),
-    distractorRationaleFa: { b: 'uu را نیفکن — دو موراست.', c: 'پرسشی نیست!' },
+    distractorRationaleFa: {
+      b: 'uu را نیفکن — دو موراست.',
+      c: 'صدای «کو» (ku) ناقص شده — u آن جا افتاده است.',
+    },
     feedback: {
       f1Fa: 'uu و oo کشیده‌اند.',
       f2HintFa: 'ちょ+う+ご+く+じ+ん.',
@@ -1002,8 +1031,10 @@ export const FM01_EXERCISES: Exercise[] = [
       c: 'ژاپنی = にほんじん — واژهٔ «کان‌کوکوجین» را شنیدی، نه «نی‌هونجین».',
     },
     feedback: {
-      f1Fa: 'かんこくじん = کره‌ای — ん خیشومی را کامل بگو.',
-      f2HintFa: 'موراها را کامل بگو: かんこくじん (کان‌کوکوجین).',
+      /* B2 §D6 — keyless F1 (the old «かんこくじん = کره‌ای» named the
+       * answer; the B1 §۵ law now covers this batch). */
+      f1Fa: 'واژهٔ شنیده‌شده ん خیشومی داشت — مال کشوری جز چین و ژاپن نیست.',
+      f2HintFa: 'موراها را کامل بگو — «کان» آغازین را از دست نده.',
       f3ExplainFa: 'かんこくじん = کره‌ای (اهل کره).',
     },
     assessmentRole: 'practice',
@@ -1101,8 +1132,10 @@ export const FM01_EXERCISES: Exercise[] = [
     ],
     acceptedChipOrder: ['g1', 'g2', 'g3'],
     feedback: {
+      /* B2 §D7 — keyless F2 (the old «موضوع+も → هویت → です» named the
+       * final chunk; slots by role instead). */
       f1Fa: 'も جای は را می‌گیرد — با هم نمی‌آیند.',
-      f2HintFa: 'موضوع+も → هویت → です.',
+      f2HintFa: 'بعد از «موضوع + هم»، هویت می‌آید و جمله با پایان‌بندی مؤدب بسته می‌شود.',
       f3ExplainFa: 'わたしも がくせいです = من هم دانشجوام.',
     },
     assessmentRole: 'practice',
@@ -1213,7 +1246,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'chrk-wakarimashita',
     lineRef: L(11),
     difficulty: 2,
-    promptFa: 'واکنش یامادا به اصلاح سورا را کامل بچین (خط ۱۲)',
+    promptFa: 'واکنش یامادا به اصلاح سورا را کامل بچین (خط ۱۱)',
     chunks: [
       { id: 'z1', ja: 'そうですか。' },
       { id: 'z2', ja: 'わかりました。' },
@@ -1595,7 +1628,7 @@ export const FM01_EXERCISES: Exercise[] = [
     assessesConcepts: ['gr-kara-kimashita', 'chrk-hajimemashite'],
     lineRef: L(12),
     difficulty: 3,
-    promptFa: 'معرفی کامل کیم را بچین (خط ۱۳)',
+    promptFa: 'معرفی کامل کیم را بچین (خط ۱۲)',
     chunks: [
       { id: 'y1', ja: 'はじめまして、キムです。' },
       { id: 'y2', ja: 'かんこくから きました。' },
@@ -1762,7 +1795,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'gr-mo',
     lineRef: L(9),
     difficulty: 2,
-    promptFa: 'در خط ۱۰، も چه کاری می‌کند؟',
+    promptFa: 'در خط ۹، も چه کاری می‌کند؟',
     ...(() => {
       const { options, correctOptionId } = o3(
         'x',
@@ -2039,7 +2072,7 @@ export const FM01_EXERCISES: Exercise[] = [
     targetConcept: 'chrk-wakarimashita',
     lineRef: L(11),
     difficulty: 2,
-    promptFa: 'یامادا اطلاعات تازه‌ای دربارهٔ کیم گرفت — واکنش او چه بود؟ (خط ۱۲)',
+    promptFa: 'یامادا اطلاعات تازه‌ای دربارهٔ کیم گرفت — واکنش او چه بود؟ (خط ۱۱)',
     ...(() => {
       const { options, correctOptionId } = o3(
         'x',

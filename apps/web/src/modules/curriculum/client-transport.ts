@@ -149,7 +149,7 @@ export type ClientTeachingBlock =
         userReply?: Omit<UserReplySpec, 'correctOptionId' | 'acceptedOrders'>;
       }[];
     }
-  | { kind: 'listening-task'; id: string; taskId: string }
+  | { kind: 'listening-task'; id: string; taskId: string; titleFa?: string; bodyFa?: string }
   | {
       /** Part-2 د/ط: the real-world board — pure display, no answer material.
        * LESSON-UX P2 #200: items carry their Persian reading (revealed on

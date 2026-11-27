@@ -434,7 +434,18 @@ export const FM01_STATIONS: Station[] = [
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
-      { kind: 'listening-task', id: 'blk-l1-task', taskId: 'listen-1' },
+      /* B2-REBUILD §D1 — the intro card's copy is AUTHORED (the global
+       * default assumed whole LINES play in this station; the actual flow is
+       * rule-card teaching → word/sentence audio inside the exercises). The
+       * honest intro sets the ear's goal before the vowel-length rule. */
+      {
+        kind: 'listening-task',
+        id: 'blk-l1-task',
+        taskId: 'listen-1',
+        titleFa: 'گوشِ فعال',
+        bodyFa:
+          'در این درس فقط با گوش کار می‌کنی: اول تفاوتِ صداهای کشیده و کوتاه را می‌آموزی، بعد بدون دیدن متن، با صدا پاسخ می‌دهی. دکمهٔ پخش هر پرسش، همان چیزی را که باید بشنوی پخش می‌کند.',
+      },
       /* ENGINE-REFORM 2026-11-22 §۲ — the station's NEW concept (vowel length)
        * is TAUGHT before it is tested: a rule-card models the two contrast
        * pairs with their real audio (the correct forms carry committed
@@ -449,7 +460,7 @@ export const FM01_STATIONS: Station[] = [
         patternJa: 'せんせい ↔ せんせ',
         titleFa: 'صدای کشیده — بلند یا کوتاه',
         bodyFa:
-          'در ژاپنی طول واکه معنا را عوض می‌کند. せんせい (استاد) چهار موراست و واکهٔ پایانی‌اش کشیده است؛ کوتاهش کنی (せんせ) واژه نابود می‌شود. همین‌طور ちゅうごく (چین): «اوی» وسط واژه کشیده است — ちゅごک نادرست است.',
+          'در ژاپنی طول واکه معنا را عوض می‌کند. せんせい (استاد) چهار موراست و واکهٔ پایانی‌اش کشیده است؛ کوتاهش کنی (せんせ) واژه نابود می‌شود. همین‌طور ちゅうごく (چین): «اوی» وسط واژه کشیده است — ちゅごく نادرست است.',
         structureTable: {
           headers: ['درست (کشیده)', 'نادرست (کوتاه)', 'شنیدن'],
           rows: [
@@ -545,7 +556,10 @@ export const FM01_STATIONS: Station[] = [
             fa: 'اسمت چیست؟ — حالا نوبت توست: معرفی‌ات را بساز!',
             userReply: {
               kind: 'template-build',
-              promptFa: 'معرفی کامل خودت را بچین (جای نام، چیپ نام را بگذار)',
+              /* B2 §D4 — the prompt names the [نامت] tile exactly as it renders
+               * (the b1 §۲ label) — «چیپ» was engine jargon a beginner has
+               * never met. */
+              promptFa: 'معرفی کامل خودت را بچین — جای [نامت]، نام خودت را بنویس',
               chips: [
                 // UX-AUDIT #143: the name slot uses the engine's ___NAME___
                 // convention — the runner renders a Persian-labelled input,
@@ -580,7 +594,7 @@ export const FM01_STATIONS: Station[] = [
     core: true,
     order: 10,
     prerequisites: ['stn-fm01-09-integrate'],
-    lineRefs: [L(9), L(9), L(10), L(11), L(12)],
+    lineRefs: [L(9), L(10), L(11), L(12), L(13)],
     objectiveCode: 'greet-first-meeting',
     estMinutes: 3,
     estLoad: 'light',
@@ -597,18 +611,19 @@ export const FM01_STATIONS: Station[] = [
       {
         kind: 'dialogue-player',
         id: 'blk-a2-dialogue',
-        focusLineRefs: [L(9), L(9), L(10), L(11), L(12)],
-        prediction: {
-          questionFa: 'حدس بزن: کیم از کجا آمده است؟',
-          options: [
-            { id: 'a', label: 'چین' },
-            { id: 'b', label: 'کره' },
-            { id: 'c', label: 'ژاپن' },
-          ],
-          correctOptionId: 'b',
-          revealFa:
-            'کیم می‌گوید: かんこくから きました — «از کره آمده‌ام». در این واحد می‌آموزی همین را دربارهٔ خودت بگویی: イランから きました。',
-        },
+        /* B2-REBUILD §D5 — two fixes:
+         * (۱) the graded pre-listening prediction is REMOVED — the anchor
+         *     law (ENGINE-REFORM §۲ / PART1): a guess on content the learner
+         *     has neither been taught (かんこく comes in the NEXT lesson) nor
+         *     needs to make cold must never be graded, and the old reveal
+         *     spoiled the very listening this station exists for. The scene
+         *     body above already plants the curiosity hook («آیا او هم مثل
+         *     سورا چینی است؟»); the a2-gist checks AFTER the listen carry
+         *     the comprehension (answerable from the replay's subtitle).
+         * (۲) focusLineRefs listed L9 TWICE and dropped the joint closing
+         *     turn L13 (the unit is L9..L13) — the LINE-REFS-UNIQUE law
+         *     (B2 §E3) now rejects this class at load time. */
+        focusLineRefs: [L(9), L(10), L(11), L(12), L(13)],
       },
       ex('blk-a2-check', ['ex-fm01-a2-gist-1', 'ex-fm01-a2-gist-2', 'ex-fm01-a2-gist-3']),
     ],
@@ -665,14 +680,20 @@ export const FM01_STATIONS: Station[] = [
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
-      { kind: 'dialogue-player', id: 'blk-g3-dialogue', focusLineRefs: [L(9)] },
+      /* B2-REBUILD §D7 — lineTeaching: the grammar station's dialogue block
+       * shows ONLY its taught line (the focused-line card), exactly like the
+       * batch-1 grammar stations (blk-g1/blk-g2); the old full-player replay
+       * contradicted «هنگام آموزش یک خط، فقط همان خط نمایش داده شود». */
+      { kind: 'dialogue-player', id: 'blk-g3-dialogue', lineTeaching: true, focusLineRefs: [L(9)] },
       {
         kind: 'guided-discovery',
         id: 'blk-g3-discovery',
         displayLineRef: L(9),
         highlightSurfaces: ['キムさんも'],
         compareLineRef: L(6),
-        questionFa: 'جملهٔ خط ۶ را با خط ۱۰ مقایسه کن — も چه چیزی را عوض کرد؟',
+        /* B2 §D7 — the も-question is dialogue line ۹ (the old «خط ۱۰» was
+         * off by one; the «خط N» content law pins this class forever). */
+        questionFa: 'جملهٔ خط ۶ را با خط ۹ مقایسه کن — も چه چیزی را عوض کرد؟',
         options: [
           { id: 'a', label: '«هم» را می‌رساند: مثل سورا' },
           { id: 'b', label: 'پرسش را مؤدبانه می‌کند' },
@@ -708,7 +729,7 @@ export const FM01_STATIONS: Station[] = [
             ja: 'キムさんも ちゅうごくじんですか。',
             reading: 'kim-san mo chuugokujin desu ka.',
             fa: 'کیم هم چینی است؟',
-            whyFa: 'از مکالمه (خط ۱۰) — یامادا کیم را به گروهِ سورا اضافه می‌کند.',
+            whyFa: 'از مکالمه (خط ۹) — یامادا کیم را به گروهِ سورا اضافه می‌کند.',
             lineRef: L(9),
           },
           {
@@ -791,7 +812,9 @@ export const FM01_STATIONS: Station[] = [
             ja: 'キムさんは ちゅうごくじんでは ありません。かんこくじんです。',
             reading: 'kim-san wa chuugokujin dewa arimasen. kankokujin desu.',
             fa: 'کیم چینی نیست. کره‌ای است.',
-            whyFa: 'از مکالمه (خط ۱۱) — اوج اصلاح اطلاعات.',
+            /* B2 §D8 (common defect — the «خط N» law): the sentence is
+             * dialogue line ۱۰; the old «خط ۱۱» was off by one. */
+            whyFa: 'از مکالمه (خط ۱۰) — اوج اصلاح اطلاعات.',
             lineRef: L(10),
           },
           {
@@ -922,7 +945,8 @@ export const FM01_STATIONS: Station[] = [
             ja: 'かんこくから きました。',
             reading: 'kankoku kara kimashita.',
             fa: 'از کره آمده‌ام.',
-            whyFa: 'از مکالمه (خط ۱۳) — جملهٔ ورود کیم.',
+            /* B2 §D8 (common defect — the «خط N» law): line ۱۲, not ۱۳. */
+            whyFa: 'از مکالمه (خط ۱۲) — جملهٔ ورود کیم.',
             lineRef: L(12),
           },
           {

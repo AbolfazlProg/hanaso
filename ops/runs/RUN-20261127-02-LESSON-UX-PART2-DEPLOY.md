@@ -16,20 +16,20 @@ PR #207 (LESSON-UX PART2 — بازسازی برگهٔ خواندن، صدای �
 
 ## گام‌های VPS و راستی‌آزمایی
 
-| گام | نتیجه |
-| --- | --- |
-| بکاپ فقط-خواندنی DB | `db-pre-p2-20261127T063006Z.sql` + `.env.pre-p2` (قبل از هر تعویض) |
-| راستی‌آزمایی قطعات | ۶/۶ قطعه `sha256sum -c` OK + sha256 کل آرشیو OK |
-| docker load | `Loaded image: ghcr.io/abolfazlprog/hanaso:4ca1d0db…` |
-| سینک سورس | `/opt/hanaso-src` detach به `4ca1d0db` (override فایل 1core دست‌نخورده) |
+| گام                       | نتیجه                                                                                                           |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| بکاپ فقط-خواندنی DB       | `db-pre-p2-20261127T063006Z.sql` + `.env.pre-p2` (قبل از هر تعویض)                                              |
+| راستی‌آزمایی قطعات        | ۶/۶ قطعه `sha256sum -c` OK + sha256 کل آرشیو OK                                                                 |
+| docker load               | `Loaded image: ghcr.io/abolfazlprog/hanaso:4ca1d0db…`                                                           |
+| سینک سورس                 | `/opt/hanaso-src` detach به `4ca1d0db` (override فایل 1core دست‌نخورده)                                         |
 | migrate/seed (idempotent) | `applied:true` · seed: 4 characters, 1 dialogue, 10 lines · seed:curriculum: 7 levels, 3 units, **93 stations** |
-| تعویض staged | فقط خط `HANASO_WEB_IMAGE` در `.env` → `up -d --no-deps web worker` (postgres/pgbouncer دست‌نخورده) |
-| دروازهٔ سلامت tier1 | `ok:true` + `commit":"4ca1d0db…"` روی 127.0.0.1:3100 ✓ (rollback خودکار به `1d417fd` تعریف شده بود — لازم نشد) |
-| ready | process ok · database ok (SELECT 1، latency 43ms، PG 18.6) |
-| سلامت از بیرون | `https://hanaso.ir/api/health` → `commit":"4ca1d0db…` ✓ |
-| دارایی صوتی جدید | `w-00859a61c08f1c32.m4a` → HTTP 200، 7677 بایت — دقیقاً مطابق manifest (`entries: 1503`) |
-| صدای بازتولیدشدهٔ سورا | `s-first-meeting-01-l4.m4a` → HTTP 200 (44526 بایت) |
-| پاک‌سازی | فایل‌های transport روی VPS حذف شدند؛ دیسک 78٪ |
+| تعویض staged              | فقط خط `HANASO_WEB_IMAGE` در `.env` → `up -d --no-deps web worker` (postgres/pgbouncer دست‌نخورده)              |
+| دروازهٔ سلامت tier1       | `ok:true` + `commit":"4ca1d0db…"` روی 127.0.0.1:3100 ✓ (rollback خودکار به `1d417fd` تعریف شده بود — لازم نشد)  |
+| ready                     | process ok · database ok (SELECT 1، latency 43ms، PG 18.6)                                                      |
+| سلامت از بیرون            | `https://hanaso.ir/api/health` → `commit":"4ca1d0db…` ✓                                                         |
+| دارایی صوتی جدید          | `w-00859a61c08f1c32.m4a` → HTTP 200، 7677 بایت — دقیقاً مطابق manifest (`entries: 1503`)                        |
+| صدای بازتولیدشدهٔ سورا    | `s-first-meeting-01-l4.m4a` → HTTP 200 (44526 بایت)                                                             |
+| پاک‌سازی                  | فایل‌های transport روی VPS حذف شدند؛ دیسک 78٪                                                                   |
 
 ## نتیجه
 

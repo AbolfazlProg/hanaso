@@ -1,0 +1,17 @@
+{
+  "width": "mob",
+  "viewport": [390, 844],
+  "stations": {
+    "stn-fm01-10-reconnect": {
+      "steps": 11,
+      "answers": 3,
+      "blocks": ["مکالمهٔ فصل"],
+      "overflow": false,
+      "completed": true,
+      "console_errors": [],
+      "page_errors": [],
+      "http_errors": [],
+      "seconds": 9.7
+    }
+  }
+}

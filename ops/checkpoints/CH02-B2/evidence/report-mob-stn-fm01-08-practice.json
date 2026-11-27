@@ -1,0 +1,17 @@
+{
+  "width": "mob",
+  "viewport": [390, 844],
+  "stations": {
+    "stn-fm01-08-practice": {
+      "steps": 29,
+      "answers": 9,
+      "blocks": ["بخش اول تمام شد!"],
+      "overflow": false,
+      "completed": true,
+      "console_errors": [],
+      "page_errors": [],
+      "http_errors": [],
+      "seconds": 22.0
+    }
+  }
+}

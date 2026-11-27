@@ -94,6 +94,20 @@ export default async function StationPage({
   if (!station) notFound();
 
   /*
+   * B2-REBUILD 2026-11-27 §E1 (the reconnect subtitle fix): the «first
+   * listen» treatment (Persian subtitle OFF + pinned — the «شکاف دانستن»
+   * pure-listening experience) belongs to the chapter's FIRST anchor
+   * station ONLY. The old `station.type === 'anchor'` heuristic also caught
+   * the chapter's LATER anchors (the unit-2 reconnect — itself a TEACHING
+   * replay whose gist checks need the subtitle ON), pinning the subtitle
+   * off exactly where the lesson's own design says it should be on.
+   * Server-computed from the real chapter data (order-based, no hardcode)
+   * and passed down as a prop — the runner never re-derives identity.
+   */
+  const isChapterFirstAnchor =
+    station.type === 'anchor' && !chapter.stations.some((s) => s.type === 'anchor' && s.order < station.order);
+
+  /*
    * UX-AUDIT #137 (root C — the gate at ENTRY, not at the completion POST):
    * the station page refuses to SERVE a walk whose prerequisites are unmet —
    * the learner sees which lesson to finish first, before investing a single
@@ -497,6 +511,7 @@ export default async function StationPage({
           chapterSlug={chapterSlug}
           station={toClientStation(station)}
           chapter={{ words: chapter.words, expressions: chapter.expressions }}
+          dialogueFirstListen={isChapterFirstAnchor}
           clientExercises={clientExercises}
           dialogueItemLabels={dialogueItemLabels}
           dialogue={{

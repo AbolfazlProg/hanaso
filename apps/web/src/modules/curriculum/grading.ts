@@ -86,15 +86,7 @@ export function gradeExerciseAnswer(ex: Exercise, answer: ExerciseAnswerPayload,
    * every chapter and asserts this contract holds (R3).
    */
   if (level < 3) {
-    const keyTexts = correctKeyTexts(ex);
-    const redact = (s: string | undefined): string | undefined => {
-      if (typeof s !== 'string') return s;
-      let out = s;
-      for (const k of keyTexts) {
-        while (out.includes(k)) out = out.replace(k, '…');
-      }
-      return out;
-    };
+    const redact = redactKeysFn(ex);
     feedbackFa = redact(feedbackFa) ?? feedbackFa;
     const distractorRationaleFa =
       answer.kind === 'option' ? redact(ex.distractorRationaleFa?.[answer.optionId]) : undefined;
@@ -108,6 +100,33 @@ export function gradeExerciseAnswer(ex: Exercise, answer: ExerciseAnswerPayload,
     reveal,
     answer.kind === 'option' ? ex.distractorRationaleFa?.[answer.optionId] : undefined,
   );
+}
+
+/**
+ * B2-REBUILD §E2 (the hint button leak): the shared pre-reveal key redaction
+ * (UX-AUDIT #139's engine law), extracted so BOTH surfaces that ship F1/F2
+ * content use the SAME net — the grade verdict AND the «سرنخ» hint action.
+ * Previously the hint endpoint returned the authored f2HintFa RAW: an
+ * authored key inside the hint (the exact class the CP-03 rewrite was meant
+ * to remove) crossed to the client pre-reveal even though the verdict path
+ * masked it. Pure function over the exercise — no per-chapter logic.
+ */
+export function redactExerciseAnswerKeys(ex: Exercise, text: string): string {
+  const redact = redactKeysFn(ex);
+  return redact(text) ?? text;
+}
+
+/** Build the redaction closure over an exercise's key texts. */
+function redactKeysFn(ex: Exercise): (s: string | undefined) => string | undefined {
+  const keyTexts = correctKeyTexts(ex);
+  return (s) => {
+    if (typeof s !== 'string') return s;
+    let out = s;
+    for (const k of keyTexts) {
+      while (out.includes(k)) out = out.replace(k, '…');
+    }
+    return out;
+  };
 }
 
 /** The correct answer's display texts (the leak-detection corpus for F1/F2). */

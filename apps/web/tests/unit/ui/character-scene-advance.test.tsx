@@ -154,7 +154,10 @@ describe('StationRunner — ISSUE #147: narration-only scene steps are advanceab
 
       // Step ۳ — the name reply (the #143 surface): chips + name input.
       await waitFor(() => {
-        expect(screen.getByText('معرفی کامل خودت را بچین (جای نام، چیپ نام را بگذار)')).toBeTruthy();
+        // B2-REBUILD §D4 (2026-11-27): the prompt now names the [نامت] tile
+        // exactly as it renders — the old «چیپ نام» was engine jargon a
+        // beginner has never met.
+        expect(screen.getByText('معرفی کامل خودت را بچین — جای [نامت]، نام خودت را بنویس')).toBeTruthy();
       });
       // Before answering the final reply step, no forward action (answered gate).
       expect(forward(), 'a reply step does not forward before a real registration').toBeNull();

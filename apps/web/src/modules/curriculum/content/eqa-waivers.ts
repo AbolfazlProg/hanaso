@@ -533,15 +533,11 @@ export const EQA_WAIVERS: EqaWaiver[] = [
       'اولین تمرین رمزگشایی این ایستگاه پیش از هر نمونهٔ الگو‌شده (example-set/board) می‌آید — در بازسازی، لحظهٔ خواندنِ الگو‌شده پیش از تمرین قرار می‌گیرد.',
     resolvedBy: 'TASK-LEARNING-15',
   },
-  {
-    key: 'EQA-8:stn-fm01-10-reconnect:graded-block-unlabelled',
-    registeredAt: '2026-11-22',
-    chapter: 'first-meeting-01',
-    issue: 162,
-    reason:
-      'پرسش پیش‌بینیِ نمره‌دار این ایستگاه (حدس پیش از شنیدن) هنوز بدون برچسب assessesConcepts است — دامنهٔ مأموریت هشت درس اول (۱–۸) است؛ بازسازی واحد دوم طبق استاندارد آموزش-مقدم-بر-سنجش در مأموریت پیگیری ثبت شده است.',
-    resolvedBy: 'TASK-LEARNING-16',
-  },
+  /* B2-REBUILD §D5 (2026-11-27): the stn-fm01-10-reconnect waiver
+   * (issue #162) is RETIRED — the graded pre-listening prediction block was
+   * removed outright (the anchor law: a guess on untaught content is never
+   * graded, and the old reveal spoiled the listening this station exists
+   * for), so the EQA-8 finding no longer exists to waive. */
   {
     key: 'EQA-8:stn-fm01-12-grammar-mo:graded-block-unlabelled',
     registeredAt: '2026-11-22',

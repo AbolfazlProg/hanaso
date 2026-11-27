@@ -1,0 +1,17 @@
+{
+  "width": "mob",
+  "viewport": [390, 844],
+  "stations": {
+    "stn-fm01-12-grammar-mo": {
+      "steps": 12,
+      "answers": 3,
+      "blocks": ["افزودن به گروه", "مثال‌ها"],
+      "overflow": false,
+      "completed": true,
+      "console_errors": [],
+      "page_errors": [],
+      "http_errors": [],
+      "seconds": 10.0
+    }
+  }
+}

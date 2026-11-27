@@ -36,6 +36,8 @@ const RULES = {
   stationFloor: 'STATION-FLOOR (island S3 — main path needs ≥5)',
   oneObjective: 'ONE-OBJECTIVE (island S1 — exactly one objectiveCode per station)',
   lineRefs: 'LINE-REFS (CONTENT-080 — knowledge stations anchor to dialogue lines)',
+  lineRefsUnique:
+    'LINE-REFS-UNIQUE (B2 §E3 — a station never lists a dialogue line twice; duplicates are always an authoring bug the silent resolver would hide)',
   prereqOrder: 'PREREQ-ORDER (island O1 — prerequisites precede dependents)',
   duplicateSlug: 'SLUG-UNIQUE',
   optionalNoGate: 'OPTIONAL-NO-GATE (island §۷-۱ — optional never a prerequisite of core)',
@@ -162,6 +164,28 @@ export function validateChapter(chapter: Chapter, level: LevelPolicy): ContentVi
     const needsLines = ['vocab', 'grammar', 'structure', 'expression', 'listen'].includes(s.type);
     if (needsLines && s.lineRefs.length === 0) {
       v.push({ rule: RULES.lineRefs, message: `${s.slug} (${s.type}): no lineRefs` });
+    }
+    /* B2-REBUILD §E3 — duplicates are always an authoring bug (the focus
+     * resolver silently dedupes, so the walk never surfaces the mistake —
+     * e.g. stn-10's [L9, L9, L10, L11, L12] which ALSO dropped the joint
+     * closing turn L13). Validation rejects them at load time instead. */
+    const seenRefs = new Set<string>();
+    for (const ref of s.lineRefs) {
+      if (seenRefs.has(ref)) {
+        v.push({ rule: RULES.lineRefsUnique, message: `${s.slug}: duplicate lineRef ${ref}` });
+      }
+      seenRefs.add(ref);
+    }
+    const seenFocus = new Set<string>();
+    for (const b of s.blocks) {
+      if (b.kind === 'dialogue-player') {
+        for (const ref of b.focusLineRefs) {
+          if (seenFocus.has(ref)) {
+            v.push({ rule: RULES.lineRefsUnique, message: `${s.slug}/${b.id}: duplicate focusLineRef ${ref}` });
+          }
+          seenFocus.add(ref);
+        }
+      }
     }
     for (const ref of s.lineRefs) {
       if (!lineIds.has(ref)) {

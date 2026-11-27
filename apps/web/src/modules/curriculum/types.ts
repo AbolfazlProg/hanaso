@@ -596,6 +596,10 @@ export type TeachingBlock =
       kind: 'listening-task';
       id: string;
       taskId: string;
+      /** B2 §D1 — optional authored intro copy (station-honest). Falls back
+       * to the global listeningTask strings when absent. */
+      titleFa?: string;
+      bodyFa?: string;
     }
   | {
       /**
