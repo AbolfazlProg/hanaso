@@ -247,6 +247,12 @@ describe('StationRunner — the anchor station walks the dialogue INLINE', () =>
         }}
         audioByLine={{}}
         audioAvailable={false}
+        /* B2-REBUILD §E1: the first-listen treatment (subtitle OFF + pinned)
+         * is now a SERVER-COMPUTED prop — true ONLY for the chapter's FIRST
+         * anchor (stn-fm01-01-anchor here); the unit-2 reconnect anchor is a
+         * teaching replay → subtitle ON. The page passes exactly this value
+         * for station 01, so the walk below pins the real wiring. */
+        dialogueFirstListen
       />,
     );
   }
@@ -358,6 +364,51 @@ describe('StationRunner — the anchor station walks the dialogue INLINE', () =>
     expect(screen.queryByText('برای فعال‌شدن این دکمه، مکالمه را تا خط آخر ببین.')).toBeNull();
     expect(screen.queryByRole('button', { name: /^ادامه$/ })).toBeTruthy();
   });
+
+  it(
+    'B2 §E1: the unit-2 RECONNECT anchor is a teaching replay — WITHOUT the first-listen prop the subtitle stays ON',
+    { timeout: 30000 },
+    async () => {
+      /* B2-REBUILD §E1 (2026-11-27): the «شکاف دانستن» pinned-off subtitle
+       * belongs to the chapter's FIRST anchor ONLY. The old heuristic
+       * (`station.type === 'anchor'`) wrongly caught stn-fm01-10-reconnect —
+       * the unit-2 teaching replay whose gist checks need the subtitle ON.
+       * The prop is absent here exactly as the page computes it for station
+       * 10 (isChapterFirstAnchor=false): the runner's safe default must be
+       * the REPLAY treatment, never the pinned-off first listen. */
+      const reconnect = chapter.stations.find((s) => s.slug === 'stn-fm01-10-reconnect')!;
+      const reconnectCheck = reconnect.blocks.find((b) => b.kind === 'exercise') as { exerciseIds: string[] };
+      const reconnectExercises: Record<string, ReturnType<typeof toClientExercise>> = {};
+      for (const id of reconnectCheck.exerciseIds) {
+        const ex = chapter.exercises[id];
+        if (ex) reconnectExercises[id] = toClientExercise(ex);
+      }
+      render(
+        <StationRunner
+          chapterSlug="first-meeting-01"
+          station={toClientStation(reconnect)}
+          chapter={{ words: chapter.words, expressions: chapter.expressions }}
+          mapHref="/learn/first-meeting-01/journey"
+          clientExercises={reconnectExercises}
+          dialogue={{ lines: [], speakers: {} }}
+          dialogueScene={{
+            dialogueSlug: 'first-meeting-01',
+            dialogue: fixture.dialogue,
+            characters: fixture.characters,
+            audio: fixture.audio,
+          }}
+          audioByLine={{}}
+          audioAvailable={false}
+        />,
+      );
+      await waitFor(() => {
+        expect(screen.getByLabelText('خطوط مکالمه')).toBeTruthy();
+      });
+      // the teaching-replay contract: the Persian subtitle is ON from the start
+      expect(screen.getByRole('button', { name: /زیرنویس فارسی: روشن/ })).toBeTruthy();
+      expect(screen.queryByRole('button', { name: /زیرنویس فارسی: خاموش/ })).toBeNull();
+    },
+  );
 });
 
 /* ---------------------------------------------------------- 1 — the chapter catalog */

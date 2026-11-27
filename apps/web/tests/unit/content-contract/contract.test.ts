@@ -499,3 +499,124 @@ describe('R13 — station data sanity (guards the audited render paths)', () => 
     });
   }
 });
+
+/* ------------------------------------------------------------------ R14 */
+
+/**
+ * B2-REBUILD 2026-11-27 — the «خط N» consistency law.
+ *
+ * The focused-line card displays a line's REAL 1-based dialogue position
+ * (B1 §۱), and the teaching copy around it cross-references those numbers
+ * («جملهٔ خط ۶ را با خط ۹ مقایسه کن», «از مکالمه (خط ۹)», «گوش بده (خط ۳)»).
+ * The unit-02-2 authoring had a systematic off-by-one (the も question cited
+ * as «خط ۱۰» while the card itself displayed خط ۹) — the learner read two
+ * contradictory numbers for the same line. This law pins EVERY learner-facing
+ * «خط N» mention to an actually-anchored line of the same station:
+ *
+ *  - a station-block string may cite only lines in the station's lineRefs
+ *    (or a lineRef/audioLineRef of one of the station's own exercises);
+ *  - an exercise OUTSIDE the station walk (the gate bank) may cite only its
+ *    own lineRef/audioLineRef anchors.
+ *
+ * Chapter-agnostic: reads the mention out of the chapter's own data. Persian
+ * and ASCII digits both accepted.
+ */
+const FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+
+function parseLineMention(raw: string): number {
+  return Number(
+    raw
+      .split('')
+      .map((d) => (FA_DIGITS.includes(d) ? String(FA_DIGITS.indexOf(d)) : d))
+      .join(''),
+  );
+}
+
+function lineMentions(text: string): number[] {
+  const out: number[] = [];
+  for (const m of text.matchAll(/خط\s*[۰-۹0-9]+/g)) {
+    out.push(parseLineMention(m[0].replace(/^خط\s*/, '')));
+  }
+  return out;
+}
+
+describe('R14 — «خط N» mentions are anchored (B2: the off-by-one line citations)', () => {
+  for (const { chapter, kind } of corpus()) {
+    it(`chapter ${chapter.slug} (${kind})`, () => {
+      const exById = new Map(Object.entries(chapter.exercises));
+      for (const st of chapter.stations) {
+        /* the station's anchored line numbers */
+        const anchored = new Set(st.lineRefs.map((r) => Number(r.split('-l').pop())));
+        const blockTexts: { where: string; text: string }[] = [];
+        for (const b of st.blocks) {
+          const w = `${st.slug}/${b.id}`;
+          for (const key of [
+            'titleFa',
+            'bodyFa',
+            'questionFa',
+            'promptFa',
+            'explainFa',
+            'revealFa',
+            'persianBridgeFa',
+            'listenNoteFa',
+          ] as const) {
+            const v = (b as Record<string, unknown>)[key];
+            if (typeof v === 'string') blockTexts.push({ where: w, text: v });
+          }
+          if (b.kind === 'example-set') {
+            for (const ex of (b as { examples: { fa?: string; whyFa?: string }[] }).examples) {
+              if (ex.fa) blockTexts.push({ where: `${w}/example`, text: ex.fa });
+              if (ex.whyFa) blockTexts.push({ where: `${w}/why`, text: ex.whyFa });
+            }
+          }
+          if (b.kind === 'exercise') {
+            for (const id of (b as { exerciseIds: string[] }).exerciseIds) {
+              const ex = exById.get(id);
+              if (!ex) continue;
+              /* the exercise's own anchors extend the allowed set */
+              for (const ref of [ex.lineRef, ex.audioLineRef]) {
+                if (ref) anchored.add(Number(ref.split('-l').pop()));
+              }
+              for (const s of [
+                ex.promptFa,
+                ex.feedback?.f1Fa,
+                ex.feedback?.f2HintFa,
+                ex.feedback?.f3ExplainFa,
+                ...(ex.distractorRationaleFa ? Object.values(ex.distractorRationaleFa) : []),
+              ]) {
+                if (s) blockTexts.push({ where: `${st.slug}/${id}`, text: s });
+              }
+            }
+          }
+        }
+        for (const { where, text } of blockTexts) {
+          for (const n of lineMentions(text)) {
+            expect(
+              anchored.has(n),
+              `${chapter.slug}/${where}: cites «خط ${n}» but L${n} is not anchored to this station (anchors: {${[...anchored].sort((a, b) => a - b).join(', ')}})`,
+            ).toBe(true);
+          }
+        }
+      }
+      /* the gate bank: every non-station exercise cites only its own anchors */
+      const stationExIds = new Set(
+        chapter.stations.flatMap((s) =>
+          s.blocks.flatMap((b) => (b.kind === 'exercise' ? (b as { exerciseIds: string[] }).exerciseIds : [])),
+        ),
+      );
+      for (const ex of allExercises(chapter)) {
+        if (stationExIds.has(ex.id)) continue;
+        const own = new Set([ex.lineRef, ex.audioLineRef].filter(Boolean).map((r) => Number(r!.split('-l').pop())));
+        for (const s of [ex.promptFa, ex.feedback?.f1Fa, ex.feedback?.f2HintFa, ex.feedback?.f3ExplainFa]) {
+          if (!s) continue;
+          for (const n of lineMentions(s)) {
+            expect(
+              own.has(n),
+              `${chapter.slug}/${ex.id} (gate bank): cites «خط ${n}» but its own anchors are {${[...own].join(', ')}}`,
+            ).toBe(true);
+          }
+        }
+      }
+    });
+  }
+});
