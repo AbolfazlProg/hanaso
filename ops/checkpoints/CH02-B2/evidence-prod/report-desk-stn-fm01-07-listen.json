@@ -1,0 +1,17 @@
+{
+  "width": "desk",
+  "viewport": [1280, 800],
+  "stations": {
+    "stn-fm01-07-listen": {
+      "steps": 19,
+      "answers": 5,
+      "blocks": ["گوشِ فعال", "صدای کشیده — بلند یا کوتاه", "این تمرین را کامل کرده‌ای"],
+      "overflow": false,
+      "completed": true,
+      "console_errors": [],
+      "page_errors": [],
+      "http_errors": [],
+      "seconds": 17.9
+    }
+  }
+}
