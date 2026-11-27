@@ -24,6 +24,7 @@
 
 `qc_b3_final_desk` · `qc_b3_final_mob`
 =======
+
 **وضعیت: تکمیل و استقرار** — دستهٔ سوم بازسازی فصل ۰۲ (درس‌های ۱۳–۱۸) در main `69a58a6e` (PR #211، squash) ادغام شد؛ CI کامل سبز؛ ایمیج GHCR ساخته شد؛ استقرار staged با گیت سلامت tier1 (rollback خودکار به `01b86619` تعریف شده بود) انجام و `https://hanaso.ir/api/health` روی `69a58a6e…` تأیید شد (LIVE از 2026-11-27T21:09:08Z). گشت مرورگر پروداکشن ۶/۶ سبز.
 
 ## تحویل‌شده‌ها
@@ -46,4 +47,5 @@
 
 - لوکال سندباکس (بی‌اثر): `qc_b3_final_desk` · `qc_b3_final_mob`
 - پروداکشن: `qc_prod_b3_desk` · `qc_prod_b3_mob` (گشت پروداکشن)
->>>>>>> Stashed changes
+
+> > > > > > > Stashed changes
