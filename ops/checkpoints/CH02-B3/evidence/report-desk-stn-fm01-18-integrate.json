@@ -1,0 +1,22 @@
+{
+ "width": "desk",
+ "viewport": [
+  1280,
+  800
+ ],
+ "stations": {
+  "stn-fm01-18-integrate": {
+   "steps": 6,
+   "answers": 1,
+   "blocks": [
+    "کاربرد کامل شد!"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 4.6
+  }
+ }
+}
