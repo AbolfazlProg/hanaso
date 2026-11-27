@@ -9,6 +9,7 @@ import {
   applyStationEvent,
   stationMeetsCompletion,
   gradeExerciseAnswer,
+  redactExerciseAnswerKeys,
   findBlockAnswer,
   type ExerciseAnswerPayload,
 } from '@/modules/curriculum';
@@ -351,7 +352,13 @@ async function handleStationPost(req: Request): Promise<Response> {
      * probing); the response carries the authored f2HintFa ONLY — the F2 hint
      * is the ladder's designed help tier (mnemonic/confusable redirect), it
      * never names the answer for recognition/decode items (the CP-03 leak
-     * rewrite made sure of that at the content layer). */
+     * rewrite made sure of that at the content layer).
+     *
+     * B2-REBUILD §E2 (defense-in-depth): the hint goes through the SAME
+     * pre-reveal key redaction as the grade verdict (redactExerciseAnswerKeys)
+     * — an authored key inside an f2HintFa (the CP-03 class that slipped
+     * through, because R3's engine-masking hid it from the CI check) must
+     * never cross to the client pre-reveal from ANY surface. */
     const station = bundle.chapter.stations.find((s) => s.slug === payload.stationSlug);
     const exercise = bundle.chapter.exercises[payload.exerciseId];
     const inStation =
@@ -363,7 +370,9 @@ async function handleStationPost(req: Request): Promise<Response> {
         { status: 404 },
       );
     }
-    return NextResponse.json(ok({ hintFa: exercise.feedback.f2HintFa }), { headers: { 'cache-control': 'no-store' } });
+    return NextResponse.json(ok({ hintFa: redactExerciseAnswerKeys(exercise, exercise.feedback.f2HintFa) }), {
+      headers: { 'cache-control': 'no-store' },
+    });
   }
 
   if (payload.action === 'grade') {
