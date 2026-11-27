@@ -880,8 +880,51 @@ export const FM01_STATIONS: Station[] = [
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
-      { kind: 'listening-task', id: 'blk-l2-task', taskId: 'listen-2' },
+      /* B3 §D — the intro card's copy is AUTHORED (the B2 §D1 pattern: the
+       * global default assumed whole LINES play in this station; the actual
+       * flow is rule-card teaching → word/line audio inside the exercises).
+       * The honest intro sets the ear's goal before the nasal-mora rule. */
+      {
+        kind: 'listening-task',
+        id: 'blk-l2-task',
+        taskId: 'listen-2',
+        titleFa: 'گوشِ دوم',
+        bodyFa:
+          'در این درس دوباره فقط با گوش کار می‌کنی: اول مورای خیشومی ん را می‌آموزی، بعد بدون دیدن متن، با صدا پاسخ می‌دهی. دکمهٔ پخش هر پرسش، همان چیزی را که باید بشنوی پخش می‌کند.',
+      },
+      /* B3 §D (the B2 §۲ pattern) — the station's NEW concept (the nasal
+       * mora) is TAUGHT before it is tested: a rule-card models the contrast
+       * with its real audio (the correct forms carry committed hostword
+       * assets; the wrong form honestly renders no control — it is not a
+       * word). The minimal-pair items that previously tested this untaught
+       * skill cold now follow a modeled engagement: teach → guided
+       * discrimination → recycling → independent. */
+      {
+        kind: 'rule-card',
+        id: 'blk-l2-nm-rule',
+        patternJa: 'かんこく ↔ かこく',
+        titleFa: 'مورای خیشومی — ん',
+        bodyFa:
+          'در ژاپنی ん یک مورای کامل است، مثل هر صدای دیگر. かんこく (کره) چهار مورا دارد: か+ん+こ+く — اگر ん را جا بیندازی، かこく می‌ماند که واژه نیست. همین ん را در かんこくじん (کره‌ای) هم می‌شنوی.',
+        structureTable: {
+          headers: ['درست (با ん)', 'نادرست (بدون ん)', 'شنیدن'],
+          rows: [
+            ['かんこく — کان‌کوکو (کره)، ۴ مورا', 'かこく — واژه نیست', 'کانْ…کو — ん کامل ادا می‌شود'],
+            ['かんこくじん — کان‌کوکوجین (کره‌ای)', 'かここじん — واژه نیست', 'همان ん، داخل واژهٔ ملیت'],
+          ],
+        },
+        listenWords: ['かんこく', 'かんこくじん'],
+        listenNoteFa: 'صدای شکل‌های درست پخش می‌شود؛ شکل‌های نادرست واژه نیستند و صدای ثبت‌شده ندارند.',
+        persianBridgeFa: 'مثل فارسی: در «فانوس»، «ن» یک صدای کامل است — حذفش کنی «فاوس» می‌شود، بی‌معنا.',
+      },
+      /* §D — ONE simple engagement (difficulty 1) straight off the rule just
+       * taught: recognize the modeled form. */
+      ex('blk-l2-engage-1', ['ex-fm01-l2-engage-1']),
+      /* recycling of ALREADY-taught material (the question intonation of the
+       * grammar-qa station), ramping difficulty. */
       ex('blk-l2-drill-1', ['ex-fm01-l2-aud-1']),
+      /* independent discrimination on a NEW surface (the full nationality
+       * word) — now AFTER teaching + guided practice. */
       ex('blk-l2-drill-2', ['ex-fm01-l2-mp-1', 'ex-fm01-l2-who-1']),
     ],
     fsrsItems: [],
