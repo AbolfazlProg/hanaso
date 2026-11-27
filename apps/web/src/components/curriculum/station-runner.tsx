@@ -175,6 +175,14 @@ export interface StationRunnerProps {
    */
   replayMode?: boolean;
   /**
+   * B2-REBUILD §E1 — TRUE only for the chapter's FIRST anchor station (the
+   * «شکاف دانستن» first listen: Persian subtitle OFF + pinned). Every later
+   * anchor (the unit-2 reconnect) is a TEACHING replay → subtitle ON.
+   * Server-computed from the real chapter data; absent = false (the safe
+   * default — a replay, never a pinned-off first listen).
+   */
+  dialogueFirstListen?: boolean;
+  /**
    * TASK-HANASO-17 §۸ — expired-resume restart (`?restart=1`, from the Home
    * «شروع دوبارهٔ درس» CTA): any local/server resume pointer is dropped and
    * the walk starts at block 0 with the neutral notice.
@@ -488,6 +496,7 @@ export function StationRunner(props: StationRunnerProps) {
     gateOpen = false,
     initialBlockId,
     replayMode = false,
+    dialogueFirstListen = false,
     restartRequested = false,
     mapHref,
     returnToStationHref,
@@ -1351,13 +1360,15 @@ export function StationRunner(props: StationRunnerProps) {
               : null
           }
           embeddedDialogueBlock={isDialogueOpeningPair(blocks, step) ? (blocks[step + 1] as DialoguePlayerBlock) : null}
-          /* JOURNEY-FIX 2026-11-23 §۴ (subtitle policy — data-driven, never a
-           * chapter hardcode): the ANCHOR station is by contract the chapter's
-           * FIRST full-conversation encounter → its inline dialogue plays the
-           * first listen with the Persian subtitle OFF + pinned off («شکاف
-           * دانستن» pure listening; the mid-playback toggle stays available).
-           * Every other station's dialogue blocks are teaching replays → ON. */
-          dialogueFirstListen={station.type === 'anchor'}
+          /* JOURNEY-FIX 2026-11-23 §۴ + B2-REBUILD §E1 (subtitle policy —
+           * data-driven, never a chapter hardcode): the chapter's FIRST
+           * anchor station plays the first listen with the Persian subtitle
+           * OFF + pinned off («شکاف دانستن» pure listening; the mid-playback
+           * toggle stays available). The prop is server-computed (first
+           * anchor ONLY) — the old `station.type === 'anchor'` heuristic
+           * wrongly pinned the subtitle off on the unit-2 reconnect too;
+           * every other dialogue block is a teaching replay → ON. */
+          dialogueFirstListen={dialogueFirstListen}
           dialogueStartAtLine={
             block.kind === 'dialogue-player' && block.focusLineRefs.length > 0 ? block.focusLineRefs[0] : null
           }
@@ -2719,9 +2730,11 @@ function BlockView({
         <section className="rounded-md border border-ink-faint bg-card p-5">
           <h3 className="flex items-center gap-2 text-h3 font-bold text-indigo">
             <Ear aria-hidden className="size-5" />
-            {fa.curriculum.listeningTaskTitle}
+            {/* B2 §D1 — station-authored copy first; the global default is
+             * the fallback for blocks without authored text. */}
+            {block.titleFa ?? fa.curriculum.listeningTaskTitle}
           </h3>
-          <p className="mt-3 text-body text-ink-soft">{fa.curriculum.listeningTaskBody}</p>
+          <p className="mt-3 text-body text-ink-soft">{block.bodyFa ?? fa.curriculum.listeningTaskBody}</p>
         </section>
       );
 
