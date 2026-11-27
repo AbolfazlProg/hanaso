@@ -1,0 +1,18 @@
+{
+  "width": "desk",
+  "viewport": [1280, 800],
+  "stations": {
+    "stn-fm01-17-practice": {
+      "steps": 29,
+      "answers": 8,
+      "blocks": ["هر دو بخش تثبیت شد"],
+      "overflow": false,
+      "completed": true,
+      "click-fail": ["Locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for get_by_role(\"button\", n"],
+      "console_errors": [],
+      "page_errors": [],
+      "http_errors": [],
+      "seconds": 51.8
+    }
+  }
+}
