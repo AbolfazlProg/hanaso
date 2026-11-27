@@ -1,0 +1,17 @@
+{
+  "width": "desk",
+  "viewport": [1280, 800],
+  "stations": {
+    "stn-fm01-09-integrate": {
+      "steps": 6,
+      "answers": 1,
+      "blocks": ["اولین معرفی ژاپنی‌ات!"],
+      "overflow": false,
+      "completed": true,
+      "console_errors": [],
+      "page_errors": [],
+      "http_errors": [],
+      "seconds": 6.1
+    }
+  }
+}
