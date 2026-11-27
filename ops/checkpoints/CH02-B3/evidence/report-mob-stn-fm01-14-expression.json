@@ -1,20 +1,17 @@
 {
- "width": "mob",
- "viewport": [
-  390,
-  844
- ],
- "stations": {
-  "stn-fm01-14-expression": {
-   "steps": 16,
-   "answers": 4,
-   "blocks": [],
-   "overflow": false,
-   "completed": true,
-   "console_errors": [],
-   "page_errors": [],
-   "http_errors": [],
-   "seconds": 11.4
+  "width": "mob",
+  "viewport": [390, 844],
+  "stations": {
+    "stn-fm01-14-expression": {
+      "steps": 16,
+      "answers": 4,
+      "blocks": [],
+      "overflow": false,
+      "completed": true,
+      "console_errors": [],
+      "page_errors": [],
+      "http_errors": [],
+      "seconds": 11.4
+    }
   }
- }
 }

@@ -1,24 +1,17 @@
 {
- "width": "mob",
- "viewport": [
-  390,
-  844
- ],
- "stations": {
-  "stn-fm01-16-grammar-kara": {
-   "steps": 15,
-   "answers": 4,
-   "blocks": [
-    "مکالمهٔ فصل",
-    "خاستگاه",
-    "مثال‌ها"
-   ],
-   "overflow": false,
-   "completed": true,
-   "console_errors": [],
-   "page_errors": [],
-   "http_errors": [],
-   "seconds": 10.8
+  "width": "mob",
+  "viewport": [390, 844],
+  "stations": {
+    "stn-fm01-16-grammar-kara": {
+      "steps": 15,
+      "answers": 4,
+      "blocks": ["مکالمهٔ فصل", "خاستگاه", "مثال‌ها"],
+      "overflow": false,
+      "completed": true,
+      "console_errors": [],
+      "page_errors": [],
+      "http_errors": [],
+      "seconds": 10.8
+    }
   }
- }
 }
