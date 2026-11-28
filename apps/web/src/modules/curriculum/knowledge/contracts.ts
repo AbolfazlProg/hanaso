@@ -72,10 +72,10 @@ export interface AssessmentEvent {
  *  position-ordered assessment events. */
 export function buildCourseAssessmentEvents(chapters: Chapter[]): AssessmentEvent[] {
   const events: AssessmentEvent[] = [];
-  chapters.forEach((chapter, chapterIdx) => {
+  chapters.forEach((chapter) => {
     const ordered = stationsInWalkOrder(chapter);
     for (const station of ordered) {
-      station.blocks.forEach((block, blockIndex) => {
+      station.blocks.forEach((block) => {
         if (block.kind !== 'exercise') return;
         for (const id of block.exerciseIds) {
           const ex = chapter.exercises[id];
@@ -86,7 +86,16 @@ export function buildCourseAssessmentEvents(chapters: Chapter[]): AssessmentEven
             exerciseId: id,
             concept: ex.targetConcept,
             difficulty: ex.difficulty,
-            position: (chapterIdx + 1) * 1_000_000 + station.order * 1000 + blockIndex,
+            /* B4-REBUILD §E1 — the position must distinguish exercises WITHIN
+             * one block: the old formula (chapter · station · block only) gave
+             * every item of a drill the SAME position, so a guided (≤d2) round
+             * could never count as "earlier" than an independent (d3) round of
+             * the same concept in the same block — C-guided-first went blind
+             * exactly where the ladders live (stn-13's cloze→prod pair was
+             * waived as debt while the guided round sat right beside it). A
+             * strict running counter is order-total by construction and cannot
+             * collide. */
+            position: events.length,
           });
         }
       });

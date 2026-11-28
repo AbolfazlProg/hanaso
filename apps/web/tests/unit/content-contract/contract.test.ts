@@ -670,3 +670,46 @@ describe('R15 — authored F1/F2 are keyless (B3: the authored answer-key leaks)
     });
   }
 });
+
+/* ------------------------------------------------------------------ R16 */
+
+/**
+ * B4-REBUILD 2026-11-28 — the within-block difficulty progression law.
+ *
+ * One exercise block is ONE continuous activity group (a drill segment): the
+ * authored order inside it is the learner's order, and the staged-teaching
+ * standard «تدرج سختی» applies inside it, not only between blocks. stn-22
+ * shipped 3→2→2 for a whole quarter (the EQA-10 gates watch card packets and
+ * d3-before-guided CONCEPT events, but nothing watched a block's own ladder)
+ * — this law fails the build the moment a block's difficulty regresses.
+ *
+ * PENDING DEBT (honest ledger, the R15 pattern): kana-foundation-01 carries
+ * the pre-rebuild drops (optional drill islands + the p3/p4 rounds); its own
+ * rebuild retires them. The set is frozen; anything not listed must progress
+ * from now on.
+ */
+const DIFFICULTY_PENDING_CHAPTERS: ReadonlySet<string> = new Set(['kana-foundation-01']);
+
+describe('R16 — within-block difficulty never regresses (B4: the drill ladders)', () => {
+  it('the pending ledger holds exactly kana-foundation-01 (its own rebuild retires it)', () => {
+    expect([...DIFFICULTY_PENDING_CHAPTERS]).toStrictEqual(['kana-foundation-01']);
+  });
+  for (const { chapter, kind } of corpus()) {
+    it(`chapter ${chapter.slug} (${kind})`, () => {
+      if (DIFFICULTY_PENDING_CHAPTERS.has(chapter.slug)) return;
+      for (const st of chapter.stations) {
+        for (const b of st.blocks) {
+          if (b.kind !== 'exercise') continue;
+          const ids = (b as { exerciseIds: string[] }).exerciseIds;
+          const ds = ids.map((id) => chapter.exercises[id]?.difficulty);
+          for (let i = 1; i < ds.length; i++) {
+            expect(
+              ds[i]! >= ds[i - 1]!,
+              `${chapter.slug}/${st.slug}/${b.id}: «${ids[i]}» (d${ds[i]}) follows «${ids[i - 1]}» (d${ds[i - 1]}) — a block is one activity group; difficulty must not regress inside it`,
+            ).toBe(true);
+          }
+        }
+      }
+    });
+  }
+});

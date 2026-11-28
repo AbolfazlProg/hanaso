@@ -272,15 +272,10 @@ export const EQA_WAIVERS: EqaWaiver[] = [
       'آیتم difficulty-3 (مستقل) پیش از هر سنجش هدایت‌شدهٔ همان مفهوم می‌آید — در بازسازی، پلهٔ هدایت‌شده (≤d2) قبل از آن ثبت می‌شود.',
     resolvedBy: 'TASK-LEARNING-15',
   },
-  {
-    key: 'EQA-10:stn-kana-m1-reading:C-guided-first',
-    registeredAt: '2026-11-22',
-    chapter: 'kana-foundation-01',
-    issue: 158,
-    reason:
-      'آیتم difficulty-3 (مستقل) پیش از هر سنجش هدایت‌شدهٔ همان مفهوم می‌آید — در بازسازی، پلهٔ هدایت‌شده (≤d2) قبل از آن ثبت می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
+  /* B4-REBUILD 2026-11-28 (engine §E1): this waiver is RETIRED — the
+   * assessment-event positions now distinguish exercises WITHIN a block, so
+   * the guided round that sat beside the independent one counts as earlier;
+   * the finding was a false positive of the old position formula. */
   {
     key: 'EQA-10:stn-kana-k6:C-first-engage',
     registeredAt: '2026-11-22',
@@ -538,67 +533,11 @@ export const EQA_WAIVERS: EqaWaiver[] = [
    * removed outright (the anchor law: a guess on untaught content is never
    * graded, and the old reveal spoiled the listening this station exists
    * for), so the EQA-8 finding no longer exists to waive. */
-  {
-    key: 'EQA-8:stn-fm01-12-grammar-mo:graded-block-unlabelled',
-    registeredAt: '2026-11-22',
-    chapter: 'first-meeting-01',
-    issue: 162,
-    reason:
-      'کشف هدایت‌شدهٔ این ایستگاه (سنجش پیش از تدریس قاعدهٔ も) بدون برچسب assessesConcepts است — دامنهٔ مأموریت هشت درس اول (۱–۸) است؛ بازسازی واحد دوم در مأموریت پیگیری ثبت شده است.',
-    resolvedBy: 'TASK-LEARNING-16',
-  },
-  {
-    key: 'EQA-8:stn-fm01-13-grammar-dewa:graded-block-unlabelled',
-    registeredAt: '2026-11-22',
-    chapter: 'first-meeting-01',
-    issue: 162,
-    reason:
-      'کشف هدایت‌شدهٔ این ایستگاه (سنجش پیش از تدریس ではありません) بدون برچسب assessesConcepts است — دامنهٔ مأموریت هشت درس اول (۱–۸) است؛ بازسازی واحد دوم در مأموریت پیگیری ثبت شده است.',
-    resolvedBy: 'TASK-LEARNING-16',
-  },
-  {
-    key: 'EQA-8:stn-fm01-16-grammar-kara:graded-block-unlabelled',
-    registeredAt: '2026-11-22',
-    chapter: 'first-meeting-01',
-    issue: 162,
-    reason:
-      'کشف هدایت‌شدهٔ این ایستگاه (سنجش پیش از تدریس 〜から きました) بدون برچسب assessesConcepts است — دامنهٔ مأموریت هشت درس اول (۱–۸) است؛ بازسازی واحد دوم در مأموریت پیگیری ثبت شده است.',
-    resolvedBy: 'TASK-LEARNING-16',
-  },
-  {
-    key: 'EQA-10:stn-fm01-11-vocab2:C-worked-before-decode',
-    registeredAt: '2026-11-22',
-    chapter: 'first-meeting-01',
-    issue: 158,
-    reason:
-      'اولین تمرین رمزگشایی این ایستگاه پیش از هر نمونهٔ الگو‌شده (example-set/board) می‌آید — در بازسازی، لحظهٔ خواندنِ الگو‌شده پیش از تمرین قرار می‌گیرد.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-fm01-13-grammar-dewa:C-guided-first',
-    registeredAt: '2026-11-22',
-    chapter: 'first-meeting-01',
-    issue: 158,
-    reason:
-      'آیتم difficulty-3 (مستقل) پیش از هر سنجش هدایت‌شدهٔ همان مفهوم می‌آید — در بازسازی، پلهٔ هدایت‌شده (≤d2) قبل از آن ثبت می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-fm01-14-expression:C-first-engage',
-    registeredAt: '2026-11-22',
-    chapter: 'first-meeting-01',
-    issue: 158,
-    reason:
-      'اولین تمرینِ پس از پکت کارت این ایستگاه difficulty 1 نیست (الگوی سیستمی «آموزش→آزمون d2») — در بازسازی مرحله‌ای محتوا، درگیرسازی ساده بلافاصله پس از هر پکت افزوده می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
-  {
-    key: 'EQA-10:stn-fm01-17-practice:C-guided-first',
-    registeredAt: '2026-11-22',
-    chapter: 'first-meeting-01',
-    issue: 158,
-    reason:
-      'آیتم difficulty-3 (مستقل) پیش از هر سنجش هدایت‌شدهٔ همان مفهوم می‌آید — در بازسازی، پلهٔ هدایت‌شده (≤d2) قبل از آن ثبت می‌شود.',
-    resolvedBy: 'TASK-LEARNING-15',
-  },
+  /* B4-REBUILD 2026-11-28: the EQA-8:stn-fm01-12-grammar-mo:graded-block-unlabelled waiver is RETIRED — the finding no longer exists (fixed in the batch-4 rebuild). */
+  /* B4-REBUILD 2026-11-28: the EQA-8:stn-fm01-13-grammar-dewa:graded-block-unlabelled waiver is RETIRED — the finding no longer exists (fixed in the batch-4 rebuild). */
+  /* B4-REBUILD 2026-11-28: the EQA-8:stn-fm01-16-grammar-kara:graded-block-unlabelled waiver is RETIRED — the finding no longer exists (fixed in the batch-4 rebuild). */
+  /* B4-REBUILD 2026-11-28: the EQA-10:stn-fm01-11-vocab2:C-worked-before-decode waiver is RETIRED — the finding no longer exists (fixed in the batch-4 rebuild). */
+  /* B4-REBUILD 2026-11-28: the EQA-10:stn-fm01-13-grammar-dewa:C-guided-first waiver is RETIRED — the finding no longer exists (fixed in the batch-4 rebuild). */
+  /* B4-REBUILD 2026-11-28: the EQA-10:stn-fm01-14-expression:C-first-engage waiver is RETIRED — the finding no longer exists (fixed in the batch-4 rebuild). */
+  /* B4-REBUILD 2026-11-28: the EQA-10:stn-fm01-17-practice:C-guided-first waiver is RETIRED — the finding no longer exists (fixed in the batch-4 rebuild). */
 ];

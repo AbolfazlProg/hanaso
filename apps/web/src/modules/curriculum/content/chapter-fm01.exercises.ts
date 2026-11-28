@@ -1200,6 +1200,33 @@ export const FM01_EXERCISES: Exercise[] = [
   },
 
   /* ════════════════════════ EXPRESSION-2 (stn-fm01-14-expression) ════════════════════════ */
+  /* B4-REBUILD §D3 — the packet engages (C-first-engage): one d1
+   * recognition right after each card, answerable from the card itself. */
+  {
+    id: 'ex-fm01-e2-engage-1',
+    type: 'cloze',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-iie',
+    lineRef: L(10),
+    difficulty: 1,
+    promptFa: 'سورا ردّ خود را با چه واژه‌ای شروع می‌کند؟',
+    promptJa: '___、キムさんは ちゅうごくじんでは ありません。',
+    clozeTokens: [null, '、キムさんは ちゅうごくじんでは ありません。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'いいえ', 'はい', 'そうですか', 1);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      a: 'はい فرضِ غلط را تأیید می‌کند — سورا می‌خواهد ردش کند.',
+      c: 'そうですか واکنشِ شنیدنِ خبرِ تازه است — این‌جا خبری تازه نیست؛ ردّ است.',
+    },
+    feedback: {
+      f1Fa: 'ردِّ مؤدبانه کوتاه است — یک واژه.',
+      f2HintFa: 'اول ردّ کن، بعد جملهٔ درست.',
+      f3ExplainFa: 'いいえ — و بعد جملهٔ درست می‌آید: かんこくじんです.',
+    },
+    assessmentRole: 'practice',
+  },
   {
     id: 'ex-fm01-e2-resp-1',
     type: 'response-select',
@@ -1225,6 +1252,31 @@ export const FM01_EXERCISES: Exercise[] = [
     referenceBlockId: 'blk-e2-card-iie',
   },
   {
+    id: 'ex-fm01-e2-engage-2',
+    type: 'cloze',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-soodesuka',
+    lineRef: L(11),
+    difficulty: 1,
+    promptFa: 'یامادا به خبرِ تازهٔ سورا چه می‌گوید؟',
+    promptJa: 'キムさんは かんこくじんです。___。',
+    clozeTokens: ['キムさんは かんこくじんです。', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'そうですか', 'いいえ', 'はじめまして', 2);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      a: 'いいえ ردّ است — این‌جا چیزی برای ردّکردن نیست؛ خبرِ تازه است.',
+      b: 'はじめまして آغازِ آیینِ آشنایی است — واکنشِ شنیدنِ خبر نیست.',
+    },
+    feedback: {
+      f1Fa: 'واکنشِ شنیدنِ خبرِ تازه.',
+      f2HintFa: 'یامادا تازه فهمید کیم کره‌ای است.',
+      f3ExplainFa: 'そうですか — آه، می‌فهمم.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
     id: 'ex-fm01-e2-resp-2',
     type: 'response-select',
     targetSkill: 'expression',
@@ -1247,6 +1299,31 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     assessmentRole: 'practice',
     referenceBlockId: 'blk-e2-card-soodesuka',
+  },
+  {
+    id: 'ex-fm01-e2-engage-3',
+    type: 'cloze',
+    targetSkill: 'expression',
+    targetConcept: 'chrk-wakarimashita',
+    lineRef: L(11),
+    difficulty: 1,
+    promptFa: 'جملهٔ پایانیِ واکنشِ یامادا را کامل کن.',
+    promptJa: 'そうですか。___。',
+    clozeTokens: ['そうですか。', null, '。'],
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'わかりました', 'いいえ', 'はじめまして', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'いいえ ردّ است — یامادا چیزی را رد نمی‌کند؛ فهمیدنش را اعلام می‌کند.',
+      c: 'はじめまして آیینِ آشنایی است — پایانِ واکنش نیست.',
+    },
+    feedback: {
+      f1Fa: 'اعلامِ فهم — پایانِ واکنش.',
+      f2HintFa: 'بعد از واکنشِ خبرِ تازه، فهم اعلام می‌شود.',
+      f3ExplainFa: 'そうですか。わかりました — آه، می‌فهمم؛ فهمیدم.',
+    },
+    assessmentRole: 'practice',
   },
   {
     id: 'ex-fm01-e2-order-1',
@@ -1517,6 +1594,29 @@ export const FM01_EXERCISES: Exercise[] = [
     },
     assessmentRole: 'practice',
   },
+  /* B4-REBUILD §D5 — the guided self-intro step (C-guided-first): a d2
+   * assembly of the familiar frame BEFORE the independent d3 builds. */
+  {
+    id: 'ex-fm01-p2-c2-guide-1',
+    type: 'produce-template',
+    targetSkill: 'production',
+    targetConcept: 'self-intro-production',
+    assessesConcepts: ['gr-desu-identity'],
+    difficulty: 2,
+    promptFa: 'گرم‌کردنِ معرفی — «از آشنایی خوشبختم؛ من استاد هستم.»',
+    chips: [
+      { id: 'gs1', ja: 'はじめまして、' },
+      { id: 'gs2', ja: 'わたしは' },
+      { id: 'gs3', ja: 'せんせいです。' },
+    ],
+    acceptedChipOrder: ['gs1', 'gs2', 'gs3'],
+    feedback: {
+      f1Fa: 'سه تکه: آیینِ آشنایی + موضوع + هویت.',
+      f2HintFa: 'فرمولِ آشنایی را اول بگذار.',
+      f3ExplainFa: 'はじめまして、わたしは せんせいです.',
+    },
+    assessmentRole: 'practice',
+  },
   {
     id: 'ex-fm01-p2-c2-prod-1',
     type: 'produce-template',
@@ -1704,7 +1804,7 @@ export const FM01_EXERCISES: Exercise[] = [
       return { options, correctOptionId };
     })(),
     distractorRationaleFa: {
-      b: '〜ご = زبان (آمریکایی انگلیسی!) — پیش‌نمایش بعدی.',
+      b: '〜ご یعنی «زبانِ» — زبانِ آمریکا انگلیسی است؛ این‌جا دنبالِ «آمریکایی» هستی.',
       c: 'さん برای اسامی اشخاص است.',
     },
     feedback: {
@@ -1753,6 +1853,29 @@ export const FM01_EXERCISES: Exercise[] = [
       f1Fa: 'واژه‌ای خارجی با کاتاکانا — نام یک شغل فنی.',
       f2HintFa: 'صدای «انجینیر» انگلیسی.',
       f3ExplainFa: 'エンジニア = مهندس.',
+    },
+    assessmentRole: 'practice',
+  },
+  {
+    id: 'ex-fm01-od2-resp-2',
+    type: 'response-select',
+    targetSkill: 'vocab',
+    targetConcept: 'jobs-recognition',
+    lineRef: L(8),
+    difficulty: 1,
+    promptFa: '«かいしゃいん» یعنی چه؟',
+    ...(() => {
+      const { options, correctOptionId } = o3('x', 'کارمند شرکت', 'پزشک', 'مدیر کافه', 0);
+      return { options, correctOptionId };
+    })(),
+    distractorRationaleFa: {
+      b: 'پزشک = いしゃ.',
+      c: 'استاد دانشگاه = だいがくの せんせい — شغلِ علی.',
+    },
+    feedback: {
+      f1Fa: 'かいしゃ (شرکت) + いん (عضو).',
+      f2HintFa: 'واژه‌ای مرکب از «شرکت» و «عضو».',
+      f3ExplainFa: 'かいしゃいん = کارمند شرکت.',
     },
     assessmentRole: 'practice',
   },
