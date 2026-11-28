@@ -114,25 +114,22 @@ describe('EQA gates over the REAL bundled chapters (the CI gate)', () => {
     }
   });
 
-  it('the EIGHT rebuilt chapter-02 lessons are CLEAN of every ENGINE-REFORM finding (owner order 2026-11-22 — no waivers)', () => {
-    /* ENGINE-REFORM §۲ — the first 8 lessons of first-meeting-01 (the REAL
-     * chapter 02) prove BOTH owner fixes end-to-end in the content itself:
-     * no graded question before its teaching (EQA-8 R5b/R6) and no EQA-10
-     * error — the previous C-first-engage/C-guided-first waivers for 05/06/
-     * 07/08 are GONE because the stations were really rebuilt. */
+  it('ALL TWENTY-THREE chapter-02 stations are CLEAN of every ENGINE-REFORM finding (B1–B4 — no waivers)', () => {
+    /* ENGINE-REFORM §2 + B4-REBUILD 2026-11-28 — the whole of first-meeting-01
+     * (the REAL chapter 02) now proves BOTH owner fixes end-to-end in the
+     * content itself: no graded question before its teaching (EQA-8 R5b/R6)
+     * and no EQA-10 error. B1 cleaned 01–06, B2 07–12, B3 13–18, and B4
+     * retired the last seven registered waivers (11/12/13/14/16/17) and gave
+     * the optional branch (19–23) the same standard — every previous fm01
+     * waiver is GONE because the stations were really rebuilt. */
     const fm = result.chapters.find((c) => c.chapter.slug === 'first-meeting-01')!;
-    for (const slug of [
-      'stn-fm01-01-anchor',
-      'stn-fm01-02-vocab',
-      'stn-fm01-03-grammar-desu',
-      'stn-fm01-04-structure',
-      'stn-fm01-05-grammar-qa',
-      'stn-fm01-06-expression',
-      'stn-fm01-07-listen',
-      'stn-fm01-08-practice',
-    ]) {
-      const findings = fm.findings.filter((f) => f.subject === slug);
-      expect(findings, `${slug} must be clean under all gates`).toEqual([]);
+    expect(fm.chapter.stations.length).toBe(23);
+    for (const st of fm.chapter.stations) {
+      /* ERRORS are the machine-gated layer. (EQA-9 warnings stay by design:
+       * the kanji station's single-glyph distractor rationales are deliberate
+       * visual shape material — the K6 extension keeps them review-visible.) */
+      const findings = fm.findings.filter((f) => f.subject === st.slug && f.severity === 'error');
+      expect(findings, `${st.slug} must be clean under all gates`).toEqual([]);
     }
   });
 
@@ -922,6 +919,35 @@ describe('EQA-10 (station teaching contracts) — mutations MUST be rejected', (
               f.subject === 'stn-kana-hd1' && f.rule === 'C-guided-first' && f.messageFa.includes('ex-kxp-hd1-dec-1'),
           ),
         ).toBe(true);
+      },
+    );
+  });
+
+  it('C-guided-first (B4 §E1) — sees the WITHIN-BLOCK order: a guided round beside its independent round counts', () => {
+    withCourseMutation(
+      (chapters) => {
+        const fm = chapters.find((c) => c.slug === 'first-meeting-01')!;
+        // stn-13's drill is [cloze-1 (d2, gr-dewa-arimasen), prod-1 (d3, same
+        // concept)] in ONE block. The pre-B4 position formula gave both items
+        // the SAME position, so the d2 round could never be "earlier" than the
+        // d3 — the debt was a false positive kept alive by a waiver. The B4
+        // counter makes deck order total; assert the real course stays clean:
+        const findings = gateEqa10(fm, buildCourseAssessmentEvents(chapters));
+        expect(findings.some((f) => f.subject === 'stn-fm01-13-grammar-dewa' && f.rule === 'C-guided-first')).toBe(
+          false,
+        );
+        return fm;
+      },
+      (_chapters, fm) => {
+        // …and the order still MATTERS: swap the pair so the d3 item comes
+        // first — the finding MUST fire (the same-block blindness is gone).
+        const stn = fm.stations.find((s) => s.slug === 'stn-fm01-13-grammar-dewa')!;
+        const drill = stn.blocks.find((b) => b.id === 'blk-g4-drill') as { kind: string; exerciseIds: string[] };
+        drill.exerciseIds = ['ex-fm01-g4-prod-1', 'ex-fm01-g4-cloze-1'];
+        const findings = gateEqa10(fm, buildCourseAssessmentEvents([fm]));
+        expect(findings.some((f) => f.subject === 'stn-fm01-13-grammar-dewa' && f.rule === 'C-guided-first')).toBe(
+          true,
+        );
       },
     );
   });

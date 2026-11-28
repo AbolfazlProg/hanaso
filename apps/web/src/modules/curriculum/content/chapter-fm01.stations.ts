@@ -644,11 +644,42 @@ export const FM01_STATIONS: Station[] = [
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
+      /* B4-REBUILD §D1 — reading moment (05A §۴): the three new words were
+       * HEARD in stn-10's replay of lines 9–13; this worked model unlocks
+       * them as READING before the recycle decode runs (C-worked-before-decode
+       * — the modeled read precedes the measured decode) and bridges the
+       * station from the dialogue the learner just left. */
+      {
+        kind: 'example-set',
+        id: 'blk-v2-reading',
+        examples: [
+          {
+            id: 'v2-read-1',
+            role: 'reading',
+            ja: 'かんこくじん',
+            reading: 'kankokujin',
+            fa: 'کره‌ای — واژهٔ تازهٔ همین درس',
+            whyFa: 'شنیدی‌اش در خط ۱۰ از زبان سورا؛ حالا خودت می‌توانی بخوانی‌اش.',
+            lineRef: L(10),
+          },
+          {
+            id: 'v2-read-2',
+            role: 'reading',
+            ja: 'かんこくから きました。',
+            reading: 'kankoku kara kimashita.',
+            fa: 'از کره آمده‌ام.',
+            whyFa: 'خط ۱۲ کیم — دو واژهٔ تازهٔ همین درس، کنار هم.',
+            lineRef: L(12),
+          },
+        ],
+      },
       ex('blk-v2-recycle', ['ex-fm01-v2-dec-1', 'ex-fm01-v2-dec-2']),
       { kind: 'vocab-card', id: 'blk-v2-card-kankokujin', wordId: 'voc-kankokujin' },
       { kind: 'vocab-card', id: 'blk-v2-card-kara', wordId: 'voc-kara' },
       { kind: 'vocab-card', id: 'blk-v2-card-kimashita', wordId: 'voc-kimashita' },
-      ex('blk-v2-drill', ['ex-fm01-v2-aud-1', 'ex-fm01-v2-aud-2', 'ex-fm01-v2-txt-1']),
+      /* B4-REBUILD §D2 — R16 (within-block progression): the particle round
+       * (d1) opens, then the word-meaning rounds (d2) — 1→2→2, not 2→1→2. */
+      ex('blk-v2-drill', ['ex-fm01-v2-aud-2', 'ex-fm01-v2-aud-1', 'ex-fm01-v2-txt-1']),
       {
         kind: 'wrap-up',
         id: 'blk-v2-wrap',
@@ -700,6 +731,11 @@ export const FM01_STATIONS: Station[] = [
           { id: 'c', label: 'جمله را منفی می‌کند' },
         ],
         correctOptionId: 'a',
+        /* B4-REBUILD §E2 — R6 label (the graded block was machine-invisible):
+         * the comparison presupposes only what earlier stations taught —
+         * は+です identity (stn-03) and the ですか question (stn-05). The も
+         * insight itself is what this discovery TEACHES (with the rule card). */
+        assessesConcepts: ['gr-desu-identity', 'gr-desu-qa'],
         explainFa:
           'わたしは ちゅうごくじんです (من چینی‌ام) → キムさんも ちゅうごくじんですか (کیم هم چینی است؟) — も جای は می‌نشیند و «افزودن به همان گروه» را می‌رساند.',
       },
@@ -783,6 +819,9 @@ export const FM01_STATIONS: Station[] = [
           { id: 'c', label: 'با も — «هم»' },
         ],
         correctOptionId: 'a',
+        /* B4-REBUILD §E2 — R6 label: rejecting the か/も distractors
+         * presupposes those taught patterns (stn-05 / stn-12). */
+        assessesConcepts: ['gr-desu-qa', 'gr-mo'],
         explainFa:
           'キムさんは ちゅうごくじんでは ありません = «کیم چینی نیست» — では ありません خودش پایان مؤدبانهٔ نفی است؛ بعدش می‌توانی جملهٔ درست را بچسبانی: かんこくじんです.',
       },
@@ -855,12 +894,15 @@ export const FM01_STATIONS: Station[] = [
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
     blocks: [
+      /* B4-REBUILD §D3 — C-first-engage: every packet now opens with its own
+       * d1 recognition (the answer is on the card just seen), THEN the applied
+       * round — 1→2 per packet, 1→2→3 on the closer. */
       { kind: 'expression-card', id: 'blk-e2-card-iie', expressionId: 'chrk-iie' },
-      ex('blk-e2-ret-1', ['ex-fm01-e2-resp-1']),
+      ex('blk-e2-ret-1', ['ex-fm01-e2-engage-1', 'ex-fm01-e2-resp-1']),
       { kind: 'expression-card', id: 'blk-e2-card-soodesuka', expressionId: 'chrk-soodesuka' },
-      ex('blk-e2-ret-2', ['ex-fm01-e2-resp-2']),
+      ex('blk-e2-ret-2', ['ex-fm01-e2-engage-2', 'ex-fm01-e2-resp-2']),
       { kind: 'expression-card', id: 'blk-e2-card-wakarimashita', expressionId: 'chrk-wakarimashita' },
-      ex('blk-e2-ret-3', ['ex-fm01-e2-order-1', 'ex-fm01-e2-prod-1']),
+      ex('blk-e2-ret-3', ['ex-fm01-e2-engage-3', 'ex-fm01-e2-order-1', 'ex-fm01-e2-prod-1']),
     ],
     fsrsItems: ['chrk-fm01-iie', 'chrk-fm01-soodesuka', 'chrk-fm01-wakarimashita'],
   },
@@ -925,7 +967,9 @@ export const FM01_STATIONS: Station[] = [
       ex('blk-l2-drill-1', ['ex-fm01-l2-aud-1']),
       /* independent discrimination on a NEW surface (the full nationality
        * word) — now AFTER teaching + guided practice. */
-      ex('blk-l2-drill-2', ['ex-fm01-l2-mp-1', 'ex-fm01-l2-who-1']),
+      /* B4-REBUILD §D4 — R16: the line-comprehension round (d2) precedes the
+       * sound-discrimination finale (d3) — macro before micro, 2→3 not 3→2. */
+      ex('blk-l2-drill-2', ['ex-fm01-l2-who-1', 'ex-fm01-l2-mp-1']),
     ],
     fsrsItems: [],
   },
@@ -960,6 +1004,9 @@ export const FM01_STATIONS: Station[] = [
           { id: 'b', label: 'اول جمله، قبل از مکان' },
           { id: 'c', label: 'آخر جمله' },
         ],
+        /* B4-REBUILD §E2 — R6 label: the slot question presupposes the SOV
+         * bridge (place before verb — stn-04's structure station). */
+        assessesConcepts: ['sov-bridge-persian'],
         correctOptionId: 'a',
         explainFa:
           'かんこく + から + きました = مکان + «از» + «آمد» — برعکس فارسی که «از» قبل از مکان می‌آید: ژاپنی می‌گوید «کره‌از آمدم».',
@@ -1030,7 +1077,14 @@ export const FM01_STATIONS: Station[] = [
     mastery: { threshold: 0.7 },
     blocks: [
       ex('blk-p2-c1', ['ex-fm01-p2-c1-decode-1', 'ex-fm01-p2-c1-decode-2']),
-      ex('blk-p2-c2', ['ex-fm01-p2-c2-cloze-1', 'ex-fm01-p2-c2-prod-1', 'ex-fm01-p2-c2-prod-2']),
+      /* B4-REBUILD §D5 — C-guided-first: the self-intro ladder gains its
+       * guided (d2) assembly BEFORE the independent (d3) builds — 2→2→3→3. */
+      ex('blk-p2-c2', [
+        'ex-fm01-p2-c2-cloze-1',
+        'ex-fm01-p2-c2-guide-1',
+        'ex-fm01-p2-c2-prod-1',
+        'ex-fm01-p2-c2-prod-2',
+      ]),
       ex('blk-p2-c3', ['ex-fm01-p2-c3-cloze-1', 'ex-fm01-p2-c3-cloze-2', 'ex-fm01-p2-c3-order-1']),
       {
         kind: 'wrap-up',
@@ -1127,7 +1181,7 @@ export const FM01_STATIONS: Station[] = [
         examples: [
           {
             id: 'od1-ex-1',
-            role: 'varied',
+            role: 'anchor',
             ja: 'にほんじん',
             reading: 'nihonjin',
             fa: 'ژاپنی — にほん + じん',
@@ -1153,7 +1207,7 @@ export const FM01_STATIONS: Station[] = [
           },
           {
             id: 'od1-ex-4',
-            role: 'faded',
+            role: 'varied',
             ja: 'にほんご',
             reading: 'nihongo',
             fa: 'زبان ژاپنی — پیش‌نمایش: 〜ご = زبان',
@@ -1162,6 +1216,15 @@ export const FM01_STATIONS: Station[] = [
         ],
       },
       ex('blk-od1-drill', ['ex-fm01-od1-resp-1', 'ex-fm01-od1-prod-1']),
+      {
+        kind: 'wrap-up',
+        id: 'blk-od1-wrap',
+        titleFa: 'الگوی 〜じん مال تو شد',
+        itemsFa: [
+          'نام کشور + じん = اهلِ آن کشور — にほんじん、かんこくじん、アメリカじん.',
+          'پیش‌نمایشِ فردا: نام کشور + ご = زبانِ آن کشور — にほんご.',
+        ],
+      },
     ],
     fsrsItems: [],
   },
@@ -1190,7 +1253,7 @@ export const FM01_STATIONS: Station[] = [
             reading: 'miki-san wa … desu.',
             fa: 'میکی … است.',
             whyFa: 'با یک واژهٔ این فصل پر کن.',
-            selfExplainFa: 'بلند بگو: مثلاً がくせい！',
+            selfExplainFa: 'بلند بگو: مثلاً にほんじん!',
           },
           {
             id: 'or1-ex-2',
@@ -1199,7 +1262,7 @@ export const FM01_STATIONS: Station[] = [
             reading: 'yamada-san wa … desu.',
             fa: 'یامادا … است.',
             whyFa: 'شغل یا هویت — آزاد انتخاب کن.',
-            selfExplainFa: 'مثلاً: てんちょう (مدیر کافه)؟ یا با آموخته‌ها: にほんじん！',
+            selfExplainFa: 'با آموخته‌ها: にほんじん! — یامادا خودش در خط ۳ گفت.',
           },
           {
             id: 'or1-ex-3',
@@ -1207,7 +1270,7 @@ export const FM01_STATIONS: Station[] = [
             ja: 'アリさんは ___の せんせいです。',
             reading: 'ari-san wa … no sensee desu.',
             fa: 'علی استادِ … است.',
-            whyFa: 'جای の را پر کن.',
+            whyFa: 'واژهٔ مکان را پر کن — علی کجا درس می‌دهد؟',
             selfExplainFa: 'だいがく！',
           },
           {
@@ -1217,7 +1280,7 @@ export const FM01_STATIONS: Station[] = [
             reading: 'watashi wa … desu.',
             fa: 'من … هستم.',
             whyFa: 'جای توست — هویت خودت.',
-            selfExplainFa: 'がくせい؟ エンジニア؟ انتخاب با تو.',
+            selfExplainFa: 'مثلاً せんせい! یا هر واژهٔ آموخته — انتخاب با تو.',
           },
         ],
       },
@@ -1228,7 +1291,7 @@ export const FM01_STATIONS: Station[] = [
     slug: 'stn-fm01-opt-jobs',
     type: 'deepdive',
     titleFa: 'شغل‌ها (اختیاری)',
-    objectiveFa: '۸ واژهٔ شغل را بشناس تا شغل خودت را بگویی — فقط با انتخاب صریح تو کارت می‌شود',
+    objectiveFa: '۵ واژهٔ شغل را بشناس تا شغل خودت را بگویی — فقط با انتخاب صریح تو کارت می‌شود',
     core: false,
     order: 21,
     prerequisites: ['stn-fm01-13-grammar-dewa'],
@@ -1248,7 +1311,7 @@ export const FM01_STATIONS: Station[] = [
             role: 'varied',
             ja: 'がくせい',
             reading: 'gakusee',
-            fa: 'دانشجو — واژهٔ نام‌گذارِ فصل!',
+            fa: 'دانشجو',
             whyFa: 'わたしは がくせいです = من دانشجوام.',
           },
           {
@@ -1295,7 +1358,18 @@ export const FM01_STATIONS: Station[] = [
           },
         ],
       },
-      ex('blk-od2-drill', ['ex-fm01-od2-resp-1', 'ex-fm01-od2-prod-1']),
+      /* B4-REBUILD §D6 — the recognition round covers a second job word too
+       * (d1→d1→d2), and the station closes with its own recap. */
+      ex('blk-od2-drill', ['ex-fm01-od2-resp-1', 'ex-fm01-od2-resp-2', 'ex-fm01-od2-prod-1']),
+      {
+        kind: 'wrap-up',
+        id: 'blk-od2-wrap',
+        titleFa: 'شغلی برای خودت داری',
+        itemsFa: [
+          '۵ واژهٔ شغل: がくせい · エンジニア · いしゃ · かいしゃいん · だいがくの せんせい.',
+          'الگوی گفتنش همان است: わたしは 〜です.',
+        ],
+      },
     ],
     fsrsItems: [],
   },
@@ -1313,7 +1387,10 @@ export const FM01_STATIONS: Station[] = [
     estLoad: 'light',
     completion: { kind: 'task_completed' },
     mastery: { threshold: 0.6 },
-    blocks: [ex('blk-or2-drill', ['ex-fm01-or2-mp-1', 'ex-fm01-or2-cloze-1', 'ex-fm01-or2-cloze-2'])],
+    /* B4-REBUILD §D7 — R16 + the objective's own promised order: the two
+     * grammar distinctions first (d2, d2), the vowel-length drill as the
+     * finale (d3) — was 3→2→2. */
+    blocks: [ex('blk-or2-drill', ['ex-fm01-or2-cloze-1', 'ex-fm01-or2-cloze-2', 'ex-fm01-or2-mp-1'])],
     fsrsItems: [],
   },
 
@@ -1400,7 +1477,7 @@ export const FM01_STATIONS: Station[] = [
         titleFa: 'جمع‌بندی ایستگاه کانجی',
         itemsFa: [
           '人 = انسان/شخص — دو ضربهٔ جدا از بالا؛ آخرِ هر ملیت (日本人، 中国人、イラン人، 韓国人) با خوانش «جین»',
-          '国 = کشور — قاب مرز + گوهر داخل؛ 中国 چین و 韓国 کره با خوانش «کُوک»',
+          '国 = کشور — قاب مرز + گوهر داخل؛ در ちゅうごく (چین) و かんこく (کره) با خوانش «کُوک»',
           'هر دو کانجی حالا وارد مرور روزانهٔ حافظه‌ات می‌شوند — هم به شکلِ تشخیص (دیدن و یادآوری) هم به شکل نوشتن (kj-rec / kj-wri).',
         ],
       },
