@@ -24,3 +24,6 @@ apps/web/vendor/kanjivg-kana/
 agent-ctx/
 apps/web/public/audio/**
 apps/web/content/lesson-engine/**
+
+# ops checkpoint evidence artifacts (machine-generated reports, not product code)
+ops/checkpoints/**

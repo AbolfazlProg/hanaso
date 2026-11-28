@@ -1,0 +1,186 @@
+{
+ "width": "mob",
+ "viewport": [
+  390,
+  844
+ ],
+ "stations": {
+  "stn-fm01-11-vocab2": {
+   "steps": 23,
+   "answers": 5,
+   "blocks": [
+    "مثال‌ها",
+    "۳ واژهٔ تازه"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 18.4
+  },
+  "stn-fm01-12-grammar-mo": {
+   "steps": 13,
+   "answers": 3,
+   "blocks": [
+    "افزودن به گروه",
+    "مثال‌ها",
+    "این تمرین را کامل کرده‌ای"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 9.8
+  },
+  "stn-fm01-13-grammar-dewa": {
+   "steps": 13,
+   "answers": 3,
+   "blocks": [
+    "مکالمهٔ فصل",
+    "«نیست» — نفی مؤدبانه",
+    "مثال‌ها",
+    "این تمرین را کامل کرده‌ای"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 10.1
+  },
+  "stn-fm01-14-expression": {
+   "steps": 26,
+   "answers": 7,
+   "blocks": [
+    "این تمرین را کامل کرده‌ای"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 18.2
+  },
+  "stn-fm01-15-listen": {
+   "steps": 16,
+   "answers": 4,
+   "blocks": [
+    "گوشِ دوم",
+    "مورای خیشومی — ん",
+    "این تمرین را کامل کرده‌ای"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 11.7
+  },
+  "stn-fm01-16-grammar-kara": {
+   "steps": 16,
+   "answers": 4,
+   "blocks": [
+    "مکالمهٔ فصل",
+    "خاستگاه",
+    "مثال‌ها",
+    "این تمرین را کامل کرده‌ای"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 11.5
+  },
+  "stn-fm01-17-practice": {
+   "steps": 31,
+   "answers": 9,
+   "blocks": [
+    "هر دو بخش تثبیت شد"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 22.2
+  },
+  "stn-fm01-opt-countries": {
+   "steps": 9,
+   "answers": 2,
+   "blocks": [
+    "مثال‌ها",
+    "الگوی 〜じん مال تو شد"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 7.0
+  },
+  "stn-fm01-opt-review-desu": {
+   "steps": 2,
+   "answers": 0,
+   "blocks": [
+    "مثال‌ها"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 3.0
+  },
+  "stn-fm01-opt-jobs": {
+   "steps": 12,
+   "answers": 3,
+   "blocks": [
+    "مثال‌ها",
+    "شغلی برای خودت داری"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 9.1
+  },
+  "stn-fm01-opt-drill": {
+   "steps": 11,
+   "answers": 3,
+   "blocks": [
+    "این تمرین را کامل کرده‌ای"
+   ],
+   "overflow": false,
+   "completed": true,
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 8.7
+  },
+  "stn-fm01-23-kanji": {
+   "steps": 54,
+   "answers": 5,
+   "blocks": [
+    "دو کانجی که تا حالا دیده‌ای",
+    "نوشتن با دست",
+    "جمع‌بندی ایستگاه کانجی"
+   ],
+   "overflow": false,
+   "completed": true,
+   "writing": [
+    "guided:人:traced:2",
+    "free:人:traced:2",
+    "guided:国:traced:8",
+    "free:国:traced:8"
+   ],
+   "console_errors": [],
+   "page_errors": [],
+   "http_errors": [],
+   "seconds": 49.1
+  }
+ }
+}
